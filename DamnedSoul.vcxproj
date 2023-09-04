@@ -171,7 +171,6 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DamnedSoul.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
   </ItemGroup>
