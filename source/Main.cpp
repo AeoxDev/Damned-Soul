@@ -2,10 +2,37 @@
 //
 
 #include <iostream>
+#include <chrono>
+#include "SDLhandler.h"
+
+
 
 int main(int argc, char* args[])
 {
+    std::chrono::steady_clock::time_point time;
+    std::chrono::steady_clock::time_point end;
+    std::chrono::duration<float> deltaTimeCount;
+	float deltaTime;
     std::cout << "Hello World!\n";
+    SetupWindow();
+	while (!quit)
+	{
+		end = std::chrono::steady_clock::now();
+		deltaTimeCount = end - time;
+
+		time = std::chrono::steady_clock::now();
+		deltaTime = deltaTimeCount.count();
+		if (deltaTimeCount.count() > DELTACAP)
+		{
+			deltaTime = DELTACAP;
+		}
+		HandleInput();
+
+		//Update
+		
+		//Draw
+	}
+    return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

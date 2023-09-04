@@ -18,7 +18,7 @@ SDL_Event sdlEvent;
 bool SetupWindow()
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	sdlWindow = SDL_CreateWindow("DV2556 Assignment 2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+	sdlWindow = SDL_CreateWindow("Damned Soul", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 	if (sdlWindow == nullptr)
 	{
 		std::cerr << "SDL: Window unsuccessfully created! SDL_GetError() Yields: " << SDL_GetError() << std::endl;
