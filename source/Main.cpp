@@ -4,6 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include "SDLhandler.h"
+#include "Input.h"
 
 
 
@@ -13,7 +14,7 @@ int main(int argc, char* args[])
     std::chrono::steady_clock::time_point end;
     std::chrono::duration<float> deltaTimeCount;
 	float deltaTime;
-    std::cout << "Hello World!\n";
+    //std::cout << "Hello World!\n";
     SetupWindow();
 	//Hwnd = sdl.window
 	while (!sdl.quit)

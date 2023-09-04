@@ -21,12 +21,18 @@
     <ClCompile Include="source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\SDLHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

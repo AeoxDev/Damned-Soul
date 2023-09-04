@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
   </ItemGroup>
@@ -183,6 +184,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\SDLHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
