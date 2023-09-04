@@ -5,11 +5,14 @@
 #include <chrono>
 #include "SDLhandler.h"
 #include "Input.h"
+#include "MemLib/MemLib.hpp"
 
 
 
 int main(int argc, char* args[])
 {
+	MemLib::createMemoryManager();
+
     std::chrono::steady_clock::time_point time;
     std::chrono::steady_clock::time_point end;
     std::chrono::duration<float> deltaTimeCount;
@@ -34,6 +37,9 @@ int main(int argc, char* args[])
 		
 		//Draw
 	}
+
+	MemLib::destroyMemoryManager();
+
     return 0;
 }
 
