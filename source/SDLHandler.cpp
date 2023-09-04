@@ -4,20 +4,12 @@
 #include "SDL.h"
 #include "SDL_syswm.h"
 
-using u32 = Uint32;
-
-const u32 WIDTH = 1280;
-const u32 HEIGHT = 720;
-
-
-
-
 
 SDL sdl;
 bool SetupWindow()
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	sdl.sdlWindow = SDL_CreateWindow("Damned Soul", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+	sdl.sdlWindow = SDL_CreateWindow("Damned Soul", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, sdl.WIDTH, sdl.HEIGHT, SDL_WINDOW_SHOWN);
 	if (sdl.sdlWindow == nullptr)
 	{
 		std::cerr << "SDL: Window unsuccessfully created! SDL_GetError() Yields: " << SDL_GetError() << std::endl;
@@ -54,7 +46,6 @@ void HandleInput()
 {
 	while (SDL_PollEvent(&sdl.sdlEvent) != 0)
 	{
-
 		//User requests quit
 		if (sdl.sdlEvent.type == SDL_QUIT || sdl.sdlEvent.key.keysym.sym == SDLK_ESCAPE)
 		{
