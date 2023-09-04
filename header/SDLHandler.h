@@ -14,6 +14,12 @@ struct SDL
 	Uint32 HEIGHT = 720;
 };
 extern SDL sdl;
-void HandleInput();
+
+/// <summary>
+/// Sets up the window, returns true on success
+/// </summary>
+/// <returns>false on failure</returns>
 bool SetupWindow();
+
+/// <summary>///Alternatively accesssible through sdl.sdlWindow /// </summary>/// <returns></returns>
 SDL_Window* GetSDLWindow();
