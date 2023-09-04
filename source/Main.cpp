@@ -20,6 +20,7 @@ int main(int argc, char* args[])
     //std::cout << "Hello World!\n";
     SetupWindow();
 	//Hwnd = sdl.window
+	int i = 0;
 	while (!sdl.quit)
 	{
 		end = std::chrono::steady_clock::now();
