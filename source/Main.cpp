@@ -36,6 +36,8 @@ int main(int argc, char* args[])
 		//Update
 		
 		//Draw
+
+		MemLib::pdefrag();
 	}
 
 	MemLib::destroyMemoryManager();
