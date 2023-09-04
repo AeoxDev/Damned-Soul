@@ -2,8 +2,16 @@
 #include <d3d11.h>
 #include <SDL.h>
 #define DELTACAP 0.2f
-extern bool quit;
-extern HWND window;
+struct SDL
+{
+	HWND window;
+	SDL_Window* sdlWindow = nullptr;
+	SDL_Surface* sdlSurface = nullptr;
+	SDL_Renderer* sdlRenderer = nullptr;
+	bool quit = false;
+	SDL_Event sdlEvent;
+};
+extern SDL sdl;
 void HandleInput();
 bool SetupWindow();
 SDL_Window* GetSDLWindow();

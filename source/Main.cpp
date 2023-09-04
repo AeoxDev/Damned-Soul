@@ -15,7 +15,8 @@ int main(int argc, char* args[])
 	float deltaTime;
     std::cout << "Hello World!\n";
     SetupWindow();
-	while (!quit)
+	//Hwnd = sdl.window
+	while (!sdl.quit)
 	{
 		end = std::chrono::steady_clock::now();
 		deltaTimeCount = end - time;
