@@ -368,3 +368,5 @@ FodyWeavers.xsd
 *.idp
 DamnedSoul.exe.recipe
 DamnedSoul.lastbuildstate
+
+intermediate/
