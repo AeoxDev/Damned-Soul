@@ -1,7 +1,6 @@
 #pragma once
 #include <d3d11.h>
 #include <SDL.h>
-#define DELTACAP 0.2f
 struct SDL
 {
 	HWND window;
