@@ -171,6 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\ConfigInterpreter.cpp" />
+    <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper.cpp" />
     <ClCompile Include="source\Input.cpp" />
@@ -187,6 +189,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\ComponentHelper.h" />
+    <ClInclude Include="header\ConfigInterpreter.h" />
+    <ClInclude Include="header\ConfigManager.h" />
     <ClInclude Include="header\D3D11Graphics.h" />
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\EntityFramework.h" />
