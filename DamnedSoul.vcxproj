@@ -194,6 +194,7 @@
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\SDLHandler.h" />
+    <ClInclude Include="source\States.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />

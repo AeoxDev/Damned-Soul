@@ -33,7 +33,7 @@
     <ClCompile Include="source\D3D11Helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\ConfigRows.cpp">
+    <ClCompile Include="source\ConfigInterpreter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,8 +56,11 @@
     <ClInclude Include="header\ConfigManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\ConfigRows.h">
+    <ClInclude Include="header\ConfigInterpreter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\States.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

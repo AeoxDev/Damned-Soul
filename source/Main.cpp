@@ -7,8 +7,7 @@
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
 #include "ConfigManager.h"
-
-
+#include "States.h"
 
 int main(int argc, char* args[])
 {
@@ -21,7 +20,12 @@ int main(int argc, char* args[])
     //std::cout << "Hello World!\n";
     SetupWindow();
 	//Hwnd = sdl.window
-	int i = 0;
+	State currentMainState = State::Menu;
+
+	Game game;
+	Menu menu;
+	Settings settings;
+
 	while (!sdl.quit)
 	{
 		end = std::chrono::steady_clock::now();
@@ -33,9 +37,10 @@ int main(int argc, char* args[])
 		{
 			deltaTime = DELTACAP;
 		}
-		HandleInput();
 
 		//Update
+		HandleStateInput(currentMainState, game, menu, settings);
+
 		
 		//Draw
 
