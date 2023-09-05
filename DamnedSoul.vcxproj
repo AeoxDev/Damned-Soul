@@ -171,7 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="header\ConfigManager.cpp" />
+    <ClCompile Include="source\ConfigRows.cpp" />
+    <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper.cpp" />
     <ClCompile Include="source\Input.cpp" />
@@ -187,12 +188,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\ConfigManager.h" />
+    <ClInclude Include="header\ConfigRows.h" />
     <ClInclude Include="header\D3D11Graphics.h" />
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClInclude Include="source\ConfigManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />

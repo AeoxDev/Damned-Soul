@@ -6,13 +6,14 @@
 #include "SDLhandler.h"
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
+#include "ConfigManager.h"
 
 
 
 int main(int argc, char* args[])
 {
 	MemLib::createMemoryManager();
-
+	InitiateConfig();
     std::chrono::steady_clock::time_point time;
     std::chrono::steady_clock::time_point end;
     std::chrono::duration<float> deltaTimeCount;
