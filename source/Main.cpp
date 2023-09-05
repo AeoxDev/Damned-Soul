@@ -49,6 +49,7 @@ int main(int argc, char* args[])
 		MemLib::pdefrag();
 	}
 
+	EndDirectX();
 	MemLib::destroyMemoryManager();
 
     return 0;

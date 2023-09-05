@@ -10,6 +10,7 @@
 D3D11Data* d3d11Data;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
+BufferHolder* bfrHolder;
 
 ////Externs:
 //ID3D11DeviceContext* deviceContext;
@@ -68,6 +69,7 @@ int SetupDirectX(HWND& w)
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
+	bfrHolder = (BufferHolder*)MemLib::spush(sizeof(BufferHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG
@@ -87,4 +89,13 @@ void EndDirectX()
 		vrtHolder->vs_arr[i]->Release();
 		vrtHolder->il_arr[i]->Release();
 	}
+
+	// Release all buffers shaders
+	for (int i = 0; i < bfrHolder->currentCount; ++i)
+		bfrHolder->buff_arr[i]->Release();
+
+	// Release basic things
+	d3d11Data->swapChain->Release();
+	d3d11Data->deviceContext->Release();
+	d3d11Data->device->Release();
 }
