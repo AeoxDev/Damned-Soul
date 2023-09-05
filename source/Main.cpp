@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
 #include "D3D11Graphics.h"
+#include "D3D11Helper.h"
 
 
 
@@ -23,6 +24,9 @@ int main(int argc, char* args[])
 	//Hwnd = sdl.window
 
 	SetupDirectX(sdl.window);
+
+	int8_t testPixelShader = LoadPixelShader("bin\\TestPS.cso");
+	int8_t testVertexShader = LoadVertexShader("bin\\TestVS.cso");
 
 	int i = 0;
 	while (!sdl.quit)
