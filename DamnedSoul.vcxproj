@@ -171,7 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\ConfigRows.cpp" />
+    <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper.cpp" />
@@ -188,7 +188,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\ConfigRows.h" />
+    <ClInclude Include="header\ConfigInterpreter.h" />
+    <ClInclude Include="header\ConfigManager.h" />
     <ClInclude Include="header\D3D11Graphics.h" />
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\Input.h" />
