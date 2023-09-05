@@ -6,6 +6,7 @@
 #include "SDLhandler.h"
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
+#include "D3D11Graphics.h"
 
 
 
@@ -20,6 +21,9 @@ int main(int argc, char* args[])
     //std::cout << "Hello World!\n";
     SetupWindow();
 	//Hwnd = sdl.window
+
+	SetupDirectX(sdl.window);
+
 	int i = 0;
 	while (!sdl.quit)
 	{
