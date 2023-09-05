@@ -57,4 +57,15 @@ public:
 
         return retVal;
     };
+
+    template<typename T2>
+    bool operator==(const PoolPointer<T2>& other)
+    {
+        return (m_pp == other.m_pp) && (m_pi == other.m_pi) (m_ps == other.m_ps);
+    }
+
+    bool IsNullptr() const
+    {
+        return (*m_pp) == nullptr;
+    }
 };
