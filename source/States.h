@@ -15,13 +15,12 @@ enum class MenuState {
 enum class GameState {
 	Unpause,
 	Pause,
-	Shop,
 	Settings
 };
 
 enum class SettingsState {
 	Graphics,
-	Sound,
+	Audio,
 	Controls,
 };
 
@@ -40,15 +39,17 @@ struct Menu
 struct Settings
 {
 	SettingsState currentSubState = SettingsState::Graphics;
-
+	std::pair<int, int> resolution;
 };
 
-void HandleMenuStateInput(Menu& menu, int input[]);
-void HandleGameStateInput(Game& game, int input[]);
+void HandleMenuStateInput(Menu&, Settings&, int[]);
+void HandleGameStateInput(Game&, Settings&, int[]);
+void HandleSettingsStateInput(Settings& , int[]);
 
 std::string stateTemp = "";
 std::string stateMenuTemp = "";
 std::string stateGameTemp = "";
+std::string stateSettingsTemp = "";
 
 void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings& settings)
 {
@@ -58,16 +59,16 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 		
 		std::string Menu = "Menu";
 		std::string Game = "Game";
-		
-		//User requests quit
-		if (sdl.sdlEvent.type == SDL_QUIT)
-			sdl.quit = true;
 
 		if (sdl.sdlEvent.type == SDL_KEYDOWN)
 			input[sdl.sdlEvent.key.keysym.scancode] = true;
 
 		if (sdl.sdlEvent.type == SDL_KEYUP)
 			input[sdl.sdlEvent.key.keysym.scancode] = false;
+		
+		//User requests quit
+		if (sdl.sdlEvent.type == SDL_QUIT)
+			sdl.quit = true;
 
 		switch (currentMainState)
 		{
@@ -79,20 +80,23 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 			{
 				stateGameTemp = "";
 				currentMainState = State::Game;
+				break;
 			}
-			HandleMenuStateInput(menu, input);
+			HandleMenuStateInput(menu, settings, input);
 			stateTemp = Menu;
 			break;
 		case State::Game:
 			if (stateTemp != Game)
 				std::cout << Game << std::endl;
 
-			if (input[SDL_SCANCODE_TAB] && game.currentSubState == GameState::Settings)
+			if (input[SDL_SCANCODE_TAB] && game.currentSubState == GameState::Pause)
 			{
 				stateMenuTemp = "";
 				currentMainState = State::Menu;
+				game.currentSubState = GameState::Unpause;
+				break;
 			}
-			HandleGameStateInput(game, input);
+			HandleGameStateInput(game, settings, input);
 			stateTemp = Game;
 			break;
 		default:
@@ -102,13 +106,11 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 	}
 }
 
-void HandleMenuStateInput(Menu& menu, int input[])
+void HandleMenuStateInput(Menu& menu, Settings& settings, int input[])
 {
-
 	std::string Main = "Main";
 	std::string Settings = "Menu Settings";
 	std::string Credits = "Credits";
-	
 
 	switch (menu.currentSubState)
 	{
@@ -116,8 +118,11 @@ void HandleMenuStateInput(Menu& menu, int input[])
 		if (stateMenuTemp != Main)
 			std::cout << Main << std::endl << std::endl;
 
-		if (input[SDL_SCANCODE_Q])
+		if (input[SDL_SCANCODE_UP])
 			menu.currentSubState = MenuState::Settings;
+
+		if (input[SDL_SCANCODE_DOWN])
+			menu.currentSubState = MenuState::Credits;
 
 		stateMenuTemp = Main;
 		break;
@@ -125,8 +130,19 @@ void HandleMenuStateInput(Menu& menu, int input[])
 		if (stateMenuTemp != Settings)
 			std::cout << Settings << std::endl << std::endl;
 
-		if (input[SDL_SCANCODE_Q])
-			menu.currentSubState = MenuState::Credits;
+		if (input[SDL_SCANCODE_ESCAPE])
+		{
+			stateSettingsTemp = "";
+			menu.currentSubState = MenuState::Main;
+		}
+
+		if (input[SDL_SCANCODE_F])
+		{
+			std::cout << "Changed Resolution to 1280x800\n";
+			settings.resolution = { 1280, 800 };
+		}
+
+		HandleSettingsStateInput(settings, input);
 
 		stateMenuTemp = Settings;
 		break;
@@ -134,7 +150,7 @@ void HandleMenuStateInput(Menu& menu, int input[])
 		if (stateMenuTemp != Credits)
 			std::cout << Credits << std::endl << std::endl;
 
-		if (input[SDL_SCANCODE_Q])
+		if (input[SDL_SCANCODE_ESCAPE])
 			menu.currentSubState = MenuState::Main;
 
 		stateMenuTemp = Credits;
@@ -145,13 +161,12 @@ void HandleMenuStateInput(Menu& menu, int input[])
 
 }
 
-void HandleGameStateInput(Game& game, int input[])
+void HandleGameStateInput(Game& game, Settings& settings, int input[])
 {
 	
 	std::string Unpause = "Unpause";
 	std::string Pause = "Pause";
 	std::string Settings = "Game Settings";
-	std::string Shop = "Shop";
 
 	switch (game.currentSubState)
 	{
@@ -159,7 +174,7 @@ void HandleGameStateInput(Game& game, int input[])
 		if (stateGameTemp != Unpause)
 			std::cout << Unpause << std::endl << std::endl;
 
-		if (input[SDL_SCANCODE_Q])
+		if (input[SDL_SCANCODE_ESCAPE])
 			game.currentSubState = GameState::Pause;
 
 		stateGameTemp = Unpause;
@@ -168,11 +183,12 @@ void HandleGameStateInput(Game& game, int input[])
 		if (stateGameTemp != Pause)
 			std::cout << Pause << std::endl << std::endl;
 
-		if (input[SDL_SCANCODE_Q])
-			game.currentSubState = GameState::Settings;
-
-		if (input[SDL_SCANCODE_E])
+		if (input[SDL_SCANCODE_UP])
 			game.currentSubState = GameState::Unpause;
+
+
+		if (input[SDL_SCANCODE_DOWN])
+			game.currentSubState = GameState::Settings;
 
 		stateGameTemp = Pause;
 		break;
@@ -180,19 +196,74 @@ void HandleGameStateInput(Game& game, int input[])
 		if (stateGameTemp != Settings)
 			std::cout << Settings << std::endl << std::endl;
 
-		if (input[SDL_SCANCODE_Q])
+		if (input[SDL_SCANCODE_ESCAPE])
+		{
+			stateGameTemp = "";
 			game.currentSubState = GameState::Pause;
+		}
+
+		if (input[SDL_SCANCODE_F])
+		{
+			std::cout << "Changed Resolution to 1600x900\n";
+			settings.resolution = {1600, 900};
+		}
+
+		HandleSettingsStateInput(settings, input);
 
 		stateGameTemp = Settings;
-		break;
-	case GameState::Shop:
-		if (stateGameTemp != Shop)
-			std::cout << Shop << std::endl << std::endl;
-
-		stateGameTemp = Shop;
 		break;
 	default:
 		break;
 	}
 
 }
+
+inline void HandleSettingsStateInput(Settings& settings, int input[])
+{
+	std::string Graphics = "Graphics";
+	std::string Audio = "Audio";
+	std::string Controls = "Controls";
+
+	switch (settings.currentSubState)
+	{
+	case SettingsState::Graphics:
+		if (stateSettingsTemp != Graphics)
+			std::cout << Graphics << std::endl << "Resolution: (" << settings.resolution.first << "x" << settings.resolution.second << ")\n" << std::endl;
+
+		if (input[SDL_SCANCODE_LEFT])
+			settings.currentSubState = SettingsState::Controls;
+
+		if (input[SDL_SCANCODE_RIGHT])
+			settings.currentSubState = SettingsState::Audio;
+
+		stateSettingsTemp = Graphics;
+		break;
+	case SettingsState::Audio:
+		if (stateSettingsTemp != Audio)
+			std::cout << Audio << std::endl << std::endl;
+
+		if (input[SDL_SCANCODE_LEFT])
+			settings.currentSubState = SettingsState::Graphics;
+
+		if (input[SDL_SCANCODE_RIGHT])
+			settings.currentSubState = SettingsState::Controls;
+
+		stateSettingsTemp = Audio;
+		break;
+	case SettingsState::Controls:
+		if (stateSettingsTemp != Controls)
+			std::cout << Controls << std::endl << std::endl;
+
+		if (input[SDL_SCANCODE_LEFT])
+			settings.currentSubState = SettingsState::Audio;
+
+		if (input[SDL_SCANCODE_RIGHT])
+			settings.currentSubState = SettingsState::Graphics;
+
+		stateSettingsTemp = Controls;
+		break;
+	default:
+		break;
+	}
+}
+

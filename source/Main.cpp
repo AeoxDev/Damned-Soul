@@ -26,6 +26,9 @@ int main(int argc, char* args[])
 	Menu menu;
 	Settings settings;
 
+	settings.resolution.first = 1920;
+	settings.resolution.second = 1080;
+
 	while (!sdl.quit)
 	{
 		end = std::chrono::steady_clock::now();
