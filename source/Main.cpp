@@ -19,13 +19,24 @@ int main(int argc, char* args[])
     
     //std::cout << "Hello World!\n";
     SetupWindow();
+	std::string title = "Damned Soul";
 	//Hwnd = sdl.window
 	int i = 0;
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 		HandleInput();
+#ifdef _DEBUG
+		if (NewSecond())
+		{
+			title = "Damned Soul " + std::to_string(GetAverage()) + " (" + std::to_string(GetFPS()) + " fps)";
+			//title+="";//Add more debugging information here, updates every second.
+			SetWindowTitle(title);
+		}
+#endif // _DEBUG Debugging purposes, not compiled in release
 
+		
+		
 		//Update
 		
 		//Draw

@@ -46,3 +46,8 @@ SDL_Window* GetSDLWindow()
 {
 	return sdl.sdlWindow;
 }
+
+void SetWindowTitle(std::string newTitle)
+{
+	SDL_SetWindowTitle(sdl.sdlWindow, newTitle.c_str());
+}
