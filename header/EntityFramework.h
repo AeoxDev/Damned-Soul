@@ -26,6 +26,7 @@ struct StatusComponent
 {
 	int hp;
 
+	StatusComponent() = default;
 	StatusComponent(int n) : hp(n) {}
 };
 
@@ -33,6 +34,7 @@ struct PlayerComponent
 {
 	std::string name;
 
+	PlayerComponent() = default;
 	PlayerComponent(std::string s) : name(s) {}
 };
 
@@ -40,6 +42,7 @@ struct EnemyComponent
 {
 	std::string name;
 
+	EnemyComponent() = default;
 	EnemyComponent(std::string s) : name(s) {}
 };
 //end of: components
@@ -47,102 +50,75 @@ struct EnemyComponent
 //Entity is just an index and some arbitrary amount of components
 struct Entity
 {
-	std::pair<int, std::vector<Component>> container;
+	int index;
+	std::vector<Component> components;
 
-	Entity(std::pair<int, std::vector<Component>> in) { container = in; }
+	Entity(int idx, std::vector<Component> vec) : index(idx), components(vec) {}
 };
 
-//Registry is just a vector of entities
+//Container for all our entities
 struct Registry
 {
-	int idx = 0;
-	std::vector<Entity> vec;
+	int index = 0;
+	std::vector<Entity> entities;
 
 	Registry() {}
+
 	Entity CreateEntity()
 	{
-		std::pair<int, std::vector<Component>> reg;
-		reg.first = idx++;
+		std::vector<Component> comps;
 
-		Entity entity = Entity(reg);
-		vec.push_back(entity);
+		Entity entity = Entity(index++, comps);
+		entities.push_back(entity);
+
 		return entity; //Return the entity as we create it so we can easily add components to this specific entity
-	}
-
-	void AddComponent(Entity& entity, const Component& comp)
-	{
-		vec.at(entity.container.first).container.second.push_back(comp); //cursed line
-		entity.container.second.push_back(comp);
 	}
 };
 
-template<typename T>
-Component ConvertComponent(T& toConvert)
+//Encapsulate to be more clear if we use it across several text-files? idk might be unnecessary
+namespace EntityLib
 {
-	//Convert any type of component (PlayerComponent, EnemyComponent, StatusComponent etc..) into the base Component struct
-	Component comp;
-	comp.address = &toConvert;
-	comp.size = sizeof(T);
-	return comp;
-}
-
-template<typename T>
-void GetComponent(T& inout, const Component& comp)
-{
-	//Get the value stored at the address that the base Component struct is pointing at
-	//Template compiler magic courtesy of Elliot
-	T* t;
-	if (sizeof(T) == comp.size)
+	template<typename T>
+	void AddComponent(Registry& registry, Entity& entity, T& toCreate)
 	{
-		//Convert void* to correct pointer type
-		t = (T*)comp.address;
+		//Convert any type of component (PlayerComponent, EnemyComponent, StatusComponent etc..) into the base Component struct (pointer tbh)
+		Component comp;
+		comp.address = &toCreate;
+		comp.size = sizeof(T);
 
-		//Dereference to get the value
-		inout = *t;
+		//Add component to entity
+		entity.components.push_back(comp);
+
+		//Add to registry vector so we can iterate
+		registry.entities.at(entity.index).components.push_back(comp);
 	}
-	//else inout = T{0}; //Have some sort of error message here x
+
+	template<typename T>
+	T& GetComponentValue(const Component& comp)
+	{
+		//Get the value stored at the address that the base Component struct is pointing at
+		//Template compiler magic courtesy of Elliot
+		T* t;
+		if (sizeof(T) == comp.size)
+		{
+			//Convert void* to correct pointer type
+			t = (T*)comp.address;
+
+			//Dereference to get the value
+			return *t;
+		}
+		//else inout = T{0}; //Have some sort of error message here x
+	}
 }
 
-//Relic of a bygone era
-//int main()
-//{
-//	//Step 1: Create registry to hold all entities and their components
-//	Registry registry;
-//
-//	//Step 1.5: Define whatever components you want
-//	StatusComponent playerHP(420);
-//	PlayerComponent playerName("Bruh");
-//
-//	StatusComponent enemyHP(69);
-//	EnemyComponent enemyName("Cringe");
-//
-//	//Step 2: Create entity
-//	auto player = registry.CreateEntity();
-//
-//	//Step 3: Add component(s)
-//	registry.AddComponent(player, ConvertComponent(playerHP));
-//	registry.AddComponent(player, ConvertComponent(playerName));
-//
-//	//Repeat step 2 and 3 for arbitrary amount of entities
-//	auto enemy = registry.CreateEntity();
-//
-//	registry.AddComponent(enemy, ConvertComponent(enemyHP));
-//	registry.AddComponent(enemy, ConvertComponent(enemyName));
-//
-//	//Step 4: Cry
-//	for (auto& entity : registry.vec)
-//	{
-//		std::cout << "Entity #" << entity.container.first << std::endl;
-//		//Get back component
-//		StatusComponent getMeBack = StatusComponent(0);
-//		GetComponent(getMeBack, entity.container.second.at(0));
-//		std::cout << "HP: " << getMeBack.hp << std::endl;
-//		PlayerComponent getMeBackToo = PlayerComponent("");
-//		GetComponent(getMeBackToo, entity.container.second.at(1));
-//		std::cout << "Name: " << getMeBackToo.name << std::endl;
-//
-//		std::cout << std::endl;
-//	}
-//
-//	return 0;
-//}
+/*
+Currently we have to hard-code components, I want to change the way this works but for now: It is what it is
+Example: StatusComponent playerHP(100);
+
+Step 1: Create registry to hold all entities and their components	-->	Registry registry;
+Step 2: Create entity												-->	auto entity = registry.CreateEntity();
+Step 3: Add component(s) to the entity								-->	EntityLib::AddComponent(registry, entity, component);
+
+If you want to get the value stored in this component (ehe)			-->	Iterate through registry.entities and do 
+																		EntityLib::GetComponentValue<ComponentType>(entity.componentThatYouWantToGetValueOf)
+*/
