@@ -31,7 +31,6 @@ int main(int argc, char* args[])
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
-		HandleInput();
 
 		//Update
 		HandleStateInput(currentMainState, game, menu, settings);
@@ -39,6 +38,8 @@ int main(int argc, char* args[])
 		
 		//Draw
 
+		SDL_RenderClear(sdl.sdlRenderer);
+		SDL_RenderPresent(sdl.sdlRenderer);
 		MemLib::pdefrag();
 	}
 

@@ -42,11 +42,12 @@ struct Settings
 	std::pair<int, int> resolution;
 };
 
+//Functions to handle individual states inputs
 void HandleMenuStateInput(Menu&, Settings&, int[]);
 void HandleGameStateInput(Game&, Settings&, int[]);
-void HandleSettingsStateInput(Settings& , int[]);
+void HandleSettingsStateInput(Settings&, std::string, int[]);
 
-std::string stateTemp = "";
+//Debug console writing variables
 std::string stateMenuTemp = "";
 std::string stateGameTemp = "";
 std::string stateSettingsTemp = "";
@@ -56,13 +57,12 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 	while (SDL_PollEvent(&sdl.sdlEvent) != 0)
 	{
 		int input[256]{0};
-		
-		std::string Menu = "Menu";
-		std::string Game = "Game";
 
-		if (sdl.sdlEvent.type == SDL_KEYDOWN)
+		//Reads that a key has been pressed
+		if (sdl.sdlEvent.type == SDL_KEYDOWN) 
 			input[sdl.sdlEvent.key.keysym.scancode] = true;
 
+		//Reads that a key has been released
 		if (sdl.sdlEvent.type == SDL_KEYUP)
 			input[sdl.sdlEvent.key.keysym.scancode] = false;
 		
@@ -73,22 +73,22 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 		switch (currentMainState)
 		{
 		case State::Menu:
-			if (stateTemp != Menu)
-				std::cout << Menu << std::endl;
+			SDL_SetRenderDrawColor(sdl.sdlRenderer, 200, 0, 0, 255);
 
+			//Check if the key is TAB and if current menu sub-state is Main, if true enter the Game State
 			if (input[SDL_SCANCODE_TAB] && menu.currentSubState == MenuState::Main)
 			{
 				stateGameTemp = "";
 				currentMainState = State::Game;
 				break;
 			}
+
 			HandleMenuStateInput(menu, settings, input);
-			stateTemp = Menu;
 			break;
 		case State::Game:
-			if (stateTemp != Game)
-				std::cout << Game << std::endl;
+			SDL_SetRenderDrawColor(sdl.sdlRenderer, 0, 200, 0, 255);
 
+			//Check if the key is TAB and if current game sub-state is Pause, if true enter the Menu State
 			if (input[SDL_SCANCODE_TAB] && game.currentSubState == GameState::Pause)
 			{
 				stateMenuTemp = "";
@@ -96,8 +96,8 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 				game.currentSubState = GameState::Unpause;
 				break;
 			}
+
 			HandleGameStateInput(game, settings, input);
-			stateTemp = Game;
 			break;
 		default:
 			break;
@@ -108,9 +108,8 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 
 void HandleMenuStateInput(Menu& menu, Settings& settings, int input[])
 {
-	std::string Main = "Main";
-	std::string Settings = "Menu Settings";
-	std::string Credits = "Credits";
+	std::string Main = "Menu: Main";
+	std::string Credits = "Menu: Credits";
 
 	switch (menu.currentSubState)
 	{
@@ -127,8 +126,7 @@ void HandleMenuStateInput(Menu& menu, Settings& settings, int input[])
 		stateMenuTemp = Main;
 		break;
 	case MenuState::Settings:
-		if (stateMenuTemp != Settings)
-			std::cout << Settings << std::endl << std::endl;
+		SDL_SetRenderDrawColor(sdl.sdlRenderer, 100, 0, 200, 255);
 
 		if (input[SDL_SCANCODE_ESCAPE])
 		{
@@ -142,9 +140,7 @@ void HandleMenuStateInput(Menu& menu, Settings& settings, int input[])
 			settings.resolution = { 1280, 800 };
 		}
 
-		HandleSettingsStateInput(settings, input);
-
-		stateMenuTemp = Settings;
+		HandleSettingsStateInput(settings, "Menu", input);
 		break;
 	case MenuState::Credits:
 		if (stateMenuTemp != Credits)
@@ -158,15 +154,13 @@ void HandleMenuStateInput(Menu& menu, Settings& settings, int input[])
 	default:
 		break;
 	}
-
 }
 
 void HandleGameStateInput(Game& game, Settings& settings, int input[])
 {
 	
-	std::string Unpause = "Unpause";
-	std::string Pause = "Pause";
-	std::string Settings = "Game Settings";
+	std::string Unpause = "Game: Unpause";
+	std::string Pause = "Game: Pause";
 
 	switch (game.currentSubState)
 	{
@@ -193,8 +187,7 @@ void HandleGameStateInput(Game& game, Settings& settings, int input[])
 		stateGameTemp = Pause;
 		break;
 	case GameState::Settings:
-		if (stateGameTemp != Settings)
-			std::cout << Settings << std::endl << std::endl;
+		SDL_SetRenderDrawColor(sdl.sdlRenderer, 0, 100, 200, 255);
 
 		if (input[SDL_SCANCODE_ESCAPE])
 		{
@@ -208,9 +201,7 @@ void HandleGameStateInput(Game& game, Settings& settings, int input[])
 			settings.resolution = {1600, 900};
 		}
 
-		HandleSettingsStateInput(settings, input);
-
-		stateGameTemp = Settings;
+		HandleSettingsStateInput(settings, "Game", input);
 		break;
 	default:
 		break;
@@ -218,11 +209,11 @@ void HandleGameStateInput(Game& game, Settings& settings, int input[])
 
 }
 
-inline void HandleSettingsStateInput(Settings& settings, int input[])
+inline void HandleSettingsStateInput(Settings& settings, std::string origin, int input[])
 {
-	std::string Graphics = "Graphics";
-	std::string Audio = "Audio";
-	std::string Controls = "Controls";
+	std::string Graphics = origin + ": Graphics";
+	std::string Audio = origin + ": Audio";
+	std::string Controls = origin + ": Controls";
 
 	switch (settings.currentSubState)
 	{
