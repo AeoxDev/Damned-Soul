@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
@@ -208,6 +209,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\D3D11Graphics.h" />
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\Input.h" />
