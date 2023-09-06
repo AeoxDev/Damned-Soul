@@ -6,7 +6,8 @@
 //NOTE: Come back to when Configurations is more fleshed out
 //Add Windowed, Borderless, Fullscreen
 //Add Master, SFX, Music
-//
+//Add Keybinds
+// 
 //Add Graphical settings?
 //Add Accessibility settings?
 //Add Mouse sensitivity (Requires Custom mouse code)?
