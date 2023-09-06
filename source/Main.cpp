@@ -2,21 +2,20 @@
 //
 
 #include <iostream>
-#include <chrono>
+
 #include "SDLhandler.h"
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
+#include "EntityFramework.h"
 #include "ConfigManager.h"
+#include "DeltaTime.h"
 #include "States.h"
 
 int main(int argc, char* args[])
 {
 	MemLib::createMemoryManager();
 	InitiateConfig();
-    std::chrono::steady_clock::time_point time;
-    std::chrono::steady_clock::time_point end;
-    std::chrono::duration<float> deltaTimeCount;
-	float deltaTime;
+    
     //std::cout << "Hello World!\n";
     SetupWindow();
 	//Hwnd = sdl.window
@@ -31,15 +30,8 @@ int main(int argc, char* args[])
 
 	while (!sdl.quit)
 	{
-		end = std::chrono::steady_clock::now();
-		deltaTimeCount = end - time;
-
-		time = std::chrono::steady_clock::now();
-		deltaTime = deltaTimeCount.count();
-		if (deltaTimeCount.count() > DELTACAP)
-		{
-			deltaTime = DELTACAP;
-		}
+		CountDeltaTime();
+		HandleInput();
 
 		//Update
 		HandleStateInput(currentMainState, game, menu, settings);
