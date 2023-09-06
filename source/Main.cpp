@@ -32,11 +32,6 @@ int main(int argc, char* args[])
 	SetPixelShader(testPixelShader);
 	VS_IDX testVertexShader = LoadVertexShader("bin\\TestVS.cso");
 	SetVertexShader(testVertexShader);
-	//int funnyNumber = 69;
-	//CB_IDX testBuffer = CreateConstantBuffer(&funnyNumber, sizeof(int), BIND_VERTEX, 0);
-	//SetConstantBuffer(testBuffer);
-	//int notSoFunnyNumber = 0;
-	//UpdateConstantBuffer(testBuffer, &notSoFunnyNumber);
 
 	struct Vertex {
 		float pos[4];
