@@ -43,7 +43,7 @@ int main(int argc, char* args[])
 	}
 
 	MemLib::destroyMemoryManager();
-
+	SDL_Quit();
     return 0;
 }
 
