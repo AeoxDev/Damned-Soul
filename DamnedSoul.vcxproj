@@ -135,12 +135,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)lib\DirectXTK\Inc;$(SolutionDir)header\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>MemLib_d.lib;d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MemLib_d.lib;d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);d2d1.lib;Dwrite.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;$(SolutionDir)lib\MemLib\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="D2D1Graphics.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
@@ -179,6 +180,11 @@
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
+    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UIComponent.cpp" />
+    <ClCompile Include="UIImage.cpp" />
+    <ClCompile Include="UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\VertexShader.hlsl">
@@ -189,6 +195,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D2D1Graphics.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
@@ -198,6 +205,12 @@
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\SDLHandler.h" />
+    <ClInclude Include="UI.h" />
+    <ClInclude Include="UIButton.h" />
+    <ClInclude Include="UICanvas.h" />
+    <ClInclude Include="UIComponent.h" />
+    <ClInclude Include="UIImage.h" />
+    <ClInclude Include="UIText.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
