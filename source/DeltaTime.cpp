@@ -34,11 +34,6 @@ void CountDeltaTime()
 	fps+=1.0f;
 }
 
-int DeltaTimeToMS()
-{
-	return (int)(deltaTime*1000.0f);
-}
-
 bool NewSecond()
 {
 	if (secondTime >= 1)
