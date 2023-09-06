@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CircularCollision.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
@@ -189,6 +190,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CircularCollision.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
