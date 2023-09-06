@@ -11,6 +11,10 @@ D3D11Data* d3d11Data;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
 BufferHolder* bfrHolder;
+ViewPortHolder* vpHolder;
+RTVHolder* rtvHolder;
+DSVHolder* dsvHolder;
+RasterizerHolder* rsHolder;
 
 ////Externs:
 //ID3D11DeviceContext* deviceContext;
@@ -70,6 +74,10 @@ int SetupDirectX(HWND& w)
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
 	bfrHolder = (BufferHolder*)MemLib::spush(sizeof(BufferHolder));
+	vpHolder = (ViewPortHolder*)MemLib::spush(sizeof(ViewPortHolder));
+	rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
+	dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
+	rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG
@@ -93,6 +101,21 @@ void EndDirectX()
 	// Release all buffers shaders
 	for (int i = 0; i < bfrHolder->currentCount; ++i)
 		bfrHolder->buff_arr[i]->Release();
+
+	// Release all render target views
+	for (int i = 0; i < rtvHolder->currentCount; ++i)
+		rtvHolder->rtv_arr[i]->Release();
+	
+	// Release all depth stencil views
+	for (int i = 0; i < dsvHolder->currentCount; ++i)
+	{
+		dsvHolder->dsv_arr[i]->Release();
+		dsvHolder->ds_arr[i]->Release();
+	}
+
+	// Release all rasterizer states
+	for (int i = 0; i < rsHolder->currentCount; ++i)
+		rsHolder->rs_arr[i]->Release();
 
 	// Release basic things
 	d3d11Data->swapChain->Release();

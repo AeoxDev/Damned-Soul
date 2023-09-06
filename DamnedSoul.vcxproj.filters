@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\D3D11Helper">
+      <UniqueIdentifier>{fe3ca8f1-fe5f-4bfe-89a4-a7fd42d91e0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\SDLHandler.cpp">
@@ -27,8 +30,14 @@
     <ClCompile Include="source\D3D11Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\D3D11Helper.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp">
+      <Filter>Source Files\D3D11Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp">
+      <Filter>Source Files\D3D11Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp">
+      <Filter>Source Files\D3D11Helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

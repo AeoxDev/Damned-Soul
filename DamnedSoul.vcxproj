@@ -172,7 +172,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\D3D11Graphics.cpp" />
-    <ClCompile Include="source\D3D11Helper.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />

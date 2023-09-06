@@ -25,8 +25,46 @@ int main(int argc, char* args[])
 
 	SetupDirectX(sdl.window);
 
-	int8_t testPixelShader = LoadPixelShader("bin\\TestPS.cso");
-	int8_t testVertexShader = LoadVertexShader("bin\\TestVS.cso");
+	RS_IDX rasterizer = CreateRasterizerState(true, true);
+	SetRasterizerState(rasterizer);
+
+	PS_IDX testPixelShader = LoadPixelShader("bin\\TestPS.cso");
+	SetPixelShader(testPixelShader);
+	VS_IDX testVertexShader = LoadVertexShader("bin\\TestVS.cso");
+	SetVertexShader(testVertexShader);
+	//int funnyNumber = 69;
+	//CB_IDX testBuffer = CreateConstantBuffer(&funnyNumber, sizeof(int), BIND_VERTEX, 0);
+	//SetConstantBuffer(testBuffer);
+	//int notSoFunnyNumber = 0;
+	//UpdateConstantBuffer(testBuffer, &notSoFunnyNumber);
+
+	struct Vertex {
+		float pos[4];
+		float normal[4];
+		float uv[2]; };
+	Vertex triangle[3] = {
+		0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
+		-0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
+		0, 0.9f, 0.5f, 1.f,			/**/ 0, 0, -1.f, 0, /**/ 0.5, 1 };
+	VB_IDX vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3);
+	uint32_t idxs[3] = { 0, 1, 2 };
+	IB_IDX indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
+
+	SetVertexBuffer(vertexBuffer);
+	SetIndexBuffer(indexBuffer);
+
+	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Create a viewport
+	VP_IDX vp = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
+	// Set the viewport
+	SetViewport(vp);
+	// Create a render target view
+	RTV_IDX rtv = CreateRenderTargetView();
+	// Create a depth stencil view
+	DSV_IDX dsv = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+	// Set a render target view and depth stencil view
+	SetRenderTargetViewAndDepthStencil(rtv, dsv);
 
 	int i = 0;
 	while (!sdl.quit)
@@ -44,7 +82,12 @@ int main(int argc, char* args[])
 
 		//Update
 		
-		//Draw
+		ClearRenderTargetView(rtv);
+		ClearDepthStencilView(dsv);
+
+		d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
+		//d3d11Data->deviceContext->Draw(3, 0);
+		d3d11Data->swapChain->Present(0, 0);
 
 		MemLib::pdefrag();
 	}
