@@ -3,7 +3,6 @@
 
 #define DELTACAP 1.f / 30.f
 
-
 float gameSpeed = 1.0f;
 float secondTime = 0.0f;
 float fps = 0.f;
@@ -37,7 +36,6 @@ void CountDeltaTime()
 
 int DeltaTimeToMS()
 {
-
 	return (int)(deltaTime*1000.0f);
 }
 
@@ -50,7 +48,6 @@ bool NewSecond()
 		fps = 0;
 		secondTime -= 1.0f;
 		return true;
-		
 	}
 	return false;
 }
