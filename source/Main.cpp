@@ -25,7 +25,7 @@ int main(int argc, char* args[])
 		CountDeltaTime();
 		HandleInput();
 #ifdef _DEBUG
-		if (NewSecond())
+		if (sdl.windowFlags == 0 && NewSecond())
 		{
 			title = "Damned Soul " + std::to_string((int)(1000.0f*GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
 			//title+="";//Add more debugging information here, updates every second.
