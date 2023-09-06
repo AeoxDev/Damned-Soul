@@ -25,13 +25,13 @@ void CountDeltaTime()
 
 	time = std::chrono::steady_clock::now();
 	deltaTime = deltaTimeCount.count() ;
-	secondTime += deltaTime;
+	
 	if (deltaTimeCount.count() > DELTACAP)
 	{
 		deltaTime = DELTACAP;
 	}
+	secondTime += deltaTime;
 	deltaTime /= gameSpeed;
-	
 	fps+=1.0f;
 }
 
