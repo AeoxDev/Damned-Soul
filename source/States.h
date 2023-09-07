@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "SDLHandler.h"
 
 enum class State {
@@ -86,7 +87,6 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 		switch (currentMainState)
 		{
 		case State::Menu:
-			SDL_SetRenderDrawColor(sdl.sdlRenderer, 200, 0, 0, 255);
 
 			//Check if the key is TAB and if current menu sub-state is Main, if true enter the Game State
 			if (input[SDL_SCANCODE_TAB] && menu.currentSubState == MenuState::Main)
@@ -99,7 +99,6 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 			HandleMenuStateInput(menu, settings, input);
 			break;
 		case State::Game:
-			SDL_SetRenderDrawColor(sdl.sdlRenderer, 0, 200, 0, 255);
 
 			//Check if the key is TAB and if current game sub-state is Pause, if true enter the Menu State
 			if (input[SDL_SCANCODE_TAB] && game.currentSubState == GameState::Pause)
@@ -139,7 +138,6 @@ void HandleMenuStateInput(Menu& menu, Settings& settings, int input[])
 		stateMenuTemp = Main;
 		break;
 	case MenuState::Settings:
-		SDL_SetRenderDrawColor(sdl.sdlRenderer, 100, 0, 200, 255);
 
 		if (input[SDL_SCANCODE_ESCAPE])
 		{

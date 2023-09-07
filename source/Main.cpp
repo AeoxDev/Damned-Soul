@@ -72,7 +72,7 @@ int main(int argc, char* args[])
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
-		HandleInput();
+		HandleStateInput(currentMainState, game, menu, settings);
 #ifdef _DEBUG
 		if (sdl.windowFlags == 0 && NewSecond())
 		{
@@ -85,8 +85,6 @@ int main(int argc, char* args[])
 		
 		
 		//Update
-		HandleStateInput(currentMainState, game, menu, settings);
-
 		
 		ClearRenderTargetView(rtv);
 		ClearDepthStencilView(dsv);
@@ -94,9 +92,6 @@ int main(int argc, char* args[])
 		d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
 		//d3d11Data->deviceContext->Draw(3, 0);
 		d3d11Data->swapChain->Present(0, 0);
-
-		SDL_RenderClear(sdl.sdlRenderer);
-		SDL_RenderPresent(sdl.sdlRenderer);
 		MemLib::pdefrag();
 	}
 
