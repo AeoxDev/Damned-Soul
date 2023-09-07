@@ -12,8 +12,8 @@ private:
 	//std::function<void()> onActive;		//incase we need for controllers
 	//std::function<void()> onDeactive;		//incase we need for controllers
 	
-	PoolPointer<UIImage> m_Image;
-	UIText m_Text;
+	PoolPointer<UIImage> m_Image;			//The image on the button
+	UIText m_Text;							//The text on the button
 
 	//bool isActive;						//bool for checking if a Controller is "hovering" a button
 public:

@@ -40,32 +40,41 @@ void UIButton::Deactivate()
 
 void UIButton::Interact()
 {
-
+	if (onClick)
+		onClick();
 }
 
 void UIButton::SetPosition(DirectX::SimpleMath::Vector2 position)
 {
-
+	UIComponent::SetPosition(position);
+	m_Image->SetPosition(position);
+	m_Text.SetPosition(position);
 }
 
 void UIButton::SetScale(DirectX::SimpleMath::Vector2 scale)
 {
-
+	UIComponent::SetScale(scale);
+	m_Image->SetScale(scale);
+	m_Text.SetScale(scale);
 }
 
 void UIButton::SetScale(float scale)
 {
-
+	UIComponent::SetScale(scale);
+	m_Image->SetScale(scale);
+	m_Text.SetScale(scale);
 }
 
 void UIButton::SetRotation(float rotation)
 {
-
+	UIComponent::SetRotation(rotation);
+	m_Image->SetRotation(rotation);
+	m_Text.SetRotation(rotation);
 }
 
 void UIButton::SetOpacity(float opacity)
 {
-
+	m_Image->SetOpacity(opacity);
 }
 
 /*bool UIButton::IsActive() const
