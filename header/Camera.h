@@ -2,12 +2,20 @@
 #include <DirectXMath.h>
 #include "MemLib/PoolPointer.hpp"
 
+
 struct Camera
 {
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT3 lookAt;
 	DirectX::XMFLOAT3 up;
 	DirectX::XMFLOAT3 rotation;
+
+	DirectX::XMFLOAT4X4 view;
+
+	DirectX::XMFLOAT4X4 perspective;
+	DirectX::XMFLOAT4X4 orthographic;
+
+	int16_t cameraBufferIndex;
 
 	float FOV;
 
@@ -16,12 +24,14 @@ struct Camera
 	bool projection;
 };
 
-PoolPointer<Camera> m_camera;
+struct CameraConstantBuffer
+{
+	DirectX::XMFLOAT4 cameraPosition;
+	DirectX::XMFLOAT4X4 viewMatrix;
+	DirectX::XMFLOAT4X4 projectionMatrix;
+};
 
-DirectX::XMFLOAT4X4 m_view;
-
-DirectX::XMFLOAT4X4 m_projection;
-DirectX::XMFLOAT4X4 m_orthographic;
+extern PoolPointer<Camera> m_camera;
 
 
 void SetPosition(float x, float y, float z);
@@ -43,15 +53,16 @@ DirectX::XMVECTOR GetUp();
 DirectX::XMVECTOR GetRotation();
 
 DirectX::XMMATRIX GetView();
-/// <summary>
-/// Depending on the state the camera is in, this function will either return a projection matrix or an orthographic matrix
-/// </summary>
-/// <returns></returns>
-DirectX::XMMATRIX GetPerspective();
 DirectX::XMMATRIX GetProjection();
 DirectX::XMMATRIX GetOrthographic();
 
+int16_t GetCameraBufferIndex();
+
 void UpdateView();
+/// <summary>
+/// TO DO: DEFINE THIS FUNCTION
+/// </summary>
+void UpdateCamera();
 
 /// <summary>
 /// Switches the camera between projection and orthographic

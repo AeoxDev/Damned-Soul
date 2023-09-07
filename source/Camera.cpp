@@ -1,5 +1,8 @@
 #include "Camera.h"
 #include "MemLib/MemLib.hpp"
+#include "D3D11Helper.h"
+
+PoolPointer<Camera> m_camera;
 
 void SetPosition(float x, float y, float z)
 {
@@ -90,36 +93,29 @@ DirectX::XMVECTOR GetRotation()
 
 DirectX::XMMATRIX GetView()
 {
-	return DirectX::XMLoadFloat4x4(&m_view);
-}
-
-DirectX::XMMATRIX GetPerspective()
-{
-	DirectX::XMMATRIX returnMatrix;
-
-	if (m_camera->projection)
-		returnMatrix = DirectX::XMLoadFloat4x4(&m_projection);
-	else
-		returnMatrix = DirectX::XMLoadFloat4x4(&m_orthographic);
-
-	return returnMatrix;
+	return DirectX::XMLoadFloat4x4(&m_camera->view);
 }
 
 DirectX::XMMATRIX GetProjection()
 {
-	return DirectX::XMLoadFloat4x4(&m_projection);
+	return DirectX::XMLoadFloat4x4(&m_camera->perspective);
 }
 
 DirectX::XMMATRIX GetOrthographic()
 {
-	return DirectX::XMLoadFloat4x4(&m_orthographic);
+	return DirectX::XMLoadFloat4x4(&m_camera->orthographic);
+}
+
+int16_t GetCameraBufferIndex()
+{
+	return m_camera->cameraBufferIndex;
 }
 
 void UpdateView()
 {
 	DirectX::XMVECTOR defaultForward, defaultUp, cameraTarget;
 	DirectX::XMVECTOR up, pos;
-	DirectX::XMMATRIX cameraRotationMatrix, vectorRotationMatrix;
+	DirectX::XMMATRIX cameraRotationMatrix;// , vectorRotationMatrix;
 
 	defaultForward = DirectX::XMVectorSet(0.f, 0.f, 1.0f, 0.f);
 	defaultUp = DirectX::XMVectorSet(0.f, 1.f, 0.0f, 0.f);
@@ -150,6 +146,11 @@ void UpdateView()
 	//this->vec_right = XMVector3TransformCoord(this->DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
 }
 
+void UpdateCamera()
+{
+
+}
+
 void SwitchProjection()
 {
 	//If projection is true, it will become false
@@ -159,6 +160,9 @@ void SwitchProjection()
 
 void InitializeCamera()
 {
+	PoolPointer<CameraConstantBuffer> bufferData;
+	bufferData = MemLib::palloc(sizeof(CameraConstantBuffer));
+
 	m_camera = MemLib::palloc(sizeof(Camera));
 	m_camera->projection = true;
 	
@@ -171,15 +175,32 @@ void InitializeCamera()
 
 	DirectX::XMMATRIX proj;
 	proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
-	DirectX::XMStoreFloat4x4(&m_projection, proj);
+	DirectX::XMStoreFloat4x4(&m_camera->perspective, proj);
 
 	DirectX::XMMATRIX orth;
 	orth = DirectX::XMMatrixOrthographicLH(1600.f, 900.f, 0.1f, 50.f);
-	DirectX::XMStoreFloat4x4(&m_orthographic, orth);
+	DirectX::XMStoreFloat4x4(&m_camera->orthographic, orth);
 
 	DirectX::XMMATRIX view;
 	view = DirectX::XMMatrixLookAtLH(GetPosition(), GetLookAt(), GetUp());
-	DirectX::XMStoreFloat4x4(&m_view, view);
+	DirectX::XMStoreFloat4x4(&m_camera->view, view);
+
+	//Update the view matrix before creating the buffer for the first time
+	UpdateView();
+
+	//Prepare the buffer to creation
+	bufferData->cameraPosition = DirectX::XMFLOAT4(m_camera->position.x, m_camera->position.y, m_camera->position.z, 1.0f);
+	DirectX::XMStoreFloat4x4(&bufferData->viewMatrix, GetView());
+
+	if (m_camera->projection)
+		DirectX::XMStoreFloat4x4(&bufferData->projectionMatrix, GetProjection());
+	else
+		DirectX::XMStoreFloat4x4(&bufferData->projectionMatrix, GetOrthographic());
+
+	//SHADER_TO_BIND_BUFFER flags = BIND_VERTEX | BIND_PIXEL;
+	m_camera->cameraBufferIndex = CreateConstantBuffer(&bufferData, sizeof(CameraConstantBuffer), BIND_VERTEX, 0);
+
+	MemLib::pfree(bufferData);
 }
 
 void FreeCamera()

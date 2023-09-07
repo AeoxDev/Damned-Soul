@@ -9,6 +9,9 @@
 #include "EntityFramework.h"
 #include "ConfigManager.h"
 #include "DeltaTime.h"
+// --- TEST, DELETE LATER ---
+#include "Camera.h"
+// --------------------------
 
 
 
@@ -59,6 +62,13 @@ int main(int argc, char* args[])
 	DSV_IDX dsv = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 	// Set a render target view and depth stencil view
 	s = SetRenderTargetViewAndDepthStencil(rtv, dsv);
+
+
+	// --- TEST, DELETE LATER ---
+	InitializeCamera();
+	SetConstantBuffer(GetCameraBufferIndex());
+	// --------------------------
+
 
 	int i = 0;
 	while (!sdl.quit)
