@@ -5,7 +5,6 @@
 #include <fstream>
 #include <string>
 
-
 // Extern
 D3D11Data* d3d11Data;
 PixelShaderHolder* pixHolder;
