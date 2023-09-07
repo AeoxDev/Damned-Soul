@@ -150,3 +150,57 @@ bool SetVertexShader(const VS_IDX idx)
 	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_arr[idx]);
 	return true;
 }
+
+
+CS_IDX LoadComputeShader(const char* name)
+{
+	std::ifstream reader;
+
+	reader.open(name, std::ios::binary | std::ios::ate);
+	if (false == reader.is_open())
+	{
+		std::cerr << "Could not open CS test file!" << std::endl;
+		return -1;
+	}
+
+	// Allocate the byte data on the stack
+	reader.seekg(0, std::ios::end);
+	unsigned int size = static_cast<unsigned int>(reader.tellg());
+	char* shaderData = (char*)MemLib::spush(size);
+	reader.seekg(0, std::ios::beg);
+
+	// Read byte data onto stack
+	reader.read(shaderData, size);
+	reader.close();
+
+	HRESULT hr = d3d11Data->device->CreateComputeShader(shaderData, size, NULL, &comHolder->cs_arr[comHolder->currentCount]); // Does not increment here
+	if (FAILED(hr))
+	{
+		MemLib::spop(); // Pop if failiure
+		std::cerr << "Failed to create Compute Shader!" << std::endl;
+		return -1;
+	}
+
+	// Free the temp memory
+	MemLib::spop();
+
+	// Return and increment (in that order)
+	return comHolder->currentCount++;
+}
+
+bool SetComputeShader(const CS_IDX idx)
+{
+	if (comHolder->currentCount < idx)
+	{
+		std::cerr << "Failed to set compute shader: Index out of range!" << std::endl;
+		return false;
+	}
+	else if (idx < 0)
+	{
+		std::cerr << "Failed to set compute shader: Index must be 0 or greater!" << std::endl;
+		return false;
+	}
+
+	d3d11Data->deviceContext->CSSetShader(comHolder->cs_arr[idx], nullptr, 0);
+	return true;
+}
