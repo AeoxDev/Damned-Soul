@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\Audio.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
@@ -180,7 +181,6 @@
     <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />
     <ClCompile Include="source\DeltaTime.cpp" />
     <ClCompile Include="source\Hitbox.cpp" />
-    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
   </ItemGroup>
@@ -245,8 +245,11 @@
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\Hitbox.h" />
-    <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\InputsHandler.h" />
+    <ClInclude Include="header\SceneManager.h" />
     <ClInclude Include="header\SDLHandler.h" />
+    <ClInclude Include="header\StateManager.h" />
+    <ClInclude Include="header\StateStructures.h" />
     <ClInclude Include="source\Colission.cpp" />
     <ClInclude Include="source\States.h" />
   </ItemGroup>

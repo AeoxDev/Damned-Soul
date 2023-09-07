@@ -2,14 +2,14 @@
 //
 
 #include "SDLhandler.h"
-#include "Input.h"
 #include "MemLib/MemLib.hpp"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
 #include "EntityFramework.h"
 #include "ConfigManager.h"
 #include "DeltaTime.h"
-#include "States.h"
+#include "StateManager.h"
+#include "InputsHandler.h"
 
 int main(int argc, char* args[])
 {
@@ -60,19 +60,13 @@ int main(int argc, char* args[])
 	s = SetRenderTargetViewAndDepthStencil(rtv, dsv);
 
 	int i = 0;
-	State currentMainState = State::Menu;
-
-	Game game;
-	Menu menu;
-	Settings settings;
-
-	settings.resolution.first = sdl.WIDTH;
-	settings.resolution.second = sdl.HEIGHT;
+	StateManager stateManager;
 
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
-		HandleStateInput(currentMainState, game, menu, settings);
+		HandleInputs(stateManager);
+
 #ifdef _DEBUG
 		if (sdl.windowFlags == 0 && NewSecond())
 		{
