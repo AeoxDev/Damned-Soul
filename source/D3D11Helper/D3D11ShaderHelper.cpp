@@ -14,7 +14,7 @@ PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 	if (false == reader.is_open())
 	{
 		std::cerr << "Could not open PS test file!" << std::endl;
-		return false;
+		return -1;
 	}
 
 	// Allocate the byte data on the stack
@@ -96,7 +96,7 @@ VS_IDX LoadVertexShader(const char* name)
 	if (false == reader.is_open())
 	{
 		std::cerr << "Could not open VS test file!" << std::endl;
-		return false;
+		return -1;
 	}
 
 	// Allocate the byte data on the stack

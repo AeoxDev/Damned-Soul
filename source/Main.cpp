@@ -22,15 +22,15 @@ int main(int argc, char* args[])
 	std::string title = "Damned Soul";
 	//Hwnd = sdl.window
 
-	SetupDirectX(sdl.window);
+	int hr = SetupDirectX(sdl.window);
 
 	RS_IDX rasterizer = CreateRasterizerState(true, true);
-	SetRasterizerState(rasterizer);
+	bool s = SetRasterizerState(rasterizer);
 
-	PS_IDX testPixelShader = LoadPixelShader("bin\\TestPS.cso");
-	SetPixelShader(testPixelShader);
-	VS_IDX testVertexShader = LoadVertexShader("bin\\TestVS.cso");
-	SetVertexShader(testVertexShader);
+	PS_IDX testPixelShader = LoadPixelShader("TestPS.cso");
+	s = SetPixelShader(testPixelShader);
+	VS_IDX testVertexShader = LoadVertexShader("TestVS.cso");
+	s = SetVertexShader(testVertexShader);
 
 	struct Vertex {
 		float pos[4];
@@ -44,21 +44,21 @@ int main(int argc, char* args[])
 	uint32_t idxs[3] = { 0, 1, 2 };
 	IB_IDX indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
 
-	SetVertexBuffer(vertexBuffer);
-	SetIndexBuffer(indexBuffer);
+	s = SetVertexBuffer(vertexBuffer);
+	s = SetIndexBuffer(indexBuffer);
 
 	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create a viewport
 	VP_IDX vp = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
 	// Set the viewport
-	SetViewport(vp);
+	s = SetViewport(vp);
 	// Create a render target view
 	RTV_IDX rtv = CreateRenderTargetView();
 	// Create a depth stencil view
 	DSV_IDX dsv = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 	// Set a render target view and depth stencil view
-	SetRenderTargetViewAndDepthStencil(rtv, dsv);
+	s = SetRenderTargetViewAndDepthStencil(rtv, dsv);
 
 	int i = 0;
 	while (!sdl.quit)
