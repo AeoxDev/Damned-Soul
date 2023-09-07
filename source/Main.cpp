@@ -9,9 +9,7 @@
 #include "EntityFramework.h"
 #include "ConfigManager.h"
 #include "DeltaTime.h"
-// --- TEST, DELETE LATER ---
 #include "Camera.h"
-// --------------------------
 
 
 
@@ -64,10 +62,8 @@ int main(int argc, char* args[])
 	s = SetRenderTargetViewAndDepthStencil(rtv, dsv);
 
 
-	// --- TEST, DELETE LATER ---
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
-	// --------------------------
 
 
 	int i = 0;

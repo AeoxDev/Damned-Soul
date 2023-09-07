@@ -51,6 +51,7 @@ DirectX::XMVECTOR GetPosition();
 DirectX::XMVECTOR GetLookAt();
 DirectX::XMVECTOR GetUp();
 DirectX::XMVECTOR GetRotation();
+float GetFOV();
 
 DirectX::XMMATRIX GetView();
 DirectX::XMMATRIX GetProjection();
