@@ -19,9 +19,9 @@ struct Camera
 
 	float FOV;
 
-	//If this is true, the camera will update the projection matrix on update call
+	//If this is true, the camera will update the persepctive matrix on update call
 	//if it is false, the camera will update the orthographic matrix on call.
-	bool projection;
+	bool projectionType;
 };
 
 struct CameraConstantBuffer
@@ -54,24 +54,23 @@ DirectX::XMVECTOR GetRotation();
 float GetFOV();
 
 DirectX::XMMATRIX GetView();
-DirectX::XMMATRIX GetProjection();
+DirectX::XMMATRIX GetPerspective();
 DirectX::XMMATRIX GetOrthographic();
 
 int16_t GetCameraBufferIndex();
 
 void UpdateView();
 /// <summary>
-/// TO DO: DEFINE THIS FUNCTION
+/// Updates either projection or orthographic, see function TogglePerspective()
 /// </summary>
-void UpdateCamera();
+void UpdateProjection();
 
 /// <summary>
 /// Switches the camera between projection and orthographic
 /// </summary>
-void SwitchProjection();
+void ToggleProjection();
 
 /// <summary>
-/// TO DO: FIX HARDDCODED VALUES IN PROJECTION AND ORTHOGRAPHIC
 /// Initializes the camera with default values
 /// Position = (0, 0, -10)
 /// Up = (0, 1, 0)
