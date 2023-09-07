@@ -25,8 +25,8 @@ int main(int argc, char* args[])
 	Menu menu;
 	Settings settings;
 
-	settings.resolution.first = 1920;
-	settings.resolution.second = 1080;
+	settings.resolution.first = sdl.WIDTH;
+	settings.resolution.second = sdl.HEIGHT;
 
 	while (!sdl.quit)
 	{

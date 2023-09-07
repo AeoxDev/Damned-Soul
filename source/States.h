@@ -28,6 +28,13 @@ struct Game
 {
 	GameState currentSubState = GameState::Unpause;
 
+	std::pair<int, int> playerPosition = {200, 200};
+
+	void Reset() 
+	{
+		currentSubState = GameState::Unpause;
+		playerPosition = {200, 200};
+	};
 };
 
 struct Menu
@@ -47,10 +54,22 @@ void HandleMenuStateInput(Menu&, Settings&, int[]);
 void HandleGameStateInput(Game&, Settings&, int[]);
 void HandleSettingsStateInput(Settings&, std::string, int[]);
 
+void ReadKeyEvent(int input[])
+{
+	//Reads that a key has been pressed
+	if (sdl.sdlEvent.type == SDL_KEYDOWN)
+		input[sdl.sdlEvent.key.keysym.scancode] = true;
+
+	//Reads that a key has been released
+	if (sdl.sdlEvent.type == SDL_KEYUP)
+		input[sdl.sdlEvent.key.keysym.scancode] = false;
+}
+
 //Debug console writing variables
 std::string stateMenuTemp = "";
 std::string stateGameTemp = "";
 std::string stateSettingsTemp = "";
+std::pair<int, int> tempPos = {};
 
 void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings& settings)
 {
@@ -58,13 +77,7 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 	{
 		int input[256]{0};
 
-		//Reads that a key has been pressed
-		if (sdl.sdlEvent.type == SDL_KEYDOWN) 
-			input[sdl.sdlEvent.key.keysym.scancode] = true;
-
-		//Reads that a key has been released
-		if (sdl.sdlEvent.type == SDL_KEYUP)
-			input[sdl.sdlEvent.key.keysym.scancode] = false;
+		ReadKeyEvent(input);
 		
 		//User requests quit
 		if (sdl.sdlEvent.type == SDL_QUIT)
@@ -93,7 +106,7 @@ void HandleStateInput(State& currentMainState, Game& game, Menu& menu, Settings&
 			{
 				stateMenuTemp = "";
 				currentMainState = State::Menu;
-				game.currentSubState = GameState::Unpause;
+				game.Reset();
 				break;
 			}
 
@@ -134,12 +147,6 @@ void HandleMenuStateInput(Menu& menu, Settings& settings, int input[])
 			menu.currentSubState = MenuState::Main;
 		}
 
-		if (input[SDL_SCANCODE_F])
-		{
-			std::cout << "Changed Resolution to 1280x800\n";
-			settings.resolution = { 1280, 800 };
-		}
-
 		HandleSettingsStateInput(settings, "Menu", input);
 		break;
 	case MenuState::Credits:
@@ -168,9 +175,27 @@ void HandleGameStateInput(Game& game, Settings& settings, int input[])
 		if (stateGameTemp != Unpause)
 			std::cout << Unpause << std::endl << std::endl;
 
+		//SDL_GetMouseState(&game.playerPosition.first, &game.playerPosition.second);
+
+		/*if (input[SDL_SCANCODE_W])
+			game.playerPosition.second += 10;
+
+		if (input[SDL_SCANCODE_A])
+			game.playerPosition.first -= 10;
+
+		if (input[SDL_SCANCODE_S])
+			game.playerPosition.second -= 10;
+
+		if (input[SDL_SCANCODE_D])
+			game.playerPosition.first += 10;
+
+		if (tempPos != game.playerPosition)
+			std::cout << "Player Position: " << game.playerPosition.first << ", " << game.playerPosition.second << std::endl;*/
+
 		if (input[SDL_SCANCODE_ESCAPE])
 			game.currentSubState = GameState::Pause;
 
+		tempPos = game.playerPosition;
 		stateGameTemp = Unpause;
 		break;
 	case GameState::Pause:
@@ -193,12 +218,6 @@ void HandleGameStateInput(Game& game, Settings& settings, int input[])
 		{
 			stateGameTemp = "";
 			game.currentSubState = GameState::Pause;
-		}
-
-		if (input[SDL_SCANCODE_F])
-		{
-			std::cout << "Changed Resolution to 1600x900\n";
-			settings.resolution = {1600, 900};
 		}
 
 		HandleSettingsStateInput(settings, "Game", input);
