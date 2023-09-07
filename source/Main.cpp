@@ -1,26 +1,25 @@
 // DamnedSoul.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-#include <chrono>
 #include "SDLhandler.h"
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
+#include "EntityFramework.h"
+#include "ConfigManager.h"
+#include "DeltaTime.h"
 
 
 
 int main(int argc, char* args[])
 {
 	MemLib::createMemoryManager();
-
-    std::chrono::steady_clock::time_point time;
-    std::chrono::steady_clock::time_point end;
-    std::chrono::duration<float> deltaTimeCount;
-	float deltaTime;
+	InitiateConfig();
+    
     //std::cout << "Hello World!\n";
     SetupWindow();
+	std::string title = "Damned Soul";
 	//Hwnd = sdl.window
 
 	SetupDirectX(sdl.window);
@@ -64,17 +63,19 @@ int main(int argc, char* args[])
 	int i = 0;
 	while (!sdl.quit)
 	{
-		end = std::chrono::steady_clock::now();
-		deltaTimeCount = end - time;
-
-		time = std::chrono::steady_clock::now();
-		deltaTime = deltaTimeCount.count();
-		if (deltaTimeCount.count() > DELTACAP)
-		{
-			deltaTime = DELTACAP;
-		}
+		CountDeltaTime();
 		HandleInput();
+#ifdef _DEBUG
+		if (sdl.windowFlags == 0 && NewSecond())
+		{
+			title = "Damned Soul " + std::to_string((int)(1000.0f*GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
+			//title+="";//Add more debugging information here, updates every second.
+			SetWindowTitle(title);
+		}
+#endif // _DEBUG Debugging purposes, not compiled in release
 
+		
+		
 		//Update
 		
 		ClearRenderTargetView(rtv);
@@ -89,7 +90,7 @@ int main(int argc, char* args[])
 
 	EndDirectX();
 	MemLib::destroyMemoryManager();
-
+	SDL_Quit();
     return 0;
 }
 

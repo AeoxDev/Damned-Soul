@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <SDL.h>
-#define DELTACAP 0.2f
+#include <string>
 struct SDL
 {
 	HWND window;
@@ -12,6 +12,7 @@ struct SDL
 	SDL_Event sdlEvent;
 	Uint32 WIDTH = 1280;
 	Uint32 HEIGHT = 720;
+	Uint32 windowFlags = 0;
 };
 extern SDL sdl;
 
@@ -23,3 +24,5 @@ bool SetupWindow();
 
 /// <summary>///Alternatively accesssible through sdl.sdlWindow /// </summary>/// <returns></returns>
 SDL_Window* GetSDLWindow();
+
+void SetWindowTitle(std::string newTitle);
