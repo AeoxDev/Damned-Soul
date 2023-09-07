@@ -59,6 +59,7 @@ void UpdateView();
 void SwitchProjection();
 
 /// <summary>
+/// TO DO: FIX HARDDCODED VALUES IN PROJECTION AND ORTHOGRAPHIC
 /// Initializes the camera with default values
 /// Position = (0, 0, -10)
 /// Up = (0, 1, 0)
