@@ -127,13 +127,13 @@ RS_IDX CreateRasterizerState(const bool cull, const bool solid)
 	desc.FillMode = solid ? D3D11_FILL_SOLID : D3D11_FILL_WIREFRAME;
 	desc.CullMode = cull ? D3D11_CULL_BACK : D3D11_CULL_NONE;
 	desc.FrontCounterClockwise = false;
-	//desc.DepthBias = 0.0f;
-	//desc.DepthBiasClamp = 0.0f;
-	//desc.SlopeScaledDepthBias = 0.0f;
-	//desc.DepthClipEnable = false;
-	//desc.ScissorEnable = false;
-	//desc.MultisampleEnable = true; // always multisample kek
-	//desc.AntialiasedLineEnable = true;
+	desc.DepthBias = 0.0f;
+	desc.DepthBiasClamp = 0.0f;
+	desc.SlopeScaledDepthBias = 0.0f;
+	desc.DepthClipEnable = false;
+	desc.ScissorEnable = false;
+	desc.MultisampleEnable = true; // always multisample kek
+	desc.AntialiasedLineEnable = true;
 
 	HRESULT hr = d3d11Data->device->CreateRasterizerState(&desc, &(rsHolder->rs_arr[rsHolder->currentCount]));
 	if (FAILED(hr))

@@ -1,42 +1,36 @@
 // DamnedSoul.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-#include <chrono>
 #include "SDLhandler.h"
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
+#include "EntityFramework.h"
+#include "ConfigManager.h"
+#include "DeltaTime.h"
 
 
 
 int main(int argc, char* args[])
 {
 	MemLib::createMemoryManager();
-
-    std::chrono::steady_clock::time_point time;
-    std::chrono::steady_clock::time_point end;
-    std::chrono::duration<float> deltaTimeCount;
-	float deltaTime;
+	InitiateConfig();
+    
     //std::cout << "Hello World!\n";
     SetupWindow();
+	std::string title = "Damned Soul";
 	//Hwnd = sdl.window
 
-	SetupDirectX(sdl.window);
+	int hr = SetupDirectX(sdl.window);
 
 	RS_IDX rasterizer = CreateRasterizerState(true, true);
-	SetRasterizerState(rasterizer);
+	bool s = SetRasterizerState(rasterizer);
 
-	PS_IDX testPixelShader = LoadPixelShader("bin\\TestPS.cso");
-	SetPixelShader(testPixelShader);
-	VS_IDX testVertexShader = LoadVertexShader("bin\\TestVS.cso");
-	SetVertexShader(testVertexShader);
-	//int funnyNumber = 69;
-	//CB_IDX testBuffer = CreateConstantBuffer(&funnyNumber, sizeof(int), BIND_VERTEX, 0);
-	//SetConstantBuffer(testBuffer);
-	//int notSoFunnyNumber = 0;
-	//UpdateConstantBuffer(testBuffer, &notSoFunnyNumber);
+	PS_IDX testPixelShader = LoadPixelShader("TestPS.cso");
+	s = SetPixelShader(testPixelShader);
+	VS_IDX testVertexShader = LoadVertexShader("TestVS.cso");
+	s = SetVertexShader(testVertexShader);
 
 	struct Vertex {
 		float pos[4];
@@ -50,36 +44,38 @@ int main(int argc, char* args[])
 	uint32_t idxs[3] = { 0, 1, 2 };
 	IB_IDX indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
 
-	SetVertexBuffer(vertexBuffer);
-	SetIndexBuffer(indexBuffer);
+	s = SetVertexBuffer(vertexBuffer);
+	s = SetIndexBuffer(indexBuffer);
 
 	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create a viewport
 	VP_IDX vp = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
 	// Set the viewport
-	SetViewport(vp);
+	s = SetViewport(vp);
 	// Create a render target view
 	RTV_IDX rtv = CreateRenderTargetView();
 	// Create a depth stencil view
 	DSV_IDX dsv = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 	// Set a render target view and depth stencil view
-	SetRenderTargetViewAndDepthStencil(rtv, dsv);
+	s = SetRenderTargetViewAndDepthStencil(rtv, dsv);
 
 	int i = 0;
 	while (!sdl.quit)
 	{
-		end = std::chrono::steady_clock::now();
-		deltaTimeCount = end - time;
-
-		time = std::chrono::steady_clock::now();
-		deltaTime = deltaTimeCount.count();
-		if (deltaTimeCount.count() > DELTACAP)
-		{
-			deltaTime = DELTACAP;
-		}
+		CountDeltaTime();
 		HandleInput();
+#ifdef _DEBUG
+		if (sdl.windowFlags == 0 && NewSecond())
+		{
+			title = "Damned Soul " + std::to_string((int)(1000.0f*GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
+			//title+="";//Add more debugging information here, updates every second.
+			SetWindowTitle(title);
+		}
+#endif // _DEBUG Debugging purposes, not compiled in release
 
+		
+		
 		//Update
 		
 		ClearRenderTargetView(rtv);
@@ -94,7 +90,7 @@ int main(int argc, char* args[])
 
 	EndDirectX();
 	MemLib::destroyMemoryManager();
-
+	SDL_Quit();
     return 0;
 }
 
