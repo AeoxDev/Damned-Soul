@@ -135,7 +135,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,8 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="D2D1Graphics.cpp" />
-    <ClCompile Include="ExampleMenu.cpp" />
+    <ClCompile Include="source\D2D1Graphics.cpp" />
+    <ClCompile Include="source\ExampleMenu.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Audio.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
@@ -186,12 +186,12 @@
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
-    <ClCompile Include="UI.cpp" />
-    <ClCompile Include="UIButton.cpp" />
-    <ClCompile Include="UICanvas.cpp" />
-    <ClCompile Include="UIComponent.cpp" />
-    <ClCompile Include="UIImage.cpp" />
-    <ClCompile Include="UIText.cpp" />
+    <ClCompile Include="source\UI.cpp" />
+    <ClCompile Include="source\UIButton.cpp" />
+    <ClCompile Include="source\UICanvas.cpp" />
+    <ClCompile Include="source\UIComponent.cpp" />
+    <ClCompile Include="source\UIImage.cpp" />
+    <ClCompile Include="source\UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\TestPS.hlsl">
@@ -244,8 +244,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D2D1Graphics.h" />
-    <ClInclude Include="ExampleMenu.h" />
+    <ClInclude Include="header\D2D1Graphics.h" />
+    <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\Colission.h" />
     <ClInclude Include="header\ComponentHelper.h" />
@@ -259,12 +259,12 @@
     <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClInclude Include="UI.h" />
-    <ClInclude Include="UIButton.h" />
-    <ClInclude Include="UICanvas.h" />
-    <ClInclude Include="UIComponent.h" />
-    <ClInclude Include="UIImage.h" />
-    <ClInclude Include="UIText.h" />
+    <ClInclude Include="header\UI.h" />
+    <ClInclude Include="header\UIButton.h" />
+    <ClInclude Include="header\UICanvas.h" />
+    <ClInclude Include="header\UIComponent.h" />
+    <ClInclude Include="header\UIImage.h" />
+    <ClInclude Include="header\UIText.h" />
     <ClInclude Include="source\Colission.cpp" />
   </ItemGroup>
   <ItemGroup>
