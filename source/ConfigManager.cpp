@@ -30,6 +30,46 @@ void DefaultConfig()
 	}
 }
 
+void ReadConfig()
+{
+	//Open the file
+	std::fstream configFile{ "Settings.config", configFile.in };
+
+	if (!configFile.is_open())
+	{
+		//Failed
+		std::cout << "WARNING! Failed to open Settings.config" << std::endl;
+	}
+	else
+	{
+		int i = 0;
+		while (!configFile.eof() && i < SETTINGS_LIMIT)
+		{
+			std::string confLine;
+			ConfigRows configs;
+			SetupRows(configs);
+			std::getline(configFile, confLine);
+
+			//After reading the line, seperate by spaces
+			std::stringstream ss(confLine);
+
+			std::string name, value;
+			ss >> name >> value;
+			if (configs.rows[i++].name != name)
+			{
+				configFile.close();
+				//Something has changed (corruption), we should default.
+				DefaultConfig();
+
+				return;
+			}
+			//Handle each case by name.
+			InterpretRow(name, value);
+		}
+
+	}
+	configFile.close();
+}
 
 void InitiateConfig()
 {
@@ -40,46 +80,11 @@ void InitiateConfig()
 	if (!std::filesystem::exists(checkPath))
 	{
 		DefaultConfig();
+		ReadConfig();
 	}
 	else
 	{
-		//Open the file
-		std::fstream configFile{ "Settings.config", configFile.in };
-
-		if (!configFile.is_open())
-		{
-			//Failed
-			std::cout << "WARNING! Failed to open Settings.config" << std::endl;
-		}
-		else
-		{
-			int i = 0;
-			while (!configFile.eof() && i < SETTINGS_LIMIT)
-			{
-				std::string confLine;
-				ConfigRows configs;
-				SetupRows(configs);
-				std::getline(configFile, confLine);
-
-				//After reading the line, seperate by spaces
-				std::stringstream ss(confLine);
-
-				std::string name, value;
-				ss >> name >> value;
-				if (configs.rows[i++].name != name)
-				{
-					configFile.close();
-					//Something has changed (corruption), we should default.
-					DefaultConfig();
-
-					return;
-				}
-				//Handle each case by name.
-				InterpretRow(name, value);
-			}
-
-		}
-		configFile.close();
+		ReadConfig();
 	}
 	//Else nothing
 
