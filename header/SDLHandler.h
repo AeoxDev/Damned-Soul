@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <SDL.h>
+#include <string>
 struct SDL
 {
 	HWND window;
@@ -22,3 +23,5 @@ bool SetupWindow();
 
 /// <summary>///Alternatively accesssible through sdl.sdlWindow /// </summary>/// <returns></returns>
 SDL_Window* GetSDLWindow();
+
+void SetWindowTitle(std::string newTitle);

@@ -1,8 +1,6 @@
 // DamnedSoul.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-
 #include "SDLhandler.h"
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
@@ -19,13 +17,24 @@ int main(int argc, char* args[])
     
     //std::cout << "Hello World!\n";
     SetupWindow();
+	std::string title = "Damned Soul";
 	//Hwnd = sdl.window
 	int i = 0;
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 		HandleInput();
+#ifdef _DEBUG
+		if (NewSecond())
+		{
+			title = "Damned Soul " + std::to_string((int)(1000.0f*GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
+			//title+="";//Add more debugging information here, updates every second.
+			SetWindowTitle(title);
+		}
+#endif // _DEBUG Debugging purposes, not compiled in release
 
+		
+		
 		//Update
 		
 		//Draw
@@ -34,7 +43,7 @@ int main(int argc, char* args[])
 	}
 
 	MemLib::destroyMemoryManager();
-
+	SDL_Quit();
     return 0;
 }
 

@@ -191,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularCollision.h" />
+    <ClInclude Include="header\Colission.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\SDLHandler.h" />
+    <ClInclude Include="source\Colission.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
