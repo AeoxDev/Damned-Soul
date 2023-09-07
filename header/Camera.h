@@ -43,6 +43,11 @@ DirectX::XMVECTOR GetUp();
 DirectX::XMVECTOR GetRotation();
 
 DirectX::XMMATRIX GetView();
+/// <summary>
+/// Depending on the state the camera is in, this function will either return a projection matrix or an orthographic matrix
+/// </summary>
+/// <returns></returns>
+DirectX::XMMATRIX GetPerspective();
 DirectX::XMMATRIX GetProjection();
 DirectX::XMMATRIX GetOrthographic();
 

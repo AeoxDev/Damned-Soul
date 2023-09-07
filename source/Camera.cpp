@@ -93,6 +93,18 @@ DirectX::XMMATRIX GetView()
 	return DirectX::XMLoadFloat4x4(&m_view);
 }
 
+DirectX::XMMATRIX GetPerspective()
+{
+	DirectX::XMMATRIX returnMatrix;
+
+	if (m_camera->projection)
+		returnMatrix = DirectX::XMLoadFloat4x4(&m_projection);
+	else
+		returnMatrix = DirectX::XMLoadFloat4x4(&m_orthographic);
+
+	return returnMatrix;
+}
+
 DirectX::XMMATRIX GetProjection()
 {
 	return DirectX::XMLoadFloat4x4(&m_projection);
@@ -106,10 +118,14 @@ DirectX::XMMATRIX GetOrthographic()
 void UpdateView()
 {
 	DirectX::XMVECTOR defaultForward, defaultUp, cameraTarget;
+	DirectX::XMVECTOR up, pos;
 	DirectX::XMMATRIX cameraRotationMatrix, vectorRotationMatrix;
 
 	defaultForward = DirectX::XMVectorSet(0.f, 0.f, 1.0f, 0.f);
 	defaultUp = DirectX::XMVectorSet(0.f, 1.f, 0.0f, 0.f);
+
+	pos = DirectX::XMLoadFloat3(&m_camera->position);
+	up = DirectX::XMLoadFloat3(&m_camera->up);
 
 	//Create camera rotation matrix
 	cameraRotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(m_camera->rotation.x, m_camera->rotation.y, m_camera->rotation.z);
@@ -117,10 +133,21 @@ void UpdateView()
 	//Calculate the cameras forward
 	cameraTarget = DirectX::XMVector3TransformCoord(defaultForward, cameraRotationMatrix);
 	//Add position on top of cameras forward
-	cameraTarget = DirectX::XMVectorAdd(cameraTarget, DirectX::XMLoadFloat3(&m_camera->position));
+	cameraTarget = DirectX::XMVectorAdd(cameraTarget, pos);
 
 	//Update cameras, up vector
-	m_camera->up = ;
+	up = DirectX::XMVector3TransformCoord(up, cameraRotationMatrix);
+	DirectX::XMStoreFloat3(&m_camera->up, up);
+	
+	
+	//Ask Quin, about this
+	//vectorRotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(m_camera->rotation.x, m_camera->rotation.y, 0.f);
+
+	//XMMATRIX vecRotationMatrix = XMMatrixRotationRollPitchYaw(this->rot.x, this->rot.y, 0.0f);
+	//this->vec_forward = XMVector3TransformCoord(this->DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
+	//this->vec_backward = XMVector3TransformCoord(this->DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
+	//this->vec_left = XMVector3TransformCoord(this->DEFAULT_LEFT_VECTOR, vecRotationMatrix);
+	//this->vec_right = XMVector3TransformCoord(this->DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
 }
 
 void SwitchProjection()
@@ -142,18 +169,13 @@ void InitializeCamera()
 	SetRotation(0.f, 0.f, 0.f);
 	SetFOV(0.f);
 
-	if (m_camera->projection) 
-	{
-		//DirectX::XMMATRIX proj;
-		//proj = DirectX::XMMatrixPerspectiveLH();
-		//DirectX::XMStoreFloat4x4(&m_projection, proj);
-	}
-	else
-	{
-		//DirectX::XMMATRIX orth;
-		//orth = DirectX::XMMatrixOrthographicLH();
-		//DirectX::XMStoreFloat4x4(&m_orthographic, orth);
-	}
+	DirectX::XMMATRIX proj;
+	proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
+	DirectX::XMStoreFloat4x4(&m_projection, proj);
+
+	DirectX::XMMATRIX orth;
+	orth = DirectX::XMMatrixOrthographicLH(1600.f, 900.f, 0.1f, 50.f);
+	DirectX::XMStoreFloat4x4(&m_orthographic, orth);
 
 	DirectX::XMMATRIX view;
 	view = DirectX::XMMatrixLookAtLH(GetPosition(), GetLookAt(), GetUp());
