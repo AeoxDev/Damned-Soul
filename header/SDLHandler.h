@@ -12,6 +12,7 @@ struct SDL
 	SDL_Event sdlEvent;
 	Uint32 WIDTH = 1280;
 	Uint32 HEIGHT = 720;
+	Uint32 windowFlags = 0;
 };
 extern SDL sdl;
 

@@ -1,5 +1,5 @@
 #pragma once
-#define SETTINGS_LIMIT 2//Amount of different kinds of settings
+#define SETTINGS_LIMIT 3//Amount of different kinds of settings
 #include<string>
 #define SETTINGS_SEPARATOR " "
 

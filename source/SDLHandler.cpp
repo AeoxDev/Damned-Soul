@@ -39,6 +39,8 @@ bool SetupWindow()
 		return false;
 	}
 	sdl.window = wmInfo.info.win.window;
+	//Set windowed mode
+	SDL_SetWindowFullscreen(sdl.sdlWindow, sdl.windowFlags);
 	return true;
 }
 
