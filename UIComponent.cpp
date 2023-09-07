@@ -1,15 +1,14 @@
 #include "UIComponent.h"
+#include "D2D1Graphics.h"
+#include "SDLHandler.h"
 
 using namespace DirectX::SimpleMath;
 
-float scalingFactor = 1.0f;
-Vector2 center{ 0.0f, 0.0f };
-
 void UIComponent::UpdateTransform()
 {
-	m_Transform = D2D1::Matrix3x2F::Scale(m_Scale.x / scalingFactor, m_Scale.y / scalingFactor)
+	m_Transform = D2D1::Matrix3x2F::Scale(m_Scale.x, m_Scale.y)
 		* D2D1::Matrix3x2F::Translation(m_Position.x, m_Position.y)
-		* D2D1::Matrix3x2F::Rotation(m_Rotation, { center.x, center.y });
+		* D2D1::Matrix3x2F::Rotation(m_Rotation, { sdl.WIDTH / 2.0f, sdl.HEIGHT / 2.0f });
 }
 
 void UIComponent::SetTransform(Vector2 position, Vector2 scale, float rotation)

@@ -12,13 +12,14 @@ private:
 	//std::function<void()> onActive;		//incase we need for controllers
 	//std::function<void()> onDeactive;		//incase we need for controllers
 	
-	PoolPointer<UIImage> m_Image;			//The image on the button
+	unsigned int m_CurrentImage = 0;
+	PoolPointer<UIImage[2]> m_Images;			//The image on the button
 	UIText m_Text;							//The text on the button
 
 	//bool isActive;						//bool for checking if a Controller is "hovering" a button
 public:
 	UIButton() = default;
-	UIButton(PoolPointer<UI>& ui, const std::string& imageFile, std::wstring buttonText,
+	UIButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText,
 		std::function<void()> onClick, std::function<void()> onHover, /* std::function<void()> onActive, std::function<void()> onDeactive, */
 		DirectX::SimpleMath::Vector2 position, /*bool isActive = false, */ DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
 		bool visibility = true, float opacity = 1.0f);

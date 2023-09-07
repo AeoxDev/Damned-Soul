@@ -21,22 +21,22 @@ void UICanvas::DrawTexts(PoolPointer<UI>& ui)
 		text.Draw(ui);
 }
 
-void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
+void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
 {
 	PoolPointer<UIButton> temp = MemLib::palloc(sizeof(UIButton));
-	*temp = UIButton(ui, imageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
+	*temp = UIButton(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
 	m_Buttons.emplace_back(temp);
 	
 }
 
-void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, std::string& file, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
+void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
 {
 	PoolPointer<UIImage> temp = MemLib::palloc(sizeof(UIImage));
 	*temp = UIImage(ui, file, position, scale, rotation, visibility, opacity);
 	m_Images.emplace(name, temp);
 }
 
-void UICanvas::AddText(PoolPointer<UI>& ui, const std::string& name, std::wstring& text, Vector2 position, Vector2 scale, float rotation, bool visibility)
+void UICanvas::AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, Vector2 position, Vector2 scale, float rotation, bool visibility)
 {
 	m_Texts.emplace(name, UIText(ui, text, position, scale, rotation, visibility));
 }

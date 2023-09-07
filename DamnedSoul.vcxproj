@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="D2D1Graphics.cpp" />
+    <ClCompile Include="ExampleMenu.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
@@ -197,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D2D1Graphics.h" />
+    <ClInclude Include="ExampleMenu.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
