@@ -1,0 +1,188 @@
+#include "D3D11Helper.h"
+#include "D3D11Graphics.h"
+#include "MemLib/MemLib.hpp"
+#include <iostream>
+
+
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const uint8_t slot)
+{
+	D3D11_BUFFER_DESC desc;
+	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
+	desc.ByteWidth = size + (16 - (size % 16));
+	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER; // Is a constant buffer
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // CPU needs to be able to write
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA buffData;
+	buffData.pSysMem = data;
+	buffData.SysMemPitch = 0;
+	buffData.SysMemSlicePitch = 0;
+
+	uint16_t currentIdx = bfrHolder->currentCount;
+
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &bfrHolder->buff_arr[currentIdx]);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Constant Buffer!" << std::endl;
+		return -1;
+	}
+
+	uint32_t* metadata = bfrHolder->metadata_arr[currentIdx];
+	metadata[0] = bindto; // Set shader to bind
+	metadata[1] = slot; // Set slot to use
+	metadata[2] = size;
+
+
+	return bfrHolder->currentCount++;
+}
+
+
+bool SetConstantBuffer(const CB_IDX idx)
+{
+	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
+	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)bfrHolder->metadata_arr[idx][0];
+	uint8_t slot = bfrHolder->metadata_arr[idx][1];
+
+	switch (whichShader)
+	{
+	case BIND_VERTEX:
+		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_HULL:
+		d3d11Data->deviceContext->HSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_DOMAIN:
+		d3d11Data->deviceContext->DSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_GEOMETRY:
+		d3d11Data->deviceContext->GSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_PIXEL:
+		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	default:
+		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		return false;
+		break; // Yes, this break is unnessecary, but it looks nice
+	}
+
+	return true;
+}
+
+
+bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
+{
+	if (bfrHolder->currentCount < idx || idx < 0)
+	{
+		std::cerr << "Index for update Constant Buffer out of range!" << std::endl;
+		return false;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	// Map the buffer
+	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_arr[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to map Constant Buffer!" << std::endl;
+		return false;
+	}
+
+	// Copy the new data to the buffer
+	memcpy(mappedResource.pData, data, bfrHolder->metadata_arr[idx][2]);
+	// Unmap the resource
+	d3d11Data->deviceContext->Unmap(bfrHolder->buff_arr[idx], 0);
+
+	return true;
+}
+
+
+VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count)
+{
+	D3D11_BUFFER_DESC desc;
+	desc.Usage = D3D11_USAGE_IMMUTABLE; // Doesn't need to be updated
+	desc.ByteWidth = size * count;
+	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Is a vertex buffer
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA buffData;
+	buffData.pSysMem = data;
+	buffData.SysMemPitch = 0;
+	buffData.SysMemSlicePitch = 0;
+
+	uint16_t currentIdx = bfrHolder->currentCount;
+
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &bfrHolder->buff_arr[currentIdx]);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Vertex Buffer!" << std::endl;
+		return -1;
+	}
+
+	bfrHolder->metadata_arr[currentIdx][0] = size;
+	bfrHolder->metadata_arr[currentIdx][1] = count;
+
+	return bfrHolder->currentCount++;
+}
+
+// Set an active constant buffer by index (shader and slot data contained in buffer)
+bool SetVertexBuffer(const VB_IDX idx)
+{
+	if (bfrHolder->currentCount < idx || idx < 0)
+	{
+		std::cerr << "Index for Vertex Buffer out of range!" << std::endl;
+		return false;
+	}
+	UINT offset = 0;
+	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &(bfrHolder->buff_arr[idx]), &(bfrHolder->metadata_arr[idx][0]), &offset);
+	return true;
+}
+
+
+// Create an Index Buffer with provided data and return a unique index to it
+IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count)
+{
+	D3D11_BUFFER_DESC desc;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.ByteWidth = (size * count) + (16 - ((size * count) % 16)); // Will most likely not matter, since it takes list
+	desc.BindFlags = D3D11_BIND_INDEX_BUFFER; // Is an index buffer
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA buffData;
+	buffData.pSysMem = data;
+	buffData.SysMemPitch = 0;
+	buffData.SysMemSlicePitch = 0;
+
+	uint16_t currentIdx = bfrHolder->currentCount;
+
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &bfrHolder->buff_arr[currentIdx]);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Index Buffer!" << std::endl;
+		return -1;
+	}
+
+	bfrHolder->metadata_arr[currentIdx][0] = size;
+	bfrHolder->metadata_arr[currentIdx][1] = count;
+
+	return bfrHolder->currentCount++;
+}
+// Set an active Index Buffer buffer by index
+bool SetIndexBuffer(const IB_IDX idx)
+{
+	if (bfrHolder->currentCount < idx || idx < 0)
+	{
+		std::cerr << "Index for Index Buffer out of range!" << std::endl;
+		return false;
+	}
+
+	UINT offset = 0;
+	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_arr[idx], DXGI_FORMAT_R32_UINT, offset);
+	return true;
+}
