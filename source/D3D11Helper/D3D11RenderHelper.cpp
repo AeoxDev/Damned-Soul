@@ -108,6 +108,100 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 	return true;
 }
 
+UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, const uint8_t slot)
+{
+	HRESULT hr;
+	uint16_t currentIdx = uavHolder->currentCount;
+
+	//Hardcoded amount
+	int TESTDELLATER = 100;
+
+	//Check what resource to create, then create it
+	switch (resource)
+	{
+	case RESOURCE_BUFFER:
+		ID3D11Buffer* buffer;
+
+		D3D11_BUFFER_DESC bufferDesc;
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.ByteWidth = size * TESTDELLATER; // Should be times the amount of elements
+		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+		bufferDesc.CPUAccessFlags = 0;
+		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
+		bufferDesc.StructureByteStride = sizeof(size);
+
+		hr = d3d11Data->device->CreateBuffer(&bufferDesc, nullptr, &buffer);
+		if (FAILED(hr))
+		{
+			std::cerr << "Failed to create Buffer to be used for Unordered Access View!" << std::endl;
+			return false;
+		}
+
+		//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
+		hr = buffer->QueryInterface(__uuidof(ID3D11Buffer), (void**)&uavHolder->uav_resource_arr[currentIdx]);//uavHolder->uav_resource_arr[currentIdx]->QueryInterface(__uuidof(ID3D11Buffer), (void**)&buffer);
+		if (FAILED(hr)) {
+			std::cerr << "Failed to QueryInterface into buffer" << std::endl;
+			return false;
+		}
+
+		break;
+	case RESOURCE_TEXTURE1D:
+		break;
+	case RESOURCE_TEXTURE1DARRAY:
+		break;
+	case RESOURCE_TEXTURE2D:
+		break;
+	case RESOURCE_TEXTURE2DARRAY:
+		break;
+	case RESOURCE_TEXTURE3D:
+		break;
+	case RESOURCE_TEXCUBE:
+		break;
+	default:
+		break;
+	}
+
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
+	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	UAVDesc.Buffer.FirstElement = 0;
+	UAVDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_APPEND;
+	UAVDesc.Buffer.NumElements = TESTDELLATER; //Hard coded value
+
+	hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_arr[currentIdx], &UAVDesc, &(uavHolder->uav_arr[currentIdx]));
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Buffer to be used for Unordered Access View!" << std::endl;
+		return false;
+	}
+
+
+	uint32_t* metadata = uavHolder->metadata_arr[currentIdx];
+	//metadata[0] = bindto; Unordered Access Views can only be bound to Compute Shaders
+	metadata[1] = slot; // Set slot to use
+	metadata[2] = size;
+
+	return (uavHolder->currentCount)++;
+}
+
+bool SetUnorderedAcessView(const UAV_IDX idx)
+{
+	ID3D11UnorderedAccessView* setter = uavHolder->uav_arr[idx];
+	uint8_t slot = uavHolder->metadata_arr[idx][1];
+
+	//NOTE TODO: count is hardcoded for now
+	unsigned int count = 0;
+
+	d3d11Data->deviceContext->CSSetUnorderedAccessViews(slot, 1, &uavHolder->uav_arr[idx], &count);
+
+	return true;
+}
+
+bool UpdateUnorderedAcessView(const UAV_IDX, const void* data)
+{
+	return false;
+}
 
 void ClearRenderTargetView(const RTV_IDX idx)
 {

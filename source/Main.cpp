@@ -10,6 +10,7 @@
 #include "ConfigManager.h"
 #include "DeltaTime.h"
 #include "Camera.h"
+#include "Particles.h"
 #include "GameRenderer.h"
 
 
@@ -23,6 +24,7 @@ int main(int argc, char* args[])
 
 	int testRenderSlot = SetupGameRenderer();
 	InitializeCamera();
+	InitializeParticles();
 	SetConstantBuffer(GetCameraBufferIndex());
 
 	while (!sdl.quit)

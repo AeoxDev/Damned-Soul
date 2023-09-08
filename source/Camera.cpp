@@ -145,6 +145,7 @@ void UpdateProjection()
 		DirectX::XMStoreFloat4x4(&m_camera->orthographic, orth);
 		DirectX::XMStoreFloat4x4(&m_bufferData->projectionMatrix, DirectX::XMMatrixTranspose(orth));
 	}
+	//NOTE TODO: CANT BIND MULTIPLE SHADERS
 	//SHADER_TO_BIND_BUFFER flags = BIND_VERTEX | BIND_PIXEL;
 	//Update Constant buffer
 	m_camera->cameraBufferIndex = CreateConstantBuffer(&(m_bufferData->cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 0);

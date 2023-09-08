@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Audio.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
@@ -187,6 +188,16 @@
     <ClCompile Include="source\SDLHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resource\shader\ParticleSmoke.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="resource\shader\TestPS.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
@@ -250,6 +261,7 @@
     <ClInclude Include="header\GameRenderer.h" />
     <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="source\Colission.cpp" />
   </ItemGroup>

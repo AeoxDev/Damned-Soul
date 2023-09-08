@@ -9,7 +9,19 @@ enum SHADER_TO_BIND_BUFFER
 	BIND_HULL,
 	BIND_DOMAIN,
 	BIND_GEOMETRY,
-	BIND_PIXEL
+	BIND_PIXEL,
+	BIND_COMPUTE
+};
+
+enum RESOURCES
+{
+	RESOURCE_BUFFER,
+	RESOURCE_TEXTURE1D,
+	RESOURCE_TEXTURE1DARRAY,
+	RESOURCE_TEXTURE2D,
+	RESOURCE_TEXTURE2DARRAY,
+	RESOURCE_TEXTURE3D,
+	RESOURCE_TEXCUBE
 };
 
 typedef int8_t PS_IDX;
@@ -21,6 +33,8 @@ typedef int16_t IB_IDX;
 typedef int8_t VP_IDX;
 typedef int8_t RTV_IDX;
 typedef int8_t DSV_IDX;
+typedef int8_t SRV_IDX;
+typedef int8_t UAV_IDX;
 typedef int8_t RS_IDX;
 
 // Load a Pixel Shader by name (ps.cso) and return a global index that can be used to reference it
@@ -47,6 +61,7 @@ bool SetConstantBuffer(const CB_IDX idx);
 // Update a constant buffer by index with given data
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
 
+
 // Create a Vertex Buffer with provided data and return a unique index to it
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count);
 // Set an active Vertex Buffer buffer by index
@@ -70,6 +85,24 @@ RTV_IDX CreateRenderTargetView();
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
 // Set a render target view and depth stencil view
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_ds);
+
+
+
+//NOTE TODO: MAKE A FIX FOR CREATESRV AND CREATEUAV (THEY CAN NOT HAVE MULTIPLE BINDFLAGS THEY ARE HARDCODED)
+// Create a shader resource view
+SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, const uint8_t slot);
+// Set an active shader resource view buffer by index (shader and slot data contained in buffer)
+bool SetShaderResourceView(const SRV_IDX idx);
+// Update a shader resource view index with given data
+bool UpdateShaderResourceView(const SRV_IDX, const void* data);
+
+// Create a unordered access view
+UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, const uint8_t slot);
+// Set an active unordered access view buffer by index (shader and slot data contained in buffer)
+bool SetUnorderedAcessView(const UAV_IDX idx);
+// Update a unordered access view index with given data
+bool UpdateUnorderedAcessView(const UAV_IDX, const void* data);
+
 
 // Clear the render target
 void ClearRenderTargetView(const RTV_IDX idx);

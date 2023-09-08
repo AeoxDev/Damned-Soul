@@ -8,11 +8,14 @@ struct RenderSetupComponent
 	RS_IDX	rasterizerState;
 	PS_IDX	pixelShader;
 	VS_IDX	vertexShader;
+	CS_IDX	computeShader;
 	VB_IDX	vertexBuffer;
 	IB_IDX	indexBuffer;
 	VP_IDX	viewPort;
 	RTV_IDX renderTargetView;
 	DSV_IDX depthStencilView;
+	SRV_IDX shaderResourceView;
+	UAV_IDX unorderedAccessView;
 };
 
 RenderSetupComponent renderStates[8];
