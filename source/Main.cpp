@@ -1,14 +1,16 @@
 // DamnedSoul.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-
 #include "SDLhandler.h"
 #include "Input.h"
 #include "MemLib/MemLib.hpp"
+#include "D3D11Graphics.h"
+#include "D3D11Helper.h"
 #include "EntityFramework.h"
 #include "ConfigManager.h"
 #include "DeltaTime.h"
+#include "Camera.h"
+#include "GameRenderer.h"
 
 
 
@@ -16,25 +18,37 @@ int main(int argc, char* args[])
 {
 	MemLib::createMemoryManager();
 	InitiateConfig();
-    
-    //std::cout << "Hello World!\n";
     SetupWindow();
-	//Hwnd = sdl.window
-	int i = 0;
+	std::string title = "Damned Soul";
+
+	int testRenderSlot = SetupGameRenderer();
+	InitializeCamera();
+	SetConstantBuffer(GetCameraBufferIndex());
+
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
-		HandleInput();
 
-		//Update
-		
-		//Draw
+		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
+		Render(testRenderSlot);
+
+		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
+		HandleInput();
+#ifdef _DEBUG
+		if (sdl.windowFlags == 0 && NewSecond())
+		{
+			title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
+			//title+="";//Add more debugging information here, updates every second.
+			SetWindowTitle(title);
+		}
+#endif // _DEBUG Debugging purposes, not compiled in release
 
 		MemLib::pdefrag();
 	}
 
+	EndDirectX();
 	MemLib::destroyMemoryManager();
-
+	SDL_Quit();
     return 0;
 }
 

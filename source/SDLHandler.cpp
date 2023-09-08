@@ -39,10 +39,17 @@ bool SetupWindow()
 		return false;
 	}
 	sdl.window = wmInfo.info.win.window;
+	//Set windowed mode
+	SDL_SetWindowFullscreen(sdl.sdlWindow, sdl.windowFlags);
 	return true;
 }
 
 SDL_Window* GetSDLWindow()
 {
 	return sdl.sdlWindow;
+}
+
+void SetWindowTitle(std::string newTitle)
+{
+	SDL_SetWindowTitle(sdl.sdlWindow, newTitle.c_str());
 }

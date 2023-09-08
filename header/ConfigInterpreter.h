@@ -1,10 +1,16 @@
 #pragma once
-#define SETTINGS_LIMIT 2//Amount of different kinds of settings
+#define SETTINGS_LIMIT 3//Amount of different kinds of settings
 #include<string>
 #define SETTINGS_SEPARATOR " "
 
 //NOTE: Come back to when Configurations is more fleshed out
-
+//Add Windowed, Borderless, Fullscreen
+//Add Master, SFX, Music
+//Add Keybinds
+// 
+//Add Graphical settings?
+//Add Accessibility settings?
+//Add Mouse sensitivity (Requires Custom mouse code)?
 
 struct ConfigRow
 {
