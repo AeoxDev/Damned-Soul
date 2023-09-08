@@ -16,6 +16,16 @@ struct Hitbox
 	float depth;
 };
 
+struct WorldMatrix
+{
+	DirectX::XMFLOAT4X4 worldMatrix;
+
+	WorldMatrix(const DirectX::XMMATRIX& wM)
+	{
+		DirectX::XMStoreFloat4x4(&worldMatrix, wM);
+	}
+};
+
 struct HitboxList
 {
 	//List of all hitboxes
@@ -37,16 +47,6 @@ struct HitboxList
 
 	//Delete this buffer later
 	ID3D11Buffer* viewAndProjMatrix = nullptr;
-};
-
-struct WorldMatrix
-{
-	DirectX::XMFLOAT4X4 worldMatrix;
-
-	WorldMatrix(const DirectX::XMMATRIX& wM)
-	{
-		DirectX::XMStoreFloat4x4(&worldMatrix, wM);
-	}
 };
 
 

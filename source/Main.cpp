@@ -25,14 +25,14 @@ int main(int argc, char* args[])
 	
 	HitboxList list;
 	std::vector<DirectX::XMFLOAT3> vertices;
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, 0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, -0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, -0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, 0.5f, -0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, 0.5f, -0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, -0.5f, -0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, -0.5f, -0.5f));
+	vertices.push_back(DirectX::XMFLOAT3(0.8f, 0.7f, 0.7f));
+	vertices.push_back(DirectX::XMFLOAT3(-0.3f, 0.7f, 0.5f));
+	vertices.push_back(DirectX::XMFLOAT3(0.3f, -0.1f, 0.7f));
+	vertices.push_back(DirectX::XMFLOAT3(-0.3f, -0.7f, 0.7f));
+	vertices.push_back(DirectX::XMFLOAT3(0.3f, 0.7f, -0.7f));
+	vertices.push_back(DirectX::XMFLOAT3(-0.3f, 0.7f, -0.9f));
+	vertices.push_back(DirectX::XMFLOAT3(0.3f, -0.7f, -0.7f));
+	vertices.push_back(DirectX::XMFLOAT3(-0.2f, -0.7f, -0.7f));
 
 	int testRenderSlot = SetupGameRenderer();
 	InitializeCamera();
@@ -46,9 +46,11 @@ int main(int argc, char* args[])
 		CountDeltaTime();
 
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		//Render(testRenderSlot);
+		Render(testRenderSlot);
 
 		DebugRenderHitbox(d3d11Data->deviceContext, list);
+
+		d3d11Data->swapChain->Present(0, 0);
 		
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism

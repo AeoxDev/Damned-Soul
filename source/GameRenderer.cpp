@@ -65,8 +65,8 @@ void Render(const int& s)
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
 
-	d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
+	//d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
 	//d3d11Data->deviceContext->Draw(3, 0);
-	d3d11Data->swapChain->Present(0, 0);
+	//d3d11Data->swapChain->Present(0, 0);
 
 }

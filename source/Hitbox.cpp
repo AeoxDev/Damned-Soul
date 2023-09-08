@@ -150,7 +150,7 @@ void InitializeBufferAndSRV(ID3D11Device*& device, HitboxList& list)
 
 	float fovRadians = (90.0f / 360.0f) * DirectX::XM_2PI;
 	DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fovRadians, 2, 0.1f, 1000.0f);
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::XMVECTOR pos = DirectX::XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);;
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(pos, target, up);
@@ -187,6 +187,7 @@ void DebugRenderHitbox(ID3D11DeviceContext*& immediateContext, HitboxList& list)
 	//Input assembler
 	immediateContext->IASetInputLayout(list.hitboxInputLayout);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	immediateContext->RSSetState(list.hitboxWireframeRaster);
 
 	//Vertex Shader
 	immediateContext->VSSetShader(list.vShader, nullptr, 0);
