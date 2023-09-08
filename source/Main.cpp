@@ -8,8 +8,8 @@
 #include "EntityFramework.h"
 #include "ConfigManager.h"
 #include "DeltaTime.h"
-#include "StateManager.h"
-#include "InputsHandler.h"
+#include "Interface\StateManager.h"
+#include "Interface\InputsHandler.h"
 
 int main(int argc, char* args[])
 {
@@ -75,8 +75,6 @@ int main(int argc, char* args[])
 			SetWindowTitle(title);
 		}
 #endif // _DEBUG Debugging purposes, not compiled in release
-
-		
 		
 		//Update
 		stateManager.Update();

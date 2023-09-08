@@ -57,7 +57,10 @@
     <ClCompile Include="source\StateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="header\SceneManager.cpp">
+    <ClCompile Include="source\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ButtonManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,16 +122,22 @@
     <ClInclude Include="source\States.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\StateStructures.h">
+    <ClInclude Include="header\Interface\StateStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\SceneManager.h">
+    <ClInclude Include="header\Interface\SceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\StateManager.h">
+    <ClInclude Include="header\Interface\StateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\InputsHandler.h">
+    <ClInclude Include="header\Interface\InputsHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Interface\SceneStructures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Interface\ButtonManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

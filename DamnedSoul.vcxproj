@@ -171,7 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="header\SceneManager.cpp" />
+    <ClCompile Include="source\ButtonManager.cpp" />
+    <ClCompile Include="source\SceneManager.cpp" />
     <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\Audio.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
@@ -246,11 +247,13 @@
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\Hitbox.h" />
-    <ClInclude Include="header\InputsHandler.h" />
-    <ClInclude Include="header\SceneManager.h" />
+    <ClInclude Include="header\Interface\ButtonManager.h" />
+    <ClInclude Include="header\Interface\InputsHandler.h" />
+    <ClInclude Include="header\Interface\SceneManager.h" />
+    <ClInclude Include="header\Interface\SceneStructures.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClInclude Include="header\StateManager.h" />
-    <ClInclude Include="header\StateStructures.h" />
+    <ClInclude Include="header\Interface\StateManager.h" />
+    <ClInclude Include="header\Interface\StateStructures.h" />
     <ClInclude Include="source\Colission.cpp" />
     <ClInclude Include="source\States.h" />
   </ItemGroup>
