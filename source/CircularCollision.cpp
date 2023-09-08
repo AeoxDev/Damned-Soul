@@ -13,17 +13,4 @@ bool IsCircularCollision(const Entity& entity1, const Entity& entity2)
 	return false;
 }
 
-void CollisionEvent(Entity& entity, Entity& entity2)
-{
-	// find on collision component in each entity
-
-	//extract positions from each entity 
-	//find last positions from each entitiy
-	// this gives us the tools to calculate the angle of attack
-
-	// calls on OnCollision
-}
-
-
-
 
