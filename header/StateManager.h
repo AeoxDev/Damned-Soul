@@ -13,6 +13,8 @@ private:
 
 public:
 
+	void Update();
+
 	void HandleInputs(int[]);
 
 };

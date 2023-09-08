@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="header\SceneManager.cpp" />
     <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\Audio.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />

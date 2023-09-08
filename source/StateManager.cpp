@@ -1,5 +1,11 @@
 #include "StateManager.h"
 
+void StateManager::Update()
+{
+	if (m_currentState == State::Game && m_game.currentSubState == GameState::Unpause)
+		m_game.Update();
+}
+
 void StateManager::HandleInputs(int keyInput[])
 {
 	switch (m_currentState)
@@ -13,7 +19,7 @@ void StateManager::HandleInputs(int keyInput[])
 			break;
 		}
 
-		m_menu.Update(keyInput, m_settings);
+		m_menu.HandleInputs(keyInput, m_settings);
 		break;
 	case State::Game:
 
@@ -25,9 +31,7 @@ void StateManager::HandleInputs(int keyInput[])
 			break;
 		}
 
-		m_game.Update(keyInput, m_settings);
-		break;
-	default:
+		m_game.HandleInputs(keyInput, m_settings);
 		break;
 	}
 }

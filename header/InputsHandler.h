@@ -24,7 +24,8 @@ void HandleInputs(StateManager& stateManager)
 		if (sdl.sdlEvent.type == SDL_QUIT)
 			sdl.quit = true;
 
-		stateManager.HandleInputs(keyInput);
+		if (sdl.sdlEvent.type == SDL_KEYDOWN)
+			stateManager.HandleInputs(keyInput);
 
 	}
 	

@@ -32,7 +32,7 @@ struct Settings
 	SettingsState currentSubState = SettingsState::Graphics;
 	std::pair<int, int> resolution = { sdl.WIDTH,  sdl.HEIGHT };
 
-	void Update(int keyInput[])
+	void HandleInputs(int keyInput[])
 	{
 		switch (currentSubState)
 		{
@@ -73,10 +73,16 @@ struct Settings
 struct Game
 {
 	GameState currentSubState = GameState::Unpause;
+	SceneManager sceneManager;
 
 	std::pair<int, int> playerPosition = { 200, 200 };
 
-	void Update(int keyInput[], Settings& settings)
+	void Update()
+	{
+		sceneManager.Update();
+	};
+
+	void HandleInputs(int keyInput[], Settings& settings)
 	{
 		switch (currentSubState)
 		{
@@ -95,6 +101,12 @@ struct Game
 
 			if (keyInput[SDL_SCANCODE_D])
 				playerPosition.first += 10;
+
+			if (keyInput[SDL_SCANCODE_1])
+				sceneManager.SetScene("Level_1");
+
+			if (keyInput[SDL_SCANCODE_2])
+				sceneManager.SetScene("Level_2");
 
 			std::cout << "Player Position: " << playerPosition.first << ", " << playerPosition.second << std::endl;
 
@@ -115,28 +127,27 @@ struct Game
 		case GameState::Settings:
 			std::cout << "Settings\n";
 
-			settings.Update(keyInput);
+			settings.HandleInputs(keyInput);
 
 			if (keyInput[SDL_SCANCODE_ESCAPE])
 				currentSubState = GameState::Pause;
 
 			break;
 		}
-
-		
 	};
 
 	void Reset()
 	{
 		currentSubState = GameState::Unpause;
 		playerPosition = { 200, 200 };
+		sceneManager = {};
 	};
 };
 
 struct Menu
 {
 	MenuState currentSubState = MenuState::Main;
-	void Update(int keyInput[], Settings& settings)
+	void HandleInputs(int keyInput[], Settings& settings)
 	{
 		switch (currentSubState)
 		{
@@ -156,7 +167,7 @@ struct Menu
 			if (keyInput[SDL_SCANCODE_ESCAPE])
 				currentSubState = MenuState::Main;
 
-			settings.Update(keyInput);
+			settings.HandleInputs(keyInput);
 			break;
 		case MenuState::Credits:
 			std::cout << "Credits\n";

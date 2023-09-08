@@ -57,6 +57,9 @@
     <ClCompile Include="source\StateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="header\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
