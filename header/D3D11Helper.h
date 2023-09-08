@@ -14,6 +14,7 @@ enum SHADER_TO_BIND_BUFFER
 
 typedef int8_t PS_IDX;
 typedef int8_t VS_IDX;
+typedef int8_t CS_IDX;
 typedef int16_t CB_IDX;
 typedef int16_t VB_IDX;
 typedef int16_t IB_IDX;
@@ -31,6 +32,11 @@ bool SetPixelShader(const PS_IDX idx);
 // Also creates an input layout to accompany it
 VS_IDX LoadVertexShader(const char* name);
 // Set a new vertex (and accompanying input layout) shader by index
+bool SetVertexShader(const VS_IDX idx);
+
+// Load a Compute Shader by name (cs.cso) and return a global index that can be used to reference it
+CS_IDX LoadVertexShader(const char* name);
+// Set a new compute shader by index
 bool SetVertexShader(const VS_IDX idx);
 
 
