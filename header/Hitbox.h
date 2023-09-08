@@ -16,6 +16,29 @@ struct Hitbox
 	float depth;
 };
 
+struct HitboxList
+{
+	//List of all hitboxes
+	std::vector<Hitbox> hitboxes;
+
+	//Shaders to render the hitboxes
+	ID3D11VertexShader* vShader = nullptr;
+	ID3D11GeometryShader* gShader = nullptr;
+	ID3D11PixelShader* pShader = nullptr;
+
+	//Buffer, Input layout, and SRV used for Vertex Pulling
+	ID3D11Buffer* hitboxStructuredBuffer = nullptr;
+	ID3D11Buffer* worldMatrixBuffer = nullptr;
+	ID3D11InputLayout* hitboxInputLayout = nullptr;
+	ID3D11ShaderResourceView* hitboxStructuredSRV = nullptr;
+
+	//RasterState for wireframe rendering
+	ID3D11RasterizerState* hitboxWireframeRaster = nullptr;
+
+	//Delete this buffer later
+	ID3D11Buffer* viewAndProjMatrix = nullptr;
+};
+
 struct WorldMatrix
 {
 	DirectX::XMFLOAT4X4 worldMatrix;
@@ -26,39 +49,19 @@ struct WorldMatrix
 	}
 };
 
-//Shaders to render the hitboxes
-ID3D11VertexShader* vShader = nullptr;
-ID3D11GeometryShader* gShader = nullptr;
-ID3D11PixelShader* pShader = nullptr;
 
-//List of all hitboxes
-std::vector<Hitbox> hitboxes;
+void CreateHitbox(ID3D11Device*& device, int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer, HitboxList& list);
 
-//Buffer, Input layout, and SRV used for Vertex Pulling
-ID3D11Buffer* hitboxStructuredBuffer = nullptr;
-ID3D11Buffer* worldMatrixBuffer = nullptr;
-ID3D11InputLayout* hitboxInputLayout = nullptr;
-ID3D11ShaderResourceView* hitboxStructuredSRV = nullptr;
+void InitializeBufferAndSRV(ID3D11Device*& device, HitboxList& list);
 
-//RasterState for wireframe rendering
-ID3D11RasterizerState* hitboxWireframeRaster = nullptr;
+void CreateShadersLayoutAndRasterState(ID3D11Device*& device, HitboxList& list);
 
-//Delete this buffer later
-ID3D11Buffer* viewAndProjMatrix = nullptr;
+void DebugRenderHitbox(ID3D11DeviceContext*& immediateContext, HitboxList& list);//, ID3D11Buffer*& viewAndProjectionMatrix)
 
+void DestroyShaders(HitboxList& list);
 
-void CreateHitbox(ID3D11Device*& device, int isCube, std::vector<DirectX::XMFLOAT3> vertexBuffer);
+void DestroyHitboxResources(HitboxList& list);
 
-void InitializeBufferAndSRV(ID3D11Device*& device);
+void DestroyBufferAndSRV(HitboxList& list);
 
-void CreateShadersLayoutAndRasterState(ID3D11Device*& device);
-
-void DebugRenderHitboxes(ID3D11DeviceContext*& immediateContext, std::vector<Hitbox> hitboxes);
-
-void DestroyShaders();
-
-void DestroyHitboxResources();
-
-void DestroyBufferAndSRV();
-
-void DestroyHitboxes();
+void DestroyHitboxes(HitboxList& list);
