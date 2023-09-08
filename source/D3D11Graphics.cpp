@@ -79,10 +79,13 @@ int SetupDirectX(HWND& w)
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
+	comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));
 	bfrHolder = (BufferHolder*)MemLib::spush(sizeof(BufferHolder));
 	vpHolder = (ViewPortHolder*)MemLib::spush(sizeof(ViewPortHolder));
 	rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
 	dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
+	srvHolder = (SRVHolder*)MemLib::spush(sizeof(SRVHolder));
+	uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
