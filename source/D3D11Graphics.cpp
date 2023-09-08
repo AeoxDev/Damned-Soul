@@ -9,10 +9,13 @@
 D3D11Data* d3d11Data;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
+ComputeShaderHolder* comHolder;
 BufferHolder* bfrHolder;
 ViewPortHolder* vpHolder;
 RTVHolder* rtvHolder;
 DSVHolder* dsvHolder;
+SRVHolder* srvHolder;
+UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
 
 ////Externs:
@@ -102,6 +105,12 @@ void EndDirectX()
 		vrtHolder->il_arr[i]->Release();
 	}
 
+	// Release all compute shaders
+	for (int i = 0; i < comHolder->currentCount; ++i)
+	{
+		comHolder->cs_arr[i]->Release();
+	}
+
 	// Release all buffers shaders
 	for (int i = 0; i < bfrHolder->currentCount; ++i)
 		bfrHolder->buff_arr[i]->Release();
@@ -115,6 +124,20 @@ void EndDirectX()
 	{
 		dsvHolder->dsv_arr[i]->Release();
 		dsvHolder->ds_arr[i]->Release();
+	}
+
+	// Release all shader resource views
+	for (int i = 0; i < srvHolder->currentCount; ++i)
+	{
+		srvHolder->srv_arr[i]->Release();
+		srvHolder->srv_resource_arr[i]->Release();
+	}
+
+	// Release all unorderd access views
+	for (int i = 0; i < uavHolder->currentCount; ++i)
+	{
+		uavHolder->uav_arr[i]->Release();
+		uavHolder->uav_resource_arr[i]->Release();
 	}
 
 	// Release all rasterizer states

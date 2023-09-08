@@ -59,17 +59,15 @@ struct DSVHolder
 struct SRVHolder
 {
 	uint8_t currentCount = 0;
-	ID3D11Texture2D* srv_tex_arr[4]; // Sometimes UAVs are created with textures
-	ID3D11Buffer* srv_buff_arr[4]; // and sometimes UAVs are created with with buffers
-	ID3D11DepthStencilView* srv_arr[8]; // NOTE: I dont think 8 is enough, will probably need more in the future
+	ID3D11Resource* srv_resource_arr[8]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
+	ID3D11ShaderResourceView* srv_arr[8]; // NOTE: I dont think 8 is enough, will probably need more in the future
 };
 
 struct UAVHolder
 {
 	uint8_t currentCount = 0;
-	ID3D11Texture2D* uav_tex_arr[4]; // Sometimes UAVs are created with textures
-	ID3D11Buffer* uav_buff_arr[4]; // and sometimes UAVs are created with with buffers
-	ID3D11DepthStencilView* dsv_arr[8]; // NOTE: I dont think 8 is enough, will probably need more in the future
+	ID3D11Resource* uav_resource_arr[8]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
+	ID3D11UnorderedAccessView* uav_arr[8]; // NOTE: I dont think 8 is enough, will probably need more in the future
 };
 
 struct RasterizerHolder
@@ -87,6 +85,8 @@ extern BufferHolder* bfrHolder;
 extern ViewPortHolder* vpHolder;
 extern RTVHolder* rtvHolder;
 extern DSVHolder* dsvHolder;
+extern SRVHolder* srvHolder;
+extern UAVHolder* uavHolder;
 extern RasterizerHolder* rsHolder;
 
 //extern ID3D11Device* device;
