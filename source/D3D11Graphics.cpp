@@ -72,7 +72,6 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	return true;
 }
 
-
 #define FAIL_MSG { std::cerr << "Failed to set up D3D11!" << std::endl; return -1; }
 
 int SetupDirectX(HWND& w)
