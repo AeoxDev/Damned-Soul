@@ -7,5 +7,5 @@ struct VS_OUT
 
 float4 main(VS_OUT input) : SV_TARGET
 {
-	return float4(0.0f, 1.0f, 0.0f, 1.0f);//input.position;
+	return input.position;
 }
