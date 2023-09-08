@@ -33,7 +33,7 @@ public:
 	UICanvas() = default;
 	virtual ~UICanvas();
 
-	virtual void Resize() = 0;
+	//virtual void Resize() = 0;
 	virtual void Reset();
 	virtual void Render(PoolPointer<UI>& ui);
 	virtual void Update() {};

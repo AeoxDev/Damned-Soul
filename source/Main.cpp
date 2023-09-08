@@ -11,7 +11,9 @@
 #include "DeltaTime.h"
 #include "Camera.h"
 
-
+#include "ExampleMenu.h"
+#include "D2D1Graphics.h"
+#include <iostream>
 
 int main(int argc, char* args[])
 {
@@ -65,6 +67,37 @@ int main(int argc, char* args[])
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
+	/////////// REMOVE //////////////
+	ID3D11Texture2D* GUIBuffer;
+	ID3D11RenderTargetView* GUIRTV;
+
+	if (FAILED(d3d11Data->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&GUIBuffer))))
+	{
+		std::cerr << "Failed to create GUI Buffer\n";
+		return false;
+	}
+	
+	hr = d3d11Data->device->CreateRenderTargetView(GUIBuffer, nullptr, &GUIRTV);
+	if (FAILED(hr))
+	{
+		std::cout << "Failed to create GUI Render Target View\n";
+		return false;
+	}
+
+	auto hres = GUIBuffer->QueryInterface<IDXGISurface>(&UISurface);
+	if (FAILED(hres))
+	{
+		printf("Failed to create UI Surface\n");
+		return -1;
+	}
+
+	PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
+	*ui = UI();
+	PoolPointer<ExMenu>apa = MemLib::palloc(sizeof(ExMenu));
+	*apa = ExMenu(ui);
+	
+	
+	/////////// REMOVE //////////////
 
 	int i = 0;
 	while (!sdl.quit)
@@ -83,7 +116,10 @@ int main(int argc, char* args[])
 		
 		
 		//Update
-		
+		/////////// REMOVE //////////////
+		apa->Run(ui, 1.0f);
+		/////////// REMOVE //////////////'
+
 		ClearRenderTargetView(rtv);
 		ClearDepthStencilView(dsv);
 

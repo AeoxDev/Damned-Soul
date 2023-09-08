@@ -31,7 +31,7 @@ RasterizerHolder* rsHolder;
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
-	UINT flags = 0x0;
+	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG

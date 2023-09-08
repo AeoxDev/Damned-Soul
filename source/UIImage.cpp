@@ -41,7 +41,8 @@ UIImage::UIImage(PoolPointer<UI>& ui, const std::string& file, Vector2 position,
 		return;
 	}
 
-	hr = ui->GetRenderTarget()->CreateBitmapFromWicBitmap(converter, &m_Bitmap);
+	
+	hr = ui->GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
 	if (FAILED(hr))
 	{
 		std::cout << "FAILED to create image bitmap" << std::endl;

@@ -26,12 +26,8 @@ ExMenu::ExMenu(PoolPointer<UI>& ui)
 		{center.x * 0.25f, center.y * 1.85f}
 	};*/
 
-	const std::string imagePath = "../resource/GUI/ExMenu/";
-
-	AddImage(ui, "Title", imagePath + "ExTitle.png", {100,100 }, { 1.0f, 1.0f });
-	AddImage(ui, "Eye", imagePath + "Eye.png", { 50, 50}, { 1.5f, 1.5f});
-
-
+	AddImage(ui, "Title", "ExMenu/ExTitle.png", {100,100 }, { 1.0f, 1.0f });
+	AddImage(ui, "Eye", "ExMenu/Eye.png", { 50, 50}, { 1.5f, 1.5f});
 
 }
 
