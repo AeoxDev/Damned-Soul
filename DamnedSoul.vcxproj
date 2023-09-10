@@ -182,6 +182,7 @@
     <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />
     <ClCompile Include="source\DeltaTime.cpp" />
+    <ClCompile Include="source\GameRenderer.cpp" />
     <ClCompile Include="source\Hitbox.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
@@ -256,6 +257,7 @@
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
+    <ClInclude Include="header\GameRenderer.h" />
     <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\SDLHandler.h" />
