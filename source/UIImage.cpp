@@ -57,7 +57,61 @@ UIImage::UIImage(PoolPointer<UI>& ui, const std::string& file, Vector2 position,
 	decoder->Release();
 }
 
-UIImage::UIImage(ID2D1Bitmap*& bitmap, Vector2 position, Vector2 scale, float rotation, bool visbility, float opacity)
+UIImage::UIImage(UI* ui, const std::string& file, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool visibility, float opacity)
+	:UIComponent(position, scale, rotation, visibility), m_Bitmap(nullptr), m_Opacity(opacity)
+{
+	HRESULT hr;
+	IWICBitmapDecoder* decoder = nullptr;
+	IWICBitmapFrameDecode* source = nullptr;
+	IWICFormatConverter* converter = nullptr;
+	IWICImagingFactory* factory = ui->GetImagingFactory();
+	const std::wstring path = L"../resource/GUI/" + std::wstring(file.begin(), file.end());
+
+	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
+	if (FAILED(hr))
+	{
+		std::cout << "FAILED to create image decoder" << std::endl;
+		return;
+	}
+
+	hr = decoder->GetFrame(0, &source);
+	if (FAILED(hr))
+	{
+		std::cout << "FAILED to get image source" << std::endl;
+		return;
+	}
+
+	hr = factory->CreateFormatConverter(&converter);
+	if (FAILED(hr))
+	{
+		std::cout << "FAILED to create image converter" << std::endl;
+		return;
+	}
+
+	hr = converter->Initialize(source, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeMedianCut);
+	if (FAILED(hr))
+	{
+		std::cout << "FAILED to inizialize image source" << std::endl;
+		return;
+	}
+
+
+	hr = ui->GetRenderTarget()->CreateBitmapFromWicBitmap(converter, &m_Bitmap);
+	if (FAILED(hr))
+	{
+		std::cout << "FAILED to create image bitmap" << std::endl;
+		return;
+	}
+
+	m_Bounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
+	SetTransform(position, scale, rotation);
+
+	converter->Release();
+	source->Release();
+	decoder->Release();
+}
+
+UIImage::UIImage(ID2D1Bitmap* bitmap, Vector2 position, Vector2 scale, float rotation, bool visbility, float opacity)
 	:UIComponent(position, scale, rotation), m_Bitmap(bitmap), m_Opacity(opacity)
 {
 	m_Bounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
@@ -73,7 +127,7 @@ UIImage::~UIImage()
 	}
 }
 
-void UIImage::Draw(ID2D1RenderTarget*& renderTarget)
+void UIImage::Draw(ID2D1RenderTarget* renderTarget)
 {
 	if (true == m_Visibility)
 	{
@@ -89,7 +143,7 @@ void UIImage::SetOpacity(float opacity)
 	m_Opacity = opacity;
 }
 
-ID2D1Bitmap* UIImage::GetBitmap()
+ID2D1Bitmap*& UIImage::GetBitmap()
 {
 	return m_Bitmap;
 }

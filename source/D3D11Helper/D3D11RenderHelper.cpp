@@ -1,6 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "D2D1Graphics.h"
 #include <iostream>
 
 VP_IDX CreateViewport(const size_t& width, const size_t& height)
@@ -39,6 +40,11 @@ RTV_IDX CreateRenderTargetView()
 		return false;
 	}
 
+	if (FAILED(backBuffer->QueryInterface<IDXGISurface>(&UISurface)))
+	{
+		printf("Failed to create UI Surface\n");
+		return -1;
+	}
 	//D3D11_RENDER_TARGET_VIEW_DESC desc;
 	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	//desc.Texture2D.MipSlice = 0;

@@ -22,6 +22,17 @@ void UIText::Draw(PoolPointer<UI>& ui)
 	}
 }
 
+void UIText::Draw(UI* ui)
+{
+	if (true == m_Visibility)
+	{
+		ID2D1RenderTarget* rt = ui->GetRenderTarget();
+
+		rt->SetTransform(m_Transform);
+		rt->DrawTextW(m_Text.c_str(), (UINT32)m_Text.length(), ui->GetTextFormat(), m_Bounds, ui->GetBrush());
+	}
+}
+
 void UIText::UpdateText(std::wstring text)
 {
 	m_Text = text;

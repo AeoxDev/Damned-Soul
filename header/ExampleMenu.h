@@ -18,6 +18,7 @@ private:
 public:
 	ExMenu() = delete;
 	ExMenu(PoolPointer<UI>& ui);
+	ExMenu(UI*& ui);
 	~ExMenu();
 
 	int Run(PoolPointer<UI>& ui, float dt);

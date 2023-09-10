@@ -28,45 +28,29 @@ int main(int argc, char* args[])
 	SetConstantBuffer(GetCameraBufferIndex());
 
 	/////////// REMOVE //////////////
-	ID3D11Texture2D* GUIBuffer;
-	ID3D11RenderTargetView* GUIRTV;
 
-	if (FAILED(d3d11Data->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&GUIBuffer))))
-	{
-		std::cerr << "Failed to create GUI Buffer\n";
-		return false;
-	}
-	
-	hr = d3d11Data->device->CreateRenderTargetView(GUIBuffer, nullptr, &GUIRTV);
-	if (FAILED(hr))
-	{
-		std::cout << "Failed to create GUI Render Target View\n";
-		return false;
-	}
-
-	auto hres = GUIBuffer->QueryInterface<IDXGISurface>(&UISurface);
-	if (FAILED(hres))
-	{
-		printf("Failed to create UI Surface\n");
-		return -1;
-	}
-
-	PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
+	/*PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
 	*ui = UI();
-	PoolPointer<ExMenu>apa = MemLib::palloc(sizeof(ExMenu));
-	*apa = ExMenu(ui);
+	PoolPointer<ExMenu> ex = MemLib::palloc(sizeof(ExMenu));
+	*ex = ExMenu(ui);*/
+
+	UI* ui = new UI();
+	ExMenu* ex = new ExMenu(ui);
 	
-	
+	ui->SetCurrentCanvas(ex);
+
+
 	/////////// REMOVE //////////////
 
-	int i = 0;
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 
+		
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
 		Render(testRenderSlot);
-
+		ui->Render();
+		d3d11Data->swapChain->Present(0, 0);
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();
 #ifdef _DEBUG
@@ -82,15 +66,8 @@ int main(int argc, char* args[])
 		
 		//Update
 		/////////// REMOVE //////////////
-		apa->Run(ui, 1.0f);
+		//apa->Run(ui, 1.0f);
 		/////////// REMOVE //////////////'
-
-		ClearRenderTargetView(rtv);
-		ClearDepthStencilView(dsv);
-
-		d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
-		//d3d11Data->deviceContext->Draw(3, 0);
-		d3d11Data->swapChain->Present(0, 0);
 
 		MemLib::pdefrag();
 	}

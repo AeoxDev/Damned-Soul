@@ -2,6 +2,7 @@
 #include <iostream>
 #include "SDLhandler.h"
 #include "D2D1Graphics.h"
+#include "UICanvas.h"
 
 UI::UI()
 {
@@ -11,7 +12,6 @@ UI::UI()
 	{
 		std::cout << "FAILED to create D2D1Factory" << std::endl;
 		return;
-
 	}
 
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(m_WriteFactory), reinterpret_cast<IUnknown**>(&m_WriteFactory));
@@ -76,6 +76,16 @@ UI::~UI()
 	m_Brush->Release();
 	m_YellowBrush->Release();
 	m_Factory->Release();
+}
+
+void UI::Render()
+{
+	BeginFrame();
+	if (m_CurrentCanvas != nullptr)
+		m_CurrentCanvas->Render(this);
+
+
+	EndFrame();
 }
 
 void UI::BeginFrame()
@@ -145,5 +155,10 @@ ID2D1SolidColorBrush*& UI::GetBrush()
 ID2D1SolidColorBrush*& UI::GetYellowBrush()
 {
 	return m_YellowBrush;
+}
+
+void UI::SetCurrentCanvas(UICanvas* canvas)
+{
+	m_CurrentCanvas = canvas;
 }
 

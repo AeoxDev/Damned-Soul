@@ -27,6 +27,15 @@ void UIButton::Draw(PoolPointer<UI>& ui)
 	}
 }
 
+void UIButton::Draw(UI* ui, ID2D1RenderTarget* renderTarget)
+{
+	if (true == m_Visibility)
+	{
+		m_Images[m_CurrentImage]->Draw(renderTarget);
+		m_Text.Draw(ui);
+	}
+}
+
 /*void UIButton::Activate()
 {
 	if (onActive)

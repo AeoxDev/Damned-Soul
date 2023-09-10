@@ -26,6 +26,8 @@ public:
 	~UIButton();
 
 	void Draw(PoolPointer<UI>& ui);
+	void Draw(UI* ui, ID2D1RenderTarget* renderTarget);
+
 	void Activate();
 	void Deactivate();
 	void Interact();

@@ -21,6 +21,24 @@ void UICanvas::DrawTexts(PoolPointer<UI>& ui)
 		text.Draw(ui);
 }
 
+void UICanvas::DrawButtons(UI* ui, ID2D1RenderTarget* renderTarget)
+{
+	for (auto& button : m_Buttons)
+		button->Draw(ui, renderTarget);
+}
+
+void UICanvas::DrawImages(ID2D1RenderTarget* renderTarget)
+{
+	for (auto& [name, image] : m_Images)
+		image->Draw(renderTarget);
+}
+
+void UICanvas::DrawTexts(UI* ui)
+{
+	for (auto& [name, text] : m_Texts)
+		text.Draw(ui);
+}
+
 void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
 {
 	PoolPointer<UIButton> temp = MemLib::palloc(sizeof(UIButton));
@@ -31,9 +49,18 @@ void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, cons
 
 void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
 {
-	PoolPointer<UIImage> temp = MemLib::palloc(sizeof(UIImage));
+	/*PoolPointer<UIImage> temp = MemLib::palloc(sizeof(UIImage));
 	*temp = UIImage(ui, file, position, scale, rotation, visibility, opacity);
-	m_Images.emplace(name, temp);
+	m_Images.emplace(name, temp);*/
+}
+
+void UICanvas::AddImage(UI* ui, const std::string& name, const std::string& file, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool visibility, float opacity)
+{
+	/*PoolPointer<UIImage> temp = MemLib::palloc(sizeof(UIImage));
+	*temp = UIImage(ui, file, position, scale, rotation, visibility, opacity);
+	m_Images.emplace(name, temp);*/
+
+	m_Images.emplace(name, new UIImage(ui, file, position, scale, rotation, visibility, opacity));
 }
 
 void UICanvas::AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, Vector2 position, Vector2 scale, float rotation, bool visibility)
@@ -44,7 +71,8 @@ void UICanvas::AddText(PoolPointer<UI>& ui, const std::string& name, const std::
 UICanvas::~UICanvas()
 {
 	for (auto& [name, image] : m_Images)
-		MemLib::pfree(image);
+		delete image;
+	//MemLib::pfree(image);
 
 	for (auto& button : m_Buttons)
 		MemLib::pfree(button);
@@ -57,13 +85,17 @@ void UICanvas::Reset()
 
 void UICanvas::Render(PoolPointer<UI>& ui)
 {
-	ui->BeginFrame();
-
 	DrawButtons(ui);
 	DrawImages(ui);
 	DrawTexts(ui);
+}
 
-	ui->EndFrame();
+void UICanvas::Render(UI* ui)
+{
+	ID2D1RenderTarget* rt = ui->GetRenderTarget();
+	DrawButtons(ui, rt);
+	DrawImages(rt);
+	DrawTexts(ui);
 }
 
 bool UICanvas::Exit()
