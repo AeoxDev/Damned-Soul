@@ -8,7 +8,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO
 {
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
-	desc.ByteWidth = size + (16 - (size % 16));
+	desc.ByteWidth = (UINT)size + (16 - ((UINT)size % 16));
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER; // Is a constant buffer
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // CPU needs to be able to write
 	desc.MiscFlags = 0;
@@ -31,7 +31,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO
 	uint32_t* metadata = bfrHolder->metadata_arr[currentIdx];
 	metadata[0] = bindto; // Set shader to bind
 	metadata[1] = slot; // Set slot to use
-	metadata[2] = size;
+	metadata[2] = (uint32_t)size;
 
 
 	return bfrHolder->currentCount++;
@@ -103,7 +103,7 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 {
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_IMMUTABLE; // Doesn't need to be updated
-	desc.ByteWidth = size * count;
+	desc.ByteWidth = (UINT)size * (UINT)count;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Is a vertex buffer
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
@@ -123,8 +123,8 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 		return -1;
 	}
 
-	bfrHolder->metadata_arr[currentIdx][0] = size;
-	bfrHolder->metadata_arr[currentIdx][1] = count;
+	bfrHolder->metadata_arr[currentIdx][0] = (uint32_t)size;
+	bfrHolder->metadata_arr[currentIdx][1] = (uint32_t)count;
 
 	return bfrHolder->currentCount++;
 }
@@ -148,7 +148,7 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 {
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.ByteWidth = (size * count) + (16 - ((size * count) % 16)); // Will most likely not matter, since it takes list
+	desc.ByteWidth = (UINT)(size * count) + (16 - ((UINT)(size * count) % 16)); // Will most likely not matter, since it takes list
 	desc.BindFlags = D3D11_BIND_INDEX_BUFFER; // Is an index buffer
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
@@ -168,8 +168,8 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 		return -1;
 	}
 
-	bfrHolder->metadata_arr[currentIdx][0] = size;
-	bfrHolder->metadata_arr[currentIdx][1] = count;
+	bfrHolder->metadata_arr[currentIdx][0] = (uint32_t)size;
+	bfrHolder->metadata_arr[currentIdx][1] = (uint32_t)count;
 
 	return bfrHolder->currentCount++;
 }
