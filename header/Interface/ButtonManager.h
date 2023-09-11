@@ -3,8 +3,12 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <fstream>
 
 #include "SDLHandler.h"
+#include "../lib/stb_image.h"
+
+#define STB_IMAGE_IMPLEMENTATION
 
 struct Button
 {
@@ -13,7 +17,10 @@ struct Button
 
 	std::function<void()> action;
 
-	Button(std::pair<int, int> origin, std::pair<int, int> extends, std::function<void()> action) :origin(origin), extends(extends), action(action) {};
+	Button(std::pair<int, int> origin, std::pair<int, int> extends, std::function<void()> action) :origin(origin), extends(extends), action(action) 
+	{
+
+	};
 
 	bool Intersects(std::pair<int, int> position) 
 	{

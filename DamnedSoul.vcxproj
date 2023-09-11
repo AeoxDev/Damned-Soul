@@ -258,6 +258,7 @@
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\Interface\StateManager.h" />
     <ClInclude Include="header\Interface\StateStructures.h" />
+    <ClInclude Include="lib\stb_image.h" />
     <ClInclude Include="source\Colission.cpp" />
     <ClInclude Include="source\States.h" />
   </ItemGroup>
