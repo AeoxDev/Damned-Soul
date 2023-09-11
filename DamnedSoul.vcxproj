@@ -256,8 +256,13 @@
     <ClInclude Include="header\GeometryIndependent.h" />
     <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Physics\Backend\CircularCollision.h" />
+    <ClInclude Include="header\Physics\Backend\Collision.h" />
+    <ClInclude Include="header\Physics\Backend\ConvexCollision.h" />
+    <ClInclude Include="header\Physics\Backend\GeometryIndependent.h" />
+    <ClInclude Include="header\Physics\Hitbox.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClInclude Include="source\Colission.cpp" />
+    <ClInclude Include="source\Collision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
