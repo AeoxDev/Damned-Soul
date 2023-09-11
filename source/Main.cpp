@@ -25,7 +25,8 @@ int main(int argc, char* args[])
 	SetConstantBuffer(GetCameraBufferIndex());
 
 	Model testModel;
-	testModel.Load("Beholder");
+	if (false == testModel.Load("HellhoundDummy.mdl"))
+		return -1;
 	SetVertexBuffer(testModel.m_vertexBuffer);
 	SetIndexBuffer(testModel.m_indexBuffer);
 
@@ -34,7 +35,7 @@ int main(int argc, char* args[])
 		CountDeltaTime();
 
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		Render(testRenderSlot, testModel.m_indices->m_numIndices);
+		Render(testRenderSlot, testModel.m_bonelessModel->m_numIndices);
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();

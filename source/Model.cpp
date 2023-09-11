@@ -6,10 +6,26 @@
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 
-bool Model::Load(const char* filepathWithoutEnding)
+const Material& ModelBonelss::GetMaterial(const size_t idx) const
 {
-	std::string name = filepathWithoutEnding;
-	name.append(".mdl");
+	return ((Material*)m_data)[idx];
+}
+
+const VertexBoneless* ModelBonelss::GetVertices() const
+{
+	return (VertexBoneless*)(&m_data[m_numMaterials * sizeof(Material)]);
+}
+
+const uint32_t* ModelBonelss::GetIndices() const
+{
+	return (uint32_t*)(&m_data[m_numMaterials * sizeof(Material) + m_numVertices * sizeof(VertexBoneless)]);
+}
+
+
+bool Model::Load(const char* filename)
+{
+	std::string name = "Models\\Mdl\\";
+	name.append(filename);
 
 	std::ifstream reader;
 	auto flags = std::ios::binary; // | std::ios::ate;
@@ -17,7 +33,7 @@ bool Model::Load(const char* filepathWithoutEnding)
 
 	if (false == reader.is_open())
 	{
-		std::cerr << "Failed to open model for \"" << filepathWithoutEnding << "\"! Please verify file!" << std::endl;
+		std::cerr << "Failed to open model for \"" << filename << "\"! Please verify file!" << std::endl;
 		return false;
 	}
 
@@ -38,43 +54,14 @@ bool Model::Load(const char* filepathWithoutEnding)
 	// pop the stack
 	MemLib::spop();
 
-	name = filepathWithoutEnding;
-	name.append(".idx");
-	reader.open(name, flags);
-
-	if (false == reader.is_open())
-	{
-		std::cerr << "Failed to open index data for for \"" << filepathWithoutEnding << "\"! Please verify file!" << std::endl;
-		return false;
-	}
-
-	// Allocate temporarily onto the stack
-	reader.seekg(0, std::ios::end);
-	size = static_cast<unsigned int>(reader.tellg());
-	char* indexData = (char*)MemLib::spush(size);
-	reader.seekg(0, std::ios::beg);
-
-	// Read byte data onto stack
-	reader.read(indexData, size);
-	reader.close();
-
-	// Copy data to the boneless model
-	m_indices = MemLib::palloc(size);
-	std::memcpy(&(*m_indices), indexData, size);
-
-	// pop the stack
-	MemLib::spop();
-
-	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->m_vertices, sizeof(VertexBoneless), m_bonelessModel->m_numVertices);
-	m_indexBuffer = CreateIndexBuffer(m_indices->m_indices, sizeof(uint32_t), m_indices->m_numIndices);
+	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->GetVertices(), sizeof(VertexBoneless), m_bonelessModel->m_numVertices);
+	m_indexBuffer = CreateIndexBuffer(m_bonelessModel->GetIndices(), sizeof(uint32_t), m_bonelessModel->m_numIndices);
 }
 
 void Model::Free()
 {
 	if (false == m_bonelessModel.IsNullptr())
 		MemLib::pfree(m_bonelessModel);
-	if (false == m_indices.IsNullptr())
-		MemLib::pfree(m_indices);
 }
 
 
