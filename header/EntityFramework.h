@@ -290,7 +290,7 @@ private:
 		while (first < pRegistry->entities.size() &&
 			(components != (components & pRegistry->entities[first].components) || !EntityGlobals::IsEntityValid(pRegistry->entities[first].id)))
 			first++;
-		return Iterator(pRegistry, 0, components);
+		return Iterator(pRegistry, first, components);
 	}
 
 	const Iterator end() const
