@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 #include <d3d11.h>
 #include <vector>
-//#include "EntityFramework.h"
+#include "EntityFramework.h"
 
 //Real
 //Hitbox variables
@@ -41,7 +41,7 @@ struct HitboxVisualizeVariables
 /// <param name="offsetZ"></param>
 /// <param name="entity"></param>
 /// <returns>The id of the circle, use this to edit and destroy this hitbox for the given component</returns>
-//int CreateHitbox(EntityID entity, float radius, float offsetX, float offsetZ);
+int CreateHitbox(EntityID entity, float radius, float offsetX, float offsetZ);
 /// <summary>
 /// Create a convex shape with corners relative to the position of the entity, then offset.
 /// </summary>
@@ -52,7 +52,7 @@ struct HitboxVisualizeVariables
 /// <param name="cornerPosX"></param>
 /// <param name="cornerPosY"></param>
 /// <returns></returns>
-//int CreateHitbox(EntityID entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ);
+int CreateHitbox(EntityID entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ);
 
 void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer);
 

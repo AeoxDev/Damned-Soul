@@ -58,7 +58,7 @@ namespace EntityGlobals
 	static constexpr int MAX_COMPONENTS = 32;
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
-	int compCount = 0;
+	static int compCount = 0;
 
 	//Previously, GetId returned the current compCount and also incremented it, but let's split these
 	template <typename T>
@@ -69,7 +69,7 @@ namespace EntityGlobals
 		return compId;
 	}
 
-	bool IsEntityValid(EntityID id)
+	static constexpr bool IsEntityValid(EntityID& id)
 	{
 		return id.index != -1;
 	}
