@@ -7,7 +7,7 @@
 #include <Windows.h>
 
 #include "MemLib/MemLib.hpp"
-#include "ComponentHelper.h"
+//#include "ComponentHelper.h"
 
 /*
 	//HOW TO USE (Basic version):
@@ -58,7 +58,7 @@ namespace EntityGlobals
 	static constexpr int MAX_COMPONENTS = 32;
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
-	int compCount = 0;
+	static int compCount = 0;
 
 	//Previously, GetId returned the current compCount and also incremented it, but let's split these
 	template <typename T>
@@ -69,7 +69,7 @@ namespace EntityGlobals
 		return compId;
 	}
 
-	bool IsEntityValid(EntityID id)
+	static constexpr bool IsEntityValid(EntityID id)
 	{
 		return id.index != -1;
 	}
@@ -235,7 +235,7 @@ private:
 template<typename ...Args>
 class View
 {
-private:
+public:
 	View(Registry& registry) : pRegistry(&registry)
 	{
 		//Array of integers for the id's ranging from 0 to however many component-types we're passing in
@@ -290,7 +290,7 @@ private:
 		while (first < pRegistry->entities.size() &&
 			(components != (components & pRegistry->entities[first].components) || !EntityGlobals::IsEntityValid(pRegistry->entities[first].id)))
 			first++;
-		return Iterator(pRegistry, 0, components);
+		return Iterator(pRegistry, first, components);
 	}
 
 	const Iterator end() const

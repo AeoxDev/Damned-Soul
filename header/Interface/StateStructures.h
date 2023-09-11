@@ -117,7 +117,7 @@ struct Game
 
 	void Update()
 	{
-		//sceneManager.Update();
+		sceneManager.Update();
 	};
 
 	void HandleKeyInputs(int keyInput[], Settings& settings)
@@ -127,25 +127,33 @@ struct Game
 		case GameState::Unpause:
 			std::cout << "Unpause\n";
 
-			if (keyInput[SDL_SCANCODE_W])
-				playerPosition.second += 10;
+			if (keyInput[SDL_SCANCODE_0])
+				sceneManager.SetScene("Shop");
 
-			if (keyInput[SDL_SCANCODE_A])
-				playerPosition.first -= 10;
+			if (keyInput[SDL_SCANCODE_1] && sceneManager.GetCurrentSceneName() == "Shop")
+			{
+				std::string name = "Level_1";
+				sceneManager.SetScene(name);
+			}
 
-			if (keyInput[SDL_SCANCODE_S])
-				playerPosition.second -= 10;
+			if (keyInput[SDL_SCANCODE_2] && sceneManager.GetCurrentSceneName() == "Level_1")
+			{
+				std::vector<std::string> entityList = { "Imp", "Imp" , "Skeleton" };
+				std::string name = "Level_2";
+				sceneManager.SetScene(name);
+				sceneManager.AddScene(name, entityList);
+			}
 
-			if (keyInput[SDL_SCANCODE_D])
-				playerPosition.first += 10;
+			if (keyInput[SDL_SCANCODE_3] && sceneManager.GetCurrentSceneName() == "Level_2")
+			{
+				std::vector<std::string> entityList = { "Skeleton", "Skeleton" , "Demon" };
+				std::string name = "Level_3";
+				sceneManager.SetScene(name);
+				sceneManager.AddScene(name, entityList);
+			}
 
-			if (keyInput[SDL_SCANCODE_1])
-				sceneManager.SetScene("Level_1");
-
-			if (keyInput[SDL_SCANCODE_2])
-				sceneManager.SetScene("Level_2");
-
-			std::cout << "Player Position: " << playerPosition.first << ", " << playerPosition.second << std::endl;
+			if (keyInput[SDL_SCANCODE_Q])
+				sceneManager.WriteEntities();
 
 			if (keyInput[SDL_SCANCODE_ESCAPE])
 				currentSubState = GameState::Pause;
