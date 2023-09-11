@@ -11,8 +11,7 @@
 #include "DeltaTime.h"
 #include "Camera.h"
 #include "GameRenderer.h"
-
-
+#include "Model.h"
 
 int main(int argc, char* args[])
 {
@@ -25,12 +24,17 @@ int main(int argc, char* args[])
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
+	Model testModel;
+	testModel.Load("Beholder");
+	SetVertexBuffer(testModel.m_vertexBuffer);
+	SetIndexBuffer(testModel.m_indexBuffer);
+
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		Render(testRenderSlot);
+		Render(testRenderSlot, testModel.m_indices->m_numIndices);
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();

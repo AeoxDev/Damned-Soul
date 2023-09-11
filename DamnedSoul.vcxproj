@@ -184,6 +184,7 @@
     <ClCompile Include="source\Hitbox.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +251,7 @@
     <ClInclude Include="header\GameRenderer.h" />
     <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Model.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="source\Colission.cpp" />
   </ItemGroup>
