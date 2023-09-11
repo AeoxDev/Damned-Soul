@@ -1,3 +1,5 @@
+#ifndef ECS
+#define ECS
 #pragma once
 #include <iostream>
 #include <vector>
@@ -301,3 +303,5 @@ private:
 	//DOCUMENTATION OF ALL FUNCTIONS AND HOW TO USE THEM:
 
 */
+
+#endif

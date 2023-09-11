@@ -3,6 +3,8 @@
 #define SAME_TYPE_HITBOX_LIMIT 4 //Limit for same type of hitboxes
 #define CONVEX_CORNER_LIMIT 8 //Maximum amount of corners allowed per Convex shape
 
+//Real
+
 struct CollisionFlags
 {
 	unsigned stage				: 1;//Collide with stage
@@ -41,11 +43,11 @@ struct GeometryIndependentColliderComponent
 
 struct CollisionComponent
 {
-	int activeCirclesHitboxes;
+	int activeCirclesHitboxes;//This is a collection of bits that indicate which are active or not
 	CollisionFlags circularFlags[SAME_TYPE_HITBOX_LIMIT];
 	CircleColliderComponent circleHitbox[SAME_TYPE_HITBOX_LIMIT];
 
-	int activeConvexHitboxes;
+	int activeConvexHitboxes;//This is a collection of bits that indicate which are active or not
 	CollisionFlags convexFlags[SAME_TYPE_HITBOX_LIMIT];
 	ConvexColliderComponent circleHitbox[SAME_TYPE_HITBOX_LIMIT];
 };
