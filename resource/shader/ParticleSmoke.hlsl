@@ -10,8 +10,8 @@ struct input
 };
 
 
-ConsumeStructuredBuffer<input> inputData : register(u0);
-AppendStructuredBuffer<input> outputData : register(u1);
+StructuredBuffer<input> inputParticleData : register( t0 ); 
+RWStructuredBuffer<input> outputParticleData : register( u0 );
 
 [numthreads(1, 1, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )

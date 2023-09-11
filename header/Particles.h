@@ -24,7 +24,7 @@ struct ParticleMetadata
 extern PoolPointer<Particle> m_particles;
 
 extern int8_t m_computeShaders[8]; //The amount of compute shaders
-extern int8_t m_ACBuffer[2]; //Append consume buffers
+extern int8_t m_RWBuffer[2]; //Read/Write buffers
 
 
 void InitializeParticles();

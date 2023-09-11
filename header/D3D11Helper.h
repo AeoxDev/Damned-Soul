@@ -3,6 +3,7 @@
 //This contains helper functions for setting up renderable objects
 // and manipulating their render states.
 
+
 enum SHADER_TO_BIND_BUFFER
 {
 	BIND_VERTEX,
@@ -15,13 +16,19 @@ enum SHADER_TO_BIND_BUFFER
 
 enum RESOURCES
 {
-	RESOURCE_BUFFER,
-	RESOURCE_TEXTURE1D,
-	RESOURCE_TEXTURE1DARRAY,
-	RESOURCE_TEXTURE2D,
-	RESOURCE_TEXTURE2DARRAY,
-	RESOURCE_TEXTURE3D,
-	RESOURCE_TEXCUBE
+	RESOURCE_BUFFER = 1,
+	RESOURCE_TEXTURE1D = 2,
+	RESOURCE_TEXTURE1DARRAY = 4,
+	RESOURCE_TEXTURE2D = 8,
+	RESOURCE_TEXTURE2DARRAY = 16,
+	RESOURCE_TEXTURE3D = 32,
+	RESOURCE_TEXCUBE = 64
+};
+
+enum FLAGS
+{
+	READ = 0x10000L,
+	WRITE = 0x20000L
 };
 
 typedef int8_t PS_IDX;
@@ -90,14 +97,14 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 
 //NOTE TODO: MAKE A FIX FOR CREATESRV AND CREATEUAV (THEY CAN NOT HAVE MULTIPLE BINDFLAGS THEY ARE HARDCODED)
 // Create a shader resource view
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, const uint8_t slot);
+SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, const FLAGS& flags, const uint8_t slot);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx);
 // Update a shader resource view index with given data
 bool UpdateShaderResourceView(const SRV_IDX, const void* data);
 
 // Create a unordered access view
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, const uint8_t slot);
+UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, const FLAGS &flags, const uint8_t slot);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx);
 // Update a unordered access view index with given data
