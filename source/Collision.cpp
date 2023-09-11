@@ -11,17 +11,17 @@
 /// <param name="pos2Y">CenterPointY</param>
 /// <param name="r2">Radius</param>
 /// <returns> return < 0.0f means hit, return > 0.0f means miss</returns>
-float CircularCircular(float& pos1X, float& pos1Y, float& r1, float& pos2X, float& pos2Y, float& r2)
-{
-	//Calculate distance between centerpoints
-	float distX = pos1X - pos2X;
-	float distY = pos1Y - pos2Y;
-	float distance = std::powf((distX * distX + distY * distY), 0.5f);
-	//Circles overlap if distance is less than sum of both radi.
-	float hitDistance = distance - (r1 + r2);
-	//Hit when negative, 
-	return hitDistance;
-}
+//float CircularCircular(float& pos1X, float& pos1Z, float& r1, float& pos2X, float& pos2Z, float& r2)
+//{
+//	//Calculate distance between centerpoints
+//	float distX = pos1X - pos2X;
+//	float distY = pos1Y - pos2Y;
+//	float distance = std::powf((distX * distX + distY * distY), 0.5f);
+//	//Circles overlap if distance is less than sum of both radi.
+//	float hitDistance = distance - (r1 + r2);
+//	//Hit when negative, 
+//	return hitDistance;
+//}
 
 struct CircularConvexReturn
 {
@@ -30,7 +30,7 @@ struct CircularConvexReturn
 	float convexAngleOfAttackX, convexAngleOfAttackY;
 };
 
-CircularConvexReturn CircularConvex(float& pos1X, float& pos1Y, float& r1/*, ConvexComponent*/)
+CircularConvexReturn CircularConvex(float& pos1X, float& pos1Z, float& r1/*, ConvexComponent*/)
 {
 	CircularConvexReturn toReturn;
 	toReturn.hit = false;
@@ -49,7 +49,7 @@ CircularConvexReturn CircularConvex(float& pos1X, float& pos1Y, float& r1/*, Con
 	return toReturn;
 }
 
-int PositionGeometryIndependent(float posX, float posY /*GeometryIndependent Component*/)
+int PositionGeometryIndependent(float posX, float posZ /*GeometryIndependent Component*/)
 {
 	//Offset posX and posY with GI offset
 	//Translate position into pixels on texture
