@@ -11,7 +11,6 @@
 #include "DeltaTime.h"
 #include "Camera.h"
 #include "GameRenderer.h"
-#include "Hitbox.h"
 
 
 
@@ -22,34 +21,17 @@ int main(int argc, char* args[])
     SetupWindow();
 	std::string title = "Damned Soul";
 
-	
-	HitboxList list;
-	std::vector<DirectX::XMFLOAT3> vertices;
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, 0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, -0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, -0.5f, 0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, 0.5f, -0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, 0.5f, -0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(0.5f, -0.5f, -0.5f));
-	vertices.push_back(DirectX::XMFLOAT3(-0.5f, -0.5f, -0.5f));
-
 	int testRenderSlot = SetupGameRenderer();
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
-	CreateHitbox(d3d11Data->device, 1, vertices, list);
-	CreateShadersLayoutAndRasterState(d3d11Data->device,list);
 
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		//Render(testRenderSlot);
-
-		DebugRenderHitbox(d3d11Data->deviceContext, list);
-		
+		Render(testRenderSlot);
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();
