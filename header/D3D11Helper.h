@@ -31,6 +31,20 @@ enum FLAGS
 	WRITE = 0x20000L
 };
 
+enum BUFFER_FLAGS
+{
+	BIND_VERTEX_BUFFER = 0x1L,
+	BIND_INDEX_BUFFER = 0x2L,
+	BIND_CONSTANT_BUFFER = 0x4L,
+	BIND_SHADER_RESOURCE = 0x8L,
+	BIND_STREAM_OUTPUT = 0x10L,
+	BIND_RENDER_TARGET = 0x20L,
+	BIND_DEPTH_STENCIL = 0x40L,
+	BIND_UNORDERED_ACCESS = 0x80L,
+	BIND_DECODER = 0x200L,
+	BIND_VIDEO_ENCODER = 0x400L
+};
+
 typedef int8_t PS_IDX;
 typedef int8_t VS_IDX;
 typedef int8_t CS_IDX;
@@ -56,9 +70,9 @@ VS_IDX LoadVertexShader(const char* name);
 bool SetVertexShader(const VS_IDX idx);
 
 // Load a Compute Shader by name (cs.cso) and return a global index that can be used to reference it
-CS_IDX LoadVertexShader(const char* name);
+CS_IDX LoadComputeShader(const char* name);
 // Set a new compute shader by index
-bool SetVertexShader(const VS_IDX idx);
+bool SetComputeShader(const CS_IDX idx);
 
 
 // Create a constant buffer with provided data and return a unique index to it
@@ -96,19 +110,17 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 
 
 //NOTE TODO: MAKE A FIX FOR CREATESRV AND CREATEUAV (THEY CAN NOT HAVE MULTIPLE BINDFLAGS THEY ARE HARDCODED)
-// Create a shader resource view
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, const FLAGS& flags, const uint8_t slot);
+// Create a shader resource view, if a buffer is to be created send in an empty string
+SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, BUFFER_FLAGS bufferFlags, const FLAGS& flags, const uint8_t slot);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx);
 // Update a shader resource view index with given data
 bool UpdateShaderResourceView(const SRV_IDX, const void* data);
 
-// Create a unordered access view
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, const FLAGS &flags, const uint8_t slot);
+// Create a unordered access view, if a buffer is to be created send in an empty string
+UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, BUFFER_FLAGS bufferFlags, const FLAGS &flags, const uint8_t slot);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx);
-// Swap the particle input and output buffers
-void SwapParticleBuffers(const UAV_IDX idxInput, const UAV_IDX idxOutput);
 // Update a unordered access view index with given data
 //bool UpdateUnorderedAcessView(const UAV_IDX, const void* data);
 

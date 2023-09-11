@@ -73,3 +73,8 @@ void Render(const int& s)
 	d3d11Data->swapChain->Present(0, 0);
 
 }
+
+void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ)
+{
+	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
+}

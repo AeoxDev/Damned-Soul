@@ -61,6 +61,9 @@ bool SetConstantBuffer(const CB_IDX idx)
 	case BIND_PIXEL:
 		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
+	case BIND_COMPUTE:
+		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
 	default:
 		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
 		return false;

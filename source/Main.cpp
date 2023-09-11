@@ -27,9 +27,14 @@ int main(int argc, char* args[])
 	InitializeParticles();
 	SetConstantBuffer(GetCameraBufferIndex());
 
+	InitializeParticles();
+
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
+
+		SwapParticleBuffers(GetFirstParticle(), GetSecondParticle());
+		DispatchParticles(1, 1, 1);
 
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
 		Render(testRenderSlot);

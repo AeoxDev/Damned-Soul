@@ -21,10 +21,20 @@ struct ParticleMetadata
 	DirectX::XMFLOAT3 m_spawnPos;
 };
 
+extern int16_t m_metadata;
+
 extern PoolPointer<Particle> m_particles;
 
 extern int8_t m_computeShaders[8]; //The amount of compute shaders
-extern int8_t m_RWBuffer[2]; //Read/Write buffers
+extern int8_t m_UAVBuffers[2]; //0 starts as input, 1 starts as output, they switch each frame
+extern int8_t m_SRVBuffers[2]; // ------------------------||----------------------------------
 
 
 void InitializeParticles();
+
+//Returns the first created particle buffer
+int8_t GetFirstParticle();
+//Returns the second created particle buffer
+int8_t GetSecondParticle();
+
+
