@@ -1,5 +1,4 @@
 #include "UIComponent.h"
-#include "D2D1Graphics.h"
 #include "SDLHandler.h"
 
 using namespace DirectX::SimpleMath;

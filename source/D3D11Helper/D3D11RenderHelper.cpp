@@ -1,7 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
-#include "D2D1Graphics.h"
+#include "UIRenderer.h"
 #include <iostream>
 
 VP_IDX CreateViewport(const size_t& width, const size_t& height)
@@ -40,11 +40,6 @@ RTV_IDX CreateRenderTargetView()
 		return false;
 	}
 
-	if (FAILED(backBuffer->QueryInterface<IDXGISurface>(&UISurface)))
-	{
-		printf("Failed to create UI Surface\n");
-		return -1;
-	}
 	//D3D11_RENDER_TARGET_VIEW_DESC desc;
 	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	//desc.Texture2D.MipSlice = 0;
@@ -63,6 +58,7 @@ RTV_IDX CreateRenderTargetView()
 	return (rtvHolder->currentCount)++;
 
 }
+
 
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 {
@@ -117,7 +113,7 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 
 void ClearRenderTargetView(const RTV_IDX idx)
 {
-	float color[4] = { 1.0f, 0.0f, 0.84f, 1.0f };
+	float color[4] = { 1.0f, 0.0f, 0.84f, 0.0f };
 	d3d11Data->deviceContext->ClearRenderTargetView(rtvHolder->rtv_arr[idx], color);
 }
 
@@ -161,4 +157,27 @@ bool SetRasterizerState(const RS_IDX idx)
 
 	d3d11Data->deviceContext->RSSetState(rsHolder->rs_arr[idx]);
 	return true;
+}
+
+SMP_IDX CreateSamplerState()
+{
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	HRESULT hr = d3d11Data->device->CreateSamplerState(&samplerDesc, &smpHolder->smp_arr[smpHolder->currentCount]);
+	if FAILED(hr)
+	{
+		std::cout << "Failed to create Sampler State" << std::endl;
+		return -1;
+	}
+
+	return smpHolder->currentCount++;
 }

@@ -2,6 +2,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "SDLHandler.h"
+#include "UIRenderer.h"
 
 struct RenderSetupComponent
 {
@@ -13,6 +14,7 @@ struct RenderSetupComponent
 	VP_IDX	viewPort;
 	RTV_IDX renderTargetView;
 	DSV_IDX depthStencilView;
+	SMP_IDX samplerState;
 };
 
 RenderSetupComponent renderStates[8];
@@ -34,6 +36,7 @@ int SetupGameRenderer()
 		float normal[4];
 		float uv[2];
 	};
+
 	Vertex triangle[3] = {
 		0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
 		-0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
@@ -46,6 +49,11 @@ int SetupGameRenderer()
 	s = SetIndexBuffer(renderStates[0].indexBuffer);
 
 	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Create a sampler state
+	renderStates[0].samplerState = CreateSamplerState();
+	// Set the sampler state
+	d3d11Data->deviceContext->PSSetSamplers(0, 1, &smpHolder->smp_arr[renderStates[0].samplerState]);
 
 	// Create a viewport
 	renderStates[0].viewPort = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
@@ -60,13 +68,22 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
-void Render(const int& s)
+void Render(const int& s, UI* ui)
 {
+	RenderUI(ui);
+
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
+	
+	SetRenderTargetViewAndDepthStencil(renderStates[0].renderTargetView, renderStates[0].depthStencilView);
+	SetPixelShader(renderStates[0].pixelShader);
+	SetVertexShader(renderStates[0].vertexShader);
+	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[UIComponents.srv]);
+	SetVertexBuffer(renderStates[0].vertexBuffer);
+	SetIndexBuffer(renderStates[0].indexBuffer);
 
 	d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
-	
+
 	//d3d11Data->deviceContext->Draw(3, 0);
 	//d3d11Data->swapChain->Present(0, 0);
 

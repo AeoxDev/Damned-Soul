@@ -17,6 +17,7 @@ DSVHolder* dsvHolder;
 SRVHolder* srvHolder;
 UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
+SamplerStateHolder* smpHolder;
 
 ////Externs:
 //ID3D11DeviceContext* deviceContext;
@@ -87,6 +88,7 @@ int SetupDirectX(HWND& w)
 	srvHolder = (SRVHolder*)MemLib::spush(sizeof(SRVHolder));
 	uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
+	smpHolder = (SamplerStateHolder*)MemLib::spush(sizeof(SamplerStateHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG
@@ -145,6 +147,9 @@ void EndDirectX()
 	// Release all rasterizer states
 	for (int i = 0; i < rsHolder->currentCount; ++i)
 		rsHolder->rs_arr[i]->Release();
+
+	for (int i = 0; i < smpHolder->currentCount; ++i)
+		smpHolder->smp_arr[i]->Release();
 
 	// Release basic things
 	d3d11Data->swapChain->Release();

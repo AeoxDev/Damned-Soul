@@ -28,6 +28,8 @@ ExMenu::ExMenu(UI*& ui)
 {
 	AddImage(ui, "Title", "ExMenu/ExTitle.png", { 100,100 }, { 1.0f, 1.0f });
 	AddImage(ui, "Eye", "ExMenu/Eye.png", { 50, 50 }, { 1.5f, 1.5f });
+	AddImage(ui, "Eye2", "ExMenu/Eye.png", { 780, 360 }, { 1.5f, 1.5f });
+
 }
 
 ExMenu::~ExMenu()

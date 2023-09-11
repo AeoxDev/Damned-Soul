@@ -22,6 +22,8 @@ typedef int8_t VP_IDX;
 typedef int8_t RTV_IDX;
 typedef int8_t DSV_IDX;
 typedef int8_t RS_IDX;
+typedef int16_t SRV_IDX;
+typedef int8_t SMP_IDX;
 
 // Load a Pixel Shader by name (ps.cso) and return a global index that can be used to reference it
 PS_IDX LoadPixelShader(const char* name);
@@ -58,6 +60,8 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 // Set an active Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx);
 
+// Create a Sampler
+SMP_IDX CreateSamplerState();
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
@@ -66,6 +70,7 @@ bool SetViewport(const VP_IDX idx);
 
 // Create a render target view
 RTV_IDX CreateRenderTargetView();
+
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
 // Set a render target view and depth stencil view
@@ -78,3 +83,4 @@ void ClearDepthStencilView(const DSV_IDX idx);
 
 RS_IDX CreateRasterizerState(const bool cull, const bool solid);
 bool SetRasterizerState(const RS_IDX idx);
+

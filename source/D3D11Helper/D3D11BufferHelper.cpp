@@ -186,3 +186,4 @@ bool SetIndexBuffer(const IB_IDX idx)
 	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_arr[idx], DXGI_FORMAT_R32_UINT, offset);
 	return true;
 }
+

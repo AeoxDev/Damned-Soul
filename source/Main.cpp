@@ -13,7 +13,7 @@
 #include "GameRenderer.h"
 
 #include "ExampleMenu.h"
-#include "D2D1Graphics.h"
+#include "UIRenderer.h"
 #include <iostream>
 
 int main(int argc, char* args[])
@@ -26,6 +26,12 @@ int main(int argc, char* args[])
 	int testRenderSlot = SetupGameRenderer();
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
+
+	if (!SetupUIRenderer())
+	{
+		std::cout << "Failed to setup UI Renderer" << std::endl;
+		return -1;
+	}
 
 	/////////// REMOVE //////////////
 
@@ -48,8 +54,8 @@ int main(int argc, char* args[])
 
 		
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		Render(testRenderSlot);
-		ui->Render();
+		//RenderUI(ui);
+		Render(testRenderSlot, ui);
 		d3d11Data->swapChain->Present(0, 0);
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();

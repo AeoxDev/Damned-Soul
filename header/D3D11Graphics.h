@@ -76,6 +76,12 @@ struct RasterizerHolder
 	ID3D11RasterizerState* rs_arr[4];
 };
 
+struct SamplerStateHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11SamplerState* smp_arr[4];
+};
+
 // Uses MemLib's persistent stack
 extern D3D11Data* d3d11Data;
 extern PixelShaderHolder* pixHolder;
@@ -88,6 +94,7 @@ extern DSVHolder* dsvHolder;
 extern SRVHolder* srvHolder;
 extern UAVHolder* uavHolder;
 extern RasterizerHolder* rsHolder;
+extern SamplerStateHolder* smpHolder;
 
 //extern ID3D11Device* device;
 //extern ID3D11DeviceContext* deviceContext;

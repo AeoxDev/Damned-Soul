@@ -1,7 +1,7 @@
 #include "UI.h"
 #include <iostream>
 #include "SDLhandler.h"
-#include "D2D1Graphics.h"
+#include "UIRenderer.h"
 #include "UICanvas.h"
 
 UI::UI()

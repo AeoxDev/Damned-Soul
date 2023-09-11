@@ -1,179 +1,69 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\D3D11Helper">
-      <UniqueIdentifier>{fe3ca8f1-fe5f-4bfe-89a4-a7fd42d91e0c}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\SDLHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp">
-      <Filter>Source Files\D3D11Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp">
-      <Filter>Source Files\D3D11Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp">
-      <Filter>Source Files\D3D11Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Hitbox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ConfigManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ConfigInterpreter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D2D1Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ConfigInterpreter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\DeltaTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UIComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UIText.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UIImage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UIButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UICanvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExampleMenu.cpp">
-    <ClCompile Include="source\DeltaTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="resource\shader\VertexShader.hlsl" />
-    <FxCompile Include="resource\shader\TestVS.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\shader\TestPS.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
+    <FxCompile Include="resource\shader\TestPS.hlsl" />
+    <FxCompile Include="resource\shader\TestVS.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxPixelShader.hlsl" />
+    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
+    <FxCompile Include="resource\shader\VertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\SDLHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Audio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Hitbox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\ConfigManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="D2D1Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\ComponentHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\ConfigInterpreter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\DeltaTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\EntityFramework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UICanvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIText.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIImage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ExampleMenu.h">
-    <ClInclude Include="header\Colission.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Colission.cpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="source\UIRenderer.cpp" />
+    <ClCompile Include="source\ExampleMenu.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\Audio.cpp" />
+    <ClCompile Include="source\ConfigInterpreter.cpp" />
+    <ClCompile Include="source\ConfigManager.cpp" />
+    <ClCompile Include="source\D3D11Graphics.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />
+    <ClCompile Include="source\DeltaTime.cpp" />
+    <ClCompile Include="source\GameRenderer.cpp" />
+    <ClCompile Include="source\Hitbox.cpp" />
+    <ClCompile Include="source\Input.cpp" />
+    <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\SDLHandler.cpp" />
+    <ClCompile Include="source\UI.cpp" />
+    <ClCompile Include="source\UIButton.cpp" />
+    <ClCompile Include="source\UICanvas.cpp" />
+    <ClCompile Include="source\UIComponent.cpp" />
+    <ClCompile Include="source\UIImage.cpp" />
+    <ClCompile Include="source\UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="lib\SDL2\lib\x64\SDL2.dll" />
-    <None Include="bin\SDL2.dll" />
+    <ClInclude Include="header\UIRenderer.h" />
+    <ClInclude Include="header\ExampleMenu.h" />
+    <ClInclude Include="header\Camera.h" />
+    <ClInclude Include="header\Colission.h" />
+    <ClInclude Include="header\ComponentHelper.h" />
+    <ClInclude Include="header\ConfigInterpreter.h" />
+    <ClInclude Include="header\ConfigManager.h" />
+    <ClInclude Include="header\Audio.h" />
+    <ClInclude Include="header\D3D11Graphics.h" />
+    <ClInclude Include="header\D3D11Helper.h" />
+    <ClInclude Include="header\DeltaTime.h" />
+    <ClInclude Include="header\EntityFramework.h" />
+    <ClInclude Include="header\GameRenderer.h" />
+    <ClInclude Include="header\Hitbox.h" />
+    <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\SDLHandler.h" />
+    <ClInclude Include="header\UI.h" />
+    <ClInclude Include="header\UIButton.h" />
+    <ClInclude Include="header\UICanvas.h" />
+    <ClInclude Include="header\UIComponent.h" />
+    <ClInclude Include="header\UIImage.h" />
+    <ClInclude Include="header\UIText.h" />
+    <ClInclude Include="source\Colission.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2main.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\SDL2.dll" />
+    <None Include="lib\SDL2\lib\x64\SDL2.dll" />
   </ItemGroup>
 </Project>
