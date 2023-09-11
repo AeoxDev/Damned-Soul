@@ -125,7 +125,6 @@ struct Game
 		switch (currentSubState)
 		{
 		case GameState::Unpause:
-			
 			std::cout << "Unpause\n";
 
 			if (keyInput[SDL_SCANCODE_W])
@@ -172,7 +171,6 @@ struct Game
 		switch (currentSubState)
 		{
 		case GameState::Unpause:
-
 			std::cout << "Unpause\n";
 
 			break;

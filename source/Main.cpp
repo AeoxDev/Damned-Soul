@@ -24,20 +24,8 @@ int main(int argc, char* args[])
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
-	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	StateManager stateManager;
 
-	// Create a viewport
-	VP_IDX vp = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
-	// Set the viewport
-	s = SetViewport(vp);
-	// Create a render target view
-	RTV_IDX rtv = CreateRenderTargetView();
-	// Create a depth stencil view
-	DSV_IDX dsv = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
-	// Set a render target view and depth stencil view
-	s = SetRenderTargetViewAndDepthStencil(rtv, dsv);
-
-	int i = 0;
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
@@ -45,8 +33,12 @@ int main(int argc, char* args[])
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
 		Render(testRenderSlot);
 
+		//Inputs: SDL readings of keyboard and mouse inputs
+		HandleInputs(stateManager);
+
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
-		HandleInput();
+		stateManager.Update();
+
 #ifdef _DEBUG
 		if (sdl.windowFlags == 0 && NewSecond())
 		{
