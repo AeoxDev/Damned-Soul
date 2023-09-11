@@ -1,4 +1,6 @@
 #pragma once
 
 int SetupGameRenderer();
-void Render(const int& componentSlot, const size_t& count);
+void Clear(const int& componentSlot);
+void Render(const size_t& count);
+void Present();

@@ -60,13 +60,18 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
-void Render(const int& s, const size_t& count)
+void Clear(const int& s)
 {
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
+}
 
+void Render(const size_t& count)
+{
 	d3d11Data->deviceContext->DrawIndexed(count, 0, 0);
-	//d3d11Data->deviceContext->Draw(3, 0);
-	d3d11Data->swapChain->Present(0, 0);
+}
 
+void Present()
+{
+	d3d11Data->swapChain->Present(0, 0);
 }

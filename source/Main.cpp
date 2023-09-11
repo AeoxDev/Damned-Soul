@@ -24,18 +24,28 @@ int main(int argc, char* args[])
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
-	Model testModel;
-	if (false == testModel.Load("FlyingEyeDummy.mdl"))
+	Model eyeModel;
+	if (false == eyeModel.Load("FlyingEyeDummy.mdl"))
 		return -1;
-	SetVertexBuffer(testModel.m_vertexBuffer);
-	SetIndexBuffer(testModel.m_indexBuffer);
+	Model dogModel;
+	if (false == dogModel.Load("Hellhound.mdl"))
+		return -1;
+	//testModel.SetVertexAndIndexBuffersActive();
 
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 
-		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		Render(testRenderSlot, testModel.m_bonelessModel->m_numIndices);
+		Clear(testRenderSlot);
+
+		//Render: GPU calls. Always tell the GPU what to do first when possible for optimal parallelism
+		eyeModel.SetVertexAndIndexBuffersActive();
+		Render(eyeModel.m_bonelessModel->m_numIndices);
+
+		dogModel.SetVertexAndIndexBuffersActive();
+		Render(dogModel.m_bonelessModel->m_numIndices);
+
+		Present();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();
