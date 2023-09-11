@@ -66,6 +66,6 @@ public:
 
     bool IsNullptr() const
     {
-        return (*m_pp) == nullptr;
+        return (m_pp == nullptr) || (*m_pp == nullptr);
     }
 };

@@ -1,148 +1,302 @@
-#pragma once
-
+#include <iostream>
 #include <vector>
-#include <string>
+#include <windows.h>
 
+#include <bitset>
+#include <Windows.h>
+
+#include "MemLib/MemLib.hpp"
+#include "ComponentHelper.h"
+
+//Notes taken from Cherno video because he's absolutely goated
 /*
-Entity itself is essentially just an indicator/index. Start at 0 and it's just that shrimple :^)
-The shmeat of the whole thing is a list of every entity and every component associated with it (called Registry in EnTT)
-
-Functions that will be needed for this registry/list:
-Create() just creates it
-AddEntity() adds an entity at index (starting at 0, then increment)
-AddComponent(), templated function that adds some component (struct with some data) to the current Entity (or do we want some sort of way of choosing which Entity to add component to?)
-Do we want this registry to be an unordered map? Since technically the "Entity" indicator itself could be the "key"? Or maybe that'll brick itself when we start removing entities from the list?
+On Binary and Bitwise Operators in C++:
+1 byte = 8 bits
+A bit is a binary (base2) number
+Addresses in memory are in hexadecimal (base16) which aligns really well since a hex number displays half a byte (binary 0000 is 0, 1111 is 15), and two hex makes up one byte
+Also https://www.youtube.com/watch?v=HoQhw6_1NAA saved me quite the headache
 */
 
-//Base Component struct
-struct Component
+//Just for better readability
+struct EntityID
 {
-	int size;
-	void* address;
+	int index;
+	bool state; //Boolean to check if the entity has been destroyed or not
 };
 
-//All components go under here
-struct StatusComponent
+//Defines a componentBitset as a bitset made up of 32 bits, and function GetId (It's either this solution, or Registry and View redefines these)
+namespace EntityGlobals
 {
-	int hp;
+	static constexpr int MAX_COMPONENTS = 32;
+	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
-	StatusComponent(int n) : hp(n) {}
-};
+	int compCount = 0;
 
-struct PlayerComponent
-{
-	std::string name;
-
-	PlayerComponent(std::string s) : name(s) {}
-};
-
-struct EnemyComponent
-{
-	std::string name;
-
-	EnemyComponent(std::string s) : name(s) {}
-};
-//end of: components
-
-//Entity is just an index and some arbitrary amount of components
-struct Entity
-{
-	std::pair<int, std::vector<Component>> container;
-
-	Entity(std::pair<int, std::vector<Component>> in) { container = in; }
-};
-
-//Registry is just a vector of entities
-struct Registry
-{
-	int idx = 0;
-	std::vector<Entity> vec;
-
-	Registry() {}
-	Entity CreateEntity()
+	//Previously, GetId returned the current compCount and also incremented it, but let's split these
+	template <typename T>
+	int GetId()
 	{
-		std::pair<int, std::vector<Component>> reg;
-		reg.first = idx++;
-
-		Entity entity = Entity(reg);
-		vec.push_back(entity);
-		return entity; //Return the entity as we create it so we can easily add components to this specific entity
+		//Note because of the increment that each time this function is called, the ID number will be new and unique
+		static int compId = compCount++;
+		return compId;
 	}
 
-	void AddComponent(Entity& entity, const Component& comp)
+	void IncrementCompCount()
 	{
-		vec.at(entity.container.first).container.second.push_back(comp); //cursed line
-		entity.container.second.push_back(comp);
+		//compCount++;
 	}
-};
 
-template<typename T>
-Component ConvertComponent(T& toConvert)
-{
-	//Convert any type of component (PlayerComponent, EnemyComponent, StatusComponent etc..) into the base Component struct
-	Component comp;
-	comp.address = &toConvert;
-	comp.size = sizeof(T);
-	return comp;
+	bool IsEntityValid(EntityID id)
+	{
+		return id.index != -1;
+	}
 }
 
-template<typename T>
-void GetComponent(T& inout, const Component& comp)
+class Registry
 {
-	//Get the value stored at the address that the base Component struct is pointing at
-	//Template compiler magic courtesy of Elliot
-	T* t;
-	if (sizeof(T) == comp.size)
+private:
+	struct Entity
 	{
-		//Convert void* to correct pointer type
-		t = (T*)comp.address;
+		EntityID id;
+		EntityGlobals::componentBitset components;
 
-		//Dereference to get the value
-		inout = *t;
+		//Quick operator hack giving better visualization to the user, you're welcome <3
+		operator const int& () const { return id.index; }
+	};
+
+	std::vector<int> availableEntitySlots;	//Contains the indices that are allowed to be used when creating new entitites (because they've for instance been 
+											//destroyed prior, and we dont want to adjust the indices of existing entities)
+
+public:
+	std::vector<Entity> entities;
+
+	size_t GetEntityCount()
+	{
+		//Since destroying an entity doesn't technically remove it (rather it stores its index into the availableEntitySlots-vector for future insertions) 
+		//this is the "real" entity count
+		return entities.size() - availableEntitySlots.size();
 	}
-	//else inout = T{0}; //Have some sort of error message here x
-}
 
-//Relic of a bygone era
-//int main()
-//{
-//	//Step 1: Create registry to hold all entities and their components
-//	Registry registry;
-//
-//	//Step 1.5: Define whatever components you want
-//	StatusComponent playerHP(420);
-//	PlayerComponent playerName("Bruh");
-//
-//	StatusComponent enemyHP(69);
-//	EnemyComponent enemyName("Cringe");
-//
-//	//Step 2: Create entity
-//	auto player = registry.CreateEntity();
-//
-//	//Step 3: Add component(s)
-//	registry.AddComponent(player, ConvertComponent(playerHP));
-//	registry.AddComponent(player, ConvertComponent(playerName));
-//
-//	//Repeat step 2 and 3 for arbitrary amount of entities
-//	auto enemy = registry.CreateEntity();
-//
-//	registry.AddComponent(enemy, ConvertComponent(enemyHP));
-//	registry.AddComponent(enemy, ConvertComponent(enemyName));
-//
-//	//Step 4: Cry
-//	for (auto& entity : registry.vec)
-//	{
-//		std::cout << "Entity #" << entity.container.first << std::endl;
-//		//Get back component
-//		StatusComponent getMeBack = StatusComponent(0);
-//		GetComponent(getMeBack, entity.container.second.at(0));
-//		std::cout << "HP: " << getMeBack.hp << std::endl;
-//		PlayerComponent getMeBackToo = PlayerComponent("");
-//		GetComponent(getMeBackToo, entity.container.second.at(1));
-//		std::cout << "Name: " << getMeBackToo.name << std::endl;
-//
-//		std::cout << std::endl;
-//	}
-//
-//	return 0;
-//}
+	EntityID CreateEntity()
+	{
+		//When we destroy an entity, we store its index and version in the freeEntities-vector so we know where we can 
+		//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id with version number 0
+		if (!availableEntitySlots.empty())
+		{
+			int newIndex = availableEntitySlots.back();
+			availableEntitySlots.pop_back();
+
+			EntityID newId = CreateEntityId(newIndex, GetEntityState(entities[newIndex].id));
+			entities[newIndex].id = newId;
+			return newId;
+		}
+		entities.push_back({ CreateEntityId((int)entities.size(), false), EntityGlobals::componentBitset() });
+		return entities.back().id;
+	}
+
+	void DestroyEntity(EntityID id)
+	{
+		EntityID nullID = CreateEntityId(-1, true);
+
+		entities[GetEntityIndex(id)].id = nullID;
+		entities[GetEntityIndex(id)].components.reset();
+
+		availableEntitySlots.push_back(GetEntityIndex(id));
+	}
+
+	template<typename T, typename ...Args>
+	void AddComponent(EntityID id, Args ...args)
+	{
+		//Don't try to access entity that has already been removed
+		if (entities[GetEntityIndex(id)].id.index != id.index)
+			return;
+
+		//Unique index of the component itself
+		int compId = EntityGlobals::GetId<T>();
+
+		//Adding a new component that's greater than the size of the pool requires a resize for memory reasons
+		if (componentArrays.size() <= compId) 
+			componentArrays.resize(compId + 1);
+
+		//New component, make a new array
+		if (componentArrays[compId].IsNullptr())
+		{
+			//Allocate space in memory and call the "constructor" for the new array
+			componentArrays[compId] = MemLib::palloc(sizeof(ComponentArray));
+			componentArrays[compId]->Initialize(sizeof(T));
+		}
+		
+		//PoolPointerPain to get create the actual component
+		PoolPointer<T> typeCasted = componentArrays[compId]->data;
+		typeCasted[GetEntityIndex(id)] = T(args...);
+
+		//Set the component bitset of the entity at the current index to 
+		entities[GetEntityIndex(id)].components.set(compId);
+	}
+
+	template <typename T>
+	void RemoveComponent(EntityID id)
+	{
+		//Don't try to access entity that has already been removed
+		if (entities[GetEntityIndex(id)].id.index != id.index)
+			return;
+
+		//Remove any component in this entity's component bitset that matches the component ID we're looking for
+		int compId = EntityGlobals::GetId<T>();
+		entities[GetEntityIndex(id)].components.reset(compId);
+	}
+
+	template<typename T>
+	T* GetComponent(EntityID id)
+	{
+		//Don't try to access entity that has already been removed
+		if (entities[GetEntityIndex(id)].id.index != id.index)
+			return nullptr;
+
+		int compId = EntityGlobals::GetId<T>();
+		//Test to see if a component has been removed
+		if (!entities[GetEntityIndex(id)].components.test(compId))
+			return nullptr;
+
+		//Return the component at the index of the specified entity ID
+		PoolPointer<T> componentPointer = componentArrays[compId]->data;
+		return &componentPointer[id.index];
+	}
+
+private:
+	EntityID CreateEntityId(int index, bool hasBeenDestroyed)
+	{
+		return { index, hasBeenDestroyed };
+	}
+
+	int GetEntityIndex(EntityID id)
+	{
+		return id.index;
+	}
+
+	bool GetEntityState(EntityID id)
+	{
+		return id.state;
+	}
+
+	//Let's say only 10 entities can have the same component, just because we need to state something when we allocate memory
+	static constexpr int MAX_ENTITIES = 10;
+	struct ComponentArray
+	{
+		ComponentArray(size_t componentSize) //Allocate enough memory to hold as many entities as we allow, along with the size of components
+		{
+			this->componentSize = componentSize;
+			this->data = MemLib::palloc(componentSize * MAX_ENTITIES);
+		}
+
+		void Initialize(const size_t& componentSize)
+		{
+			this->componentSize = componentSize;
+			this->data = MemLib::palloc(componentSize * MAX_ENTITIES);
+		}
+
+		~ComponentArray()
+		{
+			MemLib::pfree(data);
+		}
+
+		PoolPointer<char> data;
+		size_t componentSize = 0;
+	};
+
+	//Private member variables
+	std::vector<PoolPointer<ComponentArray>> componentArrays;
+};
+
+//Templated to allow for views that can contain entities with any combination of components
+template<typename ...Args>
+class View
+{
+public:
+	View(Registry& registry) : pRegistry(&registry)
+	{
+		//Array of integers for the id's ranging from 0 to however many component-types we're passing in
+		int compIds[] = { 0, EntityGlobals::GetId<Args>()... };
+
+		for (int i = 1; i < (sizeof...(Args) + 1); i++) //note that we start from 1, since compIds already holds a 0, everything AFTER that is actual component types
+		{
+			components.set(compIds[i]);
+		}
+	}
+
+	struct Iterator
+	{
+		Iterator(Registry* pRegistry, int entityIndex, EntityGlobals::componentBitset components)
+			: pRegistry(pRegistry), entityIndex(entityIndex), components(components) {}
+
+		EntityID operator*() const
+		{
+			return pRegistry->entities[entityIndex].id;
+		}
+
+		bool operator==(const Iterator& other) const
+		{
+			return entityIndex == other.entityIndex || entityIndex == pRegistry->entities.size();
+		}
+
+		bool operator!=(const Iterator& other) const
+		{
+			return entityIndex != other.entityIndex && entityIndex != pRegistry->entities.size();
+		}
+
+		Iterator& operator++()
+		{
+			//Iterate through the registry and increment the view's index but ONLY IF the entity has the appropriate component types
+			do entityIndex++;
+			while (entityIndex < pRegistry->entities.size() && components == (components & pRegistry->entities[entityIndex].components)); //Bitwise "and", checks to see that the things on either side of & are the same, https://www.youtube.com/watch?v=HoQhw6_1NAA I can't believe he does it again	
+			return *this;
+		}
+
+	private:
+		int entityIndex = 0;
+		Registry* pRegistry;
+		EntityGlobals::componentBitset components;
+	};
+
+	const Iterator begin() const
+	{
+		int first = 0;
+		while (first < pRegistry->entities.size() && components != (components & pRegistry->entities[first].components))
+			first++;
+		return Iterator(pRegistry, first, components);
+	}
+
+	const Iterator end() const
+	{
+		return Iterator(pRegistry, pRegistry->entities.size(), components);
+	}
+
+private:
+	Registry* pRegistry = nullptr;
+	EntityGlobals::componentBitset components;
+};
+
+/*
+	//HOW TO USE (Basic version):
+
+	//Step 1: Create registry, this exists to keep track of all entities and whatever component(s) they should be associated with
+	Registry registry;
+
+	//Step 2: Create an entity
+	auto player = registry.CreateEntity();
+
+	//Step 3: Add component(s) to the entity, pass in the arguments that the relevant Component expects
+	registry.AddComponent<PlayerComponent>(player, "Mr Damned Soul");
+	registry.AddComponent<StatusComponent>(player, 100);
+
+	//And that's the absolute bare minimum of it, really. If you want to create a system for, let's say collision, you'd now do something like:
+	auto enemy = registry.CreateEntity();
+	registry.AddComponent<ColliderComponent>(enemy);
+	for(auto entity : View<ColliderComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	{
+		//Check to see if this entity's hitbox overlaps with the player entity's hitbox, and then do stuff
+	}
+
+	//DOCUMENTATION OF ALL FUNCTIONS AND HOW TO USE THEM:
+
+*/
