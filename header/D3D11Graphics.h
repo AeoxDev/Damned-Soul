@@ -24,6 +24,12 @@ struct VertexShaderHolder
 	ID3D11InputLayout* il_arr[16];
 };
 
+struct ComputeShaderHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11ComputeShader* cs_arr[16];
+};
+
 struct BufferHolder
 {
 	uint8_t currentCount = 0;
@@ -50,6 +56,20 @@ struct DSVHolder
 	ID3D11DepthStencilView* dsv_arr[8]; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
 };
 
+struct SRVHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11Resource* srv_resource_arr[8]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
+	ID3D11ShaderResourceView* srv_arr[8]; // NOTE: I dont think 8 is enough, will probably need more in the future
+};
+
+struct UAVHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11Resource* uav_resource_arr[8]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
+	ID3D11UnorderedAccessView* uav_arr[8]; // NOTE: I dont think 8 is enough, will probably need more in the future
+};
+
 struct RasterizerHolder
 {
 	uint8_t currentCount = 0;
@@ -60,10 +80,13 @@ struct RasterizerHolder
 extern D3D11Data* d3d11Data;
 extern PixelShaderHolder* pixHolder;
 extern VertexShaderHolder* vrtHolder;
+extern ComputeShaderHolder* comHolder;
 extern BufferHolder* bfrHolder;
 extern ViewPortHolder* vpHolder;
 extern RTVHolder* rtvHolder;
 extern DSVHolder* dsvHolder;
+extern SRVHolder* srvHolder;
+extern UAVHolder* uavHolder;
 extern RasterizerHolder* rsHolder;
 
 //extern ID3D11Device* device;

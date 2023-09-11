@@ -8,6 +8,8 @@
 #include "EntityFramework.h"
 #include "ConfigManager.h"
 #include "DeltaTime.h"
+#include "Camera.h"
+#include "GameRenderer.h"
 #include "Interface\StateManager.h"
 #include "Interface\InputsHandler.h"
 
@@ -15,36 +17,12 @@ int main(int argc, char* args[])
 {
 	MemLib::createMemoryManager();
 	InitiateConfig();
-    
-    //std::cout << "Hello World!\n";
     SetupWindow();
 	std::string title = "Damned Soul";
-	//Hwnd = sdl.window
 
-	int hr = SetupDirectX(sdl.window);
-
-	RS_IDX rasterizer = CreateRasterizerState(true, true);
-	bool s = SetRasterizerState(rasterizer);
-
-	PS_IDX testPixelShader = LoadPixelShader("TestPS.cso");
-	s = SetPixelShader(testPixelShader);
-	VS_IDX testVertexShader = LoadVertexShader("TestVS.cso");
-	s = SetVertexShader(testVertexShader);
-
-	struct Vertex {
-		float pos[4];
-		float normal[4];
-		float uv[2]; };
-	Vertex triangle[3] = {
-		0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
-		-0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
-		0, 0.9f, 0.5f, 1.f,			/**/ 0, 0, -1.f, 0, /**/ 0.5, 1 };
-	VB_IDX vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3);
-	uint32_t idxs[3] = { 0, 1, 2 };
-	IB_IDX indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
-
-	s = SetVertexBuffer(vertexBuffer);
-	s = SetIndexBuffer(indexBuffer);
+	int testRenderSlot = SetupGameRenderer();
+	InitializeCamera();
+	SetConstantBuffer(GetCameraBufferIndex());
 
 	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -60,31 +38,24 @@ int main(int argc, char* args[])
 	s = SetRenderTargetViewAndDepthStencil(rtv, dsv);
 
 	int i = 0;
-	StateManager stateManager;
-
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
-		HandleInputs(stateManager);
 
+		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
+		Render(testRenderSlot);
+
+		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
+		HandleInput();
 #ifdef _DEBUG
 		if (sdl.windowFlags == 0 && NewSecond())
 		{
-			title = "Damned Soul " + std::to_string((int)(1000.0f*GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
+			title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
 			//title+="";//Add more debugging information here, updates every second.
 			SetWindowTitle(title);
 		}
 #endif // _DEBUG Debugging purposes, not compiled in release
-		
-		//Update
-		stateManager.Update();
-		
-		ClearRenderTargetView(rtv);
-		ClearDepthStencilView(dsv);
 
-		d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
-		//d3d11Data->deviceContext->Draw(3, 0);
-		d3d11Data->swapChain->Present(0, 0);
 		MemLib::pdefrag();
 	}
 

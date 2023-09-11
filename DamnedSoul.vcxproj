@@ -174,6 +174,7 @@
     <ClCompile Include="source\ButtonManager.cpp" />
     <ClCompile Include="source\SceneManager.cpp" />
     <ClCompile Include="source\StateManager.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Audio.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />
     <ClCompile Include="source\DeltaTime.cpp" />
+    <ClCompile Include="source\GameRenderer.cpp" />
     <ClCompile Include="source\Hitbox.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
@@ -237,6 +239,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\Colission.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -246,6 +249,7 @@
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
+    <ClInclude Include="header\GameRenderer.h" />
     <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Interface\ButtonManager.h" />
     <ClInclude Include="header\Interface\InputsHandler.h" />

@@ -1,3 +1,11 @@
+cbuffer CameraBuffer : register(b0)
+{
+    float4 cameraPosition;
+    matrix view;
+    matrix projection;
+}
+
+
 struct VS_INPUTS
 {
 	float4 position : POSITION;
@@ -19,6 +27,9 @@ VS_OUT main(VS_INPUTS pos)
 	retval.position = pos.position;
 	retval.normal = pos.normal;
 	retval.uv = pos.uv;
+	
+    retval.position = mul(pos.position, view);
+    retval.position = mul(retval.position, projection);
 
 	return retval;
 }

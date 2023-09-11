@@ -5,15 +5,17 @@
 #include <fstream>
 #include <string>
 
-
 // Extern
 D3D11Data* d3d11Data;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
+ComputeShaderHolder* comHolder;
 BufferHolder* bfrHolder;
 ViewPortHolder* vpHolder;
 RTVHolder* rtvHolder;
 DSVHolder* dsvHolder;
+SRVHolder* srvHolder;
+UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
 
 ////Externs:
@@ -70,7 +72,6 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	return true;
 }
 
-
 #define FAIL_MSG { std::cerr << "Failed to set up D3D11!" << std::endl; return -1; }
 
 int SetupDirectX(HWND& w)
@@ -78,10 +79,13 @@ int SetupDirectX(HWND& w)
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
+	comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));
 	bfrHolder = (BufferHolder*)MemLib::spush(sizeof(BufferHolder));
 	vpHolder = (ViewPortHolder*)MemLib::spush(sizeof(ViewPortHolder));
 	rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
 	dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
+	srvHolder = (SRVHolder*)MemLib::spush(sizeof(SRVHolder));
+	uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
@@ -103,6 +107,12 @@ void EndDirectX()
 		vrtHolder->il_arr[i]->Release();
 	}
 
+	// Release all compute shaders
+	for (int i = 0; i < comHolder->currentCount; ++i)
+	{
+		comHolder->cs_arr[i]->Release();
+	}
+
 	// Release all buffers shaders
 	for (int i = 0; i < bfrHolder->currentCount; ++i)
 		bfrHolder->buff_arr[i]->Release();
@@ -116,6 +126,20 @@ void EndDirectX()
 	{
 		dsvHolder->dsv_arr[i]->Release();
 		dsvHolder->ds_arr[i]->Release();
+	}
+
+	// Release all shader resource views
+	for (int i = 0; i < srvHolder->currentCount; ++i)
+	{
+		srvHolder->srv_arr[i]->Release();
+		srvHolder->srv_resource_arr[i]->Release();
+	}
+
+	// Release all unorderd access views
+	for (int i = 0; i < uavHolder->currentCount; ++i)
+	{
+		uavHolder->uav_arr[i]->Release();
+		uavHolder->uav_resource_arr[i]->Release();
 	}
 
 	// Release all rasterizer states
