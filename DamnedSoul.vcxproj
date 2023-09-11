@@ -257,7 +257,7 @@
     <ClInclude Include="header\Physics\Backend\GeometryIndependent.h" />
     <ClInclude Include="header\Physics\Hitbox.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClInclude Include="source\Collision.cpp" />
+    <ClCompile Include="source\Collision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />

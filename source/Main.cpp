@@ -11,6 +11,7 @@
 #include "DeltaTime.h"
 #include "Camera.h"
 #include "GameRenderer.h"
+#include "Hitbox.h"
 
 
 
@@ -25,6 +26,11 @@ int main(int argc, char* args[])
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
+	Registry collisionRegistry;
+	EntityID player = collisionRegistry.CreateEntity();
+	AddHitboxComponent(collisionRegistry, player);
+	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.5f);
+	
 
 	while (!sdl.quit)
 	{

@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "Backend/Collision.h"
 
 HitboxVisualizeVariables hvv;
 
@@ -12,6 +13,42 @@ bool SetupHitboxVisualizer()
 	InitializeBufferAndSRV();
 	CreateShadersLayoutAndRasterState();
 	return true;
+}
+
+int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offsetX, float offsetZ)
+{
+	//Check for the HitboxComponent, return -1 if failed
+	HitboxComponent* collisionComponent = registry.GetComponent<HitboxComponent>(entity);
+	if (collisionComponent == nullptr)
+	{
+		//Component did not exist!
+		return -1;
+	}
+	//We now have the Collision Component, look for the first bit to add a hitbox on
+	unsigned availableSlot = FindAvailableSlot(collisionComponent->activeCirclesHitboxes);
+	if (availableSlot < 0)
+	{
+		//No available bits, maximum size achieved
+		return -2;
+	}
+	//There is now a slot for the hitbox, create it on the given slot.
+	collisionComponent->circleHitbox[availableSlot].radius = radius;
+	collisionComponent->circleHitbox[availableSlot].offsetX = offsetX;
+	collisionComponent->circleHitbox[availableSlot].offsetZ = offsetZ;
+	//Set to active
+	collisionComponent->circularFlags[availableSlot].ResetToActive();
+	//Return the chosen slot for the user for further uses.
+	return availableSlot;
+}
+
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ)
+{
+	return 0;
+}
+
+void AddHitboxComponent(Registry& registry, EntityID& entity)
+{
+	registry.AddComponent<HitboxComponent>(entity);
 }
 
 void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer) //Update this to work with ECS when creating components
