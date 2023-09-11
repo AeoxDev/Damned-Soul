@@ -1,5 +1,4 @@
 #include "Backend\Collision.h"
-#include "EntityFramework.h"
 #include <cmath>
 
 /// <summary>
@@ -56,6 +55,7 @@ int PositionGeometryIndependent(float posX, float posY /*GeometryIndependent Com
 	//Translate position into pixels on texture
 	//Check int values for type
 	//Return type
+	return 0;
 }
 
 //void CollisionEvent(Entity& entity, Entity& entity2)
@@ -84,4 +84,44 @@ int PositionGeometryIndependent(float posX, float posY /*GeometryIndependent Com
 //	// calls on OnCollision
 //}
 
+//Returns the bit that is available, 
+//Returns 0 if no bits are available
+int FindAvailableSlot(unsigned& bits)
+{
+	unsigned mask = 0b1;//0b00000000 00000000 00000000 00000001
+	unsigned size = 0;
+	//Look if first bit is 0;
+	while (bits & mask)
+	{
+		if (size >= SAME_TYPE_HITBOX_LIMIT)
+		{
+			//Max size hit,
+			return -1;
+		}
+		//Check next bit
+		mask = mask << 1;
+		++size;
+	}
+	bits |= mask;//Set the bit to 1
+	return size;
+}
 
+void ExampleC()
+{
+	return;
+}
+
+HitboxComponent::HitboxComponent()
+{
+	this->activeCirclesHitboxes = 0;
+	this->activeConvexHitboxes = 0;
+	//No need to zero the other values as they won't be used until active is set.
+}
+
+void CollisionFlags::ResetToActive()
+{
+	unsigned short* r = (unsigned short*)this;
+	*r = 0;
+	this->active = 1;
+	
+}
