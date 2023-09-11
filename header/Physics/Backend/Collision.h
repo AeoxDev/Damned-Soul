@@ -3,6 +3,7 @@
 #define SAME_TYPE_HITBOX_LIMIT 4 //Limit for same type of hitboxes
 #define CONVEX_CORNER_LIMIT 8 //Maximum amount of corners allowed per Convex shape
 #define MAP_DIM 512*512
+#include "EntityFramework.h"
 
 struct OnCollision
 {
