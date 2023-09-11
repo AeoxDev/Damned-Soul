@@ -298,10 +298,13 @@ bool SetUnorderedAcessView(const UAV_IDX idx)
 	return true;
 }
 
-bool UpdateUnorderedAcessView(const UAV_IDX, const void* data)
+void SwapParticleBuffers(const UAV_IDX idxInput, const UAV_IDX idxOutput)
 {
-	return false;
+	ID3D11UnorderedAccessView *temp = uavHolder->uav_arr[idxInput];
+	uavHolder->uav_arr[idxInput] = uavHolder->uav_arr[idxOutput];
+	uavHolder->uav_arr[idxOutput] = temp;
 }
+
 
 void ClearRenderTargetView(const RTV_IDX idx)
 {

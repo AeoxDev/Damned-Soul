@@ -107,8 +107,10 @@ bool UpdateShaderResourceView(const SRV_IDX, const void* data);
 UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, const FLAGS &flags, const uint8_t slot);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx);
+// Swap the particle input and output buffers
+void SwapParticleBuffers(const UAV_IDX idxInput, const UAV_IDX idxOutput);
 // Update a unordered access view index with given data
-bool UpdateUnorderedAcessView(const UAV_IDX, const void* data);
+//bool UpdateUnorderedAcessView(const UAV_IDX, const void* data);
 
 
 // Clear the render target
