@@ -58,30 +58,30 @@ int PositionGeometryIndependent(float posX, float posY /*GeometryIndependent Com
 	//Return type
 }
 
-void CollisionEvent(Entity& entity, Entity& entity2)
-{
-	// find on collision components in each entity
-
-	//extract positions from each entity 
-	//find last positions from each entitiy
-	// this gives us the tools to calculate the angle of attack
-
-	//There are three different kinds of colission in this game:
-	//Circular to circular: Player and Enemy hurboxes and hitboxes.
-	//Circular to convex: Hurtboxes to walls(stage) or Boss hitboxes to player hurtbox
-	//Point to Geometry Independent: Players and Entities to stage and static hazards
-
-	//Here is the overview of the math to calculate if a collision occurs
-	//Circular to circular: Check distance with radius in mind
-	//Circular to convex: Use normals in convex to check if a point in circle is behind all lines.
-	//Point to Geometry Independent: Translate point to position on pixel in texture, check value for type.
-
-	//Attack angle is calculated when colliding:
-	//Circle, centerpoint to centerpoint
-	//Convex, Look at normal of line that collided by colliding with line between centerpoints.
-	//Geometry independent: No need for attack angle, always upwards.
-
-	// calls on OnCollision
-}
+//void CollisionEvent(Entity& entity, Entity& entity2)
+//{
+//	// find on collision components in each entity
+//
+//	//extract positions from each entity 
+//	//find last positions from each entitiy
+//	// this gives us the tools to calculate the angle of attack
+//
+//	//There are three different kinds of colission in this game:
+//	//Circular to circular: Player and Enemy hurboxes and hitboxes.
+//	//Circular to convex: Hurtboxes to walls(stage) or Boss hitboxes to player hurtbox
+//	//Point to Geometry Independent: Players and Entities to stage and static hazards
+//
+//	//Here is the overview of the math to calculate if a collision occurs
+//	//Circular to circular: Check distance with radius in mind
+//	//Circular to convex: Use normals in convex to check if a point in circle is behind all lines.
+//	//Point to Geometry Independent: Translate point to position on pixel in texture, check value for type.
+//
+//	//Attack angle is calculated when colliding:
+//	//Circle, centerpoint to centerpoint
+//	//Convex, Look at normal of line that collided by colliding with line between centerpoints.
+//	//Geometry independent: No need for attack angle, always upwards.
+//
+//	// calls on OnCollision
+//}
 
 

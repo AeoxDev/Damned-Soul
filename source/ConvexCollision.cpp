@@ -10,7 +10,7 @@ struct ConvexHull
 void CreateConvexHull(const float* cornersX,const float* cornersY, int& amountOfCorners)
 {
 	//Setup lines
-	ConvexHull convexHull;//Create component of this instead
+	//ConvexHull convexHull;//Create component of this instead
 
 	//Calculate center
 
