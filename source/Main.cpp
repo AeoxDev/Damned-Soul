@@ -25,7 +25,7 @@ int main(int argc, char* args[])
 	SetConstantBuffer(GetCameraBufferIndex());
 
 	Model testModel;
-	if (false == testModel.Load("HellhoundDummy.mdl"))
+	if (false == testModel.Load("FlyingEyeDummy.mdl"))
 		return -1;
 	SetVertexBuffer(testModel.m_vertexBuffer);
 	SetIndexBuffer(testModel.m_indexBuffer);
