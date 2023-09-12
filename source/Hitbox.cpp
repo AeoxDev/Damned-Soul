@@ -25,7 +25,7 @@ int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offse
 		return -1;
 	}
 	//We now have the Collision Component, look for the first bit to add a hitbox on
-	unsigned availableSlot = FindAvailableSlot(collisionComponent->activeCirclesHitboxes);
+	unsigned availableSlot = FindAvailableSlot(collisionComponent->usedCirclesHitboxes);
 	if (availableSlot < 0)
 	{
 		//No available bits, maximum size achieved
@@ -37,6 +37,9 @@ int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offse
 	collisionComponent->circleHitbox[availableSlot].offsetZ = offsetZ;
 	//Set to active
 	collisionComponent->circularFlags[availableSlot].ResetToActive();
+	//Look at components to find what bit flags should be used
+
+
 	//Return the chosen slot for the user for further uses.
 	return availableSlot;
 }
@@ -302,4 +305,64 @@ void DestroyHitboxVisualizeVariables()
 	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
 	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
 	hvv.hitboxes.clear();
+}
+
+void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+{
+	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (!isConvexHitbox)
+	{
+		hitbox->circularFlags[hitboxID].isPlayer = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].isPlayer = setFlag;
+	}
+}
+
+void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (!isConvexHitbox)
+	{
+		hitbox->circularFlags[hitboxID].isEnemy = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].isEnemy = setFlag;
+	}
+}
+
+void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (!isConvexHitbox)
+	{
+		hitbox->circularFlags[hitboxID].hitPlayer = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].hitPlayer = setFlag;
+	}
+}
+
+void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (!isConvexHitbox)
+	{
+		hitbox->circularFlags[hitboxID].hitEnemy = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].hitEnemy = setFlag;
+	}
+}
+
+void UpdatePhysics(Registry& registry)
+{
+	ResetCollisionVariables(registry);
+	HandleMoveableCollision(registry);
+	HandleDamageCollision(registry);
+	HandleStaticCollision(registry);
 }

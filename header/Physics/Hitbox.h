@@ -32,6 +32,8 @@ struct HitboxVisualizeVariables
 	ID3D11RasterizerState* hitboxWireframeRaster = nullptr;
 };
 
+//CIRCLE COLLISION:
+
 /// <summary>
 /// Create a circle hitbox on the given entity with a radius and offset.
 /// The offset does not compensate for the rotation of the entity.
@@ -44,6 +46,27 @@ struct HitboxVisualizeVariables
 /// Returns -1 if component does not exist
 /// -2 if Maximum amount of hitboxes achieved</returns>
 int CreateHitbox(Registry& registry,EntityID& entity, float radius, float offsetX, float offsetZ);
+
+//Manual Flag setting functions.
+
+void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+
+void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+
+void UpdatePhysics(Registry& registry);
+
 /// <summary>
 /// Create a convex shape with corners relative to the position of the entity, then offset.
 /// </summary>

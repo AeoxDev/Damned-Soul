@@ -235,7 +235,7 @@ private:
 template<typename ...Args>
 class View
 {
-private:
+public:
 	View(Registry& registry) : pRegistry(&registry)
 	{
 		//Array of integers for the id's ranging from 0 to however many component-types we're passing in

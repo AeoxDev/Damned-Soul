@@ -3,14 +3,13 @@
 #define SAME_TYPE_HITBOX_LIMIT 4 //Limit for same type of hitboxes
 #define CONVEX_CORNER_LIMIT 8 //Maximum amount of corners allowed per Convex shape
 #define MAP_DIM 512*512
+#define MOVEABLE_COLLISIONS_PER_FRAME 1
 #include "EntityFramework.h"
 
 struct OnCollision
 {
-	void(*CollisionFunction)(Registry& registry, EntityID& entity1, EntityID& entity2, float angleOfAttack1X, float angleOfAttack1Z, float angleOfAttack2X, float angleOfAttack2Z);
+	void(*CollisionFunction)(Registry& registry, EntityID& entity1, EntityID& entity2, const float& normal1X, const  float& normal1Z, const  float& normal2X, const  float& normal2Z);
 };
-
-
 
 struct CollisionFlags
 {
@@ -31,9 +30,9 @@ struct CollisionFlags
 	unsigned short hitStaticHazard		: 1;//Collide with static hazards
 	unsigned short hitDynamicHazard		: 1;//Collide with dynamic
 
-	unsigned short padding1 : 1;
-	unsigned short padding2 : 1;
-	unsigned short padding3 : 1;
+	unsigned short isMoveable			: 1;//Deterrmine wether or not it is possible to move this object in collision
+	unsigned short padding2				: 1;
+	unsigned short padding3				: 1;
 
 	void ResetToActive();
 };
@@ -42,13 +41,11 @@ struct CollisionFlags
 struct CircleColliderComponent
 {
 	//Might need array of circles instead
-	
 	float radius, offsetX, offsetZ;
 };
 
 struct ConvexColliderComponent
 {
-
 	//might need array of shapes instead
 	float centerX, centerZ;
 	float boundingRadius;//Circle to reduce calculations for performance
@@ -64,12 +61,14 @@ struct GeometryIndependentColliderComponent
 
 struct HitboxComponent
 {
-	unsigned activeCirclesHitboxes;//This is a collection of bits that indicate which are active or not
+	int nrMoveableCollisions;
+
+	unsigned usedCirclesHitboxes;//This is a collection of bits that indicate which are used or not
 	CollisionFlags circularFlags[SAME_TYPE_HITBOX_LIMIT];
 	OnCollision onCircleCollision[SAME_TYPE_HITBOX_LIMIT];//What happens when this hitbox collides with something
 	CircleColliderComponent circleHitbox[SAME_TYPE_HITBOX_LIMIT];
 
-	unsigned activeConvexHitboxes;//This is a collection of bits that indicate which are active or not
+	unsigned usedConvexHitboxes;//This is a collection of bits that indicate which are used or not
 	CollisionFlags convexFlags[SAME_TYPE_HITBOX_LIMIT];
 	OnCollision onConvexCollision[SAME_TYPE_HITBOX_LIMIT];//What happens when this hitbox collides with something
 	ConvexColliderComponent convexHitbox[SAME_TYPE_HITBOX_LIMIT];
@@ -80,6 +79,14 @@ struct HitboxComponent
 
 int FindAvailableSlot(unsigned& bits);
 
+/// <summary>
+/// Loops through all entities with a hitboxComponent and calculates collision.
+/// </summary>
+/// <param name="registry"></param>
+void ResetCollisionVariables(Registry& registry);
+void HandleMoveableCollision(Registry& registry);//No clipping
+void HandleDamageCollision(Registry& registry);//Hitboxes for attacks and dynamic hazards
+void HandleStaticCollision(Registry& registry);//Stage and static Collisions
 
 //struct onCollision
 //{

@@ -15,8 +15,8 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 	} // add more check to more flags later, try with this first to see if the math works
 
 	//Bitmask circle1 is to circle2 hit
-	unsigned short iSmask = 0b0000000001111110;// is mask
-	unsigned short hitMask = 0b0001111110000000;
+	unsigned short iSmask =		0b0000000001111110;// is mask
+	unsigned short hitMask =	0b0001111110000000;
 	unsigned short* r1 = (unsigned short*)&circle1->circularFlags[circleID1];
 	unsigned short* r2 = (unsigned short*)&circle2->circularFlags[circleID2];
 
@@ -38,13 +38,13 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 	if (iShit1&&hit)
 	{
 		//If circle1 collides with circle2 and has a function:
-		//Calculate angle of attack
-		//circle1->onCircleCollision[circleID1].CollisionFunction(registry, entity1, entity2, )
-
+		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
+		circle1->onCircleCollision[circleID1].CollisionFunction(registry, entity1, entity2, -dx, -dy, dx, dy);
 	}
 	if (iShit2&&hit)
 	{
-		//Calculate angle of attack
+		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
+		circle1->onCircleCollision[circleID1].CollisionFunction(registry, entity1, entity2, dx, dy, -dx, -dy);
 	}
 
 	return hit;
