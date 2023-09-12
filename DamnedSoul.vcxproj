@@ -171,8 +171,13 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
     <ClCompile Include="source\ButtonManager.cpp" />
     <ClCompile Include="source\SceneManager.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp" />
     <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Audio.cpp" />
@@ -252,11 +257,16 @@
     <ClInclude Include="header\GameRenderer.h" />
     <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\ButtonManager.h" />
-    <ClInclude Include="header\SceneManager.h" />
-    <ClInclude Include="header\SceneStructures.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClInclude Include="header\StateManager.h" />
-    <ClInclude Include="header\StateStructures.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
     <ClInclude Include="lib\stb_image.h" />
     <ClInclude Include="source\Colission.cpp" />
     <ClInclude Include="source\States.h" />

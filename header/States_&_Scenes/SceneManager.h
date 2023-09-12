@@ -1,7 +1,9 @@
 #pragma once
 #include <unordered_map>
 
-#include "SceneStructures.h"
+#include "SceneEnums.h"
+#include "Level.h"
+#include "Shop.h"
 
 class SceneManager
 {

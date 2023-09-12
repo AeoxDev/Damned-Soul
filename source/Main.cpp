@@ -10,7 +10,7 @@
 #include "DeltaTime.h"
 #include "Camera.h"
 #include "GameRenderer.h"
-#include "StateManager.h"
+#include "States_&_Scenes\StateManager.h"
 
 int main(int argc, char* args[])
 {
@@ -23,7 +23,7 @@ int main(int argc, char* args[])
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
-	StateManager stateManager;
+	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
 
 	while (!sdl.quit)
 	{

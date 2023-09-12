@@ -1,4 +1,4 @@
-#include "StateManager.h"
+#include "States_&_Scenes\StateManager.h"
 
 void StateManager::HandleKeyInputs(int keyInput[])
 {
@@ -32,6 +32,7 @@ void StateManager::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent)
 
 StateManager::StateManager()
 {
+
 	//Menu Buttons
 	m_buttonManager.AddButton("Play", { sdl.WIDTH / 2 ,sdl.HEIGHT / 2 - 200 }, { 200, 100 }, [&]() {m_currentState = State::Game; });
 	m_buttonManager.AddButton("MenuSettings", { sdl.WIDTH / 2 ,sdl.HEIGHT / 2 }, { 200, 100 }, [&]() {m_menu.currentSubState = MenuState::Settings; });
@@ -54,8 +55,19 @@ StateManager::StateManager()
 
 void StateManager::Update()
 {
-	if (m_currentState == State::Game && m_game.currentSubState == GameState::Unpause)
-		m_game.Update();
+	switch (m_currentState)
+	{
+	case State::Menu:
+
+		if (m_menu.currentSubState == MenuState::Main)
+			m_menu.Update();
+		break;
+	case State::Game:
+
+		if (m_game.currentSubState == GameState::Unpause)
+			m_game.Update();
+		break;
+	}
 
 	SDL_GetMouseState(&mousePos.first, &mousePos.second);
 	if (mousePos != oldmousepos)

@@ -1,7 +1,9 @@
 #pragma once
 #include "SDLHandler.h"
-#include "StateStructures.h"
+#include "StateEnums.h"
 #include "ButtonManager.h"
+#include "States_&_Scenes\Menu.h"
+#include "States_&_Scenes\Game.h"
 
 class StateManager
 {
