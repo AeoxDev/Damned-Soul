@@ -31,14 +31,20 @@ int main(int argc, char* args[])
 	EntityID player = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, player);
 	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.5f);
+	SetHitboxIsPlayer(collisionRegistry, player, circle);
+	SetHitboxHitEnemy(collisionRegistry, player, circle);
 	
 	EntityID enemy1 = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, enemy1);
 	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 0.0f, 1.0f);
+	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
+	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
 
 	EntityID enemy2 = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, enemy2);
 	int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);
+	SetHitboxIsEnemy(collisionRegistry, enemy2, circle3);
+	SetHitboxHitPlayer(collisionRegistry, enemy2, circle3);
 
 	while (!sdl.quit)
 	{

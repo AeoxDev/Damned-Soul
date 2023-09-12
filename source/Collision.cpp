@@ -128,6 +128,52 @@ void HandleStaticCollision(Registry& registry)
 
 void HandleMoveableCollision(Registry& registry)//Reggie Strie
 {
+	for (auto entity : View<HitboxComponent>(registry)) //Access the first entity
+	{
+		HitboxComponent* firstHitbox = registry.GetComponent<HitboxComponent>(entity);
+
+		if (firstHitbox->nrMoveableCollisions < 1) //If it can't move anymore this frame
+		{
+			continue;
+		}
+		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			/*if (!firstHitbox->circularFlags[i].isMoveable)
+			{
+				continue;
+			}*/
+			if (!firstHitbox->circularFlags[i].active)
+			{
+				continue;
+			}
+			for (auto entity2 : View<HitboxComponent>(registry)) //Access the second entity
+			{
+				if (entity.index == entity2.index) //Check that it's not the same as first entity
+				{
+					continue;
+				}
+
+				HitboxComponent* secondHitbox = registry.GetComponent<HitboxComponent>(entity2);
+				for (int j = 0; j < SAME_TYPE_HITBOX_LIMIT; j++)
+				{
+					if (!secondHitbox->circularFlags[j].active)
+					{
+						continue;
+					}
+					//Both are active, do circle to circle.
+					bool hit = IsCircularCollision(registry, entity, entity2, i, j);
+				}
+				//Example:
+				//Call OnCircleCollision if both are Circle
+				//Call OnCircleToConvexCollision if one is Circle and other is Convex
+				//Call OnConvexCollision if both are convex
+			}
+		}
+
+
+	}
+
+
 	for (auto entity : View<HitboxComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
 		//For each entity, check moveable collision first.
@@ -165,15 +211,15 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 	}
 }
 
-void ExampleC()
-{
-	return;
-}
-
 HitboxComponent::HitboxComponent()
 {
 	this->usedCirclesHitboxes = 0;
 	this->usedConvexHitboxes = 0;
+	long long* flags = (long long*)this->circularFlags;
+	*flags = 0;
+	this->nrMoveableCollisions = 0;
+	flags = (long long*)this->convexFlags;
+	*flags = 0;
 	//No need to zero the other values as they won't be used until active is set.
 }
 

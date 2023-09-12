@@ -5,6 +5,7 @@
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 1
 #include "EntityFramework.h"
+#include "CircularCollision.h"
 
 struct OnCollision
 {
@@ -64,14 +65,14 @@ struct HitboxComponent
 	int nrMoveableCollisions;
 
 	unsigned usedCirclesHitboxes;//This is a collection of bits that indicate which are used or not
-	CollisionFlags circularFlags[SAME_TYPE_HITBOX_LIMIT];
-	OnCollision onCircleCollision[SAME_TYPE_HITBOX_LIMIT];//What happens when this hitbox collides with something
-	CircleColliderComponent circleHitbox[SAME_TYPE_HITBOX_LIMIT];
+	CollisionFlags circularFlags[SAME_TYPE_HITBOX_LIMIT] = {0};
+	OnCollision onCircleCollision[SAME_TYPE_HITBOX_LIMIT] = { 0 };//What happens when this hitbox collides with something
+	CircleColliderComponent circleHitbox[SAME_TYPE_HITBOX_LIMIT] = { 0 };
 
 	unsigned usedConvexHitboxes;//This is a collection of bits that indicate which are used or not
-	CollisionFlags convexFlags[SAME_TYPE_HITBOX_LIMIT];
-	OnCollision onConvexCollision[SAME_TYPE_HITBOX_LIMIT];//What happens when this hitbox collides with something
-	ConvexColliderComponent convexHitbox[SAME_TYPE_HITBOX_LIMIT];
+	CollisionFlags convexFlags[SAME_TYPE_HITBOX_LIMIT] = { 0 };
+	OnCollision onConvexCollision[SAME_TYPE_HITBOX_LIMIT] = { 0 };//What happens when this hitbox collides with something
+	ConvexColliderComponent convexHitbox[SAME_TYPE_HITBOX_LIMIT] = { 0 };
 
 	HitboxComponent();
 	

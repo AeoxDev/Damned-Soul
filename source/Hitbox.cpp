@@ -366,3 +366,12 @@ void UpdatePhysics(Registry& registry)
 	HandleDamageCollision(registry);
 	HandleStaticCollision(registry);
 }
+
+void SetCollisionEvent(Registry& registry, EntityID& entity, int& hitboxID, void*& function, bool isConvexHitbox)
+{
+	//Find hitbox
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	hitbox->onCircleCollision[hitboxID].CollisionFunction = 
+		(void(*)(Registry&, EntityID & , EntityID & , const float&
+		, const  float& , const  float& , const  float& ))function;
+}

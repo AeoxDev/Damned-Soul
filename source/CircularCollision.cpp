@@ -9,7 +9,7 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 	HitboxComponent* circle2 = registry.GetComponent<HitboxComponent>(entity2);
 
 	// get a hold of both the circles' bit flags to check if they can collide or not
-	if (!circle1||!circle2||!circle1->circularFlags[circleID1].active||!circle2->circularFlags[circleID2].active)
+	if (!circle1||!circle2)
 	{
 		return false;
 	} // add more check to more flags later, try with this first to see if the math works
