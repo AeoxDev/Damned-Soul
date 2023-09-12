@@ -31,7 +31,7 @@ enum FLAGS
 	WRITE = 0x20000L
 };
 
-enum BUFFER_FLAGS
+enum RESOURCE_FLAGS
 {
 	BIND_VERTEX_BUFFER = 0x1L,
 	BIND_INDEX_BUFFER = 0x2L,
@@ -111,14 +111,16 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 
 //NOTE TODO: MAKE A FIX FOR CREATESRV AND CREATEUAV (THEY CAN NOT HAVE MULTIPLE BINDFLAGS THEY ARE HARDCODED)
 // Create a shader resource view, if a buffer is to be created send in an empty string
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, BUFFER_FLAGS bufferFlags, const FLAGS& flags, const uint8_t slot);
+SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const FLAGS& flags, const uint8_t slot);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx);
 // Update a shader resource view index with given data
 bool UpdateShaderResourceView(const SRV_IDX, const void* data);
 
 // Create a unordered access view, if a buffer is to be created send in an empty string
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, BUFFER_FLAGS bufferFlags, const FLAGS &flags, const uint8_t slot);
+UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, RESOURCE_FLAGS resourceFlags, const FLAGS &flags, const uint8_t slot);
+// Overload for when a resource is already created for and SRV
+UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const SRV_IDX SRVIndex, const uint8_t slot);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx);
 // Update a unordered access view index with given data

@@ -39,7 +39,6 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
 
-	
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
