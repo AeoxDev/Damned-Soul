@@ -67,7 +67,7 @@ void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxI
 
 void UpdatePhysics(Registry& registry);
 
-void SetCollisionEvent(Registry& registry, EntityID& entity, int& hitboxID,void*& function, bool isConvexHitbox = false);
+void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function, bool isConvexHitbox = false);
 
 /// <summary>
 /// Create a convex shape with corners relative to the position of the entity, then offset.

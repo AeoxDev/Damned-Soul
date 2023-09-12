@@ -1,6 +1,6 @@
 #include "Backend\CircularCollision.h"
 #include "Backend\Collision.h"
-
+#define NO false
 
 bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int circleID1, int circleID2)
 {
@@ -35,16 +35,37 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 	float distance = std::sqrt(dx * dx + dy * dy);
 	bool hit = distance <= (circle1->circleHitbox[circleID1].radius + circle2->circleHitbox[circleID2].radius);
 	//Use onCollission function for first and second respectively
+	OnCollisionParameters params = {};
+	params.registry = registry;//Reggie stiel
+	params.isConvex1 = NO;
+	params.isConvex2 = NO;
+
 	if (iShit1&&hit)
 	{
+		params.entity1 = entity1;
+		params.entity2 = entity2;
+		params.hitboxID1 = circleID1;
+		params.hitboxID2 = circleID2;
+		params.normal1X = -dx;
+		params.normal1Z = -dy;
+		params.normal2X = dx;
+		params.normal2Z = dy;
 		//If circle1 collides with circle2 and has a function:
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
-		circle1->onCircleCollision[circleID1].CollisionFunction(registry, entity1, entity2, -dx, -dy, dx, dy);
+		circle1->onCircleCollision[circleID1].CollisionFunction(params);
 	}
 	if (iShit2&&hit)
 	{
+		params.entity1 = entity2;
+		params.entity2 = entity1;
+		params.hitboxID1 = circleID2;
+		params.hitboxID2 = circleID1;
+		params.normal1X = dx;
+		params.normal1Z = dy;
+		params.normal2X = -dx;
+		params.normal2Z = -dy;
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
-		circle1->onCircleCollision[circleID1].CollisionFunction(registry, entity1, entity2, dx, dy, -dx, -dy);
+		circle1->onCircleCollision[circleID1].CollisionFunction(params);
 	}
 
 	return hit;

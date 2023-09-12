@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include "Backend/Collision.h"
+#include "CollisionFunctions.h"
 
 HitboxVisualizeVariables hvv;
 
@@ -38,6 +39,7 @@ int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offse
 	//Set to active
 	collisionComponent->circularFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
+	SetCollisionEvent(registry, entity, (int)availableSlot, NoCollision );
 
 
 	//Return the chosen slot for the user for further uses.
@@ -52,6 +54,7 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* corne
 void AddHitboxComponent(Registry& registry, EntityID& entity)
 {
 	registry.AddComponent<HitboxComponent>(entity);
+	
 }
 
 void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer) //Update this to work with ECS when creating components
@@ -367,11 +370,9 @@ void UpdatePhysics(Registry& registry)
 	HandleStaticCollision(registry);
 }
 
-void SetCollisionEvent(Registry& registry, EntityID& entity, int& hitboxID, void*& function, bool isConvexHitbox)
+void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function, bool isConvexHitbox)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	hitbox->onCircleCollision[hitboxID].CollisionFunction = 
-		(void(*)(Registry&, EntityID & , EntityID & , const float&
-		, const  float& , const  float& , const  float& ))function;
+	hitbox->onCircleCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
 }

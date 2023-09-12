@@ -7,9 +7,24 @@
 #include "EntityFramework.h"
 #include "CircularCollision.h"
 
+struct OnCollisionParameters
+{
+	Registry registry; 
+	EntityID entity1; 
+	EntityID entity2; 
+	int hitboxID1;
+	int hitboxID2;
+	bool isConvex1;
+	bool isConvex2;
+	float normal1X;
+	float normal1Z;
+	float normal2X;
+	float normal2Z;
+};
+
 struct OnCollision
 {
-	void(*CollisionFunction)(Registry& registry, EntityID& entity1, EntityID& entity2, const float& normal1X, const  float& normal1Z, const  float& normal2X, const  float& normal2Z);
+	void(*CollisionFunction)(OnCollisionParameters& params);
 };
 
 struct CollisionFlags

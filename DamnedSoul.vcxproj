@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Audio.cpp" />
@@ -255,6 +256,7 @@
     <ClInclude Include="header\Physics\Backend\Collision.h" />
     <ClInclude Include="header\Physics\Backend\ConvexCollision.h" />
     <ClInclude Include="header\Physics\Backend\GeometryIndependent.h" />
+    <ClInclude Include="header\Physics\CollisionFunctions.h" />
     <ClInclude Include="header\Physics\Hitbox.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClCompile Include="source\Collision.cpp" />
