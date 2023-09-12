@@ -1,4 +1,34 @@
-#include "Interface\StateManager.h"
+#include "StateManager.h"
+
+void StateManager::HandleKeyInputs(int keyInput[])
+{
+	switch (m_currentState)
+	{
+	case State::Menu:
+
+		m_menu.HandleKeyInputs(keyInput, m_settings);
+		break;
+	case State::Game:
+
+		m_game.HandleKeyInputs(keyInput, m_settings);
+		break;
+	}
+}
+
+void StateManager::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent)
+{
+	switch (m_currentState)
+	{
+	case State::Menu:
+
+		m_menu.HandleMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
+		break;
+	case State::Game:
+
+		m_game.HandleMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
+		break;
+	}
+}
 
 StateManager::StateManager()
 {
@@ -34,32 +64,30 @@ void StateManager::Update()
 	oldmousepos = mousePos;
 }
 
-void StateManager::HandleKeyInputs(int keyInput[])
+void StateManager::HandleInputs()
 {
-	switch (m_currentState)
+	while (SDL_PollEvent(&sdl.sdlEvent))
 	{
-	case State::Menu:
+		int keyInput[256]{ 0 };
 
-		m_menu.HandleKeyInputs(keyInput, m_settings);
-		break;
-	case State::Game:
+		switch (sdl.sdlEvent.type)
+		{
+		case SDL_QUIT: //User requests quit
+			sdl.quit = true;
+			break;
+		case SDL_KEYDOWN: //Reads that a key has been pressed
+			keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
+			HandleKeyInputs(keyInput);
+			break;
+		case SDL_KEYUP: //Reads that a key has been released
+			keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
+			break;
+		case SDL_MOUSEBUTTONDOWN: //Reads that a mouse button has been pressed
+			HandleMouseInputs(sdl.sdlEvent.button);
+			break;
+		case SDL_MOUSEBUTTONUP: //Reads that a mouse button has been released
 
-		m_game.HandleKeyInputs(keyInput, m_settings);
-		break;
-	}
-}
-
-void StateManager::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent)
-{
-	switch (m_currentState)
-	{
-	case State::Menu:
-
-		m_menu.HandleMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-		break;
-	case State::Game:
-
-		m_game.HandleMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-		break;
+			break;
+		}
 	}
 }

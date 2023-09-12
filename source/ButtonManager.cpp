@@ -1,4 +1,4 @@
-#include "Interface\ButtonManager.h"
+#include "ButtonManager.h"
 
 void ButtonManager::AddButton(std::string id, std::pair<int, int> origin, std::pair<int, int> extends, std::function<void()> action)
 {

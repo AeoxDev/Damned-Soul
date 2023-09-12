@@ -10,8 +10,7 @@
 #include "DeltaTime.h"
 #include "Camera.h"
 #include "GameRenderer.h"
-#include "Interface\StateManager.h"
-#include "Interface\InputsHandler.h"
+#include "StateManager.h"
 
 int main(int argc, char* args[])
 {
@@ -34,7 +33,7 @@ int main(int argc, char* args[])
 		Render(testRenderSlot);
 
 		//Inputs: SDL readings of keyboard and mouse inputs
-		HandleInputs(stateManager);
+		stateManager.HandleInputs();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		stateManager.Update();

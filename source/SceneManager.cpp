@@ -1,4 +1,4 @@
-#include "Interface\SceneManager.h"
+#include "SceneManager.h"
 
 SceneManager::SceneManager()
 {

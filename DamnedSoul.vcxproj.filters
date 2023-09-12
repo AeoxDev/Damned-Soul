@@ -128,22 +128,19 @@
     <ClInclude Include="source\States.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Interface\StateStructures.h">
+    <ClInclude Include="header\StateStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Interface\SceneManager.h">
+    <ClInclude Include="header\SceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Interface\StateManager.h">
+    <ClInclude Include="header\StateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Interface\InputsHandler.h">
+    <ClInclude Include="header\SceneStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Interface\SceneStructures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Interface\ButtonManager.h">
+    <ClInclude Include="header\ButtonManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Camera.h">
