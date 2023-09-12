@@ -1,6 +1,5 @@
 #pragma once
 #include <DirectXMath.h>
-//extern PoolPointer<CameraStruct> m_camera;
 
 namespace Camera
 {

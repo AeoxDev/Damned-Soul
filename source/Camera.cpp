@@ -155,7 +155,7 @@ void Camera::UpdateView()
 	DirectX::XMStoreFloat4x4(&BufferData->m_viewMatrix, DirectX::XMMatrixTranspose(view));
 
 	//Update constant buffer
-	 UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));
+	 UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(*BufferData));
 }
 
 void Camera::UpdateProjection()
@@ -176,7 +176,7 @@ void Camera::UpdateProjection()
 	}
 	//SHADER_TO_BIND_BUFFER flags = BIND_VERTEX | BIND_PIXEL;
 	//Update Constant buffer
-	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));
+	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(*BufferData));
 }
 
 void Camera::ToggleProjection()

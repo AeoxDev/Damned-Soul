@@ -1,7 +1,45 @@
 #include "States_&_Scenes\Game.h"
+#include "DeltaTime.h"
+#include "Camera.h"
+#include "Model.h"
+#include "GameRenderer.h"
+#include "SDLHandler.h"
+
+Model dogModel;
 
 void Game::Update()
 {
+	if (-1 == dogModel.m_indexBuffer)
+		dogModel.Load("Hellhound.mdl");
+
+	// No support for held keys in the input handler at the moment
+	const Uint8* keystate = SDL_GetKeyboardState(NULL);
+	float move[2] = { 0, 0 };
+
+	// Move left
+	if (keystate[SDL_SCANCODE_A])
+		move[0] -= 1;
+	// Move right
+	if (keystate[SDL_SCANCODE_D])
+		move[0] += 1;
+	// Move up
+	if (keystate[SDL_SCANCODE_W])
+		move[1] += 1;
+	// Move down
+	if (keystate[SDL_SCANCODE_S])
+		move[1] -= 1;
+
+	float len = sqrt(move[0] * move[0] + move[1] * move[1]);
+	float scale = GetAverage() / (len < 0.1f ? 1 : len);
+	playerPosition.first += move[0] * scale;
+	playerPosition.second += move[1] * scale;
+
+	Camera::SetPosition(playerPosition.first, playerPosition.second, -2.0f);
+	Camera::SetLookAt(playerPosition.first, playerPosition.second, 0.0f);
+	Camera::UpdateView();
+	dogModel.SetVertexAndIndexBuffersActive();
+	Render(dogModel.m_bonelessModel->m_numIndices);
+	
 	sceneManager.Update();
 }
 
@@ -15,13 +53,13 @@ void Game::HandleKeyInputs(int keyInput[], Settings& settings)
 		if (keyInput[SDL_SCANCODE_0])
 			sceneManager.SetScene("Shop");
 
-		if (keyInput[SDL_SCANCODE_1] && sceneManager.GetCurrentSceneName() == "Shop")
+		else if (keyInput[SDL_SCANCODE_1] && sceneManager.GetCurrentSceneName() == "Shop")
 		{
 			std::string name = "Level_1";
 			sceneManager.SetScene(name);
 		}
 
-		if (keyInput[SDL_SCANCODE_2] && sceneManager.GetCurrentSceneName() == "Level_1")
+		else if (keyInput[SDL_SCANCODE_2] && sceneManager.GetCurrentSceneName() == "Level_1")
 		{
 			std::vector<std::string> entityList = { "Imp", "Imp" , "Skeleton" };
 			std::string name = "Level_2";
@@ -29,7 +67,7 @@ void Game::HandleKeyInputs(int keyInput[], Settings& settings)
 			sceneManager.AddScene(name, entityList);
 		}
 
-		if (keyInput[SDL_SCANCODE_3] && sceneManager.GetCurrentSceneName() == "Level_2")
+		else if (keyInput[SDL_SCANCODE_3] && sceneManager.GetCurrentSceneName() == "Level_2")
 		{
 			std::vector<std::string> entityList = { "Skeleton", "Skeleton" , "Demon" };
 			std::string name = "Level_3";
@@ -37,10 +75,10 @@ void Game::HandleKeyInputs(int keyInput[], Settings& settings)
 			sceneManager.AddScene(name, entityList);
 		}
 
-		if (keyInput[SDL_SCANCODE_Q])
+		else if (keyInput[SDL_SCANCODE_Q])
 			sceneManager.WriteEntities();
 
-		if (keyInput[SDL_SCANCODE_ESCAPE])
+		else if (keyInput[SDL_SCANCODE_ESCAPE])
 			currentSubState = GameState::Pause;
 
 		break;
@@ -94,6 +132,6 @@ void Game::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager butt
 void Game::Reset()
 {
 	currentSubState = GameState::Unpause;
-	playerPosition = { 200, 200 };
+	playerPosition = { 0, 0 };
 	sceneManager = {};
 }

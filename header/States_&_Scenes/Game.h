@@ -7,7 +7,7 @@ struct Game
 	GameState currentSubState = GameState::Unpause;
 	SceneManager sceneManager;
 
-	std::pair<int, int> playerPosition = { 200, 200 };
+	std::pair<float, float> playerPosition = { 0, 0 };
 
 	void Update();
 
