@@ -2,7 +2,6 @@
 //
 
 #include "SDLhandler.h"
-#include "Input.h"
 #include "MemLib/MemLib.hpp"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
@@ -12,6 +11,8 @@
 #include "Camera.h"
 #include "GameRenderer.h"
 #include "Hitbox.h"
+#include "States_&_Scenes\StateManager.h"
+#include "Model.h"
 #include "ComponentHelper.h"
 
 void UpdateDebugWindowTitle(std::string& title);
@@ -24,8 +25,8 @@ int main(int argc, char* args[])
 	std::string title = "Damned Soul";
 
 	int testRenderSlot = SetupGameRenderer();
-	InitializeCamera();
-	SetConstantBuffer(GetCameraBufferIndex());
+	Camera::InitializeCamera();
+	SetConstantBuffer(Camera::GetCameraBufferIndex());
 
 	Registry collisionRegistry;
 	EntityID player = collisionRegistry.CreateEntity();
@@ -39,6 +40,7 @@ int main(int argc, char* args[])
 	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 0.0f, 1.0f);
 	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
 	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
+	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
 
 	EntityID enemy2 = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, enemy2);
@@ -50,14 +52,30 @@ int main(int argc, char* args[])
 	{
 		CountDeltaTime();
 
-		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		Render(testRenderSlot);
+		// Clear the render targets!
+		Clear(testRenderSlot);
+
+		//Inputs: SDL readings of keyboard and mouse inputs
+		stateManager.HandleInputs();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();
 		UpdatePhysics(collisionRegistry);//Change registry to scene registry
 		UpdateDebugWindowTitle(title);
 
+		stateManager.Update();
+
+		// Present what was drawn during the update!
+		Present();
+
+#ifdef _DEBUG
+		if (sdl.windowFlags == 0 && NewSecond())
+		{
+			title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
+			//title+="";//Add more debugging information here, updates every second.
+			SetWindowTitle(title);
+		}
+#endif // _DEBUG Debugging purposes, not compiled in release
 
 		MemLib::pdefrag();
 	}

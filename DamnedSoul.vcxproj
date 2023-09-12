@@ -171,6 +171,14 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
+    <ClCompile Include="source\ButtonManager.cpp" />
+    <ClCompile Include="source\SceneManager.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp" />
+    <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -186,8 +194,8 @@
     <ClCompile Include="source\DeltaTime.cpp" />
     <ClCompile Include="source\GameRenderer.cpp" />
     <ClCompile Include="source\Hitbox.cpp" />
-    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -252,14 +260,28 @@
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\GameRenderer.h" />
     <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Model.h" />
     <ClInclude Include="header\Physics\Backend\CircularCollision.h" />
     <ClInclude Include="header\Physics\Backend\Collision.h" />
     <ClInclude Include="header\Physics\Backend\ConvexCollision.h" />
     <ClInclude Include="header\Physics\Backend\GeometryIndependent.h" />
     <ClInclude Include="header\Physics\CollisionFunctions.h" />
     <ClInclude Include="header\Physics\Hitbox.h" />
+    <ClInclude Include="header\Hitbox.h" />
+    <ClInclude Include="header\ButtonManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClCompile Include="source\Collision.cpp" />
+    <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
+    <ClInclude Include="lib\stb_image.h" />
+    <ClInclude Include="source\Colission.cpp" />
+    <ClInclude Include="source\States.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
