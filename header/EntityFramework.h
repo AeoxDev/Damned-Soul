@@ -7,7 +7,7 @@
 #include <Windows.h>
 
 #include "MemLib/MemLib.hpp"
-#include "ComponentHelper.h"
+//#include "ComponentHelper.h"
 
 /*
 	//HOW TO USE (Basic version):
@@ -235,7 +235,7 @@ private:
 template<typename ...Args>
 class View
 {
-private:
+public:
 	View(Registry& registry) : pRegistry(&registry)
 	{
 		//Array of integers for the id's ranging from 0 to however many component-types we're passing in
@@ -290,7 +290,7 @@ private:
 		while (first < pRegistry->entities.size() &&
 			(components != (components & pRegistry->entities[first].components) || !EntityGlobals::IsEntityValid(pRegistry->entities[first].id)))
 			first++;
-		return Iterator(pRegistry, 0, components);
+		return Iterator(pRegistry, first, components);
 	}
 
 	const Iterator end() const
