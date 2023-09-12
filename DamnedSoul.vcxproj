@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
