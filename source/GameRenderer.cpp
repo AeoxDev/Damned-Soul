@@ -68,9 +68,8 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
-void Render(const int& s, UI* ui)
+void Render(const int& s)
 {
-	RenderUI(ui);
 
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);

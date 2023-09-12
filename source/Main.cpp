@@ -44,18 +44,20 @@ int main(int argc, char* args[])
 	ExMenu* ex = new ExMenu(ui);
 	
 	ui->SetCurrentCanvas(ex);
+	RenderUI(ui);
 
 
 	/////////// REMOVE //////////////
 
 	while (!sdl.quit)
 	{
+
 		CountDeltaTime();
 
 		
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
 		//RenderUI(ui);
-		Render(testRenderSlot, ui);
+		Render(testRenderSlot);
 		d3d11Data->swapChain->Present(0, 0);
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		HandleInput();

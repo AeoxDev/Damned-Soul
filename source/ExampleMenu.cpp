@@ -7,11 +7,6 @@ using namespace DirectX::SimpleMath;
 float scalingFactor;
 Vector2 center;
 
-void ExMenu::Render(PoolPointer<UI>& ui)
-{
-	//deviceContext->ClearRenderTargetView()
-}
-
 void ExMenu::Update(float dt) //Logic for updating current pages and 
 {
 	//keyboard and mouse logic

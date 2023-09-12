@@ -1,8 +1,6 @@
 #pragma once
 #include "UICanvas.h"
 
-
-
 class ExMenu : public UICanvas
 {
 private:
@@ -11,7 +9,6 @@ private:
 
 	UINT activeID = 0;
 
-	void Render(PoolPointer<UI>& ui);
 	void Update(float dt);
 
 	//void Resize();
