@@ -84,6 +84,21 @@
     <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\GeometryIndependent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CircularCollision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ConvexCollision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
@@ -110,9 +125,6 @@
     <ClInclude Include="header\Audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Hitbox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\D3D11Graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -134,10 +146,28 @@
     <ClInclude Include="header\EntityFramework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Colission.h">
+    <ClInclude Include="header\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Colission.cpp">
+    <ClInclude Include="header\GameRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\Backend\CircularCollision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\Backend\Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\Backend\ConvexCollision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\Backend\GeometryIndependent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\Hitbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\States.h">

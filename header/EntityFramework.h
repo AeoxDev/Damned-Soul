@@ -69,7 +69,7 @@ namespace EntityGlobals
 		return compId;
 	}
 
-	static constexpr bool IsEntityValid(EntityID id)
+	static constexpr bool IsEntityValid(EntityID& id)
 	{
 		return id.index != -1;
 	}

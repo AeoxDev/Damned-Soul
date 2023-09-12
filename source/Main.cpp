@@ -11,6 +11,8 @@
 #include "Camera.h"
 #include "GameRenderer.h"
 #include "States_&_Scenes\StateManager.h"
+#include "Model.h"
+
 
 int main(int argc, char* args[])
 {
@@ -23,14 +25,30 @@ int main(int argc, char* args[])
 	InitializeCamera();
 	SetConstantBuffer(GetCameraBufferIndex());
 
+	Model eyeModel;
+	if (false == eyeModel.Load("FlyingEyeDummy.mdl"))
+		return -1;
+	Model dogModel;
+	if (false == dogModel.Load("Hellhound.mdl"))
+		return -1;
+	//testModel.SetVertexAndIndexBuffersActive();
+
 	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
 
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 
-		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		Render(testRenderSlot);
+		Clear(testRenderSlot);
+
+		//Render: GPU calls. Always tell the GPU what to do first when possible for optimal parallelism
+		eyeModel.SetVertexAndIndexBuffersActive();
+		Render(eyeModel.m_bonelessModel->m_numIndices);
+
+		dogModel.SetVertexAndIndexBuffersActive();
+		Render(dogModel.m_bonelessModel->m_numIndices);
+
+		Present();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
 		stateManager.HandleInputs();

@@ -52,31 +52,23 @@ struct GraphicsComponent
 	//posX, posY, texture..
 };
 
+struct PositionComponent
+{
+	bool is3D;//false: position relative in screen, 0.0 to 1.0nb  
+	float posX, posY, posZ;
+};
+
+/// <summary>
+/// This component is only for moving objects (e.g. walls do not need a physics component)
+/// </summary>
 struct PhysicsComponent
 {
 	float mass;
 	float lastPosX;
-	float lastPosY;
+	float lastPosZ;
 };
 
-struct CircleColliderComponent
-{
-	float radius, offsetX, offsetY;
-};
 
-struct ConvexColliderComponent
-{
-	float centerX, centerY;
-
-	int cornerAmount;
-	float cornerX[16], cornerY[16];
-};
-
-struct GeometryIndependentColliderComponent
-{
-	uint8_t pixelMap[512 * 512]; //#define 512*512 as size? or rather just 512 as dimension
-	float offsetX, offsetY;
-};
 
 //Components:
 /*

@@ -3,12 +3,12 @@ struct GSOutput
     float4 position : SV_POSITION;
 };
 
-cbuffer ConstantBuffer : register(b1)
+cbuffer ConstantBuffer : register(b0)
 {
     matrix viewAndProjection;
 }
 
-[maxvertexcount(6)]
+[maxvertexcount(24)]
 void main(
 	point float4 input[1] : SV_POSITION,
     point uint isCube[1] : IS_CUBE,

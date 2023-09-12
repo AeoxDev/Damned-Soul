@@ -1,6 +1,20 @@
 #include "Hitbox.h"
+#include "D3D11Graphics.h"
+#include "D3D11Helper.h"
+#include <string>
+#include <iostream>
+#include <fstream>
 
-void CreateHitbox(ID3D11Device*& device, int isCube, std::vector<DirectX::XMFLOAT3> vertexBuffer)
+HitboxVisualizeVariables hvv;
+
+bool SetupHitboxVisualizer()
+{
+	InitializeBufferAndSRV();
+	CreateShadersLayoutAndRasterState();
+	return true;
+}
+
+void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer) //Update this to work with ECS when creating components
 {
 	Hitbox hitbox;
 	hitbox.isCube = isCube;
@@ -74,18 +88,14 @@ void CreateHitbox(ID3D11Device*& device, int isCube, std::vector<DirectX::XMFLOA
 	}
 
 	//Push the new hitbox into the list of hitboxes
-	hitboxes.push_back(hitbox);
-
-	//Update the hitbox buffer and SRV
-	DestroyBufferAndSRV();
-	InitializeBufferAndSRV(device);
+	hvv.hitboxes.push_back(hitbox);
 }
 
-void InitializeBufferAndSRV(ID3D11Device*& device)
+void InitializeBufferAndSRV()
 {
 	//Create the structured buffer description
 	D3D11_BUFFER_DESC buffDesc{};
-	buffDesc.ByteWidth = sizeof(Hitbox) * UINT(hitboxes.size());
+	buffDesc.ByteWidth = sizeof(Hitbox) * UINT(hvv.hitboxes.size());
 	buffDesc.Usage = D3D11_USAGE_DEFAULT;
 	buffDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
@@ -93,7 +103,7 @@ void InitializeBufferAndSRV(ID3D11Device*& device)
 	buffDesc.StructureByteStride = sizeof(Hitbox);
 
 	D3D11_SUBRESOURCE_DATA initialData{};
-	initialData.pSysMem = &hitboxes[0];
+	initialData.pSysMem = &hvv.hitboxes[0];
 	initialData.SysMemPitch = 0;
 	initialData.SysMemSlicePitch = 0;
 
@@ -102,77 +112,26 @@ void InitializeBufferAndSRV(ID3D11Device*& device)
 	SRVdesc.Format = DXGI_FORMAT_UNKNOWN;
 	SRVdesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	SRVdesc.Buffer.FirstElement = 0;
-	SRVdesc.Buffer.NumElements = UINT(hitboxes.size());
+	SRVdesc.Buffer.NumElements = UINT(hvv.hitboxes.size());
 	SRVdesc.Buffer.ElementOffset = 0;
 
-	//Create the world matrix constant buffer description
-	D3D11_BUFFER_DESC constantBufferDesc{};
-	constantBufferDesc.ByteWidth = sizeof(WorldMatrix);
-	constantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	constantBufferDesc.MiscFlags = 0;
-	constantBufferDesc.StructureByteStride = 0;
-
-	//World matrix
-	WorldMatrix world =
+	d3d11Data->device->CreateBuffer(&buffDesc, &initialData, &hvv.hitboxStructuredBuffer);
+	if (hvv.hitboxStructuredBuffer != NULL)
 	{
-		DirectX::XMMatrixIdentity()
-	};
-
-	D3D11_SUBRESOURCE_DATA initData{};
-	initData.pSysMem = &world;
-	initData.SysMemPitch = 0;
-	initData.SysMemSlicePitch = 0;
-
-	if (FAILED(device->CreateBuffer(&constantBufferDesc, &initData, &worldMatrixBuffer)))
-	{
-		std::cerr << "Failed to create the world matrix constant buffer!" << std::endl;
-	}
-
-	device->CreateBuffer(&buffDesc, &initialData, &hitboxStructuredBuffer);
-	if (hitboxStructuredBuffer != NULL)
-	{
-		device->CreateShaderResourceView(hitboxStructuredBuffer, &SRVdesc, &hitboxStructuredSRV);
-	}
-
-
-	//Delete everything in this function under this line later
-
-	//Create the view And projection constant buffer description
-	D3D11_BUFFER_DESC viewConstantBufferDesc{};
-	viewConstantBufferDesc.ByteWidth = sizeof(WorldMatrix);
-	viewConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	viewConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	viewConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	viewConstantBufferDesc.MiscFlags = 0;
-	viewConstantBufferDesc.StructureByteStride = 0;
-
-	float fovRadians = (90.0f / 360.0f) * DirectX::XM_2PI;
-	DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fovRadians, 2, 0.1f, 1000.0f);
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	DirectX::XMVECTOR target = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);;
-	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(pos, target, up);
-
-	//viewAndProj
-	WorldMatrix viewAndProj =
-	{
-		viewMatrix * projectionMatrix
-	};
-
-	D3D11_SUBRESOURCE_DATA initoData{};
-	initoData.pSysMem = &viewAndProj;
-	initoData.SysMemPitch = 0;
-	initoData.SysMemSlicePitch = 0;
-
-	if (FAILED(device->CreateBuffer(&viewConstantBufferDesc, &initoData, &viewAndProjMatrix)))
-	{
-		std::cerr << "Failed to create the viewAndProj matrix constant buffer!" << std::endl;
+		d3d11Data->device->CreateShaderResourceView(hvv.hitboxStructuredBuffer, &SRVdesc, &hvv.hitboxStructuredSRV);
 	}
 }
 
-void DebugRenderHitbox(ID3D11DeviceContext*& immediateContext)//, ID3D11Buffer*& viewAndProjectionMatrix)
+void UpdateHitboxBuffer()
+{
+	//Clear previous buffer
+	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
+	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
+
+	InitializeBufferAndSRV();
+}
+
+void DebugRenderHitbox(ID3D11Buffer*& worldMatrix, ID3D11Buffer*& viewAndProjectionMatrix)
 {
 	//Assuming the backbuffer is bound to the output merger
 	
@@ -180,37 +139,37 @@ void DebugRenderHitbox(ID3D11DeviceContext*& immediateContext)//, ID3D11Buffer*&
 	ID3D11Buffer* nullBuffer = nullptr;
 	UINT stride = 0;
 	UINT offset = 0;
-	immediateContext->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);
-	immediateContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-	immediateContext->IASetInputLayout(nullptr);
+	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);
+	d3d11Data->deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+	d3d11Data->deviceContext->IASetInputLayout(nullptr);
 
 	//Input assembler
-	immediateContext->IASetInputLayout(hitboxInputLayout);
-	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	d3d11Data->deviceContext->IASetInputLayout(hvv.hitboxInputLayout);
+	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	d3d11Data->deviceContext->RSSetState(hvv.hitboxWireframeRaster);
 
 	//Vertex Shader
-	immediateContext->VSSetShader(vShader, nullptr, 0);
-	immediateContext->VSSetShaderResources(0, 1, &hitboxStructuredSRV);
-	immediateContext->VSSetConstantBuffers(0, 1, &worldMatrixBuffer); //Constant Buffer Filled With World Matrix
+	d3d11Data->deviceContext->VSSetShader(hvv.vShader, nullptr, 0);
+	d3d11Data->deviceContext->VSSetShaderResources(0, 1, &hvv.hitboxStructuredSRV);
+	d3d11Data->deviceContext->VSSetConstantBuffers(0, 1, &worldMatrix); //Constant Buffer Filled With World Matrix
 
 	//Geometry Shader
-	immediateContext->GSSetShader(gShader, nullptr, 0);
-	immediateContext->GSSetConstantBuffers(0, 1, &viewAndProjMatrix); //Delete this later
-	//immediateContext->GSSetConstantBuffers(0, 1, &viewAndProjectionMatrix); //Constant Buffer Filled With View And Projection Matrix
+	d3d11Data->deviceContext->GSSetShader(hvv.gShader, nullptr, 0);
+	d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &viewAndProjectionMatrix);
 
 	//Pixel Shader
-	immediateContext->PSSetShader(pShader, nullptr, 0);
+	d3d11Data->deviceContext->PSSetShader(hvv.pShader, nullptr, 0);
 
 	//Draw
-	immediateContext->Draw(UINT(hitboxes.size()), 0);
+	d3d11Data->deviceContext->Draw(UINT(hvv.hitboxes.size()), 0);
 }
 
-void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
+void CreateShadersLayoutAndRasterState()
 {
 	//Vertex Shader
 	std::string shaderData;
 	std::ifstream reader;
-	reader.open("../x64/Debug/DebugHitboxVertexShader.cso", std::ios::binary | std::ios::ate);
+	reader.open("../bin/DebugHitboxVertexShader.cso", std::ios::binary | std::ios::ate);
 	if (!reader.is_open())
 	{
 		std::cerr << "Could not open VS file!" << std::endl;
@@ -223,7 +182,7 @@ void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
 
-	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &vShader)))
+	if (FAILED(d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader)))
 	{
 		std::cerr << "Failed to create vertex shader!" << std::endl;
 	}
@@ -232,7 +191,7 @@ void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
 	//Geometry Shader
 	shaderData.clear();
 	reader.close();
-	reader.open("../x64/Debug/DebugHitboxGeometryShader.cso", std::ios::binary | std::ios::ate);
+	reader.open("../bin/DebugHitboxGeometryShader.cso", std::ios::binary | std::ios::ate);
 	if (!reader.is_open())
 	{
 		std::cerr << "Could not open GS file!" << std::endl;
@@ -245,7 +204,7 @@ void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
 
-	if (FAILED(device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &gShader)))
+	if (FAILED(d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader)))
 	{
 		std::cerr << "Failed to create geometry shader!" << std::endl;
 	}
@@ -253,7 +212,7 @@ void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
 	//Pixel Shader
 	shaderData.clear();
 	reader.close();
-	reader.open("../x64/Debug/DebugHitboxPixelShader.cso", std::ios::binary | std::ios::ate);
+	reader.open("../bin/DebugHitboxPixelShader.cso", std::ios::binary | std::ios::ate);
 	if (!reader.is_open())
 	{
 		std::cerr << "Could not open PS file!" << std::endl;
@@ -266,7 +225,7 @@ void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
 
-	if (FAILED(device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &pShader)))
+	if (FAILED(d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader)))
 	{
 		std::cerr << "Failed to create pixel shader!" << std::endl;
 	}
@@ -278,7 +237,7 @@ void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
 	};
 
 	//Array of input descriptions, number of elements, pointer to compiled shader, size of compiled shader, pointer to input-layout.
-	if (FAILED(device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hitboxInputLayout)))
+	if (FAILED(d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout)))
 	{
 		std::cerr << "Failed to create hitbox input layout!" << std::endl;
 	}
@@ -289,40 +248,21 @@ void CreateShadersLayoutAndRasterState(ID3D11Device*& device)
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = false;
 
-	if (FAILED(device->CreateRasterizerState(&rasterDesc, &hitboxWireframeRaster)))
+	if (FAILED(d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster)))
 	{
 		std::cerr << "Failed to create hitbox raster state!" << std::endl;
 	}
 }
 
-void DestroyShaders()
+void DestroyHitboxVisualizeVariables()
 {
 	//Release COM-objects
-	if (vShader) vShader->Release();
-	if (gShader) gShader->Release();
-	if (pShader) pShader->Release();
-}
-
-void DestroyHitboxResources()
-{
-	//Release COM-objects
-	if (hitboxInputLayout) hitboxInputLayout->Release();
-	if (hitboxWireframeRaster) hitboxWireframeRaster->Release();
-}
-
-void DestroyBufferAndSRV()
-{
-	//Release COM-objects
-	if (hitboxStructuredBuffer) hitboxStructuredBuffer->Release();
-	if (worldMatrixBuffer) worldMatrixBuffer->Release();
-	if (hitboxStructuredSRV) hitboxStructuredSRV->Release();
-}
-
-void DestroyHitboxes()
-{
-	//Destroy everything associated with hitboxes
-	DestroyShaders();
-	DestroyHitboxResources();
-	DestroyBufferAndSRV();
-	hitboxes.clear();
+	if (hvv.vShader) hvv.vShader->Release();
+	if (hvv.gShader) hvv.gShader->Release();
+	if (hvv.pShader) hvv.pShader->Release();
+	if (hvv.hitboxInputLayout) hvv.hitboxInputLayout->Release();
+	if (hvv.hitboxWireframeRaster) hvv.hitboxWireframeRaster->Release();
+	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
+	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
+	hvv.hitboxes.clear();
 }

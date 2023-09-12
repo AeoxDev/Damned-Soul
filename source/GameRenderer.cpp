@@ -35,8 +35,8 @@ int SetupGameRenderer()
 		float uv[2];
 	};
 	Vertex triangle[3] = {
-		0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
-		-0.9f, -0.9, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
+		0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
+		-0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
 		0, 0.9f, 0.5f, 1.f,			/**/ 0, 0, -1.f, 0, /**/ 0.5, 1 };
 	renderStates[0].vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3);
 	uint32_t idxs[3] = { 0, 1, 2 };
@@ -60,13 +60,18 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
-void Render(const int& s)
+void Clear(const int& s)
 {
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
+}
 
-	d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
-	//d3d11Data->deviceContext->Draw(3, 0);
+void Render(const size_t& count)
+{
+	d3d11Data->deviceContext->DrawIndexed(count, 0, 0);
+}
+
+void Present()
+{
 	d3d11Data->swapChain->Present(0, 0);
-
 }
