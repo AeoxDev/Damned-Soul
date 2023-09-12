@@ -2,7 +2,6 @@
 //
 
 #include "SDLhandler.h"
-#include "Input.h"
 #include "MemLib/MemLib.hpp"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
@@ -11,7 +10,9 @@
 #include "DeltaTime.h"
 #include "Camera.h"
 #include "GameRenderer.h"
+#include "States_&_Scenes\StateManager.h"
 #include "Model.h"
+
 
 int main(int argc, char* args[])
 {
@@ -32,6 +33,8 @@ int main(int argc, char* args[])
 		return -1;
 	//testModel.SetVertexAndIndexBuffersActive();
 
+	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
+
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
@@ -51,8 +54,12 @@ int main(int argc, char* args[])
 
 		Present();
 
+		//Inputs: SDL readings of keyboard and mouse inputs
+		stateManager.HandleInputs();
+
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
-		HandleInput();
+		stateManager.Update();
+
 #ifdef _DEBUG
 		if (sdl.windowFlags == 0 && NewSecond())
 		{
