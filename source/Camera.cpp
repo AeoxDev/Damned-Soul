@@ -2,167 +2,196 @@
 #include "MemLib/MemLib.hpp"
 #include "D3D11Helper.h"
 #include "SDLHandler.h"
+#include <DirectXMath.h>
 
-PoolPointer<Camera> m_camera;
-PoolPointer<CameraConstantBuffer> m_bufferData;
+struct CameraStruct
+{
+	DirectX::XMFLOAT3 m_position;
+	DirectX::XMFLOAT3 m_lookAt;
+	DirectX::XMFLOAT3 m_up;
+	DirectX::XMFLOAT3 m_rotation;
 
-void SetPosition(float x, float y, float z)
+	DirectX::XMFLOAT4X4 m_view;
+
+	DirectX::XMFLOAT4X4 m_perspective;
+	DirectX::XMFLOAT4X4 m_orthographic;
+
+	int16_t m_cameraBufferIndex;
+
+	float m_FOV;
+
+	//If this is true, the camera will update the persepctive matrix on update call
+	//if it is false, the camera will update the orthographic matrix on call.
+	bool m_projectionType;
+};
+
+struct CameraConstantBuffer
+{
+	DirectX::XMFLOAT4 m_cameraPosition;
+	DirectX::XMFLOAT4X4 m_viewMatrix;
+	DirectX::XMFLOAT4X4 m_projectionMatrix;
+};
+
+PoolPointer<CameraStruct> GameCamera;
+PoolPointer<CameraConstantBuffer> BufferData;
+
+void Camera::SetPosition(const float x, const float y, const float z)
 {
 	
-	m_camera->position.x = x;
-	m_camera->position.y = y;
-	m_camera->position.z = z;
+	GameCamera->m_position.x = x;
+	GameCamera->m_position.y = y;
+	GameCamera->m_position.z = z;
 }
 
-void SetLookAt(float x, float y, float z)
+void Camera::SetLookAt(const float x, const float y, const float z)
 {
-	m_camera->lookAt.x = x;
-	m_camera->lookAt.y = y;
-	m_camera->lookAt.z = z;
+	GameCamera->m_lookAt.x = x;
+	GameCamera->m_lookAt.y = y;
+	GameCamera->m_lookAt.z = z;
 }
 
-void SetUp(float x, float y, float z)
+void Camera::SetUp(const float x, const float y, const float z)
 {
-	m_camera->up.x = x;
-	m_camera->up.y = y;
-	m_camera->up.z = z;
+	GameCamera->m_up.x = x;
+	GameCamera->m_up.y = y;
+	GameCamera->m_up.z = z;
 }
 
-void SetRotation(float x, float y, float z)
+void Camera::SetRotation(const float x, const float y, const float z)
 {
-	m_camera->rotation.x = x;
-	m_camera->rotation.y = y;
-	m_camera->rotation.z = z;
+	GameCamera->m_rotation.x = x;
+	GameCamera->m_rotation.y = y;
+	GameCamera->m_rotation.z = z;
 }
 
-void SetFOV(float radians)
+void Camera::SetFOV(const float radians)
 {
-	m_camera->FOV = radians;
+	GameCamera->m_FOV = radians;
 }
 
-void AdjustPosition(float x, float y, float z)
+void Camera::AdjustPosition(const float x, const float y, const float z)
 {
-	m_camera->position.x += x;
-	m_camera->position.y += y;
-	m_camera->position.z += z;
+	GameCamera->m_position.x += x;
+	GameCamera->m_position.y += y;
+	GameCamera->m_position.z += z;
 }
 
-void AdjustLookAt(float x, float y, float z)
+void Camera::AdjustLookAt(const float x, const float y, const float z)
 {
-	m_camera->lookAt.x += x;
-	m_camera->lookAt.y += y;
-	m_camera->lookAt.z += z;
+	GameCamera->m_lookAt.x += x;
+	GameCamera->m_lookAt.y += y;
+	GameCamera->m_lookAt.z += z;
 }
 
-void AdjustUp(float x, float y, float z)
+void Camera::AdjustUp(const float x, const float y, const float z)
 {
-	m_camera->up.x += x;
-	m_camera->up.y += y;
-	m_camera->up.z += z;
+	GameCamera->m_up.x += x;
+	GameCamera->m_up.y += y;
+	GameCamera->m_up.z += z;
 }
 
-void AdjustRotation(float x, float y, float z)
+void Camera::AdjustRotation(const float x, const float y, const float z)
 {
-	m_camera->rotation.x += x;
-	m_camera->rotation.y += y;
-	m_camera->rotation.z += z;
+	GameCamera->m_rotation.x += x;
+	GameCamera->m_rotation.y += y;
+	GameCamera->m_rotation.z += z;
 }
 
-void AdjustFOV(float radians)
+void Camera::AdjustFOV(const float radians)
 {
-	m_camera->FOV += radians;
+	GameCamera->m_FOV += radians;
 }
 
-DirectX::XMVECTOR GetPosition()
+DirectX::XMVECTOR Camera::GetPosition()
 {
-	return DirectX::XMLoadFloat3(&m_camera->position);
+	return DirectX::XMLoadFloat3(&GameCamera->m_position);
 }
 
-DirectX::XMVECTOR GetLookAt()
+DirectX::XMVECTOR Camera::GetLookAt()
 {
-	return DirectX::XMLoadFloat3(&m_camera->lookAt);
+	return DirectX::XMLoadFloat3(&GameCamera->m_lookAt);
 }
 
-DirectX::XMVECTOR GetUp()
+DirectX::XMVECTOR Camera::GetUp()
 {
-	return DirectX::XMLoadFloat3(&m_camera->up);
+	return DirectX::XMLoadFloat3(&GameCamera->m_up);
 }
 
-DirectX::XMVECTOR GetRotation()
+DirectX::XMVECTOR Camera::GetRotation()
 {
-	return DirectX::XMLoadFloat3(&m_camera->rotation);
+	return DirectX::XMLoadFloat3(&GameCamera->m_rotation);
 }
 
-DirectX::XMMATRIX GetView()
+DirectX::XMMATRIX Camera::GetView()
 {
-	return DirectX::XMLoadFloat4x4(&m_camera->view);
+	return DirectX::XMLoadFloat4x4(&GameCamera->m_view);
 }
 
-float GetFOV()
+float Camera::GetFOV()
 {
-	return m_camera->FOV;
+	return GameCamera->m_FOV;
 }
 
-DirectX::XMMATRIX GetPerspective()
+DirectX::XMMATRIX Camera::GetPerspective()
 {
-	return DirectX::XMLoadFloat4x4(&m_camera->perspective);
+	return DirectX::XMLoadFloat4x4(&GameCamera->m_perspective);
 }
 
-DirectX::XMMATRIX GetOrthographic()
+DirectX::XMMATRIX Camera::GetOrthographic()
 {
-	return DirectX::XMLoadFloat4x4(&m_camera->orthographic);
+	return DirectX::XMLoadFloat4x4(&GameCamera->m_orthographic);
 }
 
-int16_t GetCameraBufferIndex()
+int16_t Camera::GetCameraBufferIndex()
 {
-	return m_camera->cameraBufferIndex;
+	return GameCamera->m_cameraBufferIndex;
 }
 
-void UpdateView()
+void Camera::UpdateView()
 {
 	DirectX::XMMATRIX view;
 	view = DirectX::XMMatrixLookAtLH(GetPosition(), GetLookAt(), GetUp());
-	DirectX::XMStoreFloat4x4(&m_camera->view, view);
-	DirectX::XMStoreFloat4x4(&m_bufferData->viewMatrix, DirectX::XMMatrixTranspose(view));
+	DirectX::XMStoreFloat4x4(&GameCamera->m_view, view);
+	DirectX::XMStoreFloat4x4(&BufferData->m_viewMatrix, DirectX::XMMatrixTranspose(view));
 
 	//Update constant buffer
-	m_camera->cameraBufferIndex = CreateConstantBuffer(&(m_bufferData->cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 0);
+	 UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));
 }
 
-void UpdateProjection()
+void Camera::UpdateProjection()
 {
-	if (m_camera->projectionType)
+	if (GameCamera->m_projectionType)
 	{
 		DirectX::XMMATRIX proj;
 		proj = DirectX::XMMatrixPerspectiveFovLH(GetFOV(), (float)sdl.WIDTH / (float)sdl.HEIGHT, 0.1f, 50.f);//proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
-		DirectX::XMStoreFloat4x4(&m_camera->perspective, proj);
-		DirectX::XMStoreFloat4x4(&m_bufferData->projectionMatrix, DirectX::XMMatrixTranspose(proj));
+		DirectX::XMStoreFloat4x4(&GameCamera->m_perspective, proj);
+		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(proj));
 	}
 	else
 	{
 		DirectX::XMMATRIX orth;
 		orth = DirectX::XMMatrixOrthographicLH((float)sdl.WIDTH, (float)sdl.HEIGHT, 0.1f, 50.f);
-		DirectX::XMStoreFloat4x4(&m_camera->orthographic, orth);
-		DirectX::XMStoreFloat4x4(&m_bufferData->projectionMatrix, DirectX::XMMatrixTranspose(orth));
+		DirectX::XMStoreFloat4x4(&GameCamera->m_orthographic, orth);
+		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(orth));
 	}
 	//SHADER_TO_BIND_BUFFER flags = BIND_VERTEX | BIND_PIXEL;
 	//Update Constant buffer
-	m_camera->cameraBufferIndex = CreateConstantBuffer(&(m_bufferData->cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 0);
+	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));
 }
 
-void ToggleProjection()
+void Camera::ToggleProjection()
 {
 	//If projection is true, it will become false
 	//If projection is false, it will become true
-	m_camera->projectionType ? false : true;
+	GameCamera->m_projectionType ? false : true;
 }
 
-void InitializeCamera()
+void Camera::InitializeCamera()
 {
-	m_bufferData = MemLib::palloc(sizeof(CameraConstantBuffer));
+	BufferData = MemLib::palloc(sizeof(CameraConstantBuffer));
 
-	m_camera = MemLib::palloc(sizeof(Camera));
-	m_camera->projectionType = true;
+	GameCamera = MemLib::palloc(sizeof(CameraStruct));
+	GameCamera->m_projectionType = true;
 	
 	SetPosition(0.f, 0.f, -10.f);
 	SetLookAt(0.f, 0.f, 1.f);
@@ -179,18 +208,19 @@ void InitializeCamera()
 
 	//Prepare the buffer to creation
 	//Update camera pos, view and projection
-	m_bufferData->cameraPosition = DirectX::XMFLOAT4(m_camera->position.x, m_camera->position.y, m_camera->position.z, 1.0f);
+	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f);
+	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 0);
 	UpdateView();
 	UpdateProjection();
 
 	//SHADER_TO_BIND_BUFFER flags = BIND_VERTEX | BIND_PIXEL;
-	m_camera->cameraBufferIndex = CreateConstantBuffer(&(m_bufferData->cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 0);
+	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 0);
 
 
 }
 
-void FreeCamera()
+void Camera::FreeCamera()
 {
-	MemLib::pfree(m_camera);
-	MemLib::pfree(m_bufferData);
+	MemLib::pfree(GameCamera);
+	MemLib::pfree(BufferData);
 }

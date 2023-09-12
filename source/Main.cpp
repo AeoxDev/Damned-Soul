@@ -21,8 +21,8 @@ int main(int argc, char* args[])
 	std::string title = "Damned Soul";
 
 	int testRenderSlot = SetupGameRenderer();
-	InitializeCamera();
-	SetConstantBuffer(GetCameraBufferIndex());
+	Camera::InitializeCamera();
+	SetConstantBuffer(Camera::GetCameraBufferIndex());
 
 	Model eyeModel;
 	if (false == eyeModel.Load("FlyingEyeDummy.mdl"))
@@ -35,6 +35,10 @@ int main(int argc, char* args[])
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
+
+		//Camera::AdjustPosition(0.25 * GetAverage(), 0, 0);
+		//Camera::UpdateView();
+		//Camera::UpdateProjection();
 
 		Clear(testRenderSlot);
 
