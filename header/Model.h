@@ -25,7 +25,7 @@ struct ModelBoneless
 	uint32_t m_numMaterials;
 	uint32_t m_numVertices;
 	uint32_t m_numIndices;
-	char *m_data;
+	char m_data[];//Array is intentional, ignore warning
 
 	const Material& GetMaterial(const size_t idx) const;
 	const VertexBoneless* GetVertices() const;

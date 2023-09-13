@@ -169,45 +169,6 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 				//Call OnConvexCollision if both are convex
 			}
 		}
-
-
-	}
-
-
-	for (auto entity : View<HitboxComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-	{
-		//For each entity, check moveable collision first.
-		HitboxComponent* hitboxes = registry.GetComponent<HitboxComponent>(entity);
-		
-		if (hitboxes->nrMoveableCollisions == 0)
-		{
-			continue;
-		}
-			for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
-			{
-				//Check each active hitbox
-				if (hitboxes->circularFlags[i].isMoveable == 0)
-				{
-					continue;
-				}
-				//Circle
-				if (hitboxes->circularFlags[i].active)
-				{
-					//Active hitbox, loop every other entity
-					for (auto entity2 : View<HitboxComponent>(registry))
-					{
-						//Check if same entity
-						if (entity.index == entity2.index)
-						{
-							continue;
-						}
-						HitboxComponent* hitboxes2 = registry.GetComponent<HitboxComponent>(entity2);
-						//Check circular collision for each active circle.
-
-					}
-				}
-				//Convex
-			}
 	}
 }
 

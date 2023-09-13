@@ -46,7 +46,7 @@ struct HitboxVisualizeVariables
 /// Returns -1 if component does not exist
 /// -2 if Maximum amount of hitboxes achieved</returns>
 int CreateHitbox(Registry& registry,EntityID& entity, float radius, float offsetX, float offsetZ);
-
+void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID);
 //Manual Flag setting functions.
 
 void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);

@@ -28,25 +28,27 @@ int main(int argc, char* args[])
 	Camera::InitializeCamera();
 	SetConstantBuffer(Camera::GetCameraBufferIndex());
 
-	Registry collisionRegistry;
-	EntityID player = collisionRegistry.CreateEntity();
-	AddHitboxComponent(collisionRegistry, player);
-	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.5f);
-	SetHitboxIsPlayer(collisionRegistry, player, circle);
-	SetHitboxHitEnemy(collisionRegistry, player, circle);
-	
-	EntityID enemy1 = collisionRegistry.CreateEntity();
-	AddHitboxComponent(collisionRegistry, enemy1);
-	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 0.0f, 1.0f);
-	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
-	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
-	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
+	//Put into scne
+	//Registry collisionRegistry;
+	//EntityID player = collisionRegistry.CreateEntity();
+	//AddHitboxComponent(collisionRegistry, player);
+	//int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.5f);
+	//SetHitboxIsPlayer(collisionRegistry, player, circle);
+	//SetHitboxHitEnemy(collisionRegistry, player, circle);
+	//
+	//EntityID enemy1 = collisionRegistry.CreateEntity();
+	//AddHitboxComponent(collisionRegistry, enemy1);
+	//int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 0.0f, 1.0f);
+	//SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
+	//SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
+	//RemoveHitbox(collisionRegistry, enemy1, circle2);
 
-	EntityID enemy2 = collisionRegistry.CreateEntity();
-	AddHitboxComponent(collisionRegistry, enemy2);
-	int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);
-	SetHitboxIsEnemy(collisionRegistry, enemy2, circle3);
-	SetHitboxHitPlayer(collisionRegistry, enemy2, circle3);
+	//EntityID enemy2 = collisionRegistry.CreateEntity();
+	//AddHitboxComponent(collisionRegistry, enemy2);
+	//int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);
+	//SetHitboxIsEnemy(collisionRegistry, enemy2, circle3);
+	//SetHitboxHitPlayer(collisionRegistry, enemy2, circle3);
+	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
 
 	while (!sdl.quit)
 	{
@@ -59,7 +61,7 @@ int main(int argc, char* args[])
 		stateManager.HandleInputs();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
-		UpdatePhysics(collisionRegistry);//Change registry to scene registry
+		//UpdatePhysics(stateManager);//Change registry to scene registry
 		UpdateDebugWindowTitle(title);
 
 		stateManager.Update();

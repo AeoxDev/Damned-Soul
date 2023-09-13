@@ -45,6 +45,33 @@ int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offse
 	return availableSlot;
 }
 
+void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
+{
+	//Set slot flag to 0
+	unsigned mask = 0b1;//0b00000000 00000000 00000000 00000001
+	// ob0011
+	// ob0101
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		//Find slot flag
+		hitbox->usedCirclesHitboxes = hitbox->usedCirclesHitboxes & (~(mask << hitboxID));
+		//Set collision flags to 0
+		hitbox->circularFlags[hitboxID].ResetToActive();
+		hitbox->circularFlags[hitboxID].active = 0;
+	}
+	else
+	{
+		int convexSlot = hitboxID - SAME_TYPE_HITBOX_LIMIT;
+		//Find slot flag
+		hitbox->usedConvexHitboxes = hitbox->usedConvexHitboxes & (~(mask << (convexSlot)));
+		//Set collision flags to 0
+		hitbox->convexFlags[convexSlot].ResetToActive();
+		hitbox->convexFlags[convexSlot].active = 0;
+	}
+}
+
 int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ)
 {
 	return 0;
