@@ -108,19 +108,32 @@
     <ClCompile Include="source\Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Particles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resource\shader\VertexShader.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="resource\shader\TestPS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
-    <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl" />
-    <FxCompile Include="resource\shader\DebugHitboxPixelShader.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
+    <FxCompile Include="resource\shader\VertexShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\shader\ParticleSmoke.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\shader\DebugHitboxPixelShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\SDLHandler.h">
@@ -177,9 +190,6 @@
     <ClInclude Include="header\Physics\Hitbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\States.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -219,9 +229,6 @@
     <ClInclude Include="header\States_&amp;_Scenes\Shop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -241,6 +248,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\States.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

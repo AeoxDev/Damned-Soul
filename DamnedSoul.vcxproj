@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\Collision.cpp" />
+    <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
@@ -270,7 +271,6 @@
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\GameRenderer.h" />
-    <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\Model.h" />
     <ClInclude Include="header\Physics\Backend\CircularCollision.h" />
     <ClInclude Include="header\Physics\Backend\Collision.h" />
@@ -279,7 +279,6 @@
     <ClInclude Include="header\Physics\CollisionFunctions.h" />
     <ClInclude Include="header\Physics\Hitbox.h" />
     <ClInclude Include="header\Hitbox.h" />
-    <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\ButtonManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
