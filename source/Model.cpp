@@ -6,17 +6,17 @@
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 
-const Material& ModelBonelss::GetMaterial(const size_t idx) const
+const Material& ModelBoneless::GetMaterial(const size_t idx) const
 {
 	return ((Material*)m_data)[idx];
 }
 
-const VertexBoneless* ModelBonelss::GetVertices() const
+const VertexBoneless* ModelBoneless::GetVertices() const
 {
 	return (VertexBoneless*)(&m_data[m_numMaterials * sizeof(Material)]);
 }
 
-const uint32_t* ModelBonelss::GetIndices() const
+const uint32_t* ModelBoneless::GetIndices() const
 {
 	return (uint32_t*)(&m_data[m_numMaterials * sizeof(Material) + m_numVertices * sizeof(VertexBoneless)]);
 }

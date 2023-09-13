@@ -12,17 +12,17 @@
 /// <param name="pos2Y">CenterPointY</param>
 /// <param name="r2">Radius</param>
 /// <returns> return < 0.0f means hit, return > 0.0f means miss</returns>
-float CircularCircular(float& pos1X, float& pos1Y, float& r1, float& pos2X, float& pos2Y, float& r2)
-{
-	//Calculate distance between centerpoints
-	float distX = pos1X - pos2X;
-	float distY = pos1Y - pos2Y;
-	float distance = std::powf((distX * distX + distY * distY), 0.5f);
-	//Circles overlap if distance is less than sum of both radi.
-	float hitDistance = distance - (r1 + r2);
-	//Hit when negative, 
-	return hitDistance;
-}
+//float CircularCircular(float& pos1X, float& pos1Z, float& r1, float& pos2X, float& pos2Z, float& r2)
+//{
+//	//Calculate distance between centerpoints
+//	float distX = pos1X - pos2X;
+//	float distY = pos1Y - pos2Y;
+//	float distance = std::powf((distX * distX + distY * distY), 0.5f);
+//	//Circles overlap if distance is less than sum of both radi.
+//	float hitDistance = distance - (r1 + r2);
+//	//Hit when negative, 
+//	return hitDistance;
+//}
 
 struct CircularConvexReturn
 {
@@ -31,7 +31,7 @@ struct CircularConvexReturn
 	float convexAngleOfAttackX, convexAngleOfAttackY;
 };
 
-CircularConvexReturn CircularConvex(float& pos1X, float& pos1Y, float& r1/*, ConvexComponent*/)
+CircularConvexReturn CircularConvex(float& pos1X, float& pos1Z, float& r1/*, ConvexComponent*/)
 {
 	CircularConvexReturn toReturn;
 	toReturn.hit = false;
@@ -50,12 +50,13 @@ CircularConvexReturn CircularConvex(float& pos1X, float& pos1Y, float& r1/*, Con
 	return toReturn;
 }
 
-int PositionGeometryIndependent(float posX, float posY /*GeometryIndependent Component*/)
+int PositionGeometryIndependent(float posX, float posZ /*GeometryIndependent Component*/)
 {
 	//Offset posX and posY with GI offset
 	//Translate position into pixels on texture
 	//Check int values for type
 	//Return type
+	return 0;
 }
 
 //void CollisionEvent(Entity& entity, Entity& entity2)
@@ -84,4 +85,112 @@ int PositionGeometryIndependent(float posX, float posY /*GeometryIndependent Com
 //	// calls on OnCollision
 //}
 
+//Returns the bit that is available, 
+//Returns 0 if no bits are available
+int FindAvailableSlot(unsigned& bits)
+{
+	unsigned mask = 0b1;//0b00000000 00000000 00000000 00000001
+	unsigned size = 0;
+	//Look if first bit is 0;
+	while (bits & mask)
+	{
+		if (size >= SAME_TYPE_HITBOX_LIMIT)
+		{
+			//Max size hit,
+			return -1;
+		}
+		//Check next bit
+		mask = mask << 1;
+		++size;
+	}
+	bits |= mask;//Set the bit to 1
+	return size;
+}
 
+void ResetCollisionVariables(Registry& registry)
+{
+	for (auto entity : View<HitboxComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	{
+		HitboxComponent* hitboxes = registry.GetComponent<HitboxComponent>(entity);
+		hitboxes->nrMoveableCollisions = MOVEABLE_COLLISIONS_PER_FRAME;
+	}
+}
+
+void HandleDamageCollision(Registry& registry)
+{
+	//Stuff happens here. WOW!
+}
+
+void HandleStaticCollision(Registry& registry)
+{
+	//Look at picture. Amaziung!
+}
+
+void HandleMoveableCollision(Registry& registry)//Reggie Strie
+{
+	for (auto entity : View<HitboxComponent>(registry)) //Access the first entity
+	{
+		HitboxComponent* firstHitbox = registry.GetComponent<HitboxComponent>(entity);
+
+		if (firstHitbox->nrMoveableCollisions < 1) //If it can't move anymore this frame
+		{
+			continue;
+		}
+		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			for (auto entity2 : View<HitboxComponent>(registry)) //Access the second entity
+			{
+				if (entity.index == entity2.index) //Check that it's not the same as first entity
+				{
+					continue;
+				}
+
+				HitboxComponent* secondHitbox = registry.GetComponent<HitboxComponent>(entity2);
+
+				for (int j = 0; j < SAME_TYPE_HITBOX_LIMIT; j++)
+				{
+					if (firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
+					{
+						//Both are circular, do circle to circle.
+						bool hit = IsCircularCollision(registry, entity, entity2, i, j);
+					}
+					else if (firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
+					{
+						//Both are convex, do convex to convex.
+						//bool hit = IsConvexCollision(registry, entity, entity2, i, j);
+					}
+					else if ((firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
+						|| (firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active))
+					{
+						//One is convex, other one is circular.
+						//bool hit = IsConvularCollision(registry, entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
+					}
+					else
+					{
+						continue;
+					}
+				}
+			}
+		}
+	}
+}
+
+HitboxComponent::HitboxComponent()
+{
+	this->usedCirclesHitboxes = 0;
+	this->usedConvexHitboxes = 0;
+	long long* flags = (long long*)this->circularFlags;
+	*flags = 0;
+	this->nrMoveableCollisions = 0;
+	flags = (long long*)this->convexFlags;
+	*flags = 0;
+	//No need to zero the other values as they won't be used until active is set.
+}
+
+void CollisionFlags::ResetToActive()
+{
+	unsigned short* r = (unsigned short*)this;
+	*r = 0;
+	this->active = 1;
+	
+}

@@ -1,16 +1,74 @@
 #include "Backend\CircularCollision.h"
-//
-//bool IsCircularCollision()
-//{
-//	// Needs to loop through entities in case of several hitboxes
-//
-//	/*float dx = entity1.components[CIRCLE_COMPONENT_INDEX].posX - entity2.components[CIRCLE_COMPONENT_INDEX].posX;
-//	float dy = entity1.components[CIRCLE_COMPONENT_INDEX].posY - entity2.components[CIRCLE_COMPONENT_INDEX].posY;
-//
-//	float distance = std::sqrt(dx * dx + dy * dy);
-//
-//	return distance <= (entity1.radius + entity2.radius);*/
-//	return false;
-//}
+#include "Backend\Collision.h"
+#define NO false
 
+bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int circleID1, int circleID2)
+{
+	// get a hold of hitbox components from entity
+	HitboxComponent* circle1 = registry.GetComponent<HitboxComponent>(entity1);
+	HitboxComponent* circle2 = registry.GetComponent<HitboxComponent>(entity2);
 
+	// get a hold of both the circles' bit flags to check if they can collide or not
+	if (!circle1||!circle2)
+	{
+		return false;
+	} // add more check to more flags later, try with this first to see if the math works
+
+	//Bitmask circle1 is to circle2 hit
+	unsigned short iSmask =		0b0000000001111110;// is mask
+	unsigned short hitMask =	0b0001111110000000;
+	unsigned short* r1 = (unsigned short*)&circle1->circularFlags[circleID1];
+	unsigned short* r2 = (unsigned short*)&circle2->circularFlags[circleID2];
+
+	bool iShit1 = (( *r1 & iSmask) << 6) & ( *r2 & hitMask);//circle1 hit circle2. is hit
+	bool iShit2 = (( *r2 & iSmask) << 6) & ( *r1 & hitMask);//circle2 hit circle1. is hit
+	
+	//If none can interact return false
+	if (!iShit1&&!iShit2)
+	{
+		return false;
+	}
+
+	// if not, find the hitboxes and see if they actually collide
+	float dx = circle1->circleHitbox[circleID1].offsetX - circle2->circleHitbox[circleID2].offsetX; //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
+	float dy = circle1->circleHitbox[circleID1].offsetZ - circle2->circleHitbox[circleID2].offsetZ; //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
+	float distance = std::sqrt(dx * dx + dy * dy);
+	bool hit = distance <= (circle1->circleHitbox[circleID1].radius + circle2->circleHitbox[circleID2].radius);
+	//Use onCollission function for first and second respectively
+	OnCollisionParameters params = {};
+	params.registry = registry;//Reggie stiel
+	params.isConvex1 = NO;
+	params.isConvex2 = NO;
+
+	if (iShit1&&hit)
+	{
+		params.entity1 = entity1;
+		params.entity2 = entity2;
+		params.hitboxID1 = circleID1;
+		params.hitboxID2 = circleID2;
+		params.normal1X = -dx;
+		params.normal1Z = -dy;
+		params.normal2X = dx;
+		params.normal2Z = dy;
+		//If circle1 collides with circle2 and has a function:
+		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
+		circle1->onCircleCollision[circleID1].CollisionFunction(params);
+	}
+	if (iShit2&&hit)
+	{
+		params.entity1 = entity2;
+		params.entity2 = entity1;
+		params.hitboxID1 = circleID2;
+		params.hitboxID2 = circleID1;
+		params.normal1X = dx;
+		params.normal1Z = dy;
+		params.normal2X = -dx;
+		params.normal2Z = -dy;
+		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
+		circle1->onCircleCollision[circleID1].CollisionFunction(params);
+	}
+
+	return hit;
+
+	// return true/false
+}

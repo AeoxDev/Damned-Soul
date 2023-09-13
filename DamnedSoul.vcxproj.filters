@@ -99,7 +99,13 @@
     <ClCompile Include="source\GameRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -215,7 +221,13 @@
     <ClInclude Include="header\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="header\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\CollisionFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Hitbox.h">

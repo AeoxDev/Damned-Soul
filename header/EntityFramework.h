@@ -295,7 +295,7 @@ public:
 
 	const Iterator end() const
 	{
-		return Iterator(pRegistry, pRegistry->entities.size(), components);
+		return Iterator(pRegistry, (int)pRegistry->entities.size(), components);
 	}
 
 	Registry* pRegistry;

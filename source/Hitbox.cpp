@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "Backend/Collision.h"
+#include "CollisionFunctions.h"
 
 HitboxVisualizeVariables hvv;
 
@@ -12,6 +14,73 @@ bool SetupHitboxVisualizer()
 	InitializeBufferAndSRV();
 	CreateShadersLayoutAndRasterState();
 	return true;
+}
+
+int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offsetX, float offsetZ)
+{
+	//Check for the HitboxComponent, return -1 if failed
+	HitboxComponent* collisionComponent = registry.GetComponent<HitboxComponent>(entity);
+	if (collisionComponent == nullptr)
+	{
+		//Component did not exist!
+		return -1;
+	}
+	//We now have the Collision Component, look for the first bit to add a hitbox on
+	unsigned availableSlot = FindAvailableSlot(collisionComponent->usedCirclesHitboxes);
+	if (availableSlot < 0)
+	{
+		//No available bits, maximum size achieved
+		return -2;
+	}
+	//There is now a slot for the hitbox, create it on the given slot.
+	collisionComponent->circleHitbox[availableSlot].radius = radius;
+	collisionComponent->circleHitbox[availableSlot].offsetX = offsetX;
+	collisionComponent->circleHitbox[availableSlot].offsetZ = offsetZ;
+	//Set to active
+	collisionComponent->circularFlags[availableSlot].ResetToActive();
+	//Look at components to find what bit flags should be used
+	SetCollisionEvent(registry, entity, (int)availableSlot, NoCollision );
+
+	//Return the chosen slot for the user for further uses.
+	return availableSlot;
+}
+
+void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
+{
+	//Set slot flag to 0
+	unsigned mask = 0b1;//0b00000000 00000000 00000000 00000001
+	// ob0011
+	// ob0101
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		//Find slot flag
+		hitbox->usedCirclesHitboxes = hitbox->usedCirclesHitboxes & (~(mask << hitboxID));
+		//Set collision flags to 0
+		hitbox->circularFlags[hitboxID].ResetToActive();
+		hitbox->circularFlags[hitboxID].active = 0;
+	}
+	else
+	{
+		int convexSlot = hitboxID - SAME_TYPE_HITBOX_LIMIT;
+		//Find slot flag
+		hitbox->usedConvexHitboxes = hitbox->usedConvexHitboxes & (~(mask << (convexSlot)));
+		//Set collision flags to 0
+		hitbox->convexFlags[convexSlot].ResetToActive();
+		hitbox->convexFlags[convexSlot].active = 0;
+	}
+}
+
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ)
+{
+	return 0;
+}
+
+void AddHitboxComponent(Registry& registry, EntityID& entity)
+{
+	registry.AddComponent<HitboxComponent>(entity);
+	
 }
 
 void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer) //Update this to work with ECS when creating components
@@ -265,4 +334,79 @@ void DestroyHitboxVisualizeVariables()
 	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
 	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
 	hvv.hitboxes.clear();
+}
+
+void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isPlayer = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].isPlayer = setFlag;
+	}
+}
+
+void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isEnemy = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].isEnemy = setFlag;
+	}
+}
+
+void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitPlayer = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].hitPlayer = setFlag;
+	}
+}
+
+void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitEnemy = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID].hitEnemy = setFlag;
+	}
+}
+
+void UpdatePhysics(Registry& registry)
+{
+	ResetCollisionVariables(registry);
+	HandleMoveableCollision(registry);
+	HandleDamageCollision(registry);
+	HandleStaticCollision(registry);
+}
+
+void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function)
+{
+	//Find hitbox
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->onCircleCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
+	}
+	else
+	{
+		hitbox->onConvexCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
+	}
+	
 }
