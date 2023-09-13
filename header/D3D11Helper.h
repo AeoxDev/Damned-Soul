@@ -114,6 +114,8 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const FLAGS& flags, const uint8_t slot);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx);
+//Overload that sets slot to NULL before setting shader, for particles
+bool SetShaderResourceView(const SRV_IDX idx, bool particles);
 // Update a shader resource view index with given data
 bool UpdateShaderResourceView(const SRV_IDX, const void* data);
 
@@ -123,6 +125,8 @@ UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESO
 UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const SRV_IDX SRVIndex, const uint8_t slot);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx);
+//Overload that sets slot to NULL before setting shader, for particles
+bool SetUnorderedAcessView(const UAV_IDX idx, bool particles);
 // Update a unordered access view index with given data
 //bool UpdateUnorderedAcessView(const UAV_IDX, const void* data);
 

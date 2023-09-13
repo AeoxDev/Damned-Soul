@@ -32,5 +32,6 @@ struct ParticleInputOutput
 void InitializeParticles();
 void SetupParticles();
 void SwitchInputOutput();
+void SetBuffers();
 
 

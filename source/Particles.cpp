@@ -55,10 +55,7 @@ void SetupParticles()
 {
 	SetComputeShader(m_computeShaders[0]);
 
-	SetConstantBuffer(m_metadata);
-
-	SetShaderResourceView(m_readBuffer->SRVIndex);
-	SetUnorderedAcessView(m_writeBuffer->UAVIndex);
+	//SetConstantBuffer(m_metadata);
 }
 
 void SwitchInputOutput()
@@ -68,4 +65,10 @@ void SwitchInputOutput()
 
 	m_readBuffer = m_writeBuffer;
 	m_writeBuffer = tempHolder;
+}
+
+void SetBuffers()
+{
+	SetShaderResourceView(m_readBuffer->SRVIndex, true);
+	SetUnorderedAcessView(m_writeBuffer->UAVIndex, true);
 }

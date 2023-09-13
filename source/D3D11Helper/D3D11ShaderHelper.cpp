@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 
+PixelShaderHolder* pixHolder_NULL = NULL;
+VertexShaderHolder* vrtHolder_NULL = NULL;
+ComputeShaderHolder* comHolder_NULL = NULL;
 
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)

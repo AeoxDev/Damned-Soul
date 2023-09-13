@@ -3,6 +3,16 @@
 #include "MemLib/MemLib.hpp"
 #include <iostream>
 
+
+ID3D11Buffer* bfr_NULL = NULL;
+ID3D11View* vp_NULL = NULL;
+ID3D11RenderTargetView* rtv_NULL = NULL;
+ID3D11DepthStencilView* dsv_NULL = NULL;
+ID3D11ShaderResourceView* srv_NULL = NULL;
+ID3D11UnorderedAccessView* uav_NULL = NULL;
+ID3D11RasterizerState* rs_NULL = NULL;
+
+
 VP_IDX CreateViewport(const size_t& width, const size_t& height)
 {
 	D3D11_VIEWPORT* vp = &vpHolder->vp_arr[vpHolder->currentCount];
@@ -240,6 +250,48 @@ bool SetShaderResourceView(const SRV_IDX idx)
 	return true;
 }
 
+bool SetShaderResourceView(const SRV_IDX idx, bool particles)
+{
+	ID3D11ShaderResourceView* setter = srvHolder->srv_arr[idx];
+	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)srvHolder->metadata_arr[idx][0];
+	uint8_t slot = srvHolder->metadata_arr[idx][1];
+
+	//In this overload, the slot is first set to NULL then the SRV is set
+	switch (whichShader)
+	{
+	case BIND_VERTEX:
+		d3d11Data->deviceContext->VSSetShaderResources(slot, 1, &srv_NULL);
+		d3d11Data->deviceContext->VSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
+		break;
+	case BIND_HULL:
+		d3d11Data->deviceContext->HSSetShaderResources(slot, 1, &srv_NULL);
+		d3d11Data->deviceContext->HSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
+		break;
+	case BIND_DOMAIN:
+		d3d11Data->deviceContext->DSSetShaderResources(slot, 1, &srv_NULL);
+		d3d11Data->deviceContext->DSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
+		break;
+	case BIND_GEOMETRY:
+		d3d11Data->deviceContext->GSSetShaderResources(slot, 1, &srv_NULL);
+		d3d11Data->deviceContext->GSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
+		break;
+	case BIND_PIXEL:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &srv_NULL);
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
+		break;
+	case BIND_COMPUTE:
+		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srv_NULL);
+		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
+		break;
+	default:
+		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		return false;
+		break; // Yes, this break is unnessecary, but it looks nice
+	}
+
+	return true;
+}
+
 UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, RESOURCE_FLAGS resourceFlags, const FLAGS &flags, const uint8_t slot)
 {
 	HRESULT hr;
@@ -363,6 +415,19 @@ bool SetUnorderedAcessView(const UAV_IDX idx)
 	ID3D11UnorderedAccessView* setter = uavHolder->uav_arr[idx];
 	uint8_t slot = uavHolder->metadata_arr[idx][0];
 
+	d3d11Data->deviceContext->CSSetUnorderedAccessViews(slot, 1, &uavHolder->uav_arr[idx], NULL);
+
+	return true;
+}
+
+bool SetUnorderedAcessView(const UAV_IDX idx, bool particles)
+{
+	ID3D11UnorderedAccessView* setter = uavHolder->uav_arr[idx];
+	uint8_t slot = uavHolder->metadata_arr[idx][0];
+
+	//First set it to NULL
+	d3d11Data->deviceContext->CSSetUnorderedAccessViews(slot, 1, &uav_NULL, NULL);
+	//Then set the UAV
 	d3d11Data->deviceContext->CSSetUnorderedAccessViews(slot, 1, &uavHolder->uav_arr[idx], NULL);
 
 	return true;

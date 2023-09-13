@@ -22,7 +22,7 @@ int main(int argc, char* args[])
 {
 	MemLib::createMemoryManager();
 	InitiateConfig();
-    SetupWindow();
+	SetupWindow();
 	std::string title = "Damned Soul";
 
 	int testRenderSlot = SetupGameRenderer();
@@ -35,7 +35,7 @@ int main(int argc, char* args[])
 	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.5f);
 	SetHitboxIsPlayer(collisionRegistry, player, circle);
 	SetHitboxHitEnemy(collisionRegistry, player, circle);
-	
+
 	EntityID enemy1 = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, enemy1);
 	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 0.0f, 1.0f);
@@ -56,15 +56,16 @@ int main(int argc, char* args[])
 	{
 		CountDeltaTime();
 
-		//Before dispatch, switch particles read and write
-		//SwitchInputOutput();
-		DispatchParticles(100, 1, 1);
-
-		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
-		Render(testRenderSlot);
+		// Clear the render targets!
+		Clear(testRenderSlot);
 
 		//Inputs: SDL readings of keyboard and mouse inputs
 		stateManager.HandleInputs();
+
+		SwitchInputOutput();
+		SetBuffers();
+
+		DispatchParticles(100, 1, 1);
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		UpdatePhysics(collisionRegistry);//Change registry to scene registry
@@ -80,7 +81,7 @@ int main(int argc, char* args[])
 	EndDirectX();
 	MemLib::destroyMemoryManager();
 	SDL_Quit();
-    return 0;
+	return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

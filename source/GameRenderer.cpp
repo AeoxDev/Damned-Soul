@@ -84,3 +84,8 @@ void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ)
 {
 	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
 }
+
+void SetSwappedParticles()
+{
+	//Get particle functions in here some how
+}
