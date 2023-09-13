@@ -41,7 +41,7 @@ int SetupGameRenderer()
 		0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
 		-0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
 		0, 0.9f, 0.5f, 1.f,			/**/ 0, 0, -1.f, 0, /**/ 0.5, 1 };
-	renderStates[0].vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3);
+	renderStates[0].vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3, USAGE_IMMUTABLE);
 	uint32_t idxs[3] = { 0, 1, 2 };
 	renderStates[0].indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
 

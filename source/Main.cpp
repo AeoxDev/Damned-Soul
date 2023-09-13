@@ -62,10 +62,14 @@ int main(int argc, char* args[])
 		//Inputs: SDL readings of keyboard and mouse inputs
 		stateManager.HandleInputs();
 
-		SwitchInputOutput();
-		SetBuffers();
+		//Prepare the particles to be dispatched
+		PrepareParticles();
 
+		//Dispatch the particles
 		DispatchParticles(100, 1, 1);
+
+		//Finish handling the data
+		FinishParticles();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		UpdatePhysics(collisionRegistry);//Change registry to scene registry

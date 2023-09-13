@@ -54,7 +54,7 @@ bool Model::Load(const char* filename)
 	// pop the stack
 	MemLib::spop();
 
-	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->GetVertices(), sizeof(VertexBoneless), m_bonelessModel->m_numVertices);
+	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->GetVertices(), sizeof(VertexBoneless), m_bonelessModel->m_numVertices, USAGE_IMMUTABLE);
 	m_indexBuffer = CreateIndexBuffer(m_bonelessModel->GetIndices(), sizeof(uint32_t), m_bonelessModel->m_numIndices);
 }
 

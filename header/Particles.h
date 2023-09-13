@@ -32,6 +32,9 @@ struct ParticleInputOutput
 void InitializeParticles();
 void SetupParticles();
 void SwitchInputOutput();
-void SetBuffers();
+void PrepareParticles();
+
+//Calls for D3D11Helper to copy the resources of SRV to vertex buffer
+void FinishParticles();
 
 

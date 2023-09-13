@@ -4,7 +4,6 @@
 #include <iostream>
 
 
-ID3D11Buffer* bfr_NULL = NULL;
 ID3D11View* vp_NULL = NULL;
 ID3D11RenderTargetView* rtv_NULL = NULL;
 ID3D11DepthStencilView* dsv_NULL = NULL;
@@ -118,7 +117,7 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 	return true;
 }
 
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const FLAGS& flags, const uint8_t slot)
+SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
 {
 	HRESULT hr;
 	uint16_t currentIdx = srvHolder->currentCount;
@@ -140,7 +139,7 @@ SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHAD
 		D3D11_BUFFER_DESC bufferDesc;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.ByteWidth = size * TESTDELLATER; // Should be times the amount of elements
-		bufferDesc.CPUAccessFlags = flags;
+		bufferDesc.CPUAccessFlags = CPUFlags;
 		bufferDesc.BindFlags = resourceFlags; //D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
 		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
 		bufferDesc.StructureByteStride = size;
@@ -250,7 +249,7 @@ bool SetShaderResourceView(const SRV_IDX idx)
 	return true;
 }
 
-bool SetShaderResourceView(const SRV_IDX idx, bool particles)
+bool UnloadShaderResourceView(const SRV_IDX idx)
 {
 	ID3D11ShaderResourceView* setter = srvHolder->srv_arr[idx];
 	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)srvHolder->metadata_arr[idx][0];
@@ -261,27 +260,21 @@ bool SetShaderResourceView(const SRV_IDX idx, bool particles)
 	{
 	case BIND_VERTEX:
 		d3d11Data->deviceContext->VSSetShaderResources(slot, 1, &srv_NULL);
-		d3d11Data->deviceContext->VSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
 		break;
 	case BIND_HULL:
 		d3d11Data->deviceContext->HSSetShaderResources(slot, 1, &srv_NULL);
-		d3d11Data->deviceContext->HSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
 		break;
 	case BIND_DOMAIN:
 		d3d11Data->deviceContext->DSSetShaderResources(slot, 1, &srv_NULL);
-		d3d11Data->deviceContext->DSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
 		break;
 	case BIND_GEOMETRY:
 		d3d11Data->deviceContext->GSSetShaderResources(slot, 1, &srv_NULL);
-		d3d11Data->deviceContext->GSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
 		break;
 	case BIND_PIXEL:
 		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &srv_NULL);
-		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
 		break;
 	case BIND_COMPUTE:
 		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srv_NULL);
-		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srvHolder->srv_arr[idx]);
 		break;
 	default:
 		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
@@ -292,7 +285,13 @@ bool SetShaderResourceView(const SRV_IDX idx, bool particles)
 	return true;
 }
 
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, RESOURCE_FLAGS resourceFlags, const FLAGS &flags, const uint8_t slot)
+void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
+{
+	ID3D11Resource* vertexBufferResource = bfrHolder->buff_arr[destination];
+	d3d11Data->deviceContext->CopyResource(vertexBufferResource, srvHolder->srv_resource_arr[source]);
+}
+
+UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
 {
 	HRESULT hr;
 	uint16_t currentIdx = uavHolder->currentCount;
@@ -311,7 +310,7 @@ UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESO
 		D3D11_BUFFER_DESC bufferDesc;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.ByteWidth = size * TESTDELLATER; // Should be times the amount of elements
-		bufferDesc.CPUAccessFlags = flags;
+		bufferDesc.CPUAccessFlags = CPUFlags;
 		bufferDesc.BindFlags = resourceFlags; //D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
 		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
 		bufferDesc.StructureByteStride = size;
@@ -420,15 +419,12 @@ bool SetUnorderedAcessView(const UAV_IDX idx)
 	return true;
 }
 
-bool SetUnorderedAcessView(const UAV_IDX idx, bool particles)
+bool UnloadUnorderedAcessView(const UAV_IDX idx)
 {
 	ID3D11UnorderedAccessView* setter = uavHolder->uav_arr[idx];
 	uint8_t slot = uavHolder->metadata_arr[idx][0];
 
-	//First set it to NULL
 	d3d11Data->deviceContext->CSSetUnorderedAccessViews(slot, 1, &uav_NULL, NULL);
-	//Then set the UAV
-	d3d11Data->deviceContext->CSSetUnorderedAccessViews(slot, 1, &uavHolder->uav_arr[idx], NULL);
 
 	return true;
 }
