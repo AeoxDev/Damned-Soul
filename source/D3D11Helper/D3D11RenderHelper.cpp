@@ -61,8 +61,8 @@ RTV_IDX CreateRenderTargetView()
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 {
 	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = width;
-	textureDesc.Height = height;
+	textureDesc.Width = (UINT)width;
+	textureDesc.Height = (UINT)height;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -386,7 +386,7 @@ RS_IDX CreateRasterizerState(const bool cull, const bool solid)
 	desc.FillMode = solid ? D3D11_FILL_SOLID : D3D11_FILL_WIREFRAME;
 	desc.CullMode = cull ? D3D11_CULL_BACK : D3D11_CULL_NONE;
 	desc.FrontCounterClockwise = false;
-	desc.DepthBias = 0.0f;
+	desc.DepthBias = 0;
 	desc.DepthBiasClamp = 0.0f;
 	desc.SlopeScaledDepthBias = 0.0f;
 	desc.DepthClipEnable = false;

@@ -6,3 +6,6 @@
 int SetupGameRenderer();
 void Render(const int& componentSlot);
 void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ);
+void Clear(const int& componentSlot);
+void Render(const size_t& count);
+void Present();
