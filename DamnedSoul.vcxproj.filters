@@ -99,6 +99,9 @@
     <ClCompile Include="source\GameRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
@@ -151,9 +154,6 @@
     </ClInclude>
     <ClInclude Include="header\GameRenderer.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Collision.cpp">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Physics\Backend\CircularCollision.h">
       <Filter>Header Files</Filter>
@@ -211,6 +211,18 @@
     </ClInclude>
     <ClInclude Include="header\States_&amp;_Scenes\Shop.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Hitbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Colission.cpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
