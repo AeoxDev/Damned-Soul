@@ -6,7 +6,6 @@ struct input
     float padding2;
     float3 rgb;
     float padding3;
-
 };
 
 cbuffer metadata : register (b0)
@@ -19,14 +18,13 @@ cbuffer metadata : register (b0)
     float3 startPosition;
 };
 
-
-
-StructuredBuffer<input> inputParticleData : register( t0 ); 
 RWStructuredBuffer<input> outputParticleData : register( u0 );
 
-[numthreads(100, 1, 1)]
+[numthreads(1, 1, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
+    input currentInput = outputParticleData[DTid.x];
+    currentInput.position += float3(0.1f, 0.1f, 0.1f);
+    outputParticleData[DTid.x] = currentInput;
     
-    outputParticleData[DTid.x].position = inputParticleData[DTid.x].position + float3(0.1f, 0.1f, 0.1f);
 }

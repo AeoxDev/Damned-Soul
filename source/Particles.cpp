@@ -32,13 +32,20 @@ void InitializeParticles()
 	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
 	m_metadata = CreateConstantBuffer(&(*data), sizeof(m_metadata), BIND_COMPUTE, 0);
 
+	for (int i = 0; i < data->m_end; i++)
+	{
+		m_particles[i].m_position = DirectX::XMFLOAT3((float)i, 0.f, 0.f);
+		m_particles[i].m_rgb = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+		m_particles[i].m_velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+	}
+
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
-	m_readBuffer->SRVIndex = CreateShaderResourceView(NULL, sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (FLAGS)0, 0);
-	m_writeBuffer->SRVIndex = CreateShaderResourceView(NULL, sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (FLAGS)0, 0);
+	m_readBuffer->SRVIndex = CreateShaderResourceView(&(*m_particles), sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (FLAGS)0, 0);
+	m_writeBuffer->SRVIndex = CreateShaderResourceView(&(*m_particles), sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (FLAGS)0, 0);
 
 
-	m_readBuffer->UAVIndex = CreateUnorderedAcessView(NULL, sizeof(Particle), m_readBuffer->SRVIndex, 0);
-	m_writeBuffer->UAVIndex = CreateUnorderedAcessView(NULL, sizeof(Particle), m_writeBuffer->SRVIndex, 0);
+	m_readBuffer->UAVIndex = CreateUnorderedAcessView(&(*m_particles), sizeof(Particle), m_readBuffer->SRVIndex, 0);
+	m_writeBuffer->UAVIndex = CreateUnorderedAcessView(&(*m_particles), sizeof(Particle), m_writeBuffer->SRVIndex, 0);
 
 
 	m_computeShaders[0] = LoadComputeShader("ParticleSmoke.cso");

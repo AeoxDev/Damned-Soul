@@ -35,7 +35,7 @@ int main(int argc, char* args[])
 
 		//Before dispatch, switch particles read and write
 		//SwitchInputOutput();
-		DispatchParticles(1, 1, 1);
+		DispatchParticles(100, 1, 1);
 
 		//Render: GPU calls. Always tell the GPU what to do first for optimal parallelism
 		Render(testRenderSlot);

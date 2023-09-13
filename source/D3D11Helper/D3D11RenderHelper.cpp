@@ -135,7 +135,12 @@ SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHAD
 		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
 		bufferDesc.StructureByteStride = size;
 
-		hr = d3d11Data->device->CreateBuffer(&bufferDesc, nullptr, &buffer);
+		D3D11_SUBRESOURCE_DATA buffData;
+		buffData.pSysMem = data;
+		buffData.SysMemPitch = 0;
+		buffData.SysMemSlicePitch = 0;
+
+		hr = d3d11Data->device->CreateBuffer(&bufferDesc, &buffData, &buffer);
 		if (FAILED(hr))
 		{
 			std::cerr << "Failed to create Buffer to be used for Shader Resource View!" << std::endl;
