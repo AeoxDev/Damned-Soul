@@ -66,7 +66,8 @@ struct ConvexColliderComponent
 	float centerX, centerZ;
 	float boundingRadius;//Circle to reduce calculations for performance
 	int cornerAmount;
-	float cornerX[CONVEX_CORNER_LIMIT], cornerY[CONVEX_CORNER_LIMIT];
+	float cornerX[CONVEX_CORNER_LIMIT], cornerZ[CONVEX_CORNER_LIMIT];
+	float normalX[CONVEX_CORNER_LIMIT], normalZ[CONVEX_CORNER_LIMIT];
 };
 
 struct GeometryIndependentColliderComponent

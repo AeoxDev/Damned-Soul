@@ -72,9 +72,136 @@ void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
 	}
 }
 
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ)
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosZ, float offsetX, float offsetZ)
 {
-	return 0;
+	if (corners < 3 && corners >= CONVEX_CORNER_LIMIT)
+	{
+		return -3;
+	}
+	//Check for the HitboxComponent, return -1 if failed
+	HitboxComponent* collisionComponent = registry.GetComponent<HitboxComponent>(entity);
+	if (collisionComponent == nullptr)
+	{
+		//Component did not exist!
+		return -1;
+	}
+	//We now have the Collision Component, look for the first bit to add a hitbox on
+	unsigned availableSlot = FindAvailableSlot(collisionComponent->usedConvexHitboxes);
+	if (availableSlot < 0)
+	{
+		//No available bits, maximum size achieved
+		return -2;
+	}
+	//There is now a slot for the hitbox, create it on the given slot.
+	/*collisionComponent->circleHitbox[availableSlot].radius = radius;
+	collisionComponent->circleHitbox[availableSlot].offsetX = offsetX;
+	collisionComponent->circleHitbox[availableSlot].offsetZ = offsetZ;*/
+	float sumX = 0.f;
+	float sumZ = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		collisionComponent->convexHitbox[availableSlot].cornerX[i] = cornerPosX[i];
+		sumX += cornerPosX[i];
+
+		collisionComponent->convexHitbox[availableSlot].cornerZ[i] = cornerPosZ[i];
+		sumZ += cornerPosZ[i];
+	}
+	collisionComponent->convexHitbox[availableSlot].cornerAmount = corners;
+	//Calculate centroid
+	collisionComponent->convexHitbox[availableSlot].centerX = offsetX + (sumX / (float)corners);
+	collisionComponent->convexHitbox[availableSlot].centerZ = offsetZ + (sumZ / (float)corners);
+	//Calculate boundingRadius
+	//Get longest line from centroid
+	float longestDistance = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		float dx, dz = 0.f;
+		dx = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerX;
+		dx = dx * dx;
+
+		dz = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
+		dz = dz * dz;
+
+		float tempDist = std::sqrt(dx * dx + dz * dz);
+
+		if (tempDist > longestDistance)
+		{
+			longestDistance = tempDist;
+		}
+	}
+	collisionComponent->convexHitbox[availableSlot].boundingRadius = longestDistance;
+	
+	//Set normals
+	float lineX, lineZ = 0.f;
+	float scalar = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		//First get line
+		lineX = cornerPosX[(i + 1) % corners] - cornerPosX[i];
+		lineZ = cornerPosZ[(i + 1) % corners] - cornerPosZ[i];
+		//Rotate 90 degrees for normal
+		collisionComponent->convexHitbox[availableSlot].normalX[i] = -lineZ;
+		collisionComponent->convexHitbox[availableSlot].normalZ[i] = lineX;
+		//Get line from centroid to corner
+		lineX = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerX;
+		lineX = cornerPosZ[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
+		//Check if scalar is positive, if negative, reverse normal direction
+		scalar = (lineX * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (lineZ * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
+		if (scalar < 0.f)
+		{
+			collisionComponent->convexHitbox[availableSlot].normalX[i] *= -1.0f;
+			collisionComponent->convexHitbox[availableSlot].normalZ[i] *= -1.0f;
+		}
+	}
+
+	float line2X, line2Z = 0.f;
+	float magnitudeX, magnitudeZ = 0.f;
+	float radians = 0.f;
+	bool reverse = false;
+	//Check if convex
+	for (int i = 0; i < corners; i++)
+	{
+		//First get line
+		lineX = cornerPosX[(i + 1) % corners] - cornerPosX[i];
+		lineZ = cornerPosZ[(i + 1) % corners] - cornerPosZ[i];
+
+		//Second line
+		line2X = cornerPosX[(i + 2) % corners] - cornerPosX[(i + 1) % corners];
+		line2Z = cornerPosZ[(i + 2) % corners] - cornerPosZ[(i + 1) % corners];
+
+		// dot product
+		scalar = (lineX * line2X) + (lineZ * line2Z);
+
+		//calculate magnitude of the lnes
+		magnitudeX = std::sqrt(lineX * lineX + line2X * line2X);
+		magnitudeZ = std::sqrt(lineZ * lineZ + line2Z * line2Z);
+
+		//angle in radians
+		radians = std::acos(scalar / (magnitudeX * magnitudeZ));
+
+		if (i == 0 && radians > 3.14159265359f * 0.5f)
+		{
+			reverse = true;
+		}
+		if (reverse)
+		{
+			radians = 3.14159265359f - radians;
+		}
+		if (radians > 3.14159265359f * 0.5f)
+		{
+			//Concave shape, sadge
+			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			return -4;
+		}
+	}
+
+	//Set to active
+	collisionComponent->convexFlags[availableSlot].ResetToActive();
+	//Look at components to find what bit flags should be used
+	SetCollisionEvent(registry, entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);
+
+	//Return the chosen slot for the user for further uses.
+	return availableSlot + SAME_TYPE_HITBOX_LIMIT;
 }
 
 void AddHitboxComponent(Registry& registry, EntityID& entity)
