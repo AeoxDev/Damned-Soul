@@ -29,12 +29,21 @@ int main(int argc, char* args[])
 	SetConstantBuffer(Camera::GetCameraBufferIndex());
 
 	//Put into scne
-	//Registry collisionRegistry;
-	//EntityID player = collisionRegistry.CreateEntity();
-	//AddHitboxComponent(collisionRegistry, player);
-	//int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.5f);
-	//SetHitboxIsPlayer(collisionRegistry, player, circle);
-	//SetHitboxHitEnemy(collisionRegistry, player, circle);
+	Registry collisionRegistry;
+	EntityID player = collisionRegistry.CreateEntity();
+	AddHitboxComponent(collisionRegistry, player);
+	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.5f);
+	SetHitboxIsPlayer(collisionRegistry, player, circle);
+	SetHitboxHitEnemy(collisionRegistry, player, circle);
+	float triangleX[3] = { 0.f, 1.f, 0.5f };
+	float triangleZ[3] = { 0.f, 0.f, 1.f };
+	int triangle = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ, 0.0f, 0.0f);
+	float concavePentagonX[5]{ 0.0f, 1.0f, 1.0f, 0.5f, 0.0f };
+	float concavePentagonZ[5]{ 0.0f, 0.0f, 1.0f, 0.5f, 1.0f };
+	int pentagone = CreateHitbox(collisionRegistry, player, 5, concavePentagonX, concavePentagonZ, 0.0f, 0.0f);
+	int triangle2 = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ, 0.0f, 0.0f);
+	int triangle3 = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ, 0.0f, 0.0f);
+	
 	//
 	//EntityID enemy1 = collisionRegistry.CreateEntity();
 	//AddHitboxComponent(collisionRegistry, enemy1);

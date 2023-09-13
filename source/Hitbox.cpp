@@ -72,7 +72,7 @@ void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
 	}
 }
 
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosZ, float offsetX, float offsetZ)
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[], float offsetX, float offsetZ)
 {
 	if (corners < 3 && corners >= CONVEX_CORNER_LIMIT)
 	{
@@ -144,14 +144,18 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* corne
 		collisionComponent->convexHitbox[availableSlot].normalZ[i] = lineX;
 		//Get line from centroid to corner
 		lineX = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerX;
-		lineX = cornerPosZ[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
+		lineZ = cornerPosZ[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
 		//Check if scalar is positive, if negative, reverse normal direction
 		scalar = (lineX * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (lineZ * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
-		if (scalar < 0.f)
+		if (scalar <= 0.f)
 		{
 			collisionComponent->convexHitbox[availableSlot].normalX[i] *= -1.0f;
 			collisionComponent->convexHitbox[availableSlot].normalZ[i] *= -1.0f;
 		}
+		float magnitude = sqrt(collisionComponent->convexHitbox[availableSlot].normalX[i] * collisionComponent->convexHitbox[availableSlot].normalX[i] +
+			collisionComponent->convexHitbox[availableSlot].normalZ[i] * collisionComponent->convexHitbox[availableSlot].normalZ[i]); // very logical line, yes.
+		collisionComponent->convexHitbox[availableSlot].normalX[i] /= magnitude;
+		collisionComponent->convexHitbox[availableSlot].normalZ[i] /= magnitude;
 	}
 
 	float line2X, line2Z = 0.f;
@@ -173,13 +177,13 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* corne
 		scalar = (lineX * line2X) + (lineZ * line2Z);
 
 		//calculate magnitude of the lnes
-		magnitudeX = std::sqrt(lineX * lineX + line2X * line2X);
-		magnitudeZ = std::sqrt(lineZ * lineZ + line2Z * line2Z);
+		magnitudeX = std::sqrt(lineX * lineX + lineZ * lineZ);
+		magnitudeZ = std::sqrt(line2X * line2X + line2Z * line2Z);
 
 		//angle in radians
 		radians = std::acos(scalar / (magnitudeX * magnitudeZ));
 
-		if (i == 0 && radians > 3.14159265359f * 0.5f)
+		if (i == 0 && radians + 0.0001f> 3.14159265359f * 0.5f)
 		{
 			reverse = true;
 		}
@@ -192,6 +196,27 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* corne
 			//Concave shape, sadge
 			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
 			return -4;
+		}
+		//Check if middle point of neighboring points is on the inside
+		//First get middle point
+		float middleX = (cornerPosX[i] + cornerPosX[(i + 2) % corners]) * 0.5f;
+		float middleZ = (cornerPosZ[i] + cornerPosZ[(i + 2) % corners]) * 0.5f;
+		float middleToCorner1X = cornerPosX[i] - middleX;
+		float middleToCorner1Z = cornerPosZ[i] - middleZ;
+		float middleToCorner2X = cornerPosX[(i + 2) % corners] - middleX;
+		float middleToCorner2Z = cornerPosZ[(i + 2) % corners] - middleZ;
+		//Then do scalar product to verify direction
+		scalar = (middleToCorner1X * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (middleToCorner1Z * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
+		if (scalar < 0.0f)
+		{
+			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			return -5;
+		}
+		scalar = (middleToCorner2X * collisionComponent->convexHitbox[availableSlot].normalX[(i + 1) % corners]) + (middleToCorner2Z * collisionComponent->convexHitbox[availableSlot].normalZ[(i + 1) % corners]);
+		if (scalar < 0.0f)
+		{
+			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			return -5;
 		}
 	}
 
@@ -533,7 +558,7 @@ void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void*
 	}
 	else
 	{
-		hitbox->onConvexCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
+		hitbox->onConvexCollision[hitboxID- SAME_TYPE_HITBOX_LIMIT].CollisionFunction = (void(*)(OnCollisionParameters&))function;
 	}
 	
 }
