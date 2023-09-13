@@ -2,10 +2,10 @@
 #include "D3D11Graphics.h"
 #include <filesystem>
 
-using namespace DirectX::SimpleMath;
+using namespace DirectX;
 
 float scalingFactor;
-Vector2 center;
+XMFLOAT2 center;
 
 void ExMenu::Update(float dt) //Logic for updating current pages and 
 {

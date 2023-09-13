@@ -5,6 +5,7 @@
 #include "UIImage.h"
 #include "UIText.h"
 #include "PoolUtility.hpp"
+#include <DirectXMath.h>
 
 class UICanvas
 {
@@ -27,17 +28,17 @@ protected:
 	void DrawTexts(UI* ui);*/
 
 	void AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick,
-		std::function<void()> onHover, /*std::function<void()> onClick, std::function<void()> onClick,*/ DirectX::SimpleMath::Vector2 position,/* bool isActive = false,*/
-		DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
+		std::function<void()> onHover, /*std::function<void()> onClick, std::function<void()> onClick,*/ DirectX::XMFLOAT2 position,/* bool isActive = false,*/
+		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
-	void AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, DirectX::SimpleMath::Vector2 position,
-		DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
+	void AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, DirectX::XMFLOAT2 position,
+		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 	
-	void AddImage(UI* ui, const std::string& name, const std::string& file, DirectX::SimpleMath::Vector2 position,
-		DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
+	void AddImage(UI* ui, const std::string& name, const std::string& file, DirectX::XMFLOAT2 position,
+		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
-	void AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, DirectX::SimpleMath::Vector2 position,
-		DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
+	void AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, DirectX::XMFLOAT2 position,
+		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
 
 public:
 	UICanvas() = default;

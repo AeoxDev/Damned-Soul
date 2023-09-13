@@ -3,6 +3,7 @@
 #include "UIText.h"
 #include "UIImage.h"
 #include "MemLib/MemLib.hpp"
+#include <DirectXMath.h>
 
 // Expected to be saved in a pool pointer
 class UIButton : public UIComponent
@@ -22,7 +23,7 @@ public:
 	UIButton() = default;
 	UIButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText,
 		std::function<void()> onClick, std::function<void()> onHover, /* std::function<void()> onActive, std::function<void()> onDeactive, */
-		DirectX::SimpleMath::Vector2 position, /*bool isActive = false, */ DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
+		DirectX::XMFLOAT2 position, /*bool isActive = false, */ DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
 		bool visibility = true, float opacity = 1.0f);
 	//~UIButton();
 
@@ -33,8 +34,8 @@ public:
 	void Deactivate();
 	void Interact();
 
-	void SetPosition(DirectX::SimpleMath::Vector2 position);
-	void SetScale(DirectX::SimpleMath::Vector2 scale);
+	void SetPosition(DirectX::XMFLOAT2 position);
+	void SetScale(DirectX::XMFLOAT2 scale);
 	void SetScale(float scale);
 	void SetRotation(float rotation);
 	void SetOpacity(float opacity);

@@ -1,7 +1,7 @@
 #include "UIComponent.h"
 #include "SDLHandler.h"
 
-using namespace DirectX::SimpleMath;
+using namespace DirectX;
 
 void UIComponent::UpdateTransform()
 {
@@ -10,25 +10,25 @@ void UIComponent::UpdateTransform()
 		* D2D1::Matrix3x2F::Rotation(m_Rotation, { sdl.WIDTH / 2.0f, sdl.HEIGHT / 2.0f });
 }
 
-void UIComponent::SetTransform(Vector2 position, Vector2 scale, float rotation)
+void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation)
 {
 	SetPosition(position);
 	SetScale(scale);
 	SetRotation(rotation);
 }
 
-UIComponent::UIComponent(Vector2 position, Vector2 scale, float rotation, bool visibility)
+UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
 	:m_Position(position), m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
 {
 	UpdateTransform();
 }
 
-Vector2 UIComponent::GetPosition()
+XMFLOAT2 UIComponent::GetPosition()
 {
 	return m_Position;
 }
 
-Vector2 UIComponent::GetScale()
+XMFLOAT2 UIComponent::GetScale()
 {
 	return m_Scale;
 }
@@ -38,13 +38,13 @@ float UIComponent::GetRotation()
 	return m_Rotation;
 }
 
-void UIComponent::SetPosition(Vector2 position)
+void UIComponent::SetPosition(XMFLOAT2 position)
 {
 	m_Position = { position.x - m_Bounds.right / 2.0f, position.y - m_Bounds.bottom / 2.0f };
 	UpdateTransform();
 }
 
-void UIComponent::SetScale(Vector2 scale)
+void UIComponent::SetScale(XMFLOAT2 scale)
 {
 	m_Scale = scale;
 	UpdateTransform();

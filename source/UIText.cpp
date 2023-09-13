@@ -1,8 +1,8 @@
 #include "UIText.h"
 
-using namespace DirectX::SimpleMath;
+using namespace DirectX;
 
-UIText::UIText(PoolPointer<UI>& ui, const std::wstring& text, Vector2 position, Vector2 scale, float rotation, bool visibility)
+UIText::UIText(PoolPointer<UI>& ui, const std::wstring& text, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
 	:UIComponent(m_Position, m_Scale, m_Rotation, m_Visibility), m_Text(text)
 {
 	float fontSize = ui->GetTextFormat()->GetFontSize();

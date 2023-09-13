@@ -1,6 +1,6 @@
 #include "UICanvas.h"
 
-using namespace DirectX::SimpleMath;
+using namespace DirectX;
 
 void UICanvas::DrawButtons(PoolPointer<UI>& ui, ID2D1RenderTarget* rt)
 {
@@ -53,7 +53,7 @@ void UICanvas::DrawTexts(PoolPointer<UI>& ui)
 //		m_Texts[keys[i]].Draw(ui);
 //}
 
-void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
+void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	//PoolPointer<UIButton> temp = MemLib::palloc(sizeof(UIButton));
 	UIButton temp = UIButton(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
@@ -61,7 +61,7 @@ void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, cons
 	
 }
 
-void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
+void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	//PoolPointer<UIImage> temp = MemLib::palloc(sizeof(UIImage));
 	//*temp = UIImage(ui, file, position, scale, rotation, visibility, opacity);
@@ -69,7 +69,7 @@ void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std:
 	m_Images.emplace(name, temp);
 }
 
-void UICanvas::AddImage(UI* ui, const std::string& name, const std::string& file, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool visibility, float opacity)
+void UICanvas::AddImage(UI* ui, const std::string& name, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	/*PoolPointer<UIImage> temp = MemLib::palloc(sizeof(UIImage));
 	*temp = UIImage(ui, file, position, scale, rotation, visibility, opacity);
@@ -78,7 +78,7 @@ void UICanvas::AddImage(UI* ui, const std::string& name, const std::string& file
 	//m_Images.emplace(name, new UIImage(ui, file, position, scale, rotation, visibility, opacity));
 }
 
-void UICanvas::AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, Vector2 position, Vector2 scale, float rotation, bool visibility)
+void UICanvas::AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
 {
 	UIText temp = UIText(ui, text, position, scale, rotation, visibility);
 	m_Texts.emplace(name, temp);

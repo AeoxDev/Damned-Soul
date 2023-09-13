@@ -1,8 +1,8 @@
 #include "UIButton.h"
 
-using namespace DirectX::SimpleMath;
+using namespace DirectX;
 
-UIButton::UIButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
+UIButton::UIButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 	:UIComponent(position, scale, rotation, visibility), onClick(onClick), onHover(onHover)
 {
 	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
@@ -62,7 +62,7 @@ void UIButton::Interact()
 		onClick();
 }
 
-void UIButton::SetPosition(DirectX::SimpleMath::Vector2 position)
+void UIButton::SetPosition(XMFLOAT2 position)
 {
 	UIComponent::SetPosition(position);
 	m_Images[0].SetPosition(position);
@@ -70,7 +70,7 @@ void UIButton::SetPosition(DirectX::SimpleMath::Vector2 position)
 	m_Text.SetPosition(position);
 }
 
-void UIButton::SetScale(DirectX::SimpleMath::Vector2 scale)
+void UIButton::SetScale(XMFLOAT2 scale)
 {
 	UIComponent::SetScale(scale);
 	m_Images[0].SetScale(scale);

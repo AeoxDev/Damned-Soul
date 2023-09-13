@@ -1,9 +1,9 @@
 #include "UIImage.h"
 #include <iostream>
 
-using namespace DirectX::SimpleMath;
+using namespace DirectX;
 
-UIImage::UIImage(PoolPointer<UI>& ui, const std::string& file, Vector2 position, Vector2 scale, float rotation, bool visibility, float opacity)
+UIImage::UIImage(PoolPointer<UI>& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 	:UIComponent(position, scale, rotation, visibility), m_Bitmap(nullptr), m_Opacity(opacity)
 {
 	HRESULT hr;
@@ -57,7 +57,7 @@ UIImage::UIImage(PoolPointer<UI>& ui, const std::string& file, Vector2 position,
 	decoder->Release();
 }
 
-UIImage::UIImage(UI* ui, const std::string& file, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 scale, float rotation, bool visibility, float opacity)
+UIImage::UIImage(UI* ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 	:UIComponent(position, scale, rotation, visibility), m_Bitmap(nullptr), m_Opacity(opacity)
 {
 	HRESULT hr;
@@ -111,7 +111,7 @@ UIImage::UIImage(UI* ui, const std::string& file, DirectX::SimpleMath::Vector2 p
 	decoder->Release();
 }
 
-UIImage::UIImage(ID2D1Bitmap* bitmap, Vector2 position, Vector2 scale, float rotation, bool visbility, float opacity)
+UIImage::UIImage(ID2D1Bitmap* bitmap, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visbility, float opacity)
 	:UIComponent(position, scale, rotation), m_Bitmap(bitmap), m_Opacity(opacity)
 {
 	m_Bounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };

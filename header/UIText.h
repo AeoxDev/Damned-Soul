@@ -10,8 +10,8 @@ private:
 
 public:
 	UIText() = default;
-	UIText(PoolPointer<UI>& ui, const std::wstring& string, DirectX::SimpleMath::Vector2 position,
-		DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
+	UIText(PoolPointer<UI>& ui, const std::wstring& string, DirectX::XMFLOAT2 position,
+		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
 	~UIText() = default;
 
 	void Draw(PoolPointer<UI>& ui);
