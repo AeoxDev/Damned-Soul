@@ -14,8 +14,6 @@ struct OnCollisionParameters
 	EntityID entity2; 
 	int hitboxID1;
 	int hitboxID2;
-	bool isConvex1;
-	bool isConvex2;
 	float normal1X;
 	float normal1Z;
 	float normal2X;
