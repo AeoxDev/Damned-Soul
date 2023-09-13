@@ -11,6 +11,12 @@ struct D3D11Data
 
 };
 
+struct GeometryShaderHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11GeometryShader* gs_arr[16];
+};
+
 struct PixelShaderHolder
 {
 	uint8_t currentCount = 0;
@@ -82,6 +88,7 @@ struct RasterizerHolder
 extern D3D11Data* d3d11Data;
 extern PixelShaderHolder* pixHolder;
 extern VertexShaderHolder* vrtHolder;
+extern GeometryShaderHolder* geoHolder;
 extern ComputeShaderHolder* comHolder;
 extern BufferHolder* bfrHolder;
 extern ViewPortHolder* vpHolder;

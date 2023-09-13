@@ -56,6 +56,7 @@ enum RESOURCE_FLAGS
 typedef int8_t PS_IDX;
 typedef int8_t VS_IDX;
 typedef int8_t CS_IDX;
+typedef int8_t GS_IDX;
 typedef int16_t CB_IDX;
 typedef int16_t VB_IDX;
 typedef int16_t IB_IDX;
@@ -81,6 +82,12 @@ bool SetVertexShader(const VS_IDX idx);
 CS_IDX LoadComputeShader(const char* name);
 // Set a new compute shader by index
 bool SetComputeShader(const CS_IDX idx);
+
+// Load a Geometry Shader by name (cs.cso) and return a global index that can be used to reference it
+GS_IDX LoadGeometryShader(const char* name);
+// Set a new geometry shader by index
+bool SetGeometryShader(const GS_IDX idx);
+
 
 
 // Create a constant buffer with provided data and return a unique index to it

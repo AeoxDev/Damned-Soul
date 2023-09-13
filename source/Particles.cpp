@@ -10,6 +10,7 @@ PoolPointer<ParticleInputOutput> m_readBuffer;
 PoolPointer<ParticleInputOutput> m_writeBuffer;
 
 int8_t m_computeShaders[8];
+int8_t m_vertexShader, m_pixelShader, m_geometryShader;
 int16_t m_metadata;
 int16_t m_vertexBuffer;
 
@@ -52,6 +53,10 @@ void InitializeParticles()
 	m_vertexBuffer = CreateVertexBuffer(&(*m_particles), sizeof(Particle), data->m_end, USAGE_DEFAULT);
 
 	m_computeShaders[0] = LoadComputeShader("ParticleSmoke.cso");
+
+	m_vertexShader = LoadVertexShader("ParticleVertex.cso");
+	m_pixelShader = LoadPixelShader("ParticlePixel.cso");
+	m_geometryShader = LoadGeometryShader("ParticleGeometry.cso");
 }
 
 void SetupParticles()
