@@ -1,4 +1,6 @@
 #pragma once
 #include "UI.h"
 int SetupGameRenderer();
-void Render(const int& componentSlot);
+void Clear(const int& componentSlot);
+void Render(const size_t& count);
+void Present();

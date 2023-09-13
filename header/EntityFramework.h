@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <windows.h>
@@ -6,15 +7,42 @@
 #include <Windows.h>
 
 #include "MemLib/MemLib.hpp"
-#include "ComponentHelper.h"
+//#include "ComponentHelper.h"
 
-//Notes taken from Cherno video because he's absolutely goated
 /*
-On Binary and Bitwise Operators in C++:
-1 byte = 8 bits
-A bit is a binary (base2) number
-Addresses in memory are in hexadecimal (base16) which aligns really well since a hex number displays half a byte (binary 0000 is 0, 1111 is 15), and two hex makes up one byte
-Also https://www.youtube.com/watch?v=HoQhw6_1NAA saved me quite the headache
+	//HOW TO USE (Basic version):
+
+	//Step 1: Create registry, this exists to keep track of all entities and whatever component(s) they should be associated with
+	Registry registry;
+
+	//Step 2: Create an entity
+	auto player = registry.CreateEntity();
+
+	//Step 3: Add component(s) to the entity, pass in the arguments that the relevant Component expects
+	registry.AddComponent<PlayerComponent>(player, "Mr Damned Soul");
+	registry.AddComponent<StatusComponent>(player, 100);
+
+	//And that's the absolute bare minimum of it, really. If you want to create a system for, let's say collision, you'd now do something like:
+	auto enemy = registry.CreateEntity();
+	registry.AddComponent<ColliderComponent>(enemy);
+	for(auto entity : View<ColliderComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	{
+		//Check to see if this entity's hitbox overlaps with the player entity's hitbox, and then do stuff
+	}
+
+	//DOCUMENTATION
+
+	//ENTITY FUNCTIONS
+	registry.CreateEntity()										-> Creates an entity, returns EntityID so it's easy to apply components
+	registry.DestroyEntity(EntityID)							-> Destroys the entity with this ID
+
+	//COMPONENT FUNCTIONS
+	registry.AddComponent<ComponentName>(EntityID, arguments)	-> Adds component to entity, type in whatever arguments the component constructor expects
+	registry.RemoveComponent<ComponentName>(EntityID)			-> Removes the specified component from entity
+	registry.GetComponent<ComponentName>(EntityID)				-> Returns the specified component from entity
+
+	//VIEW
+	View<ComponentName>(registry)								-> Creates a view that contains every entity with the specified component(s), can be iterated through
 */
 
 //Just for better readability
@@ -30,7 +58,7 @@ namespace EntityGlobals
 	static constexpr int MAX_COMPONENTS = 32;
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
-	int compCount = 0;
+	static int compCount = 0;
 
 	//Previously, GetId returned the current compCount and also incremented it, but let's split these
 	template <typename T>
@@ -41,12 +69,7 @@ namespace EntityGlobals
 		return compId;
 	}
 
-	void IncrementCompCount()
-	{
-		//compCount++;
-	}
-
-	bool IsEntityValid(EntityID id)
+	static constexpr bool IsEntityValid(EntityID& id)
 	{
 		return id.index != -1;
 	}
@@ -246,14 +269,17 @@ public:
 
 		Iterator& operator++()
 		{
-			//Iterate through the registry and increment the view's index but ONLY IF the entity has the appropriate component types
-			do entityIndex++;
-			while (entityIndex < pRegistry->entities.size() && components == (components & pRegistry->entities[entityIndex].components)); //Bitwise "and", checks to see that the things on either side of & are the same, https://www.youtube.com/watch?v=HoQhw6_1NAA I can't believe he does it again	
+			//Iterate through the registry and increment the view's index but ONLY IF the entity has the appropriate component types and is a valid entity
+			do
+			{
+				entityIndex++;
+			} while (entityIndex < pRegistry->entities.size() &&
+				!EntityGlobals::IsEntityValid(pRegistry->entities[entityIndex].id) &&
+				components != (components & pRegistry->entities[entityIndex].components)); //Bitwise "and", checks to see that the things on either side of & are the same, https://www.youtube.com/watch?v=HoQhw6_1NAA I can't believe he does it again		
 			return *this;
 		}
 
-	private:
-		int entityIndex = 0;
+		int entityIndex;
 		Registry* pRegistry;
 		EntityGlobals::componentBitset components;
 	};
@@ -261,42 +287,17 @@ public:
 	const Iterator begin() const
 	{
 		int first = 0;
-		while (first < pRegistry->entities.size() && components != (components & pRegistry->entities[first].components))
+		while (first < pRegistry->entities.size() &&
+			(components != (components & pRegistry->entities[first].components) || !EntityGlobals::IsEntityValid(pRegistry->entities[first].id)))
 			first++;
 		return Iterator(pRegistry, first, components);
 	}
 
 	const Iterator end() const
 	{
-		return Iterator(pRegistry, pRegistry->entities.size(), components);
+		return Iterator(pRegistry, (int)pRegistry->entities.size(), components);
 	}
 
-private:
-	Registry* pRegistry = nullptr;
+	Registry* pRegistry;
 	EntityGlobals::componentBitset components;
 };
-
-/*
-	//HOW TO USE (Basic version):
-
-	//Step 1: Create registry, this exists to keep track of all entities and whatever component(s) they should be associated with
-	Registry registry;
-
-	//Step 2: Create an entity
-	auto player = registry.CreateEntity();
-
-	//Step 3: Add component(s) to the entity, pass in the arguments that the relevant Component expects
-	registry.AddComponent<PlayerComponent>(player, "Mr Damned Soul");
-	registry.AddComponent<StatusComponent>(player, 100);
-
-	//And that's the absolute bare minimum of it, really. If you want to create a system for, let's say collision, you'd now do something like:
-	auto enemy = registry.CreateEntity();
-	registry.AddComponent<ColliderComponent>(enemy);
-	for(auto entity : View<ColliderComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-	{
-		//Check to see if this entity's hitbox overlaps with the player entity's hitbox, and then do stuff
-	}
-
-	//DOCUMENTATION OF ALL FUNCTIONS AND HOW TO USE THEM:
-
-*/

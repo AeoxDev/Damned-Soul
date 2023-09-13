@@ -11,18 +11,6 @@ struct StatusComponent
 	StatusComponent(int n) : hp(n) {}
 };
 
-struct PlayerComponent
-{
-#define MAX_LENGTH 16
-	char name[MAX_LENGTH] = "Default Name";
-
-	PlayerComponent() = default;
-	PlayerComponent(const char s[MAX_LENGTH])
-	{
-		std::memcpy(name, s, MAX_LENGTH);
-	}
-};
-
 struct EnemyComponent
 {
 #define MAX_LENGTH 16
@@ -35,48 +23,27 @@ struct EnemyComponent
 	}
 };
 
-struct WackyComponent
-{
-	int hp = 0;
-	float speed = 5.5f;
-	char name[16] = "Hi";
-
-	WackyComponent(int hp, float speed, PlayerComponent pc) : hp(hp), speed(speed) 
-	{
-		std::memcpy(this->name, pc.name, 16);
-	}
-};
 
 struct GraphicsComponent
 {
 	//posX, posY, texture..
 };
 
-struct PhysicsComponent
+struct PositionComponent
 {
-	float mass;
+	bool is3D;//false: position relative in screen, 0.0 to 1.0nb  
+	float posX, posY, posZ;
 	float lastPosX;
-	float lastPosY;
+	float lastPosZ;
+	float mass;
 };
 
-struct CircleColliderComponent
-{
-	float radius, offsetX, offsetY;
-};
+/// <summary>
+/// This component is only for moving objects (e.g. walls do not need a physics component)
+/// </summary>
 
-struct ConvexColliderComponent
-{
-	float centerX, centerY;
 
-	int cornerAmount;
-	float cornerX[16], cornerY[16];
-};
 
-struct GeometryIndependentColliderComponent
-{
-	uint8_t pixelMap[512 * 512]; //#define 512*512 as size? or rather just 512 as dimension
-	float offsetX, offsetY;
-};
 
 //Components:
 /*

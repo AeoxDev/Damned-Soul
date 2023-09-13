@@ -93,17 +93,22 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;$(SolutionDir)lib\MemLib\$(Configuration);$(SolutionDir)lib\FmodLib</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -114,7 +119,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,11 +127,16 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;$(SolutionDir)lib\MemLib\$(Configuration);$(SolutionDir)lib\FmodLib</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -136,6 +146,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,6 +157,11 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -156,7 +172,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,14 +185,32 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\UIRenderer.cpp" />
     <ClCompile Include="source\ExampleMenu.cpp" />
+    <ClCompile Include="source\Collision.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
+    <ClCompile Include="source\ButtonManager.cpp" />
+    <ClCompile Include="source\SceneManager.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp" />
+    <ClCompile Include="source\StateManager.cpp" />
+    <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
+    <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Audio.cpp" />
+    <ClCompile Include="source\CircularCollision.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
+    <ClCompile Include="source\ConvexCollision.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
@@ -184,8 +218,8 @@
     <ClCompile Include="source\DeltaTime.cpp" />
     <ClCompile Include="source\GameRenderer.cpp" />
     <ClCompile Include="source\Hitbox.cpp" />
-    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI.cpp" />
     <ClCompile Include="source\UIButton.cpp" />
@@ -249,7 +283,6 @@
     <ClInclude Include="header\UIRenderer.h" />
     <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />
-    <ClInclude Include="header\Colission.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
@@ -259,8 +292,19 @@
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\GameRenderer.h" />
-    <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Model.h" />
+    <ClInclude Include="header\Physics\Backend\CircularCollision.h" />
+    <ClInclude Include="header\Physics\Backend\Collision.h" />
+    <ClInclude Include="header\Physics\Backend\ConvexCollision.h" />
+    <ClInclude Include="header\Physics\Backend\GeometryIndependent.h" />
+    <ClInclude Include="header\Physics\CollisionFunctions.h" />
+    <ClInclude Include="header\Physics\Hitbox.h" />
+    <ClInclude Include="header\Hitbox.h" />
+    <ClInclude Include="header\ButtonManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI.h" />
     <ClInclude Include="header\UIButton.h" />
@@ -268,7 +312,15 @@
     <ClInclude Include="header\UIComponent.h" />
     <ClInclude Include="header\UIImage.h" />
     <ClInclude Include="header\UIText.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
+    <ClInclude Include="lib\stb_image.h" />
     <ClInclude Include="source\Colission.cpp" />
+    <ClInclude Include="source\States.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
