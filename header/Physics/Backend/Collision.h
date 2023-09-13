@@ -47,8 +47,8 @@ struct CollisionFlags
 	unsigned short hitDynamicHazard		: 1;//Collide with dynamic
 
 	unsigned short isMoveable			: 1;//Deterrmine wether or not it is possible to move this object in collision
-	unsigned short padding2				: 1;
-	unsigned short padding3				: 1;
+	unsigned short canTakeDamage		: 1;//Determines if hitbox can take damage
+	unsigned short canDealDamage		: 1;//Determines if hitbox can deal damage
 
 	void ResetToActive();
 };

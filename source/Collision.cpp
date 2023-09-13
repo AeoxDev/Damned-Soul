@@ -119,6 +119,30 @@ void ResetCollisionVariables(Registry& registry)
 void HandleDamageCollision(Registry& registry)
 {
 	//Stuff happens here. WOW!
+
+	for (auto entity : View<HitboxComponent>(registry)) //Access the first entity
+	{
+		HitboxComponent* firstHitbox = registry.GetComponent<HitboxComponent>(entity);
+
+		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			//Add CanDealDamageCheck
+			for (auto entity2 : View<HitboxComponent>(registry)) //Access the second entity
+			{
+				if (entity.index == entity2.index) //Check that it's not the same as first entity
+				{
+					continue;
+				}
+
+				HitboxComponent* secondHitbox = registry.GetComponent<HitboxComponent>(entity2);
+
+				for (int j = 0; j < SAME_TYPE_HITBOX_LIMIT; j++)
+				{
+					//Add CanTakeDamageCheck
+				}
+			}
+		}
+	}
 }
 
 void HandleStaticCollision(Registry& registry)
