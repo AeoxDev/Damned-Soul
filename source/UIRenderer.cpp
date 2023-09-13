@@ -3,6 +3,7 @@
 #include "SDLHandler.h"
 #include "D3D11Graphics.h"
 #include <iostream>
+#include "MemLib/PoolPointer.hpp"
 
 IDXGISurface* UISurface;
 UIRenderComponents UIComponents;
@@ -76,7 +77,20 @@ bool SetupUIRenderer()
 	return true;
 }
 
-void RenderUI(UI* ui)
+//void RenderUI(UI* ui)
+//{
+//	ID3D11ShaderResourceView* nullsrv = nullptr;
+//	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
+//
+//	ClearDepthStencilView(UIComponents.dsv);
+//	ClearRenderTargetView(UIComponents.rtv);
+//
+//	SetRenderTargetViewAndDepthStencil(UIComponents.rtv, UIComponents.dsv);
+//
+//	ui->Render();
+//}
+
+void RenderUI(PoolPointer<UI> ui)
 {
 	ID3D11ShaderResourceView* nullsrv = nullptr;
 	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
@@ -86,5 +100,5 @@ void RenderUI(UI* ui)
 
 	SetRenderTargetViewAndDepthStencil(UIComponents.rtv, UIComponents.dsv);
 
-	ui->Render();
+	ui->Render(ui);
 }

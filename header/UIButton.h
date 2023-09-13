@@ -4,6 +4,7 @@
 #include "UIImage.h"
 #include "MemLib/MemLib.hpp"
 
+// Expected to be saved in a pool pointer
 class UIButton : public UIComponent
 {
 private:
@@ -13,7 +14,7 @@ private:
 	//std::function<void()> onDeactive;		//incase we need for controllers
 	
 	unsigned int m_CurrentImage = 0;
-	PoolPointer<UIImage[2]> m_Images;			//The image on the button
+	UIImage m_Images[2];					//2 Images, button image and hover button image (can be null)
 	UIText m_Text;							//The text on the button
 
 	//bool isActive;						//bool for checking if a Controller is "hovering" a button
@@ -23,10 +24,10 @@ public:
 		std::function<void()> onClick, std::function<void()> onHover, /* std::function<void()> onActive, std::function<void()> onDeactive, */
 		DirectX::SimpleMath::Vector2 position, /*bool isActive = false, */ DirectX::SimpleMath::Vector2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
 		bool visibility = true, float opacity = 1.0f);
-	~UIButton();
+	//~UIButton();
 
-	void Draw(PoolPointer<UI>& ui);
-	void Draw(UI* ui, ID2D1RenderTarget* renderTarget);
+	void Draw(PoolPointer<UI>& ui, ID2D1RenderTarget* renderTarget);
+	//void Draw(UI* ui, ID2D1RenderTarget* renderTarget);
 
 	void Activate();
 	void Deactivate();

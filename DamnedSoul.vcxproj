@@ -245,6 +245,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\UIRenderer.h" />
     <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />

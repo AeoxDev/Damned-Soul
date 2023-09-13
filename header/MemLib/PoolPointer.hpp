@@ -5,11 +5,11 @@ class PoolPointer
 {
 public:
     // Pointer pointer to the data
-    T** m_pp; // = nullptr;
+    T** m_pp = nullptr;
     // Pool size
-    unsigned char m_ps; // = 0xff;
+    unsigned char m_ps = 0xff;
     // Pool index
-    unsigned char m_pi; // = 0xff;
+    unsigned char m_pi = 0xff;
 
     PoolPointer(void* adress, unsigned char ps, unsigned char pi)
     {

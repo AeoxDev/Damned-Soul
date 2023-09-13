@@ -35,13 +35,14 @@ int main(int argc, char* args[])
 
 	/////////// REMOVE //////////////
 
-	/*PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
+	PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
 	*ui = UI();
 	PoolPointer<ExMenu> ex = MemLib::palloc(sizeof(ExMenu));
-	*ex = ExMenu(ui);*/
+	ex->Initialize(ui);
 
-	UI* ui = new UI();
-	ExMenu* ex = new ExMenu(ui);
+	//UI* ui = new UI();
+	//ExMenu* ex = new ExMenu(ui);
+
 	
 	ui->SetCurrentCanvas(ex);
 	RenderUI(ui);

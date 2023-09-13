@@ -68,22 +68,22 @@ UI::UI()
 	}
 }
 
-UI::~UI()
-{
-	m_ImagingFactory->Release();
-	m_RenderTarget->Release();
-	m_WriteFactory->Release();
-	m_Brush->Release();
-	m_YellowBrush->Release();
-	m_Factory->Release();
-}
+//UI::~UI()
+//{
+//	m_ImagingFactory->Release();
+//	m_RenderTarget->Release();
+//	m_WriteFactory->Release();
+//	m_Brush->Release();
+//	m_YellowBrush->Release();
+//	m_Factory->Release();
+//}
 
-void UI::Render()
+void UI::Render(PoolPointer<UI>& ui)
 {
 	BeginFrame();
-	if (m_CurrentCanvas != nullptr)
-		m_CurrentCanvas->Render(this);
-
+	if (false == currentCanvas.IsNullptr())
+		currentCanvas->Render(ui);
+	
 
 	EndFrame();
 }
@@ -160,5 +160,10 @@ ID2D1SolidColorBrush*& UI::GetYellowBrush()
 void UI::SetCurrentCanvas(UICanvas* canvas)
 {
 	m_CurrentCanvas = canvas;
+}
+
+void UI::SetCurrentCanvas(PoolPointer<UICanvas> canvas)
+{
+	currentCanvas = canvas;
 }
 

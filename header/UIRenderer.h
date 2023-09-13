@@ -15,3 +15,4 @@ extern UIRenderComponents UIComponents;
 
 bool SetupUIRenderer();
 void RenderUI(UI* ui);
+void RenderUI(PoolPointer<UI> ui);

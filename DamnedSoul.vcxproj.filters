@@ -56,6 +56,7 @@
     <ClInclude Include="header\UIImage.h" />
     <ClInclude Include="header\UIText.h" />
     <ClInclude Include="source\Colission.cpp" />
+    <ClInclude Include="header\PoolUtility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />

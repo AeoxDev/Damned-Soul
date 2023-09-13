@@ -120,11 +120,14 @@ UIImage::UIImage(ID2D1Bitmap* bitmap, Vector2 position, Vector2 scale, float rot
 
 UIImage::~UIImage()
 {
-	if (nullptr != m_Bitmap)
-	{
-		m_Bitmap->Release();
-		m_Bitmap = nullptr;
-	}
+
+	// YEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEET
+
+	//if (nullptr != m_Bitmap)
+	//{
+	//	m_Bitmap->Release();
+	//	m_Bitmap = nullptr;
+	//}
 }
 
 void UIImage::Draw(ID2D1RenderTarget* renderTarget)

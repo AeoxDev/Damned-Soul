@@ -2,9 +2,9 @@
 #include <d2d1.h>
 #include <wincodec.h>
 #include <dwrite.h>
-//#include "MemLib/PoolPointer.hpp"
+#include "MemLib/PoolPointer.hpp"
 
-class UICanvas;
+class UICanvas; //compiler hack
 
 class UI
 {
@@ -17,16 +17,16 @@ private:
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;		//Another brush with a diffrent color, might remake in order to more eaisly make more brushes later if needed :)
 
-	//PoolPointer<UICanvas> currentCanvas;
+	PoolPointer<UICanvas> currentCanvas;
 	UICanvas* m_CurrentCanvas = nullptr;
 
 	void BeginFrame();
 	void EndFrame();
 public:
 	UI();
-	~UI();
+	//~UI();
 
-	void Render();
+	void Render(PoolPointer<UI>& ui);
 
 	void ResizeRelease();
 	void Resize();
@@ -40,6 +40,6 @@ public:
 	ID2D1SolidColorBrush*& GetYellowBrush();
 
 	void SetCurrentCanvas(UICanvas* canvas);
-	//void SetCurrentCanvas(PoolPointer<UICanvas> canvas);
+	void SetCurrentCanvas(PoolPointer<UICanvas> canvas);
 };
 
