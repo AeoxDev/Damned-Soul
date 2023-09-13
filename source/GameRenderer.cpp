@@ -68,7 +68,7 @@ void Clear(const int& s)
 
 void Render(const size_t& count)
 {
-	d3d11Data->deviceContext->DrawIndexed(count, 0, 0);
+	d3d11Data->deviceContext->DrawIndexed((UINT)count, 0, 0);
 }
 
 void Present()

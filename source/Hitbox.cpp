@@ -41,9 +41,35 @@ int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offse
 	//Look at components to find what bit flags should be used
 	SetCollisionEvent(registry, entity, (int)availableSlot, NoCollision );
 
-
 	//Return the chosen slot for the user for further uses.
 	return availableSlot;
+}
+
+void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
+{
+	//Set slot flag to 0
+	unsigned mask = 0b1;//0b00000000 00000000 00000000 00000001
+	// ob0011
+	// ob0101
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		//Find slot flag
+		hitbox->usedCirclesHitboxes = hitbox->usedCirclesHitboxes & (~(mask << hitboxID));
+		//Set collision flags to 0
+		hitbox->circularFlags[hitboxID].ResetToActive();
+		hitbox->circularFlags[hitboxID].active = 0;
+	}
+	else
+	{
+		int convexSlot = hitboxID - SAME_TYPE_HITBOX_LIMIT;
+		//Find slot flag
+		hitbox->usedConvexHitboxes = hitbox->usedConvexHitboxes & (~(mask << (convexSlot)));
+		//Set collision flags to 0
+		hitbox->convexFlags[convexSlot].ResetToActive();
+		hitbox->convexFlags[convexSlot].active = 0;
+	}
 }
 
 int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ)
@@ -310,10 +336,10 @@ void DestroyHitboxVisualizeVariables()
 	hvv.hitboxes.clear();
 }
 
-void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (!isConvexHitbox)
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isPlayer = setFlag;
 	}
@@ -323,10 +349,10 @@ void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 }
 
-void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (!isConvexHitbox)
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isEnemy = setFlag;
 	}
@@ -336,10 +362,10 @@ void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool i
 	}
 }
 
-void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (!isConvexHitbox)
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitPlayer = setFlag;
 	}
@@ -349,10 +375,10 @@ void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool
 	}
 }
 
-void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox, bool setFlag)
+void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (!isConvexHitbox)
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitEnemy = setFlag;
 	}
@@ -370,9 +396,17 @@ void UpdatePhysics(Registry& registry)
 	HandleStaticCollision(registry);
 }
 
-void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function, bool isConvexHitbox)
+void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	hitbox->onCircleCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->onCircleCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
+	}
+	else
+	{
+		hitbox->onConvexCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
+	}
+	
 }

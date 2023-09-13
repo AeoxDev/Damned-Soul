@@ -34,7 +34,6 @@ void SceneManager::SetScene(std::string id)
 		m_currentSceneType = Scene::Level;
 	else
 		m_currentSceneType = Scene::Shop;
-
 }
 
 void SceneManager::AddScene(std::string name, std::vector<std::string> entityList)

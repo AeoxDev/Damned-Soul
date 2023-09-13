@@ -20,12 +20,12 @@ struct Material
 	float exponent;
 };
 
-struct ModelBonelss
+struct ModelBoneless
 {
 	uint32_t m_numMaterials;
 	uint32_t m_numVertices;
 	uint32_t m_numIndices;
-	char m_data[];
+	char m_data[];//Array is intentional, ignore warning
 
 	const Material& GetMaterial(const size_t idx) const;
 	const VertexBoneless* GetVertices() const;
@@ -40,7 +40,7 @@ struct ModelBonelss
 
 struct Model
 {
-	PoolPointer<ModelBonelss> m_bonelessModel;
+	PoolPointer<ModelBoneless> m_bonelessModel;
 	uint32_t m_vertexBuffer = -1, m_indexBuffer = -1;
 
 	// Load a .mdl file

@@ -31,11 +31,11 @@ void Game::Update()
 
 	float len = sqrt(move[0] * move[0] + move[1] * move[1]);
 	float scale = GetAverage() / (len < 0.1f ? 1 : len);
-	playerPosition.first += move[0] * scale;
-	playerPosition.second += move[1] * scale;
+	playerPosition[0] += move[0] * scale;
+	playerPosition[1] += move[1] * scale;
 
-	Camera::SetPosition(playerPosition.first, playerPosition.second, -2.0f);
-	Camera::SetLookAt(playerPosition.first, playerPosition.second, 0.0f);
+	Camera::SetPosition(playerPosition[0], playerPosition[1], -2.0f);
+	Camera::SetLookAt(playerPosition[0], playerPosition[1], 0.0f);
 	Camera::UpdateView();
 	dogModel.SetVertexAndIndexBuffersActive();
 	Render(dogModel.m_bonelessModel->m_numIndices);
@@ -132,6 +132,6 @@ void Game::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager butt
 void Game::Reset()
 {
 	currentSubState = GameState::Unpause;
-	playerPosition = { 0, 0 };
+	playerPosition[0] = playerPosition[1] = playerPosition[2] = 0;
 	sceneManager = {};
 }
