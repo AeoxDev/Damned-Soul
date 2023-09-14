@@ -55,6 +55,13 @@ bool Model::Load(const char* filename)
 	// pop the stack
 	MemLib::spop();
 
+	//float fun[600][2];
+	//for (unsigned int i = 0; i < m_bonelessModel->m_numVertices; ++i)
+	//{
+	//	fun[i][0] = m_bonelessModel->GetVertices()[i].m_uv[0];
+	//	fun[i][1] = m_bonelessModel->GetVertices()[i].m_uv[1];
+	//}
+
 	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->GetVertices(), sizeof(VertexBoneless), m_bonelessModel->m_numVertices);
 	m_indexBuffer = CreateIndexBuffer(m_bonelessModel->GetIndices(), sizeof(uint32_t), m_bonelessModel->m_numIndices);
 
@@ -83,9 +90,9 @@ void Model::Free()
 bool Model::SetMaterialActive() const
 {
 	const Material& mat = (**m_bonelessModel.m_pp).GetMaterial(0);
-	if (SetTexture(mat.albedoIdx, 0, BIND_PIXEL) &&
+	if (SetTexture(mat.albedoIdx, 0, BIND_PIXEL)/* &&
 		SetTexture(mat.normalIdx, 1, BIND_PIXEL) &&
-		SetTexture(mat.glowIdx, 2, BIND_PIXEL))
+		SetTexture(mat.glowIdx, 2, BIND_PIXEL)*/)
 		return true;
 	return false;
 }

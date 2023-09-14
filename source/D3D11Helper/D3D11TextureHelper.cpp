@@ -21,10 +21,14 @@ TX_IDX LoadTexture(const char* name)
     const uint64_t hash = C_StringToHash(name);
     
     // If the texture is already loaded, return the index to that texture
-    for (unsigned int i = 0; i < txHolder->currentCount; ++i)
-        if (hash == txHolder->hash_arr[i])
-            return i;
-
+	for (unsigned int i = 0; i < txHolder->currentCount; ++i)
+	{
+		if (hash == txHolder->hash_arr[i])
+		{
+			return i;
+		}
+	}
+        
 	uint16_t& current = txHolder->currentCount;
 	Image& img = txHolder->img_arr[current];
 	if (false == img.load(name))
@@ -70,6 +74,8 @@ TX_IDX LoadTexture(const char* name)
 		return false;
 	}
 
+	// Set the hash last thing you do
+	txHolder->hash_arr[current] = hash;
 	return current++;
 }
 
@@ -105,4 +111,33 @@ bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOU
 	}
 
 	return true;
+}
+
+
+SMP_IDX CreateSamplerState()
+{
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	HRESULT hr = d3d11Data->device->CreateSamplerState(&samplerDesc, &smpHolder->smp_arr[smpHolder->currentCount]);
+	if FAILED(hr)
+	{
+		std::cout << "Failed to create Sampler State" << std::endl;
+		return -1;
+	}
+
+	return smpHolder->currentCount++;
+}
+
+void SetSamplerState(const SMP_IDX idx)
+{
+	d3d11Data->deviceContext->PSSetSamplers(0, 1, &(smpHolder->smp_arr[idx]));
 }

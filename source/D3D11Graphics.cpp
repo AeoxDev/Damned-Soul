@@ -8,6 +8,7 @@
 // Extern
 D3D11Data* d3d11Data;
 TextureHolder* txHolder;
+SamplerStateHolder* smpHolder;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
 ComputeShaderHolder* comHolder;
@@ -65,6 +66,7 @@ int SetupDirectX(HWND& w)
 {
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
 	txHolder = (TextureHolder*)MemLib::spush(sizeof(TextureHolder));
+	smpHolder = (SamplerStateHolder*)MemLib::spush(sizeof(SamplerStateHolder));
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
 	comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));

@@ -13,6 +13,7 @@ enum SHADER_TO_BIND_RESOURCE
 };
 
 typedef int16_t TX_IDX;
+typedef int8_t SMP_IDX;
 typedef int8_t PS_IDX;
 typedef int8_t VS_IDX;
 typedef int8_t CS_IDX;
@@ -28,6 +29,11 @@ typedef int8_t RS_IDX;
 TX_IDX LoadTexture(const char* name);
 // Set a material
 bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOURCE& shader);
+
+// Create a Sampler
+SMP_IDX CreateSamplerState();
+// Set a sampler (currently only binds to the pixel shader
+void SetSamplerState(const SMP_IDX idx);
 
 // Load a Pixel Shader by name (ps.cso) and return a global index that can be used to reference it
 PS_IDX LoadPixelShader(const char* name);

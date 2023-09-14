@@ -23,6 +23,13 @@ struct TextureHolder
 	ID3D11ShaderResourceView*	srv_arr[TX_HOLD_LIM]; // Ysed to store the Shader Resource Views for the textures
 };
 
+struct SamplerStateHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11SamplerState* smp_arr[4];
+};
+
+
 struct PixelShaderHolder
 {
 #define PS_HOLD_LIM 16
@@ -101,6 +108,7 @@ struct RasterizerHolder
 // Uses MemLib's persistent stack
 extern D3D11Data* d3d11Data;
 extern TextureHolder* txHolder;
+extern SamplerStateHolder* smpHolder;
 extern PixelShaderHolder* pixHolder;
 extern VertexShaderHolder* vrtHolder;
 extern ComputeShaderHolder* comHolder;
