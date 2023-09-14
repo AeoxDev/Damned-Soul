@@ -58,6 +58,8 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO
 bool SetConstantBuffer(const CB_IDX idx);
 // Update a constant buffer by index with given data
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
+// Update the world matrix, there needs to be only one
+void UpdateWorldMatrix(const void* data);
 
 // Create a Vertex Buffer with provided data and return a unique index to it
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count);
