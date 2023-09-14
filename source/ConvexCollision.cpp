@@ -107,6 +107,25 @@ bool IsConvexCircularCollision(Registry& registry, EntityID& entity1, EntityID& 
 //	return new Vector4(0, 0, 0, 0);
 //}
 
+// //Kolla denna polygons hörnor
+//for (int i = 0; i < totalVertices; i++)
+//{
+//	for (int j = 0; j < collider.totalVertices; j++)
+//	{
+//		result = LineLineIntersection(center, vertices[i].GetPosition(), collider.lines[j].point1, collider.lines[j].point2);
+//		if (result.X != 0 || result.Y != 0)
+//		{
+//			normal = collider.lines[j].normal;
+//			Translate(-1 * new Vector2(result.X, result.Y));
+//			//collider.Translate(-1 * new Vector2(result.Z, result.W)); 
+//			//UpdateAll();
+//			collision = true;
+//			InitiateCollision(collider, new Vector2(result.Z, result.W), j, normal, i);
+//			return collision;
+//		}
+//	}
+//}
+
 bool IsConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int circle1, int circle2)
 {
 	//
