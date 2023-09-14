@@ -72,6 +72,8 @@ void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
 	}
 }
 
+
+
 int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[])
 {
 	if (corners < 3 && corners >= CONVEX_CORNER_LIMIT)
@@ -488,6 +490,27 @@ void DestroyHitboxVisualizeVariables()
 	hvv.hitboxes.clear();
 }
 
+void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].active = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].active = setFlag;
+	}
+}
+
+void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+}
+
+void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+}
+
 void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
@@ -512,6 +535,14 @@ void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool s
 	{
 		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].isEnemy = setFlag;
 	}
+}
+
+void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+}
+
+void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
 }
 
 void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)

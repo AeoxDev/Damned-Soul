@@ -236,6 +236,9 @@
     <ClInclude Include="source\Colission.cpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\SDL2\lib\x64\SDL2.dll" />
@@ -245,5 +248,24 @@
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2main.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resource\DamnedSoul.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resource\DamnedSoulsIcon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DamnedSoul.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

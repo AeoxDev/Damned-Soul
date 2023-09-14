@@ -301,6 +301,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
     <ClInclude Include="lib\stb_image.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="source\Colission.cpp" />
     <ClInclude Include="source\States.h" />
   </ItemGroup>
@@ -312,6 +313,20 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2main.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
+    <Image Include="icon2.ico" />
+    <Image Include="resource\DamnedSoul.ico" />
+    <Image Include="resource\DamnedSoulsIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DamnedSoul.rc">
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">0x041d</Culture>
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">0x041d</Culture>
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">0x041d</Culture>
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Release|x64'">0x041d</Culture>
+    </ResourceCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
