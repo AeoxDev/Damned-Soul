@@ -92,6 +92,21 @@ bool IsConvexCircularCollision(Registry& registry, EntityID& entity1, EntityID& 
 	return IsCircularConvexCollision(registry, entity2, entity1, circle, convex);
 }
 
+//Vector4 LineLineIntersection(Vector2 l1p1, Vector2 l1p2, Vector2 l2p1, Vector2 l2p2)
+//{
+//	//https://github.com/OneLoneCoder/olcPixelGameEngine/blob/master/Videos/OneLoneCoder_PGE_PolygonCollisions1.cpp
+//	float denominator = (l2p2.X - l2p1.X) * (l1p1.Y - l1p2.Y) - (l1p1.X - l1p2.X) * (l2p2.Y - l2p1.Y);
+//	float t1 = ((l2p1.Y - l2p2.Y) * (l1p1.X - l2p1.X) + (l2p2.X - l2p1.X) * (l1p1.Y - l2p1.Y)) / denominator;
+//	float t2 = ((l1p1.Y - l1p2.Y) * (l1p1.X - l2p1.X) + (l1p2.X - l1p1.X) * (l1p1.Y - l2p1.Y)) / denominator;
+//	if (t1 >= 0.0f && t1 < 1.0f && t2 >= 0.0f && t2 < 1.0f)
+//	{
+//		Vector2 line1 = new Vector2((1.0f - t1) * (l1p2.X - l1p1.X), (1.0f - t1) * (l1p2.Y - l1p1.Y));
+//		Vector2 line2 = new Vector2((1.0f - t2) * (l2p2.X - l2p1.X), (1.0f - t2) * (l2p2.Y - l2p1.Y));
+//		return new Vector4(line1.X, line1.Y, line2.X, line2.Y);
+//	}
+//	return new Vector4(0, 0, 0, 0);
+//}
+
 bool IsConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int circle1, int circle2)
 {
 	//
