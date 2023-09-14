@@ -79,7 +79,7 @@ void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void*
 /// <param name="cornerPosX"></param>
 /// <param name="cornerPosY"></param>
 /// <returns></returns>
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[], float offsetX, float offsetZ);
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[]);
 
 void AddHitboxComponent(Registry& registry, EntityID& entity);
 

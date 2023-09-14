@@ -37,7 +37,7 @@ int main(int argc, char* args[])
 	SetHitboxHitEnemy(collisionRegistry, player, circle);
 	float triangleX[3] = { 0.f, 1.f, 0.5f };
 	float triangleZ[3] = { 0.f, 0.f, 1.f };
-	int triangle = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ, 0.0f, 0.0f);
+	int triangle = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ);
 	SetHitboxIsPlayer(collisionRegistry, player, triangle);
 	SetHitboxHitEnemy(collisionRegistry, player, triangle);
 
@@ -49,7 +49,7 @@ int main(int argc, char* args[])
 	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 0.0f, 1.0f);
 	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
 	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
-	int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ, 0.0f, 0.0f);
+	int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ);
 	SetHitboxIsEnemy(collisionRegistry, enemy1, enemyConvex);
 	SetHitboxHitPlayer(collisionRegistry, enemy1, enemyConvex);
 

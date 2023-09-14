@@ -72,7 +72,7 @@ void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
 	}
 }
 
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[], float offsetX, float offsetZ)
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[])
 {
 	if (corners < 3 && corners >= CONVEX_CORNER_LIMIT)
 	{
@@ -219,9 +219,7 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 			return -5;
 		}
 	}
-	//Lastly add the offset to the hitbox
-	collisionComponent->convexHitbox[availableSlot].centerX += offsetX;
-	collisionComponent->convexHitbox[availableSlot].centerZ += offsetZ;
+
 	//Set to active
 	collisionComponent->convexFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
