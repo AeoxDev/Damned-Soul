@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const uint8_t slot)
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot)
 {
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -41,7 +41,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO
 bool SetConstantBuffer(const CB_IDX idx)
 {
 	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
-	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)bfrHolder->metadata_arr[idx][0];
+	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
 	uint8_t slot = bfrHolder->metadata_arr[idx][1];
 
 	switch (whichShader)

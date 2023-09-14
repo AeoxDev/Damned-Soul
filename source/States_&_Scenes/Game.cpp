@@ -10,7 +10,7 @@ Model dogModel;
 void Game::Update()
 {
 	if (-1 == dogModel.m_indexBuffer)
-		dogModel.Load("Hellhound.mdl");
+		dogModel.Load("TestSKeletonOne.mdl");
 
 	// No support for held keys in the input handler at the moment
 	const Uint8* keystate = SDL_GetKeyboardState(NULL);
@@ -37,6 +37,7 @@ void Game::Update()
 	Camera::SetPosition(playerPosition[0], playerPosition[1], -2.0f);
 	Camera::SetLookAt(playerPosition[0], playerPosition[1], 0.0f);
 	Camera::UpdateView();
+	dogModel.SetMaterialActive();
 	dogModel.SetVertexAndIndexBuffersActive();
 	Render(dogModel.m_bonelessModel->m_numIndices);
 	

@@ -12,10 +12,13 @@ struct VertexBoneless
 
 struct Material
 {
-	#define MAT_TEX_NAME_LEN 40
+	#define MAT_TEX_NAME_LEN 70
 	char albedo[MAT_TEX_NAME_LEN];
+	int16_t albedoIdx = -1;
 	char normal[MAT_TEX_NAME_LEN];
+	int16_t normalIdx = -1;
 	char glow[MAT_TEX_NAME_LEN];
+	int16_t glowIdx = -1;
 	float roughness;
 	float exponent;
 };
@@ -46,6 +49,8 @@ struct Model
 	// Load a .mdl file
 	// No other file formats are supported!
 	bool Load(const char* filename);
+
+	bool SetMaterialActive() const;
 
 	// Set the currently active index and vertex buffers to this model
 	bool SetVertexAndIndexBuffersActive() const;

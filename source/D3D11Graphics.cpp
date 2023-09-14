@@ -7,6 +7,7 @@
 
 // Extern
 D3D11Data* d3d11Data;
+TextureHolder* txHolder;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
 ComputeShaderHolder* comHolder;
@@ -17,20 +18,6 @@ DSVHolder* dsvHolder;
 SRVHolder* srvHolder;
 UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
-
-////Externs:
-//ID3D11DeviceContext* deviceContext;
-//ID3D11Device* device;
-//IDXGISwapChain* swapChain;
-
-//Privates:
-//ID3D11PixelShader* tps; // Test Pixel Shader
-//ID3D11VertexShader* tvs; // Test Vertex Shader
-//ID3D11InputLayout* til; // Test Input Layout
-//ID3D11Texture2D* tbb; // Test Back Buffer
-//ID3D11Texture2D* tdst; // Test Depth Stencil Texture
-//ID3D11DepthStencilView* tdsv; // Test Depth Stencil View
-//ID3D11RenderTargetView* trtv; // Test Render Target View
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
@@ -77,6 +64,7 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 int SetupDirectX(HWND& w)
 {
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
+	txHolder = (TextureHolder*)MemLib::spush(sizeof(TextureHolder));
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
 	comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));
@@ -145,6 +133,10 @@ void EndDirectX()
 	// Release all rasterizer states
 	for (int i = 0; i < rsHolder->currentCount; ++i)
 		rsHolder->rs_arr[i]->Release();
+
+	// Release all rasterizer states
+	for (int i = 0; i < txHolder->currentCount; ++i)
+		txHolder->tx_arr[i]->Release();
 
 	// Release basic things
 	d3d11Data->swapChain->Release();
