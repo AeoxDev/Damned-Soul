@@ -108,8 +108,8 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 	}
 	collisionComponent->convexHitbox[availableSlot].cornerAmount = corners;
 	//Calculate centroid
-	collisionComponent->convexHitbox[availableSlot].centerX = offsetX + (sumX / (float)corners);
-	collisionComponent->convexHitbox[availableSlot].centerZ = offsetZ + (sumZ / (float)corners);
+	collisionComponent->convexHitbox[availableSlot].centerX = (sumX / (float)corners);
+	collisionComponent->convexHitbox[availableSlot].centerZ = (sumZ / (float)corners);
 	//Calculate boundingRadius
 	//Get longest line from centroid
 	float longestDistance = 0.f;
@@ -183,7 +183,7 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 		//angle in radians
 		radians = std::acos(scalar / (magnitudeX * magnitudeZ));
 
-		if (i == 0 && radians + 0.0001f> 3.14159265359f * 0.5f)
+		if (i == 0 && radians - 0.0001f> 3.14159265359f * 0.5f)
 		{
 			reverse = true;
 		}
@@ -199,8 +199,8 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 		}
 		//Check if middle point of neighboring points is on the inside
 		//First get middle point
-		float middleX = (cornerPosX[i] + cornerPosX[(i + 2) % corners]) * 0.5f;
-		float middleZ = (cornerPosZ[i] + cornerPosZ[(i + 2) % corners]) * 0.5f;
+		float middleX = (cornerPosX[i] + cornerPosX[(i + 1) % corners] + cornerPosX[(i + 2) % corners]) * 0.333f;
+		float middleZ = (cornerPosZ[i] +cornerPosZ[(i + 1) % corners] + cornerPosZ[(i + 2) % corners]) * 0.333f;
 		float middleToCorner1X = cornerPosX[i] - middleX;
 		float middleToCorner1Z = cornerPosZ[i] - middleZ;
 		float middleToCorner2X = cornerPosX[(i + 2) % corners] - middleX;
@@ -219,7 +219,9 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 			return -5;
 		}
 	}
-
+	//Lastly add the offset to the hitbox
+	collisionComponent->convexHitbox[availableSlot].centerX += offsetX;
+	collisionComponent->convexHitbox[availableSlot].centerZ += offsetZ;
 	//Set to active
 	collisionComponent->convexFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
@@ -497,7 +499,7 @@ void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].isPlayer = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].isPlayer = setFlag;
 	}
 }
 
@@ -510,7 +512,7 @@ void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool s
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].isEnemy = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].isEnemy = setFlag;
 	}
 }
 
@@ -523,7 +525,7 @@ void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].hitPlayer = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].hitPlayer = setFlag;
 	}
 }
 
@@ -536,7 +538,7 @@ void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].hitEnemy = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].hitEnemy = setFlag;
 	}
 }
 

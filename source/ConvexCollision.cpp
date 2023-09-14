@@ -181,7 +181,7 @@ bool IsConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2,
 	unsigned short iSmask = 0b0000000001111110;// is mask
 	unsigned short hitMask = 0b0001111110000000;
 	unsigned short* r1 = (unsigned short*)&convex1->circularFlags[convexID1];
-	unsigned short* r2 = (unsigned short*)&convex2->circularFlags[convexID2];
+	unsigned short* r2 = (unsigned short*)&convex2->convexFlags[convexID2];
 
 	bool iShit1 = ((*r1 & iSmask) << 6) & (*r2 & hitMask);//circle1 hit circle2. is hit
 	bool iShit2 = ((*r2 & iSmask) << 6) & (*r1 & hitMask);//circle2 hit circle1. is hit
@@ -226,6 +226,11 @@ bool IsConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2,
 				//If we add convex hurtboxes for enemies we can add moving them correctly here.
 				break;
 			}
+		}
+		if (returnedData.hit)
+		{
+			//If we add convex hurtboxes for enemies we can add moving them correctly here.
+			break;
 		}
 	}
 	OnCollisionParameters params = {};

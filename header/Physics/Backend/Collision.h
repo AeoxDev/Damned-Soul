@@ -5,7 +5,7 @@
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 1
 #include "EntityFramework.h"
-#include "CircularCollision.h"
+
 
 struct OnCollisionParameters
 {

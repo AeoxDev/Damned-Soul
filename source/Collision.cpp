@@ -1,4 +1,6 @@
-#include "Backend\Collision.h"
+#include "Backend/Collision.h"
+#include "Backend/ConvexCollision.h"
+#include "Backend/CircularCollision.h"
 #include "EntityFramework.h"
 #include <cmath>
 
@@ -178,21 +180,25 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 						//Both are circular, do circle to circle.
 						bool hit = IsCircularCollision(registry, entity, entity2, i, j);
 					}
-					else if (firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
+					if (firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
 					{
 						//Both are convex, do convex to convex.
-						//bool hit = IsConvexCollision(registry, entity, entity2, i, j);
+						bool hit = IsConvexCollision(registry, entity, entity2, i, j);
 					}
-					else if ((firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
-						|| (firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active))
+					if (firstHitbox->circularFlags[i].active && firstHitbox->convexFlags[j].active)
 					{
 						//One is convex, other one is circular.
-						//bool hit = IsConvularCollision(registry, entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
+						bool hit = IsCircularConvexCollision(registry, entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
 					}
-					else
+					if (firstHitbox->convexFlags[i].active && firstHitbox->circularFlags[j].active)
+					{
+						//One is convex, other one is circular.
+						bool hit = IsConvexCircularCollision(registry, entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
+					}
+					/*else
 					{
 						continue;
-					}
+					}*/
 				}
 			}
 		}
