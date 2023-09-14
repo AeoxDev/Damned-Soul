@@ -505,10 +505,28 @@ void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool se
 
 void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isStage = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isStage = setFlag;
+	}
 }
 
 void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isWall = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isWall = setFlag;
+	}
 }
 
 void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
@@ -539,10 +557,67 @@ void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool s
 
 void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isStaticHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isStaticHazard = setFlag;
+	}
 }
 
 void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isDynamicHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isDynamicHazard = setFlag;
+	}
+}
+
+void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isMoveable = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isMoveable = setFlag;
+	}
+}
+
+void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitStage = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitStage = setFlag;
+	}
+}
+
+void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitWall = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitWall = setFlag;
+	}
 }
 
 void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
@@ -568,6 +643,32 @@ void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool 
 	else
 	{
 		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].hitEnemy = setFlag;
+	}
+}
+
+void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitStaticHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitStaticHazard = setFlag;
+	}
+}
+
+void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitDynamicHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitDynamicHazard = setFlag;
 	}
 }
 
