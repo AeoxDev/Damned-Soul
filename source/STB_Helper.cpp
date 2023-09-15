@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector>
+#include <string>
 #include "STB_Helper.h"
 #include "MemLib\MemLib.hpp"
 #include "STB_Image\stb_image.h"
@@ -11,9 +11,13 @@ Image::Image(const char* filepath)
 	this->load(filepath);
 }
 
-bool Image::load(const char* filepath)
+bool Image::load(const char* filename)
 {
-	unsigned char* data = stbi_load(filepath, &m_width, &m_height, nullptr, CHANNELS);
+	// A price to pay for salvation...
+	std::string filepath("Textures");
+	filepath.append(filename);
+
+	unsigned char* data = stbi_load(filepath.c_str(), &m_width, &m_height, nullptr, CHANNELS);
 	m_channels = CHANNELS; // Should always be 4
 	
 	if (nullptr == data)

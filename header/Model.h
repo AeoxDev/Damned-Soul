@@ -12,15 +12,15 @@ struct VertexBoneless
 
 struct Material
 {
-	#define MAT_TEX_NAME_LEN 70
+	#define MAT_TEX_NAME_LEN 64
 	char albedo[MAT_TEX_NAME_LEN];
 	int16_t albedoIdx = -1;
 	char normal[MAT_TEX_NAME_LEN];
 	int16_t normalIdx = -1;
 	char glow[MAT_TEX_NAME_LEN];
 	int16_t glowIdx = -1;
-	float roughness;
-	float exponent;
+	float roughness = 0.5f;
+	float exponent = 1.0f;
 };
 
 struct ModelBoneless
