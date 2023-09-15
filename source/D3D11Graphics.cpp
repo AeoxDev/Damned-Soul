@@ -5,8 +5,14 @@
 #include <fstream>
 #include <string>
 
+//#ifdef _DEBUG
+//#include <dxgidebug.h>
+//#endif
+
 // Extern
 D3D11Data* d3d11Data;
+TextureHolder* txHolder;
+SamplerStateHolder* smpHolder;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
 ComputeShaderHolder* comHolder;
@@ -17,20 +23,6 @@ DSVHolder* dsvHolder;
 SRVHolder* srvHolder;
 UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
-
-////Externs:
-//ID3D11DeviceContext* deviceContext;
-//ID3D11Device* device;
-//IDXGISwapChain* swapChain;
-
-//Privates:
-//ID3D11PixelShader* tps; // Test Pixel Shader
-//ID3D11VertexShader* tvs; // Test Vertex Shader
-//ID3D11InputLayout* til; // Test Input Layout
-//ID3D11Texture2D* tbb; // Test Back Buffer
-//ID3D11Texture2D* tdst; // Test Depth Stencil Texture
-//ID3D11DepthStencilView* tdsv; // Test Depth Stencil View
-//ID3D11RenderTargetView* trtv; // Test Render Target View
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
@@ -77,6 +69,8 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 int SetupDirectX(HWND& w)
 {
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
+	txHolder = (TextureHolder*)MemLib::spush(sizeof(TextureHolder));
+	smpHolder = (SamplerStateHolder*)MemLib::spush(sizeof(SamplerStateHolder));
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
 	comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));
@@ -99,6 +93,19 @@ void EndDirectX()
 	// Release all pixel shaders
 	for (int i = 0; i < pixHolder->currentCount; ++i)
 		pixHolder->ps_arr[i]->Release();
+
+	// Release all samplers
+	for (int i = 0; i < smpHolder->currentCount; ++i)
+		smpHolder->smp_arr[i]->Release();
+
+	// Release all textures and associated resources
+	for (int i = 0; i < txHolder->currentCount; ++i)
+	{
+		txHolder->img_arr[i].Release();
+		txHolder->srv_arr[i]->Release();
+		txHolder->tx_arr[i]->Release();
+	}
+		
 
 	// Release all vertex shaders and their input layouts
 	for (int i = 0; i < vrtHolder->currentCount; ++i)
@@ -145,6 +152,18 @@ void EndDirectX()
 	// Release all rasterizer states
 	for (int i = 0; i < rsHolder->currentCount; ++i)
 		rsHolder->rs_arr[i]->Release();
+
+	// Clear and flush device context
+	d3d11Data->deviceContext->ClearState();
+	d3d11Data->deviceContext->Flush();
+
+#ifdef _DEBUG
+	ID3D11Debug* debugInterface;
+	HRESULT hr = d3d11Data->device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debugInterface));
+
+	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	debugInterface->Release();
+#endif
 
 	// Release basic things
 	d3d11Data->swapChain->Release();

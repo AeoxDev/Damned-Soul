@@ -28,6 +28,9 @@ int main(int argc, char* args[])
 	Camera::InitializeCamera();
 	SetConstantBuffer(Camera::GetCameraBufferIndex());
 
+	SMP_IDX sampler = CreateSamplerState();
+	SetSamplerState(sampler);
+
 	//Put into scne
 	Registry collisionRegistry;
 	EntityID player = collisionRegistry.CreateEntity();
