@@ -77,19 +77,6 @@ bool SetupUIRenderer()
 	return true;
 }
 
-//void RenderUI(UI* ui)
-//{
-//	ID3D11ShaderResourceView* nullsrv = nullptr;
-//	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
-//
-//	ClearDepthStencilView(UIComponents.dsv);
-//	ClearRenderTargetView(UIComponents.rtv);
-//
-//	SetRenderTargetViewAndDepthStencil(UIComponents.rtv, UIComponents.dsv);
-//
-//	ui->Render();
-//}
-
 void RenderUI(PoolPointer<UI> ui)
 {
 	ID3D11ShaderResourceView* nullsrv = nullptr;

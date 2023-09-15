@@ -24,7 +24,7 @@ private:
 	void EndFrame();
 public:
 	UI();
-	//~UI();
+	void Release();
 
 	void Render(PoolPointer<UI>& ui);
 

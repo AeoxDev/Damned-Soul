@@ -1,10 +1,11 @@
 #pragma once
 #include "UICanvas.h"
+#include "PoolUtility.hpp"
 
 class ExMenu : public UICanvas
 {
 private:
-	std::map<std::string, PoolPointer<UICanvas>> m_Pages;
+	PoolMap<std::string, UICanvas> m_Pages;
 
 	PoolPointer<UICanvas> m_CurrentPage;
 
@@ -14,11 +15,9 @@ private:
 
 	//void Resize();
 public:
-	ExMenu() = default;// = delete;
-	//ExMenu(PoolPointer<UI>& ui);
+	ExMenu() = default;
 	void Initialize(PoolPointer<UI>& ui);
-	//ExMenu(UI*& ui);
-	//~ExMenu();
+	void Release();
 
 	int Run(PoolPointer<UI>& ui, float dt);
 

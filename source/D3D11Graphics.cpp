@@ -134,7 +134,8 @@ void EndDirectX()
 	for (int i = 0; i < srvHolder->currentCount; ++i)
 	{
 		srvHolder->srv_arr[i]->Release();
-		srvHolder->srv_resource_arr[i]->Release();
+		if (srvHolder->srv_resource_arr[i])
+			srvHolder->srv_resource_arr[i]->Release();
 	}
 
 	// Release all unorderd access views

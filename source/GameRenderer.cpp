@@ -51,7 +51,7 @@ int SetupGameRenderer()
 	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create a sampler state
-	renderStates[0].samplerState = CreateSamplerState();
+	//renderStates[0].samplerState = CreateSamplerState();
 	// Set the sampler state
 	d3d11Data->deviceContext->PSSetSamplers(0, 1, &smpHolder->smp_arr[renderStates[0].samplerState]);
 

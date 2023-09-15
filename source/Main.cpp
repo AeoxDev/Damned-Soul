@@ -63,25 +63,22 @@ int main(int argc, char* args[])
 
 	PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
 	*ui = UI();
-	PoolPointer<ExMenu> ex = MemLib::palloc(sizeof(ExMenu));
-	ex->Initialize(ui);
-
-	//UI* ui = new UI();
-	//ExMenu* ex = new ExMenu(ui);
+	PoolPointer<ExMenu> exMenu = MemLib::palloc(sizeof(ExMenu));
+	exMenu->Initialize(ui);
 
 	
-	ui->SetCurrentCanvas(ex);
+	ui->SetCurrentCanvas(exMenu);
 	RenderUI(ui);
 
-
+	
 	/////////// REMOVE //////////////
-
+	
 	while (!sdl.quit)
 	{
 
 		CountDeltaTime();
 
-		// Clear the render targets!
+		//Clear the render targets!
 		Clear(testRenderSlot);
 
 		//Inputs: SDL readings of keyboard and mouse inputs
@@ -93,10 +90,14 @@ int main(int argc, char* args[])
 
 		stateManager.Update();
 
-		// Present what was drawn during the update!
+		//Present what was drawn during the update!
 		Present();
 		MemLib::pdefrag();
 	}
+	
+	exMenu->Release();
+	ui->Release();
+	
 
 	EndDirectX();
 	MemLib::destroyMemoryManager();

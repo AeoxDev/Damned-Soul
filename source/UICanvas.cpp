@@ -22,36 +22,10 @@ void UICanvas::DrawImages(ID2D1RenderTarget* rt)
 
 void UICanvas::DrawTexts(PoolPointer<UI>& ui)
 {
-	//for (auto& [name, text] : m_Texts)
-	//	text.Draw(ui);
 	auto keys = m_Texts.GetKeys();
 	for (unsigned int i = 0; i < m_Texts.Size(); ++i)
 		m_Texts[keys[i]].Draw(ui);
 }
-
-//void UICanvas::DrawButtons(UI* ui, ID2D1RenderTarget* renderTarget)
-//{
-//	for (auto& button : m_Buttons)
-//		button->Draw(ui, renderTarget);
-//}
-
-//void UICanvas::DrawImages(ID2D1RenderTarget* renderTarget)
-//{
-//	//for (auto& [name, image] : m_Images)
-//	//	image->Draw(renderTarget);
-//	auto keys = m_Images.GetKeys();
-//	for (unsigned int i = 0; i < m_Images.Size(); ++i)
-//		m_Images[keys[i]].Draw(renderTarget);
-//}
-
-//void UICanvas::DrawTexts(UI* ui)
-//{
-//	//for (auto& [name, text] : m_Texts)
-//	//	text.Draw(ui);
-//	auto keys = m_Texts.GetKeys();
-//	for (unsigned int i = 0; i < m_Texts.Size(); ++i)
-//		m_Texts[keys[i]].Draw(ui);
-//}
 
 void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {

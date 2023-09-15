@@ -68,15 +68,15 @@ UI::UI()
 	}
 }
 
-//UI::~UI()
-//{
-//	m_ImagingFactory->Release();
-//	m_RenderTarget->Release();
-//	m_WriteFactory->Release();
-//	m_Brush->Release();
-//	m_YellowBrush->Release();
-//	m_Factory->Release();
-//}
+void UI::Release()
+{
+	m_ImagingFactory->Release();
+	m_RenderTarget->Release();
+	m_WriteFactory->Release();
+	m_Brush->Release();
+	m_YellowBrush->Release();
+	m_Factory->Release();
+}
 
 void UI::Render(PoolPointer<UI>& ui)
 {

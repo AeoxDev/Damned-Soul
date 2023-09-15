@@ -7,13 +7,13 @@ UIText::UIText(PoolPointer<UI>& ui, const std::wstring& text, XMFLOAT2 position,
 {
 	float fontSize = ui->GetTextFormat()->GetFontSize();
 
-	m_Bounds = { 0, 0, fontSize * m_Text.length(), fontSize + 5 };
+	m_Bounds = { 0, 0, fontSize * m_Text.length(), fontSize + 5};
 	SetTransform(position, scale, rotation);
 }
 
 void UIText::Draw(PoolPointer<UI>& ui)
 {
-	if (true == m_Visibility)
+	if (m_Visibility)
 	{
 		ID2D1RenderTarget* rt = ui->GetRenderTarget();
 
@@ -24,7 +24,7 @@ void UIText::Draw(PoolPointer<UI>& ui)
 
 void UIText::Draw(UI* ui)
 {
-	if (true == m_Visibility)
+	if (m_Visibility)
 	{
 		ID2D1RenderTarget* rt = ui->GetRenderTarget();
 
