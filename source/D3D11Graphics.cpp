@@ -94,9 +94,11 @@ void EndDirectX()
 	for (int i = 0; i < pixHolder->currentCount; ++i)
 		pixHolder->ps_arr[i]->Release();
 
+	// Release all samplers
 	for (int i = 0; i < smpHolder->currentCount; ++i)
 		smpHolder->smp_arr[i]->Release();
 
+	// Release all textures and associated resources
 	for (int i = 0; i < txHolder->currentCount; ++i)
 	{
 		txHolder->img_arr[i].Release();
@@ -150,10 +152,6 @@ void EndDirectX()
 	// Release all rasterizer states
 	for (int i = 0; i < rsHolder->currentCount; ++i)
 		rsHolder->rs_arr[i]->Release();
-
-	// Release all rasterizer states
-	for (int i = 0; i < txHolder->currentCount; ++i)
-		txHolder->tx_arr[i]->Release();
 
 	// Clear and flush device context
 	d3d11Data->deviceContext->ClearState();
