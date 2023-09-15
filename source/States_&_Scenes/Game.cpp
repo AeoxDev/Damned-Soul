@@ -34,11 +34,11 @@ void Game::Update()
 	playerPosition[0] += move[0] * scale;
 	playerPosition[1] += move[1] * scale;
 
-	Camera::SetPosition(-playerPosition[0], 1.0f, -playerPosition[1] + 1.0f);
-	Camera::SetLookAt(-playerPosition[0], 0.0f, -playerPosition[1]);
+	Camera::SetPosition(playerPosition[0], playerPosition[1], -2.0f);
+	Camera::SetLookAt(playerPosition[0], playerPosition[1], 0.0f);
 	Camera::UpdateView();
 	dogModel.SetVertexAndIndexBuffersActive();
-	//Render(dogModel.m_bonelessModel->m_numIndices);
+	Render(dogModel.m_bonelessModel->m_numIndices);
 	
 	sceneManager.Update();
 }

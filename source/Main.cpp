@@ -43,19 +43,17 @@ int main(int argc, char* args[])
 
 	float convexPentaX[5]{ 0.5f, 1.5f, 1.5f, 1.0f, 0.5f };
 	float convexPentaZ[5]{ -0.5f, -0.5f, .5f, 1.f, .5f };
-	//
-	//EntityID enemy1 = collisionRegistry.CreateEntity();
-	//AddHitboxComponent(collisionRegistry, enemy1);
-	//int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 0.0f, 1.0f);
-	//SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
-	//SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
-	//int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ);
-	//SetHitboxIsEnemy(collisionRegistry, enemy1, enemyConvex);
-	//SetHitboxHitPlayer(collisionRegistry, enemy1, enemyConvex);
+	
+	EntityID enemy1 = collisionRegistry.CreateEntity();
+	AddHitboxComponent(collisionRegistry, enemy1);
+	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 1.0f, 1.0f);
+	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
+	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
+	int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ);
+	SetHitboxIsEnemy(collisionRegistry, enemy1, enemyConvex);
+	SetHitboxHitPlayer(collisionRegistry, enemy1, enemyConvex);
 
 	UpdatePhysics(collisionRegistry);
-
-	SetupHitboxVisualizer(collisionRegistry);
 
 	//EntityID enemy2 = collisionRegistry.CreateEntity();
 	//AddHitboxComponent(collisionRegistry, enemy2);
@@ -79,7 +77,6 @@ int main(int argc, char* args[])
 		UpdateDebugWindowTitle(title);
 
 		stateManager.Update();
-		DebugRenderHitbox(bfrHolder->buff_arr[Camera::GetCameraBufferIndex()]);
 
 		// Present what was drawn during the update!
 		Present();
