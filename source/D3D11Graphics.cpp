@@ -5,6 +5,10 @@
 #include <fstream>
 #include <string>
 
+//#ifdef _DEBUG
+//#include <dxgidebug.h>
+//#endif
+
 // Extern
 D3D11Data* d3d11Data;
 TextureHolder* txHolder;
@@ -90,6 +94,17 @@ void EndDirectX()
 	for (int i = 0; i < pixHolder->currentCount; ++i)
 		pixHolder->ps_arr[i]->Release();
 
+	for (int i = 0; i < smpHolder->currentCount; ++i)
+		smpHolder->smp_arr[i]->Release();
+
+	for (int i = 0; i < txHolder->currentCount; ++i)
+	{
+		txHolder->img_arr[i].Release();
+		txHolder->srv_arr[i]->Release();
+		txHolder->tx_arr[i]->Release();
+	}
+		
+
 	// Release all vertex shaders and their input layouts
 	for (int i = 0; i < vrtHolder->currentCount; ++i)
 	{
@@ -139,6 +154,18 @@ void EndDirectX()
 	// Release all rasterizer states
 	for (int i = 0; i < txHolder->currentCount; ++i)
 		txHolder->tx_arr[i]->Release();
+
+	// Clear and flush device context
+	d3d11Data->deviceContext->ClearState();
+	d3d11Data->deviceContext->Flush();
+
+#ifdef _DEBUG
+	ID3D11Debug* debugInterface;
+	HRESULT hr = d3d11Data->device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debugInterface));
+
+	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	debugInterface->Release();
+#endif
 
 	// Release basic things
 	d3d11Data->swapChain->Release();
