@@ -9,9 +9,9 @@
 
 HitboxVisualizeVariables hvv;
 
-bool SetupHitboxVisualizer()
+bool SetupHitboxVisualizer(Registry& registry)
 {
-	InitializeBufferAndSRV();
+	InitializeBufferAndSRV(registry);
 	CreateShadersLayoutAndRasterState();
 	return true;
 }
@@ -237,93 +237,47 @@ void AddHitboxComponent(Registry& registry, EntityID& entity)
 	
 }
 
-void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer) //Update this to work with ECS when creating components
+void InitializeBufferAndSRV(Registry& registry)
 {
-	Hitbox hitbox;
-	hitbox.isCube = isCube;
-
-	float biggestX = 0.0f;
-	float smallestX = 0.0f;
-	float biggestY = 0.0f;
-	float smallestY = 0.0f;
-	float biggestZ = 0.0f;
-	float smallestZ = 0.0f;
-
-	for (int i = 0; i < (int)vertexBuffer.size(); i++)
+	hvv.hitboxes.clear();
+	//Loop through the registry, find hitboxComponents, add to a struct and link to a buffer.
+	for (auto entity : View<HitboxComponent>(registry))
 	{
-		//Take out the vertex with the largest and smallest X value.
-		if (vertexBuffer[i].x > biggestX)
-		{
-			biggestX = vertexBuffer[i].x;
-		}
-		else if (vertexBuffer[i].x < smallestX)
-		{
-			smallestX = vertexBuffer[i].x;
-		}
+		HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 
-		//Take out the vertex with the largest and smallest Y value.
-		if (vertexBuffer[i].y > biggestY)
+		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
 		{
-			biggestY = vertexBuffer[i].y;
-		}
-		else if (vertexBuffer[i].y < smallestY)
-		{
-			smallestY = vertexBuffer[i].y;
-		}
-
-		//Take out the vertex with the largest and smallest Z value.
-		if (vertexBuffer[i].z > biggestZ)
-		{
-			biggestZ = vertexBuffer[i].z;
-		}
-		else if (vertexBuffer[i].z < smallestZ)
-		{
-			smallestZ = vertexBuffer[i].z;
+			if (hitbox->circularFlags[i].active != 0)
+			{
+				VisualHitbox vh;
+				vh.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f); //Change color
+				vh.middlePoint = DirectX::XMFLOAT3(hitbox->circleHitbox[i].offsetX, 0.0f, hitbox->circleHitbox[i].offsetZ);
+				vh.radius = hitbox->circleHitbox[i].radius;
+				hvv.hitboxes.push_back(vh);
+			}
+			else if (hitbox->convexFlags[i].active != 0)
+			{
+				VisualHitbox vh;
+				vh.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f); //Change color
+				vh.middlePoint = DirectX::XMFLOAT3(hitbox->convexHitbox[i].centerX, 0.0f, hitbox->convexHitbox[i].centerZ);
+				vh.radius = hitbox->convexHitbox[i].boundingRadius;
+				hvv.hitboxes.push_back(vh);
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
 
-	//Calculate the middle point of the mesh
-	hitbox.middlePoint = DirectX::XMFLOAT3((biggestX + smallestX) / 2.0f, (biggestY + smallestY) / 2.0f, (biggestZ + smallestZ) / 2.0f);
-
-	if (isCube)
-	{
-		//Create width, height, and depth
-		hitbox.widthOrRadius = biggestX - smallestX;
-		hitbox.height = biggestY - smallestY;
-		hitbox.depth = biggestZ - smallestZ;
-	}
-	else
-	{
-		//Create radius for a sphere
-		float largest = biggestX - smallestX;
-
-		if (largest < (biggestY - smallestY))
-		{
-			largest = biggestY - smallestY;
-		}
-
-		if (largest < (biggestZ - smallestZ))
-		{
-			largest = biggestZ - smallestZ;
-		}
-
-		hitbox.widthOrRadius = largest;
-	}
-
-	//Push the new hitbox into the list of hitboxes
-	hvv.hitboxes.push_back(hitbox);
-}
-
-void InitializeBufferAndSRV()
-{
 	//Create the structured buffer description
 	D3D11_BUFFER_DESC buffDesc{};
-	buffDesc.ByteWidth = sizeof(Hitbox) * UINT(hvv.hitboxes.size());
+	buffDesc.ByteWidth = sizeof(VisualHitbox) * UINT(hvv.hitboxes.size());
 	buffDesc.Usage = D3D11_USAGE_DEFAULT;
 	buffDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 	buffDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	buffDesc.StructureByteStride = sizeof(Hitbox);
+	buffDesc.StructureByteStride = sizeof(VisualHitbox);
 
 	D3D11_SUBRESOURCE_DATA initialData{};
 	initialData.pSysMem = &hvv.hitboxes[0];
@@ -345,16 +299,16 @@ void InitializeBufferAndSRV()
 	}
 }
 
-void UpdateHitboxBuffer()
+void UpdateHitboxBuffer(Registry& registry)
 {
 	//Clear previous buffer
 	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
 	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
 
-	InitializeBufferAndSRV();
+	InitializeBufferAndSRV(registry);
 }
 
-void DebugRenderHitbox(ID3D11Buffer*& worldMatrix, ID3D11Buffer*& viewAndProjectionMatrix)
+void DebugRenderHitbox(ID3D11Buffer*& worldMatrix) //ID3D11Buffer*& viewAndProjectionMatrix)
 {
 	//Assuming the backbuffer is bound to the output merger
 	
@@ -374,11 +328,12 @@ void DebugRenderHitbox(ID3D11Buffer*& worldMatrix, ID3D11Buffer*& viewAndProject
 	//Vertex Shader
 	d3d11Data->deviceContext->VSSetShader(hvv.vShader, nullptr, 0);
 	d3d11Data->deviceContext->VSSetShaderResources(0, 1, &hvv.hitboxStructuredSRV);
-	d3d11Data->deviceContext->VSSetConstantBuffers(0, 1, &worldMatrix); //Constant Buffer Filled With World Matrix
+	//d3d11Data->deviceContext->VSSetConstantBuffers(0, 1, &worldMatrix); //Constant Buffer Filled With World Matrix
 
 	//Geometry Shader
 	d3d11Data->deviceContext->GSSetShader(hvv.gShader, nullptr, 0);
-	d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &viewAndProjectionMatrix);
+	d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &worldMatrix); //Technically viewAndProjection
+	//d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &viewAndProjectionMatrix);
 
 	//Pixel Shader
 	d3d11Data->deviceContext->PSSetShader(hvv.pShader, nullptr, 0);
