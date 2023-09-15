@@ -2,6 +2,10 @@
 #include <string>
 #include "STB_Helper.h"
 #include "MemLib\MemLib.hpp"
+
+#ifndef  _DEBUG
+#define STB_IMAGE_IMPLEMENTATION
+#endif // ! _DEBUG
 #include "STB_Image\stb_image.h"
 
 #define CHANNELS 4
