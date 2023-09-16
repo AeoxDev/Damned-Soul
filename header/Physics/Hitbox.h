@@ -6,13 +6,11 @@
 
 //Real
 //Hitbox variables
-struct Hitbox
+struct VisualHitbox
 {
-	DirectX::XMFLOAT3 middlePoint;
-	int isCube;
-	float widthOrRadius;
-	float height;
-	float depth;
+	DirectX::XMFLOAT4 color; //4
+	DirectX::XMFLOAT3 middlePoint; //3
+	float radius; //1
 };
 
 struct HitboxVisualizeVariables
@@ -23,7 +21,7 @@ struct HitboxVisualizeVariables
 	ID3D11PixelShader* pShader = nullptr;
 
 	//Buffer, Input layout, and SRV used for Vertex Pulling
-	std::vector<Hitbox> hitboxes;
+	std::vector<VisualHitbox> hitboxes;
 	ID3D11Buffer* hitboxStructuredBuffer = nullptr;
 	ID3D11InputLayout* hitboxInputLayout = nullptr;
 	ID3D11ShaderResourceView* hitboxStructuredSRV = nullptr;
@@ -79,20 +77,18 @@ void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void*
 /// <param name="cornerPosX"></param>
 /// <param name="cornerPosY"></param>
 /// <returns></returns>
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ);
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[]);
 
 void AddHitboxComponent(Registry& registry, EntityID& entity);
 
-void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer);
+bool SetupHitboxVisualizer(Registry& registry);
 
-bool SetupHitboxVisualizer();
+void InitializeBufferAndSRV(Registry& registry);
 
-void InitializeBufferAndSRV();
-
-void UpdateHitboxBuffer();
+void UpdateHitboxBuffer(Registry& registry);
 
 void CreateShadersLayoutAndRasterState();
 
-void DebugRenderHitbox(ID3D11Buffer*& worldMatrix, ID3D11Buffer*& viewAndProjectionMatrix);
+void DebugRenderHitbox(ID3D11Buffer*& worldMatrix); //ID3D11Buffer*& viewAndProjectionMatrix);
 
 void DestroyHitboxVisualizeVariables();

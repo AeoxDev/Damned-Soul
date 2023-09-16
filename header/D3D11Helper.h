@@ -3,7 +3,7 @@
 //This contains helper functions for setting up renderable objects
 // and manipulating their render states.
 
-enum SHADER_TO_BIND_BUFFER
+enum SHADER_TO_BIND_RESOURCE
 {
 	BIND_VERTEX,
 	BIND_HULL,
@@ -12,6 +12,8 @@ enum SHADER_TO_BIND_BUFFER
 	BIND_PIXEL
 };
 
+typedef int16_t TX_IDX;
+typedef int8_t SMP_IDX;
 typedef int8_t PS_IDX;
 typedef int8_t VS_IDX;
 typedef int8_t CS_IDX;
@@ -24,6 +26,16 @@ typedef int8_t DSV_IDX;
 typedef int8_t RS_IDX;
 typedef int16_t SRV_IDX;
 typedef int8_t SMP_IDX;
+
+// Load a texture from a .png file and return a global index that can be used to reference it
+TX_IDX LoadTexture(const char* name);
+// Set a material
+bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOURCE& shader);
+
+// Create a Sampler
+SMP_IDX CreateSamplerState();
+// Set a sampler (currently only binds to the pixel shader
+void SetSamplerState(const SMP_IDX idx);
 
 // Load a Pixel Shader by name (ps.cso) and return a global index that can be used to reference it
 PS_IDX LoadPixelShader(const char* name);
@@ -43,11 +55,13 @@ bool SetVertexShader(const VS_IDX idx);
 
 
 // Create a constant buffer with provided data and return a unique index to it
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const uint8_t slot);
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot);
 // Set an active constant buffer by index (shader and slot data contained in buffer)
 bool SetConstantBuffer(const CB_IDX idx);
 // Update a constant buffer by index with given data
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
+// Update the world matrix, there needs to be only one
+void UpdateWorldMatrix(const void* data);
 
 // Create a Vertex Buffer with provided data and return a unique index to it
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count);

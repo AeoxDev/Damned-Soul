@@ -1,6 +1,7 @@
 struct PixelShaderInput
 {
     float4 position : SV_POSITION;
+    float4 color : COLOR;
 };
 
 struct PixelShaderOutput
@@ -12,6 +13,6 @@ PixelShaderOutput main(PixelShaderInput input)
 {
     PixelShaderOutput output;
 
-    output.swapChain = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    output.swapChain = input.color;
     return output;
 }

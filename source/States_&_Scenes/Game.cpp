@@ -4,13 +4,14 @@
 #include "Model.h"
 #include "GameRenderer.h"
 #include "SDLHandler.h"
+#include "D3D11Helper.h"
 
 Model dogModel;
 
 void Game::Update()
 {
 	if (-1 == dogModel.m_indexBuffer)
-		dogModel.Load("Hellhound.mdl");
+		dogModel.Load("HellhoundDummy_PH.mdl");
 
 	// No support for held keys in the input handler at the moment
 	const Uint8* keystate = SDL_GetKeyboardState(NULL);
@@ -18,10 +19,10 @@ void Game::Update()
 
 	// Move left
 	if (keystate[SDL_SCANCODE_A])
-		move[0] -= 1;
+		move[0] += 1;
 	// Move right
 	if (keystate[SDL_SCANCODE_D])
-		move[0] += 1;
+		move[0] -= 1;
 	// Move up
 	if (keystate[SDL_SCANCODE_W])
 		move[1] += 1;
@@ -34,9 +35,12 @@ void Game::Update()
 	playerPosition[0] += move[0] * scale;
 	playerPosition[1] += move[1] * scale;
 
-	Camera::SetPosition(playerPosition[0], playerPosition[1], -2.0f);
+	Camera::SetPosition(playerPosition[0], playerPosition[1], 8.0f);
 	Camera::SetLookAt(playerPosition[0], playerPosition[1], 0.0f);
+	DirectX::XMMATRIX identity = DirectX::XMMatrixIdentity();
+	UpdateWorldMatrix(&identity);
 	Camera::UpdateView();
+	dogModel.SetMaterialActive();
 	dogModel.SetVertexAndIndexBuffersActive();
 	Render(dogModel.m_bonelessModel->m_numIndices);
 	

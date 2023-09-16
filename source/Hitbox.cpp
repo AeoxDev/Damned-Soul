@@ -9,9 +9,9 @@
 
 HitboxVisualizeVariables hvv;
 
-bool SetupHitboxVisualizer()
+bool SetupHitboxVisualizer(Registry& registry)
 {
-	InitializeBufferAndSRV();
+	InitializeBufferAndSRV(registry);
 	CreateShadersLayoutAndRasterState();
 	return true;
 }
@@ -72,9 +72,163 @@ void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
 	}
 }
 
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ)
+
+
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[])
 {
-	return 0;
+	if (corners < 3 && corners >= CONVEX_CORNER_LIMIT)
+	{
+		return -3;
+	}
+	//Check for the HitboxComponent, return -1 if failed
+	HitboxComponent* collisionComponent = registry.GetComponent<HitboxComponent>(entity);
+	if (collisionComponent == nullptr)
+	{
+		//Component did not exist!
+		return -1;
+	}
+	//We now have the Collision Component, look for the first bit to add a hitbox on
+	unsigned availableSlot = FindAvailableSlot(collisionComponent->usedConvexHitboxes);
+	if (availableSlot < 0)
+	{
+		//No available bits, maximum size achieved
+		return -2;
+	}
+	//There is now a slot for the hitbox, create it on the given slot.
+	/*collisionComponent->circleHitbox[availableSlot].radius = radius;
+	collisionComponent->circleHitbox[availableSlot].offsetX = offsetX;
+	collisionComponent->circleHitbox[availableSlot].offsetZ = offsetZ;*/
+	float sumX = 0.f;
+	float sumZ = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		collisionComponent->convexHitbox[availableSlot].cornerX[i] = cornerPosX[i];
+		sumX += cornerPosX[i];
+
+		collisionComponent->convexHitbox[availableSlot].cornerZ[i] = cornerPosZ[i];
+		sumZ += cornerPosZ[i];
+	}
+	collisionComponent->convexHitbox[availableSlot].cornerAmount = corners;
+	//Calculate centroid
+	collisionComponent->convexHitbox[availableSlot].centerX = (sumX / (float)corners);
+	collisionComponent->convexHitbox[availableSlot].centerZ = (sumZ / (float)corners);
+	//Calculate boundingRadius
+	//Get longest line from centroid
+	float longestDistance = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		float dx, dz = 0.f;
+		dx = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerX;
+		dx = dx * dx;
+
+		dz = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
+		dz = dz * dz;
+
+		float tempDist = std::sqrt(dx * dx + dz * dz);
+
+		if (tempDist > longestDistance)
+		{
+			longestDistance = tempDist;
+		}
+	}
+	collisionComponent->convexHitbox[availableSlot].boundingRadius = longestDistance;
+	
+	//Set normals
+	float lineX, lineZ = 0.f;
+	float scalar = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		//First get line
+		lineX = cornerPosX[(i + 1) % corners] - cornerPosX[i];
+		lineZ = cornerPosZ[(i + 1) % corners] - cornerPosZ[i];
+		//Rotate 90 degrees for normal
+		collisionComponent->convexHitbox[availableSlot].normalX[i] = -lineZ;
+		collisionComponent->convexHitbox[availableSlot].normalZ[i] = lineX;
+		//Get line from centroid to corner
+		lineX = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerX;
+		lineZ = cornerPosZ[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
+		//Check if scalar is positive, if negative, reverse normal direction
+		scalar = (lineX * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (lineZ * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
+		if (scalar <= 0.f)
+		{
+			collisionComponent->convexHitbox[availableSlot].normalX[i] *= -1.0f;
+			collisionComponent->convexHitbox[availableSlot].normalZ[i] *= -1.0f;
+		}
+		float magnitude = sqrt(collisionComponent->convexHitbox[availableSlot].normalX[i] * collisionComponent->convexHitbox[availableSlot].normalX[i] +
+			collisionComponent->convexHitbox[availableSlot].normalZ[i] * collisionComponent->convexHitbox[availableSlot].normalZ[i]); // very logical line, yes.
+		collisionComponent->convexHitbox[availableSlot].normalX[i] /= magnitude;
+		collisionComponent->convexHitbox[availableSlot].normalZ[i] /= magnitude;
+	}
+
+	float line2X, line2Z = 0.f;
+	float magnitudeX, magnitudeZ = 0.f;
+	float radians = 0.f;
+	bool reverse = false;
+	//Check if convex
+	for (int i = 0; i < corners; i++)
+	{
+		//First get line
+		lineX = cornerPosX[(i + 1) % corners] - cornerPosX[i];
+		lineZ = cornerPosZ[(i + 1) % corners] - cornerPosZ[i];
+
+		//Second line
+		line2X = cornerPosX[(i + 2) % corners] - cornerPosX[(i + 1) % corners];
+		line2Z = cornerPosZ[(i + 2) % corners] - cornerPosZ[(i + 1) % corners];
+
+		// dot product
+		scalar = (lineX * line2X) + (lineZ * line2Z);
+
+		//calculate magnitude of the lnes
+		magnitudeX = std::sqrt(lineX * lineX + lineZ * lineZ);
+		magnitudeZ = std::sqrt(line2X * line2X + line2Z * line2Z);
+
+		//angle in radians
+		radians = std::acos(scalar / (magnitudeX * magnitudeZ));
+
+		if (i == 0 && radians - 0.0001f> 3.14159265359f * 0.5f)
+		{
+			reverse = true;
+		}
+		if (reverse)
+		{
+			radians = 3.14159265359f - radians;
+		}
+		if (radians > 3.14159265359f * 0.5f)
+		{
+			//Concave shape, sadge
+			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			return -4;
+		}
+		//Check if middle point of neighboring points is on the inside
+		//First get middle point
+		float middleX = (cornerPosX[i] + cornerPosX[(i + 1) % corners] + cornerPosX[(i + 2) % corners]) * 0.333f;
+		float middleZ = (cornerPosZ[i] +cornerPosZ[(i + 1) % corners] + cornerPosZ[(i + 2) % corners]) * 0.333f;
+		float middleToCorner1X = cornerPosX[i] - middleX;
+		float middleToCorner1Z = cornerPosZ[i] - middleZ;
+		float middleToCorner2X = cornerPosX[(i + 2) % corners] - middleX;
+		float middleToCorner2Z = cornerPosZ[(i + 2) % corners] - middleZ;
+		//Then do scalar product to verify direction
+		scalar = (middleToCorner1X * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (middleToCorner1Z * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
+		if (scalar < 0.0f)
+		{
+			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			return -5;
+		}
+		scalar = (middleToCorner2X * collisionComponent->convexHitbox[availableSlot].normalX[(i + 1) % corners]) + (middleToCorner2Z * collisionComponent->convexHitbox[availableSlot].normalZ[(i + 1) % corners]);
+		if (scalar < 0.0f)
+		{
+			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			return -5;
+		}
+	}
+
+	//Set to active
+	collisionComponent->convexFlags[availableSlot].ResetToActive();
+	//Look at components to find what bit flags should be used
+	SetCollisionEvent(registry, entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);
+
+	//Return the chosen slot for the user for further uses.
+	return availableSlot + SAME_TYPE_HITBOX_LIMIT;
 }
 
 void AddHitboxComponent(Registry& registry, EntityID& entity)
@@ -83,93 +237,47 @@ void AddHitboxComponent(Registry& registry, EntityID& entity)
 	
 }
 
-void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer) //Update this to work with ECS when creating components
+void InitializeBufferAndSRV(Registry& registry)
 {
-	Hitbox hitbox;
-	hitbox.isCube = isCube;
-
-	float biggestX = 0.0f;
-	float smallestX = 0.0f;
-	float biggestY = 0.0f;
-	float smallestY = 0.0f;
-	float biggestZ = 0.0f;
-	float smallestZ = 0.0f;
-
-	for (int i = 0; i < (int)vertexBuffer.size(); i++)
+	hvv.hitboxes.clear();
+	//Loop through the registry, find hitboxComponents, add to a struct and link to a buffer.
+	for (auto entity : View<HitboxComponent>(registry))
 	{
-		//Take out the vertex with the largest and smallest X value.
-		if (vertexBuffer[i].x > biggestX)
-		{
-			biggestX = vertexBuffer[i].x;
-		}
-		else if (vertexBuffer[i].x < smallestX)
-		{
-			smallestX = vertexBuffer[i].x;
-		}
+		HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 
-		//Take out the vertex with the largest and smallest Y value.
-		if (vertexBuffer[i].y > biggestY)
+		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
 		{
-			biggestY = vertexBuffer[i].y;
-		}
-		else if (vertexBuffer[i].y < smallestY)
-		{
-			smallestY = vertexBuffer[i].y;
-		}
-
-		//Take out the vertex with the largest and smallest Z value.
-		if (vertexBuffer[i].z > biggestZ)
-		{
-			biggestZ = vertexBuffer[i].z;
-		}
-		else if (vertexBuffer[i].z < smallestZ)
-		{
-			smallestZ = vertexBuffer[i].z;
+			if (hitbox->circularFlags[i].active != 0)
+			{
+				VisualHitbox vh;
+				vh.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f); //Change color
+				vh.middlePoint = DirectX::XMFLOAT3(hitbox->circleHitbox[i].offsetX, 0.0f, hitbox->circleHitbox[i].offsetZ);
+				vh.radius = hitbox->circleHitbox[i].radius;
+				hvv.hitboxes.push_back(vh);
+			}
+			else if (hitbox->convexFlags[i].active != 0)
+			{
+				VisualHitbox vh;
+				vh.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f); //Change color
+				vh.middlePoint = DirectX::XMFLOAT3(hitbox->convexHitbox[i].centerX, 0.0f, hitbox->convexHitbox[i].centerZ);
+				vh.radius = hitbox->convexHitbox[i].boundingRadius;
+				hvv.hitboxes.push_back(vh);
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
 
-	//Calculate the middle point of the mesh
-	hitbox.middlePoint = DirectX::XMFLOAT3((biggestX + smallestX) / 2.0f, (biggestY + smallestY) / 2.0f, (biggestZ + smallestZ) / 2.0f);
-
-	if (isCube)
-	{
-		//Create width, height, and depth
-		hitbox.widthOrRadius = biggestX - smallestX;
-		hitbox.height = biggestY - smallestY;
-		hitbox.depth = biggestZ - smallestZ;
-	}
-	else
-	{
-		//Create radius for a sphere
-		float largest = biggestX - smallestX;
-
-		if (largest < (biggestY - smallestY))
-		{
-			largest = biggestY - smallestY;
-		}
-
-		if (largest < (biggestZ - smallestZ))
-		{
-			largest = biggestZ - smallestZ;
-		}
-
-		hitbox.widthOrRadius = largest;
-	}
-
-	//Push the new hitbox into the list of hitboxes
-	hvv.hitboxes.push_back(hitbox);
-}
-
-void InitializeBufferAndSRV()
-{
 	//Create the structured buffer description
 	D3D11_BUFFER_DESC buffDesc{};
-	buffDesc.ByteWidth = sizeof(Hitbox) * UINT(hvv.hitboxes.size());
+	buffDesc.ByteWidth = sizeof(VisualHitbox) * UINT(hvv.hitboxes.size());
 	buffDesc.Usage = D3D11_USAGE_DEFAULT;
 	buffDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 	buffDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	buffDesc.StructureByteStride = sizeof(Hitbox);
+	buffDesc.StructureByteStride = sizeof(VisualHitbox);
 
 	D3D11_SUBRESOURCE_DATA initialData{};
 	initialData.pSysMem = &hvv.hitboxes[0];
@@ -191,16 +299,16 @@ void InitializeBufferAndSRV()
 	}
 }
 
-void UpdateHitboxBuffer()
+void UpdateHitboxBuffer(Registry& registry)
 {
 	//Clear previous buffer
 	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
 	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
 
-	InitializeBufferAndSRV();
+	InitializeBufferAndSRV(registry);
 }
 
-void DebugRenderHitbox(ID3D11Buffer*& worldMatrix, ID3D11Buffer*& viewAndProjectionMatrix)
+void DebugRenderHitbox(ID3D11Buffer*& worldMatrix) //ID3D11Buffer*& viewAndProjectionMatrix)
 {
 	//Assuming the backbuffer is bound to the output merger
 	
@@ -220,11 +328,12 @@ void DebugRenderHitbox(ID3D11Buffer*& worldMatrix, ID3D11Buffer*& viewAndProject
 	//Vertex Shader
 	d3d11Data->deviceContext->VSSetShader(hvv.vShader, nullptr, 0);
 	d3d11Data->deviceContext->VSSetShaderResources(0, 1, &hvv.hitboxStructuredSRV);
-	d3d11Data->deviceContext->VSSetConstantBuffers(0, 1, &worldMatrix); //Constant Buffer Filled With World Matrix
+	//d3d11Data->deviceContext->VSSetConstantBuffers(0, 1, &worldMatrix); //Constant Buffer Filled With World Matrix
 
 	//Geometry Shader
 	d3d11Data->deviceContext->GSSetShader(hvv.gShader, nullptr, 0);
-	d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &viewAndProjectionMatrix);
+	d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &worldMatrix); //Technically viewAndProjection
+	//d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &viewAndProjectionMatrix);
 
 	//Pixel Shader
 	d3d11Data->deviceContext->PSSetShader(hvv.pShader, nullptr, 0);
@@ -336,6 +445,45 @@ void DestroyHitboxVisualizeVariables()
 	hvv.hitboxes.clear();
 }
 
+void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].active = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].active = setFlag;
+	}
+}
+
+void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isStage = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isStage = setFlag;
+	}
+}
+
+void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isWall = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isWall = setFlag;
+	}
+}
+
 void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
@@ -345,7 +493,7 @@ void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].isPlayer = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].isPlayer = setFlag;
 	}
 }
 
@@ -358,7 +506,72 @@ void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool s
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].isEnemy = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].isEnemy = setFlag;
+	}
+}
+
+void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isStaticHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isStaticHazard = setFlag;
+	}
+}
+
+void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isDynamicHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isDynamicHazard = setFlag;
+	}
+}
+
+void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].isMoveable = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].isMoveable = setFlag;
+	}
+}
+
+void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitStage = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitStage = setFlag;
+	}
+}
+
+void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitWall = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitWall = setFlag;
 	}
 }
 
@@ -371,7 +584,7 @@ void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].hitPlayer = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].hitPlayer = setFlag;
 	}
 }
 
@@ -384,7 +597,33 @@ void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 	else
 	{
-		hitbox->convexFlags[hitboxID].hitEnemy = setFlag;
+		hitbox->convexFlags[hitboxID- SAME_TYPE_HITBOX_LIMIT].hitEnemy = setFlag;
+	}
+}
+
+void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitStaticHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitStaticHazard = setFlag;
+	}
+}
+
+void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circularFlags[hitboxID].hitDynamicHazard = setFlag;
+	}
+	else
+	{
+		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].hitDynamicHazard = setFlag;
 	}
 }
 
@@ -406,7 +645,7 @@ void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void*
 	}
 	else
 	{
-		hitbox->onConvexCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
+		hitbox->onConvexCollision[hitboxID- SAME_TYPE_HITBOX_LIMIT].CollisionFunction = (void(*)(OnCollisionParameters&))function;
 	}
 	
 }

@@ -5,7 +5,7 @@
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 1
 #include "EntityFramework.h"
-#include "CircularCollision.h"
+
 
 struct OnCollisionParameters
 {
@@ -14,8 +14,6 @@ struct OnCollisionParameters
 	EntityID entity2; 
 	int hitboxID1;
 	int hitboxID2;
-	bool isConvex1;
-	bool isConvex2;
 	float normal1X;
 	float normal1Z;
 	float normal2X;
@@ -47,8 +45,8 @@ struct CollisionFlags
 	unsigned short hitDynamicHazard		: 1;//Collide with dynamic
 
 	unsigned short isMoveable			: 1;//Deterrmine wether or not it is possible to move this object in collision
-	unsigned short padding2				: 1;
-	unsigned short padding3				: 1;
+	unsigned short canTakeDamage		: 1;//Determines if hitbox can take damage
+	unsigned short canDealDamage		: 1;//Determines if hitbox can deal damage
 
 	void ResetToActive();
 };
@@ -66,7 +64,8 @@ struct ConvexColliderComponent
 	float centerX, centerZ;
 	float boundingRadius;//Circle to reduce calculations for performance
 	int cornerAmount;
-	float cornerX[CONVEX_CORNER_LIMIT], cornerY[CONVEX_CORNER_LIMIT];
+	float cornerX[CONVEX_CORNER_LIMIT], cornerZ[CONVEX_CORNER_LIMIT];
+	float normalX[CONVEX_CORNER_LIMIT], normalZ[CONVEX_CORNER_LIMIT];
 };
 
 struct GeometryIndependentColliderComponent
