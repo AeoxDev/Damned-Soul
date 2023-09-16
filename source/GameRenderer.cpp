@@ -73,7 +73,8 @@ void Clear(const int& s)
 
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
-	
+
+	SetRenderTargetViewAndDepthStencil(renderStates[0].renderTargetView, renderStates[0].depthStencilView);
 	/*SetRenderTargetViewAndDepthStencil(renderStates[0].renderTargetView, renderStates[0].depthStencilView);
 	SetPixelShader(renderStates[0].pixelShader);
 	SetVertexShader(renderStates[0].vertexShader);

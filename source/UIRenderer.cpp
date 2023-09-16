@@ -68,16 +68,37 @@ bool SetupUIRenderer()
 	if (FAILED(hr))
 	{
 		std::cout << "Failed to create Shader Resource View" << std::endl;
-		return -1;
+		return false;
 	}
 	UIComponents.srv = (srvHolder->currentCount)++;
 
 	texture->Release();
 
+	//-----------------------------------------------------------------//
+	struct Vertex {
+		float pos[4];
+		float normal[4];
+		float uv[2];
+	};
+
+	Vertex screenQuad[] =
+	{
+	   { {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {1.0f, 0.0f} },  // TOP RIGHT
+	   { {1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {1.0f, 1.0f} }, // BOTTOM RIGHT
+	   { {-1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} }, // TOP LEFT
+	   { {-1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} } // BOTTOM LEFT
+	};
+	UIComponents.vertexBuffer = CreateVertexBuffer(screenQuad, sizeof(Vertex), ARRAYSIZE(screenQuad));
+	uint32_t idxs[] = { 0, 1, 2, 2, 1, 3 };
+	UIComponents.indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), ARRAYSIZE(idxs));
+	
+	UIComponents.vertexShader = LoadVertexShader("UIVS.cso", LAYOUT_DESC::SCREEN);
+	UIComponents.pixelShader = LoadPixelShader("UIPS.cso");
+
 	return true;
 }
 
-void RenderUI(PoolPointer<UI> ui)
+void UpdateUI(PoolPointer<UI> ui)
 {
 	ID3D11ShaderResourceView* nullsrv = nullptr;
 	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
@@ -88,4 +109,33 @@ void RenderUI(PoolPointer<UI> ui)
 	SetRenderTargetViewAndDepthStencil(UIComponents.rtv, UIComponents.dsv);
 
 	ui->Render(ui);
+}
+
+void RenderUI()
+{
+	if (!SetVertexShader(UIComponents.vertexShader))
+	{
+		std::cout << "Failed to set UI Vertex Shader!" << std::endl;
+		return;
+	}
+	if (!SetPixelShader(UIComponents.pixelShader))
+	{
+		std::cout << "Failed to set UI Pixel Shader!" << std::endl;
+		return;
+	}
+	if (!SetVertexBuffer(UIComponents.vertexBuffer))
+	{
+		std::cout << "Failed to set UI Vertex Buffer!" << std::endl;
+		return;
+	}
+	if (!SetIndexBuffer(UIComponents.indexBuffer))
+	{
+		std::cout << "Failed to set UI Index Buffer!" << std::endl;
+		return;
+	}
+
+
+	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[UIComponents.srv]);
+	
+	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
 }

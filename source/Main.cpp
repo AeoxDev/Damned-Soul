@@ -83,7 +83,7 @@ int main(int argc, char* args[])
 
 	
 	ui->SetCurrentCanvas(exMenu);
-	RenderUI(ui);
+	UpdateUI(ui);
 
 	
 	/////////// REMOVE //////////////
@@ -95,6 +95,7 @@ int main(int argc, char* args[])
 
 		//Clear the render targets!
 		Clear(testRenderSlot);
+		RenderUI();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
 		stateManager.HandleInputs();

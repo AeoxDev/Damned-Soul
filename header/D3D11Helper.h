@@ -12,6 +12,13 @@ enum SHADER_TO_BIND_RESOURCE
 	BIND_PIXEL
 };
 
+enum LAYOUT_DESC
+{
+	DEFAULT,
+	SKELETAL,
+	SCREEN
+};
+
 typedef int16_t TX_IDX;
 typedef int8_t SMP_IDX;
 typedef int8_t PS_IDX;
@@ -44,14 +51,14 @@ bool SetPixelShader(const PS_IDX idx);
 
 // Load a Vertex Shader by name (vs.cso) and return a global index that can be used to reference it
 // Also creates an input layout to accompany it
-VS_IDX LoadVertexShader(const char* name);
+VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout = LAYOUT_DESC::SKELETAL);
 // Set a new vertex (and accompanying input layout) shader by index
 bool SetVertexShader(const VS_IDX idx);
 
 // Load a Compute Shader by name (cs.cso) and return a global index that can be used to reference it
-CS_IDX LoadVertexShader(const char* name);
+CS_IDX LoadComputeShader(const char* name);
 // Set a new compute shader by index
-bool SetVertexShader(const VS_IDX idx);
+bool SetComputeShader(const CS_IDX idx);
 
 
 // Create a constant buffer with provided data and return a unique index to it

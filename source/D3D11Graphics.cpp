@@ -23,7 +23,6 @@ DSVHolder* dsvHolder;
 SRVHolder* srvHolder;
 UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
-SamplerStateHolder* smpHolder;
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
@@ -107,7 +106,6 @@ void EndDirectX()
 		txHolder->srv_arr[i]->Release();
 		txHolder->tx_arr[i]->Release();
 	}
-		
 
 	// Release all vertex shaders and their input layouts
 	for (int i = 0; i < vrtHolder->currentCount; ++i)
@@ -155,10 +153,6 @@ void EndDirectX()
 	// Release all rasterizer states
 	for (int i = 0; i < rsHolder->currentCount; ++i)
 		rsHolder->rs_arr[i]->Release();
-
-	// Release all sampler states
-	for (int i = 0; i < smpHolder->currentCount; ++i)
-		smpHolder->smp_arr[i]->Release();
 
 	// Clear and flush device context
 	d3d11Data->deviceContext->ClearState();
