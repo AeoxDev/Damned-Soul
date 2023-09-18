@@ -14,10 +14,10 @@
 #include "States_&_Scenes\StateManager.h"
 #include "Model.h"
 #include "ComponentHelper.h"
-
 #include "ExampleMenu.h"
 #include "UIRenderer.h"
 #include <iostream>
+
 void UpdateDebugWindowTitle(std::string& title);
 
 int main(int argc, char* args[])
@@ -74,19 +74,17 @@ int main(int argc, char* args[])
 		return -1;
 	}
 
-	/////////// REMOVE //////////////
-
+	// Create UI + Example Menu
 	PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
 	*ui = UI();
 	PoolPointer<ExMenu> exMenu = MemLib::palloc(sizeof(ExMenu));
-	exMenu->Initialize(ui);
+	exMenu->Setup(ui);
 
 	
 	ui->SetCurrentCanvas(exMenu);
 	UpdateUI(ui);
 
-	
-	/////////// REMOVE //////////////
+
 	
 	while (!sdl.quit)
 	{
@@ -111,10 +109,8 @@ int main(int argc, char* args[])
 		MemLib::pdefrag();
 	}
 	
-	exMenu->Release();
 	ui->Release();
 	
-
 	EndDirectX();
 	MemLib::destroyMemoryManager();
 	SDL_Quit();

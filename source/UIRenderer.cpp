@@ -134,8 +134,6 @@ void RenderUI()
 		return;
 	}
 
-
 	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[UIComponents.srv]);
-	
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
 }

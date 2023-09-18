@@ -15,8 +15,6 @@ public:
 	~UIText() = default;
 
 	void Draw(PoolPointer<UI>& ui);
-	void Draw(UI* ui);
-
 	void UpdateText(std::wstring text);
 };
 

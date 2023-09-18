@@ -38,7 +38,8 @@ UI::UI()
 		return;
 	}
 
-	hr = m_WriteFactory->CreateTextFormat(L"Candara", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,30.0f, L"", &m_TextFormat);
+	float fontSize = 30.0f;
+	hr = m_WriteFactory->CreateTextFormat(L"Candara", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &m_TextFormat);
 	if (FAILED(hr))
 	{
 		std::cout << "FAILED to create Text Format" << std::endl;

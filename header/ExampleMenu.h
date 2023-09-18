@@ -16,8 +16,7 @@ private:
 	//void Resize();
 public:
 	ExMenu() = default;
-	void Initialize(PoolPointer<UI>& ui);
-	void Release();
+	void Setup(PoolPointer<UI>& ui);
 
 	int Run(PoolPointer<UI>& ui, float dt);
 

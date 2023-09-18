@@ -74,18 +74,8 @@ void Clear(const int& s)
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
 
+	// temporary needed for ui rendering, only set once otherwise
 	SetRenderTargetViewAndDepthStencil(renderStates[0].renderTargetView, renderStates[0].depthStencilView);
-	/*SetRenderTargetViewAndDepthStencil(renderStates[0].renderTargetView, renderStates[0].depthStencilView);
-	SetPixelShader(renderStates[0].pixelShader);
-	SetVertexShader(renderStates[0].vertexShader);
-	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[UIComponents.srv]);
-	SetVertexBuffer(renderStates[0].vertexBuffer);
-	SetIndexBuffer(renderStates[0].indexBuffer);
-
-	d3d11Data->deviceContext->DrawIndexed(3, 0, 0);
-
-	//d3d11Data->deviceContext->Draw(3, 0);
-	//d3d11Data->swapChain->Present(0, 0);*/
 
 }
 
