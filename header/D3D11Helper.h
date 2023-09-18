@@ -53,10 +53,17 @@ enum RESOURCE_FLAGS
 	BIND_VIDEO_ENCODER = 0x400L
 };
 
-typedef int8_t PS_IDX;
-typedef int8_t VS_IDX;
-typedef int8_t CS_IDX;
-typedef int8_t GS_IDX;
+enum LAYOUT_DESC
+{
+	DEFAULT,
+	SKELETAL,
+	SCREEN
+};
+
+typedef int16_t TX_IDX;
+typedef int8_t	PS_IDX;
+typedef int8_t	VS_IDX;
+typedef int8_t	CS_IDX;
 typedef int16_t CB_IDX;
 typedef int16_t VB_IDX;
 typedef int16_t IB_IDX;
@@ -67,6 +74,7 @@ typedef int8_t SRV_IDX;
 typedef int8_t UAV_IDX;
 typedef int8_t	RS_IDX;
 typedef int8_t SMP_IDX;
+
 
 
 // Load a texture from a .png file and return a global index that can be used to reference it
