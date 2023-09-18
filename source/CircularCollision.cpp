@@ -37,8 +37,6 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 	//Use onCollission function for first and second respectively
 	OnCollisionParameters params = {};
 	params.registry = registry;//Reggie stiel
-	params.isConvex1 = NO;
-	params.isConvex2 = NO;
 
 	if (iShit1&&hit)
 	{
@@ -65,7 +63,7 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 		params.normal2X = -dx;
 		params.normal2Z = -dy;
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
-		circle1->onCircleCollision[circleID1].CollisionFunction(params);
+		circle2->onCircleCollision[circleID2].CollisionFunction(params);
 	}
 
 	return hit;

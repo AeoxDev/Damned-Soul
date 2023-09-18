@@ -2,10 +2,11 @@
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include <iostream>
+#include <DirectXMath.h>
 
 ID3D11Buffer* bfr_NULL = NULL;
 
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const uint8_t slot)
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot)
 {
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -42,7 +43,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO
 bool SetConstantBuffer(const CB_IDX idx)
 {
 	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
-	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)bfrHolder->metadata_arr[idx][0];
+	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
 	uint8_t slot = bfrHolder->metadata_arr[idx][1];
 
 	switch (whichShader)
@@ -77,7 +78,7 @@ bool SetConstantBuffer(const CB_IDX idx)
 bool SetConstantBuffer(const CB_IDX idx, bool particles)
 {
 	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
-	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)bfrHolder->metadata_arr[idx][0];
+	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
 	uint8_t slot = bfrHolder->metadata_arr[idx][1];
 
 	switch (whichShader)
@@ -143,6 +144,33 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 	return true;
 }
 
+
+void UpdateWorldMatrix(const void* data)
+{
+	static CB_IDX constantBufferIdx = -1;
+	if (constantBufferIdx == -1)
+	{
+		DirectX::XMMATRIX emptyWorld;
+		constantBufferIdx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld), BIND_VERTEX, 0);
+		SetConstantBuffer(constantBufferIdx);
+	}
+		
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	// Map the buffer
+	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_arr[constantBufferIdx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to map World Constant Buffer!" << std::endl;
+		return;
+	}
+
+	// Copy the new data to the buffer
+	memcpy(mappedResource.pData, data, bfrHolder->metadata_arr[constantBufferIdx][2]);
+	// Unmap the resource
+	d3d11Data->deviceContext->Unmap(bfrHolder->buff_arr[constantBufferIdx], 0);
+}
 
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
@@ -231,3 +259,4 @@ bool SetIndexBuffer(const IB_IDX idx)
 	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_arr[idx], DXGI_FORMAT_R32_UINT, offset);
 	return true;
 }
+

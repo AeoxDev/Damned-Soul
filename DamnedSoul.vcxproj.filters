@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <FxCompile Include="resource\shader\TestPS.hlsl" />
+    <FxCompile Include="resource\shader\TestVS.hlsl" />
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -114,6 +116,18 @@
     <ClCompile Include="source\Particles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ImageHealper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FPNG\fpng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\STB_Helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\TestVS.hlsl">
@@ -122,33 +136,40 @@
     <FxCompile Include="resource\shader\TestPS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="resource\shader\VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
     <FxCompile Include="resource\shader\ParticleSmoke.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\shader\DebugHitboxPixelShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
+    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
+    <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl" />
+    <FxCompile Include="resource\shader\DebugHitboxPixelShader.hlsl" />
+    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
+    <FxCompile Include="resource\shader\VertexShader.hlsl" />
     <FxCompile Include="PixelVertex.hlsl" />
     <FxCompile Include="ParticleGS.hlsl">
-      <Filter>Resource Files\Particles</Filter>
-    </FxCompile>
     <FxCompile Include="ParticleVS.hlsl">
-      <Filter>Resource Files\Particles</Filter>
-    </FxCompile>
     <FxCompile Include="ParticlePS.hlsl">
-      <Filter>Resource Files\Particles</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\UIRenderer.cpp" />
+    <ClCompile Include="source\ExampleMenu.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\Audio.cpp" />
+    <ClCompile Include="source\ConfigInterpreter.cpp" />
+    <ClCompile Include="source\ConfigManager.cpp" />
+    <ClCompile Include="source\D3D11Graphics.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />
+    <ClCompile Include="source\DeltaTime.cpp" />
+    <ClCompile Include="source\GameRenderer.cpp" />
+    <ClCompile Include="source\Hitbox.cpp" />
+    <ClCompile Include="source\Input.cpp" />
+    <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\SDLHandler.cpp" />
+    <ClCompile Include="source\UI.cpp" />
+    <ClCompile Include="source\UIButton.cpp" />
+    <ClCompile Include="source\UICanvas.cpp" />
+    <ClCompile Include="source\UIComponent.cpp" />
+    <ClCompile Include="source\UIImage.cpp" />
+    <ClCompile Include="source\UIText.cpp" />
     <ClInclude Include="header\SDLHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -224,7 +245,7 @@
     <ClInclude Include="header\GameRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lib\stb_image.h">
+    <ClInclude Include="lib\STB_Image\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\States_&amp;_Scenes\Game.h">
@@ -240,6 +261,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\States_&amp;_Scenes\Shop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Model.h">
@@ -266,14 +293,67 @@
     <ClInclude Include="source\States.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\STB_Helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\STB_Helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lib\SDL2\lib\x64\SDL2.dll" />
-    <None Include="bin\SDL2.dll" />
+    <ClInclude Include="header\UIRenderer.h" />
+    <ClInclude Include="header\ExampleMenu.h" />
+    <ClInclude Include="header\Camera.h" />
+    <ClInclude Include="header\Colission.h" />
+    <ClInclude Include="header\ComponentHelper.h" />
+    <ClInclude Include="header\ConfigInterpreter.h" />
+    <ClInclude Include="header\ConfigManager.h" />
+    <ClInclude Include="header\Audio.h" />
+    <ClInclude Include="header\D3D11Graphics.h" />
+    <ClInclude Include="header\D3D11Helper.h" />
+    <ClInclude Include="header\DeltaTime.h" />
+    <ClInclude Include="header\EntityFramework.h" />
+    <ClInclude Include="header\GameRenderer.h" />
+    <ClInclude Include="header\Hitbox.h" />
+    <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\SDLHandler.h" />
+    <ClInclude Include="header\UI.h" />
+    <ClInclude Include="header\UIButton.h" />
+    <ClInclude Include="header\UICanvas.h" />
+    <ClInclude Include="header\UIComponent.h" />
+    <ClInclude Include="header\UIImage.h" />
+    <ClInclude Include="header\UIText.h" />
+    <ClInclude Include="source\Colission.cpp" />
+    <ClInclude Include="header\PoolUtility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2main.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resource\DamnedSoul.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resource\DamnedSoulsIcon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DamnedSoul.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

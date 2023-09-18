@@ -1,0 +1,78 @@
+#include "UIComponent.h"
+#include "SDLHandler.h"
+
+using namespace DirectX;
+
+void UIComponent::UpdateTransform()
+{
+	m_Transform = D2D1::Matrix3x2F::Scale(m_Scale.x, m_Scale.y)
+		* D2D1::Matrix3x2F::Translation(m_Position.x, m_Position.y)
+		* D2D1::Matrix3x2F::Rotation(m_Rotation, { sdl.WIDTH / 2.0f, sdl.HEIGHT / 2.0f });
+}
+
+void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation)
+{
+	SetPosition(position);
+	SetScale(scale);
+	SetRotation(rotation);
+}
+
+UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
+	:m_Position(position), m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
+{
+	UpdateTransform();
+}
+
+XMFLOAT2 UIComponent::GetPosition()
+{
+	return m_Position;
+}
+
+XMFLOAT2 UIComponent::GetScale()
+{
+	return m_Scale;
+}
+
+float UIComponent::GetRotation()
+{
+	return m_Rotation;
+}
+
+void UIComponent::SetPosition(XMFLOAT2 position)
+{
+	m_Position = { position.x - m_Bounds.right / 2.0f, position.y - m_Bounds.bottom / 2.0f };
+	UpdateTransform();
+}
+
+void UIComponent::SetScale(XMFLOAT2 scale)
+{
+	m_Scale = scale;
+	UpdateTransform();
+}
+
+void UIComponent::SetScale(float scale)
+{
+	m_Scale = { scale, scale };
+	UpdateTransform();
+}
+
+void UIComponent::SetRotation(float rotation)
+{
+	m_Rotation = rotation;
+	UpdateTransform();
+}
+
+void UIComponent::SetVisibility(bool value)
+{
+	m_Visibility = value;
+}
+
+void UIComponent::ToggleVisibility()
+{
+	m_Visibility = (m_Visibility) ? false : true;
+}
+
+bool UIComponent::IsVisible()
+{
+	return m_Visibility;
+}

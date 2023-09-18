@@ -1,6 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "UIRenderer.h"
 #include <iostream>
 
 
@@ -67,6 +68,7 @@ RTV_IDX CreateRenderTargetView()
 
 }
 
+
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 {
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -117,7 +119,7 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 	return true;
 }
 
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
+SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
 {
 	HRESULT hr;
 	uint16_t currentIdx = srvHolder->currentCount;
@@ -217,7 +219,7 @@ SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHAD
 bool SetShaderResourceView(const SRV_IDX idx)
 {
 	ID3D11ShaderResourceView* setter = srvHolder->srv_arr[idx];
-	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)srvHolder->metadata_arr[idx][0];
+	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)srvHolder->metadata_arr[idx][0];
 	uint8_t slot = srvHolder->metadata_arr[idx][1];
 
 	switch (whichShader)
@@ -252,7 +254,7 @@ bool SetShaderResourceView(const SRV_IDX idx)
 bool UnloadShaderResourceView(const SRV_IDX idx)
 {
 	ID3D11ShaderResourceView* setter = srvHolder->srv_arr[idx];
-	SHADER_TO_BIND_BUFFER whichShader = (SHADER_TO_BIND_BUFFER)srvHolder->metadata_arr[idx][0];
+	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)srvHolder->metadata_arr[idx][0];
 	uint8_t slot = srvHolder->metadata_arr[idx][1];
 
 	//In this overload, the slot is first set to NULL then the SRV is set
@@ -431,7 +433,7 @@ bool UnloadUnorderedAcessView(const UAV_IDX idx)
 
 void ClearRenderTargetView(const RTV_IDX idx)
 {
-	float color[4] = { 1.0f, 0.0f, 0.84f, 1.0f };
+	float color[4] = { 1.0f, 0.0f, 0.84f, 0.0f };
 	d3d11Data->deviceContext->ClearRenderTargetView(rtvHolder->rtv_arr[idx], color);
 }
 

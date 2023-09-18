@@ -6,9 +6,8 @@
 #include <fstream>
 
 #include "SDLHandler.h"
-#include "../lib/stb_image.h"
-
-#define STB_IMAGE_IMPLEMENTATION
+//#include "../lib/stb_image.h"
+//#define STB_IMAGE_IMPLEMENTATION
 
 struct Button
 {
