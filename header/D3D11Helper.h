@@ -4,7 +4,7 @@
 // and manipulating their render states.
 
 
-enum SHADER_TO_BIND_BUFFER
+enum SHADER_TO_BIND_RESOURCE
 {
 	BIND_VERTEX,
 	BIND_HULL,
@@ -61,21 +61,20 @@ enum LAYOUT_DESC
 };
 
 typedef int16_t TX_IDX;
-typedef int8_t SMP_IDX;
-typedef int8_t PS_IDX;
-typedef int8_t VS_IDX;
-typedef int8_t CS_IDX;
+typedef int8_t	PS_IDX;
+typedef int8_t	VS_IDX;
+typedef int8_t	CS_IDX;
 typedef int16_t CB_IDX;
 typedef int16_t VB_IDX;
 typedef int16_t IB_IDX;
-typedef int8_t VP_IDX;
+typedef int8_t	VP_IDX;
 typedef int8_t RTV_IDX;
 typedef int8_t DSV_IDX;
 typedef int8_t SRV_IDX;
 typedef int8_t UAV_IDX;
-typedef int8_t RS_IDX;
-typedef int16_t SRV_IDX;
+typedef int8_t	RS_IDX;
 typedef int8_t SMP_IDX;
+
 
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
@@ -147,7 +146,7 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 
 //NOTE TODO: MAKE A FIX FOR CREATESRV AND CREATEUAV (THEY CAN NOT HAVE MULTIPLE BINDFLAGS THEY ARE HARDCODED)
 // Create a shader resource view, if a buffer is to be created send in an empty string
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
+SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx);
 //Overload that sets slot to NULL before setting SRV, for particles

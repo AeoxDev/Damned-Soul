@@ -17,6 +17,7 @@ struct RenderSetupComponent
 	DSV_IDX depthStencilView;
 	SRV_IDX shaderResourceView;
 	UAV_IDX unorderedAccessView;
+	SMP_IDX samplerState;
 };
 
 RenderSetupComponent renderStates[8];
