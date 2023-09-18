@@ -19,7 +19,7 @@ struct GeometryShaderHolder
 	ID3D11GeometryShader* gs_arr[16];
 };
 
-struct PixelShaderHolder
+struct TextureHolder
 {
 #define TX_HOLD_LIM 64
 	uint16_t					currentCount = 0; // How many textures are currently loaded

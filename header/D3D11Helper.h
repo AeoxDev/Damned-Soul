@@ -63,6 +63,7 @@ enum LAYOUT_DESC
 typedef int16_t TX_IDX;
 typedef int8_t	PS_IDX;
 typedef int8_t	VS_IDX;
+typedef int8_t	GS_IDX;
 typedef int8_t	CS_IDX;
 typedef int16_t CB_IDX;
 typedef int16_t VB_IDX;
