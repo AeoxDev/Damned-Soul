@@ -68,19 +68,36 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 
 int SetupDirectX(HWND& w)
 {
-	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
-	txHolder = (TextureHolder*)MemLib::spush(sizeof(TextureHolder));
-	smpHolder = (SamplerStateHolder*)MemLib::spush(sizeof(SamplerStateHolder));
-	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
-	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
-	comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));
-	bfrHolder = (BufferHolder*)MemLib::spush(sizeof(BufferHolder));
-	vpHolder = (ViewPortHolder*)MemLib::spush(sizeof(ViewPortHolder));
-	rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
-	dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
-	srvHolder = (SRVHolder*)MemLib::spush(sizeof(SRVHolder));
-	uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
-	rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
+#define PUSH_AND_INITIALIZE(pointer, type) { pointer = (type*)MemLib::spush(sizeof(type)); *pointer = type(); }
+
+	PUSH_AND_INITIALIZE(d3d11Data, D3D11Data);
+	//d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
+	PUSH_AND_INITIALIZE(txHolder, TextureHolder);
+	//txHolder = (TextureHolder*)MemLib::spush(sizeof(TextureHolder));
+	PUSH_AND_INITIALIZE(smpHolder, SamplerStateHolder);
+	//smpHolder = (SamplerStateHolder*)MemLib::spush(sizeof(SamplerStateHolder));
+	PUSH_AND_INITIALIZE(pixHolder, PixelShaderHolder);
+	//pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
+	PUSH_AND_INITIALIZE(vrtHolder, VertexShaderHolder);
+	//vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
+	PUSH_AND_INITIALIZE(comHolder, ComputeShaderHolder);
+	//comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));
+	PUSH_AND_INITIALIZE(bfrHolder, BufferHolder);
+	//bfrHolder = (BufferHolder*)MemLib::spush(sizeof(BufferHolder));
+	PUSH_AND_INITIALIZE(vpHolder, ViewPortHolder);
+	//vpHolder = (ViewPortHolder*)MemLib::spush(sizeof(ViewPortHolder));
+	PUSH_AND_INITIALIZE(rtvHolder, RTVHolder);
+	//rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
+	PUSH_AND_INITIALIZE(rtvHolder, RTVHolder);
+	//rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
+	PUSH_AND_INITIALIZE(dsvHolder, DSVHolder);
+	//dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
+	PUSH_AND_INITIALIZE(srvHolder, SRVHolder);
+	//srvHolder = (SRVHolder*)MemLib::spush(sizeof(SRVHolder));
+	PUSH_AND_INITIALIZE(uavHolder, UAVHolder);
+	//uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
+	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
+	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG
