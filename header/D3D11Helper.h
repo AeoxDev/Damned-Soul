@@ -53,6 +53,15 @@ enum RESOURCE_FLAGS
 	BIND_VIDEO_ENCODER = 0x400L
 };
 
+enum LAYOUT_DESC
+{
+	DEFAULT,
+	SKELETAL,
+	SCREEN
+};
+
+typedef int16_t TX_IDX;
+typedef int8_t SMP_IDX;
 typedef int8_t PS_IDX;
 typedef int8_t VS_IDX;
 typedef int8_t CS_IDX;
@@ -65,6 +74,18 @@ typedef int8_t DSV_IDX;
 typedef int8_t SRV_IDX;
 typedef int8_t UAV_IDX;
 typedef int8_t RS_IDX;
+typedef int16_t SRV_IDX;
+typedef int8_t SMP_IDX;
+
+// Load a texture from a .png file and return a global index that can be used to reference it
+TX_IDX LoadTexture(const char* name);
+// Set a material
+bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOURCE& shader);
+
+// Create a Sampler
+SMP_IDX CreateSamplerState();
+// Set a sampler (currently only binds to the pixel shader
+void SetSamplerState(const SMP_IDX idx);
 
 // Load a Pixel Shader by name (ps.cso) and return a global index that can be used to reference it
 PS_IDX LoadPixelShader(const char* name);
@@ -73,7 +94,7 @@ bool SetPixelShader(const PS_IDX idx);
 
 // Load a Vertex Shader by name (vs.cso) and return a global index that can be used to reference it
 // Also creates an input layout to accompany it
-VS_IDX LoadVertexShader(const char* name);
+VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout = LAYOUT_DESC::SKELETAL);
 // Set a new vertex (and accompanying input layout) shader by index
 bool SetVertexShader(const VS_IDX idx);
 
@@ -84,13 +105,15 @@ bool SetComputeShader(const CS_IDX idx);
 
 
 // Create a constant buffer with provided data and return a unique index to it
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_BUFFER& bindto, const uint8_t slot);
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot);
 // Set an active constant buffer by index (shader and slot data contained in buffer)
 bool SetConstantBuffer(const CB_IDX idx);
 //Overload that sets slot to NULL before setting buffer, for particles
 bool SetConstantBuffer(const CB_IDX idx, bool particles);
 // Update a constant buffer by index with given data
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
+// Update the world matrix, there needs to be only one
+void UpdateWorldMatrix(const void* data);
 
 
 // Create a Vertex Buffer with provided data and return a unique index to it
@@ -104,6 +127,8 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 // Set an active Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx);
 
+// Create a Sampler
+SMP_IDX CreateSamplerState();
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
@@ -112,6 +137,7 @@ bool SetViewport(const VP_IDX idx);
 
 // Create a render target view
 RTV_IDX CreateRenderTargetView();
+
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
 // Set a render target view and depth stencil view
@@ -150,3 +176,4 @@ void ClearDepthStencilView(const DSV_IDX idx);
 
 RS_IDX CreateRasterizerState(const bool cull, const bool solid);
 bool SetRasterizerState(const RS_IDX idx);
+

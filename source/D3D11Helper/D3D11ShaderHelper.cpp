@@ -60,27 +60,53 @@ bool SetPixelShader(const PS_IDX idx)
 }
 
 // Does this string reference create more memory used on the stack?
-bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID3D11InputLayout*& il, const bool skeletonLayout)
+bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID3D11InputLayout*& il, const LAYOUT_DESC layout)
 {
-	D3D11_INPUT_ELEMENT_DESC nonSkeletalInputDesc[3] =
+	struct Layout
+	{
+		D3D11_INPUT_ELEMENT_DESC* desc;
+		UINT size;
+	};
+
+	//Default layout / Non skeletal layout
+	D3D11_INPUT_ELEMENT_DESC defaultInputDesc[4] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{"MATERIAL", 0, DXGI_FORMAT_R32_UINT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
+	Layout defaultLayout = { defaultInputDesc, ARRAYSIZE(defaultInputDesc)};
 
-	D3D11_INPUT_ELEMENT_DESC skeletalInputDesc[5] =
+	//Skeletal Layout
+	D3D11_INPUT_ELEMENT_DESC skeletalInputDesc[6] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{"BONE_INDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BONE_WIEGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"MATERIAL", 0, DXGI_FORMAT_R32_UINT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"BONE_INDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONE_WIEGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 60, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	Layout skeletalLayout = { skeletalInputDesc, ARRAYSIZE(skeletalInputDesc) };
+
+	//Screen/UI Layout
+	D3D11_INPUT_ELEMENT_DESC UIInputDesc[1] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	Layout ScreenLayout = { UIInputDesc, ARRAYSIZE(UIInputDesc) };
+
+	//Must correspond to enum layout in d3d11helper.h
+	Layout layouts[] =
+	{
+		defaultLayout,
+		skeletalLayout,
+		ScreenLayout
 	};
 
-	D3D11_INPUT_ELEMENT_DESC* chosen = skeletonLayout ? skeletalInputDesc : nonSkeletalInputDesc;
-
-	HRESULT hr = d3d11Data->device->CreateInputLayout(skeletalInputDesc, 3, vShaderByteCode, size, &il);
+	Layout chosen = layouts[layout];
+	HRESULT hr = d3d11Data->device->CreateInputLayout(chosen.desc, chosen.size, vShaderByteCode, size, &il);
 
 	if (FAILED(hr))
 	{
@@ -91,7 +117,7 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	return true;
 }
 
-VS_IDX LoadVertexShader(const char* name)
+VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 {
 	std::ifstream reader;
 
@@ -122,7 +148,7 @@ VS_IDX LoadVertexShader(const char* name)
 	}
 
 	// Try to create accompanying input layout
-	if (false == CreateInputLayout(shaderData, size, vrtHolder->il_arr[vrtHolder->currentCount], false))
+	if (false == CreateInputLayout(shaderData, size, vrtHolder->il_arr[vrtHolder->currentCount], layout))
 	{
 		MemLib::spop(); // Pop if failiure
 		vrtHolder->vs_arr[vrtHolder->currentCount]->Release(); // Release the newly created shader if the input layout failed

@@ -6,13 +6,11 @@
 
 //Real
 //Hitbox variables
-struct Hitbox
+struct VisualHitbox
 {
-	DirectX::XMFLOAT3 middlePoint;
-	int isCube;
-	float widthOrRadius;
-	float height;
-	float depth;
+	DirectX::XMFLOAT4 color; //4
+	DirectX::XMFLOAT3 middlePoint; //3
+	float radius; //1
 };
 
 struct HitboxVisualizeVariables
@@ -23,7 +21,7 @@ struct HitboxVisualizeVariables
 	ID3D11PixelShader* pShader = nullptr;
 
 	//Buffer, Input layout, and SRV used for Vertex Pulling
-	std::vector<Hitbox> hitboxes;
+	std::vector<VisualHitbox> hitboxes;
 	ID3D11Buffer* hitboxStructuredBuffer = nullptr;
 	ID3D11InputLayout* hitboxInputLayout = nullptr;
 	ID3D11ShaderResourceView* hitboxStructuredSRV = nullptr;
@@ -46,28 +44,28 @@ struct HitboxVisualizeVariables
 /// Returns -1 if component does not exist
 /// -2 if Maximum amount of hitboxes achieved</returns>
 int CreateHitbox(Registry& registry,EntityID& entity, float radius, float offsetX, float offsetZ);
-
+void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID);
 //Manual Flag setting functions.
 
-void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
 
-void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
-void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool isConvexHitbox = false, bool setFlag = true);
+void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
 
 void UpdatePhysics(Registry& registry);
 
-void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function, bool isConvexHitbox = false);
+void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function);
 
 /// <summary>
 /// Create a convex shape with corners relative to the position of the entity, then offset.
@@ -79,20 +77,18 @@ void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void*
 /// <param name="cornerPosX"></param>
 /// <param name="cornerPosY"></param>
 /// <returns></returns>
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float* cornerPosX, float* cornerPosY, float offsetX, float offsetZ);
+int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[]);
 
 void AddHitboxComponent(Registry& registry, EntityID& entity);
 
-void CreateHitbox(int isCube, std::vector<DirectX::XMFLOAT3>& vertexBuffer);
+bool SetupHitboxVisualizer(Registry& registry);
 
-bool SetupHitboxVisualizer();
+void InitializeBufferAndSRV(Registry& registry);
 
-void InitializeBufferAndSRV();
-
-void UpdateHitboxBuffer();
+void UpdateHitboxBuffer(Registry& registry);
 
 void CreateShadersLayoutAndRasterState();
 
-void DebugRenderHitbox(ID3D11Buffer*& worldMatrix, ID3D11Buffer*& viewAndProjectionMatrix);
+void DebugRenderHitbox(ID3D11Buffer*& worldMatrix); //ID3D11Buffer*& viewAndProjectionMatrix);
 
 void DestroyHitboxVisualizeVariables();

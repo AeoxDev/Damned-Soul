@@ -1,6 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "UIRenderer.h"
 #include <iostream>
 
 
@@ -66,6 +67,7 @@ RTV_IDX CreateRenderTargetView()
 	return (rtvHolder->currentCount)++;
 
 }
+
 
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 {
@@ -431,7 +433,7 @@ bool UnloadUnorderedAcessView(const UAV_IDX idx)
 
 void ClearRenderTargetView(const RTV_IDX idx)
 {
-	float color[4] = { 1.0f, 0.0f, 0.84f, 1.0f };
+	float color[4] = { 1.0f, 0.0f, 0.84f, 0.0f };
 	d3d11Data->deviceContext->ClearRenderTargetView(rtvHolder->rtv_arr[idx], color);
 }
 

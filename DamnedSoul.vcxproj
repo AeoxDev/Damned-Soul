@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,6 +104,11 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -114,7 +119,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,6 +132,11 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -135,17 +145,23 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>fmodL_vc.lib;MemLib_d.lib;d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmodL_vc.lib;MemLib_d.lib;d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);d2d1.lib;Dwrite.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;$(SolutionDir)lib\MemLib\$(Configuration);$(SolutionDir)lib\FmodLib</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -156,7 +172,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,10 +185,18 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd $(OutDir)Models
+PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
+      <Message>Compile the .mdl files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\UIRenderer.cpp" />
+    <ClCompile Include="source\ExampleMenu.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
@@ -199,6 +223,13 @@
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
+    <ClCompile Include="source\UI.cpp" />
+    <ClCompile Include="source\UIButton.cpp" />
+    <ClCompile Include="source\UICanvas.cpp" />
+    <ClCompile Include="source\UIComponent.cpp" />
+    <ClCompile Include="source\UIImage.cpp" />
+    <ClCompile Include="source\UIText.cpp" />
+    <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\ParticleSmoke.hlsl">
@@ -253,6 +284,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\UIPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="resource\shader\UIVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -261,6 +304,9 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\PoolUtility.hpp" />
+    <ClInclude Include="header\UIRenderer.h" />
+    <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -270,6 +316,8 @@
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
+    <ClInclude Include="header\STB_Helper.h" />
+    <ClInclude Include="lib\FPNG\fpng.h" />
     <ClInclude Include="header\GameRenderer.h" />
     <ClInclude Include="header\Model.h" />
     <ClInclude Include="header\Physics\Backend\CircularCollision.h" />
@@ -285,13 +333,20 @@
     <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
+    <ClInclude Include="header\UI.h" />
+    <ClInclude Include="header\UIButton.h" />
+    <ClInclude Include="header\UICanvas.h" />
+    <ClInclude Include="header\UIComponent.h" />
+    <ClInclude Include="header\UIImage.h" />
+    <ClInclude Include="header\UIText.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
     <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
     <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
-    <ClInclude Include="lib\stb_image.h" />
+    <ClInclude Include="lib\STB_Image\stb_image.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="source\Colission.cpp" />
     <ClInclude Include="source\States.h" />
   </ItemGroup>
@@ -303,6 +358,20 @@
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2main.lib" />
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
+    <Image Include="icon2.ico" />
+    <Image Include="resource\DamnedSoul.ico" />
+    <Image Include="resource\DamnedSoulsIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DamnedSoul.rc">
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">0x041d</Culture>
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">0x041d</Culture>
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">0x041d</Culture>
+      <Culture Condition="'$(Configuration)|$(Platform)'=='Release|x64'">0x041d</Culture>
+    </ResourceCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
