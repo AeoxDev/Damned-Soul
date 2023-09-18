@@ -7,5 +7,5 @@ int SetupGameRenderer();
 void Clear(const int& componentSlot);
 void Render(const size_t& count);
 void Present();
-void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ);
+void RenderParticles(UINT threadX, UINT threadY, UINT threadZ, const size_t& count);
 void SetSwappedParticles();
