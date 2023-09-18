@@ -66,7 +66,7 @@ int main(int argc, char* args[])
 		PrepareParticles();
 
 		//Dispatch the particles
-		DispatchParticles(100, 1, 1);
+		RenderParticles(100, 1, 1, 100);
 
 		//Finish handling the data
 		FinishParticles();

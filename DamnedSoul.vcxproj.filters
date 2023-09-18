@@ -16,6 +16,9 @@
     <Filter Include="Source Files\D3D11Helper">
       <UniqueIdentifier>{fe3ca8f1-fe5f-4bfe-89a4-a7fd42d91e0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Particles">
+      <UniqueIdentifier>{e5b065c9-dd73-474d-b097-2aeb821ff016}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\SDLHandler.cpp">
@@ -133,6 +136,16 @@
     </FxCompile>
     <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl">
       <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelVertex.hlsl" />
+    <FxCompile Include="ParticleGS.hlsl">
+      <Filter>Resource Files\Particles</Filter>
+    </FxCompile>
+    <FxCompile Include="ParticleVS.hlsl">
+      <Filter>Resource Files\Particles</Filter>
+    </FxCompile>
+    <FxCompile Include="ParticlePS.hlsl">
+      <Filter>Resource Files\Particles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

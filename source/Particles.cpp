@@ -13,6 +13,7 @@ int8_t m_computeShaders[8];
 int8_t m_vertexShader, m_pixelShader, m_geometryShader;
 int16_t m_metadata;
 int16_t m_vertexBuffer;
+int16_t m_indexBuffer;
 
 void InitializeParticles()
 {
@@ -28,6 +29,7 @@ void InitializeParticles()
 	data->m_spawnPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 
 	float size = sizeof(Particle) * data->m_end;
+	PoolPointer<uint32_t> index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
 
 
 	m_particles = MemLib::palloc(sizeof(Particle) * data->m_end);
@@ -40,6 +42,8 @@ void InitializeParticles()
 		m_particles[i].m_position = DirectX::XMFLOAT3((float)i, 0.f, 0.f);
 		m_particles[i].m_rgb = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 		m_particles[i].m_velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+
+		index[i] = i;
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
@@ -51,12 +55,13 @@ void InitializeParticles()
 	m_writeBuffer->UAVIndex = CreateUnorderedAcessView(&(*m_particles), sizeof(Particle), m_writeBuffer->SRVIndex, 0);
 
 	m_vertexBuffer = CreateVertexBuffer(&(*m_particles), sizeof(Particle), data->m_end, USAGE_DEFAULT);
+	m_indexBuffer = CreateIndexBuffer(&(*index), sizeof(int), data->m_end);
 
 	m_computeShaders[0] = LoadComputeShader("ParticleSmoke.cso");
 
-	m_vertexShader = LoadVertexShader("ParticleVertex.cso");
-	m_pixelShader = LoadPixelShader("ParticlePixel.cso");
-	m_geometryShader = LoadGeometryShader("ParticleGeometry.cso");
+	m_vertexShader = LoadVertexShader("ParticleVS.cso");
+	m_pixelShader = LoadPixelShader("ParticlePS.cso");
+	m_geometryShader = LoadGeometryShader("ParticleGS.cso");
 }
 
 void SetupParticles()
@@ -78,6 +83,12 @@ void PrepareParticles()
 {
 	SwitchInputOutput();
 
+	SetVertexShader(m_vertexShader);
+	SetGeometryShader(m_geometryShader);
+	SetPixelShader(m_pixelShader);
+
+	SetVertexBuffer(m_vertexBuffer);
+	SetIndexBuffer(m_indexBuffer);
 
 	SetShaderResourceView(m_readBuffer->SRVIndex);
 	SetUnorderedAcessView(m_writeBuffer->UAVIndex);

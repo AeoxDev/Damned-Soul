@@ -244,3 +244,20 @@ GS_IDX LoadGeometryShader(const char* name)
 	// Return and increment (in that order)
 	return geoHolder->currentCount++;
 }
+
+bool SetGeometryShader(const GS_IDX idx)
+{
+	if (geoHolder->currentCount < idx)
+	{
+		std::cerr << "Failed to set geometry shader: Index out of range!" << std::endl;
+		return false;
+	}
+	else if (idx < 0)
+	{
+		std::cerr << "Failed to set geometry shader: Index must be 0 or greater!" << std::endl;
+		return false;
+	}
+
+	d3d11Data->deviceContext->GSSetShader(geoHolder->gs_arr[idx], nullptr, 0);
+	return true;
+}

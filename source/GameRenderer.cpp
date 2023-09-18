@@ -80,9 +80,18 @@ void Present()
 
 }
 
-void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ)
+void PrepareParticlePass()
+{
+	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+
+}
+
+void RenderParticles(UINT threadX, UINT threadY, UINT threadZ, const size_t& count)
 {
 	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
+
+	d3d11Data->deviceContext->DrawIndexed(count, 0, 0);
 }
 
 void SetSwappedParticles()

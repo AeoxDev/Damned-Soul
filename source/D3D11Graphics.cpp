@@ -9,6 +9,7 @@
 D3D11Data* d3d11Data;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
+GeometryShaderHolder* geoHolder;
 ComputeShaderHolder* comHolder;
 BufferHolder* bfrHolder;
 ViewPortHolder* vpHolder;
@@ -78,6 +79,7 @@ int SetupDirectX(HWND& w)
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));
 	pixHolder = (PixelShaderHolder*)MemLib::spush(sizeof(PixelShaderHolder));
 	vrtHolder = (VertexShaderHolder*)MemLib::spush(sizeof(VertexShaderHolder));
+	geoHolder = (GeometryShaderHolder*)MemLib::spush(sizeof(GeometryShaderHolder));
 	comHolder = (ComputeShaderHolder*)MemLib::spush(sizeof(ComputeShaderHolder));
 	bfrHolder = (BufferHolder*)MemLib::spush(sizeof(BufferHolder));
 	vpHolder = (ViewPortHolder*)MemLib::spush(sizeof(ViewPortHolder));
