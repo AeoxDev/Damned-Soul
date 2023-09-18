@@ -96,7 +96,7 @@ int main(int argc, char* args[])
 		RenderUI();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
-		stateManager.HandleInputs();
+		stateManager.ReadInputs();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		//UpdatePhysics(stateManager);//Change registry to scene registry

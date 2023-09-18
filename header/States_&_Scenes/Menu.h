@@ -8,8 +8,10 @@ struct Menu
 
 	void Update();
 
-	void HandleKeyInputs(int keyInput[], Settings& settings);
+	void ReadKeyInputs(int[], Settings&);
+	void ReadKeyOutputs(int[], Settings&);
 
-	void HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos);
+	void ReadMouseInputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
+	void ReadMouseOutputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
 
 };
