@@ -1,159 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <FxCompile Include="resource\shader\ParticleGS.hlsl" />
+    <FxCompile Include="resource\shader\ParticlePS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleVS.hlsl" />
+    <FxCompile Include="resource\shader\PixelVertex.hlsl" />
+    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
     <FxCompile Include="resource\shader\TestPS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\D3D11Helper">
-      <UniqueIdentifier>{fe3ca8f1-fe5f-4bfe-89a4-a7fd42d91e0c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Particles">
-      <UniqueIdentifier>{e5b065c9-dd73-474d-b097-2aeb821ff016}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\SDLHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp">
-      <Filter>Source Files\D3D11Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp">
-      <Filter>Source Files\D3D11Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp">
-      <Filter>Source Files\D3D11Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Hitbox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ConfigManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ConfigInterpreter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\DeltaTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SceneManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ButtonManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\GameRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\GeometryIndependent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CircularCollision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ConvexCollision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\GameRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Collision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Particles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ImageHealper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\FPNG\fpng.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\STB_Helper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="resource\shader\TestVS.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\shader\TestPS.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\shader\ParticleSmoke.hlsl">
-    <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxPixelShader.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
+    <FxCompile Include="resource\shader\UIPS.hlsl" />
+    <FxCompile Include="resource\shader\UIVS.hlsl" />
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
-    <FxCompile Include="PixelVertex.hlsl" />
-    <FxCompile Include="ParticleGS.hlsl">
-    <FxCompile Include="ParticleVS.hlsl">
-    <FxCompile Include="ParticlePS.hlsl">
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\UIRenderer.cpp" />
     <ClCompile Include="source\ExampleMenu.cpp" />
+    <ClCompile Include="source\Collision.cpp" />
+    <ClCompile Include="source\Particles.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
+    <ClCompile Include="source\ButtonManager.cpp" />
+    <ClCompile Include="source\SceneManager.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp" />
+    <ClCompile Include="source\StateManager.cpp" />
+    <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
+    <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Audio.cpp" />
+    <ClCompile Include="source\CircularCollision.cpp" />
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
+    <ClCompile Include="source\ConvexCollision.cpp" />
     <ClCompile Include="source\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
@@ -161,8 +44,8 @@
     <ClCompile Include="source\DeltaTime.cpp" />
     <ClCompile Include="source\GameRenderer.cpp" />
     <ClCompile Include="source\Hitbox.cpp" />
-    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI.cpp" />
     <ClCompile Include="source\UIButton.cpp" />
@@ -170,147 +53,13 @@
     <ClCompile Include="source\UIComponent.cpp" />
     <ClCompile Include="source\UIImage.cpp" />
     <ClCompile Include="source\UIText.cpp" />
-    <ClInclude Include="header\SDLHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Audio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\D3D11Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\ConfigManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\ComponentHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\ConfigInterpreter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\DeltaTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\EntityFramework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\GameRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Physics\Backend\CircularCollision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Physics\Backend\Collision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Physics\Backend\ConvexCollision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Physics\Backend\GeometryIndependent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Physics\Hitbox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\ButtonManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\GameRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\STB_Image\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\Menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\Settings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\Level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\States_&amp;_Scenes\Shop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Physics\CollisionFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Hitbox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Colission.cpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\GameRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Particles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\States.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\STB_Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\STB_Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\UIRenderer.h" />
     <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />
-    <ClInclude Include="header\Colission.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
@@ -319,9 +68,21 @@
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
+    <ClInclude Include="header\STB_Helper.h" />
+    <ClInclude Include="lib\FPNG\fpng.h" />
     <ClInclude Include="header\GameRenderer.h" />
-    <ClInclude Include="header\Hitbox.h" />
-    <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Model.h" />
+    <ClInclude Include="header\Physics\Backend\CircularCollision.h" />
+    <ClInclude Include="header\Physics\Backend\Collision.h" />
+    <ClInclude Include="header\Physics\Backend\ConvexCollision.h" />
+    <ClInclude Include="header\Physics\Backend\GeometryIndependent.h" />
+    <ClInclude Include="header\Physics\CollisionFunctions.h" />
+    <ClInclude Include="header\Physics\Hitbox.h" />
+    <ClInclude Include="header\Particles.h" />
+    <ClInclude Include="header\ButtonManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI.h" />
     <ClInclude Include="header\UIButton.h" />
@@ -329,8 +90,15 @@
     <ClInclude Include="header\UIComponent.h" />
     <ClInclude Include="header\UIImage.h" />
     <ClInclude Include="header\UIText.h" />
-    <ClInclude Include="source\Colission.cpp" />
-    <ClInclude Include="header\PoolUtility.hpp" />
+    <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
+    <ClInclude Include="lib\STB_Image\stb_image.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="source\States.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
@@ -338,22 +106,16 @@
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resource\DamnedSoul.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="resource\DamnedSoulsIcon.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="icon1.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="icon2.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ResourceCompile Include="DamnedSoul.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DamnedSoul.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <Image Include="icon1.ico" />
+    <Image Include="icon2.ico" />
+    <Image Include="resource\DamnedSoul.ico" />
+    <Image Include="resource\DamnedSoulsIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\SDL2.dll" />
+    <None Include="lib\SDL2\lib\x64\SDL2.dll" />
   </ItemGroup>
 </Project>
