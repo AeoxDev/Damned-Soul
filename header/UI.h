@@ -39,7 +39,7 @@ public:
 	ID2D1SolidColorBrush*& GetBrush();
 	ID2D1SolidColorBrush*& GetYellowBrush();
 
-	void SetCurrentCanvas(UICanvas* canvas);
+	/*void SetCurrentCanvas(UICanvas* canvas);*/
 	void SetCurrentCanvas(PoolPointer<UICanvas> canvas);
 };
 

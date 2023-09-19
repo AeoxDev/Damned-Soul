@@ -98,6 +98,11 @@ bool SetupUIRenderer()
 	return true;
 }
 
+void ReleaseUIRenderer()
+{
+	UISurface->Release();
+}
+
 void UpdateUI(PoolPointer<UI> ui)
 {
 	ID3D11ShaderResourceView* nullsrv = nullptr;

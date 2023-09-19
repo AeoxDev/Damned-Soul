@@ -71,6 +71,7 @@ UI::UI()
 
 void UI::Release()
 {
+	this;
 	m_ImagingFactory->Release();
 	m_RenderTarget->Release();
 	m_WriteFactory->Release();
@@ -158,10 +159,10 @@ ID2D1SolidColorBrush*& UI::GetYellowBrush()
 	return m_YellowBrush;
 }
 
-void UI::SetCurrentCanvas(UICanvas* canvas)
-{
-	m_CurrentCanvas = canvas;
-}
+//void UI::SetCurrentCanvas(UICanvas* canvas)
+//{
+//	m_CurrentCanvas = canvas;
+//}
 
 void UI::SetCurrentCanvas(PoolPointer<UICanvas> canvas)
 {
