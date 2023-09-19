@@ -58,7 +58,7 @@ int main(int argc, char* args[])
 	ui->SetCurrentCanvas(exMenu);
 	UpdateUI(ui);
 
-
+	
 	
 	while (!sdl.quit)
 	{

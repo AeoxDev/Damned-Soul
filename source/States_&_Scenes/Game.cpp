@@ -43,6 +43,8 @@ void Game::Update()
 	dogModel.SetMaterialActive();
 	dogModel.SetVertexAndIndexBuffersActive();
 	Render(dogModel.m_bonelessModel->m_numIndices);
+
+	
 	
 	sceneManager.Update();
 }

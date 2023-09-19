@@ -12,6 +12,6 @@ struct LightingStruct
 };
 
 
-bool CreateLightingConstantBuffer(ID3D11Device* device, ID3D11Buffer** constantBuffer); //create a lighting constant buffer
+bool CreateLightingConstantBuffer( ID3D11Buffer*& constantBuffer); //create a lighting constant buffer
 
-void UpdateLightingBuffer(ID3D11DeviceContext* context, ID3D11Buffer* lightingConstantBuffer, LightingStruct& lightingData); // update the values of the constant buffer
+void UpdateLightingBuffer(ID3D11Buffer* lightingConstantBuffer, LightingStruct& lightingData); // update the values of the constant buffer
