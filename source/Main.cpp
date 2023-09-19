@@ -54,7 +54,7 @@ int main(int argc, char* args[])
 	PoolPointer<ExMenu> exMenu = MemLib::palloc(sizeof(ExMenu));
 	exMenu->Setup(ui);
 
-	
+
 	ui->SetCurrentCanvas(exMenu);
 	UpdateUI(ui);
 
@@ -92,7 +92,9 @@ int main(int argc, char* args[])
 		MemLib::pdefrag();
 	}
 	
+	exMenu->Release();
 	ui->Release();
+	ReleaseUIRenderer();
 	
 	EndDirectX();
 	MemLib::destroyMemoryManager();

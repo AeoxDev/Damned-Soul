@@ -79,7 +79,8 @@ public:
 		}
 
 		// Set data at location
-		m_data[m_size] = item;
+		std::memcpy(&m_data[m_size], &item, m_tSize);
+		//m_data[m_size] = item;
 
 		// Return the index of the newly pushed object
 		return m_size++;
@@ -144,19 +145,33 @@ public:
 
 	// Initiate an ML_Vector<T> with a number of T objects, can be called as such to emulate normal C++ style coding
 	// ML_Vector<T>() = { args };
+	ML_Vector()
+	{
+		// Set capacity
+		m_capacity = 4;
+		// Set the individual item size
+		m_tSize = sizeof(T);
+
+		// Allocate to memory pool
+		if (false == m_data.IsNullptr())
+			MemLib::pfree(m_data);
+		m_data = MemLib::palloc(m_capacity * m_tSize);
+	};
+
+	// Initiate an ML_Vector<T> with a number of T objects, can be called as such to emulate normal C++ style coding
+	// ML_Vector<T>() = { args };
 	template<typename... Types>
 	ML_Vector(Types... args)
 	{
 		// Set capacity
 		m_capacity = sizeof...(args);
+		// Set the individual item size
+		m_tSize = sizeof(T);
 
 		// Allocate to memory pool
 		if (false == m_data.IsNullptr())
 			MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity);
-
-		// Set the individual item size
-		m_tSize = sizeof(T);
+		m_data = MemLib::palloc(m_capacity * m_tSize);
 
 		// Set items
 		for (auto item : { args... } )

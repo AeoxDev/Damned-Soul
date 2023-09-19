@@ -9,7 +9,7 @@ struct PS_IN
 
 //Make use of a pre-existing pixel shader constant buffer for GI data in order to reduce memory usage
 
-float4 main(VS_OUT input) : SV_TARGET
+float4 main(PS_IN input) : SV_TARGET
 {
     //Using an orthographic camera in the vertex stage:
     //Look at model and see whatever is above pre-determined value

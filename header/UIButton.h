@@ -33,6 +33,7 @@ public:
 	void Activate();
 	void Deactivate();
 	void Interact();
+	void Release();
 
 	void SetPosition(DirectX::XMFLOAT2 position);
 	void SetScale(DirectX::XMFLOAT2 scale);

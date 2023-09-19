@@ -95,8 +95,6 @@ int SetupDirectX(HWND& w)
 	//uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
-	PUSH_AND_INITIALIZE(smpHolder, SamplerStateHolder);
-	//smpHolder = (SamplerStateHolder*)MemLib::spush(sizeof(SamplerStateHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG
@@ -173,7 +171,12 @@ void EndDirectX()
 	d3d11Data->deviceContext->ClearState();
 	d3d11Data->deviceContext->Flush();
 
+	// Release basic things
+	d3d11Data->swapChain->Release();
+	d3d11Data->deviceContext->Release();
+
 #ifdef _DEBUG
+	// Check for stuffs
 	ID3D11Debug* debugInterface;
 	HRESULT hr = d3d11Data->device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debugInterface));
 
@@ -181,8 +184,5 @@ void EndDirectX()
 	debugInterface->Release();
 #endif
 
-	// Release basic things
-	d3d11Data->swapChain->Release();
-	d3d11Data->deviceContext->Release();
 	d3d11Data->device->Release();
 }

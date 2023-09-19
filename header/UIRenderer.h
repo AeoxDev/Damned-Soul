@@ -18,5 +18,6 @@ extern IDXGISurface* UISurface;
 extern UIRenderComponents UIComponents;
 
 bool SetupUIRenderer();
+void ReleaseUIRenderer();
 void UpdateUI(PoolPointer<UI> ui);
 void RenderUI();
