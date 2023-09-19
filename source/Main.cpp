@@ -70,7 +70,7 @@ int main(int argc, char* args[])
 		RenderUI();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
-		stateManager.HandleInputs();
+		stateManager.ReadInputs();
 
 		//Prepare the particles to be dispatched
 		PrepareParticles();
