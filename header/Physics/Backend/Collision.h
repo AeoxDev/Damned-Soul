@@ -5,6 +5,7 @@
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 1
 #include "EntityFramework.h"
+#include "PoolUtility.hpp"
 
 
 struct OnCollisionParameters
@@ -92,6 +93,21 @@ struct HitboxComponent
 	
 };
 
+struct ProximityPoint
+{
+	int index;
+	float x;
+	float z;
+};
+
+struct ProximityHitboxComponent
+{
+	int clockwise = 1; //Clockwise or counter-clockwise
+	PoolVector<ProximityPoints> pointList = { 0 }; //List of all points in the hitbox
+
+	ProximityHitboxComponent();
+};
+
 int FindAvailableSlot(unsigned& bits);
 
 /// <summary>
@@ -100,6 +116,7 @@ int FindAvailableSlot(unsigned& bits);
 /// <param name="registry"></param>
 void ResetCollisionVariables(Registry& registry);
 void HandleMoveableCollision(Registry& registry);//No clipping
+void HandleProximityCollision(Registry& registry); //No proximity clipping
 void HandleDamageCollision(Registry& registry);//Hitboxes for attacks and dynamic hazards
 void HandleStaticCollision(Registry& registry);//Stage and static Collisions
 

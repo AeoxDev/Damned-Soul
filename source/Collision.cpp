@@ -154,6 +154,7 @@ void HandleStaticCollision(Registry& registry)
 
 void HandleMoveableCollision(Registry& registry)//Reggie Strie
 {
+	HandleProximityCollision(registry);
 	for (auto entity : View<HitboxComponent>(registry)) //Access the first entity
 	{
 		HitboxComponent* firstHitbox = registry.GetComponent<HitboxComponent>(entity);
@@ -205,6 +206,39 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 	}
 }
 
+void HandleProximityCollision(Registry& registry)
+{
+	float distance = 1000.0f;
+	int index = 0;
+	for (auto entity : View<ProximityHitboxComponent>(registry)) //Access the wall
+	{
+		ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(entity);
+
+		for (auto entity : View<HitboxComponent>(registry)) //Access an entity
+		{
+			HitboxComponent* entityHitbox = registry.GetComponent<HitboxComponent>(entity);
+
+			if (entityHitbox->circularFlags[0].hitWall || entityHitbox->convexFlags[0].hitWall) //Check if the entity can hit the wall
+			{
+				if (entityHitbox->circularFlags[0].active) //Check if it's a circular hitbox
+				{
+					for (int i = 0; i < wallHitbox->pointList.Size(); i++) //Loop through all points in the wallHitbox
+					{
+						float currentDistance = sqrt(float(pow(entityHitbox->circleHitbox[0].offsetX - wallHitbox->pointList[i].x) + pow(entityHitbox->circleHitbox[0].offsetZ - wallHitbox->pointList[i].z)));
+					}
+				}
+				else if (entityHitbox->convexFlags[0].active) //Check if it's a convex hitbox
+				{
+					for (int i = 0; i < wallHitbox->pointList.Size(); i++) //Loop through all points in the wallHitbox
+					{
+						float currentDistance = sqrt(float(pow(entityHitbox->convexHitbox[0].centerX - wallHitbox->pointList[i].x) + pow(entityHitbox->convexHitbox[0].centerZ - wallHitbox->pointList[i].z)));
+					}
+				}
+			}
+		}
+	}
+}
+
 HitboxComponent::HitboxComponent()
 {
 	this->usedCirclesHitboxes = 0;
@@ -223,4 +257,10 @@ void CollisionFlags::ResetToActive()
 	*r = 0;
 	this->active = 1;
 	
+}
+
+ProximityHitboxComponent::ProximityHitboxComponent()
+{
+	this->clockwise = 1;
+	this->pointList = { 0 };
 }

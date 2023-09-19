@@ -81,6 +81,10 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 
 void AddHitboxComponent(Registry& registry, EntityID& entity);
 
+void CreateProximityHitbox(Registry& registry, EntityID& entity, std::string fileName = "default"); //File name without extension ending
+
+void AddProximityHitboxComponent(Registry& registry, EntityID& entity);
+
 bool SetupHitboxVisualizer(Registry& registry);
 
 void InitializeBufferAndSRV(Registry& registry);

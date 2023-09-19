@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "Backend/Collision.h"
 #include "CollisionFunctions.h"
 
@@ -235,6 +236,65 @@ void AddHitboxComponent(Registry& registry, EntityID& entity)
 {
 	registry.AddComponent<HitboxComponent>(entity);
 	
+}
+
+void CreateProximityHitbox(Registry& registry, EntityID& entity, std::string fileName)
+{
+	//Check if the proximityComponent already exists.
+	ProximityHitboxComponent* proximityComponent = registry.GetComponent<ProximityHitboxComponent>(entity);
+	if (proximityComponent == nullptr)
+	{
+		//Component did not exist!
+		return;
+	}
+
+	//Read file and fill up the pointList and tell if clockwise or counter-clockwise
+	std::string filePath = "HitboxFiles/" + fileName + ".box";
+	std::ifstream file(filePath);
+	if (!file.is_open())
+	{
+		return; //File not found
+	}
+
+	std::string line;
+	ProximityPoint currentPoint;
+
+	while (std::getline(file, line)) //For each line in the file
+	{
+		std::stringstream ss(line); //Load line into a stringstream
+
+		std::string word;
+
+		ss >> word; //Prefix
+
+		if (word == "Clockwise") //Set clockwise variable to the value read from file
+		{
+			ss >> word;
+			proximityComponent->clockwise = std::stoi(word);
+		}
+		else if (word == "Point") //Start of a new point, add index to ProximityPoint
+		{
+			ss >> word;
+			currentPoint.index = std::stoi(word);
+		}
+		else if (word == "X") //X coordinate for the ProximityPoint
+		{
+			ss >> word;
+			currentPoint.x = std::stoi(word);
+		}
+		else if (word == "Z") //Z coordinate for the ProximityPoint, also marks a completed point to add to component list.
+		{
+			ss >> word;
+			currentPoint.z = std::stoi(word);
+
+			proximityComponent->pointList.emplace_back(currentPoint);
+		}
+	}
+}
+
+void AddProximityHitboxComponent(Registry& registry, EntityID& entity)
+{
+	registry.AddComponent<ProximityHitboxComponent>(entity);
 }
 
 void InitializeBufferAndSRV(Registry& registry)
