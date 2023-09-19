@@ -110,13 +110,10 @@
     <ClCompile Include="source\Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Particles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ImageHealper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\FPNG\fpng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\STB_Helper.cpp">
@@ -124,13 +121,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resource\shader\VertexShader.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="resource\shader\TestPS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
+    <FxCompile Include="resource\shader\ParticleSmoke.hlsl">
     <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxPixelShader.hlsl" />
@@ -214,9 +211,6 @@
     <ClInclude Include="header\Physics\Hitbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\States.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -274,6 +268,18 @@
     <ClInclude Include="source\Colission.cpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\GameRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\States.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -284,6 +290,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\FPNG\fpng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\MemLib\ML_Vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

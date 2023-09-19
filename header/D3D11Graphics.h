@@ -87,6 +87,7 @@ struct SRVHolder
 	uint8_t						currentCount = 0;
 	ID3D11Resource*				srv_resource_arr[SRV_HOLD_LIM]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
 	ID3D11ShaderResourceView*	srv_arr[SRV_HOLD_LIM]; // NOTE: I dont think 8 is enough, will probably need more in the future
+	uint32_t					metadata_arr[SRV_HOLD_LIM][3]; // Shader Resource View needs an indicator on where and how to be used
 };
 
 struct UAVHolder
@@ -95,6 +96,7 @@ struct UAVHolder
 	uint8_t						currentCount = 0;
 	ID3D11Resource*				uav_resource_arr[UAV_HOLD_LIM]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
 	ID3D11UnorderedAccessView*	uav_arr[UAV_HOLD_LIM]; // NOTE: I dont think 8 is enough, will probably need more in the future
+	uint32_t					metadata_arr[UAV_HOLD_LIM][2]; // Unordered Access View needs an indicator on how to be used, UAVs can only bind to compute shaders therefore no indication of where to use is needed
 };
 
 struct RasterizerHolder

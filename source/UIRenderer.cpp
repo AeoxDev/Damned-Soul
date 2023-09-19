@@ -88,7 +88,7 @@ bool SetupUIRenderer()
 	   { {-1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} }, // TOP LEFT
 	   { {-1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} } // BOTTOM LEFT
 	};
-	UIComponents.vertexBuffer = CreateVertexBuffer(screenQuad, sizeof(Vertex), ARRAYSIZE(screenQuad));
+	UIComponents.vertexBuffer = CreateVertexBuffer(screenQuad, sizeof(Vertex), ARRAYSIZE(screenQuad), USAGE_IMMUTABLE);
 	uint32_t idxs[] = { 0, 1, 2, 2, 1, 3 };
 	UIComponents.indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), ARRAYSIZE(idxs));
 	
@@ -96,6 +96,11 @@ bool SetupUIRenderer()
 	UIComponents.pixelShader = LoadPixelShader("UIPS.cso");
 
 	return true;
+}
+
+void ReleaseUIRenderer()
+{
+	UISurface->Release();
 }
 
 void UpdateUI(PoolPointer<UI> ui)

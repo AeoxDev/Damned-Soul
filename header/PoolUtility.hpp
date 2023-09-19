@@ -5,7 +5,7 @@
 template<typename T1, typename T2>
 struct PoolMap
 {
-private:
+public:
 	size_t m_size;
 	size_t m_capacity;
 	PoolPointer<T1> m_keys;
@@ -121,7 +121,7 @@ public:
 		m_capacity = capacity;
 	}
 
-	void emplace_back(T& value)
+	void push_back(T& value)
 	{
 		if (m_size == m_capacity)
 			Reserve((0 == m_size) ? 2 : (m_size * 2));
@@ -136,7 +136,7 @@ public:
 		return m_values[key];
 	}
 
-	const size_t Size() const
+	const size_t size() const
 	{
 		return m_size;
 	}

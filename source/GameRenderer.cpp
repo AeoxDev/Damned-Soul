@@ -9,11 +9,14 @@ struct RenderSetupComponent
 	RS_IDX	rasterizerState;
 	PS_IDX	pixelShader;
 	VS_IDX	vertexShader;
+	CS_IDX	computeShader;
 	VB_IDX	vertexBuffer;
 	IB_IDX	indexBuffer;
 	VP_IDX	viewPort;
 	RTV_IDX renderTargetView;
 	DSV_IDX depthStencilView;
+	SRV_IDX shaderResourceView;
+	UAV_IDX unorderedAccessView;
 	SMP_IDX samplerState;
 };
 
@@ -41,7 +44,7 @@ int SetupGameRenderer()
 		0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
 		-0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
 		0, 0.9f, 0.5f, 1.f,			/**/ 0, 0, -1.f, 0, /**/ 0.5, 1 };
-	renderStates[0].vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3);
+	renderStates[0].vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3, USAGE_IMMUTABLE);
 	uint32_t idxs[3] = { 0, 1, 2 };
 	renderStates[0].indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
 
@@ -87,4 +90,15 @@ void Render(const size_t& count)
 void Present()
 {
 	d3d11Data->swapChain->Present(0, 0);
+
+}
+
+void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ)
+{
+	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
+}
+
+void SetSwappedParticles()
+{
+	//Get particle functions in here some how
 }

@@ -5,6 +5,7 @@
 #include "UIImage.h"
 #include "UIText.h"
 #include "PoolUtility.hpp"
+#include "MemLib\ML_Vector.hpp"
 #include <DirectXMath.h>
 
 class UICanvas
@@ -12,7 +13,7 @@ class UICanvas
 protected:
 	bool m_Exit = false;
 
-	PoolVector<UIButton> m_Buttons;
+	ML_Vector<UIButton> m_Buttons;
 	//std::map<const std::string, PoolPointer<UIImage>> m_Images;
 	PoolMap<const std::string, UIImage> m_Images;
 	//std::map<const std::string, UIImage*> m_Images;
@@ -43,6 +44,7 @@ protected:
 public:
 	UICanvas() = default;
 	virtual ~UICanvas();
+	virtual void Release();
 
 	//virtual void Resize() = 0;
 	virtual void Reset();

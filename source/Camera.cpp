@@ -174,6 +174,7 @@ void Camera::UpdateProjection()
 		DirectX::XMStoreFloat4x4(&GameCamera->m_orthographic, orth);
 		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(orth));
 	}
+	//NOTE TODO: CANT BIND MULTIPLE SHADERS
 	//SHADER_TO_BIND_BUFFER flags = BIND_VERTEX | BIND_PIXEL;
 	//Update Constant buffer
 	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(*BufferData));

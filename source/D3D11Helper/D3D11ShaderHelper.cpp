@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 
+PixelShaderHolder* pixHolder_NULL = NULL;
+VertexShaderHolder* vrtHolder_NULL = NULL;
+ComputeShaderHolder* comHolder_NULL = NULL;
 
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
@@ -120,7 +123,8 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 
 	reader.open(name, std::ios::binary | std::ios::ate);
 	if (false == reader.is_open())
-	{
+	{    float paddingOne;
+
 		std::cerr << "Could not open VS test file!" << std::endl;
 		return -1;
 	}
