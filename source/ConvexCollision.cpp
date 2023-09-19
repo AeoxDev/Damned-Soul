@@ -210,9 +210,9 @@ bool IsConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2,
 	ConvexReturnData returnedData = {0};
 	int whichLine = 0;
 	//Now we can check which lines collide
-	for (size_t i = 0; i < convex1->convexHitbox[convexID1].cornerAmount; i++)
+	for (int i = 0; i < convex1->convexHitbox[convexID1].cornerAmount; i++)
 	{
-		for (size_t j = 0; j < convex2->convexHitbox[convexID2].cornerAmount; j++)
+		for (int j = 0; j < convex2->convexHitbox[convexID2].cornerAmount; j++)
 		{
 			//Check from center to corner of one convex shape onto the sides of another.
 			returnedData = LineToLineIntersection(convex1->convexHitbox[convexID1].centerX,
