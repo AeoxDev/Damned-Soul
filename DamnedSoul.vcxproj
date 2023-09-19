@@ -233,6 +233,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resource\shader\GICollisionPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\ParticleSmoke.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -318,6 +324,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
+    <ClInclude Include="header\MemLib\ML_Vector.hpp" />
     <ClInclude Include="header\STB_Helper.h" />
     <ClInclude Include="lib\FPNG\fpng.h" />
     <ClInclude Include="header\GameRenderer.h" />
@@ -374,6 +381,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <Culture Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">0x041d</Culture>
       <Culture Condition="'$(Configuration)|$(Platform)'=='Release|x64'">0x041d</Culture>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="resource\NatVis\mlv_vis.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
