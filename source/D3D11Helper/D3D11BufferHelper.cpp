@@ -4,6 +4,8 @@
 #include <iostream>
 #include <DirectXMath.h>
 
+ID3D11Buffer* bfr_NULL = NULL;
+
 CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot)
 {
 	D3D11_BUFFER_DESC desc;
@@ -60,6 +62,50 @@ bool SetConstantBuffer(const CB_IDX idx)
 		break;
 	case BIND_PIXEL:
 		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_COMPUTE:
+		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	default:
+		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		return false;
+		break; // Yes, this break is unnessecary, but it looks nice
+	}
+
+	return true;
+}
+
+bool SetConstantBuffer(const CB_IDX idx, bool particles)
+{
+	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
+	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
+	uint8_t slot = bfrHolder->metadata_arr[idx][1];
+
+	switch (whichShader)
+	{
+	case BIND_VERTEX:
+		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfr_NULL);
+		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_HULL:
+		d3d11Data->deviceContext->HSSetConstantBuffers(slot, 1, &bfr_NULL);
+		d3d11Data->deviceContext->HSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_DOMAIN:
+		d3d11Data->deviceContext->DSSetConstantBuffers(slot, 1, &bfr_NULL);
+		d3d11Data->deviceContext->DSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_GEOMETRY:
+		d3d11Data->deviceContext->GSSetConstantBuffers(slot, 1, &bfr_NULL);
+		d3d11Data->deviceContext->GSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_PIXEL:
+		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfr_NULL);
+		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		break;
+	case BIND_COMPUTE:
+		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfr_NULL);
+		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
 	default:
 		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
@@ -126,11 +172,10 @@ void UpdateWorldMatrix(const void* data)
 	d3d11Data->deviceContext->Unmap(bfrHolder->buff_arr[constantBufferIdx], 0);
 }
 
-
-VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count)
+VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
 	D3D11_BUFFER_DESC desc;
-	desc.Usage = D3D11_USAGE_IMMUTABLE; // Doesn't need to be updated
+	desc.Usage = (D3D11_USAGE)useFlags; 
 	desc.ByteWidth = (UINT)size * (UINT)count;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Is a vertex buffer
 	desc.CPUAccessFlags = 0;
@@ -214,3 +259,4 @@ bool SetIndexBuffer(const IB_IDX idx)
 	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_arr[idx], DXGI_FORMAT_R32_UINT, offset);
 	return true;
 }
+

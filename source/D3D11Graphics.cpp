@@ -26,12 +26,11 @@ RasterizerHolder* rsHolder;
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
-	UINT flags = 0x0;
+	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
 
-	
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -88,8 +87,6 @@ int SetupDirectX(HWND& w)
 	//vpHolder = (ViewPortHolder*)MemLib::spush(sizeof(ViewPortHolder));
 	PUSH_AND_INITIALIZE(rtvHolder, RTVHolder);
 	//rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
-	PUSH_AND_INITIALIZE(rtvHolder, RTVHolder);
-	//rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
 	PUSH_AND_INITIALIZE(dsvHolder, DSVHolder);
 	//dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
 	PUSH_AND_INITIALIZE(srvHolder, SRVHolder);
@@ -98,6 +95,8 @@ int SetupDirectX(HWND& w)
 	//uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
+	PUSH_AND_INITIALIZE(smpHolder, SamplerStateHolder);
+	//smpHolder = (SamplerStateHolder*)MemLib::spush(sizeof(SamplerStateHolder));
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG
@@ -122,7 +121,6 @@ void EndDirectX()
 		txHolder->srv_arr[i]->Release();
 		txHolder->tx_arr[i]->Release();
 	}
-		
 
 	// Release all vertex shaders and their input layouts
 	for (int i = 0; i < vrtHolder->currentCount; ++i)
@@ -156,7 +154,8 @@ void EndDirectX()
 	for (int i = 0; i < srvHolder->currentCount; ++i)
 	{
 		srvHolder->srv_arr[i]->Release();
-		srvHolder->srv_resource_arr[i]->Release();
+		if (srvHolder->srv_resource_arr[i])
+			srvHolder->srv_resource_arr[i]->Release();
 	}
 
 	// Release all unorderd access views
