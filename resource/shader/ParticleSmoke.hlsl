@@ -24,6 +24,6 @@ RWStructuredBuffer<input> outputParticleData : register(u0);
 void main( uint3 DTid : SV_DispatchThreadID )
 {
     input test = inputParticleData[DTid.x];
-    test.position = test.position + float3(0.1f, 0.1f, 0.1f);
+    test.position = test.position;
     outputParticleData[DTid.x] = test;
 }

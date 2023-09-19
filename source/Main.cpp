@@ -30,10 +30,9 @@ int main(int argc, char* args[])
 
 	int testRenderSlot = SetupGameRenderer();
 	Camera::InitializeCamera();
-	SetConstantBuffer(Camera::GetCameraBufferIndex());
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
 
 	InitializeParticles();
-	SetupParticles();
 
 	SMP_IDX sampler = CreateSamplerState();
 	SetSamplerState(sampler);
@@ -102,14 +101,27 @@ int main(int argc, char* args[])
 		//Inputs: SDL readings of keyboard and mouse inputs
 		stateManager.HandleInputs();
 
+
+
 		//Prepare the particles to be dispatched
-		PrepareParticles();
+		PrepareParticleCompute();
 
 		//Dispatch the particles
-		RenderParticles(100, 1, 1, 100);
+		DispatchParticles(100, 1, 1);
 
 		//Finish handling the data
-		FinishParticles();
+		FinishParticleCompute();
+
+		//Prepare the graphics pipeline to handle particles
+		PrepareParticlePass();
+		ChangeTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		SetCameraBuffer(Camera::GetCameraBufferIndex());
+
+		RenderParticles(100);
+
+		//Set the pipeline back now that particles are finished.
+		FinishParticlePass();
+
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		//UpdatePhysics(stateManager);//Change registry to scene registry

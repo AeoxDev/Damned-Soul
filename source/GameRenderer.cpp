@@ -71,15 +71,18 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
+void SetCameraBuffer(CB_IDX index)
+{
+	SetConstantBuffer(index, BIND_GEOMETRY);
+}
+
 void Clear(const int& s)
 {
-
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
 
 	// temporary needed for ui rendering, only set once otherwise
 	SetRenderTargetViewAndDepthStencil(renderStates[0].renderTargetView, renderStates[0].depthStencilView);
-
 }
 
 void Render(const size_t& count)
@@ -90,24 +93,19 @@ void Render(const size_t& count)
 void Present()
 {
 	d3d11Data->swapChain->Present(0, 0);
-
 }
 
-void PrepareParticlePass()
-{
-	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-
-}
-
-void RenderParticles(UINT threadX, UINT threadY, UINT threadZ, const size_t& count)
+void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ)
 {
 	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
+}
 
+void RenderParticles(const size_t& count)
+{
 	d3d11Data->deviceContext->DrawIndexed(count, 0, 0);
 }
 
-void SetSwappedParticles()
+void ChangeTopology(D3D_PRIMITIVE_TOPOLOGY toplogy)
 {
-	//Get particle functions in here some how
+	d3d11Data->deviceContext->IASetPrimitiveTopology(toplogy);
 }

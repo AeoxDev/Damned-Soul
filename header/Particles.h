@@ -30,11 +30,15 @@ struct ParticleInputOutput
 };
 
 void InitializeParticles();
-void SetupParticles();
-void SwitchInputOutput();
-void PrepareParticles();
 
-//Calls for D3D11Helper to copy the resources of SRV to vertex buffer
-void FinishParticles();
+//Calls for D3D11Helper to set the compute shader and the resources it requires
+void PrepareParticleCompute();
+//Calls for D3D11Helper to reset the compute shader and copy the resources of the SRV to vertex buffer
+void FinishParticleCompute();
+//Calls for D3D11Helper to set the shaders and resources requiered for the particle pass
+void PrepareParticlePass();
+//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
+void FinishParticlePass();
+
 
 

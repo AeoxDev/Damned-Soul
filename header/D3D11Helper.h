@@ -57,7 +57,8 @@ enum LAYOUT_DESC
 {
 	DEFAULT,
 	SKELETAL,
-	SCREEN
+	SCREEN,
+	PARTICLE
 };
 
 typedef int16_t TX_IDX;
@@ -103,24 +104,28 @@ bool SetVertexShader(const VS_IDX idx);
 CS_IDX LoadComputeShader(const char* name);
 // Set a new compute shader by index
 bool SetComputeShader(const CS_IDX idx);
+// Sets compute shader to null
+bool ResetComputeShader();
 
 // Load a Geometry Shader by name (cs.cso) and return a global index that can be used to reference it
 GS_IDX LoadGeometryShader(const char* name);
 // Set a new geometry shader by index
 bool SetGeometryShader(const GS_IDX idx);
+// Sets geometry shader to null
+bool ResetGeometryShader();
 
 
 
 // Create a constant buffer with provided data and return a unique index to it
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot);
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const uint8_t slot);
 // Set an active constant buffer by index (shader and slot data contained in buffer)
-bool SetConstantBuffer(const CB_IDX idx);
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto);
 //Overload that sets slot to NULL before setting buffer, for particles
-bool SetConstantBuffer(const CB_IDX idx, bool particles);
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, bool particles);
 // Update a constant buffer by index with given data
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
 // Update the world matrix, there needs to be only one
-void UpdateWorldMatrix(const void* data);
+void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto);
 
 
 // Create a Vertex Buffer with provided data and return a unique index to it

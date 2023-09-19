@@ -4,10 +4,9 @@
 #include <iostream>
 #include <fstream>
 
-PixelShaderHolder* pixHolder_NULL = NULL;
-VertexShaderHolder* vrtHolder_NULL = NULL;
-ComputeShaderHolder* comHolder_NULL = NULL;
-
+// Theese shaders exist to enable removing shaders from the pipeline
+ID3D11ComputeShader* comShader_NULL = NULL;
+ID3D11GeometryShader* geoShader_NULL = NULL;
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
@@ -95,14 +94,24 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
-	Layout ScreenLayout = { UIInputDesc, ARRAYSIZE(UIInputDesc) };
+	Layout screenLayout = { UIInputDesc, ARRAYSIZE(UIInputDesc) };
+
+	D3D11_INPUT_ELEMENT_DESC ParticleInputDesc[3] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"VELOCITY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"RBG", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+	};
+	Layout particleLayout = { ParticleInputDesc, ARRAYSIZE(ParticleInputDesc) };
 
 	//Must correspond to enum layout in d3d11helper.h
 	Layout layouts[] =
 	{
 		defaultLayout,
 		skeletalLayout,
-		ScreenLayout
+		screenLayout,
+		particleLayout,
 	};
 
 	Layout chosen = layouts[layout];
@@ -235,6 +244,12 @@ bool SetComputeShader(const CS_IDX idx)
 	return true;
 }
 
+bool ResetComputeShader()
+{
+	d3d11Data->deviceContext->CSSetShader(comShader_NULL, nullptr, 0);
+	return true;
+}
+
 GS_IDX LoadGeometryShader(const char* name)
 {
 	std::ifstream reader;
@@ -285,5 +300,11 @@ bool SetGeometryShader(const GS_IDX idx)
 	}
 
 	d3d11Data->deviceContext->GSSetShader(geoHolder->gs_arr[idx], nullptr, 0);
+	return true;
+}
+
+bool ResetGeometryShader()
+{
+	d3d11Data->deviceContext->GSSetShader(geoShader_NULL, nullptr, 0);
 	return true;
 }

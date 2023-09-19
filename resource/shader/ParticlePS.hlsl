@@ -1,4 +1,11 @@
-float4 main() : SV_TARGET
+struct GS_OUT
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 position : SV_POSITION;
+    float3 velocity : VELOCITY;
+    float4 rbg : RBG;
+};
+
+float4 main(GS_OUT input) : SV_TARGET
+{
+    return input.rbg;
 }

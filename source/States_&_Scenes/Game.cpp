@@ -38,7 +38,7 @@ void Game::Update()
 	Camera::SetPosition(playerPosition[0], playerPosition[1], 8.0f);
 	Camera::SetLookAt(playerPosition[0], playerPosition[1], 0.0f);
 	DirectX::XMMATRIX identity = DirectX::XMMatrixIdentity();
-	UpdateWorldMatrix(&identity);
+	UpdateWorldMatrix(&identity, BIND_VERTEX);
 	Camera::UpdateView();
 	dogModel.SetMaterialActive();
 	dogModel.SetVertexAndIndexBuffersActive();
