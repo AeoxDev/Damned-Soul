@@ -62,6 +62,12 @@ void UIButton::Interact()
 		onClick();
 }
 
+void UIButton::Release()
+{
+	m_Images[0].Release();
+	m_Images[1].Release();
+}
+
 void UIButton::SetPosition(XMFLOAT2 position)
 {
 	UIComponent::SetPosition(position);

@@ -12,13 +12,16 @@ SceneManager::SceneManager()
 
 void SceneManager::Update()
 {
+	auto player = m_registry.GetComponent<PlayerComponent>((EntityID)0);
 	switch (m_currentSceneType)
 	{
 	case Scene::Level:
 		m_levels.find(m_currentScene)->second.Update();
+
 		break;
 	case Scene::Shop:
 		m_shop.Update();
+		
 		break;
 	}
 

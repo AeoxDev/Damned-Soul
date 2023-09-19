@@ -2,10 +2,10 @@
 
 void Menu::Update()
 {
-
+	//std::cout << "menu" << std::endl;
 }
 
-void Menu::HandleKeyInputs(int keyInput[], Settings& settings)
+void Menu::ReadKeyInputs(int keyState[], Settings& settings)
 {
 	switch (currentSubState)
 	{
@@ -16,22 +16,41 @@ void Menu::HandleKeyInputs(int keyInput[], Settings& settings)
 	case MenuState::Settings:
 		std::cout << "Settings\n";
 
-		if (keyInput[SDL_SCANCODE_ESCAPE])
+		if (keyState[SDL_SCANCODE_ESCAPE])
 			currentSubState = MenuState::Main;
 
-		settings.HandleKeyInputs(keyInput);
+		settings.ReadKeyInputs(keyState);
 		break;
 	case MenuState::Credits:
 		std::cout << "Credits\n";
 
-		if (keyInput[SDL_SCANCODE_ESCAPE])
+		if (keyState[SDL_SCANCODE_ESCAPE])
 			currentSubState = MenuState::Main;
 
 		break;
 	}
 }
 
-void Menu::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
+void Menu::ReadKeyOutputs(int keyState[], Settings& settings)
+{
+	switch (currentSubState)
+	{
+	case MenuState::Main:
+		std::cout << "Main\n";
+
+		break;
+	case MenuState::Settings:
+		std::cout << "Settings\n";
+
+		break;
+	case MenuState::Credits:
+		std::cout << "Credits\n";
+
+		break;
+	}
+}
+
+void Menu::ReadMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
 {
 	switch (currentSubState)
 	{
@@ -57,13 +76,32 @@ void Menu::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager butt
 		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Main").Intersects(mousePos))
 			buttonManager.DoButtonAction("Main");
 
-		settings.HandleMouseInputs(mouseEvent, buttonManager, mousePos);
+		settings.ReadMouseInputs(mouseEvent, buttonManager, mousePos);
 		break;
 	case MenuState::Credits:
 		std::cout << "Credits\n";
 
 		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Main").Intersects(mousePos))
 			buttonManager.DoButtonAction("Main");
+
+		break;
+	}
+}
+
+void Menu::ReadMouseOutputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
+{
+	switch (currentSubState)
+	{
+	case MenuState::Main:
+		std::cout << "Main\n";
+
+		break;
+	case MenuState::Settings:
+		std::cout << "Settings\n";
+
+		break;
+	case MenuState::Credits:
+		std::cout << "Credits\n";
 
 		break;
 	}

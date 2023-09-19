@@ -92,3 +92,5 @@ void CreateShadersLayoutAndRasterState();
 void DebugRenderHitbox(ID3D11Buffer*& worldMatrix); //ID3D11Buffer*& viewAndProjectionMatrix);
 
 void DestroyHitboxVisualizeVariables();
+
+void SetupTestHitbox();

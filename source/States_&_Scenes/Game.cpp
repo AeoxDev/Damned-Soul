@@ -14,27 +14,20 @@ void Game::Update()
 	if (-1 == dogModel.m_indexBuffer)
 		dogModel.Load("HellhoundDummy_PH.mdl");
 
-	// No support for held keys in the input handler at the moment
-	const Uint8* keystate = SDL_GetKeyboardState(NULL);
 	float move[2] = { 0, 0 };
 
-	// Move left
-	if (keystate[SDL_SCANCODE_A])
-		move[0] += 1;
-	// Move right
-	if (keystate[SDL_SCANCODE_D])
-		move[0] -= 1;
-	// Move up
-	if (keystate[SDL_SCANCODE_W])
-		move[1] += 1;
-	// Move down
-	if (keystate[SDL_SCANCODE_S])
-		move[1] -= 1;
+	if (playerDirX != 0)
+		move[0] += playerDirX;
+
+	if (playerDirY != 0)
+		move[1] += playerDirY;
 
 	float len = sqrt(move[0] * move[0] + move[1] * move[1]);
 	float scale = GetAverage() / (len < 0.1f ? 1 : len);
 	playerPosition[0] += move[0] * scale;
 	playerPosition[1] += move[1] * scale;
+
+	std::cout << playerPosition[0] << ", " << playerPosition[1] << std::endl;
 
 	Camera::SetPosition(playerPosition[0], playerPosition[1], 8.0f);
 	Camera::SetLookAt(playerPosition[0], playerPosition[1], 0.0f);
@@ -65,23 +58,36 @@ void Game::UpdateParticles()
 	Particles::FinishParticleCompute();
 }
 
-void Game::HandleKeyInputs(int keyInput[], Settings& settings)
+//void Game::HandleKeyInputs(int keyInput[], Settings& settings)
+void Game::ReadKeyInputs(int keyState[], Settings& settings)
 {
 	switch (currentSubState)
 	{
 	case GameState::Unpause:
 		std::cout << "Unpause\n";
 
-		if (keyInput[SDL_SCANCODE_0])
+		if (keyState[SDL_SCANCODE_W])
+			playerDirY = -1;
+
+		if (keyState[SDL_SCANCODE_A])
+			playerDirX = -1;
+
+		if (keyState[SDL_SCANCODE_S])
+			playerDirY = 1;
+			
+		if (keyState[SDL_SCANCODE_D])
+			playerDirX = 1;
+
+		if (keyState[SDL_SCANCODE_0])
 			sceneManager.SetScene("Shop");
 
-		else if (keyInput[SDL_SCANCODE_1] && sceneManager.GetCurrentSceneName() == "Shop")
+		else if (keyState[SDL_SCANCODE_1] && sceneManager.GetCurrentSceneName() == "Shop")
 		{
 			std::string name = "Level_1";
 			sceneManager.SetScene(name);
 		}
 
-		else if (keyInput[SDL_SCANCODE_2] && sceneManager.GetCurrentSceneName() == "Level_1")
+		else if (keyState[SDL_SCANCODE_2] && sceneManager.GetCurrentSceneName() == "Level_1")
 		{
 			std::vector<std::string> entityList = { "Imp", "Imp" , "Skeleton" };
 			std::string name = "Level_2";
@@ -89,7 +95,7 @@ void Game::HandleKeyInputs(int keyInput[], Settings& settings)
 			sceneManager.AddScene(name, entityList);
 		}
 
-		else if (keyInput[SDL_SCANCODE_3] && sceneManager.GetCurrentSceneName() == "Level_2")
+		else if (keyState[SDL_SCANCODE_3] && sceneManager.GetCurrentSceneName() == "Level_2")
 		{
 			std::vector<std::string> entityList = { "Skeleton", "Skeleton" , "Demon" };
 			std::string name = "Level_3";
@@ -97,10 +103,10 @@ void Game::HandleKeyInputs(int keyInput[], Settings& settings)
 			sceneManager.AddScene(name, entityList);
 		}
 
-		else if (keyInput[SDL_SCANCODE_Q])
+		else if (keyState[SDL_SCANCODE_Q])
 			sceneManager.WriteEntities();
 
-		else if (keyInput[SDL_SCANCODE_ESCAPE])
+		else if (keyState[SDL_SCANCODE_ESCAPE])
 			currentSubState = GameState::Pause;
 
 		break;
@@ -111,15 +117,46 @@ void Game::HandleKeyInputs(int keyInput[], Settings& settings)
 	case GameState::Settings:
 		std::cout << "Settings\n";
 
-		if (keyInput[SDL_SCANCODE_ESCAPE])
+		if (keyState[SDL_SCANCODE_ESCAPE])
 			currentSubState = GameState::Pause;
 
-		settings.HandleKeyInputs(keyInput);
+		settings.ReadKeyInputs(keyState);
 		break;
 	}
 }
 
-void Game::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
+void Game::ReadKeyOutputs(int keyState[], Settings& settings)
+{
+	switch (currentSubState)
+	{
+	case GameState::Unpause:
+		std::cout << "Unpause\n";
+
+		if (keyState[SDL_SCANCODE_W])
+			playerDirY = 0;
+
+		if (keyState[SDL_SCANCODE_A])
+			playerDirX = 0;
+
+		if (keyState[SDL_SCANCODE_S])
+			playerDirY = 0;
+
+		if (keyState[SDL_SCANCODE_D])
+			playerDirX = 0;
+
+		break;
+	case GameState::Pause:
+		std::cout << "Pause\n";
+
+		break;
+	case GameState::Settings:
+		std::cout << "Settings\n";
+
+		break;
+	}
+}
+
+void Game::ReadMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
 {
 	switch (currentSubState)
 	{
@@ -146,7 +183,26 @@ void Game::HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager butt
 		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Pause").Intersects(mousePos))
 			buttonManager.DoButtonAction("Pause");
 
-		settings.HandleMouseInputs(mouseEvent, buttonManager, mousePos);
+		settings.ReadMouseInputs(mouseEvent, buttonManager, mousePos);
+		break;
+	}
+}
+
+void Game::ReadMouseOutputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
+{
+	switch (currentSubState)
+	{
+	case GameState::Unpause:
+		std::cout << "Unpause\n";
+
+		break;
+	case GameState::Pause:
+		std::cout << "Pause\n";
+
+		break;
+	case GameState::Settings:
+		std::cout << "Settings\n";
+
 		break;
 	}
 }
