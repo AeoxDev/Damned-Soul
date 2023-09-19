@@ -35,6 +35,8 @@ struct CameraConstantBuffer
 PoolPointer<CameraStruct> GameCamera;
 PoolPointer<CameraConstantBuffer> BufferData;
 
+int orthWidth, orthHeight;
+
 void Camera::SetPosition(const float x, const float y, const float z)
 {
 	
@@ -67,6 +69,16 @@ void Camera::SetRotation(const float x, const float y, const float z)
 void Camera::SetFOV(const float radians)
 {
 	GameCamera->m_FOV = radians;
+}
+
+void Camera::SetWidth(const int width)
+{
+	orthWidth = width;
+}
+
+void Camera::SetHeight(const int height)
+{
+	orthHeight = height;
 }
 
 void Camera::AdjustPosition(const float x, const float y, const float z)
@@ -170,7 +182,7 @@ void Camera::UpdateProjection()
 	else
 	{
 		DirectX::XMMATRIX orth;
-		orth = DirectX::XMMatrixOrthographicLH((float)sdl.WIDTH, (float)sdl.HEIGHT, 0.1f, 50.f);
+		orth = DirectX::XMMatrixOrthographicLH((float)orthWidth, (float)orthHeight, 0.1f, 50.f);
 		DirectX::XMStoreFloat4x4(&GameCamera->m_orthographic, orth);
 		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(orth));
 	}

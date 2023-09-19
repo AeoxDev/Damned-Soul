@@ -308,3 +308,18 @@ bool ResetGeometryShader()
 	d3d11Data->deviceContext->GSSetShader(geoShader_NULL, nullptr, 0);
 	return true;
 }
+
+void SetTopology(TOPOLOGY topology)
+{
+	switch (topology)
+	{
+	case TRIANGLELIST:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		break;
+	case POINTLIST:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		break;
+	default:
+		break;
+	}
+}

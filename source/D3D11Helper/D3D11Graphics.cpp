@@ -66,6 +66,7 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 
 #define FAIL_MSG { std::cerr << "Failed to set up D3D11!" << std::endl; return -1; }
 
+
 int SetupDirectX(HWND& w)
 {
 	d3d11Data = (D3D11Data*)MemLib::spush(sizeof(D3D11Data));

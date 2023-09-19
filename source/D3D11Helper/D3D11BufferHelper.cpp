@@ -246,6 +246,7 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 
 	return bfrHolder->currentCount++;
 }
+
 // Set an active Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx)
 {

@@ -213,7 +213,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\ConvexCollision.cpp" />
-    <ClCompile Include="source\D3D11Graphics.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />

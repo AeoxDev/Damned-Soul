@@ -71,11 +71,6 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
-void SetCameraBuffer(CB_IDX index)
-{
-	SetConstantBuffer(index, BIND_GEOMETRY);
-}
-
 void Clear(const int& s)
 {
 	ClearRenderTargetView(renderStates[s].renderTargetView);
@@ -95,17 +90,7 @@ void Present()
 	d3d11Data->swapChain->Present(0, 0);
 }
 
-void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ)
+void Dispatch(UINT threadX, UINT threadY, UINT threadZ)
 {
 	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
-}
-
-void RenderParticles(const size_t& count)
-{
-	d3d11Data->deviceContext->DrawIndexed(count, 0, 0);
-}
-
-void ChangeTopology(D3D_PRIMITIVE_TOPOLOGY toplogy)
-{
-	d3d11Data->deviceContext->IASetPrimitiveTopology(toplogy);
 }

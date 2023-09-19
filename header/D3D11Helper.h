@@ -61,6 +61,12 @@ enum LAYOUT_DESC
 	PARTICLE
 };
 
+enum TOPOLOGY
+{
+	TRIANGLELIST,
+	POINTLIST
+};
+
 typedef int16_t TX_IDX;
 typedef int8_t	PS_IDX;
 typedef int8_t	VS_IDX;
@@ -76,8 +82,6 @@ typedef int8_t SRV_IDX;
 typedef int8_t UAV_IDX;
 typedef int8_t	RS_IDX;
 typedef int8_t SMP_IDX;
-
-
 
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
@@ -189,3 +193,4 @@ void ClearDepthStencilView(const DSV_IDX idx);
 RS_IDX CreateRasterizerState(const bool cull, const bool solid);
 bool SetRasterizerState(const RS_IDX idx);
 
+void SetTopology(TOPOLOGY topology);

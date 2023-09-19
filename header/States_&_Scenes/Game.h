@@ -11,6 +11,7 @@ struct Game
 	float playerPosition[3];//Change to vec3
 
 	void Update();
+	void UpdateParticles();
 
 	void HandleKeyInputs(int keyInput[], Settings& settings);
 

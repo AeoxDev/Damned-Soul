@@ -32,7 +32,8 @@ int main(int argc, char* args[])
 	Camera::InitializeCamera();
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
 
-	InitializeParticles();
+	Particles::InitializeParticles();
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_COMPUTE);
 
 	SMP_IDX sampler = CreateSamplerState();
 	SetSamplerState(sampler);
@@ -91,37 +92,16 @@ int main(int argc, char* args[])
 	
 	while (!sdl.quit)
 	{
-
 		CountDeltaTime();
 
 		//Clear the render targets!
 		Clear(testRenderSlot);
+
+
 		RenderUI();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
 		stateManager.HandleInputs();
-
-
-
-		//Prepare the particles to be dispatched
-		PrepareParticleCompute();
-
-		//Dispatch the particles
-		DispatchParticles(100, 1, 1);
-
-		//Finish handling the data
-		FinishParticleCompute();
-
-		//Prepare the graphics pipeline to handle particles
-		PrepareParticlePass();
-		ChangeTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-		SetCameraBuffer(Camera::GetCameraBufferIndex());
-
-		RenderParticles(100);
-
-		//Set the pipeline back now that particles are finished.
-		FinishParticlePass();
-
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		//UpdatePhysics(stateManager);//Change registry to scene registry
