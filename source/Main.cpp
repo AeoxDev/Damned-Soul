@@ -38,38 +38,8 @@ int main(int argc, char* args[])
 	SMP_IDX sampler = CreateSamplerState();
 	SetSamplerState(sampler);
 
-	//Put into scne
-	Registry collisionRegistry;
-	EntityID player = collisionRegistry.CreateEntity();
-	AddHitboxComponent(collisionRegistry, player);
-	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.0f);
-	SetHitboxIsPlayer(collisionRegistry, player, circle);
-	SetHitboxHitEnemy(collisionRegistry, player, circle);
-	float triangleX[3] = { 0.f, 1.f, 0.5f };
-	float triangleZ[3] = { 0.f, 0.f, 1.f };
-	int triangle = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ);
-	SetHitboxIsPlayer(collisionRegistry, player, triangle);
-	SetHitboxHitEnemy(collisionRegistry, player, triangle);
+	SetupTestHitbox();
 
-	float convexPentaX[5]{ 0.5f, 1.5f, 1.5f, 1.0f, 0.5f };
-	float convexPentaZ[5]{ -0.5f, -0.5f, .5f, 1.f, .5f };
-	
-	EntityID enemy1 = collisionRegistry.CreateEntity();
-	AddHitboxComponent(collisionRegistry, enemy1);
-	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 1.0f, 1.0f);
-	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
-	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
-	int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ);
-	SetHitboxIsEnemy(collisionRegistry, enemy1, enemyConvex);
-	SetHitboxHitPlayer(collisionRegistry, enemy1, enemyConvex);
-
-	UpdatePhysics(collisionRegistry);
-
-	//EntityID enemy2 = collisionRegistry.CreateEntity();
-	//AddHitboxComponent(collisionRegistry, enemy2);
-	//int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);
-	//SetHitboxIsEnemy(collisionRegistry, enemy2, circle3);
-	//SetHitboxHitPlayer(collisionRegistry, enemy2, circle3);
 	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
 
 	if (!SetupUIRenderer())
@@ -84,7 +54,7 @@ int main(int argc, char* args[])
 	PoolPointer<ExMenu> exMenu = MemLib::palloc(sizeof(ExMenu));
 	exMenu->Setup(ui);
 
-	
+
 	ui->SetCurrentCanvas(exMenu);
 	UpdateUI(ui);
 
@@ -100,7 +70,7 @@ int main(int argc, char* args[])
 		RenderUI();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
-		stateManager.HandleInputs();
+		stateManager.ReadInputs();
 
 		//Prepare the particles to be dispatched
 		PrepareParticles();
@@ -116,13 +86,15 @@ int main(int argc, char* args[])
 		UpdateDebugWindowTitle(title);
 
 		stateManager.Update();
-
+		//UpdatePhysics(sceneRegistry);//Use the registry of the scene
 		//Present what was drawn during the update!
 		Present();
 		MemLib::pdefrag();
 	}
 	
+	exMenu->Release();
 	ui->Release();
+	ReleaseUIRenderer();
 	
 	EndDirectX();
 	MemLib::destroyMemoryManager();

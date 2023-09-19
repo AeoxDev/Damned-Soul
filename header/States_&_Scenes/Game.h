@@ -9,12 +9,16 @@ struct Game
 
 	//std::pair<float, float> playerPosition = { 0, 0 };
 	float playerPosition[3];//Change to vec3
+	int playerDirX = 0;
+	int playerDirY = 0;
 
 	void Update();
 
-	void HandleKeyInputs(int keyInput[], Settings& settings);
+	void ReadKeyInputs(int[], Settings&);
+	void ReadKeyOutputs(int[], Settings&);
 
-	void HandleMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos);
+	void ReadMouseInputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
+	void ReadMouseOutputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
 
 	void Reset();
 };

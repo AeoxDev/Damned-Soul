@@ -7,7 +7,7 @@ void UICanvas::DrawButtons(PoolPointer<UI>& ui, ID2D1RenderTarget* rt)
 	/*for (auto& button : m_Buttons)
 		button->Draw(ui, rt);*/
 
-	for (unsigned int i = 0; i < m_Buttons.Size(); ++i)
+	for (unsigned int i = 0; i < m_Buttons.size(); ++i)
 		m_Buttons[i].Draw(ui, rt);
 }
 
@@ -31,7 +31,7 @@ void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, cons
 {
 	//PoolPointer<UIButton> temp = MemLib::palloc(sizeof(UIButton));
 	UIButton temp = UIButton(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
-	m_Buttons.emplace_back(temp);
+	m_Buttons.push_back(temp);
 	
 }
 
@@ -43,14 +43,14 @@ void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std:
 	m_Images.emplace(name, temp);
 }
 
-void UICanvas::AddImage(UI* ui, const std::string& name, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
-{
+//void UICanvas::AddImage(UI* ui, const std::string& name, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+//{
 	/*PoolPointer<UIImage> temp = MemLib::palloc(sizeof(UIImage));
 	*temp = UIImage(ui, file, position, scale, rotation, visibility, opacity);
 	m_Images.emplace(name, temp);*/
 
 	//m_Images.emplace(name, new UIImage(ui, file, position, scale, rotation, visibility, opacity));
-}
+//}
 
 void UICanvas::AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
 {
@@ -68,6 +68,22 @@ UICanvas::~UICanvas()
 	/*for (auto& button : m_Buttons)
 		if (false == button.IsNullptr())
 			MemLib::pfree(button);*/
+}
+
+void UICanvas::Release()
+{
+	for (unsigned int i = 0; i < m_Buttons.size(); ++i)
+	{
+		m_Buttons[i].Release();
+	}
+	for (unsigned int i = 0; i < m_Images.Size(); ++i)
+	{
+		m_Images.m_values[i].Release();
+	}
+	//for (unsigned int i = 0; i < m_Texts.Size(); ++i)
+	//{
+	//	m_Texts.m_values[i].Release();
+	//}
 }
 
 void UICanvas::Reset()

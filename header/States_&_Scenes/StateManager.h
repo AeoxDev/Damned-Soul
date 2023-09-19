@@ -16,17 +16,22 @@ private:
 
 	ButtonManager m_buttonManager;
 
+	int m_keyInput[256]{ 0 };
+
 	//Debug console variables
 	std::pair<int, int> mousePos;
 	std::pair<int, int> oldmousepos = {};
 
-	void HandleKeyInputs(int[]);
-	void HandleMouseInputs(SDL_MouseButtonEvent);
+	void ReadKeyInputs(int[]);
+	void ReadKeyOutputs(int[]);
+
+	void ReadMouseInputs(SDL_MouseButtonEvent);
+	void ReadMouseOutputs(SDL_MouseButtonEvent);
 
 public:
 	StateManager();
 
 	void Update();
-	void HandleInputs();
+	void ReadInputs();
 
 };

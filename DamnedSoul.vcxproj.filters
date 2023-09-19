@@ -116,12 +116,6 @@
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\ImageHealper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\FPNG\fpng.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\STB_Helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -296,6 +290,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\FPNG\fpng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\MemLib\ML_Vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
