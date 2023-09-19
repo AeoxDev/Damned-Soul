@@ -333,6 +333,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <Culture Condition="'$(Configuration)|$(Platform)'=='Release|x64'">0x041d</Culture>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="resource\NatVis\mlv_vis.natvis" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
