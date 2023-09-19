@@ -280,14 +280,14 @@ void CreateProximityHitbox(Registry& registry, EntityID& entity, std::string fil
 		else if (word == "X") //X coordinate for the ProximityPoint
 		{
 			ss >> word;
-			currentPoint.x = std::stoi(word);
+			currentPoint.x = (float)(std::stoi(word));
 		}
 		else if (word == "Z") //Z coordinate for the ProximityPoint, also marks a completed point to add to component list.
 		{
 			ss >> word;
-			currentPoint.z = std::stoi(word);
+			currentPoint.z = (float)(std::stoi(word));
 
-			proximityComponent->pointList.emplace_back(currentPoint);
+			proximityComponent->pointList.push_back(currentPoint);
 		}
 	}
 }

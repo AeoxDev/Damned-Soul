@@ -192,6 +192,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\UIRenderer.cpp" />
     <ClCompile Include="source\ExampleMenu.cpp" />
     <ClCompile Include="source\Collision.cpp" />
@@ -310,6 +311,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\UIRenderer.h" />
     <ClInclude Include="header\ExampleMenu.h" />

@@ -1,6 +1,7 @@
 #include "Backend/Collision.h"
 #include "Backend/ConvexCollision.h"
 #include "Backend/CircularCollision.h"
+#include "Backend/ProximityCollision.h"
 #include "EntityFramework.h"
 #include <cmath>
 
@@ -209,33 +210,62 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 void HandleProximityCollision(Registry& registry)
 {
 	float distance = 1000.0f;
+	float x, z;
 	int index = 0;
-	for (auto entity : View<ProximityHitboxComponent>(registry)) //Access the wall
+	EntityID closestWall = { 0 };
+	closestWall.index = -1;
+	for (auto entity : View<HitboxComponent>(registry)) //Access an entity
 	{
-		ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(entity);
+		HitboxComponent* entityHitbox = registry.GetComponent<HitboxComponent>(entity);
 
-		for (auto entity : View<HitboxComponent>(registry)) //Access an entity
+		if (entityHitbox->circularFlags[0].hitWall && entityHitbox->circularFlags[0].active) //Check if the entity can hit the wall and is circular
 		{
-			HitboxComponent* entityHitbox = registry.GetComponent<HitboxComponent>(entity);
-
-			if (entityHitbox->circularFlags[0].hitWall || entityHitbox->convexFlags[0].hitWall) //Check if the entity can hit the wall
+			for (auto entity2 : View<ProximityHitboxComponent>(registry)) //Access the wall
 			{
-				if (entityHitbox->circularFlags[0].active) //Check if it's a circular hitbox
+				ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(entity2);
+
+				for (int i = 0; i < (int)(wallHitbox->pointList.size()); i++) //Loop through all points in the wallHitbox
 				{
-					for (int i = 0; i < wallHitbox->pointList.Size(); i++) //Loop through all points in the wallHitbox
+					float currentDistance = sqrt(float((pow(entityHitbox->circleHitbox[0].offsetX - wallHitbox->pointList[i].x, 2)) + (pow(entityHitbox->circleHitbox[0].offsetZ - wallHitbox->pointList[i].z, 2))));
+					
+					if (distance > currentDistance) //Check if closer to the new point checked
 					{
-						float currentDistance = sqrt(float(pow(entityHitbox->circleHitbox[0].offsetX - wallHitbox->pointList[i].x) + pow(entityHitbox->circleHitbox[0].offsetZ - wallHitbox->pointList[i].z)));
-					}
-				}
-				else if (entityHitbox->convexFlags[0].active) //Check if it's a convex hitbox
-				{
-					for (int i = 0; i < wallHitbox->pointList.Size(); i++) //Loop through all points in the wallHitbox
-					{
-						float currentDistance = sqrt(float(pow(entityHitbox->convexHitbox[0].centerX - wallHitbox->pointList[i].x) + pow(entityHitbox->convexHitbox[0].centerZ - wallHitbox->pointList[i].z)));
+						distance = currentDistance;
+						index = i;
+						closestWall = entity2;
+						x = entityHitbox->circleHitbox[0].offsetX;
+						z = entityHitbox->circleHitbox[0].offsetZ;
 					}
 				}
 			}
 		}
+		else if (entityHitbox->convexFlags[0].hitWall && entityHitbox->convexFlags[0].active) //Check if the entity can hit the wall and is convex
+		{
+			for (auto entity2 : View<ProximityHitboxComponent>(registry)) //Access the wall
+			{
+				ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(entity2);
+
+				for (int i = 0; i < (int)(wallHitbox->pointList.size()); i++) //Loop through all points in the wallHitbox
+				{
+					float currentDistance = sqrt(float((pow(entityHitbox->convexHitbox[0].centerX - wallHitbox->pointList[i].x, 2)) + (pow(entityHitbox->convexHitbox[0].centerZ - wallHitbox->pointList[i].z, 2))));
+					
+					if (distance > currentDistance) //Check if closer to the new point checked
+					{
+						distance = currentDistance;
+						index = i;
+						closestWall = entity2;
+						x = entityHitbox->convexHitbox[0].centerX;
+						z = entityHitbox->convexHitbox[0].centerZ;
+					}
+				}
+			}
+		}
+
+		if (closestWall.index != -1) //If an entity has been asigned as the closestWall
+		{
+			bool yes = IsProximityCorrectSide(registry, closestWall, index, x, z);
+		}
+
 	}
 }
 
@@ -262,5 +292,4 @@ void CollisionFlags::ResetToActive()
 ProximityHitboxComponent::ProximityHitboxComponent()
 {
 	this->clockwise = 1;
-	this->pointList = { 0 };
 }

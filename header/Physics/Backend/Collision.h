@@ -5,7 +5,7 @@
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 1
 #include "EntityFramework.h"
-#include "PoolUtility.hpp"
+#include "MemLib/ML_Vector.hpp"
 
 
 struct OnCollisionParameters
@@ -103,8 +103,7 @@ struct ProximityPoint
 struct ProximityHitboxComponent
 {
 	int clockwise = 1; //Clockwise or counter-clockwise
-	PoolVector<ProximityPoints> pointList = { 0 }; //List of all points in the hitbox
-
+	ML_Vector<ProximityPoint> pointList;
 	ProximityHitboxComponent();
 };
 
