@@ -54,7 +54,6 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	swapChainDesc.Flags = 0;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &d3d11Data->swapChain, &d3d11Data->device, NULL, &d3d11Data->deviceContext);
-
 	if (FAILED(hr))
 	{
 		std::cout << "Failed to create device and swap chain!" << std::endl;

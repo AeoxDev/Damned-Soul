@@ -40,7 +40,7 @@ bool SetViewport(const VP_IDX idx)
 }
 
 
-RTV_IDX CreateRenderTargetView()
+RTV_IDX CreateBackBuffer()
 {
 	// get the address of the back buffer
 	ID3D11Texture2D* backBuffer = nullptr;
@@ -49,10 +49,6 @@ RTV_IDX CreateRenderTargetView()
 		std::cerr << "Failed to get back buffer!" << std::endl;
 		return false;
 	}
-
-	//D3D11_RENDER_TARGET_VIEW_DESC desc;
-	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	//desc.Texture2D.MipSlice = 0;
 
 	// use the back buffer address to create the render target
 	// null as description to base it on the backbuffers values
@@ -66,32 +62,31 @@ RTV_IDX CreateRenderTargetView()
 	}
 
 	return (rtvHolder->currentCount)++;
-
 }
 
-RTV_IDX CreateRenderTargetViewAndTexture()
+RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
 {
 	uint8_t& current = rtvHolder->currentCount;
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
-	desc.Width = sdl.WIDTH;
-	desc.Height = sdl.HEIGHT;
+	desc.Width = width;
+	desc.Height = height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
 	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_RENDER_TARGET;
-	desc.CPUAccessFlags = 0;
+	desc.Usage = (D3D11_USAGE)useFlags;
+	desc.BindFlags = bindFlags;
+	desc.CPUAccessFlags = cpuAcess;
 	desc.MiscFlags = 0;
 
 	// Attempt to create a texture in the device
 	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, NULL, &(rtvHolder->tx_arr[current]));
 	if (FAILED(hr))
 	{
-		std::cerr << "Failed to create ID3D11Texture2D" << std::endl;
+		std::cerr << "Failed to create ID3D11Texture2D for RenderTargetView" << std::endl;
 		return false;
 	}
 
@@ -106,8 +101,8 @@ RTV_IDX CreateRenderTargetViewAndTexture()
 
 	// Set the hash last thing you do
 	return current++;
-}
 
+}
 
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 {
@@ -130,11 +125,6 @@ DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 		std::cerr << "Failed to create Depth Stencil Texture!" << std::endl;
 		return false;
 	}
-
-	//D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	//depthStencilDesc.DepthEnable = true;
-	//depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	//depthStencilDesc.DepthFunc = D3D11_COMPARISON_NEVER;
 
 	hr = d3d11Data->device->CreateDepthStencilView(dsvHolder->ds_arr[dsvHolder->currentCount], 0, &(dsvHolder->dsv_arr[dsvHolder->currentCount]));
 	if (FAILED(hr))
@@ -159,15 +149,68 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 	return true;
 }
 
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
+SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, const int amount, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
+{
+	uint16_t currentIdx = srvHolder->currentCount;
+
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = (UINT)size * amount;
+	bufferDesc.CPUAccessFlags = CPUFlags;
+	bufferDesc.BindFlags = resourceFlags;
+	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
+	bufferDesc.StructureByteStride = (UINT)size;
+
+	D3D11_SUBRESOURCE_DATA buffData;
+	buffData.pSysMem = data;
+	buffData.SysMemPitch = 0;
+	buffData.SysMemSlicePitch = 0;
+
+	ID3D11Buffer* buffer;
+	HRESULT hr = d3d11Data->device->CreateBuffer(&bufferDesc, &buffData, &buffer);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Buffer to be used for Shader Resource View!" << std::endl;
+		return false;
+	}
+
+	//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
+	hr = buffer->QueryInterface(__uuidof(ID3D11Buffer), (void**)&srvHolder->srv_resource_arr[currentIdx]);
+	if (FAILED(hr)) {
+		std::cerr << "Failed to QueryInterface into buffer" << std::endl;
+		return false;
+	}
+
+
+	//Now create the SRV
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.ElementOffset = 0;
+	SRVDesc.Buffer.ElementWidth = (UINT)size;
+	SRVDesc.Buffer.FirstElement = 0;
+
+	hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[currentIdx], &SRVDesc, &(srvHolder->srv_arr[currentIdx]));
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Shader Resource View!" << std::endl;
+		return false;
+	}
+
+	uint32_t* metadata = srvHolder->metadata_arr[currentIdx];
+	metadata[0] = bindto;
+	metadata[1] = slot; // Set slot to use
+	metadata[2] = (uint32_t)size;
+
+	return (srvHolder->currentCount)++;
+}
+
+SRV_IDX CreateShaderResourceViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height, const uint8_t slot)
 {
 	HRESULT hr;
 	uint16_t currentIdx = srvHolder->currentCount;
-
-	//NOTE TODO: Hardcoded amount, dlete this
-	int TESTDELLATER = 100;
-
-	//Check what resource to create, then create it
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
 
@@ -175,114 +218,99 @@ SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHAD
 	//To then define and create the SRV that will be holding the resource
 	switch (resource)
 	{
-	case RESOURCE_BUFFER:
-		ID3D11Buffer* buffer;
+		case RESOURCE_TEXTURE1D:
+			//Define if needed
+			break;
+		case RESOURCE_TEXTURE1DARRAY:
+			//Define if needed
+			break;
+		case RESOURCE_TEXTURE2D:
+			ID3D11Texture2D* texture;
 
-		D3D11_BUFFER_DESC bufferDesc;
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = (UINT)size * TESTDELLATER; // Should be times the amount of elements
-		bufferDesc.CPUAccessFlags = CPUFlags;
-		bufferDesc.BindFlags = resourceFlags; //D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
-		bufferDesc.StructureByteStride = (UINT)size;
+			D3D11_TEXTURE2D_DESC textureDesc;
+			textureDesc.Width = (UINT)width;
+			textureDesc.Height = (UINT)height;
+			textureDesc.MipLevels = 1;
+			textureDesc.ArraySize = 1;
+			textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			textureDesc.SampleDesc.Count = 1;
+			textureDesc.SampleDesc.Quality = 0;
+			textureDesc.Usage = D3D11_USAGE_DEFAULT;
+			textureDesc.BindFlags = resourceFlags;
+			textureDesc.CPUAccessFlags = CPUFlags;
+			textureDesc.MiscFlags = 0;
 
-		D3D11_SUBRESOURCE_DATA buffData;
-		buffData.pSysMem = data;
-		buffData.SysMemPitch = 0;
-		buffData.SysMemSlicePitch = 0;
+			hr = d3d11Data->device->CreateTexture2D(&textureDesc, nullptr, &texture);
+			if (FAILED(hr))
+			{
+				std::cerr << "Failed to create Depth Stencil Texture!" << std::endl;
+				return false;
+			}
 
-		hr = d3d11Data->device->CreateBuffer(&bufferDesc, &buffData, &buffer);
-		if (FAILED(hr))
-		{
-			std::cerr << "Failed to create Buffer to be used for Shader Resource View!" << std::endl;
-			return false;
-		}
-
-		//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
-		hr = buffer->QueryInterface(__uuidof(ID3D11Buffer), (void**)&srvHolder->srv_resource_arr[currentIdx]);
-		if (FAILED(hr)) {
-			std::cerr << "Failed to QueryInterface into buffer" << std::endl;
-			return false;
-		}
-
-
-		//Now create the SRV
-		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
-		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		SRVDesc.Buffer.FirstElement = 0;
-		SRVDesc.Buffer.ElementOffset = 0;
-		SRVDesc.Buffer.ElementWidth = (UINT)size;
-		SRVDesc.Buffer.FirstElement = 0;
-
-		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[currentIdx], &SRVDesc, &(srvHolder->srv_arr[currentIdx]));
-		if (FAILED(hr))
-		{
-			std::cerr << "Failed to create Shader Resource View!" << std::endl;
-			return false;
-		}
-
-		break;
-	case RESOURCE_TEXTURE1D:
-		//Define if needed
-		break;
-	case RESOURCE_TEXTURE1DARRAY:
-		//Define if needed
-		break;
-	case RESOURCE_TEXTURE2D:
-		//Define if needed
-		break;
-	case RESOURCE_TEXTURE2DARRAY:
-		//Define if needed
-		break;
-	case RESOURCE_TEXTURE3D:
-		//Define if needed
-		break;
-	case RESOURCE_TEXCUBE:
-		//Define if needed
-		break;
-	default:
-		break;
+			//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
+			hr = texture->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&srvHolder->srv_resource_arr[currentIdx]);
+			if (FAILED(hr)) {
+				std::cerr << "Failed to QueryInterface into buffer" << std::endl;
+				return false;
+			}
+			break;
+		case RESOURCE_TEXTURE2DARRAY:
+			//Define if needed
+			break;
+		case RESOURCE_TEXTURE3D:
+			//Define if needed
+			break;
+		case RESOURCE_TEXCUBE:
+			//Define if needed
+			break;
+		default:
+			break;
 	}
-
-
-
-	
 
 	uint32_t* metadata = srvHolder->metadata_arr[currentIdx];
 	metadata[0] = bindto;
 	metadata[1] = slot; // Set slot to use
-	metadata[2] = (uint32_t)size;
+	//metadata[2] = (uint32_t)size; NOTE: Textures dont have a size, this is for buffers
 
 	return (srvHolder->currentCount)++;
 }
 
-SRV_IDX CreateShaderResrouceView(const int16_t idx, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS& resource, const uint8_t slot)
+SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS resource, const uint8_t slot)
 {
 	uint16_t currentIdx = srvHolder->currentCount;
+	HRESULT hr = NULL;
 
 	switch (resource)
 	{
 	case RENDER_TARGET_VIEW:
 		srvHolder->srv_resource_arr[currentIdx] = rtvHolder->tx_arr[idx];
-		d3d11Data->device->CreateShaderResourceView(rtvHolder->tx_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		hr = d3d11Data->device->CreateShaderResourceView(rtvHolder->tx_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		if (FAILED(hr))
+		{
+			std::cerr << "Failed to create Shader Resource View from a Render Target View!" << std::endl;
+			return false;
+		}
 		break;
 	case SHADER_RESOURCE_VIEW:
 		srvHolder->srv_resource_arr[currentIdx] = srvHolder->srv_resource_arr[idx];
-		d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		if (FAILED(hr))
+		{
+			std::cerr << "Failed to create Shader Resource View from another Shader Resource View!" << std::endl;
+			return false;
+		}
 		break;
 	default:
 		break;
 	}
 
-
 	uint32_t* metadata = srvHolder->metadata_arr[currentIdx];
 	metadata[0] = bindto;
 	metadata[1] = slot; // Set slot to use
-	metadata[2] = (uint32_t)size;
+	//metadata[2] = (uint32_t)size; NOTE: Textures dont have a size, this is for buffers
 
 	return (srvHolder->currentCount)++;
 }
-
 
 bool SetShaderResourceView(const SRV_IDX idx)
 {
@@ -361,66 +389,36 @@ void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 	d3d11Data->deviceContext->CopyResource(vertexBufferResource, srvHolder->srv_resource_arr[source]);
 }
 
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
+SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
 {
-	HRESULT hr;
-	uint16_t currentIdx = uavHolder->currentCount;
+	uint16_t currentIdx = srvHolder->currentCount;
 
-	//NOTE TODO: Hardcoded amount, dlete this
-	int TESTDELLATER = 100;
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = (UINT)size * amount;
+	bufferDesc.CPUAccessFlags = CPUFlags;
+	bufferDesc.BindFlags = resourceFlags; //D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
+	bufferDesc.StructureByteStride = (UINT)size;
 
-	//Check what resource to create, then create it
+	D3D11_SUBRESOURCE_DATA buffData;
+	buffData.pSysMem = data;
+	buffData.SysMemPitch = 0;
+	buffData.SysMemSlicePitch = 0;
 
-
-	switch (resource)
+	ID3D11Buffer* buffer;
+	HRESULT hr = d3d11Data->device->CreateBuffer(&bufferDesc, &buffData, &buffer);
+	if (FAILED(hr))
 	{
-	case RESOURCE_BUFFER:
-		ID3D11Buffer* buffer;
+		std::cerr << "Failed to create Buffer to be used for Unordered Access View!" << std::endl;
+		return false;
+	}
 
-		D3D11_BUFFER_DESC bufferDesc;
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = (UINT)size * TESTDELLATER; // Should be times the amount of elements
-		bufferDesc.CPUAccessFlags = CPUFlags;
-		bufferDesc.BindFlags = resourceFlags; //D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;  // Hardcoded for particles, might be ok as we probably wont use UAV buffers for anything other than particles
-		bufferDesc.StructureByteStride = (UINT)size;
-
-		hr = d3d11Data->device->CreateBuffer(&bufferDesc, nullptr, &buffer);
-		if (FAILED(hr))
-		{
-			std::cerr << "Failed to create Buffer to be used for Unordered Access View!" << std::endl;
-			return false;
-		}
-
-		//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
-		hr = buffer->QueryInterface(__uuidof(ID3D11Buffer), (void**)&uavHolder->uav_resource_arr[currentIdx]);
-		if (FAILED(hr)) {
-			std::cerr << "Failed to QueryInterface into buffer" << std::endl;
-			return false;
-		}
-
-		break;
-	case RESOURCE_TEXTURE1D:
-		//Define if needed
-		break;
-	case RESOURCE_TEXTURE1DARRAY:
-		//Define if needed
-		break;
-	case RESOURCE_TEXTURE2D:
-		//Define when STB image is implemented
-
-		break;
-	case RESOURCE_TEXTURE2DARRAY:
-		//Define if needed
-		break;
-	case RESOURCE_TEXTURE3D:
-		//Define if needed
-		break;
-	case RESOURCE_TEXCUBE:
-		//Define if needed
-		break;
-	default:
-		break;
+	//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
+	hr = buffer->QueryInterface(__uuidof(ID3D11Buffer), (void**)&uavHolder->uav_resource_arr[currentIdx]);
+	if (FAILED(hr)) {
+		std::cerr << "Failed to QueryInterface into buffer" << std::endl;
+		return false;
 	}
 
 
@@ -429,7 +427,7 @@ UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESO
 	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	UAVDesc.Buffer.FirstElement = 0;
 	UAVDesc.Buffer.Flags = 0;
-	UAVDesc.Buffer.NumElements = TESTDELLATER; //Hard coded value
+	UAVDesc.Buffer.NumElements = amount;
 
 	hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_arr[currentIdx], &UAVDesc, &(uavHolder->uav_arr[currentIdx]));
 	if (FAILED(hr))
@@ -446,31 +444,24 @@ UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESO
 	return (uavHolder->currentCount)++;
 }
 
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const SRV_IDX SRVIndex, const uint8_t slot)
+SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx, const uint8_t slot)
 {
-	HRESULT hr;
 	uint16_t currentIdx = uavHolder->currentCount;
-
-	//NOTE TODO: Hardcoded amount, dlete this
-	int TESTDELLATER = 100;
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
 	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
 	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	UAVDesc.Buffer.FirstElement = 0;
 	UAVDesc.Buffer.Flags = 0;
-	UAVDesc.Buffer.NumElements = TESTDELLATER; //Hard coded value
+	UAVDesc.Buffer.NumElements = amount;
 
-	// Set the UAVs resource to the resource created for the SRV
-	uavHolder->uav_resource_arr[currentIdx] = srvHolder->srv_resource_arr[SRVIndex];
-
-	hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_arr[currentIdx], &UAVDesc, &(uavHolder->uav_arr[currentIdx]));
+	uavHolder->uav_resource_arr[currentIdx] = srvHolder->srv_resource_arr[idx];
+	HRESULT hr = d3d11Data->device->CreateUnorderedAccessView(rtvHolder->tx_arr[idx], &UAVDesc, &uavHolder->uav_arr[currentIdx]);
 	if (FAILED(hr))
 	{
-		std::cerr << "Failed to create Unordered Access View!" << std::endl;
+		std::cerr << "Failed to create Unordered Access View from another resource!" << std::endl;
 		return false;
 	}
-
 
 	uint32_t* metadata = uavHolder->metadata_arr[currentIdx];
 	metadata[0] = slot; // Set slot to use

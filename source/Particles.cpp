@@ -85,12 +85,11 @@ void Particles::InitializeParticles()
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
-	m_readBuffer->SRVIndex = CreateShaderResourceView(&(*particles), sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (CPU_FLAGS)0, 0);
-	m_writeBuffer->SRVIndex = CreateShaderResourceView(&(*particles), sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (CPU_FLAGS)0, 0);
+	m_readBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), data->m_end, BIND_COMPUTE, resourceFlags, (CPU_FLAGS)0, 0);
+	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), data->m_end, BIND_COMPUTE, resourceFlags, (CPU_FLAGS)0, 0);
 
-
-	m_readBuffer->UAVIndex = CreateUnorderedAcessView(&(*particles), sizeof(Particle), m_readBuffer->SRVIndex, 0);
-	m_writeBuffer->UAVIndex = CreateUnorderedAcessView(&(*particles), sizeof(Particle), m_writeBuffer->SRVIndex, 0);
+	m_readBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(particles), data->m_end, m_readBuffer->SRVIndex, 0);
+	m_writeBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(particles), data->m_end, m_readBuffer->SRVIndex, 0);
 
 	m_vertexBuffer = CreateVertexBuffer(&(*particles), sizeof(Particle), data->m_end, USAGE_DEFAULT);
 	m_indexBuffer = CreateIndexBuffer(&(*index), sizeof(int), data->m_end);
@@ -105,8 +104,8 @@ void Particles::InitializeParticles()
 	MemLib::pfree(particles);
 
 
-	m_renderTargetView = CreateRenderTargetViewAndTexture();
-	m_shaderResourceView = CreateShaderResourceView(NULL, sizeof(ID3D11Texture2D), BIND_PIXEL, RESOURCE_TEXTURE2D, BIND_SHADER_RESOURCE, (CPU_FLAGS)0, 3);
+	//m_renderTargetView = CreateRenderTargetViewAndTexture();
+	//m_shaderResourceView = CreateShaderResourceView(NULL, sizeof(ID3D11Texture2D), BIND_PIXEL, RESOURCE_TEXTURE2D, BIND_SHADER_RESOURCE, (CPU_FLAGS)0, 3);
 	m_depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 }
 
