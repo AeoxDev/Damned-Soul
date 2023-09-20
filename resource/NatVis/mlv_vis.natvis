@@ -11,6 +11,16 @@
 		</Expand>
 	</Type>
 
+	<Type Name="ML_Array&lt;*,*&gt;">
+		<Expand>
+			<Item Name="[Size]" ExcludeView="simple">m_size</Item>
+			<ArrayItems>
+				<Size>m_size</Size>
+				<ValuePointer>*(m_data.m_pp)</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
 	<Type Name="ML_Map&lt;*,*&gt;">
 		<Expand>
 			<Item Name="[Size]" ExcludeView="simple">m_size</Item>

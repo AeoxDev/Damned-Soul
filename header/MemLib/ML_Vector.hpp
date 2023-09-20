@@ -124,7 +124,7 @@ public:
 
 	T& operator[](const uint32_t& idx)
 	{
-		if (idx < 0 || m_size <= idx)
+		if (m_size <= idx)
 		{
 			throw std::out_of_range("Index provided for ML_Vector is out of range!");
 			std::terminate();
@@ -144,11 +144,23 @@ public:
 
 		std::memcpy(m_data, other.m_data, m_tSize * m_size);
 		return *this;
-	}
+	};
 
 	// Initiate an ML_Vector<T> with a number of T objects, can be called as such to emulate normal C++ style coding
 	// ML_Vector<T>() = { args };
 	ML_Vector()
+	{
+		// Set capacity
+		m_capacity = 4;
+		// Set the individual item size
+		m_tSize = sizeof(T);
+
+		// Allocate to memory pool
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(m_capacity * m_tSize);
+	};
+
+	ML_Vector& Initialize()
 	{
 		// Set capacity
 		m_capacity = 4;
@@ -186,5 +198,5 @@ public:
 	~ML_Vector()
 	{
 		MemLib::pfree(m_data);
-	}
+	};
 };

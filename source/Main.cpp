@@ -18,8 +18,10 @@
 #include "ExampleMenu.h"
 #include "UIRenderer.h"
 #include <iostream>
-#include "MemLib\ML_Map.hpp"
-#include "MemLib\ML_String.hpp"
+//#include "MemLib\ML_Vector.hpp"
+//#include "MemLib\ML_Map.hpp"
+//#include "MemLib\ML_String.hpp"
+#include "MemLib\ML_Array.hpp"
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -36,6 +38,13 @@ int main(int argc, char* args[])
 
 	InitializeParticles();
 	SetupParticles();
+
+	//ML_Array<int, 10> arrayTest{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+	//for (int i = 0; i < 100'000; ++i)
+	//{
+	//	arrayTest = { i, 2, 3, 4, 5, 6, 7, 8, 9, i * i };
+	//}
 
 	////ML_Vector<std::pair<int, float>> testVector = { {1, 1.0f}, {2, 4.0f}, {3, 9.0f}, {4, 16.0f}, {5, 25.0f} };
 	//ML_Map<int, float> testMap = { std::pair(1, 1.0f), std::pair(2, 4.0f), std::pair(3, 9.0f), std::pair(4, 16.0f), std::pair(5, 25.0f) };
