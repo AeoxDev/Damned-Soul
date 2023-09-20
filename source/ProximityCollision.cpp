@@ -36,7 +36,7 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 
 		//Check if (x,z) is to the right of the two lines
 		bool first, second;
-		if (((x - A.x) * (B.z - A.z) - (z - A.z) * (B.z - A.z)) >= 0)
+		if (((x - A.x) * (B.z - A.z) - (z - A.z) * (B.x - A.x)) >= 0)
 		{
 			first = true; //Right side or on the line
 		}
@@ -45,7 +45,7 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 			first = false; //Left side
 		}
 
-		if (((x - B.x) * (C.z - B.z) - (z - B.z) * (C.z - B.z)) >= 0)
+		if (((x - B.x) * (C.z - B.z) - (z - B.z) * (C.x - B.x)) >= 0)
 		{
 			second = true; //Right side or on the line
 		}
@@ -72,7 +72,7 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 
 			if ((o1 != o2) && (o3 != o4))
 			{
-				return first; //Intersection occurred
+				return first; //Intersection did not occur
 			}
 			return second;
 		}
@@ -100,7 +100,7 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 
 		//Check if (x,z) is to the left of the two lines
 		bool first, second;
-		if (((x - A.x) * (B.z - A.z) - (z - A.z) * (B.z - A.z)) <= 0)
+		if (((x - A.x) * (B.z - A.z) - (z - A.z) * (B.x - A.x)) <= 0)
 		{
 			first = true; //Left side or on the line
 		}
@@ -109,7 +109,7 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 			first = false; //Right side
 		}
 
-		if (((x - B.x) * (C.z - B.z) - (z - B.z) * (C.z - B.z)) <= 0)
+		if (((x - B.x) * (C.z - B.z) - (z - B.z) * (C.x - B.x)) <= 0)
 		{
 			second = true; //Left side or on the line
 		}
@@ -136,7 +136,7 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 
 			if ((o1 != o2) && (o3 != o4))
 			{
-				return first; //Intersection occurred
+				return first; //Intersection did not occur
 			}
 			return second;
 		}

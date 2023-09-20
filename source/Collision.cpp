@@ -4,6 +4,7 @@
 #include "Backend/ProximityCollision.h"
 #include "EntityFramework.h"
 #include <cmath>
+#include <string>
 
 /// <summary>
 /// Calculates the closest distance of two circles.
@@ -209,13 +210,13 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 
 void HandleProximityCollision(Registry& registry)
 {
-	float distance = 1000.0f;
-	float x, z;
-	int index = 0;
-	EntityID closestWall = { 0 };
-	closestWall.index = -1;
 	for (auto entity : View<HitboxComponent>(registry)) //Access an entity
 	{
+		float distance = 1000.0f;
+		float x, z;
+		int index = 0;
+		EntityID closestWall = { 0 };
+		closestWall.index = -1;
 		HitboxComponent* entityHitbox = registry.GetComponent<HitboxComponent>(entity);
 
 		if (entityHitbox->circularFlags[0].hitWall && entityHitbox->circularFlags[0].active) //Check if the entity can hit the wall and is circular
@@ -261,9 +262,12 @@ void HandleProximityCollision(Registry& registry)
 			}
 		}
 
-		if (closestWall.index != -1) //If an entity has been asigned as the closestWall
+		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
 		{
-			bool yes = IsProximityCorrectSide(registry, closestWall, index, x, z);
+			if (!IsProximityCorrectSide(registry, closestWall, index, x, z))
+			{
+				//Push the entity back into the correct side of the wall
+			}
 		}
 
 	}

@@ -717,9 +717,10 @@ void SetupTestHitbox()
 	Registry collisionRegistry;
 	EntityID player = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, player);
-	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.0f);
+	int circle = CreateHitbox(collisionRegistry, player, 1.0f, -10.0f, -10.0f);
 	SetHitboxIsPlayer(collisionRegistry, player, circle);
 	SetHitboxHitEnemy(collisionRegistry, player, circle);
+	SetHitboxHitWall(collisionRegistry, player, circle);
 	float triangleX[3] = { 0.f, 1.f, 0.5f };
 	float triangleZ[3] = { 0.f, 0.f, 1.f };
 	int triangle = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ);
@@ -731,13 +732,17 @@ void SetupTestHitbox()
 
 	EntityID enemy1 = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, enemy1);
-	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 1.0f, 1.0f);
+	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, -11.0f, 1.0f);
 	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
 	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
+	SetHitboxHitWall(collisionRegistry, enemy1, circle2);
 	int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ);
 	SetHitboxIsEnemy(collisionRegistry, enemy1, enemyConvex);
 	SetHitboxHitPlayer(collisionRegistry, enemy1, enemyConvex);
 
+	EntityID wall = collisionRegistry.CreateEntity();
+	AddProximityHitboxComponent(collisionRegistry, wall);
+	CreateProximityHitbox(collisionRegistry, wall);
 	//EntityID enemy2 = collisionRegistry.CreateEntity();
 	//AddHitboxComponent(collisionRegistry, enemy2);
 	//int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);
