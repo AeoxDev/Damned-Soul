@@ -88,6 +88,7 @@ TX_IDX LoadTexture(const char* name);
 // Set a material
 bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOURCE& shader);
 
+
 // Create a Sampler
 SMP_IDX CreateSamplerState();
 // Set a sampler (currently only binds to the pixel shader

@@ -49,7 +49,14 @@ void Particles::SwitchInputOutput()
 void Particles::InitializeParticles()
 {
 	PoolPointer<ParticleMetadata> data;
+	PoolPointer<uint32_t> index;
 	data = MemLib::palloc(sizeof(ParticleMetadata));
+	index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
+
+	particles = MemLib::palloc(sizeof(Particle) * data->m_end);
+	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_metadata = CreateConstantBuffer(&(*data), sizeof(m_metadata), 0);
 
 
 	//NOTE TODO: DONT USE HARDCODED VALUES
@@ -60,13 +67,9 @@ void Particles::InitializeParticles()
 	data->m_spawnPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 
 	float size = sizeof(Particle) * data->m_end;
-	PoolPointer<uint32_t> index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
 
 
-	particles = MemLib::palloc(sizeof(Particle) * data->m_end);
-	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
-	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
-	m_metadata = CreateConstantBuffer(&(*data), sizeof(m_metadata), 0);
+
 
 	m_rasterizer = CreateRasterizerState(false, true);
 
@@ -98,6 +101,10 @@ void Particles::InitializeParticles()
 
 	//When done initializing free the temporary paritcle data
 	MemLib::pfree(particles);
+
+
+
+	//m_renderTargetView = CreateRenderTargetViewAndTexture();
 }
 
 void Particles::PrepareParticleCompute()

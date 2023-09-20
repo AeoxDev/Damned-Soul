@@ -138,3 +138,18 @@ int SetupDirectX(HWND& window);
 
 // Frees DirectX related memory
 void EndDirectX();
+
+
+enum TEXTURE_HOLDER_TYPE
+{
+	TEXTURE,
+	SHADER_RESOURCE_VIEW,
+	RENDER_TARGET_VIEW,
+	UNORDERED_ACCESS_VIEW
+};
+union IDX_UNION
+{
+	int8_t TX;
+	int16_t VIEWS;
+};
+void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, IDX_UNION idx);
