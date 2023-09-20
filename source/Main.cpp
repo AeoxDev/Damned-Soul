@@ -18,6 +18,8 @@
 #include "ExampleMenu.h"
 #include "UIRenderer.h"
 #include <iostream>
+#include "MemLib\ML_Map.hpp"
+#include "MemLib\ML_String.hpp"
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -34,6 +36,31 @@ int main(int argc, char* args[])
 
 	InitializeParticles();
 	SetupParticles();
+
+	////ML_Vector<std::pair<int, float>> testVector = { {1, 1.0f}, {2, 4.0f}, {3, 9.0f}, {4, 16.0f}, {5, 25.0f} };
+	//ML_Map<int, float> testMap = { std::pair(1, 1.0f), std::pair(2, 4.0f), std::pair(3, 9.0f), std::pair(4, 16.0f), std::pair(5, 25.0f) };
+	////testMap.emplace(2, 4.0f);
+	////testMap.emplace(3, 9.0f);
+	//for (auto& [key, val] : testMap)
+	//{
+	//	std::cout << key << " | " << val << std::endl;
+	//}
+
+	//ML_String testString = "Hello, world!";
+	//testString.append("Yeet");
+	//testString = "HA!";
+
+	//ML_String s1 = "This is a very long striiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiing!";
+	//ML_String s2 = "smol";
+	//bool validation = s1 == s2;
+	//s1 = s2;
+	//validation = s1 == s2;
+
+	//for (unsigned int i = 0; i < 100000; ++i)
+	//{
+	//	testString = ML_String("Hello, world!Hello,world!,Henlo,UwUrd!") = "LMAO";
+	//	testMap = { std::pair(1, 1.0f), std::pair(2, 4.0f), std::pair(3, 9.0f), std::pair(4, 16.0f), std::pair(5, 25.0f) };
+	//}
 
 	SMP_IDX sampler = CreateSamplerState();
 	SetSamplerState(sampler);

@@ -52,7 +52,7 @@ public:
 
 		// Free the old pool pointer and allocate a new one
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(capacity);
+		m_data = MemLib::palloc(capacity * m_tSize);
 
 		// Copy the data over to the new location and pop the temp from the stack
 		std::memcpy(&(*m_data), temp, m_capacity * m_tSize);
@@ -65,8 +65,9 @@ public:
 	// Clear the vector
 	void clear()
 	{
-		// No need to actually clear data, just setting the size to 0 is enough
 		m_size = 0;
+		m_capacity = 0;
+		MemLib::pfree(m_data);
 	}
 
 	// Push an item into the back of the vector, returns the index of that item
@@ -75,7 +76,8 @@ public:
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
 		if (m_capacity <= m_size + 1)
 		{
-			reserve(m_capacity * 2);
+			// Branchlessly add 4 to the capacity if it is zero
+			reserve(m_capacity * 2 + (m_capacity == 0) * 4);
 		}
 
 		// Set data at location
@@ -133,13 +135,14 @@ public:
 
 	ML_Vector& operator=(const ML_Vector& other)
 	{
-		if (false == m_data.IsNullptr())
-			MemLib::pfree(m_data);
-		m_data = other.m_data;
-		m_capacity = other.m_capacity;
+		// Update size and capacity
 		m_size = other.m_size;
 		m_tSize = other.m_tSize;
+		m_capacity = other.m_capacity;
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(other.m_capacity * other.m_tSize);
 
+		std::memcpy(m_data, other.m_data, m_tSize * m_size);
 		return *this;
 	}
 
@@ -153,8 +156,7 @@ public:
 		m_tSize = sizeof(T);
 
 		// Allocate to memory pool
-		if (false == m_data.IsNullptr())
-			MemLib::pfree(m_data);
+		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 	};
 
@@ -169,8 +171,7 @@ public:
 		m_tSize = sizeof(T);
 
 		// Allocate to memory pool
-		if (false == m_data.IsNullptr())
-			MemLib::pfree(m_data);
+		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 
 		// Set items
@@ -181,4 +182,9 @@ public:
 			//ZeroMemory(item, sizeof(item));
 		}
 	};
+
+	~ML_Vector()
+	{
+		MemLib::pfree(m_data);
+	}
 };
