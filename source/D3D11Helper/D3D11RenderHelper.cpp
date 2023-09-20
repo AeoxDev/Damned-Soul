@@ -2,6 +2,7 @@
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "UIRenderer.h"
+#include "SDLHandler.h"
 #include <iostream>
 
 
@@ -66,6 +67,56 @@ RTV_IDX CreateRenderTargetView()
 
 	return (rtvHolder->currentCount)++;
 
+}
+
+RTV_IDX CreateRenderTargetViewAndTexture()
+{
+	// Check hash
+	//const uint64_t hash = C_StringToHash(name);
+
+	//// If the texture is already loaded, return the index to that texture
+	//for (unsigned int i = 0; i < txHolder->currentCount; ++i)
+	//{
+	//	if (hash == txHolder->hash_arr[i])
+	//	{
+	//		return i;
+	//	}
+	//}
+
+	uint8_t& current = rtvHolder->currentCount;
+
+	D3D11_TEXTURE2D_DESC desc;
+	// Take the height and width of the loaded image and set it as the dimensions for the texture
+	desc.Width = sdl.WIDTH;
+	desc.Height = sdl.HEIGHT;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	// Attempt to create a texture in the device
+	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, NULL, &(txHolder->tx_arr[current]));
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create ID3D11Texture2D" << std::endl;
+		return false;
+	}
+
+	hr = d3d11Data->device->CreateRenderTargetView(rtvHolder->tx_arr[current], nullptr, &(rtvHolder->rtv_arr[current]));
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create ID3D11RenderTargetView" << std::endl;
+		return false;
+	}
+
+	// Set the hash last thing you do
+	//rtvHolder->hash_arr[current] = hash;
+	return current++;
 }
 
 
