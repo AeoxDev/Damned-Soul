@@ -264,12 +264,8 @@ void HandleProximityCollision(Registry& registry)
 
 		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
 		{
-			if (!IsProximityCorrectSide(registry, closestWall, index, x, z))
-			{
-				//Push the entity back into the correct side of the wall
-			}
+			ProximityCorrection(registry, closestWall, index, x, z);
 		}
-
 	}
 }
 

@@ -1,7 +1,7 @@
 #include "Physics\Backend\ProximityCollision.h"
 #include "Physics\Backend\Collision.h"
 
-int GetOrientation(float Ax, float Az, float Bx, float Bz, float Cx, float Cz)
+int GetOrientation(float& Ax, float& Az, float& Bx, float& Bz, float& Cx, float& Cz)
 {
 	float val = (Bz - Az) * (Cx - Bx) - (Bx - Ax) * (Cz - Bz);
 
@@ -9,7 +9,7 @@ int GetOrientation(float Ax, float Az, float Bx, float Bz, float Cx, float Cz)
 	return (val > 0) ? 1 : 2; //Clockwise or counterclockwise
 }
 
-bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float x, float z)
+void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& x, float& z)
 {
 	ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(wall);
 
@@ -56,11 +56,11 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 
 		if (first && second)
 		{
-			return true;
+			return; //Do nothing
 		}
 		else if (!first && !second)
 		{
-			return false;
+			ProximityStepChart(A, B, C, x, z, x, z, wallHitbox->clockwise); //Change second pair of x, z -> Previous position X and Z.
 		}
 		else
 		{
@@ -70,11 +70,22 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 			int o3 = GetOrientation(C.x, C.z, x, z, A.x, A.z);
 			int o4 = GetOrientation(C.x, C.z, x, z, B.x, B.z);
 
-			if ((o1 != o2) && (o3 != o4))
+			if ((o1 != o2) && (o3 != o4)) //Intersection did not occur
 			{
-				return first; //Intersection did not occur
+				if (!first)
+				{
+					//Move using A -> B
+					ProximityMove(A, B, x, z, wallHitbox->clockwise);
+				}
 			}
-			return second;
+			else
+			{
+				if (!second)
+				{
+					//Move using B -> C
+					ProximityMove(B, C, x, z, wallHitbox->clockwise);
+				}
+			}
 		}
 
 
@@ -120,11 +131,11 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 
 		if (first && second)
 		{
-			return true;
+			return; //Do nothing
 		}
 		else if (!first && !second)
 		{
-			return false;
+			ProximityStepChart(A, B, C, x, z, x, z, wallHitbox->clockwise); //Change second pair of x, z -> Previous position X and Z.
 		}
 		else
 		{
@@ -134,12 +145,102 @@ bool IsProximityCorrectSide(Registry& registry, EntityID& wall, int index, float
 			int o3 = GetOrientation(C.x, C.z, x, z, A.x, A.z);
 			int o4 = GetOrientation(C.x, C.z, x, z, B.x, B.z);
 
-			if ((o1 != o2) && (o3 != o4))
+			if ((o1 != o2) && (o3 != o4)) //Intersection did not occur
 			{
-				return first; //Intersection did not occur
+				if (!first)
+				{
+					//Move using A -> B
+					ProximityMove(A, B, x, z, wallHitbox->clockwise);
+				}
 			}
-			return second;
+			else
+			{
+				if (!second)
+				{
+					//Move using B -> C
+					ProximityMove(B, C, x, z, wallHitbox->clockwise);
+				}
+			}
 		}
 	}
-    return false;
+}
+
+void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z, int& clockwise)
+{
+	float magnitude = ((x - p1.x) * (p2.z - p1.z)) - ((z - p1.z) * (p2.x - p1.x));
+
+	//Calculate what X and Z should be changed to in order to be on the line.
+	//Get wall proximityHitbox's clockwise or counter-clockwise to figure out which direction is the correct normal.
+
+	/*
+	dx = x2 - x1
+	dz = z2 - z1
+	
+	normals = (-dy, dx) or (dy, -dx)
+	*/
+}
+
+void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C, float& x, float& z, float& px, float& pz, int& clockwise)
+{
+	int o1, o2, o3, o4;
+	//Step 1: Check if A -> Previous position intersects with B -> C
+	bool step1;
+	o1 = GetOrientation(B.x, B.z, C.x, C.z, A.x, A.z);
+	o2 = GetOrientation(B.x, B.z, C.x, C.z, px, pz);
+	o3 = GetOrientation(A.x, A.z, px, pz, B.x, B.z);
+	o4 = GetOrientation(A.x, A.z, px, pz, C.x, C.z);
+
+	if ((o1 != o2) && (o3 != o4))
+	{
+		step1 = false; //No intersection
+	}
+	else
+	{
+		step1 = true; //Intersection
+	}
+
+	//Step 2: Check if C -> Previous position intersects with A -> B
+	bool step2;
+	o1 = GetOrientation(A.x, A.z, B.x, B.z, C.x, C.z);
+	o2 = GetOrientation(A.x, A.z, B.x, B.z, px, pz);
+	o3 = GetOrientation(C.x, C.z, px, pz, A.x, A.z);
+	o4 = GetOrientation(C.x, C.z, px, pz, B.x, B.z);
+
+	if ((o1 != o2) && (o3 != o4))
+	{
+		step2 = false; //No intersection
+	}
+	else
+	{
+		step2 = true; //Intersection
+	}
+
+	//Step 3: Split into cases based on which line intersected
+	if (step1 && step2)
+	{
+		//Step 4a: Move entity to position of B
+		x = B.x;
+		z = B.z;
+	}
+	else if (!step1 && !step2)
+	{
+		//Step 4b: Move entity first based on magnitude from the first line, then move it again based on the magnitude of the second line.
+		ProximityMove(A, B, x, z, clockwise); //x and z gets updated
+		ProximityMove(B, C, x, z, clockwise); //x and z gets updated
+	}
+	else
+	{
+		//Step 4c: Only move based on which line did not intersect in Step 1 and 2.
+		if (step1)
+		{
+			//Move based on the B -> C line
+			ProximityMove(B, C, x, z, clockwise);
+		}
+		else
+		{
+			//Move based on the A -> B line
+			ProximityMove(A, B, x, z, clockwise);
+		}
+	}
+
 }
