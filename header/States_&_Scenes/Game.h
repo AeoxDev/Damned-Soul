@@ -13,6 +13,7 @@ struct Game
 	int playerDirY = 0;
 
 	void Update();
+	void UpdateParticles();
 
 	void ReadKeyInputs(int[], Settings&);
 	void ReadKeyOutputs(int[], Settings&);

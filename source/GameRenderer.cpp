@@ -3,6 +3,7 @@
 #include "D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "UIRenderer.h"
+#include "Lighting.h"
 
 struct RenderSetupComponent
 {
@@ -73,32 +74,35 @@ int SetupGameRenderer()
 
 void Clear(const int& s)
 {
-
 	ClearRenderTargetView(renderStates[s].renderTargetView);
 	ClearDepthStencilView(renderStates[s].depthStencilView);
 
 	// temporary needed for ui rendering, only set once otherwise
 	SetRenderTargetViewAndDepthStencil(renderStates[0].renderTargetView, renderStates[0].depthStencilView);
-
 }
 
 void Render(const size_t& count)
 {
+	//ID3D11Buffer* lightBuf = nullptr;
+	//bool test = CreateLightingConstantBuffer( lightBuf);
+	//LightingStruct values;
+	//values.ambientColor = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.f);
+	//values.diffuseColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.f);  // White light
+	//values.specularColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.f);  // White specular light
+	//values.intensity = 32.f;
+	//UpdateLightingBuffer(lightBuf, values);
+	//d3d11Data->deviceContext->PSSetConstantBuffers(0, 1, &lightBuf);
+
 	d3d11Data->deviceContext->DrawIndexed((UINT)count, 0, 0);
 }
 
 void Present()
 {
-	d3d11Data->swapChain->Present(0, 0);
 
+	d3d11Data->swapChain->Present(0, 0);
 }
 
-void DispatchParticles(UINT threadX, UINT threadY, UINT threadZ)
+void Dispatch(UINT threadX, UINT threadY, UINT threadZ)
 {
 	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
-}
-
-void SetSwappedParticles()
-{
-	//Get particle functions in here some how
 }

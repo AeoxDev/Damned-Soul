@@ -13,6 +13,12 @@ struct D3D11Data
 
 };
 
+struct GeometryShaderHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11GeometryShader* gs_arr[16];
+};
+
 struct TextureHolder
 {
 #define TX_HOLD_LIM 64
@@ -70,6 +76,7 @@ struct RTVHolder
 {
 #define RTV_HOLD_LIM 8
 	uint8_t					currentCount = 0;
+	ID3D11Texture2D*		tx_arr[RTV_HOLD_LIM]; // Needs a texture for the depth stencil as well
 	ID3D11RenderTargetView*	rtv_arr[RTV_HOLD_LIM]; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
 };
 
@@ -112,6 +119,7 @@ extern TextureHolder* txHolder;
 extern SamplerStateHolder* smpHolder;
 extern PixelShaderHolder* pixHolder;
 extern VertexShaderHolder* vrtHolder;
+extern GeometryShaderHolder* geoHolder;
 extern ComputeShaderHolder* comHolder;
 extern BufferHolder* bfrHolder;
 extern ViewPortHolder* vpHolder;

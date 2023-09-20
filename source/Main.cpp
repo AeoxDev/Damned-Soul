@@ -30,10 +30,10 @@ int main(int argc, char* args[])
 
 	int testRenderSlot = SetupGameRenderer();
 	Camera::InitializeCamera();
-	SetConstantBuffer(Camera::GetCameraBufferIndex());
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
 
-	InitializeParticles();
-	SetupParticles();
+	Particles::InitializeParticles();
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_COMPUTE);
 
 	SMP_IDX sampler = CreateSamplerState();
 	SetSamplerState(sampler);
@@ -58,28 +58,20 @@ int main(int argc, char* args[])
 	ui->SetCurrentCanvas(exMenu);
 	UpdateUI(ui);
 
-
+	
 	
 	while (!sdl.quit)
 	{
-
 		CountDeltaTime();
 
 		//Clear the render targets!
 		Clear(testRenderSlot);
+
+
 		RenderUI();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
 		stateManager.ReadInputs();
-
-		//Prepare the particles to be dispatched
-		PrepareParticles();
-
-		//Dispatch the particles
-		DispatchParticles(100, 1, 1);
-
-		//Finish handling the data
-		FinishParticles();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		//UpdatePhysics(stateManager);//Change registry to scene registry

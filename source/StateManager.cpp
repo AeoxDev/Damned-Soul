@@ -95,7 +95,14 @@ void StateManager::Update()
 	case State::Game:
 
 		if (m_game.currentSubState == GameState::Unpause)
+		{
+			//In the future, we may not want to update particles on every update call
+			//Currently lacking an indicator as to when we want to update particles
+			m_game.UpdateParticles();
+
 			m_game.Update();
+		}
+
 		break;
 	}
 

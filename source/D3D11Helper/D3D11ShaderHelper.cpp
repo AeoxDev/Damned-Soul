@@ -4,10 +4,9 @@
 #include <iostream>
 #include <fstream>
 
-PixelShaderHolder* pixHolder_NULL = NULL;
-VertexShaderHolder* vrtHolder_NULL = NULL;
-ComputeShaderHolder* comHolder_NULL = NULL;
-
+// Theese shaders exist to enable removing shaders from the pipeline
+ID3D11ComputeShader* comShader_NULL = NULL;
+ID3D11GeometryShader* geoShader_NULL = NULL;
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
@@ -95,14 +94,24 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
-	Layout ScreenLayout = { UIInputDesc, ARRAYSIZE(UIInputDesc) };
+	Layout screenLayout = { UIInputDesc, ARRAYSIZE(UIInputDesc) };
+
+	D3D11_INPUT_ELEMENT_DESC ParticleInputDesc[3] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"VELOCITY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"RBG", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+	};
+	Layout particleLayout = { ParticleInputDesc, ARRAYSIZE(ParticleInputDesc) };
 
 	//Must correspond to enum layout in d3d11helper.h
 	Layout layouts[] =
 	{
 		defaultLayout,
 		skeletalLayout,
-		ScreenLayout
+		screenLayout,
+		particleLayout,
 	};
 
 	Layout chosen = layouts[layout];
@@ -233,4 +242,84 @@ bool SetComputeShader(const CS_IDX idx)
 
 	d3d11Data->deviceContext->CSSetShader(comHolder->cs_arr[idx], nullptr, 0);
 	return true;
+}
+
+bool ResetComputeShader()
+{
+	d3d11Data->deviceContext->CSSetShader(comShader_NULL, nullptr, 0);
+	return true;
+}
+
+GS_IDX LoadGeometryShader(const char* name)
+{
+	std::ifstream reader;
+
+	reader.open(name, std::ios::binary | std::ios::ate);
+	if (false == reader.is_open())
+	{
+		std::cerr << "Could not open GS test file!" << std::endl;
+		return -1;
+	}
+
+	// Allocate the byte data on the stack
+	reader.seekg(0, std::ios::end);
+	unsigned int size = static_cast<unsigned int>(reader.tellg());
+	char* shaderData = (char*)MemLib::spush(size);
+	reader.seekg(0, std::ios::beg);
+
+	// Read byte data onto stack
+	reader.read(shaderData, size);
+	reader.close();
+
+	HRESULT hr = d3d11Data->device->CreateGeometryShader(shaderData, size, NULL, &geoHolder->gs_arr[geoHolder->currentCount]); // Does not increment here
+	if (FAILED(hr))
+	{
+		MemLib::spop(); // Pop if failure
+		std::cerr << "Failed to create Geometry Shader!" << std::endl;
+		return -1;
+	}
+
+	// Free the temp memory
+	MemLib::spop();
+
+	// Return and increment (in that order)
+	return geoHolder->currentCount++;
+}
+
+bool SetGeometryShader(const GS_IDX idx)
+{
+	if (geoHolder->currentCount < idx)
+	{
+		std::cerr << "Failed to set geometry shader: Index out of range!" << std::endl;
+		return false;
+	}
+	else if (idx < 0)
+	{
+		std::cerr << "Failed to set geometry shader: Index must be 0 or greater!" << std::endl;
+		return false;
+	}
+
+	d3d11Data->deviceContext->GSSetShader(geoHolder->gs_arr[idx], nullptr, 0);
+	return true;
+}
+
+bool ResetGeometryShader()
+{
+	d3d11Data->deviceContext->GSSetShader(geoShader_NULL, nullptr, 0);
+	return true;
+}
+
+void SetTopology(TOPOLOGY topology)
+{
+	switch (topology)
+	{
+	case TRIANGLELIST:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		break;
+	case POINTLIST:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		break;
+	default:
+		break;
+	}
 }

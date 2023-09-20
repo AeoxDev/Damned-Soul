@@ -15,6 +15,7 @@ TextureHolder* txHolder;
 SamplerStateHolder* smpHolder;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
+GeometryShaderHolder* geoHolder;
 ComputeShaderHolder* comHolder;
 BufferHolder* bfrHolder;
 ViewPortHolder* vpHolder;
@@ -65,6 +66,7 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 
 #define FAIL_MSG { std::cerr << "Failed to set up D3D11!" << std::endl; return -1; }
 
+
 int SetupDirectX(HWND& w)
 {
 #define PUSH_AND_INITIALIZE(pointer, type) { pointer = (type*)MemLib::spush(sizeof(type)); *pointer = type(); }
@@ -95,6 +97,7 @@ int SetupDirectX(HWND& w)
 	//uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
+	PUSH_AND_INITIALIZE(geoHolder, GeometryShaderHolder);
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG
