@@ -32,6 +32,10 @@ int16_t Particles::m_vertexBuffer;
 int16_t Particles::m_indexBuffer;
 int8_t  Particles::m_rasterizer; 
 
+int8_t m_renderTargetView;
+int8_t m_depthStencilView;
+int8_t m_shaderResourceView;
+
 void Particles::SwitchInputOutput()
 {
 	//Store read
