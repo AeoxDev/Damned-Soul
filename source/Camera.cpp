@@ -39,10 +39,11 @@ int orthWidth, orthHeight;
 
 void Camera::SetPosition(const float x, const float y, const float z)
 {
-	
 	GameCamera->m_position.x = x;
 	GameCamera->m_position.y = y;
 	GameCamera->m_position.z = z;
+
+	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
 
 void Camera::SetLookAt(const float x, const float y, const float z)
@@ -86,6 +87,8 @@ void Camera::AdjustPosition(const float x, const float y, const float z)
 	GameCamera->m_position.x += x;
 	GameCamera->m_position.y += y;
 	GameCamera->m_position.z += z;
+
+	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
 
 void Camera::AdjustLookAt(const float x, const float y, const float z)

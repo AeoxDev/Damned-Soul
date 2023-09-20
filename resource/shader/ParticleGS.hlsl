@@ -26,7 +26,7 @@ void main(
 )
 {
     float3 look = cameraPosition.xyz - inval[0].position.xyz;
-    look.y = 0.f;
+    //look.y = 0.f;
     look = normalize(look);
     
     float3 up = float3(0.f, 1.f, 0.f);
@@ -51,6 +51,7 @@ void main(
     for (int i = 0; i < 6; i++)
     {
         retappend.position = mul(float4(vertices[i], 1.f), viewProj);
+        retappend.position = retappend.position / retappend.position.w;
         retappend.velocity = inval[0].velocity;
         retappend.rbg = inval[0].rbg;
 
