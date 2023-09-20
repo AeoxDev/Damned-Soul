@@ -153,6 +153,8 @@ bool SetViewport(const VP_IDX idx);
 
 // Create a render target view
 RTV_IDX CreateRenderTargetView();
+// This function does not release the texture
+RTV_IDX CreateRenderTargetViewAndTexture();
 
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);

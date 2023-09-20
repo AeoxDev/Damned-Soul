@@ -76,6 +76,7 @@ struct RTVHolder
 {
 #define RTV_HOLD_LIM 8
 	uint8_t					currentCount = 0;
+	ID3D11Texture2D*		tx_arr[RTV_HOLD_LIM]; // Needs a texture for the depth stencil as well
 	ID3D11RenderTargetView*	rtv_arr[RTV_HOLD_LIM]; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
 };
 
