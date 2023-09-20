@@ -82,13 +82,13 @@ RTV_IDX CreateRenderTargetViewAndTexture()
 	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_IMMUTABLE;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_RENDER_TARGET;
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 
 	// Attempt to create a texture in the device
-	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, NULL, &(txHolder->tx_arr[current]));
+	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, NULL, &(rtvHolder->tx_arr[current]));
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to create ID3D11Texture2D" << std::endl;
@@ -255,6 +255,34 @@ SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHAD
 
 	return (srvHolder->currentCount)++;
 }
+
+SRV_IDX CreateShaderResrouceView(const int16_t idx, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS& resource, const uint8_t slot)
+{
+	uint16_t currentIdx = srvHolder->currentCount;
+
+	switch (resource)
+	{
+	case RENDER_TARGET_VIEW:
+		srvHolder->srv_resource_arr[currentIdx] = rtvHolder->tx_arr[idx];
+		d3d11Data->device->CreateShaderResourceView(rtvHolder->tx_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		break;
+	case SHADER_RESOURCE_VIEW:
+		srvHolder->srv_resource_arr[currentIdx] = srvHolder->srv_resource_arr[idx];
+		d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		break;
+	default:
+		break;
+	}
+
+
+	uint32_t* metadata = srvHolder->metadata_arr[currentIdx];
+	metadata[0] = bindto;
+	metadata[1] = slot; // Set slot to use
+	metadata[2] = (uint32_t)size;
+
+	return (srvHolder->currentCount)++;
+}
+
 
 bool SetShaderResourceView(const SRV_IDX idx)
 {

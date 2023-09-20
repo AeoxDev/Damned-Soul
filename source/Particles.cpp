@@ -2,6 +2,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "SDLHandler.h"
 
 __declspec(align(16)) struct Particle
 {
@@ -32,9 +33,9 @@ int16_t Particles::m_vertexBuffer;
 int16_t Particles::m_indexBuffer;
 int8_t  Particles::m_rasterizer; 
 
-int8_t m_renderTargetView;
-int8_t m_depthStencilView;
-int8_t m_shaderResourceView;
+int8_t Particles::m_renderTargetView;
+int8_t Particles::m_depthStencilView;
+int8_t Particles::m_shaderResourceView;
 
 void Particles::SwitchInputOutput()
 {
@@ -51,14 +52,6 @@ void Particles::InitializeParticles()
 	PoolPointer<ParticleMetadata> data;
 	PoolPointer<uint32_t> index;
 	data = MemLib::palloc(sizeof(ParticleMetadata));
-	index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
-
-	particles = MemLib::palloc(sizeof(Particle) * data->m_end);
-	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
-	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
-	m_metadata = CreateConstantBuffer(&(*data), sizeof(m_metadata), 0);
-
-
 	//NOTE TODO: DONT USE HARDCODED VALUES
 	data->m_start = 0; data->m_end = 100;
 	data->m_life = 5.f;
@@ -67,6 +60,15 @@ void Particles::InitializeParticles()
 	data->m_spawnPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 
 	float size = sizeof(Particle) * data->m_end;
+
+	index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
+
+
+
+	particles = MemLib::palloc(sizeof(Particle) * data->m_end);
+	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_metadata = CreateConstantBuffer(&(*data), sizeof(m_metadata), 0);
 
 
 
@@ -103,8 +105,9 @@ void Particles::InitializeParticles()
 	MemLib::pfree(particles);
 
 
-
-	//m_renderTargetView = CreateRenderTargetViewAndTexture();
+	m_renderTargetView = CreateRenderTargetViewAndTexture();
+	m_shaderResourceView = CreateShaderResourceView(NULL, sizeof(ID3D11Texture2D), BIND_PIXEL, RESOURCE_TEXTURE2D, BIND_SHADER_RESOURCE, (CPU_FLAGS)0, 3);
+	m_depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 }
 
 void Particles::PrepareParticleCompute()
