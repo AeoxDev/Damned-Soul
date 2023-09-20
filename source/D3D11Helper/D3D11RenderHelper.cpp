@@ -456,7 +456,7 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 	UAVDesc.Buffer.NumElements = amount;
 
 	uavHolder->uav_resource_arr[currentIdx] = srvHolder->srv_resource_arr[idx];
-	HRESULT hr = d3d11Data->device->CreateUnorderedAccessView(rtvHolder->tx_arr[idx], &UAVDesc, &uavHolder->uav_arr[currentIdx]);
+	HRESULT hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_arr[currentIdx], &UAVDesc, &uavHolder->uav_arr[currentIdx]);
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to create Unordered Access View from another resource!" << std::endl;

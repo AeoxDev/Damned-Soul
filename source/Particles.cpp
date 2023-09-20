@@ -89,7 +89,7 @@ void Particles::InitializeParticles()
 	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), data->m_end, BIND_COMPUTE, resourceFlags, (CPU_FLAGS)0, 0);
 
 	m_readBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(particles), data->m_end, m_readBuffer->SRVIndex, 0);
-	m_writeBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(particles), data->m_end, m_readBuffer->SRVIndex, 0);
+	m_writeBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(particles), data->m_end, m_writeBuffer->SRVIndex, 0);
 
 	m_vertexBuffer = CreateVertexBuffer(&(*particles), sizeof(Particle), data->m_end, USAGE_DEFAULT);
 	m_indexBuffer = CreateIndexBuffer(&(*index), sizeof(int), data->m_end);
@@ -100,13 +100,14 @@ void Particles::InitializeParticles()
 	m_pixelShader = LoadPixelShader("ParticlePS.cso");
 	m_geometryShader = LoadGeometryShader("ParticleGS.cso");
 
+	resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
+	m_renderTargetView = CreateRenderTargetView(USAGE_DEFAULT, resourceFlags, (CPU_FLAGS)0, sdl.WIDTH, sdl.HEIGHT);
+	m_shaderResourceView = CreateShaderResourceViewTexture(m_renderTargetView, BIND_PIXEL, BIND_RENDER_TARGET, 0);
+	m_depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+
+
 	//When done initializing free the temporary paritcle data
 	MemLib::pfree(particles);
-
-
-	//m_renderTargetView = CreateRenderTargetViewAndTexture();
-	//m_shaderResourceView = CreateShaderResourceView(NULL, sizeof(ID3D11Texture2D), BIND_PIXEL, RESOURCE_TEXTURE2D, BIND_SHADER_RESOURCE, (CPU_FLAGS)0, 3);
-	m_depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 }
 
 void Particles::PrepareParticleCompute()
