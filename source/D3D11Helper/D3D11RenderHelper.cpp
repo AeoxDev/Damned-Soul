@@ -71,18 +71,6 @@ RTV_IDX CreateRenderTargetView()
 
 RTV_IDX CreateRenderTargetViewAndTexture()
 {
-	// Check hash
-	//const uint64_t hash = C_StringToHash(name);
-
-	//// If the texture is already loaded, return the index to that texture
-	//for (unsigned int i = 0; i < txHolder->currentCount; ++i)
-	//{
-	//	if (hash == txHolder->hash_arr[i])
-	//	{
-	//		return i;
-	//	}
-	//}
-
 	uint8_t& current = rtvHolder->currentCount;
 
 	D3D11_TEXTURE2D_DESC desc;
@@ -110,12 +98,13 @@ RTV_IDX CreateRenderTargetViewAndTexture()
 	hr = d3d11Data->device->CreateRenderTargetView(rtvHolder->tx_arr[current], nullptr, &(rtvHolder->rtv_arr[current]));
 	if (FAILED(hr))
 	{
+		// If the RTV failed to create, release the texture
+		rtvHolder->tx_arr[current]->Release();
 		std::cerr << "Failed to create ID3D11RenderTargetView" << std::endl;
 		return false;
 	}
 
 	// Set the hash last thing you do
-	//rtvHolder->hash_arr[current] = hash;
 	return current++;
 }
 
