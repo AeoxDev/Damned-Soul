@@ -66,7 +66,7 @@ RTV_IDX CreateBackBuffer()
 
 RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
 {
-	uint8_t& current = rtvHolder->currentCount;
+	uint16_t currentIdx = rtvHolder->currentCount;
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
@@ -83,24 +83,24 @@ RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, C
 	desc.MiscFlags = 0;
 
 	// Attempt to create a texture in the device
-	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, NULL, &(rtvHolder->tx_arr[current]));
+	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, NULL, &(rtvHolder->tx_arr[currentIdx]));
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to create ID3D11Texture2D for RenderTargetView" << std::endl;
 		return false;
 	}
 
-	hr = d3d11Data->device->CreateRenderTargetView(rtvHolder->tx_arr[current], nullptr, &(rtvHolder->rtv_arr[current]));
+	hr = d3d11Data->device->CreateRenderTargetView(rtvHolder->tx_arr[currentIdx], nullptr, &(rtvHolder->rtv_arr[currentIdx]));
 	if (FAILED(hr))
 	{
 		// If the RTV failed to create, release the texture
-		rtvHolder->tx_arr[current]->Release();
+		rtvHolder->tx_arr[currentIdx]->Release();
 		std::cerr << "Failed to create ID3D11RenderTargetView" << std::endl;
 		return false;
 	}
 
 	// Set the hash last thing you do
-	return current++;
+	return (rtvHolder->currentCount)++;
 
 }
 
@@ -253,6 +253,9 @@ SRV_IDX CreateShaderResourceViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, c
 				std::cerr << "Failed to QueryInterface into buffer" << std::endl;
 				return false;
 			}
+
+			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			break;
 		case RESOURCE_TEXTURE2DARRAY:
 			//Define if needed
@@ -264,7 +267,16 @@ SRV_IDX CreateShaderResourceViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, c
 			//Define if needed
 			break;
 		default:
+			std::cerr << "Did not create requested Shader Resource View, requested case is not defined" << std::endl;
+			return false;
 			break;
+	}
+
+	hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[currentIdx], &SRVDesc, &(srvHolder->srv_arr[currentIdx]));
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Shader Resource View!" << std::endl;
+		return false;
 	}
 
 	uint32_t* metadata = srvHolder->metadata_arr[currentIdx];
@@ -282,7 +294,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_
 
 	switch (resource)
 	{
-	case RENDER_TARGET_VIEW:
+	case BIND_RENDER_TARGET:
 		srvHolder->srv_resource_arr[currentIdx] = rtvHolder->tx_arr[idx];
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[currentIdx], NULL, &srvHolder->srv_arr[currentIdx]);
 		if (FAILED(hr))
@@ -291,7 +303,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_
 			return false;
 		}
 		break;
-	case SHADER_RESOURCE_VIEW:
+	case BIND_SHADER_RESOURCE:
 		srvHolder->srv_resource_arr[currentIdx] = srvHolder->srv_resource_arr[idx];
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[currentIdx], NULL, &srvHolder->srv_arr[currentIdx]);
 		if (FAILED(hr))
@@ -301,6 +313,8 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_
 		}
 		break;
 	default:
+		std::cerr << "Did not create requested Shader Resource View (overload), requested case is not defined" << std::endl;
+		return false;
 		break;
 	}
 
@@ -391,7 +405,7 @@ void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)
 {
-	uint16_t currentIdx = srvHolder->currentCount;
+	uint16_t currentIdx = uavHolder->currentCount;
 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;

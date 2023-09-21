@@ -51,6 +51,7 @@ void Particles::InitializeParticles()
 {
 	PoolPointer<ParticleMetadata> data;
 	PoolPointer<uint32_t> index;
+
 	data = MemLib::palloc(sizeof(ParticleMetadata));
 	//NOTE TODO: DONT USE HARDCODED VALUES
 	data->m_start = 0; data->m_end = 100;
@@ -68,11 +69,7 @@ void Particles::InitializeParticles()
 	particles = MemLib::palloc(sizeof(Particle) * data->m_end);
 	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
 	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
-	m_metadata = CreateConstantBuffer(&(*data), sizeof(m_metadata), 0);
-
-
-
-
+	m_metadata = CreateConstantBuffer(&(*data), sizeof(ParticleMetadata), 0);
 	m_rasterizer = CreateRasterizerState(false, true);
 
 	for (int i = 0; i < data->m_end; i++)
@@ -108,6 +105,13 @@ void Particles::InitializeParticles()
 
 	//When done initializing free the temporary paritcle data
 	MemLib::pfree(particles);
+	MemLib::pfree(data);
+}
+
+void Particles::ReleaseParticles()
+{
+	MemLib::pfree(m_readBuffer);
+	MemLib::pfree(m_writeBuffer);
 }
 
 void Particles::PrepareParticleCompute()
