@@ -6,6 +6,7 @@
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 #include "STB_Helper.h"
+#include "D3D11Helper.h"
 
 #define SANE_MODEL_VALIDATION_NUMBER (1'234'567'890)
 const bool ModelBoneless::ValidByteData() const
@@ -21,19 +22,19 @@ const SubMesh& ModelBoneless::GetSubMesh(const size_t idx) const
 #define SUBMESH_BYTE_SIZE (m_numSubMeshes * sizeof(SubMesh))
 const Material& ModelBoneless::GetMaterial(const size_t idx) const
 {
-	return ((Material*)(m_data[SUBMESH_BYTE_SIZE]))[idx];
+	return ((Material*)(&(m_data[SUBMESH_BYTE_SIZE])))[idx];
 }
 
 #define MATERIAL_BYTE_SIZE (m_numMaterials * sizeof(Material))
 const VertexBoneless* ModelBoneless::GetVertices() const
 {
-	return (VertexBoneless*)(&m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE]);
+	return (VertexBoneless*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE]));
 }
 
 #define VERTEX_BYTE_SIZE (m_numVertices * sizeof(VertexBoneless))
 const uint32_t* ModelBoneless::GetIndices() const
 {
-	return (uint32_t*)(&m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + VERTEX_BYTE_SIZE]);
+	return (uint32_t*)((&m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + VERTEX_BYTE_SIZE]));
 }
 
 
@@ -83,7 +84,7 @@ bool Model::Load(const char* filename)
 	for (unsigned int i = 0; i < m_bonelessModel->m_numMaterials; ++i)
 	{
 		// Same operation as GetMaterial(size_t), but not const
-		Material& mat = ((Material*)(m_bonelessModel->m_data[m_bonelessModel->m_numSubMeshes * sizeof(SubMesh)]))[i];
+		Material& mat = ((Material*)(&(m_bonelessModel->m_data[m_bonelessModel->m_numSubMeshes * sizeof(SubMesh)])))[i];
 		// Load colors
 		mat.albedoIdx = LoadTexture(mat.albedo);
 		// Load normal map
@@ -120,4 +121,18 @@ bool Model::SetVertexAndIndexBuffersActive() const
 	if (false == SetIndexBuffer(m_indexBuffer))
 		return false;
 	return true;
+}
+
+
+void Model::RenderAllSubmeshes()
+{
+	for (unsigned int i = 0; i < m_bonelessModel->m_numSubMeshes; ++i)
+	{
+		const SubMesh& currentMesh = m_bonelessModel->GetSubMesh(i);
+		const Material& currentMaterial = m_bonelessModel->GetMaterial(currentMesh.m_material);
+
+		// Set material and draw
+		SetTexture(currentMaterial.albedoIdx, 0, BIND_PIXEL);
+		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
+	}
 }

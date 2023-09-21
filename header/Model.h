@@ -31,19 +31,18 @@ struct Material
 
 struct ModelBoneless
 {
-	uint32_t m_sanityCheckNumber;
-	uint32_t m_numSubMeshes;
-	uint32_t m_numMaterials;
-	uint32_t m_numVertices;
-	uint32_t m_numIndices;
-	char m_data[];//Array is intentional, ignore warning
+	const uint32_t m_sanityCheckNumber;
+	const uint32_t m_numSubMeshes;
+	const uint32_t m_numMaterials;
+	const uint32_t m_numVertices;
+	const uint32_t m_numIndices;
+	const char m_data[];//Array is intentional, ignore warning
 
 	const bool ValidByteData() const;
 	const SubMesh& GetSubMesh(const size_t idx) const;
 	const Material& GetMaterial(const size_t idx) const;
 	const VertexBoneless* GetVertices() const;
 	const uint32_t* GetIndices() const;
-	void RenderInFull() const;
 };
 
 struct Model
@@ -59,6 +58,9 @@ struct Model
 
 	// Set the currently active index and vertex buffers to this model
 	bool SetVertexAndIndexBuffersActive() const;
+
+	// Render all the model's submeshes one after another
+	void RenderAllSubmeshes();
 
 	void Free();
 };

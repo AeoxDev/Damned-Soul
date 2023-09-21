@@ -41,7 +41,8 @@ void Game::Update()
 
 	SetTopology(TRIANGLELIST);
 
-	Render(dogModel.m_bonelessModel->m_numIndices);
+	dogModel.RenderAllSubmeshes();
+	//Render(dogModel.m_bonelessModel->m_numIndices);
 	
 	Particles::PrepareParticlePass();
 	SetTopology(POINTLIST);
