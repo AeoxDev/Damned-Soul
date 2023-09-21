@@ -32,8 +32,8 @@ void UICanvas::DrawTexts(PoolPointer<UI>& ui)
 void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	//PoolPointer<UIButton> temp = MemLib::palloc(sizeof(UIButton));
-	UIButton temp(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
-	m_Buttons.push_back(temp);
+	//UIButton temp(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
+	m_Buttons.push_back(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);//(temp);
 }
 
 void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
