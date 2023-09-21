@@ -47,11 +47,8 @@ public:
 		char* temp = (char*)MemLib::spush(m_capacity);
 
 		// Free the old pool pointer and allocate a new one, if need be
-		if (false == m_data.IsNullptr())
-		{
-			std::memcpy(temp, &(*m_data), m_capacity);
-			MemLib::pfree(m_data);
-		}
+		std::memcpy(temp, &(*m_data), m_capacity);
+		MemLib::pfree(m_data);
 
 		m_data = MemLib::palloc(capacity);
 
@@ -67,8 +64,7 @@ public:
 	void clear()
 	{
 		m_len = 0;
-		m_capacity = 0;
-		MemLib::pfree(m_data);
+		m_data[0] = '\0';
 	}
 
 	// Return the internal string. Should not be kept between frames due to risk of defragmentation discoupling the data
@@ -178,30 +174,6 @@ public:
 	{
 		return (0 == std::strcmp(m_data, other));
 	}
-
-	//// Initiate an ML_Vector<T> with a number of T objects, can be called as such to emulate normal C++ style coding
-	//// ML_Vector<T>() = { args };
-	//template<typename... Types>
-	//ML_String(Types... args)
-	//{
-	//	// Set capacity
-	//	m_capacity = sizeof...(args);
-	//	// Set the individual item size
-	//	m_tSize = sizeof(T);
-
-	//	// Allocate to memory pool
-	//	if (false == m_data.IsNullptr())
-	//		MemLib::pfree(m_data);
-	//	m_data = MemLib::palloc(m_capacity * m_tSize);
-
-	//	// Set items
-	//	for (auto item : { args... })
-	//	{
-	//		/*T test = item;*/
-	//		push_back(item);
-	//		//ZeroMemory(item, sizeof(item));
-	//	}
-	//};
 
 	~ML_String()
 	{

@@ -66,8 +66,6 @@ public:
 	void clear()
 	{
 		m_size = 0;
-		m_capacity = 0;
-		MemLib::pfree(m_data);
 	}
 
 	// Push an item into the back of the map, returns the index of that item
@@ -76,8 +74,7 @@ public:
 		// if the capacity of the map is less than the size of the map, reserve a larger chunk of memory
 		if (m_capacity <= m_size + 1)
 		{
-			// Branchlessly add 4 to the capacity if it is zero
-			reserve(m_capacity * 2 + (m_capacity == 0) * 4);
+			reserve(m_capacity * 2 + (m_capacity == 0));
 		}
 
 		for (uint32_t i = 0; i < m_size; ++i)
@@ -89,8 +86,8 @@ public:
 			}
 		}
 
-		std::pair<tKey, tVal> temp = { key, val };
 		// Set data at location
+		std::pair<tKey, tVal> temp = { key, val };
 		std::memcpy(&m_data[m_size], &temp, m_tSize);
 
 		// Return the index of the newly pushed object
@@ -138,7 +135,7 @@ public:
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
 		m_tSize = other.m_tSize;
-		//reserve(m_capacity);
+
 		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 
@@ -159,6 +156,20 @@ public:
 		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 	};
+
+	const ML_Map& Initialize()
+	{
+		// Set capacity
+		m_capacity = 4;
+		// Set the individual item size
+		m_tSize = sizeof(std::pair<tKey, tVal>);
+
+		// Allocate new to memory pool
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(m_capacity * m_tSize);
+
+		return *this;
+	}
 
 	// Initiate an ML_Map<tKey, tVal> with a number of pairs, can be called as such to emulate normal C++ style coding
 	// ML_Map<tKey, tVal>() = { {kay, val}, ... };

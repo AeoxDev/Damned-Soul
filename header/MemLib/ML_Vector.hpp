@@ -66,8 +66,6 @@ public:
 	void clear()
 	{
 		m_size = 0;
-		m_capacity = 0;
-		MemLib::pfree(m_data);
 	}
 
 	// Push an item into the back of the vector, returns the index of that item
@@ -77,7 +75,7 @@ public:
 		if (m_capacity <= m_size + 1)
 		{
 			// Branchlessly add 4 to the capacity if it is zero
-			reserve(m_capacity * 2 + (m_capacity == 0) * 4);
+			reserve(m_capacity * 2 + (m_capacity == 0));
 		}
 
 		// Set data at location
@@ -160,7 +158,7 @@ public:
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 	};
 
-	ML_Vector& Initialize()
+	const ML_Vector& Initialize()
 	{
 		// Set capacity
 		m_capacity = 4;

@@ -127,13 +127,3 @@ public:
 		return *m_data;
 	};
 };
-
-//template <class _First, class... _Rest>
-//struct _Enforce_same {
-//	static_assert(
-//		conjunction_v<is_same<_First, _Rest>...>, "N4950 [array.cons]/2: Mandates: (is_same_v<T, U> && ...) is true.");
-//	using type = _First;
-//};
-//
-//template<typename T, typename... Rest>
-//ML_Array(T first, Rest... rest) -> ML_Array<typename _Enforce_same<T, Rest...>::type, 1 + sizeof...(Rest)>;
