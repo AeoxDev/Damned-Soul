@@ -2,27 +2,30 @@
 #include "MemLib\MemLib.hpp"
 #include <cinttypes>
 #include <stdexcept>
+//#include <vector>
 
-template<typename T>
+template<typename _T>
 struct ML_Vector
 {
 private:
 	// Pool pointer to internal data
-	PoolPointer<T> m_data;
+	PoolPointer<_T> m_data;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_size = 0;
+	uint32_t m_size;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_capacity = 0;
+	uint32_t m_capacity;
 	// size of the internal type
-	uint16_t m_tSize = 0;
+	uint16_t m_tSize;
+
+	//std::vector<int> test;
 
 public:
-	T* begin() const
+	_T* begin() const
 	{
 		return &(m_data[0]);
 	}
 
-	T* end() const
+	_T* end() const
 	{
 		return &(m_data[m_size]);
 	}
@@ -32,7 +35,7 @@ public:
 		return m_size;
 	}
 
-	const PoolPointer<T>& data() const
+	const PoolPointer<_T>& data() const
 	{
 		return m_data;
 	}
@@ -47,7 +50,7 @@ public:
 		}
 
 		// Provide a temporary copy of the data
-		T* temp = (T*)MemLib::spush(m_capacity * m_tSize);
+		_T* temp = (_T*)MemLib::spush(m_capacity * m_tSize);
 		std::memcpy(temp, &(*m_data), m_capacity * m_tSize);
 
 		// Free the old pool pointer and allocate a new one
@@ -65,11 +68,13 @@ public:
 	// Clear the vector
 	void clear()
 	{
+		for (uint32_t i = 0; i < m_size; ++i)
+			m_data[i].~_T();
 		m_size = 0;
 	}
 
 	// Push an item into the back of the vector, returns the index of that item
-	uint32_t push_back(const T& item)
+	uint32_t push_back(const _T& item)
 	{
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
 		if (m_capacity <= m_size + 1)
@@ -79,7 +84,28 @@ public:
 		}
 
 		// Set data at location
-		std::memcpy(&m_data[m_size], &item, m_tSize);
+		new(&m_data[m_size]) _T(item);
+		//std::memcpy(&m_data[m_size], &item, m_tSize);
+		//m_data[m_size] = item;
+
+		// Return the index of the newly pushed object
+		return m_size++;
+	};
+
+	// Push an item into the back of the vector, returns the index of that item
+	template<typename... Args>
+	uint32_t push_back(Args... args)
+	{
+		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
+		if (m_capacity <= m_size + 1)
+		{
+			// Branchlessly add 4 to the capacity if it is zero
+			reserve(m_capacity * 2 + (m_capacity == 0));
+		}
+
+		// Set data at location
+		m_data[m_size] = *(new(&m_data[m_size]) _T({args...}));
+		//std::memcpy(&m_data[m_size], &item, m_tSize);
 		//m_data[m_size] = item;
 
 		// Return the index of the newly pushed object
@@ -103,7 +129,7 @@ public:
 	};
 
 	// Pop and return the back most item of the vector
-	T pop_back()
+	_T pop_back()
 	{
 		if (m_size <= 0)
 		{
@@ -115,12 +141,12 @@ public:
 		return m_data[--m_size];
 	};
 
-	T& operator*()
+	_T& operator*()
 	{
 		return (*m_data);
 	};
 
-	T& operator[](const uint32_t& idx)
+	_T& operator[](const uint32_t& idx)
 	{
 		if (m_size <= idx)
 		{
@@ -133,6 +159,9 @@ public:
 
 	ML_Vector& operator=(const ML_Vector& other)
 	{
+		// First clear
+		clear();
+
 		// Update size and capacity
 		m_size = other.m_size;
 		m_tSize = other.m_tSize;
@@ -140,7 +169,9 @@ public:
 		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(other.m_capacity * other.m_tSize);
 
-		std::memcpy(m_data, other.m_data, m_tSize * m_size);
+		for (uint32_t i = 0; i < m_size; ++i)
+			new(&m_data[i]) _T(other.m_data[i]);
+		//std::memcpy(m_data, other.m_data, m_tSize * m_size);
 		return *this;
 	};
 
@@ -148,10 +179,11 @@ public:
 	// ML_Vector<T>() = { args };
 	ML_Vector()
 	{
+		m_size = 0;
 		// Set capacity
 		m_capacity = 4;
 		// Set the individual item size
-		m_tSize = sizeof(T);
+		m_tSize = sizeof(_T);
 
 		// Allocate to memory pool
 		MemLib::pfree(m_data);
@@ -160,25 +192,44 @@ public:
 
 	const ML_Vector& Initialize()
 	{
+		m_size = 0;
 		// Set capacity
 		m_capacity = 4;
 		// Set the individual item size
-		m_tSize = sizeof(T);
+		m_tSize = sizeof(_T);
 
 		// Allocate to memory pool
 		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 	};
 
+	ML_Vector(const ML_Vector& to_copy)
+	{
+		m_size = to_copy.m_size;
+		// Set the capacity
+		m_capacity = to_copy.m_capacity;
+		// Set the individual item size
+		m_tSize = to_copy.m_tSize;
+
+		// Free the old memory
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(m_size * m_tSize);
+		// Set items
+
+		for (uint32_t i = 0; i < m_size; ++i)
+			new(&m_data[i]) _T(to_copy.m_data[i]);
+	}
+
 	// Initiate an ML_Vector<T> with a number of T objects, can be called as such to emulate normal C++ style coding
 	// ML_Vector<T>() = { args };
 	template<typename... Types>
 	ML_Vector(Types... args)
 	{
+		m_size = 0;
 		// Set capacity
 		m_capacity = sizeof...(args);
 		// Set the individual item size
-		m_tSize = sizeof(T);
+		m_tSize = sizeof(_T);
 
 		// Allocate to memory pool
 		MemLib::pfree(m_data);
@@ -195,6 +246,7 @@ public:
 
 	~ML_Vector()
 	{
+		clear();
 		MemLib::pfree(m_data);
 	};
 };

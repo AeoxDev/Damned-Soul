@@ -9,9 +9,9 @@ private:
 	// Pool pointer to internal data
 	PoolPointer<char> m_data;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_len = 0;
+	uint32_t m_len;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_capacity = 0;
+	uint32_t m_capacity;
 
 public:
 	char* begin() const
@@ -78,11 +78,8 @@ public:
 	{
 		uint32_t newLen = m_len + other.m_len;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
-		if (m_capacity <= newLen)
-		{
-			// Branchlessly add 4 to the capacity if it is zero
-			reserve(newLen);
-		}
+		while (m_capacity < newLen)
+			reserve(newLen + ((newLen == 0) * 32));
 
 		// Set data at location
 		std::memcpy(&m_data[m_len], &(*other), other.m_len);
@@ -96,11 +93,11 @@ public:
 	// Push an item into the back of the vector, returns the index of that item
 	const ML_String& append(const char* other)
 	{
-		uint32_t otherLen = std::strlen(other);
-		uint32_t newLen = m_len + otherLen;
+		uint32_t otherLen = std::strlen(other) + 1;
+		uint32_t newLen = m_len + otherLen - 1;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
 		while (m_capacity < newLen)
-			reserve(m_capacity * 2);
+			reserve(m_capacity * 2 + ((newLen == 0) * 32));
 
 		// Set data at location
 		std::memcpy(&m_data[m_len], other, otherLen);
@@ -161,6 +158,16 @@ public:
 		m_data = MemLib::palloc(m_capacity);
 
 		append(c_str);
+	}
+
+	ML_String(const ML_String& ml_str)
+	{
+		// Set capacity
+		m_capacity = 32;
+		m_len = 0;
+		m_data = MemLib::palloc(m_capacity);
+
+		append(ml_str);
 	}
 
 	// Comparison with other ML_String

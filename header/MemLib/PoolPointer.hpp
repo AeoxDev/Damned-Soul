@@ -25,6 +25,19 @@ public:
         m_pi = 0xff;
     };
 
+    //// Create a new item in the pool pointer
+    //PoolPointer& operator(const T& item)
+    //{
+    //    new(*m_pp) T(item);
+    //}
+
+    //// Create a new item in the pool pointer
+    //template<typename... Args>
+    //PoolPointer& operator(Args... args)
+    //{
+    //    new(*m_pp) T({ args... });
+    //}
+
     T* operator->()
     {
         return (*m_pp);
