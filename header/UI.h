@@ -4,7 +4,7 @@
 #include <dwrite.h>
 #include "MemLib/PoolPointer.hpp"
 
-struct UICanvas; //compiler hack
+//struct UICanvas; //compiler hack
 
 struct UI
 {
@@ -16,14 +16,13 @@ struct UI
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;		//Another brush with a diffrent color, might remake in order to more eaisly make more brushes later if needed :)
 
-	UICanvas* currentCanvas;
-	UICanvas* m_CurrentCanvas = nullptr;
+	//UICanvas m_CurrentCanvas;
 
 	void BeginFrame();
 	void EndFrame();
 
 	UI();
-	void SetupUI();
+	void Setup();
 
 	void Release();
 
@@ -42,6 +41,6 @@ struct UI
 	ID2D1SolidColorBrush*& GetYellowBrush();
 
 	/*void SetCurrentCanvas(UICanvas* canvas);*/
-	void SetCurrentCanvas(UICanvas& canvas);
+	//void SetCurrentCanvas(UICanvas& canvas);
 };
 

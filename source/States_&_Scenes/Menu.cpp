@@ -124,18 +124,19 @@ void Menu::SetupMainMenu()
 		std::cout << "Failed to setup UI Renderer" << std::endl;
 		return;
 	}
+
+	this->registry.AddComponent<UI>(mainMenuEntity);
+	UI* ui = registry.GetComponent<UI>(mainMenuEntity);
+	ui->Setup();
 	
 	this->registry.AddComponent<ExMenu>(mainMenuEntity);
 	ExMenu *exMenu = registry.GetComponent<ExMenu>(mainMenuEntity);
 	uiComp = registry.GetComponent<UIRenderComponents>(mainMenuEntity);
 	// Create UI and example menu
-	this->registry.AddComponent<UI>(mainMenuEntity);
-	UI* ui = registry.GetComponent<UI>(mainMenuEntity);
-	ui->SetupUI();
 	//*ui = UI();
 
 	exMenu->Setup(*ui);
-	ui->SetCurrentCanvas(exMenu->m_CurrentPage);
+	//ui->SetCurrentCanvas(exMenu->m_CurrentPage);
 	DrawGUI(this->registry, mainMenuEntity);
 
 
@@ -160,7 +161,7 @@ void Menu::Unload()
 		if (ui)
 		{
 			ExMenu* exMenu = registry.GetComponent<ExMenu>(entity);
-			exMenu->m_uiCanvas->Release();
+			exMenu->m_uiCanvas.Release();
 			ui->Release();
 		}
 	}

@@ -8,7 +8,7 @@
 // Expected to be saved in a pool pointer
 struct UIButton 
 {
-	UIComponent* m_uiComponent;
+	UIComponent m_uiComponent;
 	std::function<void()> onClick;			//On click function for a button
 	std::function<void()> onHover;			//On hover function for a button
 	//std::function<void()> onActive;		//incase we need for controllers
@@ -20,7 +20,7 @@ struct UIButton
 
 	//bool isActive;						//bool for checking if a Controller is "hovering" a button
 	UIButton() = default;
-	UIButton(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText,
+	void Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText,
 		std::function<void()> onClick, std::function<void()> onHover, /* std::function<void()> onActive, std::function<void()> onDeactive, */
 		DirectX::XMFLOAT2 position, /*bool isActive = false, */ DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
 		bool visibility = true, float opacity = 1.0f);

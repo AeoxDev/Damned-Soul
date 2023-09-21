@@ -2,8 +2,14 @@
 
 using namespace DirectX;
 
-UIButton::UIButton(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
+	m_uiComponent.SetPosition(position);
+	m_uiComponent.SetRotation(rotation);
+	m_uiComponent.SetScale(scale);
+	m_uiComponent.SetTransform(position, scale, rotation);
+	m_uiComponent.SetVisibility(visibility);
+
 	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
 
 	//Hover image is not necessarily needed
@@ -27,7 +33,7 @@ UIButton::UIButton(UI& ui, const std::string& imageFile, const std::string& hove
 
 void UIButton::Draw(UI& ui, ID2D1RenderTarget* rt)
 {
-	if (true == m_uiComponent->m_Visibility)
+	if (true == m_uiComponent.m_Visibility)
 	{
 		m_Images[m_CurrentImage].Draw(rt);
 		m_Text.Draw(ui);
@@ -69,7 +75,7 @@ void UIButton::Release()
 
 void UIButton::SetPosition(XMFLOAT2 position)
 {
-	m_uiComponent->SetPosition(position);
+	m_uiComponent.SetPosition(position);
 	m_Images[0].SetPosition(position);
 	m_Images[1].SetPosition(position);
 	m_Text.SetPosition(position);
@@ -77,7 +83,7 @@ void UIButton::SetPosition(XMFLOAT2 position)
 
 void UIButton::SetScale(XMFLOAT2 scale)
 {
-	m_uiComponent->SetScale(scale);
+	m_uiComponent.SetScale(scale);
 	m_Images[0].SetScale(scale);
 	m_Images[1].SetScale(scale);
 	m_Text.SetScale(scale);
@@ -85,7 +91,7 @@ void UIButton::SetScale(XMFLOAT2 scale)
 
 void UIButton::SetScale(float scale)
 {
-	m_uiComponent->SetScale(scale);
+	m_uiComponent.SetScale(scale);
 	m_Images[0].SetScale(scale);
 	m_Images[1].SetScale(scale);
 	m_Text.SetScale(scale);
@@ -93,7 +99,7 @@ void UIButton::SetScale(float scale)
 
 void UIButton::SetRotation(float rotation)
 {
-	m_uiComponent->SetRotation(rotation);
+	m_uiComponent.SetRotation(rotation);
 	m_Images[0].SetRotation(rotation);
 	m_Images[1].SetRotation(rotation);
 	m_Text.SetRotation(rotation);

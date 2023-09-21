@@ -4,12 +4,13 @@
 #include "UIRenderer.h"
 #include "UICanvas.h"
 
+
 UI::UI()
 {
 	
 }
 
-void UI::SetupUI()
+void UI::Setup()
 {
 	HRESULT hr;
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_Factory);
@@ -98,8 +99,8 @@ void UI::Release()
 void UI::Render(UI& ui)
 {
 	BeginFrame();
-	if (currentCanvas == nullptr)
-		currentCanvas->Render(ui);
+	/*if (m_CurrentCanvas == nullptr)
+		m_CurrentCanvas->Render(ui);*/
 
 	EndFrame();
 }
@@ -178,8 +179,8 @@ ID2D1SolidColorBrush*& UI::GetYellowBrush()
 //	m_CurrentCanvas = canvas;
 //}
 
-void UI::SetCurrentCanvas(UICanvas& canvas)
-{
-	currentCanvas = &canvas;
-}
+//void UI::SetCurrentCanvas(UICanvas& canvas)
+//{
+//	m_CurrentCanvas = &canvas;
+//}
 

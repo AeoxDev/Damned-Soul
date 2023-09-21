@@ -5,11 +5,8 @@
 
 struct ExMenu
 {
-private:
 	ML_Map<ML_String, UICanvas> m_Pages;
-	UICanvas* m_uiCanvas;
-
-	PoolMap<std::string, UICanvas> m_Pages;
+	UICanvas m_uiCanvas;
 
 	UICanvas m_CurrentPage;
 
