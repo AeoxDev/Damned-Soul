@@ -284,7 +284,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_
 	{
 	case RENDER_TARGET_VIEW:
 		srvHolder->srv_resource_arr[currentIdx] = rtvHolder->tx_arr[idx];
-		hr = d3d11Data->device->CreateShaderResourceView(rtvHolder->tx_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[currentIdx], NULL, &srvHolder->srv_arr[currentIdx]);
 		if (FAILED(hr))
 		{
 			std::cerr << "Failed to create Shader Resource View from a Render Target View!" << std::endl;
@@ -293,7 +293,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_
 		break;
 	case SHADER_RESOURCE_VIEW:
 		srvHolder->srv_resource_arr[currentIdx] = srvHolder->srv_resource_arr[idx];
-		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[idx], NULL, &srvHolder->srv_arr[currentIdx]);
+		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_arr[currentIdx], NULL, &srvHolder->srv_arr[currentIdx]);
 		if (FAILED(hr))
 		{
 			std::cerr << "Failed to create Shader Resource View from another Shader Resource View!" << std::endl;
