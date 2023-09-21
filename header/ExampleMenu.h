@@ -1,11 +1,12 @@
 #pragma once
 #include "UICanvas.h"
-#include "PoolUtility.hpp"
+#include "MemLib\ML_Map.hpp"
+#include "MemLib\ML_String.hpp"
 
 class ExMenu : public UICanvas
 {
 private:
-	PoolMap<std::string, UICanvas> m_Pages;
+	ML_Map<ML_String, UICanvas> m_Pages;
 
 	PoolPointer<UICanvas> m_CurrentPage;
 

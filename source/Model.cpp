@@ -98,8 +98,7 @@ bool Model::Load(const char* filename)
 
 void Model::Free()
 {
-	if (false == m_bonelessModel.IsNullptr())
-		MemLib::pfree(m_bonelessModel);
+	MemLib::pfree(m_bonelessModel);
 }
 
 

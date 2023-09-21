@@ -14,6 +14,16 @@ void ExMenu::Update(float dt) //Logic for updating current pages and
 void ExMenu::Setup(PoolPointer<UI>& ui)
 {
 	*(this) = ExMenu();
+
+	m_Exit = false;
+	m_Buttons = ML_Vector<UIButton>();
+	//std::map<const std::string, PoolPointer<UIImage>> m_Images;
+	m_Images = ML_Map<const std::string, UIImage>();
+	//std::map<const std::string, UIImage*> m_Images;
+	m_Texts = ML_Map<const std::string, UIText>();
+	//std::map<const std::string, UIText> m_Texts;
+
+	//
 	AddImage(ui, "Title", "ExMenu/ExTitle.png", { (sdl.WIDTH / 2.0f) - 250.0f, 100.0f }, { 3.0f, 3.0f });
 	AddImage(ui, "Eye", "ExMenu/Eye.png", { 50.0f, 50.0f }, { 1.5f, 1.5f });
 	AddImage(ui, "Eye2", "ExMenu/Eye.png", { sdl.WIDTH - 68.0f, 50.0f }, { 1.5f, 1.5f });
