@@ -36,6 +36,7 @@ namespace Particles
 
 	void SwitchInputOutput();
 	void InitializeParticles();
+	void ReleaseParticles();
 
 	//Calls for D3D11Helper to set the compute shader and the resources it requires
 	void PrepareParticleCompute();
