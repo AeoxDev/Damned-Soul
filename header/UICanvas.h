@@ -4,8 +4,9 @@
 #include "UIButton.h"
 #include "UIImage.h"
 #include "UIText.h"
-#include "PoolUtility.hpp"
+//#include "PoolUtility.hpp"
 #include "MemLib\ML_Vector.hpp"
+#include "MemLib\ML_Map.hpp"
 #include <DirectXMath.h>
 
 struct UICanvas
@@ -14,9 +15,9 @@ struct UICanvas
 
 	ML_Vector<UIButton> m_Buttons;
 	//std::map<const std::string, PoolPointer<UIImage>> m_Images;
-	PoolMap<const std::string, UIImage> m_Images;
+	ML_Map<const std::string, UIImage> m_Images;
 	//std::map<const std::string, UIImage*> m_Images;
-	PoolMap<const std::string, UIText> m_Texts;
+	ML_Map<const std::string, UIText> m_Texts;
 	//std::map<const std::string, UIText> m_Texts;
 
 	void DrawButtons(UI& ui, ID2D1RenderTarget* renderTarget);

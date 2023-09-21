@@ -52,7 +52,7 @@ public:
 
 		// Free the old pool pointer and allocate a new one
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(capacity);
+		m_data = MemLib::palloc(capacity * m_tSize);
 
 		// Copy the data over to the new location and pop the temp from the stack
 		std::memcpy(&(*m_data), temp, m_capacity * m_tSize);
@@ -65,7 +65,6 @@ public:
 	// Clear the vector
 	void clear()
 	{
-		// No need to actually clear data, just setting the size to 0 is enough
 		m_size = 0;
 	}
 
@@ -75,7 +74,8 @@ public:
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
 		if (m_capacity <= m_size + 1)
 		{
-			reserve(m_capacity * 2);
+			// Branchlessly add 4 to the capacity if it is zero
+			reserve(m_capacity * 2 + (m_capacity == 0));
 		}
 
 		// Set data at location
@@ -122,7 +122,7 @@ public:
 
 	T& operator[](const uint32_t& idx)
 	{
-		if (idx < 0 || m_size <= idx)
+		if (m_size <= idx)
 		{
 			throw std::out_of_range("Index provided for ML_Vector is out of range!");
 			std::terminate();
@@ -133,15 +133,16 @@ public:
 
 	ML_Vector& operator=(const ML_Vector& other)
 	{
-		if (false == m_data.IsNullptr())
-			MemLib::pfree(m_data);
-		m_data = other.m_data;
-		m_capacity = other.m_capacity;
+		// Update size and capacity
 		m_size = other.m_size;
 		m_tSize = other.m_tSize;
+		m_capacity = other.m_capacity;
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(other.m_capacity * other.m_tSize);
 
+		std::memcpy(m_data, other.m_data, m_tSize * m_size);
 		return *this;
-	}
+	};
 
 	// Initiate an ML_Vector<T> with a number of T objects, can be called as such to emulate normal C++ style coding
 	// ML_Vector<T>() = { args };
@@ -153,8 +154,19 @@ public:
 		m_tSize = sizeof(T);
 
 		// Allocate to memory pool
-		if (false == m_data.IsNullptr())
-			MemLib::pfree(m_data);
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(m_capacity * m_tSize);
+	};
+
+	const ML_Vector& Initialize()
+	{
+		// Set capacity
+		m_capacity = 4;
+		// Set the individual item size
+		m_tSize = sizeof(T);
+
+		// Allocate to memory pool
+		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 	};
 
@@ -169,8 +181,7 @@ public:
 		m_tSize = sizeof(T);
 
 		// Allocate to memory pool
-		if (false == m_data.IsNullptr())
-			MemLib::pfree(m_data);
+		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 
 		// Set items
@@ -180,5 +191,10 @@ public:
 			push_back(item);
 			//ZeroMemory(item, sizeof(item));
 		}
+	};
+
+	~ML_Vector()
+	{
+		MemLib::pfree(m_data);
 	};
 };
