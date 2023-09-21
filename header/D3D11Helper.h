@@ -57,12 +57,21 @@ enum LAYOUT_DESC
 {
 	DEFAULT,
 	SKELETAL,
-	SCREEN
+	SCREEN,
+	PARTICLE
 };
+
+enum TOPOLOGY
+{
+	TRIANGLELIST,
+	POINTLIST
+};
+
 
 typedef int16_t TX_IDX;
 typedef int8_t	PS_IDX;
 typedef int8_t	VS_IDX;
+typedef int8_t	GS_IDX;
 typedef int8_t	CS_IDX;
 typedef int16_t CB_IDX;
 typedef int16_t VB_IDX;
@@ -75,11 +84,11 @@ typedef int8_t UAV_IDX;
 typedef int8_t	RS_IDX;
 typedef int8_t SMP_IDX;
 
-
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
 // Set a material
 bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOURCE& shader);
+
 
 // Create a Sampler
 SMP_IDX CreateSamplerState();
@@ -101,18 +110,28 @@ bool SetVertexShader(const VS_IDX idx);
 CS_IDX LoadComputeShader(const char* name);
 // Set a new compute shader by index
 bool SetComputeShader(const CS_IDX idx);
+// Sets compute shader to null
+bool ResetComputeShader();
+
+// Load a Geometry Shader by name (cs.cso) and return a global index that can be used to reference it
+GS_IDX LoadGeometryShader(const char* name);
+// Set a new geometry shader by index
+bool SetGeometryShader(const GS_IDX idx);
+// Sets geometry shader to null
+bool ResetGeometryShader();
+
 
 
 // Create a constant buffer with provided data and return a unique index to it
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot);
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const uint8_t slot);
 // Set an active constant buffer by index (shader and slot data contained in buffer)
-bool SetConstantBuffer(const CB_IDX idx);
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto);
 //Overload that sets slot to NULL before setting buffer, for particles
-bool SetConstantBuffer(const CB_IDX idx, bool particles);
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, bool particles);
 // Update a constant buffer by index with given data
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
 // Update the world matrix, there needs to be only one
-void UpdateWorldMatrix(const void* data);
+void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto);
 
 
 // Create a Vertex Buffer with provided data and return a unique index to it
@@ -134,8 +153,10 @@ VP_IDX CreateViewport(const size_t& width, const size_t& height);
 // Set an active viewport
 bool SetViewport(const VP_IDX idx);
 
+// Creates the backbuffer from swapchain
+RTV_IDX CreateBackBuffer();
 // Create a render target view
-RTV_IDX CreateRenderTargetView();
+RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height);
 
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
@@ -143,29 +164,32 @@ DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_ds);
 
 
-
-//NOTE TODO: MAKE A FIX FOR CREATESRV AND CREATEUAV (THEY CAN NOT HAVE MULTIPLE BINDFLAGS THEY ARE HARDCODED)
-// Create a shader resource view, if a buffer is to be created send in an empty string
-SRV_IDX CreateShaderResourceView(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
+// Create a shader resource view that holds a buffer
+SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, const int amount, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
+// Create a shader resource view that holds a texture
+// Currently only supports Texture2D, support for other formats will be implemented if needed
+SRV_IDX CreateShaderResourceViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height, const uint8_t slot);
+// Overload to create a Shader Resource View with an already existing texture from another resource
+SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS sourceResource, const uint8_t slot);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx);
 //Overload that sets slot to NULL before setting SRV, for particles
 bool UnloadShaderResourceView(const SRV_IDX idx);
-// Update a shader resource view index with given data
-bool UpdateShaderResourceView(const SRV_IDX, const void* data);
+
 // Copies the data in a SRV to a vertex buffer, for particles
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source);
 
-// Create a unordered access view, if a buffer is to be created send in an empty string
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const RESOURCES &resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
-// Overload for when a resource is already created for and SRV
-UAV_IDX CreateUnorderedAcessView(const void* data, const size_t size, const SRV_IDX SRVIndex, const uint8_t slot);
+// Create a shader resource view that holds a buffer
+SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
+// Overload to create a Unordered Access View with an already existing buffer from a Shader Resource View
+SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx, const uint8_t slot);
+// Create a shader resource view that holds a texture 
+// NOT DEFINED, WILL BE DEFINED IF NEEDED
+SRV_IDX CreateUnorderedAccessViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height, const uint8_t slot);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx);
 //Overload that sets slot to NULL before setting UAV, for particles
 bool UnloadUnorderedAcessView(const UAV_IDX idx);
-// Update a unordered access view index with given data
-//bool UpdateUnorderedAcessView(const UAV_IDX, const void* data);
 
 
 // Clear the render target
@@ -176,3 +200,4 @@ void ClearDepthStencilView(const DSV_IDX idx);
 RS_IDX CreateRasterizerState(const bool cull, const bool solid);
 bool SetRasterizerState(const RS_IDX idx);
 
+void SetTopology(TOPOLOGY topology);

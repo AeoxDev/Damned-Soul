@@ -2,6 +2,28 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
+    <FxCompile Include="resource\shader\ParticleGS.hlsl" />
+    <FxCompile Include="resource\shader\ParticlePS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleVS.hlsl" />
+    <FxCompile Include="resource\shader\PixelVertex.hlsl" />
+    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
+    <FxCompile Include="resource\shader\TestPS.hlsl" />
+    <FxCompile Include="resource\shader\TestVS.hlsl" />
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\D3D11Helper">
+      <UniqueIdentifier>{fe3ca8f1-fe5f-4bfe-89a4-a7fd42d91e0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -37,7 +59,7 @@
     <ClCompile Include="source\ConfigInterpreter.cpp" />
     <ClCompile Include="source\ConfigManager.cpp" />
     <ClCompile Include="source\ConvexCollision.cpp" />
-    <ClCompile Include="source\D3D11Graphics.cpp" />
+    <ClCompile Include="source\D3D11Helper\D3D11Graphics.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11BufferHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11RenderHelper.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11ShaderHelper.cpp" />
@@ -80,7 +102,6 @@
     <ClInclude Include="header\Physics\Backend\GeometryIndependent.h" />
     <ClInclude Include="header\Physics\CollisionFunctions.h" />
     <ClInclude Include="header\Physics\Hitbox.h" />
-    <ClInclude Include="header\Hitbox.h" />
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\ButtonManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
@@ -101,9 +122,7 @@
     <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="source\Colission.cpp" />
     <ClInclude Include="source\States.h" />
-    <ClInclude Include="header\MemLib\ML_Array.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />

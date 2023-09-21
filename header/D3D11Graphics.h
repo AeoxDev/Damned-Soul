@@ -13,21 +13,12 @@ struct D3D11Data
 
 };
 
-struct TextureHolder
-{
-#define TX_HOLD_LIM 64
-	uint16_t					currentCount = 0; // How many textures are currently loaded
-	uint64_t					hash_arr[TX_HOLD_LIM]; // Used to check if Texture has already been loaded
-	Image						img_arr[TX_HOLD_LIM]; // Unnessecary?
-	ID3D11Texture2D*			tx_arr[TX_HOLD_LIM]; // Used to store the Textures, Unnessecary?
-	ID3D11ShaderResourceView*	srv_arr[TX_HOLD_LIM]; // Ysed to store the Shader Resource Views for the textures
-};
-
-struct SamplerStateHolder
+struct GeometryShaderHolder
 {
 	uint8_t currentCount = 0;
-	ID3D11SamplerState* smp_arr[4];
+	ID3D11GeometryShader* gs_arr[16];
 };
+
 
 struct PixelShaderHolder
 {
@@ -51,6 +42,22 @@ struct ComputeShaderHolder
 	ID3D11ComputeShader*	cs_arr[CS_HOLD_LIM];
 };
 
+struct TextureHolder
+{
+#define TX_HOLD_LIM 64
+	uint16_t					currentCount = 0; // How many textures are currently loaded
+	uint64_t					hash_arr[TX_HOLD_LIM]; // Used to check if Texture has already been loaded
+	Image						img_arr[TX_HOLD_LIM]; // Unnessecary?
+	ID3D11Texture2D* tx_arr[TX_HOLD_LIM]; // Used to store the Textures, Unnessecary?
+	ID3D11ShaderResourceView* srv_arr[TX_HOLD_LIM]; // Ysed to store the Shader Resource Views for the textures
+};
+
+struct SamplerStateHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11SamplerState* smp_arr[4];
+};
+
 struct BufferHolder
 {
 #define BUFF_HOLD_LIM 512
@@ -70,6 +77,7 @@ struct RTVHolder
 {
 #define RTV_HOLD_LIM 8
 	uint8_t					currentCount = 0;
+	ID3D11Texture2D*		tx_arr[RTV_HOLD_LIM]; // Needs a texture for the depth stencil as well
 	ID3D11RenderTargetView*	rtv_arr[RTV_HOLD_LIM]; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
 };
 
@@ -112,6 +120,7 @@ extern TextureHolder* txHolder;
 extern SamplerStateHolder* smpHolder;
 extern PixelShaderHolder* pixHolder;
 extern VertexShaderHolder* vrtHolder;
+extern GeometryShaderHolder* geoHolder;
 extern ComputeShaderHolder* comHolder;
 extern BufferHolder* bfrHolder;
 extern ViewPortHolder* vpHolder;
@@ -130,3 +139,18 @@ int SetupDirectX(HWND& window);
 
 // Frees DirectX related memory
 void EndDirectX();
+
+
+enum TEXTURE_HOLDER_TYPE
+{
+	TEXTURE,
+	SHADER_RESOURCE_VIEW,
+	RENDER_TARGET_VIEW,
+	UNORDERED_ACCESS_VIEW
+};
+union IDX_UNION
+{
+	int8_t TX;
+	int16_t VIEWS;
+};
+void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, IDX_UNION idx);

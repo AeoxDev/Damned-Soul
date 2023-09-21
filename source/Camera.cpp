@@ -35,12 +35,15 @@ struct CameraConstantBuffer
 PoolPointer<CameraStruct> GameCamera;
 PoolPointer<CameraConstantBuffer> BufferData;
 
+int orthWidth, orthHeight;
+
 void Camera::SetPosition(const float x, const float y, const float z)
 {
-	
 	GameCamera->m_position.x = x;
 	GameCamera->m_position.y = y;
 	GameCamera->m_position.z = z;
+
+	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
 
 void Camera::SetLookAt(const float x, const float y, const float z)
@@ -69,11 +72,23 @@ void Camera::SetFOV(const float radians)
 	GameCamera->m_FOV = radians;
 }
 
+void Camera::SetWidth(const int width)
+{
+	orthWidth = width;
+}
+
+void Camera::SetHeight(const int height)
+{
+	orthHeight = height;
+}
+
 void Camera::AdjustPosition(const float x, const float y, const float z)
 {
 	GameCamera->m_position.x += x;
 	GameCamera->m_position.y += y;
 	GameCamera->m_position.z += z;
+
+	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
 
 void Camera::AdjustLookAt(const float x, const float y, const float z)
@@ -170,7 +185,7 @@ void Camera::UpdateProjection()
 	else
 	{
 		DirectX::XMMATRIX orth;
-		orth = DirectX::XMMatrixOrthographicLH((float)sdl.WIDTH, (float)sdl.HEIGHT, 0.1f, 50.f);
+		orth = DirectX::XMMatrixOrthographicLH((float)orthWidth, (float)orthHeight, 0.1f, 50.f);
 		DirectX::XMStoreFloat4x4(&GameCamera->m_orthographic, orth);
 		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(orth));
 	}
@@ -210,7 +225,7 @@ void Camera::InitializeCamera()
 	//Prepare the buffer to creation
 	//Update camera pos, view and projection
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f);
-	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 1);
+	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer), 1);
 	UpdateView();
 	UpdateProjection();
 	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));

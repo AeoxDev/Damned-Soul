@@ -7,6 +7,7 @@ struct PS_INPUTS
     float4 screenPos : SCREEN_POS;
 };
 
+
 float4 main(PS_INPUTS input) : SV_TARGET
 {
     float4 pos = input.screenPos;

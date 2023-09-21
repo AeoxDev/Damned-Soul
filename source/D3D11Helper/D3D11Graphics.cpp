@@ -15,6 +15,7 @@ TextureHolder* txHolder;
 SamplerStateHolder* smpHolder;
 PixelShaderHolder* pixHolder;
 VertexShaderHolder* vrtHolder;
+GeometryShaderHolder* geoHolder;
 ComputeShaderHolder* comHolder;
 BufferHolder* bfrHolder;
 ViewPortHolder* vpHolder;
@@ -53,7 +54,6 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	swapChainDesc.Flags = 0;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &d3d11Data->swapChain, &d3d11Data->device, NULL, &d3d11Data->deviceContext);
-
 	if (FAILED(hr))
 	{
 		std::cout << "Failed to create device and swap chain!" << std::endl;
@@ -64,6 +64,7 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 }
 
 #define FAIL_MSG { std::cerr << "Failed to set up D3D11!" << std::endl; return -1; }
+
 
 int SetupDirectX(HWND& w)
 {
@@ -95,6 +96,7 @@ int SetupDirectX(HWND& w)
 	//uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
+	PUSH_AND_INITIALIZE(geoHolder, GeometryShaderHolder);
 
 	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
 		FAIL_MSG

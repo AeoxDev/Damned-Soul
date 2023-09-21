@@ -4,6 +4,10 @@ Texture2D emissionTex : register(t2);
 
 SamplerState WrapSampler : register(s0);
 
+
+
+
+
 struct VS_OUT
 {
 	float4 position : SV_POSITION;
@@ -14,7 +18,10 @@ struct VS_OUT
 
 
 
+
 float4 main(VS_OUT input) : SV_TARGET
 {
 	return albedoTex.Sample(WrapSampler, input.uv);
 }
+   
+    

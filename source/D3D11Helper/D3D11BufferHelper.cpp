@@ -6,7 +6,7 @@
 
 ID3D11Buffer* bfr_NULL = NULL;
 
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot)
+CB_IDX CreateConstantBuffer(const void* data, const size_t size, const uint8_t slot)
 {
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -31,7 +31,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO
 	}
 
 	uint32_t* metadata = bfrHolder->metadata_arr[currentIdx];
-	metadata[0] = bindto; // Set shader to bind
+	//metadata[0] = bindto; // Set shader to bind
 	metadata[1] = slot; // Set slot to use
 	metadata[2] = (uint32_t)size;
 
@@ -40,13 +40,13 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const SHADER_TO
 }
 
 
-bool SetConstantBuffer(const CB_IDX idx)
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto)
 {
 	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
-	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
+	//SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
 	uint8_t slot = bfrHolder->metadata_arr[idx][1];
 
-	switch (whichShader)
+	switch (bindto)
 	{
 	case BIND_VERTEX:
 		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
@@ -75,13 +75,13 @@ bool SetConstantBuffer(const CB_IDX idx)
 	return true;
 }
 
-bool SetConstantBuffer(const CB_IDX idx, bool particles)
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, bool particles)
 {
 	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
-	SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
+	//SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
 	uint8_t slot = bfrHolder->metadata_arr[idx][1];
 
-	switch (whichShader)
+	switch (bindto)
 	{
 	case BIND_VERTEX:
 		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfr_NULL);
@@ -145,14 +145,14 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 }
 
 
-void UpdateWorldMatrix(const void* data)
+void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 {
 	static CB_IDX constantBufferIdx = -1;
 	if (constantBufferIdx == -1)
 	{
 		DirectX::XMMATRIX emptyWorld;
-		constantBufferIdx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld), BIND_VERTEX, 0);
-		SetConstantBuffer(constantBufferIdx);
+		constantBufferIdx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld), 0);
+		SetConstantBuffer(constantBufferIdx, bindto);
 	}
 		
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -246,6 +246,7 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 
 	return bfrHolder->currentCount++;
 }
+
 // Set an active Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx)
 {
