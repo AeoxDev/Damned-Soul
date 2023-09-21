@@ -18,8 +18,8 @@ cbuffer metadata : register(b0)
     float3 startPosition;
 };
 
-StructuredBuffer<input> inputParticleData : register(t0);
-RWStructuredBuffer<input> outputParticleData : register(u0);
+StructuredBuffer<Input> inputParticleData : register(t0);
+RWStructuredBuffer<Input> outputParticleData : register(u0);
 
 [numthreads(1, 1, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
