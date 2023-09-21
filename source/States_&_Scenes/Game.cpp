@@ -12,7 +12,7 @@ Model dogModel;
 void Game::Update()
 {
 	if (-1 == dogModel.m_indexBuffer)
-		dogModel.Load("HellhoundDummy_PH.mdl");
+		dogModel.Load("PlaceholderScene.mdl");
 
 	float move[2] = { 0, 0 };
 

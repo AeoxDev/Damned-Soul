@@ -410,6 +410,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
+    <Natvis Include="resource\NatVis\model_vis.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,19 +7,33 @@
 #include "GameRenderer.h"
 #include "STB_Helper.h"
 
+#define SANE_MODEL_VALIDATION_NUMBER (1'234'567'890)
+const bool ModelBoneless::ValidByteData() const
+{
+	return m_sanityCheckNumber == SANE_MODEL_VALIDATION_NUMBER;
+}
+
+const SubMesh& ModelBoneless::GetSubMesh(const size_t idx) const
+{
+	return ((SubMesh*)m_data)[idx];
+}
+
+#define SUBMESH_BYTE_SIZE (m_numSubMeshes * sizeof(SubMesh))
 const Material& ModelBoneless::GetMaterial(const size_t idx) const
 {
-	return ((Material*)m_data)[idx];
+	return ((Material*)(m_data[SUBMESH_BYTE_SIZE]))[idx];
 }
 
+#define MATERIAL_BYTE_SIZE (m_numMaterials * sizeof(Material))
 const VertexBoneless* ModelBoneless::GetVertices() const
 {
-	return (VertexBoneless*)(&m_data[m_numMaterials * sizeof(Material)]);
+	return (VertexBoneless*)(&m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE]);
 }
 
+#define VERTEX_BYTE_SIZE (m_numVertices * sizeof(VertexBoneless))
 const uint32_t* ModelBoneless::GetIndices() const
 {
-	return (uint32_t*)(&m_data[m_numMaterials * sizeof(Material) + m_numVertices * sizeof(VertexBoneless)]);
+	return (uint32_t*)(&m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + VERTEX_BYTE_SIZE]);
 }
 
 
@@ -52,16 +66,24 @@ bool Model::Load(const char* filename)
 	m_bonelessModel = MemLib::palloc(size);
 	std::memcpy(&(*m_bonelessModel), modelData, size);
 
+	if (false == m_bonelessModel->ValidByteData())
+	{
+		std::cerr << "Failed to load model \"" << filename << "\" correctly! Likely endian error!" << std::endl;
+		return false;
+	}
+
 	// pop the stack
 	MemLib::spop();
 
 	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->GetVertices(), sizeof(VertexBoneless), m_bonelessModel->m_numVertices, USAGE_IMMUTABLE);
 	m_indexBuffer = CreateIndexBuffer(m_bonelessModel->GetIndices(), sizeof(uint32_t), m_bonelessModel->m_numIndices);
 
+	const ModelBoneless& visCopy = *m_bonelessModel;
+
 	for (unsigned int i = 0; i < m_bonelessModel->m_numMaterials; ++i)
 	{
 		// Same operation as GetMaterial(size_t), but not const
-		Material& mat = ((Material*)m_bonelessModel->m_data)[i];
+		Material& mat = ((Material*)(m_bonelessModel->m_data[m_bonelessModel->m_numSubMeshes * sizeof(SubMesh)]))[i];
 		// Load colors
 		mat.albedoIdx = LoadTexture(mat.albedo);
 		// Load normal map

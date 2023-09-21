@@ -6,8 +6,14 @@ struct VertexBoneless
 {
 	float m_position[4];
 	float m_normal[4];
-	uint32_t m_material;
 	float m_uv[2];
+};
+
+struct SubMesh
+{
+	uint16_t m_material = 0;
+	uint32_t m_start = 0;
+	uint32_t m_end = 0;
 };
 
 struct Material
@@ -25,21 +31,20 @@ struct Material
 
 struct ModelBoneless
 {
+	uint32_t m_sanityCheckNumber;
+	uint32_t m_numSubMeshes;
 	uint32_t m_numMaterials;
 	uint32_t m_numVertices;
 	uint32_t m_numIndices;
 	char m_data[];//Array is intentional, ignore warning
 
+	const bool ValidByteData() const;
+	const SubMesh& GetSubMesh(const size_t idx) const;
 	const Material& GetMaterial(const size_t idx) const;
 	const VertexBoneless* GetVertices() const;
 	const uint32_t* GetIndices() const;
+	void RenderInFull() const;
 };
-
-//struct ModelIndices
-//{
-//	uint32_t m_numIndices;
-//	uint32_t m_indices[];
-//};
 
 struct Model
 {
