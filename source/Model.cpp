@@ -1,12 +1,12 @@
 #include "Model.h"
 #include <iostream>
 #include <fstream>
-#include <string>
 #include "MemLib\MemLib.hpp"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 #include "STB_Helper.h"
 #include "D3D11Helper.h"
+#include "MemLib\ML_String.hpp"
 
 #define SANE_MODEL_VALIDATION_NUMBER (1'234'567'890)
 const bool ModelBoneless::ValidByteData() const
@@ -40,12 +40,12 @@ const uint32_t* ModelBoneless::GetIndices() const
 
 bool Model::Load(const char* filename)
 {
-	std::string name = "Models\\Mdl\\";
+	ML_String name = "Models\\Mdl\\";
 	name.append(filename);
 
 	std::ifstream reader;
 	auto flags = std::ios::binary; // | std::ios::ate;
-	reader.open(name, flags);
+	reader.open(name.c_str(), flags);
 
 	if (false == reader.is_open())
 	{
