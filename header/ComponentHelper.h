@@ -1,6 +1,7 @@
 #pragma once
 
 #include "D3D11Graphics.h"
+#include <DirectXMath.h>
 
 #include "Relics.h"
 
@@ -14,25 +15,109 @@ Weapon (move attack speed and damage variables here? depends how we want to do t
 StaticHazard (damage)
 */
 
-//
+//TEEEEMP
+struct ConstantBuffer
+{
+	ID3D11Buffer* m_buffer;
+	size_t m_bufferSize = 0;
+
+	ConstantBuffer() = default;
+
+	//You're welcome herman ehe
+	void Init(ID3D11Device* device, void* data, size_t byteSize)
+	{
+		m_bufferSize = byteSize;
+
+		D3D11_BUFFER_DESC desc = {};
+		desc.ByteWidth = byteSize;
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
+
+		D3D11_SUBRESOURCE_DATA srd = {};
+		srd.pSysMem = data;
+		srd.SysMemPitch = 0;
+		srd.SysMemSlicePitch = 0;
+
+		//Do something like HRESULT or assert here?
+		device->CreateBuffer(&desc, &srd, &m_buffer);
+	}
+	void Update(ID3D11DeviceContext* context, void* data)
+	{
+		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+		HRESULT hr = context->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+		if (FAILED(hr))
+		{
+			MessageBox(NULL, L"Failed to map resource!", L"Error", MB_OK);
+			return;
+		}
+		memcpy(mappedResource.pData, data, m_bufferSize);
+
+		context->Unmap(m_buffer, 0);
+	}
+};
+
+//Temporary graphics component gibberish that needs to work with however the rest of graphics stuff is set up so this is all super temp
 struct GraphicsComponent
 {
-	/*sf::RectangleShape body;
+	//Defaults
+	DirectX::XMFLOAT3 m_scale = {1.0f, 1.0f, 1.0f};
+	DirectX::XMFLOAT3 m_rotate = {0.0f, 0.0f, 0.0f};
+	DirectX::XMFLOAT3 m_translate = {0.0f, 0.0f, 0.0f};
 
-	GraphicsComponent(int posX, int posY, int width, int height, sf::Color color)
+	//Container/descriptor for the transform
+	struct WorldTransform
 	{
-		body.setPosition((float)posX, (float)posY);
-		body.setSize(sf::Vector2f((float)width, (float)height));
-		body.setFillColor(color);
-	}*/
+		DirectX::XMFLOAT4X4 scale;
+		DirectX::XMFLOAT4X4 rotate;
+		DirectX::XMFLOAT4X4 translate;
+	};
+	WorldTransform m_transform;
 
+	//Ababa
+	ConstantBuffer m_constantBuffer;
 
+	//ConstructoRR (ehe do Initialize()-function instead maybe)
+	GraphicsComponent(ID3D11Device* device, float posX, float posY, float posZ)
+	{
+		m_translate = { posX, posY, posZ }; //Alternatively pass in an XMFLOAT3 in the constructor? (ehe do Initialize()-functions instead)
+		
+		//Store all the stuff into the m_transform
+		DirectX::XMStoreFloat4x4(&m_transform.scale, DirectX::XMMatrixTranspose(
+			DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z)
+		));
+		DirectX::XMStoreFloat4x4(&m_transform.rotate, DirectX::XMMatrixTranspose(
+			DirectX::XMMatrixRotationX(m_rotate.x) * DirectX::XMMatrixRotationY(m_rotate.y) * DirectX::XMMatrixRotationZ(m_rotate.z)
+		));
+		DirectX::XMStoreFloat4x4(&m_transform.translate, DirectX::XMMatrixTranspose(
+			DirectX::XMMatrixTranslation(m_translate.x, m_translate.y, m_translate.z)
+		));
 
+		//Init constant buffer using the transform
+		m_constantBuffer.Init(device, &m_transform, sizeof(m_transform));
+
+		//Submesh stuff? Idk I have no idea how the rest of graphics stuff is handled here
+	}
+
+	//Guhhh..?
+	void EditTranslation(float x, float y, float z)
+	{
+		m_translate.x += x;
+		m_translate.y += y;
+		m_translate.z += z;
+
+		DirectX::XMStoreFloat4x4(&m_transform.translate, DirectX::XMMatrixTranspose(
+			DirectX::XMMatrixTranslation(m_translate.x, m_translate.y, m_translate.z)
+		));
+	}
 };
 
 //Temporary component for player
 #define MAX_RELICS 8
-struct PlayerComponent
+struct TempPlayerComponent
 {
 #define MAX_LENGTH 16
 
@@ -45,7 +130,7 @@ struct PlayerComponent
 	float defense = 0.0f; //percentage
 	float speed = 0.25f;
 
-	PlayerComponent(const char name_in[MAX_LENGTH], const int hp) :hp(hp)
+	TempPlayerComponent(const char name_in[MAX_LENGTH], const int hp) :hp(hp)
 	{
 		std::memcpy(name, name_in, MAX_LENGTH);
 	}
