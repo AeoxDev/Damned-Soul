@@ -7,7 +7,7 @@
 #include <Windows.h>
 
 #include "MemLib/MemLib.hpp"
-//#include "ComponentHelper.h"
+#include "ComponentHelper.h"
 
 /*
 	//HOW TO USE (Basic version):
@@ -259,12 +259,18 @@ public:
 
 		bool operator==(const Iterator& other) const
 		{
-			return entityIndex == other.entityIndex || entityIndex == pRegistry->entities.size();
+			return entityIndex == other.entityIndex || entityIndex == (int)pRegistry->entities.size();
 		}
 
 		bool operator!=(const Iterator& other) const
 		{
-			return entityIndex != other.entityIndex && entityIndex != pRegistry->entities.size();
+			return entityIndex != other.entityIndex && entityIndex != (int)pRegistry->entities.size();
+		}
+
+		bool ValidIndex() const
+		{
+			return EntityGlobals::IsEntityValid(pRegistry->entities[entityIndex].id) &&
+				(components == (components & pRegistry->entities[entityIndex].components)); //Bitwise "and", checks to see that the things on either side of & are the same
 		}
 
 		Iterator& operator++()
@@ -273,9 +279,11 @@ public:
 			do
 			{
 				entityIndex++;
-			} while (entityIndex < pRegistry->entities.size() &&
-				!EntityGlobals::IsEntityValid(pRegistry->entities[entityIndex].id) &&
-				components != (components & pRegistry->entities[entityIndex].components)); //Bitwise "and", checks to see that the things on either side of & are the same, https://www.youtube.com/watch?v=HoQhw6_1NAA I can't believe he does it again		
+			} while (entityIndex < (int)pRegistry->entities.size() && !ValidIndex()); //Way cleaner ngl
+			//Previously:
+			/*while (entityIndex < (int)pRegistry->entities.size() &&
+				!(EntityGlobals::IsEntityValid(pRegistry->entities[entityIndex].id) &&
+					(components == (components & pRegistry->entities[entityIndex].components))));*/
 			return *this;
 		}
 
@@ -287,7 +295,7 @@ public:
 	const Iterator begin() const
 	{
 		int first = 0;
-		while (first < pRegistry->entities.size() &&
+		while (first < (int)pRegistry->entities.size() &&
 			(components != (components & pRegistry->entities[first].components) || !EntityGlobals::IsEntityValid(pRegistry->entities[first].id)))
 			first++;
 		return Iterator(pRegistry, first, components);
