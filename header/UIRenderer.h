@@ -1,6 +1,7 @@
 #pragma once
 #include <dxgi.h>
 #include "D3D11Helper.h"
+#include "EntityFramework.h"
 #include "UI.h"
 
 struct UIRenderComponents
@@ -15,9 +16,8 @@ struct UIRenderComponents
 };
 
 extern IDXGISurface* UISurface;
-extern UIRenderComponents UIComponents;
 
-bool SetupUIRenderer();
+bool SetupUIRenderer(UIRenderComponents*& inOut);
 void ReleaseUIRenderer();
-void UpdateUI(PoolPointer<UI> ui);
-void RenderUI();
+void DrawGUI(Registry& registry, EntityID& entity);
+void RenderUI(UIRenderComponents*& uiComp);

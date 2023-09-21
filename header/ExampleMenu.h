@@ -2,23 +2,24 @@
 #include "UICanvas.h"
 #include "PoolUtility.hpp"
 
-class ExMenu : public UICanvas
+struct ExMenu
 {
-private:
+	UICanvas* m_uiCanvas;
+
 	PoolMap<std::string, UICanvas> m_Pages;
 
-	PoolPointer<UICanvas> m_CurrentPage;
+	UICanvas m_CurrentPage;
 
 	UINT activeID = 0;
 
 	void Update(float dt);
 
 	//void Resize();
-public:
-	ExMenu() = default;
-	void Setup(PoolPointer<UI>& ui);
+	ExMenu();
 
-	int Run(PoolPointer<UI>& ui, float dt);
+	void Setup(UI& ui);
+
+	int Run(UI& ui, float dt);
 
 	void operator=(const ExMenu& other);
 };

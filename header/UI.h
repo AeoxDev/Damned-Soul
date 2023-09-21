@@ -4,11 +4,10 @@
 #include <dwrite.h>
 #include "MemLib/PoolPointer.hpp"
 
-class UICanvas; //compiler hack
+struct UICanvas; //compiler hack
 
-class UI
+struct UI
 {
-private:
 	ID2D1Factory* m_Factory = nullptr;					//Used to create other Direct2D resources that you can use to draw or describe shapes. (basicly device)
 	ID2D1RenderTarget* m_RenderTarget = nullptr;		//Represents an object that can receive drawing command
 	IDWriteFactory* m_WriteFactory = nullptr;			//Used to create all subsequent DirectWrite objects
@@ -17,16 +16,19 @@ private:
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;		//Another brush with a diffrent color, might remake in order to more eaisly make more brushes later if needed :)
 
-	PoolPointer<UICanvas> currentCanvas;
+	UICanvas* currentCanvas;
 	UICanvas* m_CurrentCanvas = nullptr;
 
 	void BeginFrame();
 	void EndFrame();
-public:
+
 	UI();
+	void SetupUI();
+
 	void Release();
 
-	void Render(PoolPointer<UI>& ui);
+	//void Render(PoolPointer<UI>& ui);
+	void Render(UI& ui);
 
 	void ResizeRelease();
 	void Resize();
@@ -40,6 +42,6 @@ public:
 	ID2D1SolidColorBrush*& GetYellowBrush();
 
 	/*void SetCurrentCanvas(UICanvas* canvas);*/
-	void SetCurrentCanvas(PoolPointer<UICanvas> canvas);
+	void SetCurrentCanvas(UICanvas& canvas);
 };
 

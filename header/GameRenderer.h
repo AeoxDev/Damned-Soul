@@ -8,5 +8,6 @@ int SetupGameRenderer();
 
 void Clear(const int& componentSlot);
 void Render(const size_t& count);
+void ClearParticles();
 void Present();
 void Dispatch(UINT threadX, UINT threadY, UINT threadZ);

@@ -17,6 +17,7 @@
 #include "ComponentHelper.h"
 #include "ExampleMenu.h"
 #include "UIRenderer.h"
+#include "States_&_Scenes\StateManager.h"
 #include <iostream>
 
 void UpdateDebugWindowTitle(std::string& title);
@@ -42,23 +43,15 @@ int main(int argc, char* args[])
 
 	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
 
-	if (!SetupUIRenderer())
-	{
-		std::cout << "Failed to setup UI Renderer" << std::endl;
-		return -1;
-	}
+	
 
 	// Create UI + Example Menu
-	PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
-	*ui = UI();
-	PoolPointer<ExMenu> exMenu = MemLib::palloc(sizeof(ExMenu));
-	exMenu->Setup(ui);
 
-
-	ui->SetCurrentCanvas(exMenu);
-	UpdateUI(ui);
+	stateManager.m_menu.SetupMainMenu();
 
 	
+
+	currentStates = State::MainMenu;
 	
 	while (!sdl.quit)
 	{
@@ -68,10 +61,10 @@ int main(int argc, char* args[])
 		Clear(testRenderSlot);
 
 
-		RenderUI();
+		
 
 		//Inputs: SDL readings of keyboard and mouse inputs
-		stateManager.ReadInputs();
+		//stateManager.ReadInputs();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		//UpdatePhysics(stateManager);//Change registry to scene registry
@@ -84,8 +77,7 @@ int main(int argc, char* args[])
 		MemLib::pdefrag();
 	}
 	
-	exMenu->Release();
-	ui->Release();
+	stateManager.m_menu.Unload();
 	ReleaseUIRenderer();
 	
 	EndDirectX();

@@ -3,14 +3,14 @@
 
 using namespace DirectX;
 
-UIImage::UIImage(PoolPointer<UI>& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 	:UIComponent(position, scale, rotation, visibility), m_Bitmap(nullptr), m_Opacity(opacity)
 {
 	HRESULT hr;
 	IWICBitmapDecoder* decoder = nullptr;
 	IWICBitmapFrameDecode* source = nullptr;
 	IWICFormatConverter* converter = nullptr;
-	IWICImagingFactory* factory = ui->GetImagingFactory();
+	IWICImagingFactory* factory = ui.GetImagingFactory();
 	const std::wstring path = L"../resource/GUI/" + std::wstring(file.begin(), file.end());
 
 	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
@@ -42,7 +42,7 @@ UIImage::UIImage(PoolPointer<UI>& ui, const std::string& file, XMFLOAT2 position
 	}
 
 	
-	hr = ui->GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
+	hr = ui.GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
 	if (FAILED(hr))
 	{
 		std::cout << "FAILED to create image bitmap" << std::endl;

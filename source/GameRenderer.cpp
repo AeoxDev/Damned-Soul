@@ -4,6 +4,7 @@
 #include "SDLHandler.h"
 #include "UIRenderer.h"
 #include "Lighting.h"
+#include "Particles.h"
 
 struct RenderSetupComponent
 {
@@ -94,6 +95,14 @@ void Render(const size_t& count)
 	//d3d11Data->deviceContext->PSSetConstantBuffers(0, 1, &lightBuf);
 
 	d3d11Data->deviceContext->DrawIndexed((UINT)count, 0, 0);
+}
+
+void ClearParticles()
+{
+	ClearRenderTargetView(Particles::m_renderTargetView);
+	ClearDepthStencilView(Particles::m_depthStencilView);
+
+	SetRenderTargetViewAndDepthStencil(Particles::m_renderTargetView, Particles::m_depthStencilView);
 }
 
 void Present()

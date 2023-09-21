@@ -6,6 +6,8 @@
 #include <bitset>
 #include <Windows.h>
 
+#include <map>
+
 #include "MemLib/MemLib.hpp"
 //#include "ComponentHelper.h"
 
@@ -59,13 +61,27 @@ namespace EntityGlobals
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
 	static int compCount = 0;
+	//Map
+	static std::map<void*, int> componentOnBit;
 
 	//Previously, GetId returned the current compCount and also incremented it, but let's split these
 	template <typename T>
 	int GetId()
 	{
+		
 		//Note because of the increment that each time this function is called, the ID number will be new and unique
 		static int compId = compCount++;
+		int ret = componentOnBit[GetId<T>];
+		return ret;
+	}
+
+	template <typename T>
+	int CreateID()
+	{
+
+		//Note because of the increment that each time this function is called, the ID number will be new and unique
+		static int compId = componentOnBit.size();
+		componentOnBit.emplace(GetId<T>, componentOnBit.size());
 		return compId;
 	}
 
@@ -73,6 +89,7 @@ namespace EntityGlobals
 	{
 		return id.index != -1;
 	}
+
 }
 
 class Registry
@@ -135,7 +152,7 @@ public:
 			return;
 
 		//Unique index of the component itself
-		int compId = EntityGlobals::GetId<T>();
+		int compId = EntityGlobals::CreateID<T>();
 
 		//Adding a new component that's greater than the size of the pool requires a resize for memory reasons
 		if (componentArrays.size() <= compId) 

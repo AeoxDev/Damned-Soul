@@ -1,17 +1,15 @@
 #pragma once
 #include "StateEnums.h"
 #include "Settings.h"
+#include "EntityFramework.h"
 
 struct Menu
 {
-	MenuState currentSubState = MenuState::Main;
+	Registry registry;//This contains all entities and components for the main menu.
 
-	void Update();
+	void SetupMainMenu();
 
-	void ReadKeyInputs(int[], Settings&);
-	void ReadKeyOutputs(int[], Settings&);
+	void MenuSystem();
 
-	void ReadMouseInputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
-	void ReadMouseOutputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
-
+	void Unload();
 };

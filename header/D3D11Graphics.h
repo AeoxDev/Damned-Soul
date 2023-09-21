@@ -148,9 +148,5 @@ enum TEXTURE_HOLDER_TYPE
 	RENDER_TARGET_VIEW,
 	UNORDERED_ACCESS_VIEW
 };
-union IDX_UNION
-{
-	int8_t TX;
-	int16_t VIEWS;
-};
-void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, IDX_UNION idx);
+
+void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, int16_t idx);
