@@ -1,6 +1,6 @@
 #include "States_&_Scenes\Menu.h"
 #include "UIRenderer.h"
-#include "ExampleMenu.h"
+#include "MainMenu.h"
 #include "Hitbox.h"
 //
 //void Menu::Update()
@@ -125,34 +125,23 @@ void Menu::Input()
 
 }
 
-void Menu::Setup()
+void Menu::Setup()//Load
 {
 	//Add entities and components to the registry for the main menu here
-	EntityID mainMenuEntity = this->registry.CreateEntity();
-	//First set up UI renderer
-	//AddHitboxComponent(registry, mainMenuEntity);
-	this->registry.AddComponent<UIRenderComponents>(mainMenuEntity);
-
-	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(mainMenuEntity);
-	if (!SetupUIRenderer(uiComp))
-	{
-		std::cout << "Failed to setup UI Renderer" << std::endl;
-		return;
-	}
-
-	this->registry.AddComponent<UI>(mainMenuEntity);
-	UI* ui = registry.GetComponent<UI>(mainMenuEntity);
-	ui->Setup();
 	
-	this->registry.AddComponent<ExMenu>(mainMenuEntity);
-	ExMenu *exMenu = registry.GetComponent<ExMenu>(mainMenuEntity);
-	uiComp = registry.GetComponent<UIRenderComponents>(mainMenuEntity);
+	//Entities, pageComponent (active, priority)
+	EntityID mainMenuPage = registry.CreateEntity();
+
+	this->registry.AddComponent<UICanvas>(mainMenuPage);
+	UICanvas* mainMenu = registry.GetComponent<UICanvas>(mainMenuPage);
+	SetupMainMenuCanvas(*mainMenu);
+
 	// Create UI and example menu
 	//*ui = UI();
-
-	exMenu->Setup(*ui);
-	//ui->SetCurrentCanvas(exMenu->m_CurrentPage);
-	DrawGUI(this->registry, mainMenuEntity);
+	
+	//exMenu->Setup(*ui);
+	////ui->SetCurrentCanvas(exMenu->m_CurrentPage);
+	DrawGUI();
 
 
 }
@@ -164,7 +153,7 @@ void Menu::Render()
 	/*	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
 		RenderUI(uiComp);*/
 	}
-	//RenderUI();
+	RenderUI();
 }
 
 void Menu::Unload()
@@ -175,10 +164,9 @@ void Menu::Unload()
 		/*UI* ui = registry.GetComponent<UI>(entity);
 		if (ui)
 		{
-			ExMenu* exMenu = registry.GetComponent<ExMenu>(entity);
+			MainMenu* exMenu = registry.GetComponent<MainMenu>(entity);
 			exMenu->m_uiCanvas.Release();
 			ui->Release();
 		}*/
 	}
-	
 }

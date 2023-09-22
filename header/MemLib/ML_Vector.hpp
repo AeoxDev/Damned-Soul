@@ -3,15 +3,17 @@
 #include <cinttypes>
 #include <stdexcept>
 //#include <vector>
+#define HEADER_ID 0b0101010101010101010
 
 template<typename _T>
 struct ML_Vector
 {
 private:
+	int header = HEADER_ID;
 	// Pool pointer to internal data
 	PoolPointer<_T> m_data;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_size;
+	uint32_t m_size = 0;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
 	uint32_t m_capacity;
 	// size of the internal type
@@ -160,7 +162,10 @@ public:
 	ML_Vector& operator=(const ML_Vector& other)
 	{
 		// First clear
-		clear();
+		if (header == HEADER_ID)
+		{
+			clear();
+		}
 
 		// Update size and capacity
 		m_size = other.m_size;

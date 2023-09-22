@@ -1,6 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "GameRenderer.h"
 #include <iostream>
 #include <fstream>
 
@@ -187,7 +188,6 @@ bool SetVertexShader(const VS_IDX idx)
 	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_arr[idx]);
 	return true;
 }
-
 
 CS_IDX LoadComputeShader(const char* name)
 {

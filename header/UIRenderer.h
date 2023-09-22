@@ -19,5 +19,5 @@ extern IDXGISurface* UISurface;
 
 bool SetupUIRenderer(UIRenderComponents*& inOut);
 void ReleaseUIRenderer();
-void DrawGUI(Registry& registry, EntityID& entity);
-void RenderUI(UIRenderComponents*& uiComp);
+void DrawGUI();
+void RenderUI();

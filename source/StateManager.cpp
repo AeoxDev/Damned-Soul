@@ -64,7 +64,7 @@ StateManager stateManager;
 
 void StateManager::Setup()
 {
-	currentStates = MainMenu;
+	currentStates = InMainMenu;
 
 	menu.Setup();
 
@@ -77,19 +77,19 @@ void StateManager::Clear()
 
 void StateManager::ComputeShaders()
 {
-	if (currentStates & State::MainMenu)
+	if (currentStates & State::InMainMenu)
 	{
 		menu.ComputeShaders();
 	}
-	if (currentStates & State::Pause)
+	if (currentStates & State::InPause)
 	{
 		pause.ComputeShaders();
 	}
-	if (currentStates & State::Settings)
+	if (currentStates & State::InSettings)
 	{
 		settings.ComputeShaders();
 	}
-	if (currentStates & State::Play)
+	if (currentStates & State::InPlay)
 	{
 		levelScenes[activeLevelScene].ComputeShaders();
 	}
@@ -102,19 +102,19 @@ void StateManager::ComputeShaders()
 void StateManager::Render()
 {
 	//Find which registries for render system
-	if (currentStates & State::MainMenu)
+	if (currentStates & State::InMainMenu)
 	{
 		menu.Render();
 	}
-	if (currentStates & State::Pause)
+	if (currentStates & State::InPause)
 	{
 		pause.Render();
 	}
-	if (currentStates & State::Settings)
+	if (currentStates & State::InSettings)
 	{
 		settings.Render();
 	}
-	if (currentStates & State::Play)
+	if (currentStates & State::InPlay)
 	{
 		levelScenes[activeLevelScene].Render();
 	}
@@ -130,19 +130,19 @@ void StateManager::Input()
 	GetInput();
 
 	//Then go through the registries that are active
-	if (currentStates & State::MainMenu)
+	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
 	}
-	if (currentStates & State::Pause)
+	if (currentStates & State::InPause)
 	{
 		pause.Input();
 	}
-	if (currentStates & State::Settings)
+	if (currentStates & State::InSettings)
 	{
 		settings.Input();
 	}
-	if (currentStates & State::Play)
+	if (currentStates & State::InPlay)
 	{
 		levelScenes[activeLevelScene].Input();
 	}
@@ -154,19 +154,19 @@ void StateManager::Input()
 
 void StateManager::Update()
 {
-	if (currentStates & State::MainMenu)
+	if (currentStates & State::InMainMenu)
 	{
 		menu.Update();
 	}
-	if (currentStates & State::Pause)
+	if (currentStates & State::InPause)
 	{
 		pause.Update();
 	}
-	if (currentStates & State::Settings)
+	if (currentStates & State::InSettings)
 	{
 		settings.Update();
 	}
-	if (currentStates & State::Play)
+	if (currentStates & State::InPlay)
 	{
 		levelScenes[activeLevelScene].Update();
 	}

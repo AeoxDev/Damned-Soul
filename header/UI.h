@@ -6,6 +6,10 @@
 
 //struct UICanvas; //compiler hack
 
+struct UI;
+
+extern UI ui;
+
 struct UI
 {
 	ID2D1Factory* m_Factory = nullptr;					//Used to create other Direct2D resources that you can use to draw or describe shapes. (basicly device)
@@ -15,7 +19,7 @@ struct UI
 	IDWriteTextFormat* m_TextFormat = nullptr;			//Describes the font and paragraph properties used to format text, and it describes locale information.
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;		//Another brush with a diffrent color, might remake in order to more eaisly make more brushes later if needed :)
-
+	int RenderSlot;
 	//UICanvas m_CurrentCanvas;
 
 	void BeginFrame();
@@ -27,7 +31,7 @@ struct UI
 	void Release();
 
 	//void Render(PoolPointer<UI>& ui);
-	void Render(UI& ui);
+	void Render();
 
 	void ResizeRelease();
 	void Resize();

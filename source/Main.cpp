@@ -15,7 +15,6 @@
 #include "States_&_Scenes\StateManager.h"
 #include "Model.h"
 #include "ComponentHelper.h"
-#include "ExampleMenu.h"
 #include "UIRenderer.h"
 #include "States_&_Scenes\StateManager.h"
 #include <iostream>
@@ -28,6 +27,10 @@ int main(int argc, char* args[])
 	InitiateConfig();
 	SetupWindow();
 	std::string title = "Damned Soul";
+	Setup3dGraphics();
+	ui.RenderSlot = SetupUIRenderState();
+
+	ui.Setup();
 
 	int testRenderSlot = SetupGameRenderer();
 	Camera::InitializeCamera();
@@ -43,7 +46,7 @@ int main(int argc, char* args[])
 
 	stateManager.Setup();
 
-	currentStates = State::MainMenu;
+	currentStates = State::InMainMenu;
 	
 	while (!sdl.quit)
 	{

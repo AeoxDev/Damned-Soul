@@ -4,6 +4,7 @@
 #include "UIRenderer.h"
 #include "UICanvas.h"
 
+UI ui;
 
 UI::UI()
 {
@@ -13,7 +14,9 @@ UI::UI()
 void UI::Setup()
 {
 	HRESULT hr;
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_Factory);
+	D2D1_FACTORY_OPTIONS options;
+	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, &m_Factory);
 	if (FAILED(hr))
 	{
 		std::cout << "FAILED to create D2D1Factory" << std::endl;
@@ -96,7 +99,7 @@ void UI::Release()
 //	EndFrame();
 //}
 
-void UI::Render(UI& ui)
+void UI::Render()
 {
 	BeginFrame();
 	/*if (m_CurrentCanvas == nullptr)

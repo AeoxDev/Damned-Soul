@@ -6,6 +6,7 @@
 #include <iostream>
 #include "MemLib/PoolPointer.hpp"
 #include "EntityFramework.h"
+#include "GameRenderer.h"
 
 IDXGISurface* UISurface;
 
@@ -75,44 +76,45 @@ void ReleaseUIRenderer()
 //}
 
 
-void DrawGUI(Registry &registry, EntityID& entity)
+void DrawGUI()
 {
-	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
-	UI *ui = registry.GetComponent<UI>(entity);
 	ID3D11ShaderResourceView* nullsrv = nullptr;
 	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
 
-	ClearDepthStencilView(uiComp->dsv);
-	ClearRenderTargetView(uiComp->rtv);
+	ClearDepthStencilView(renderStates[ui.RenderSlot].depthStencilView);
+	ClearRenderTargetView(renderStates[ui.RenderSlot].renderTargetView);
 
-	SetRenderTargetViewAndDepthStencil(uiComp->rtv, uiComp->dsv);
+	SetRenderTargetViewAndDepthStencil(renderStates[ui.RenderSlot].renderTargetView, renderStates[ui.RenderSlot].depthStencilView);
 
-	ui->Render(*ui);
+	ui.Render();
 }
 
-void RenderUI(UIRenderComponents*& uiComp)
+void RenderUI()
 {
-	if (!SetVertexShader(uiComp->vertexShader))
+
+	if (!SetVertexShader(renderStates[ui.RenderSlot].vertexShader))
 	{
 		std::cout << "Failed to set UI Vertex Shader!" << std::endl;
 		return;
 	}
-	if (!SetPixelShader(uiComp->pixelShader))
+	if (!SetPixelShader(renderStates[ui.RenderSlot].pixelShader))
 	{
 		std::cout << "Failed to set UI Pixel Shader!" << std::endl;
 		return;
 	}
-	if (!SetVertexBuffer(uiComp->vertexBuffer))
+	if (!SetVertexBuffer(renderStates[ui.RenderSlot].vertexBuffer))
 	{
 		std::cout << "Failed to set UI Vertex Buffer!" << std::endl;
 		return;
 	}
-	if (!SetIndexBuffer(uiComp->indexBuffer))
+	if (!SetIndexBuffer(renderStates[ui.RenderSlot].indexBuffer))
 	{
 		std::cout << "Failed to set UI Index Buffer!" << std::endl;
 		return;
 	}
 
-	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[uiComp->srv]);
+	SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
+
+	//d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[renderStates[ui.RenderSlot].shaderResourceView]);
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
 }

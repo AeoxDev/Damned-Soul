@@ -63,7 +63,7 @@ void UICanvas::AddText(UI& ui, const std::string& name, const std::wstring& text
 
 UICanvas::UICanvas()
 {
-
+	Setup();
 }
 
 void UICanvas::Setup()

@@ -1,9 +1,4 @@
 #pragma once
-#include <string>
-#include <iostream>
-
-#include "SceneManager.h"
-#include "ButtonManager.h"
 
 //enum class State {
 //	Menu,
@@ -25,10 +20,10 @@
 //Which states (Which registry/registries to have systems go over)
 enum State
 {
-	MainMenu = 0b1,//Is a registry
-	Play = 0b10,//Will look at registries
-	Pause = 0b100,//Is a registry
-	Settings = 0b1000,//Is a registry
+	InMainMenu = 0b1,//Is a registry
+	InPlay = 0b10,//Will look at registries
+	InPause = 0b100,//Is a registry
+	InSettings = 0b1000,//Is a registry
 	InShop = 0b10000//In a shop, is registry
 };
 
