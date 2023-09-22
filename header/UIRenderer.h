@@ -3,6 +3,7 @@
 #include "D3D11Helper.h"
 #include "EntityFramework.h"
 #include "UI.h"
+#include "UICanvas.h"
 
 struct UIRenderComponents
 {
@@ -19,5 +20,8 @@ extern IDXGISurface* UISurface;
 
 bool SetupUIRenderer(UIRenderComponents*& inOut);
 void ReleaseUIRenderer();
-void DrawGUI();
+void DrawGUI(UICanvas& canvas);
 void RenderUI();
+
+void Begin2dFrame(UI& ui);
+void End2dFrame(UI& ui);

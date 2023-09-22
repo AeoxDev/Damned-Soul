@@ -61,14 +61,14 @@ int SetupUIRenderState()
 	//   { {-1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} }, // TOP LEFT
 	//   { {-1.0f, -1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} } // BOTTOM LEFT
 	//};
-	Vertex screenQuad[] =
+	ScreenVertex screenQuad[] =
 	{
 	   { {1.0f, 1.0f, 0.0f}},  // TOP RIGHT
 	   { {1.0f, -1.0f, 0.0f}}, // BOTTOM RIGHT
 	   { {-1.0f, 1.0f, 0.0f}}, // TOP LEFT
 	   { {-1.0f, -1.0f, 0.0f}} // BOTTOM LEFT
 	};
-	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(screenQuad, sizeof(Vertex), ARRAYSIZE(screenQuad), USAGE_IMMUTABLE);
+	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(screenQuad, sizeof(ScreenVertex), ARRAYSIZE(screenQuad), USAGE_IMMUTABLE);
 	uint32_t idxs[] = { 0, 1, 2, 2, 1, 3 };
 	renderStates[currentSize].indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), ARRAYSIZE(idxs));
 
@@ -80,14 +80,14 @@ int SetupUIRenderState()
 
 int SetupGameRenderer()
 {
-	int hr = SetupDirectX(sdl.window);
+	//int hr = SetupDirectX(sdl.window);
 	renderStates[currentSize].rasterizerState = CreateRasterizerState(true, true);
-	bool s = SetRasterizerState(renderStates[currentSize].rasterizerState);
+	//bool s = SetRasterizerState(renderStates[currentSize].rasterizerState);
 
 	renderStates[currentSize].pixelShader = LoadPixelShader("TestPS.cso");
-	s = SetPixelShader(renderStates[currentSize].pixelShader);
+	//s = SetPixelShader(renderStates[currentSize].pixelShader);
 	renderStates[currentSize].vertexShader = LoadVertexShader("TestVS.cso");
-	s = SetVertexShader(renderStates[currentSize].vertexShader);
+	//s = SetVertexShader(renderStates[currentSize].vertexShader);
 
 	Vertex triangle[3] = {
 		0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
@@ -97,8 +97,8 @@ int SetupGameRenderer()
 	uint32_t idxs[3] = { 0, 1, 2 };
 	renderStates[currentSize].indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
 
-	s = SetVertexBuffer(renderStates[currentSize].vertexBuffer);
-	s = SetIndexBuffer(renderStates[currentSize].indexBuffer);
+	//s = SetVertexBuffer(renderStates[currentSize].vertexBuffer);
+	//s = SetIndexBuffer(renderStates[currentSize].indexBuffer);
 
 	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -110,7 +110,7 @@ int SetupGameRenderer()
 	// Create a viewport
 	renderStates[currentSize].viewPort = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
 	// Set the viewport
-	s = SetViewport(renderStates[currentSize].viewPort);
+	bool s = SetViewport(renderStates[currentSize].viewPort);
 	// Create a render target view
 	renderStates[currentSize].renderTargetView = CreateBackBuffer();
 	// Create a depth stencil view

@@ -13,7 +13,7 @@ private:
 	// Pool pointer to internal data
 	PoolPointer<_T> m_data;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_size = 0;
+	uint32_t m_size = 4;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
 	uint32_t m_capacity;
 	// size of the internal type
@@ -218,7 +218,7 @@ public:
 
 		// Free the old memory
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_size * m_tSize);
+		m_data = MemLib::palloc(m_capacity * m_tSize);
 		// Set items
 
 		for (uint32_t i = 0; i < m_size; ++i)

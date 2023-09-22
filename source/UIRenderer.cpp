@@ -75,8 +75,18 @@ void ReleaseUIRenderer()
 //	ui->Render(ui);
 //}
 
+void Begin2dFrame(UI& ui)
+{
+	ui.m_RenderTarget->BeginDraw();
+	ui.m_RenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+}
 
-void DrawGUI()
+void End2dFrame(UI& ui)
+{
+	ui.m_RenderTarget->EndDraw();
+}
+
+void DrawGUI(UICanvas& canvas)
 {
 	ID3D11ShaderResourceView* nullsrv = nullptr;
 	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
@@ -86,10 +96,10 @@ void DrawGUI()
 
 	SetRenderTargetViewAndDepthStencil(renderStates[ui.RenderSlot].renderTargetView, renderStates[ui.RenderSlot].depthStencilView);
 
-	ui.Render();
+	ui.Render(canvas);
 }
 
-void RenderUI()
+void RenderUI()//Render what is drawn to rendertarget.
 {
 
 	if (!SetVertexShader(renderStates[ui.RenderSlot].vertexShader))
@@ -112,8 +122,19 @@ void RenderUI()
 		std::cout << "Failed to set UI Index Buffer!" << std::endl;
 		return;
 	}
+	if (!SetRenderTargetViewAndDepthStencil(renderStates[1].renderTargetView, renderStates[1].depthStencilView))
+	{
+		std::cout << "Failed to set rtv or dsv!" << std::endl;
+		return;
+	}
+	//UnloadShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
+	if (!SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView))
+	{
+		std::cout << "Failed to set srv!" << std::endl;
+		return;
+	}
 
-	SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
+	//SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
 
 	//d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[renderStates[ui.RenderSlot].shaderResourceView]);
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);

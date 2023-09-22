@@ -38,15 +38,15 @@ struct UICanvas
 		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
 	UICanvas();
 	void Setup();
-	virtual ~UICanvas();
-	virtual void Release();
+	~UICanvas();
+	void Release();
 
 	//virtual void Resize() = 0;
-	virtual void Reset();
+	void Reset();
 	//virtual void Render(PoolPointer<UI>& ui);
-	virtual void Render(UI& ui);
+	void Render(UI& ui);
 	//virtual void Render(UI* ui);
-	virtual void Update() {};
+	void Update() {};
 	
 	bool Exit();
 };

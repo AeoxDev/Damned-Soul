@@ -4,7 +4,7 @@
 #include <dwrite.h>
 #include "MemLib/PoolPointer.hpp"
 
-//struct UICanvas; //compiler hack
+struct UICanvas; //compiler hack
 
 struct UI;
 
@@ -31,7 +31,7 @@ struct UI
 	void Release();
 
 	//void Render(PoolPointer<UI>& ui);
-	void Render();
+	void Render(UICanvas& canvas);
 
 	void ResizeRelease();
 	void Resize();

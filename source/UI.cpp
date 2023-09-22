@@ -99,11 +99,11 @@ void UI::Release()
 //	EndFrame();
 //}
 
-void UI::Render()
+void UI::Render(UICanvas& canvas)
 {
 	BeginFrame();
-	/*if (m_CurrentCanvas == nullptr)
-		m_CurrentCanvas->Render(ui);*/
+	
+	canvas.Render(ui);
 
 	EndFrame();
 }

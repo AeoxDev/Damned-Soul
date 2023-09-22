@@ -141,9 +141,10 @@ void Menu::Setup()//Load
 	
 	//exMenu->Setup(*ui);
 	////ui->SetCurrentCanvas(exMenu->m_CurrentPage);
-	DrawGUI();
-
-
+	//DrawGUI(*mainMenu);
+	Begin2dFrame(ui);
+	mainMenu->Render(ui);
+	End2dFrame(ui);
 }
 
 void Menu::Render()
