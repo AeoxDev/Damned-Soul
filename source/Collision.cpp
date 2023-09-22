@@ -1,8 +1,10 @@
 #include "Backend/Collision.h"
 #include "Backend/ConvexCollision.h"
 #include "Backend/CircularCollision.h"
+#include "Backend/ProximityCollision.h"
 #include "EntityFramework.h"
 #include <cmath>
+#include <string>
 
 /// <summary>
 /// Calculates the closest distance of two circles.
@@ -154,6 +156,7 @@ void HandleStaticCollision(Registry& registry)
 
 void HandleMoveableCollision(Registry& registry)//Reggie Strie
 {
+	HandleProximityCollision(registry);
 	for (auto entity : View<HitboxComponent>(registry)) //Access the first entity
 	{
 		HitboxComponent* firstHitbox = registry.GetComponent<HitboxComponent>(entity);
@@ -205,6 +208,67 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 	}
 }
 
+void HandleProximityCollision(Registry& registry)
+{
+	for (auto entity : View<HitboxComponent>(registry)) //Access an entity
+	{
+		float distance = 1000.0f;
+		float x, z;
+		int index = 0;
+		EntityID closestWall = { 0 };
+		closestWall.index = -1;
+		HitboxComponent* entityHitbox = registry.GetComponent<HitboxComponent>(entity);
+
+		if (entityHitbox->circularFlags[0].hitWall && entityHitbox->circularFlags[0].active) //Check if the entity can hit the wall and is circular
+		{
+			for (auto entity2 : View<ProximityHitboxComponent>(registry)) //Access the wall
+			{
+				ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(entity2);
+
+				for (int i = 0; i < (int)(wallHitbox->pointList.size()); i++) //Loop through all points in the wallHitbox
+				{
+					float currentDistance = sqrt(float((pow(entityHitbox->circleHitbox[0].offsetX - wallHitbox->pointList[i].x, 2)) + (pow(entityHitbox->circleHitbox[0].offsetZ - wallHitbox->pointList[i].z, 2))));
+					
+					if (distance > currentDistance) //Check if closer to the new point checked
+					{
+						distance = currentDistance;
+						index = i;
+						closestWall = entity2;
+						x = entityHitbox->circleHitbox[0].offsetX;
+						z = entityHitbox->circleHitbox[0].offsetZ;
+					}
+				}
+			}
+		}
+		else if (entityHitbox->convexFlags[0].hitWall && entityHitbox->convexFlags[0].active) //Check if the entity can hit the wall and is convex
+		{
+			for (auto entity2 : View<ProximityHitboxComponent>(registry)) //Access the wall
+			{
+				ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(entity2);
+
+				for (int i = 0; i < (int)(wallHitbox->pointList.size()); i++) //Loop through all points in the wallHitbox
+				{
+					float currentDistance = sqrt(float((pow(entityHitbox->convexHitbox[0].centerX - wallHitbox->pointList[i].x, 2)) + (pow(entityHitbox->convexHitbox[0].centerZ - wallHitbox->pointList[i].z, 2))));
+					
+					if (distance > currentDistance) //Check if closer to the new point checked
+					{
+						distance = currentDistance;
+						index = i;
+						closestWall = entity2;
+						x = entityHitbox->convexHitbox[0].centerX;
+						z = entityHitbox->convexHitbox[0].centerZ;
+					}
+				}
+			}
+		}
+
+		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
+		{
+			ProximityCorrection(registry, closestWall, index, x, z);
+		}
+	}
+}
+
 HitboxComponent::HitboxComponent()
 {
 	this->usedCirclesHitboxes = 0;
@@ -223,4 +287,9 @@ void CollisionFlags::ResetToActive()
 	*r = 0;
 	this->active = 1;
 	
+}
+
+ProximityHitboxComponent::ProximityHitboxComponent()
+{
+	this->clockwise = 1;
 }
