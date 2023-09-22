@@ -29,9 +29,14 @@ namespace Particles
 	extern int16_t m_indexBuffer;
 	extern int8_t m_rasterizer;
 
+	extern int8_t m_renderTargetView;
+	extern int8_t m_depthStencilView;
+	extern int8_t m_shaderResourceView;
+
 
 	void SwitchInputOutput();
 	void InitializeParticles();
+	void ReleaseParticles();
 
 	//Calls for D3D11Helper to set the compute shader and the resources it requires
 	void PrepareParticleCompute();

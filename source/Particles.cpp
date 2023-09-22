@@ -2,6 +2,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "SDLHandler.h"
 
 __declspec(align(16)) struct Particle
 {
@@ -32,6 +33,10 @@ int16_t Particles::m_vertexBuffer;
 int16_t Particles::m_indexBuffer;
 int8_t  Particles::m_rasterizer; 
 
+int8_t Particles::m_renderTargetView;
+int8_t Particles::m_depthStencilView;
+int8_t Particles::m_shaderResourceView;
+
 void Particles::SwitchInputOutput()
 {
 	//Store read
@@ -45,9 +50,9 @@ void Particles::SwitchInputOutput()
 void Particles::InitializeParticles()
 {
 	PoolPointer<ParticleMetadata> data;
+	PoolPointer<uint32_t> index;
+
 	data = MemLib::palloc(sizeof(ParticleMetadata));
-
-
 	//NOTE TODO: DONT USE HARDCODED VALUES
 	data->m_start = 0; data->m_end = 100;
 	data->m_life = 5.f;
@@ -56,14 +61,15 @@ void Particles::InitializeParticles()
 	data->m_spawnPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 
 	float size = sizeof(Particle) * data->m_end;
-	PoolPointer<uint32_t> index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
+
+	index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
+
 
 
 	particles = MemLib::palloc(sizeof(Particle) * data->m_end);
 	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
 	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
-	m_metadata = CreateConstantBuffer(&(*data), sizeof(m_metadata), 0);
-
+	m_metadata = CreateConstantBuffer(&(*data), sizeof(ParticleMetadata), 0);
 	m_rasterizer = CreateRasterizerState(false, true);
 
 	for (int i = 0; i < data->m_end; i++)
@@ -76,12 +82,11 @@ void Particles::InitializeParticles()
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
-	m_readBuffer->SRVIndex = CreateShaderResourceView(&(*particles), sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (CPU_FLAGS)0, 0);
-	m_writeBuffer->SRVIndex = CreateShaderResourceView(&(*particles), sizeof(Particle), BIND_COMPUTE, RESOURCE_BUFFER, resourceFlags, (CPU_FLAGS)0, 0);
+	m_readBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), data->m_end, BIND_COMPUTE, resourceFlags, (CPU_FLAGS)0, 0);
+	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), data->m_end, BIND_COMPUTE, resourceFlags, (CPU_FLAGS)0, 0);
 
-
-	m_readBuffer->UAVIndex = CreateUnorderedAcessView(&(*particles), sizeof(Particle), m_readBuffer->SRVIndex, 0);
-	m_writeBuffer->UAVIndex = CreateUnorderedAcessView(&(*particles), sizeof(Particle), m_writeBuffer->SRVIndex, 0);
+	m_readBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(particles), data->m_end, m_readBuffer->SRVIndex, 0);
+	m_writeBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(particles), data->m_end, m_writeBuffer->SRVIndex, 0);
 
 	m_vertexBuffer = CreateVertexBuffer(&(*particles), sizeof(Particle), data->m_end, USAGE_DEFAULT);
 	m_indexBuffer = CreateIndexBuffer(&(*index), sizeof(int), data->m_end);
@@ -92,8 +97,21 @@ void Particles::InitializeParticles()
 	m_pixelShader = LoadPixelShader("ParticlePS.cso");
 	m_geometryShader = LoadGeometryShader("ParticleGS.cso");
 
+	resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
+	m_renderTargetView = CreateRenderTargetView(USAGE_DEFAULT, resourceFlags, (CPU_FLAGS)0, sdl.WIDTH, sdl.HEIGHT);
+	m_shaderResourceView = CreateShaderResourceViewTexture(m_renderTargetView, BIND_PIXEL, BIND_RENDER_TARGET, 0);
+	m_depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+
+
 	//When done initializing free the temporary paritcle data
 	MemLib::pfree(particles);
+	MemLib::pfree(data);
+}
+
+void Particles::ReleaseParticles()
+{
+	MemLib::pfree(m_readBuffer);
+	MemLib::pfree(m_writeBuffer);
 }
 
 void Particles::PrepareParticleCompute()

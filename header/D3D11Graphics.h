@@ -19,21 +19,6 @@ struct GeometryShaderHolder
 	ID3D11GeometryShader* gs_arr[16];
 };
 
-struct TextureHolder
-{
-#define TX_HOLD_LIM 64
-	uint16_t					currentCount = 0; // How many textures are currently loaded
-	uint64_t					hash_arr[TX_HOLD_LIM]; // Used to check if Texture has already been loaded
-	Image						img_arr[TX_HOLD_LIM]; // Unnessecary?
-	ID3D11Texture2D*			tx_arr[TX_HOLD_LIM]; // Used to store the Textures, Unnessecary?
-	ID3D11ShaderResourceView*	srv_arr[TX_HOLD_LIM]; // Ysed to store the Shader Resource Views for the textures
-};
-
-struct SamplerStateHolder
-{
-	uint8_t currentCount = 0;
-	ID3D11SamplerState* smp_arr[4];
-};
 
 struct PixelShaderHolder
 {
@@ -55,6 +40,22 @@ struct ComputeShaderHolder
 #define CS_HOLD_LIM 16
 	uint8_t					currentCount = 0;
 	ID3D11ComputeShader*	cs_arr[CS_HOLD_LIM];
+};
+
+struct TextureHolder
+{
+#define TX_HOLD_LIM 64
+	uint16_t					currentCount = 0; // How many textures are currently loaded
+	uint64_t					hash_arr[TX_HOLD_LIM]; // Used to check if Texture has already been loaded
+	Image						img_arr[TX_HOLD_LIM]; // Unnessecary?
+	ID3D11Texture2D* tx_arr[TX_HOLD_LIM]; // Used to store the Textures, Unnessecary?
+	ID3D11ShaderResourceView* srv_arr[TX_HOLD_LIM]; // Ysed to store the Shader Resource Views for the textures
+};
+
+struct SamplerStateHolder
+{
+	uint8_t currentCount = 0;
+	ID3D11SamplerState* smp_arr[4];
 };
 
 struct BufferHolder
@@ -138,3 +139,18 @@ int SetupDirectX(HWND& window);
 
 // Frees DirectX related memory
 void EndDirectX();
+
+
+enum TEXTURE_HOLDER_TYPE
+{
+	TEXTURE,
+	SHADER_RESOURCE_VIEW,
+	RENDER_TARGET_VIEW,
+	UNORDERED_ACCESS_VIEW
+};
+union IDX_UNION
+{
+	int8_t TX;
+	int16_t VIEWS;
+};
+void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, IDX_UNION idx);

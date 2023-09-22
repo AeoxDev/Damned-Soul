@@ -64,7 +64,7 @@ int SetupGameRenderer()
 	// Set the viewport
 	s = SetViewport(renderStates[0].viewPort);
 	// Create a render target view
-	renderStates[0].renderTargetView = CreateRenderTargetView();
+	renderStates[0].renderTargetView = CreateBackBuffer();
 	// Create a depth stencil view
 	renderStates[0].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 	// Set a render target view and depth stencil view

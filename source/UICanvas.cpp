@@ -13,26 +13,27 @@ void UICanvas::DrawButtons(PoolPointer<UI>& ui, ID2D1RenderTarget* rt)
 
 void UICanvas::DrawImages(ID2D1RenderTarget* rt)
 {
-	//for (auto& [name, image] : m_Images)
-	//	image->Draw(rt);
-	auto keys = m_Images.GetKeys();
-	for (unsigned int i = 0; i < m_Images.Size(); ++i)
-		m_Images[keys[i]].Draw(rt);
+	for (auto& [name, image] : m_Images)
+		image.Draw(rt);
+	//auto keys = m_Images.GetKeys();
+	//for (unsigned int i = 0; i < m_Images.Size(); ++i)
+	//	m_Images[keys[i]].Draw(rt);
 }
 
 void UICanvas::DrawTexts(PoolPointer<UI>& ui)
 {
-	auto keys = m_Texts.GetKeys();
-	for (unsigned int i = 0; i < m_Texts.Size(); ++i)
-		m_Texts[keys[i]].Draw(ui);
+	for (auto& [name, text] : m_Texts)
+		text.Draw(ui);
+	//auto keys = m_Texts.GetKeys();
+	//for (unsigned int i = 0; i < m_Texts.Size(); ++i)
+	//	m_Texts[keys[i]].Draw(ui);
 }
 
 void UICanvas::AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	//PoolPointer<UIButton> temp = MemLib::palloc(sizeof(UIButton));
-	UIButton temp = UIButton(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
-	m_Buttons.push_back(temp);
-	
+	//UIButton temp(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
+	m_Buttons.push_back(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);//(temp);
 }
 
 void UICanvas::AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
@@ -76,10 +77,14 @@ void UICanvas::Release()
 	{
 		m_Buttons[i].Release();
 	}
-	for (unsigned int i = 0; i < m_Images.Size(); ++i)
-	{
-		m_Images.m_values[i].Release();
-	}
+	for (auto& [key, value] : m_Images)
+		value.Release();
+	//for (unsigned int i = 0; i < m_Images.Size(); ++i)
+	//{
+	//	m_Images.m_values[i].Release();
+	//}
+	//for (auto& [key, value] : m_Texts)
+	//	value.Release();
 	//for (unsigned int i = 0; i < m_Texts.Size(); ++i)
 	//{
 	//	m_Texts.m_values[i].Release();

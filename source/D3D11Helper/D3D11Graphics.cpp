@@ -54,7 +54,6 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	swapChainDesc.Flags = 0;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &d3d11Data->swapChain, &d3d11Data->device, NULL, &d3d11Data->deviceContext);
-
 	if (FAILED(hr))
 	{
 		std::cout << "Failed to create device and swap chain!" << std::endl;
@@ -115,14 +114,6 @@ void EndDirectX()
 	for (int i = 0; i < smpHolder->currentCount; ++i)
 		smpHolder->smp_arr[i]->Release();
 
-	// Release all textures and associated resources
-	for (int i = 0; i < txHolder->currentCount; ++i)
-	{
-		txHolder->img_arr[i].Release();
-		txHolder->srv_arr[i]->Release();
-		txHolder->tx_arr[i]->Release();
-	}
-
 	// Release all vertex shaders and their input layouts
 	for (int i = 0; i < vrtHolder->currentCount; ++i)
 	{
@@ -130,10 +121,22 @@ void EndDirectX()
 		vrtHolder->il_arr[i]->Release();
 	}
 
+	// Release all geometry shaders
+	for (int i = 0; i < geoHolder->currentCount; ++i)
+		geoHolder->gs_arr[i]->Release();
+
 	// Release all compute shaders
 	for (int i = 0; i < comHolder->currentCount; ++i)
 	{
 		comHolder->cs_arr[i]->Release();
+	}
+
+	// Release all textures and associated resources
+	for (int i = 0; i < txHolder->currentCount; ++i)
+	{
+		txHolder->img_arr[i].Release();
+		txHolder->srv_arr[i]->Release();
+		txHolder->tx_arr[i]->Release();
 	}
 
 	// Release all buffers shaders
@@ -154,7 +157,8 @@ void EndDirectX()
 	// Release all shader resource views
 	for (int i = 0; i < srvHolder->currentCount; ++i)
 	{
-		srvHolder->srv_arr[i]->Release();
+		if (srvHolder->srv_arr[i])
+			srvHolder->srv_arr[i]->Release();
 		if (srvHolder->srv_resource_arr[i])
 			srvHolder->srv_resource_arr[i]->Release();
 	}

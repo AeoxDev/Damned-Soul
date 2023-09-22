@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 	<Type Name="ML_Vector&lt;*&gt;">
-		<!--<DisplayString>{{ size={_Mylast - _Myfirst} }}</DisplayString>-->
 		<Expand>
 			<Item Name="[Size]" ExcludeView="simple">m_size</Item>
 			<Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
@@ -9,6 +8,33 @@
 				<Size>m_size</Size>
 				<ValuePointer>*(m_data.m_pp)</ValuePointer>
 			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="ML_Array&lt;*,*&gt;">
+		<Expand>
+			<Item Name="[Size]" ExcludeView="simple">m_size</Item>
+			<ArrayItems>
+				<Size>m_size</Size>
+				<ValuePointer>*(m_data.m_pp)</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="ML_Map&lt;*,*&gt;">
+		<Expand>
+			<Item Name="[Size]" ExcludeView="simple">m_size</Item>
+			<Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
+			<ArrayItems>
+				<Size>m_size</Size>
+				<ValuePointer>*(m_data.m_pp)</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="ML_String">
+		<Expand>
+			<Item Name="[Internal]" ExcludeView="simple">*(m_data.m_pp)</Item>
 		</Expand>
 	</Type>
 </AutoVisualizer>

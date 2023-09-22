@@ -33,7 +33,7 @@ int main(int argc, char* args[])
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
 
 	Particles::InitializeParticles();
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_COMPUTE);
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
 
 	SMP_IDX sampler = CreateSamplerState();
 	SetSamplerState(sampler);
