@@ -116,6 +116,10 @@ void ResetCollisionVariables(Registry& registry)
 	for (auto entity : View<HitboxComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
 		HitboxComponent* hitboxes = registry.GetComponent<HitboxComponent>(entity);
+		if (hitboxes == nullptr)
+		{
+			continue;
+		}
 		hitboxes->nrMoveableCollisions = MOVEABLE_COLLISIONS_PER_FRAME;
 	}
 }
