@@ -72,23 +72,23 @@ namespace EntityGlobals
 		//Note because of the increment that each time this function is called, the ID number will be new and unique
 		static int compId = compCount++;
 		int ret = componentOnBit[GetId<T>];
-		return ret;
-	}
-
-	template <typename T>
-	int CreateID()
-	{
-
-		//Note because of the increment that each time this function is called, the ID number will be new and unique
-		static int compId = componentOnBit.size();
-		//componentOnBit.emplace(GetId<T>, componentOnBit.size());
-		if (componentOnBit.find(GetId<T>) == componentOnBit.end())
-		{
-			componentOnBit.emplace(GetId<T>, componentOnBit.size());
-		}
-		
 		return compId;
 	}
+
+	//template <typename T>
+	//int CreateID()
+	//{
+
+	//	//Note because of the increment that each time this function is called, the ID number will be new and unique
+	//	static int compId = componentOnBit.size();
+	//	//componentOnBit.emplace(GetId<T>, componentOnBit.size());
+	//	if (componentOnBit.find(GetId<T>) == componentOnBit.end())
+	//	{
+	//		componentOnBit.emplace(GetId<T>, componentOnBit.size());
+	//	}
+	//	
+	//	return compId;
+	//}
 
 	static constexpr bool IsEntityValid(EntityID& id)
 	{
@@ -157,7 +157,7 @@ public:
 			return;
 
 		//Unique index of the component itself
-		int compId = EntityGlobals::CreateID<T>();
+		int compId = EntityGlobals::GetId<T>();
 
 		//Adding a new component that's greater than the size of the pool requires a resize for memory reasons
 		if (componentArrays.size() <= compId) 

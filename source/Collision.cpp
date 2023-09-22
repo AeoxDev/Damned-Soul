@@ -228,7 +228,10 @@ void HandleProximityCollision(Registry& registry)
 			for (auto entity2 : View<ProximityHitboxComponent>(registry)) //Access the wall
 			{
 				ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(entity2);
-
+				if (wallHitbox == nullptr)
+				{
+					continue;
+				}
 				for (int i = 0; i < (int)(wallHitbox->pointList.size()); i++) //Loop through all points in the wallHitbox
 				{
 					float currentDistance = sqrt(float((pow(entityHitbox->circleHitbox[0].offsetX - wallHitbox->pointList[i].x, 2)) + (pow(entityHitbox->circleHitbox[0].offsetZ - wallHitbox->pointList[i].z, 2))));
