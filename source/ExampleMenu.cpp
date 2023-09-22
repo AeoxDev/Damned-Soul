@@ -3,6 +3,7 @@
 #include <filesystem>
 #include "SDLHandler.h"
 #include "MemLib/MemLib.hpp"
+#include <iostream>
 
 using namespace DirectX;
 
@@ -33,7 +34,7 @@ void ExMenu::Setup(UI& ui)
 	{
 		auto OnClick = [this]() 
 			{
-				//Do click stuff
+				std::cout << "First" << std::endl;
 			};
 
 		auto OnHover = [this]()
@@ -48,7 +49,7 @@ void ExMenu::Setup(UI& ui)
 	{
 		auto OnClick = [this]()
 			{
-				//Do click stuff
+				std::cout << "Second" << std::endl;
 			};
 
 		auto OnHover = [this]()
@@ -58,6 +59,9 @@ void ExMenu::Setup(UI& ui)
 
 		this->m_uiCanvas.AddButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f - 65.0f, 800 });
 	}
+
+	for (auto& button : m_Buttons)
+		button.Interact();
 }
 
 void ExMenu::operator=(const ExMenu& other)

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="ModelBoneless">
+		<Expand>
+			<!--<Item Name="[Sane?]" ExcludeView="simple">ValidByteData()</Item>-->
+			<Item Name="[Submeshes]" ExcludeView="simple">m_numSubMeshes</Item>
+			<ArrayItems>
+				<Size>m_numSubMeshes</Size>
+				<ValuePointer>(SubMesh*)m_data</ValuePointer>
+			</ArrayItems>
+			<Item Name="[Materials]" ExcludeView="simple">m_numMaterials</Item>
+			<ArrayItems>
+				<Size>m_numMaterials</Size>
+				<ValuePointer>((Material*)(m_data[m_numSubMeshes * sizeof(SubMesh)]))</ValuePointer>
+			</ArrayItems>
+			<Item Name="[Vertices]" ExcludeView="simple">m_numVertices</Item>
+			<!--<ArrayItems>
+				<Size>m_numVertices</Size>
+				<ValuePointer>(VertexBoneless*)(m_data[m_numSubMeshes * sizeof(SubMesh) + m_numMaterials * sizeof(Material)])</ValuePointer>
+			</ArrayItems>-->
+		</Expand>
+	</Type>
+</AutoVisualizer>

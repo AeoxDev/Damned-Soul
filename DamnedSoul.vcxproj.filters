@@ -9,6 +9,31 @@
     <FxCompile Include="resource\shader\ParticlePS.hlsl" />
     <FxCompile Include="resource\shader\ParticleVS.hlsl" />
     <FxCompile Include="resource\shader\PixelVertex.hlsl" />
+    <Natvis Include="resource\NatVis\mlv_vis.natvis" />
+    <Natvis Include="resource\NatVis\model_vis.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
+    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
+    <FxCompile Include="resource\shader\TestPS.hlsl" />
+    <FxCompile Include="resource\shader\TestVS.hlsl" />
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\D3D11Helper">
+      <UniqueIdentifier>{fe3ca8f1-fe5f-4bfe-89a4-a7fd42d91e0c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
     <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
     <FxCompile Include="resource\shader\TestPS.hlsl" />

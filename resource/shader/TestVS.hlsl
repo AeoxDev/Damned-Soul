@@ -15,7 +15,6 @@ struct VS_INPUTS
 {
 	float4 position : POSITION;
 	float4 normal : NORMAL;
-	uint material : MATERIAL;
 	float2 uv : UV;
 };
 
@@ -34,8 +33,6 @@ VS_OUT main(VS_INPUTS pos)
 	retval.position = pos.position;
 	retval.normal = pos.normal;
 	retval.uv = pos.uv;
-
-	retval.material = pos.material;
 	
 	retval.position = mul(pos.position, world);
     retval.position = mul(retval.position, view);

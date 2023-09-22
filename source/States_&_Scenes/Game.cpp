@@ -11,7 +11,10 @@ Model dogModel;
 
 void GameScene::Update()
 {
-	
+	if (-1 == dogModel.m_indexBuffer)
+		dogModel.Load("PlaceholderScene.mdl");
+
+	float move[2] = { 0, 0 };
 
 	//float move[2] = { 0, 0 };
 
@@ -38,7 +41,9 @@ void GameScene::Update()
 	dogModel.SetMaterialActive();
 	dogModel.SetVertexAndIndexBuffersActive();
 	SetTopology(TRIANGLELIST);
-	Render(dogModel.m_bonelessModel->m_numIndices);
+
+	dogModel.RenderAllSubmeshes();
+	//Render(dogModel.m_bonelessModel->m_numIndices);
 	
 	Particles::PrepareParticlePass();
 	SetTopology(POINTLIST);
