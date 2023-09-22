@@ -18,7 +18,7 @@ StaticHazard (damage)
 //TEEEEMP
 struct ConstantBuffer
 {
-	ID3D11Buffer* m_buffer;
+	ID3D11Buffer* m_buffer = nullptr;
 	size_t m_bufferSize = 0;
 
 	ConstantBuffer() = default;

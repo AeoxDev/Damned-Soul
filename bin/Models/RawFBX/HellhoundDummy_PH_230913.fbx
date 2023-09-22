@@ -497,12 +497,12 @@ Objects:  {
 	Video: 2123616564768, "Video::base_color_texture", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:/Users/ratse/Desktop/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/Textures/HellhoundDummy_PH_TexAlbedo_230911.png"
-			P: "RelPath", "KString", "XRefUrl", "", "..\Textures\HellhoundDummy_PH_TexAlbedo_230911.png"
+			P: "Path", "KString", "XRefUrl", "", "C:/Users/ratse/Desktop/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/Texture finished/HellhoundDummy_PH_TexAlbedo_230911.png"
+			P: "RelPath", "KString", "XRefUrl", "", "..\Texture finished\HellhoundDummy_PH_TexAlbedo_230911.png"
 		}
 		UseMipMap: 0
-		Filename: "C:/Users/ratse/Desktop/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/Textures/HellhoundDummy_PH_TexAlbedo_230911.png"
-		RelativeFilename: "..\Textures\HellhoundDummy_PH_TexAlbedo_230911.png"
+		Filename: "C:/Users/ratse/Desktop/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/Texture finished/HellhoundDummy_PH_TexAlbedo_230911.png"
+		RelativeFilename: "..\Texture finished\HellhoundDummy_PH_TexAlbedo_230911.png"
 	}
 	Texture: 2123616570528, "Texture::base_color_texture", "" {
 		Type: "TextureVideoClip"
@@ -514,8 +514,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::base_color_texture"
-		FileName: "C:/Users/ratse/Desktop/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/Textures/HellhoundDummy_PH_TexAlbedo_230911.png"
-		RelativeFilename: "..\Textures\HellhoundDummy_PH_TexAlbedo_230911.png"
+		FileName: "C:/Users/ratse/Desktop/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/Texture finished/HellhoundDummy_PH_TexAlbedo_230911.png"
+		RelativeFilename: "..\Texture finished\HellhoundDummy_PH_TexAlbedo_230911.png"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
