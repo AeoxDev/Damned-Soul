@@ -717,7 +717,7 @@ void SetupTestHitbox()
 	Registry collisionRegistry;
 	EntityID player = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, player);
-	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 9.0f, 13.0f);
+	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 15.0f, 15.0f);
 	SetHitboxIsPlayer(collisionRegistry, player, circle);
 	SetHitboxHitEnemy(collisionRegistry, player, circle);
 	SetHitboxHitWall(collisionRegistry, player, circle);

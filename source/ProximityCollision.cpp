@@ -186,8 +186,8 @@ void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 		{
 			return;
 		}
-		float X = ((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x));
-		
+		float X = abs(((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)));
+
 		//Move the position to be on the line.
 		x = x + dz * X;
 		z = z + dx * X;
@@ -202,7 +202,7 @@ void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 		{
 			return;
 		}
-		float X = ((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x));
+		float X = abs(((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)));
 
 		//Move the position to be on the line.
 		x = x + dz * X;
