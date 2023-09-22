@@ -11,8 +11,7 @@ Model dogModel;
 
 void GameScene::Update()
 {
-	if (-1 == dogModel.m_indexBuffer)
-		dogModel.Load("HellhoundDummy_PH.mdl");
+	
 
 	//float move[2] = { 0, 0 };
 
@@ -48,11 +47,30 @@ void GameScene::Update()
 
 }
 
-void GameScene::UpdateParticles()
+void GameScene::Clear()
+{
+}
+
+void GameScene::Setup(int scene)
+{
+	if (-1 == dogModel.m_indexBuffer)
+		dogModel.Load("HellhoundDummy_PH.mdl");
+}
+
+void GameScene::ComputeShaders()
 {
 	Particles::PrepareParticleCompute();
 	Dispatch(100, 0, 0);
 	Particles::FinishParticleCompute();
+}
+void GameScene::Render()
+{
+}
+void GameScene::Input()
+{
+}
+void GameScene::Unload()
+{
 }
 //
 ////void Game::HandleKeyInputs(int keyInput[], Settings& settings)

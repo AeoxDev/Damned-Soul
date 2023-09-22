@@ -41,15 +41,7 @@ int main(int argc, char* args[])
 
 	SetupTestHitbox();
 
-	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
-
-	
-
-	// Create UI + Example Menu
-
-	stateManager.m_menu.SetupMainMenu();
-
-	
+	stateManager.Setup();
 
 	currentStates = State::MainMenu;
 	
@@ -60,24 +52,31 @@ int main(int argc, char* args[])
 		//Clear the render targets!
 		Clear(testRenderSlot);
 
+		//First do compute shader work
+		stateManager.ComputeShaders();
 
-		
+		//Then render all registries that are active
+		stateManager.Render();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
-		//stateManager.ReadInputs();
+		
+		//Do all systems that are based on input
+		stateManager.Input();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		//UpdatePhysics(stateManager);//Change registry to scene registry
 		UpdateDebugWindowTitle(title);
 
+		//Lastly do the cpu work
 		stateManager.Update();
 		//UpdatePhysics(sceneRegistry);//Use the registry of the scene
 		//Present what was drawn during the update!
 		Present();
 		MemLib::pdefrag();
+		stateManager.EndFrame();
 	}
 	
-	stateManager.m_menu.Unload();
+	stateManager.UnloadAll();
 	ReleaseUIRenderer();
 	
 	EndDirectX();

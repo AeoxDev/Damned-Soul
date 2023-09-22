@@ -28,7 +28,8 @@ enum State
 	MainMenu = 0b1,//Is a registry
 	Play = 0b10,//Will look at registries
 	Pause = 0b100,//Is a registry
-	Settings = 0b1000//Is a registry
+	Settings = 0b1000,//Is a registry
+	InShop = 0b10000//In a shop, is registry
 };
 
 //Settings state

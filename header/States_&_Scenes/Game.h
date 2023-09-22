@@ -14,8 +14,13 @@ struct GameScene
 	//int playerDirX = 0;
 	//int playerDirY = 0;
 
-	void Update();
-	void UpdateParticles();
+	void Setup(int scene);
 
-	void Reset();
+	void Clear();
+	void ComputeShaders();
+	void Render();
+	void Input();
+	void Update();
+
+	void Unload();
 };

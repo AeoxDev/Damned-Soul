@@ -81,7 +81,12 @@ namespace EntityGlobals
 
 		//Note because of the increment that each time this function is called, the ID number will be new and unique
 		static int compId = componentOnBit.size();
-		componentOnBit.emplace(GetId<T>, componentOnBit.size());
+		//componentOnBit.emplace(GetId<T>, componentOnBit.size());
+		if (componentOnBit.find(GetId<T>) == componentOnBit.end())
+		{
+			componentOnBit.emplace(GetId<T>, componentOnBit.size());
+		}
+		
 		return compId;
 	}
 

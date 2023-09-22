@@ -7,9 +7,14 @@ struct Menu
 {
 	Registry registry;//This contains all entities and components for the main menu.
 
-	void SetupMainMenu();
+	//Load all main meny related
+	void Setup();
 
-	void MenuSystem();
+	void ComputeShaders();
+	void Render();
+	void Input();
+	void Update();
 
+	//Unload everything in the registry, do this after turning the menu state off.
 	void Unload();
 };

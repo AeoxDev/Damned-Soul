@@ -1,7 +1,7 @@
 #include "States_&_Scenes\StateManager.h"
-
+#include "Input.h"
 State currentStates;
-
+StateManager stateManager;
 //void StateManager::ReadKeyInputs(int keyState[])
 //{
 //	switch (m_currentState)
@@ -64,7 +64,10 @@ State currentStates;
 
 void StateManager::Setup()
 {
-	//
+	currentStates = MainMenu;
+
+	menu.Setup();
+
 }
 
 void StateManager::Clear()
@@ -72,16 +75,104 @@ void StateManager::Clear()
 	//Find which registries for clear system
 }
 
+void StateManager::ComputeShaders()
+{
+	if (currentStates & State::MainMenu)
+	{
+		menu.ComputeShaders();
+	}
+	if (currentStates & State::Pause)
+	{
+		pause.ComputeShaders();
+	}
+	if (currentStates & State::Settings)
+	{
+		settings.ComputeShaders();
+	}
+	if (currentStates & State::Play)
+	{
+		levelScenes[activeLevelScene].ComputeShaders();
+	}
+	if (currentStates & State::InShop)
+	{
+		shop.ComputeShaders();
+	}
+}
+
 void StateManager::Render()
 {
 	//Find which registries for render system
+	if (currentStates & State::MainMenu)
+	{
+		menu.Render();
+	}
+	if (currentStates & State::Pause)
+	{
+		pause.Render();
+	}
+	if (currentStates & State::Settings)
+	{
+		settings.Render();
+	}
+	if (currentStates & State::Play)
+	{
+		levelScenes[activeLevelScene].Render();
+	}
+	if (currentStates & State::InShop)
+	{
+		shop.Render();
+	}
+}
+
+void StateManager::Input()
+{
+	//First read the keys
+	GetInput();
+
+	//Then go through the registries that are active
+	if (currentStates & State::MainMenu)
+	{
+		menu.Input();
+	}
+	if (currentStates & State::Pause)
+	{
+		pause.Input();
+	}
+	if (currentStates & State::Settings)
+	{
+		settings.Input();
+	}
+	if (currentStates & State::Play)
+	{
+		levelScenes[activeLevelScene].Input();
+	}
+	if (currentStates & State::InShop)
+	{
+		shop.Input();
+	}
 }
 
 void StateManager::Update()
 {
 	if (currentStates & State::MainMenu)
 	{
-		this->m_menu.MenuSystem();
+		menu.Update();
+	}
+	if (currentStates & State::Pause)
+	{
+		pause.Update();
+	}
+	if (currentStates & State::Settings)
+	{
+		settings.Update();
+	}
+	if (currentStates & State::Play)
+	{
+		levelScenes[activeLevelScene].Update();
+	}
+	if (currentStates & State::InShop)
+	{
+		shop.Update();
 	}
 	//Find which registries to update
 	//switch (m_currentState)
@@ -110,6 +201,18 @@ void StateManager::Update()
 	//	//std::cout << mousePos.first << ", " << mousePos.second << std::endl;
 
 	//oldmousepos = mousePos;
+}
+void StateManager::EndFrame()
+{
+	ResetMouse();
+}
+void StateManager::UnloadAll()
+{
+	menu.Unload();
+	settings.Unload();
+	shop.Unload();
+	levelScenes[0].Unload();
+	levelScenes[1].Unload();
 }
 //
 //void StateManager::ReadInputs()

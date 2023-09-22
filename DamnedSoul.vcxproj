@@ -192,7 +192,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
     <ClCompile Include="source\CompCount.cpp" />
+    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Lighting.cpp" />
     <ClCompile Include="source\UIRenderer.cpp" />
     <ClCompile Include="source\ExampleMenu.cpp" />
@@ -340,10 +342,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
     <ClInclude Include="header\UIRenderer.h" />
     <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />

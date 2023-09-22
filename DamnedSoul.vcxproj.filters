@@ -62,12 +62,13 @@
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\CompCount.cpp" />
+    <ClCompile Include="source\Input.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
-    <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\UIRenderer.h" />
     <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />
@@ -111,6 +112,9 @@
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="source\States.h" />
+    <ClInclude Include="header\MemLib\ML_Array.hpp" />
+    <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
