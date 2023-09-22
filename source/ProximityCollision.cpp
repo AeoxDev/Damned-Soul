@@ -167,6 +167,7 @@ void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& 
 
 void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 {
+	//d = (x - x1)(y2 - y1) - (y - y1)(x2 - x1)
 	float magnitude = ((x - p1.x) * (p2.z - p1.z)) - ((z - p1.z) * (p2.x - p1.x));
 
 	float dx = p2.x - p1.x;
