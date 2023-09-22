@@ -60,7 +60,7 @@ void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& 
 		}
 		else if (!first && !second)
 		{
-			ProximityStepChart(A, B, C, x, z, x, z, wallHitbox->clockwise); //Change second pair of x, z -> Previous position X and Z.
+			ProximityStepChart(A, B, C, x, z, x, z); //Change second pair of x, z -> Previous position X and Z.
 		}
 		else
 		{
@@ -75,7 +75,7 @@ void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& 
 				if (!first)
 				{
 					//Move using A -> B
-					ProximityMove(A, B, x, z, wallHitbox->clockwise);
+					ProximityMove(A, B, x, z);
 				}
 			}
 			else
@@ -83,7 +83,7 @@ void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& 
 				if (!second)
 				{
 					//Move using B -> C
-					ProximityMove(B, C, x, z, wallHitbox->clockwise);
+					ProximityMove(B, C, x, z);
 				}
 			}
 		}
@@ -135,7 +135,7 @@ void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& 
 		}
 		else if (!first && !second)
 		{
-			ProximityStepChart(A, B, C, x, z, x, z, wallHitbox->clockwise); //Change second pair of x, z -> Previous position X and Z.
+			ProximityStepChart(A, B, C, x, z, x, z); //Change second pair of x, z -> Previous position X and Z.
 		}
 		else
 		{
@@ -150,7 +150,7 @@ void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& 
 				if (!first)
 				{
 					//Move using A -> B
-					ProximityMove(A, B, x, z, wallHitbox->clockwise);
+					ProximityMove(A, B, x, z);
 				}
 			}
 			else
@@ -158,29 +158,58 @@ void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& 
 				if (!second)
 				{
 					//Move using B -> C
-					ProximityMove(B, C, x, z, wallHitbox->clockwise);
+					ProximityMove(B, C, x, z);
 				}
 			}
 		}
 	}
 }
 
-void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z, int& clockwise)
+void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 {
 	float magnitude = ((x - p1.x) * (p2.z - p1.z)) - ((z - p1.z) * (p2.x - p1.x));
 
-	//Calculate what X and Z should be changed to in order to be on the line.
-	//Get wall proximityHitbox's clockwise or counter-clockwise to figure out which direction is the correct normal.
+	float dx = p2.x - p1.x;
+	float dz = p2.z - p1.z;
 
-	/*
-	dx = x2 - x1
-	dz = z2 - z1
-	
-	normals = (-dy, dx) or (dy, -dx)
-	*/
+	//If magnitude > 0 --> Normal = (-dz, dx)
+	//If magnitude < 0 --> Normal = (dz, -dx)
+
+	if (magnitude > 0)
+	{
+		//Inverse the delta z value.
+		dz = -dz;
+
+		//Calculate the coefficient that tells the amount to move
+		if (((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)) == 0) //Division by zero is BAD! >:(
+		{
+			return;
+		}
+		float X = ((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x));
+		
+		//Move the position to be on the line.
+		x = x + dz * X;
+		z = z + dx * X;
+	}
+	else if (magnitude < 0)
+	{
+		//Inverse the delta x value.
+		dx = -dx;
+
+		//Calculate the coefficient that tells the amount to move
+		if (((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)) == 0) //Division by zero is BAD! >:(
+		{
+			return;
+		}
+		float X = ((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x));
+
+		//Move the position to be on the line.
+		x = x + dz * X;
+		z = z + dx * X;
+	}
 }
 
-void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C, float& x, float& z, float& px, float& pz, int& clockwise)
+void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C, float& x, float& z, float& px, float& pz)
 {
 	int o1, o2, o3, o4;
 	//Step 1: Check if A -> Previous position intersects with B -> C
@@ -225,8 +254,8 @@ void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C,
 	else if (!step1 && !step2)
 	{
 		//Step 4b: Move entity first based on magnitude from the first line, then move it again based on the magnitude of the second line.
-		ProximityMove(A, B, x, z, clockwise); //x and z gets updated
-		ProximityMove(B, C, x, z, clockwise); //x and z gets updated
+		ProximityMove(A, B, x, z); //x and z gets updated
+		ProximityMove(B, C, x, z); //x and z gets updated
 	}
 	else
 	{
@@ -234,12 +263,12 @@ void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C,
 		if (step1)
 		{
 			//Move based on the B -> C line
-			ProximityMove(B, C, x, z, clockwise);
+			ProximityMove(B, C, x, z);
 		}
 		else
 		{
 			//Move based on the A -> B line
-			ProximityMove(A, B, x, z, clockwise);
+			ProximityMove(A, B, x, z);
 		}
 	}
 
