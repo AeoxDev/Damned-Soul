@@ -195,7 +195,7 @@ public:
 		m_data = MemLib::palloc(m_capacity * m_tSize);
 	};
 
-	const ML_Vector& Initialize()
+	void Initialize()
 	{
 		m_size = 0;
 		// Set capacity

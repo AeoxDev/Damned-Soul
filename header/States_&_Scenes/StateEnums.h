@@ -27,6 +27,12 @@ enum State
 	InShop = 0b10000//In a shop, is registry
 };
 
+void SetInMainMenu(bool value);
+void SetInPlay(bool value);
+void SetInPause(bool value);
+void SetInSettings(bool value);
+void SetInShop(bool value);
+
 //Settings state
 //enum class SettingsState {
 //	Graphics,

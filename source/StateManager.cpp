@@ -1,7 +1,69 @@
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
+#include "Model.h"
 State currentStates;
 StateManager stateManager;
+
+void SetInMainMenu(bool value)
+{
+	
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InMainMenu);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InMainMenu));
+	}
+}
+void SetInPlay(bool value)
+{
+
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InPlay);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InPlay));
+	}
+}
+void SetInPause(bool value)
+{
+
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InPause);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InPause));
+	}
+}
+void SetInSettings(bool value)
+{
+
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InSettings);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InSettings));
+	}
+}
+void SetInShop(bool value)
+{
+
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InShop);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InShop));
+	}
+}
 //void StateManager::ReadKeyInputs(int keyState[])
 //{
 //	switch (m_currentState)
@@ -65,7 +127,7 @@ StateManager stateManager;
 void StateManager::Setup()
 {
 	currentStates = InMainMenu;
-
+	//models.Initialize();
 	menu.Setup();
 
 }
@@ -204,7 +266,7 @@ void StateManager::Update()
 }
 void StateManager::EndFrame()
 {
-	ResetMouse();
+	ResetInput();
 }
 void StateManager::UnloadAll()
 {
@@ -228,12 +290,12 @@ void StateManager::UnloadAll()
 //				sdl.quit = true;
 //				break;
 //			case SDL_KEYDOWN: //Reads that a key has been pressed
-//				m_keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
-//				ReadKeyInputs(m_keyInput);
+//				keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
+//				ReadKeyInputs(keyInput);
 //				break;
 //			case SDL_KEYUP: //Reads that a key has been released
-//				ReadKeyOutputs(m_keyInput);
-//				m_keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
+//				ReadKeyOutputs(keyInput);
+//				keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
 //				break;
 //			case SDL_MOUSEBUTTONDOWN: //Reads that a mouse button has been pressed
 //				ReadMouseInputs(sdl.sdlEvent.button);

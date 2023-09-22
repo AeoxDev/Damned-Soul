@@ -1,6 +1,11 @@
 #pragma once
 
-extern int m_keyInput[256];
+enum ButtonState;
+
+
+
+extern int keyInput[256];
+extern ButtonState keyState[256];
 
 enum MouseButton
 {
@@ -9,23 +14,23 @@ enum MouseButton
 	middle,
 };
 
-enum MouseButtonState
+enum ButtonState
 {
 	noEvent,
 	pressed,//Pressed down this frame
 	released,//From down/pressed to up
 };
 
-enum MouseButtonDown
+enum ButtonDown
 {
 	up,//Not down
 	down,//Not released yet
 };
 
-extern MouseButtonState mouseButtonPressed[3];//Left, right, middle
-extern MouseButtonDown mouseButtonDown[3];
+extern ButtonState mouseButtonPressed[3];//Left, right, middle
+extern ButtonDown mouseButtonDown[3];
 extern int mouseX;
 extern int mouseY;
 
 void GetInput();
-void ResetMouse();
+void ResetInput();

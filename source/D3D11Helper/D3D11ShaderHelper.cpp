@@ -131,7 +131,7 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 
 	reader.open(name, std::ios::binary | std::ios::ate);
 	if (false == reader.is_open())
-	{    float paddingOne;
+	{ 
 
 		std::cerr << "Could not open VS test file!" << std::endl;
 		return -1;

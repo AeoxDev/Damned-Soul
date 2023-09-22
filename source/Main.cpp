@@ -32,28 +32,24 @@ int main(int argc, char* args[])
 
 	ui.Setup();
 
-	int testRenderSlot = SetupGameRenderer();
+	backBufferRenderSlot = SetupGameRenderer();
+
 	Camera::InitializeCamera();
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
 
 	Particles::InitializeParticles();
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
 
-	SMP_IDX sampler = CreateSamplerState();
-	SetSamplerState(sampler);
-
 	SetupTestHitbox();
 
 	stateManager.Setup();
-
-	currentStates = State::InMainMenu;
 	
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 
 		//Clear the render targets!
-		Clear(testRenderSlot);
+		Clear(backBufferRenderSlot);
 
 		//First do compute shader work
 		stateManager.ComputeShaders();

@@ -5,7 +5,7 @@
 
 struct GameScene
 {
-	Registry m_registry;
+	Registry registry;
 	
 	//SceneManager sceneManager;
 

@@ -9,6 +9,9 @@
 #include "MemLib\ML_String.hpp"
 
 #define SANE_MODEL_VALIDATION_NUMBER (1'234'567'890)
+
+//ML_Vector<Model> models = ML_Vector<Model>();
+
 const bool ModelBoneless::ValidByteData() const
 {
 	return m_sanityCheckNumber == SANE_MODEL_VALIDATION_NUMBER;

@@ -1,9 +1,11 @@
 #include "Input.h"
 #include "SDLHandler.h"
 
-int m_keyInput[256]{ 0 };
-MouseButtonState mouseButtonPressed[3]{MouseButtonState::noEvent};//Left, right, middle
-MouseButtonDown mouseButtonDown[3]{ MouseButtonDown::up };
+int keyInput[256]{ 0 };
+ButtonState keyState[256]{			ButtonState			::			noEvent};
+int keyReset[256]{ 0 };
+ButtonState mouseButtonPressed[3]{	ButtonState			::			noEvent};//Left, right, middle
+ButtonDown mouseButtonDown[3]{		ButtonDown			::			up };
 int mouseX, mouseY;
 SDL_MouseButtonEvent mouseButton;
 
@@ -22,6 +24,19 @@ void UpdateMouseState(int mouse)
 	}
 }
 
+void UpdateKeyState(int key)
+{
+	//First go from up  to pressed
+	if (keyInput[key] == 0)
+	{
+		keyState[key] = ButtonState::pressed;
+	}
+	else if (keyInput[key] == 1)//Then go from pressed or down to released
+	{
+		keyState[key] = ButtonState::released;
+	}
+}
+
 void GetInput()
 {
 	//Loop through each event; there can be multiple each frame
@@ -36,10 +51,12 @@ void GetInput()
 				sdl.quit = true;
 				break;
 			case SDL_KEYDOWN: //Reads that a key has been pressed
-				m_keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
+				UpdateKeyState(sdl.sdlEvent.key.keysym.scancode);
+				keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
 				break;
 			case SDL_KEYUP: //Reads that a key has been released
-				m_keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
+				UpdateKeyState(sdl.sdlEvent.key.keysym.scancode);
+				keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
 				break;
 			case SDL_MOUSEBUTTONDOWN || SDL_MOUSEBUTTONUP: //Reads that a mouse button has been pressed
 				//Find which mouse button
@@ -64,9 +81,10 @@ void GetInput()
 	}
 }
 
-void ResetMouse()
+void ResetInput()
 {
 	mouseButtonPressed[0] = noEvent;
 	mouseButtonPressed[1] = noEvent;
 	mouseButtonPressed[2] = noEvent;
+	memcpy(keyState, keyReset, sizeof(keyState));
 }

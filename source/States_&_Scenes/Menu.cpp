@@ -2,6 +2,8 @@
 #include "UIRenderer.h"
 #include "MainMenu.h"
 #include "Hitbox.h"
+#include "States_&_Scenes\StateManager.h"
+#include "Input.h"
 //
 //void Menu::Update()
 //{
@@ -122,7 +124,14 @@ void Menu::Update()
 
 void Menu::Input()
 {
-
+	//Input controller component.
+	if (keyState[SDL_SCANCODE_1] == released)
+	{
+		SetInPlay(true);
+		SetInMainMenu(false);
+		stateManager.levelScenes[0].Setup(0);
+		Unload();
+	}
 }
 
 void Menu::Setup()//Load

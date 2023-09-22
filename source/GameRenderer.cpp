@@ -10,6 +10,7 @@
 
 RenderSetupComponent renderStates[8];
 int currentSize = 0;
+int backBufferRenderSlot;
 
 struct Vertex {
 	float pos[4];
@@ -117,7 +118,21 @@ int SetupGameRenderer()
 	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 	// Set a render target view and depth stencil view
 	s = SetRenderTargetViewAndDepthStencil(renderStates[currentSize].renderTargetView, renderStates[currentSize].depthStencilView);
+	//Create and set a simple sampler
+	SMP_IDX sampler = CreateSamplerState();
+	SetSamplerState(sampler);
 	return currentSize++;
+}
+
+void PrepareBackBuffer()
+{
+	Clear(backBufferRenderSlot);
+	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
+
+	renderStates[backBufferRenderSlot].pixelShader = LoadPixelShader("TestPS.cso");
+	SetPixelShader(renderStates[backBufferRenderSlot].pixelShader);
+	renderStates[backBufferRenderSlot].vertexShader = LoadVertexShader("TestVS.cso");
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShader);
 }
 
 void Clear(const int& s)
@@ -129,7 +144,7 @@ void Clear(const int& s)
 	SetRenderTargetViewAndDepthStencil(renderStates[s].renderTargetView, renderStates[s].depthStencilView);
 }
 
-void Render(const size_t& count)
+void RenderIndexed(const size_t& count)
 {
 	//ID3D11Buffer* lightBuf = nullptr;
 	//bool test = CreateLightingConstantBuffer( lightBuf);

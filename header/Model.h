@@ -1,6 +1,11 @@
 #pragma once
 #include <cinttypes>
 #include "MemLib\PoolPointer.hpp"
+#include "MemLib\ML_Vector.hpp"
+struct Model;
+
+//extern ML_Vector<Model> models;
+
 
 struct VertexBoneless
 {

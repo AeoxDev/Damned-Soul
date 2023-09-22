@@ -19,13 +19,15 @@ struct RenderSetupComponent
 	SMP_IDX samplerState;
 };
 extern RenderSetupComponent renderStates[8];
+extern int backBufferRenderSlot;
 
 bool Setup3dGraphics();
 int SetupUIRenderState();
 int SetupGameRenderer();
 
+void PrepareBackBuffer();
 void Clear(const int& componentSlot);
-void Render(const size_t& count);
+void RenderIndexed(const size_t& count);
 void ClearParticles();
 void Present();
 void Dispatch(UINT threadX, UINT threadY, UINT threadZ);

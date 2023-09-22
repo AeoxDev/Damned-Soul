@@ -48,7 +48,6 @@
   <ItemGroup>
     <ClCompile Include="source\Lighting.cpp" />
     <ClCompile Include="source\UIRenderer.cpp" />
-    <ClCompile Include="source\ExampleMenu.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
@@ -89,13 +88,18 @@
     <ClCompile Include="source\CompCount.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
+    <ClCompile Include="source\MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModelComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
     <ClInclude Include="header\UIRenderer.h" />
-    <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -140,6 +144,15 @@
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
+    <ClInclude Include="header\MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ModelComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\AllComponents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
