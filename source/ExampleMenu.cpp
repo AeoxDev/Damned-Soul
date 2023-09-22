@@ -60,7 +60,7 @@ void ExMenu::Setup(UI& ui)
 		this->m_uiCanvas.AddButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f - 65.0f, 800 });
 	}
 
-	for (auto& button : m_Buttons)
+	for (auto& button : m_uiCanvas.m_Buttons)
 		button.Interact();
 }
 

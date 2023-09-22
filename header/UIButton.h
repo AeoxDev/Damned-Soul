@@ -19,7 +19,7 @@ struct UIButton
 	UIText m_Text;							//The text on the button
 
 	//bool isActive;						//bool for checking if a Controller is "hovering" a button
-	UIButton() = default;
+	UIButton();
 	void Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText,
 		std::function<void()> onClick, std::function<void()> onHover, /* std::function<void()> onActive, std::function<void()> onDeactive, */
 		DirectX::XMFLOAT2 position, /*bool isActive = false, */ DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,

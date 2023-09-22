@@ -128,31 +128,31 @@ void Menu::Input()
 void Menu::Setup()
 {
 	//Add entities and components to the registry for the main menu here
-	//EntityID mainMenuEntity = this->registry.CreateEntity();
-	////First set up UI renderer
-	////AddHitboxComponent(registry, mainMenuEntity);
-	//this->registry.AddComponent<UIRenderComponents>(mainMenuEntity);
+	EntityID mainMenuEntity = this->registry.CreateEntity();
+	//First set up UI renderer
+	//AddHitboxComponent(registry, mainMenuEntity);
+	this->registry.AddComponent<UIRenderComponents>(mainMenuEntity);
 
-	//UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(mainMenuEntity);
-	//if (!SetupUIRenderer(uiComp))
-	//{
-	//	std::cout << "Failed to setup UI Renderer" << std::endl;
-	//	return;
-	//}
+	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(mainMenuEntity);
+	if (!SetupUIRenderer(uiComp))
+	{
+		std::cout << "Failed to setup UI Renderer" << std::endl;
+		return;
+	}
 
-	//this->registry.AddComponent<UI>(mainMenuEntity);
-	//UI* ui = registry.GetComponent<UI>(mainMenuEntity);
-	//ui->Setup();
-	//
-	//this->registry.AddComponent<ExMenu>(mainMenuEntity);
-	//ExMenu *exMenu = registry.GetComponent<ExMenu>(mainMenuEntity);
-	//uiComp = registry.GetComponent<UIRenderComponents>(mainMenuEntity);
-	//// Create UI and example menu
-	////*ui = UI();
+	this->registry.AddComponent<UI>(mainMenuEntity);
+	UI* ui = registry.GetComponent<UI>(mainMenuEntity);
+	ui->Setup();
+	
+	this->registry.AddComponent<ExMenu>(mainMenuEntity);
+	ExMenu *exMenu = registry.GetComponent<ExMenu>(mainMenuEntity);
+	uiComp = registry.GetComponent<UIRenderComponents>(mainMenuEntity);
+	// Create UI and example menu
+	//*ui = UI();
 
-	//exMenu->Setup(*ui);
-	////ui->SetCurrentCanvas(exMenu->m_CurrentPage);
-	//DrawGUI(this->registry, mainMenuEntity);
+	exMenu->Setup(*ui);
+	//ui->SetCurrentCanvas(exMenu->m_CurrentPage);
+	DrawGUI(this->registry, mainMenuEntity);
 
 
 }

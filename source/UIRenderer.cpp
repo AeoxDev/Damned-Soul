@@ -28,7 +28,7 @@ bool SetupUIRenderer(UIRenderComponents*& inOut)
 	inOut->dsv = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 
 	//SHADER RESOURCE VIEW
-	inOut->srv = CreateShaderResourceViewTexture(rtv, SHADER_TO_BIND_RESOURCE::BIND_COMPUTE, RESOURCE_FLAGS::BIND_RENDER_TARGET, 0 );
+	inOut->srv = CreateShaderResourceViewTexture(rtv, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, RESOURCE_FLAGS::BIND_RENDER_TARGET, 0 );
 
 	texture->Release();
 

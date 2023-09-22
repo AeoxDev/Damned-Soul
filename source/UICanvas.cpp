@@ -33,7 +33,9 @@ void UICanvas::AddButton(UI& ui, const std::string& imageFile, const std::string
 {
 	//PoolPointer<UIButton> temp = MemLib::palloc(sizeof(UIButton));
 	//UIButton temp(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
-	m_Buttons.push_back(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);//(temp);
+	//m_Buttons.push_back(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);//(temp);
+	m_Buttons.push_back(UIButton());
+	m_Buttons[m_Buttons.size() - 1].Setup(ui, imageFile, hoverImageFile, buttonString, onClick, onHover, position, scale, rotation, visibility, opacity);
 }
 
 void UICanvas::AddImage(UI& ui, const std::string& name, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
