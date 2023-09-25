@@ -203,7 +203,7 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 	metadata[0] = bindto;
 	metadata[1] = slot; // Set slot to use
 	metadata[2] = (uint32_t)size;
-
+	buffer->Release();
 	return (srvHolder->currentCount)++;
 }
 
@@ -256,6 +256,7 @@ SRV_IDX CreateShaderResourceViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, c
 
 			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			texture->Release();
 			break;
 		case RESOURCE_TEXTURE2DARRAY:
 			//Define if needed
@@ -401,6 +402,7 @@ void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 {
 	ID3D11Resource* vertexBufferResource = bfrHolder->buff_arr[destination];
 	d3d11Data->deviceContext->CopyResource(vertexBufferResource, srvHolder->srv_resource_arr[source]);
+	vertexBufferResource->Release();
 }
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot)

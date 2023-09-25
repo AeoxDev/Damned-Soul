@@ -19,8 +19,8 @@ struct UICanvas
 	ML_Map<const std::string, UIText> m_Texts;
 	//std::map<const std::string, UIText> m_Texts;
 
-	void DrawButtons(UI& ui, ID2D1RenderTarget* renderTarget);
-	void DrawImages(ID2D1RenderTarget* renderTarget);
+	void DrawButtons(UI& ui, ID2D1RenderTarget*& renderTarget);
+	void DrawImages(ID2D1RenderTarget*& renderTarget);
 	void DrawTexts(UI& ui);
 
 	/*void DrawButtons(UI* ui, ID2D1RenderTarget* renderTarget);

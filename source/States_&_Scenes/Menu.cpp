@@ -171,12 +171,12 @@ void Menu::Unload()
 	for (auto entity : View<UI>(registry))
 	{
 		//Get entity with UI, release components.
-		/*UI* ui = registry.GetComponent<UI>(entity);
+		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
 		if (ui)
 		{
-			MainMenu* exMenu = registry.GetComponent<MainMenu>(entity);
-			exMenu->m_uiCanvas.Release();
+			//MainMenu* exMenu = registry.GetComponent<MainMenu>(entity);
+			//exMenu->m_uiCanvas.Release();
 			ui->Release();
-		}*/
+		}
 	}
 }

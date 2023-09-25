@@ -77,7 +77,8 @@ int main(int argc, char* args[])
 	
 	stateManager.UnloadAll();
 	ReleaseUIRenderer();
-	
+	ui.Release();
+	DestroyHitboxVisualizeVariables();
 	EndDirectX();
 	MemLib::destroyMemoryManager();
 	SDL_Quit();
