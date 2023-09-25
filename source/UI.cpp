@@ -80,7 +80,6 @@ void UI::Setup()
 
 void UI::Release()
 {
-	this;
 	m_ImagingFactory->Release();
 	m_RenderTarget->Release();
 	m_WriteFactory->Release();

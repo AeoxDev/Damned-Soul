@@ -168,7 +168,7 @@ void Menu::Render()
 
 void Menu::Unload()
 {
-	for (auto entity : View<UI>(registry))
+	for (auto entity : View<UICanvas>(registry))
 	{
 		//Get entity with UI, release components.
 		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
