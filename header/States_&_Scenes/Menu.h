@@ -7,7 +7,7 @@ struct Menu
 {
 	Registry registry;//This contains all entities and components for the main menu.
 
-	//Load all main meny related
+	//Load all main menu related
 	void Setup();
 
 	void ComputeShaders();
