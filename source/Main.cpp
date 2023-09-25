@@ -80,8 +80,8 @@ int main(int argc, char* args[])
 	ui.Release();
 	DestroyHitboxVisualizeVariables();
 	EndDirectX();
-	MemLib::destroyMemoryManager();
 	SDL_Quit();
+	MemLib::destroyMemoryManager();
 	return 0;
 }
 
