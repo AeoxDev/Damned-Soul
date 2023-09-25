@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
+    <Natvis Include="resource\NatVis\mlv_vis.natvis" />
+  </ItemGroup>
+  <ItemGroup>
     <FxCompile Include="resource\shader\ParticleGS.hlsl" />
     <FxCompile Include="resource\shader\ParticlePS.hlsl" />
     <FxCompile Include="resource\shader\ParticleVS.hlsl" />
@@ -43,8 +46,8 @@
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Lighting.cpp" />
     <ClCompile Include="source\UIRenderer.cpp" />
-    <ClCompile Include="source\ExampleMenu.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
@@ -81,15 +84,22 @@
     <ClCompile Include="source\UIImage.cpp" />
     <ClCompile Include="source\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
-    <ClCompile Include="source\Lighting.cpp">
+    <ClCompile Include="source\STB_Helper.cpp" />
+    <ClCompile Include="source\CompCount.cpp" />
+    <ClCompile Include="source\Input.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
+    <ClCompile Include="source\MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
+    <ClInclude Include="header\Lighting.h" />
     <ClInclude Include="header\UIRenderer.h" />
-    <ClInclude Include="header\ExampleMenu.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -131,13 +141,16 @@
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="source\States.h" />
-    <ClInclude Include="header\MemLib\ML_Array.hpp">
+    <ClInclude Include="header\MemLib\ML_Array.hpp" />
+    <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
+    <ClInclude Include="header\MainMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Lighting.h">
+    <ClInclude Include="header\Components\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics.h">
+    <ClInclude Include="header\Components\AllComponents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

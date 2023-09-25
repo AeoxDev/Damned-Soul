@@ -1,10 +1,10 @@
 #pragma once
-#include "StateEnums.h"
 #include "EntityFramework.h"
 
-struct SettingsState
+struct PauseState
 {
 	Registry registry;
+
 	void Setup();
 
 	void Clear();

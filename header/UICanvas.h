@@ -4,14 +4,12 @@
 #include "UIButton.h"
 #include "UIImage.h"
 #include "UIText.h"
-//#include "PoolUtility.hpp"
 #include "MemLib\ML_Vector.hpp"
 #include "MemLib\ML_Map.hpp"
 #include <DirectXMath.h>
 
-class UICanvas
+struct UICanvas
 {
-protected:
 	bool m_Exit = false;
 
 	ML_Vector<UIButton> m_Buttons;
@@ -21,37 +19,34 @@ protected:
 	ML_Map<const std::string, UIText> m_Texts;
 	//std::map<const std::string, UIText> m_Texts;
 
-	void DrawButtons(PoolPointer<UI>& ui, ID2D1RenderTarget* renderTarget);
+	void DrawButtons(UI& ui, ID2D1RenderTarget* renderTarget);
 	void DrawImages(ID2D1RenderTarget* renderTarget);
-	void DrawTexts(PoolPointer<UI>& ui);
+	void DrawTexts(UI& ui);
 
 	/*void DrawButtons(UI* ui, ID2D1RenderTarget* renderTarget);
 	void DrawImages(ID2D1RenderTarget* renderTarget);
 	void DrawTexts(UI* ui);*/
 
-	void AddButton(PoolPointer<UI>& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick,
+	void AddButton(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonString, std::function<void()> onClick,
 		std::function<void()> onHover, /*std::function<void()> onClick, std::function<void()> onClick,*/ DirectX::XMFLOAT2 position,/* bool isActive = false,*/
 		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
-	void AddImage(PoolPointer<UI>& ui, const std::string& name, const std::string& file, DirectX::XMFLOAT2 position,
-		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
-	
-	void AddImage(UI* ui, const std::string& name, const std::string& file, DirectX::XMFLOAT2 position,
+	void AddImage(UI& ui, const std::string& name, const std::string& file, DirectX::XMFLOAT2 position,
 		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
-	void AddText(PoolPointer<UI>& ui, const std::string& name, const std::wstring& text, DirectX::XMFLOAT2 position,
+	void AddText(UI& ui, const std::string& name, const std::wstring& text, DirectX::XMFLOAT2 position,
 		DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
-
-public:
-	UICanvas() = default;
-	virtual ~UICanvas();
-	virtual void Release();
+	UICanvas();
+	void Setup();
+	~UICanvas();
+	void Release();
 
 	//virtual void Resize() = 0;
-	virtual void Reset();
-	virtual void Render(PoolPointer<UI>& ui);
+	void Reset();
+	//virtual void Render(PoolPointer<UI>& ui);
+	void Render(UI& ui);
 	//virtual void Render(UI* ui);
-	virtual void Update() {};
+	void Update() {};
 	
 	bool Exit();
 };

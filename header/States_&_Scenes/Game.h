@@ -1,25 +1,26 @@
 #pragma once
 #include "StateEnums.h"
 #include "Settings.h"
+#include "EntityFramework.h"
 
-struct Game
+struct GameScene
 {
-	GameState currentSubState = GameState::Unpause;
-	SceneManager sceneManager;
+	Registry registry;
+	
+	//SceneManager sceneManager;
 
 	//std::pair<float, float> playerPosition = { 0, 0 };
-	float playerPosition[3];//Change to vec3
-	int playerDirX = 0;
-	int playerDirY = 0;
+	//float playerPosition[3];//Change to vec3
+	//int playerDirX = 0;
+	//int playerDirY = 0;
 
+	void Setup(int scene);
+
+	void Clear();
+	void ComputeShaders();
+	void Render();
+	void Input();
 	void Update();
-	void UpdateParticles();
 
-	void ReadKeyInputs(int[], Settings&);
-	void ReadKeyOutputs(int[], Settings&);
-
-	void ReadMouseInputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
-	void ReadMouseOutputs(SDL_MouseButtonEvent, ButtonManager, Settings&, std::pair<int, int>);
-
-	void Reset();
+	void Unload();
 };

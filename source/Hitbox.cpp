@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "Backend/Collision.h"
 #include "CollisionFunctions.h"
 
@@ -235,6 +236,65 @@ void AddHitboxComponent(Registry& registry, EntityID& entity)
 {
 	registry.AddComponent<HitboxComponent>(entity);
 	
+}
+
+void CreateProximityHitbox(Registry& registry, EntityID& entity, std::string fileName)
+{
+	//Check if the proximityComponent already exists.
+	ProximityHitboxComponent* proximityComponent = registry.GetComponent<ProximityHitboxComponent>(entity);
+	if (proximityComponent == nullptr)
+	{
+		//Component did not exist!
+		return;
+	}
+
+	//Read file and fill up the pointList and tell if clockwise or counter-clockwise
+	std::string filePath = "HitboxFiles/" + fileName + ".box";
+	std::ifstream file(filePath);
+	if (!file.is_open())
+	{
+		return; //File not found
+	}
+
+	std::string line;
+	ProximityPoint currentPoint;
+
+	while (std::getline(file, line)) //For each line in the file
+	{
+		std::stringstream ss(line); //Load line into a stringstream
+
+		std::string word;
+
+		ss >> word; //Prefix
+
+		if (word == "Clockwise") //Set clockwise variable to the value read from file
+		{
+			ss >> word;
+			proximityComponent->clockwise = std::stoi(word);
+		}
+		else if (word == "Point") //Start of a new point, add index to ProximityPoint
+		{
+			ss >> word;
+			currentPoint.index = std::stoi(word);
+		}
+		else if (word == "X") //X coordinate for the ProximityPoint
+		{
+			ss >> word;
+			currentPoint.x = (float)(std::stoi(word));
+		}
+		else if (word == "Z") //Z coordinate for the ProximityPoint, also marks a completed point to add to component list.
+		{
+			ss >> word;
+			currentPoint.z = (float)(std::stoi(word));
+
+			proximityComponent->pointList.push_back(currentPoint);
+		}
+	}
+}
+
+void AddProximityHitboxComponent(Registry& registry, EntityID& entity)
+{
+	registry.AddComponent<ProximityHitboxComponent>(entity);
 }
 
 void InitializeBufferAndSRV(Registry& registry)
@@ -657,9 +717,10 @@ void SetupTestHitbox()
 	Registry collisionRegistry;
 	EntityID player = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, player);
-	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 0.0f, 0.0f);
+	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 15.0f, 15.0f);
 	SetHitboxIsPlayer(collisionRegistry, player, circle);
 	SetHitboxHitEnemy(collisionRegistry, player, circle);
+	SetHitboxHitWall(collisionRegistry, player, circle);
 	float triangleX[3] = { 0.f, 1.f, 0.5f };
 	float triangleZ[3] = { 0.f, 0.f, 1.f };
 	int triangle = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ);
@@ -671,13 +732,17 @@ void SetupTestHitbox()
 
 	EntityID enemy1 = collisionRegistry.CreateEntity();
 	AddHitboxComponent(collisionRegistry, enemy1);
-	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, 1.0f, 1.0f);
+	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, -11.0f, 1.0f);
 	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
 	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
+	SetHitboxHitWall(collisionRegistry, enemy1, circle2);
 	int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ);
 	SetHitboxIsEnemy(collisionRegistry, enemy1, enemyConvex);
 	SetHitboxHitPlayer(collisionRegistry, enemy1, enemyConvex);
 
+	EntityID wall = collisionRegistry.CreateEntity();
+	AddProximityHitboxComponent(collisionRegistry, wall);
+	CreateProximityHitbox(collisionRegistry, wall);
 	//EntityID enemy2 = collisionRegistry.CreateEntity();
 	//AddHitboxComponent(collisionRegistry, enemy2);
 	//int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);

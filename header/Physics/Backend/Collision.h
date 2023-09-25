@@ -5,6 +5,7 @@
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 1
 #include "EntityFramework.h"
+#include "MemLib/ML_Vector.hpp"
 
 
 struct OnCollisionParameters
@@ -92,6 +93,20 @@ struct HitboxComponent
 	
 };
 
+struct ProximityPoint
+{
+	int index;
+	float x;
+	float z;
+};
+
+struct ProximityHitboxComponent
+{
+	int clockwise = 1; //Clockwise or counter-clockwise
+	ML_Vector<ProximityPoint> pointList;
+	ProximityHitboxComponent();
+};
+
 int FindAvailableSlot(unsigned& bits);
 
 /// <summary>
@@ -100,6 +115,7 @@ int FindAvailableSlot(unsigned& bits);
 /// <param name="registry"></param>
 void ResetCollisionVariables(Registry& registry);
 void HandleMoveableCollision(Registry& registry);//No clipping
+void HandleProximityCollision(Registry& registry); //No proximity clipping
 void HandleDamageCollision(Registry& registry);//Hitboxes for attacks and dynamic hazards
 void HandleStaticCollision(Registry& registry);//Stage and static Collisions
 

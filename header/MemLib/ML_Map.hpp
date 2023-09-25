@@ -3,10 +3,14 @@
 #include <cinttypes>
 #include <stdexcept>
 
+#define HEADER_ID 0b0101010101010101010
+
 template<typename _tKey, typename _tVal>
 struct ML_Map
 {
 private:
+
+	int header = HEADER_ID;
 	// Pool pointer to internal data
 	PoolPointer<std::pair<_tKey, _tVal>> m_data;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
@@ -141,7 +145,10 @@ public:
 	ML_Map& operator=(const ML_Map& other)
 	{
 		// First clear
-		clear();
+		if (header == HEADER_ID)
+		{
+			clear();
+		}
 
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;

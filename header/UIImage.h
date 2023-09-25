@@ -11,7 +11,7 @@ private:
 
 public:
 	UIImage() = default;
-	UIImage(PoolPointer<UI>& ui, const std::string& file, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f },
+	UIImage(UI& ui, const std::string& file, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f },
 		float rotation = 0.0f, bool visbility = true, float opacity = 1.0f);
 	//UIImage(UI* ui, const std::string& file, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f },
 	//	float rotation = 0.0f, bool visbility = true, float opacity = 1.0f);

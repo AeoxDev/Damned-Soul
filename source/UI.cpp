@@ -4,10 +4,19 @@
 #include "UIRenderer.h"
 #include "UICanvas.h"
 
+UI ui;
+
 UI::UI()
 {
+	
+}
+
+void UI::Setup()
+{
 	HRESULT hr;
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_Factory);
+	D2D1_FACTORY_OPTIONS options;
+	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, &m_Factory);
 	if (FAILED(hr))
 	{
 		std::cout << "FAILED to create D2D1Factory" << std::endl;
@@ -20,12 +29,12 @@ UI::UI()
 		std::cout << "FAILED to create D2D1WriteFactory" << std::endl;
 		return;
 	}
-	
+
 	UINT DPIX, DPIY;
 	DPIX = DPIY = GetDpiForWindow(sdl.window);
 
 	D2D1_RENDER_TARGET_PROPERTIES properties;
-	properties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN,D2D1_ALPHA_MODE_PREMULTIPLIED), (float)DPIX, (float)DPIY);
+	properties = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), (float)DPIX, (float)DPIY);
 
 	RECT rect;
 	GetClientRect(sdl.window, &rect);
@@ -80,12 +89,21 @@ void UI::Release()
 	m_Factory->Release();
 }
 
-void UI::Render(PoolPointer<UI>& ui)
+//void UI::Render(PoolPointer<UI>& ui)
+//{
+//	BeginFrame();
+//	if (false == currentCanvas.IsNullptr())
+//		currentCanvas->Render(ui);
+//	
+//
+//	EndFrame();
+//}
+
+void UI::Render(UICanvas& canvas)
 {
 	BeginFrame();
-	if (false == currentCanvas.IsNullptr())
-		currentCanvas->Render(ui);
 	
+	canvas.Render(ui);
 
 	EndFrame();
 }
@@ -164,8 +182,8 @@ ID2D1SolidColorBrush*& UI::GetYellowBrush()
 //	m_CurrentCanvas = canvas;
 //}
 
-void UI::SetCurrentCanvas(PoolPointer<UICanvas> canvas)
-{
-	currentCanvas = canvas;
-}
+//void UI::SetCurrentCanvas(UICanvas& canvas)
+//{
+//	m_CurrentCanvas = &canvas;
+//}
 

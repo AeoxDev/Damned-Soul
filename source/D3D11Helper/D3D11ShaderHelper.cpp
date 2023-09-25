@@ -1,6 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "GameRenderer.h"
 #include <iostream>
 #include <fstream>
 
@@ -130,7 +131,7 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 
 	reader.open(name, std::ios::binary | std::ios::ate);
 	if (false == reader.is_open())
-	{    float paddingOne;
+	{ 
 
 		std::cerr << "Could not open VS test file!" << std::endl;
 		return -1;
@@ -187,7 +188,6 @@ bool SetVertexShader(const VS_IDX idx)
 	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_arr[idx]);
 	return true;
 }
-
 
 CS_IDX LoadComputeShader(const char* name)
 {

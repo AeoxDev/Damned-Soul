@@ -4,34 +4,36 @@
 #include "ButtonManager.h"
 #include "States_&_Scenes\Menu.h"
 #include "States_&_Scenes\Game.h"
+#include "States_&_Scenes\Pause.h"
 
-class StateManager
+struct StateManager;
+
+extern State currentStates;
+extern StateManager stateManager;
+
+struct StateManager
 {
-private:
-	State m_currentState = State::Menu;
+	int activeLevelScene = 0;
+	GameScene levelScenes[2];
+	GameScene shop;
+	Menu menu;
+	SettingsState settings;
+	PauseState pause;
+	//MainMenu = 0b1,//Is a registry
+	//Pause = 0b100,//Is a registry
+	//Settings = 0b1000//Is a registry
 
-	Game m_game;
-	Menu m_menu;
-	Settings m_settings;
 
-	ButtonManager m_buttonManager;
+	void Setup();
+	void Clear();
+	void ComputeShaders();//All compute shaders here
+	void Render();//All gpu systems here
+	void Input();//All input based cpu systems here
+	void Update();//All cpu systems here
 
-	int m_keyInput[256]{ 0 };
+	void EndFrame();//Clears all framebased variables.
 
-	//Debug console variables
-	std::pair<int, int> mousePos;
-	std::pair<int, int> oldmousepos = {};
+	void UnloadAll();
 
-	void ReadKeyInputs(int[]);
-	void ReadKeyOutputs(int[]);
-
-	void ReadMouseInputs(SDL_MouseButtonEvent);
-	void ReadMouseOutputs(SDL_MouseButtonEvent);
-
-public:
-	StateManager();
-
-	void Update();
-	void ReadInputs();
 
 };

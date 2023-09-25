@@ -2,9 +2,8 @@
 #include "UI.h"
 #include <DirectXMath.h>
 
-class UIComponent
+struct UIComponent
 {
-protected:
 	DirectX::XMFLOAT2 m_Position;
 	DirectX::XMFLOAT2 m_Scale;
 	float m_Rotation;
@@ -13,8 +12,6 @@ protected:
 	bool m_Visibility;
 	void UpdateTransform();
 	void SetTransform(DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f);
-
-public:
 	UIComponent() = default;
 	UIComponent(DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
 	UI& operator=(UI&) = delete;
