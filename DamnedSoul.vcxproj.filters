@@ -11,10 +11,16 @@
     <FxCompile Include="resource\shader\PixelVertex.hlsl" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
+    <FxCompile Include="resource\shader\ParticleFlamethrowerCS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleImplosionCS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleExplosionCS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleArchCS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleRainCS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl" />
+    <FxCompile Include="resource\shader\ParticleSinusCS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
     <FxCompile Include="resource\shader\TestPS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
     <Filter Include="Source Files">
@@ -47,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Lighting.cpp" />
-    <ClCompile Include="source\UIRenderer.cpp" />
+    <ClCompile Include="source\UI\UIRenderer.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
@@ -77,12 +83,12 @@
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
-    <ClCompile Include="source\UI.cpp" />
-    <ClCompile Include="source\UIButton.cpp" />
-    <ClCompile Include="source\UICanvas.cpp" />
-    <ClCompile Include="source\UIComponent.cpp" />
-    <ClCompile Include="source\UIImage.cpp" />
-    <ClCompile Include="source\UIText.cpp" />
+    <ClCompile Include="source\UI\UI.cpp" />
+    <ClCompile Include="source\UI\UIButton.cpp" />
+    <ClCompile Include="source\UI\UICanvas.cpp" />
+    <ClCompile Include="source\UI\UIComponent.cpp" />
+    <ClCompile Include="source\UI\UIImage.cpp" />
+    <ClCompile Include="source\UI\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\CompCount.cpp" />
@@ -94,12 +100,15 @@
     <ClCompile Include="source\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\ProximityCollision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
-    <ClInclude Include="header\UIRenderer.h" />
+    <ClInclude Include="header\UI\UIRenderer.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -126,12 +135,12 @@
     <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
-    <ClInclude Include="header\UI.h" />
-    <ClInclude Include="header\UIButton.h" />
-    <ClInclude Include="header\UICanvas.h" />
-    <ClInclude Include="header\UIComponent.h" />
-    <ClInclude Include="header\UIImage.h" />
-    <ClInclude Include="header\UIText.h" />
+    <ClInclude Include="header\UI\UI.h" />
+    <ClInclude Include="header\UI\UIButton.h" />
+    <ClInclude Include="header\UI\UICanvas.h" />
+    <ClInclude Include="header\UI\UIComponent.h" />
+    <ClInclude Include="header\UI\UIImage.h" />
+    <ClInclude Include="header\UI\UIText.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
     <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
@@ -151,6 +160,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\AllComponents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\Backend\ProximityCollision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\PoolUtility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
