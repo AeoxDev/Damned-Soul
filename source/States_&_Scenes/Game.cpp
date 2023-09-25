@@ -9,6 +9,7 @@
 #include "AllComponents.h"
 #include "Input.h"
 #include "States_&_Scenes\StateManager.h"
+#include "RenderableComponent.h"
 
 void GameScene::Update()
 {
@@ -61,6 +62,11 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
 		dogCo->model.Load("HellhoundDummy_PH.mdl");
+		registry.AddComponent<RenderableComponent>(dog);
+		RenderableComponent* renderCo = registry.GetComponent<RenderableComponent>(dog);
+
+		renderCo->ToRenderableComponent(renderStates[backBufferRenderSlot]);
+		
 		/*EntityID stage = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);

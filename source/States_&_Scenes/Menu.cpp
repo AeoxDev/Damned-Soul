@@ -4,6 +4,9 @@
 #include "Hitbox.h"
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
+#include "RenderableComponent.h"
+#include "GameRenderer.h"
+
 //
 //void Menu::Update()
 //{
@@ -141,9 +144,14 @@ void Menu::Setup()//Load
 	//Entities, pageComponent (active, priority)
 	EntityID mainMenuPage = registry.CreateEntity();
 
-	this->registry.AddComponent<UICanvas>(mainMenuPage);
+	registry.AddComponent<UICanvas>(mainMenuPage);
 	UICanvas* mainMenu = registry.GetComponent<UICanvas>(mainMenuPage);
 	SetupMainMenuCanvas(*mainMenu);
+
+	registry.AddComponent<RenderableComponent>(mainMenuPage);
+	RenderableComponent* renderable = registry.GetComponent<RenderableComponent>(mainMenuPage);
+	renderable->ToRenderableComponent(renderStates[ui.RenderSlot]);
+
 
 	// Create UI and example menu
 	//*ui = UI();
