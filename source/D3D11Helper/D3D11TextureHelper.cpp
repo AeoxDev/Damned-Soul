@@ -113,23 +113,23 @@ bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOU
 	return true;
 }
 
-void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, IDX_UNION idx)
+void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, int16_t idx)
 {
 	switch (type)
 	{
 	case TEXTURE:
-		out = txHolder->tx_arr[idx.TX];
+		out = txHolder->tx_arr[idx];
 		break;
 	case SHADER_RESOURCE_VIEW:
 		//Might crash, might need to use queryinterface
-		out = (ID3D11Texture2D*)srvHolder->srv_resource_arr[idx.VIEWS];
+		out = (ID3D11Texture2D*)srvHolder->srv_resource_arr[idx];
 		break;
 	case RENDER_TARGET_VIEW:
-		out = rtvHolder->tx_arr[idx.VIEWS];
+		out = rtvHolder->tx_arr[idx];
 		break;
 	case UNORDERED_ACCESS_VIEW:
 		//Might crash, might need to use queryinterface
-		out = (ID3D11Texture2D*)uavHolder->uav_resource_arr[idx.VIEWS];
+		out = (ID3D11Texture2D*)uavHolder->uav_resource_arr[idx];
 		break;
 	default:
 		break;

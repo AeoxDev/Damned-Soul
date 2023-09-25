@@ -12,7 +12,6 @@ struct VS_OUT
 {
 	float4 position : SV_POSITION;
 	float4 normal : NORMAL;
-	uint material : MATERIAL;
 	float2 uv : UV;
 };
 

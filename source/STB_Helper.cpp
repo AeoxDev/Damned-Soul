@@ -43,14 +43,12 @@ bool Image::load(const char* filename)
 
 void Image::Release()
 {
-	if (false == m_data.IsNullptr())
-		MemLib::pfree(m_data);
+	MemLib::pfree(m_data);
 }
 
 Image::~Image()
 {
 	if (dontFree)
 		return;
-	else if (false == m_data.IsNullptr())
-		MemLib::pfree(m_data);
+	MemLib::pfree(m_data);
 }

@@ -27,6 +27,7 @@ enum RESOURCES
 
 enum CPU_FLAGS
 {
+	NONE = 0,
 	READ = 0x10000L,
 	WRITE = 0x20000L
 };

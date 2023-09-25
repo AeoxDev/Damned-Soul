@@ -1,6 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "GameRenderer.h"
 #include <iostream>
 #include <fstream>
 
@@ -68,24 +69,22 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	};
 
 	//Default layout / Non skeletal layout
-	D3D11_INPUT_ELEMENT_DESC defaultInputDesc[4] =
+	D3D11_INPUT_ELEMENT_DESC defaultInputDesc[3] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"MATERIAL", 0, DXGI_FORMAT_R32_UINT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	Layout defaultLayout = { defaultInputDesc, ARRAYSIZE(defaultInputDesc)};
 
 	//Skeletal Layout
-	D3D11_INPUT_ELEMENT_DESC skeletalInputDesc[6] =
+	D3D11_INPUT_ELEMENT_DESC skeletalInputDesc[5] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"MATERIAL", 0, DXGI_FORMAT_R32_UINT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{"BONE_INDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BONE_WIEGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 60, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"BONE_INDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONE_WIEGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 	Layout skeletalLayout = { skeletalInputDesc, ARRAYSIZE(skeletalInputDesc) };
 
@@ -132,7 +131,7 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 
 	reader.open(name, std::ios::binary | std::ios::ate);
 	if (false == reader.is_open())
-	{    float paddingOne;
+	{ 
 
 		std::cerr << "Could not open VS test file!" << std::endl;
 		return -1;
@@ -189,7 +188,6 @@ bool SetVertexShader(const VS_IDX idx)
 	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_arr[idx]);
 	return true;
 }
-
 
 CS_IDX LoadComputeShader(const char* name)
 {

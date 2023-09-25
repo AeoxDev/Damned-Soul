@@ -6,6 +6,8 @@
 #include <bitset>
 #include <Windows.h>
 
+#include <map>
+
 #include "MemLib/MemLib.hpp"
 //#include "ComponentHelper.h"
 
@@ -59,6 +61,8 @@ namespace EntityGlobals
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
 	static int compCount = 0;
+	//Map
+	static std::map<void*, int> componentOnBit;
 
 	//Previously, GetId returned the current compCount and also incremented it, but let's split these
 	template <typename T>
@@ -73,6 +77,7 @@ namespace EntityGlobals
 	{
 		return id.index != -1;
 	}
+
 }
 
 class Registry

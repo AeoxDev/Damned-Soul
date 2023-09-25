@@ -1,15 +1,17 @@
 #pragma once
 #include "StateEnums.h"
+#include "EntityFramework.h"
 
-struct Settings
+struct SettingsState
 {
-	SettingsState currentSubState = SettingsState::Graphics;
-	std::pair<int, int> resolution = { sdl.WIDTH,  sdl.HEIGHT };
+	Registry registry;
+	void Setup();
 
-	void ReadKeyInputs(int[]);
-	void ReadKeyOutputs(int[]);
+	void Clear();
+	void ComputeShaders();
+	void Render();
+	void Input();
+	void Update();
 
-	void ReadMouseInputs(SDL_MouseButtonEvent, ButtonManager, std::pair<int, int>);
-	void ReadMouseOutputs(SDL_MouseButtonEvent, ButtonManager, std::pair<int, int>);
-
+	void Unload();
 };

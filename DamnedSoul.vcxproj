@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,7 +119,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,7 +146,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,7 +172,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -192,9 +192,14 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\ModelComponent.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
+    <ClCompile Include="source\CompCount.cpp" />
+    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Lighting.cpp" />
+    <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\UIRenderer.cpp" />
-    <ClCompile Include="source\ExampleMenu.cpp" />
+    <ClCompile Include="source\MainMenu.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
@@ -399,10 +404,18 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Components\AllComponents.h" />
+    <ClInclude Include="header\Components\ModelComponent.h" />
+    <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\MemLib\ML_Array.hpp" />
+    <ClInclude Include="header\MemLib\ML_Map.hpp" />
+    <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
+    <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
+    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
     <ClInclude Include="header\UIRenderer.h" />
-    <ClInclude Include="header\ExampleMenu.h" />
+    <ClInclude Include="header\MainMenu.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -470,6 +483,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
+    <Natvis Include="resource\NatVis\model_vis.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

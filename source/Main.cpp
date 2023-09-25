@@ -15,8 +15,8 @@
 #include "States_&_Scenes\StateManager.h"
 #include "Model.h"
 #include "ComponentHelper.h"
-#include "ExampleMenu.h"
 #include "UIRenderer.h"
+#include "States_&_Scenes\StateManager.h"
 #include <iostream>
 
 void UpdateDebugWindowTitle(std::string& title);
@@ -27,65 +27,55 @@ int main(int argc, char* args[])
 	InitiateConfig();
 	SetupWindow();
 	std::string title = "Damned Soul";
+	Setup3dGraphics();
+	ui.RenderSlot = SetupUIRenderState();
 
-	int testRenderSlot = SetupGameRenderer();
+	ui.Setup();
+
+	backBufferRenderSlot = SetupGameRenderer();
+
 	Camera::InitializeCamera();
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
 
 	Particles::InitializeParticles();
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
 
-	SMP_IDX sampler = CreateSamplerState();
-	SetSamplerState(sampler);
-
 	SetupTestHitbox();
 
-	StateManager stateManager; //Outside of memlib at the moment, might fix later if necessary.
-
-	if (!SetupUIRenderer())
-	{
-		std::cout << "Failed to setup UI Renderer" << std::endl;
-		return -1;
-	}
-
-	// Create UI + Example Menu
-	PoolPointer<UI> ui = MemLib::palloc(sizeof(UI));
-	*ui = UI();
-	PoolPointer<ExMenu> exMenu = MemLib::palloc(sizeof(ExMenu));
-	exMenu->Setup(ui);
-
-
-	ui->SetCurrentCanvas(exMenu);
-	UpdateUI(ui);
-
-	
+	stateManager.Setup();
 	
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 
 		//Clear the render targets!
-		Clear(testRenderSlot);
+		Clear(backBufferRenderSlot);
 
+		//First do compute shader work
+		stateManager.ComputeShaders();
 
-		RenderUI();
+		//Then render all registries that are active
+		stateManager.Render();
 
 		//Inputs: SDL readings of keyboard and mouse inputs
-		stateManager.ReadInputs();
+		
+		//Do all systems that are based on input
+		stateManager.Input();
 
 		//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		//UpdatePhysics(stateManager);//Change registry to scene registry
 		UpdateDebugWindowTitle(title);
 
+		//Lastly do the cpu work
 		stateManager.Update();
 		//UpdatePhysics(sceneRegistry);//Use the registry of the scene
 		//Present what was drawn during the update!
 		Present();
 		MemLib::pdefrag();
+		stateManager.EndFrame();
 	}
 	
-	exMenu->Release();
-	ui->Release();
+	stateManager.UnloadAll();
 	ReleaseUIRenderer();
 	
 	EndDirectX();
