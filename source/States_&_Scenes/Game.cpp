@@ -60,7 +60,7 @@ void GameScene::Setup(int scene)//Load
 		EntityID dog = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
-		dogCo->model.Load("HellhoundDummy_PH.mdl");
+		dogCo->model.Load("PlayerPlaceholder.mdl");
 		/*EntityID stage = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
@@ -80,8 +80,12 @@ void GameScene::Render()
 	for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(entity);
+		DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+		UpdateWorldMatrix(&world, BIND_VERTEX);
+		dogCo->model.SetVertexAndIndexBuffersActive();
+		dogCo->model.SetPixelAndVertexShader();
 		dogCo->model.RenderAllSubmeshes();
-		RenderIndexed(dogCo->model.m_bonelessModel->m_numIndices);
+		//RenderIndexed(dogCo->model.m_data->m_numIndices);
 	}
 }
 void GameScene::Input()

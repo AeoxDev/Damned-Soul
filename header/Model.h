@@ -2,9 +2,13 @@
 #include <cinttypes>
 #include "MemLib\PoolPointer.hpp"
 #include "MemLib\ML_Vector.hpp"
-struct Model;
 
-//extern ML_Vector<Model> models;
+enum MODEL_TYPE
+{
+	MODEL_INSANE = 0,
+	MODEL_BONELESS = 1, // Model loaded without bones
+	MODEL_WITH_BONES = 2 // Model loaded with bones
+};
 
 
 struct VertexBoneless
@@ -12,6 +16,15 @@ struct VertexBoneless
 	float m_position[4];
 	float m_normal[4];
 	float m_uv[2];
+};
+
+struct VertexBoned
+{
+	float m_position[4];
+	float m_normal[4];
+	float m_uv[2];
+	uint32_t m_boneIdx[4];
+	float m_boneWeight[4];
 };
 
 struct SubMesh
@@ -34,35 +47,50 @@ struct Material
 	float exponent = 1.0f;
 };
 
-struct ModelBoneless
+struct BoneMatrix
+{
+	float mat[4][4];
+};
+
+struct modelGenericData
 {
 	const uint32_t m_sanityCheckNumber;
 	const uint32_t m_numSubMeshes;
 	const uint32_t m_numMaterials;
-	const uint32_t m_numVertices;
 	const uint32_t m_numIndices;
+	const uint32_t m_numVertices;
+	const uint32_t m_numBones;
 	const char m_data[];//Array is intentional, ignore warning
 
-	const bool ValidByteData() const;
+	const MODEL_TYPE ValidByteData() const;
 	const SubMesh& GetSubMesh(const size_t idx) const;
 	const Material& GetMaterial(const size_t idx) const;
-	const VertexBoneless* GetVertices() const;
-	const uint32_t* GetIndices() const;
+	const uint32_t* GetIndices() const; // Swap the indices and vertices in the data structure!!!!!!!!
+	const VertexBoneless* GetBonelessVertices() const;
+	const VertexBoned* GetBonedVertices() const;
+	const BoneMatrix* GetBoneMatrices() const;
 };
 
 struct Model
 {
-	PoolPointer<ModelBoneless> m_bonelessModel;
+	//PoolPointer<ModelBoneless> m_modelData;
+	PoolPointer<modelGenericData> m_data;
+
+
 	uint32_t m_vertexBuffer = -1, m_indexBuffer = -1;
+	uint16_t m_animationBuffer = -1;
+	uint8_t m_pixelShader = -1, m_vertexShader = -1;
 
 	// Load a .mdl file
 	// No other file formats are supported!
-	bool Load(const char* filename);
+	const MODEL_TYPE Load(const char* filename);
 
 	bool SetMaterialActive() const;
 
 	// Set the currently active index and vertex buffers to this model
 	bool SetVertexAndIndexBuffersActive() const;
+
+	void SetPixelAndVertexShader() const;
 
 	// Render all the model's submeshes one after another
 	void RenderAllSubmeshes();
