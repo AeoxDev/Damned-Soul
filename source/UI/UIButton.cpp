@@ -29,12 +29,6 @@ void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& ho
 		m_Text = UIText();
 }
 
-//UIButton::~UIButton()
-//{
-//	if (!m_Images.IsNullptr())
-//		MemLib::pfree(m_Images);
-//}
-
 void UIButton::Draw(UI& ui, ID2D1RenderTarget* rt)
 {
 	if (true == m_uiComponent.m_Visibility)
@@ -43,27 +37,6 @@ void UIButton::Draw(UI& ui, ID2D1RenderTarget* rt)
 		m_Text.Draw(ui);
 	}
 }
-
-//void UIButton::Draw(UI* ui, ID2D1RenderTarget* renderTarget)
-//{
-//	if (true == m_Visibility)
-//	{
-//		m_Images[m_CurrentImage].Draw(renderTarget);
-//		m_Text.Draw(ui);
-//	}
-//}
-
-/*void UIButton::Activate()
-{
-	if (onActive)
-		onActive();
-}
-
-void UIButton::Deactivate()
-{
-	if (onDeactive)
-			onDeactive();
-}*/
 
 void UIButton::Interact()
 {
@@ -114,8 +87,3 @@ void UIButton::SetOpacity(float opacity)
 	m_Images[0].SetOpacity(opacity);
 	m_Images[1].SetOpacity(opacity);
 }
-
-/*bool UIButton::IsActive() const
-{
-	return false;
-}*/

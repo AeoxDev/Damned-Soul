@@ -89,16 +89,6 @@ void UI::Release()
 	m_Factory->Release();
 }
 
-//void UI::Render(PoolPointer<UI>& ui)
-//{
-//	BeginFrame();
-//	if (false == currentCanvas.IsNullptr())
-//		currentCanvas->Render(ui);
-//	
-//
-//	EndFrame();
-//}
-
 void UI::Render(UICanvas& canvas)
 {
 	BeginFrame();
@@ -176,14 +166,3 @@ ID2D1SolidColorBrush*& UI::GetYellowBrush()
 {
 	return m_YellowBrush;
 }
-
-//void UI::SetCurrentCanvas(UICanvas* canvas)
-//{
-//	m_CurrentCanvas = canvas;
-//}
-
-//void UI::SetCurrentCanvas(UICanvas& canvas)
-//{
-//	m_CurrentCanvas = &canvas;
-//}
-

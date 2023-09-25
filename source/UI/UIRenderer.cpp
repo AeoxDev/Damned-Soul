@@ -61,7 +61,7 @@ void ReleaseUIRenderer()
 {
 	UISurface->Release();
 }
-//
+
 //void UpdateUI(Registry& registry, EntityID& entity)
 //{
 //	ID3D11ShaderResourceView* nullsrv = nullptr;
