@@ -19,10 +19,6 @@ struct StateManager
 	Menu menu;
 	SettingsState settings;
 	PauseState pause;
-	//MainMenu = 0b1,//Is a registry
-	//Pause = 0b100,//Is a registry
-	//Settings = 0b1000//Is a registry
-
 
 	void Setup();
 	void Clear();

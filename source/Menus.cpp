@@ -26,7 +26,7 @@ void SetupMainMenuCanvas(UICanvas& canvas)
 				//Change hover button, spawn particles, bla bla 
 			};
 
-		canvas.AddButton(ui, "Exmenu/StartButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f - 65.0f, 600 });
+		canvas.AddButton(ui, "Exmenu/StartButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f, 600 });
 	}
 
 	//Exit Button
@@ -41,7 +41,7 @@ void SetupMainMenuCanvas(UICanvas& canvas)
 				//Change hover button, spawn particles, bla bla 
 			};
 
-		canvas.AddButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f - 65.0f, 800 });
+		canvas.AddButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f, 800 });
 	}
 }
 

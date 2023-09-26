@@ -4,13 +4,14 @@ using namespace DirectX;
 
 void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
+	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
+	m_uiComponent.m_Bounds = m_Images[0].m_Bounds;
+
 	m_uiComponent.SetPosition(position);
 	m_uiComponent.SetRotation(rotation);
 	m_uiComponent.SetScale(scale);
 	m_uiComponent.SetTransform(position, scale, rotation);
 	m_uiComponent.SetVisibility(visibility);
-
-	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
 
 	//Hover image is not necessarily needed
 	if (hoverImageFile != "")

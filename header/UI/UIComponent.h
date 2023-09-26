@@ -28,4 +28,5 @@ struct UIComponent
 	void SetVisibility(bool value);
 	void ToggleVisibility();
 	bool IsVisible();
+	bool Intersect(DirectX::XMINT2 mousePos);
 };

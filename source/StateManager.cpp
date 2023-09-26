@@ -64,65 +64,6 @@ void SetInShop(bool value)
 		currentStates = (State)(currentStates & (~State::InShop));
 	}
 }
-//void StateManager::ReadKeyInputs(int keyState[])
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadKeyInputs(keyState, m_settings);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadKeyInputs(keyState, m_settings);
-//		break;
-//	}
-//}
-//
-//void StateManager::ReadKeyOutputs(int keyState[])
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadKeyOutputs(keyState, m_settings);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadKeyOutputs(keyState, m_settings);
-//		break;
-//	}
-//}
-//
-//void StateManager::ReadMouseInputs(SDL_MouseButtonEvent mouseEvent)
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	}
-//}
-//
-//void StateManager::ReadMouseOutputs(SDL_MouseButtonEvent mouseEvent)
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadMouseOutputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadMouseOutputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	}
-//}
 
 void StateManager::Setup()
 {
