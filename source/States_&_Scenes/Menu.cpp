@@ -1,6 +1,6 @@
 #include "States_&_Scenes\Menu.h"
 #include "UIRenderer.h"
-#include "MainMenu.h"
+#include "Menus.h"
 #include "Hitbox.h"
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
@@ -158,11 +158,11 @@ void Menu::Setup()//Load
 
 void Menu::Render()
 {
-	for (auto entity : View<UIRenderComponents>(registry))
+	/*for (auto entity : View<UIRenderComponents>(registry))
 	{
-	/*	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
-		RenderUI(uiComp);*/
-	}
+		UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
+		RenderUI(uiComp);
+	}*/
 	RenderUI();
 }
 

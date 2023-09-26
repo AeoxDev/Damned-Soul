@@ -2,10 +2,6 @@
 
 using namespace DirectX;
 
-UIButton::UIButton()
-{
-}
-
 void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_uiComponent.SetPosition(position);

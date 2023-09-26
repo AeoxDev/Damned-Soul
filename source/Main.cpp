@@ -17,7 +17,6 @@
 #include "ComponentHelper.h"
 #include "UIRenderer.h"
 #include "States_&_Scenes\StateManager.h"
-#include <iostream>
 
 void UpdateDebugWindowTitle(std::string& title);
 
