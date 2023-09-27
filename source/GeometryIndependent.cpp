@@ -24,6 +24,8 @@ struct GeometryIndependentComponent
 
 	//TextureComponent
 	uint8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+
+	~GeometryIndependentComponent();
 };
 void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& stageEntity)
 {
@@ -214,4 +216,9 @@ bool SetupGIAll(Registry& registry, EntityID& stage)
 		return false;
 	}
 	return true;
+}
+
+GeometryIndependentComponent::~GeometryIndependentComponent()
+{
+	//ReleaseTexture(stagingTexture);
 }

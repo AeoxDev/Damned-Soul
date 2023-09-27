@@ -2,8 +2,6 @@
 #include "D3D11Helper.h"
 #include "EntityFramework.h"
 
-
-
 RTV_IDX SetupGIRenderTargetView(Registry& registry, EntityID& stageEntity);
 PS_IDX SetupGIPixelShader(Registry& registry, EntityID& stageEntity);
 VS_IDX SetupGIVertexShader(Registry& registry, EntityID& stageEntity);
