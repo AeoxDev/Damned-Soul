@@ -145,7 +145,14 @@ void EndDirectX()
 
 	// Release all render target views
 	for (int i = 0; i < rtvHolder->currentCount; ++i)
+	{
 		rtvHolder->rtv_arr[i]->Release();
+		if (rtvHolder->tx_arr[i])
+		{
+			//rtvHolder->tx_arr[i]->Release();
+		}
+		
+	}
 	
 	// Release all depth stencil views
 	for (int i = 0; i < dsvHolder->currentCount; ++i)
@@ -159,8 +166,9 @@ void EndDirectX()
 	{
 		if (srvHolder->srv_arr[i])
 			srvHolder->srv_arr[i]->Release();
-		if (srvHolder->srv_resource_arr[i])
-			srvHolder->srv_resource_arr[i]->Release();
+		if (srvHolder->srv_resource_arr[i]) {}
+			//srvHolder->srv_resource_arr[i]->Release();
+
 	}
 
 	// Release all unorderd access views

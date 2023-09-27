@@ -17,7 +17,6 @@
 #include "ComponentHelper.h"
 #include "UIRenderer.h"
 #include "States_&_Scenes\StateManager.h"
-#include <iostream>
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -77,10 +76,11 @@ int main(int argc, char* args[])
 	
 	stateManager.UnloadAll();
 	ReleaseUIRenderer();
-	
+	ui.Release();
+	DestroyHitboxVisualizeVariables();
 	EndDirectX();
-	MemLib::destroyMemoryManager();
 	SDL_Quit();
+	MemLib::destroyMemoryManager();
 	return 0;
 }
 

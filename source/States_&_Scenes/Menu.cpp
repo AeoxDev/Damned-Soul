@@ -1,6 +1,6 @@
 #include "States_&_Scenes\Menu.h"
 #include "UIRenderer.h"
-#include "MainMenu.h"
+#include "Menus.h"
 #include "Hitbox.h"
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
@@ -158,25 +158,25 @@ void Menu::Setup()//Load
 
 void Menu::Render()
 {
-	for (auto entity : View<UIRenderComponents>(registry))
+	/*for (auto entity : View<UIRenderComponents>(registry))
 	{
-	/*	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
-		RenderUI(uiComp);*/
-	}
+		UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
+		RenderUI(uiComp);
+	}*/
 	RenderUI();
 }
 
 void Menu::Unload()
 {
-	for (auto entity : View<UI>(registry))
+	for (auto entity : View<UICanvas>(registry))
 	{
 		//Get entity with UI, release components.
-		/*UI* ui = registry.GetComponent<UI>(entity);
+		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
 		if (ui)
 		{
-			MainMenu* exMenu = registry.GetComponent<MainMenu>(entity);
-			exMenu->m_uiCanvas.Release();
+			//MainMenu* exMenu = registry.GetComponent<MainMenu>(entity);
+			//exMenu->m_uiCanvas.Release();
 			ui->Release();
-		}*/
+		}
 	}
 }

@@ -20,17 +20,14 @@ struct UI
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;		//Another brush with a diffrent color, might remake in order to more eaisly make more brushes later if needed :)
 	int RenderSlot;
-	//UICanvas m_CurrentCanvas;
 
 	void BeginFrame();
 	void EndFrame();
 
 	UI();
 	void Setup();
-
 	void Release();
 
-	//void Render(PoolPointer<UI>& ui);
 	void Render(UICanvas& canvas);
 
 	void ResizeRelease();
@@ -43,8 +40,5 @@ struct UI
 	IDWriteTextFormat*& GetTextFormat();
 	ID2D1SolidColorBrush*& GetBrush();
 	ID2D1SolidColorBrush*& GetYellowBrush();
-
-	/*void SetCurrentCanvas(UICanvas* canvas);*/
-	//void SetCurrentCanvas(UICanvas& canvas);
 };
 
