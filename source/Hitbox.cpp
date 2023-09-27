@@ -7,6 +7,7 @@
 #include <sstream>
 #include "Backend/Collision.h"
 #include "CollisionFunctions.h"
+#include "Backend\GeometryIndependent.h"
 
 HitboxVisualizeVariables hvv;
 
@@ -748,6 +749,12 @@ void SetupTestHitbox()
 	//int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);
 	//SetHitboxIsEnemy(collisionRegistry, enemy2, circle3);
 	//SetHitboxHitPlayer(collisionRegistry, enemy2, circle3);
+
+	EntityID stage = collisionRegistry.CreateEntity();
+	AddGeometryIndependentComponent(collisionRegistry, stage);
+	GeometryIndependentColliderComponent* GeoIndie = collisionRegistry.GetComponent<GeometryIndependentColliderComponent>(stage);
+	SetupGIAll(collisionRegistry, stage);
+	RenderGeometryIndependentCollisionToTexture(collisionRegistry, stage);
 
 	UpdatePhysics(collisionRegistry);
 }

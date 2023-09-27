@@ -405,6 +405,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Components\AllComponents.h" />
+    <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />

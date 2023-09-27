@@ -35,7 +35,7 @@ struct CameraConstantBuffer
 PoolPointer<CameraStruct> GameCamera;
 PoolPointer<CameraConstantBuffer> BufferData;
 
-int orthWidth, orthHeight;
+float orthWidth, orthHeight;
 
 void Camera::SetPosition(const float x, const float y, const float z)
 {
@@ -72,12 +72,12 @@ void Camera::SetFOV(const float radians)
 	GameCamera->m_FOV = radians;
 }
 
-void Camera::SetWidth(const int width)
+void Camera::SetWidth(const float& width)
 {
 	orthWidth = width;
 }
 
-void Camera::SetHeight(const int height)
+void Camera::SetHeight(const float& height)
 {
 	orthHeight = height;
 }

@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
     <FxCompile Include="resource\shader\TestPS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl" />
@@ -169,6 +168,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Relics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\GeometryIndependentComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
