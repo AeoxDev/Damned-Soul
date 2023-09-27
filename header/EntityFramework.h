@@ -191,7 +191,7 @@ public:
 
 		//Return the component at the index of the specified entity ID
 		//Get component by casting ComponentArray data (char*, address) back to the Component struct itself, NORMALLY: T* componentPointer = (T*)(componentArrays[compId]->data);
-		PoolPointer<T> componentPointer = (PoolPointer<T>)componentArrays[compId]->data;
+		PoolPointer<T> componentPointer = componentArrays[compId]->data;
 		return &componentPointer[id.index];
 	}
 
