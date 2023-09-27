@@ -189,6 +189,7 @@ public:
 		}
 
 		//Create component and cast to ComponentArray data (char*, address)
+		//Edit: Not quite true, more like we're slotting T(args...) into the memory address at the specified index in the ComponentArray
 		T* componentPointer = new (componentArrays[compId]->GetDataAt(id)) T(args...);
 		//PoolPointer<T> typeCasted = (componentArrays[compId]->GetDataAt(id)) T(args...);
 		//typeCasted[GetEntityIndex(id)] = T(args...);
