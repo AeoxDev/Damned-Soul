@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "AllComponents.h"
 
 #define TEXTURE_DIMENSIONS 256
 struct GIConstantBufferData
@@ -27,7 +28,11 @@ struct GeometryIndependentComponent
 
 	~GeometryIndependentComponent();
 };
-void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& stageEntity)
+struct giTexture
+{
+	uint8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+};
+void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& stageEntity, EntityID& modelEntity)
 {
 	//Find GI component
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
@@ -35,6 +40,7 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	{
 		return;
 	}
+	ModelComponent* model = registry.GetComponent<ModelComponent>(modelEntity);
 	//Find stage component
 
 	//Look at model using orthographic camera
@@ -57,11 +63,13 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	SetPixelShader(GIcomponent->pixelShader);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
 	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL);
+	SetVertexBuffer(model->model.m_vertexBuffer);
+	SetIndexBuffer(model->model.m_indexBuffer);
 	//Update CB
 	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 
 	//Render texture to RTV
-	d3d11Data->deviceContext->Draw(3, 0);
+	model->model.RenderAllSubmeshes();
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;
 	GetTextureByType(RTVResource, TEXTURE_HOLDER_TYPE::RENDER_TARGET_VIEW, GIcomponent->renderTargetView);

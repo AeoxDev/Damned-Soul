@@ -8,6 +8,7 @@
 #include "Backend/Collision.h"
 #include "CollisionFunctions.h"
 #include "Backend\GeometryIndependent.h"
+#include "AllComponents.h"
 
 HitboxVisualizeVariables hvv;
 
@@ -754,7 +755,15 @@ void SetupTestHitbox()
 	AddGeometryIndependentComponent(collisionRegistry, stage);
 	GeometryIndependentColliderComponent* GeoIndie = collisionRegistry.GetComponent<GeometryIndependentColliderComponent>(stage);
 	SetupGIAll(collisionRegistry, stage);
-	RenderGeometryIndependentCollisionToTexture(collisionRegistry, stage);
+
+	EntityID stageModel = collisionRegistry.CreateEntity();
+	collisionRegistry.AddComponent<ModelComponent>(stageModel);
+	ModelComponent* m = collisionRegistry.GetComponent<ModelComponent>(stageModel);
+	m->model.Load("PlaceholderScene.mdl");
+
+	RenderGeometryIndependentCollisionToTexture(collisionRegistry, stage, stageModel);
+
+
 
 	UpdatePhysics(collisionRegistry);
 }
