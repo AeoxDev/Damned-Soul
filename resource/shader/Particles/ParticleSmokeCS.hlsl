@@ -1,3 +1,5 @@
+#define NUM_THREADS 256
+
 struct Input
 {
     float3 position;
@@ -23,8 +25,6 @@ cbuffer metadataBuffer : register(b0)
     metadata meta[256];
 };
 
-#define NUM_THREADS 256
-
 void SmokeMovement(in uint3 DTid, in uint3 blockID);
 void ArchMovement(in uint3 DTid, in uint3 blockID);
 void ExplosionMovement(in uint3 DTid, in uint3 blockID);
@@ -36,7 +36,7 @@ void SinusMovement(in uint3 DTid, in uint3 blockID);
 StructuredBuffer<Input> inputParticleData : register(t0);
 RWStructuredBuffer<Input> outputParticleData : register(u0);
 
-[numthreads(256, 1, 1)]
+[numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID, uint3 blockID : SV_GroupID)
 {
     if (meta[blockID.y].life > 0 )
@@ -78,6 +78,12 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
     particle.position += noise;
     //____________________________________________________________________
     //test.position = test.position;
+    
+    if (particle.time >= meta[blockID.y].life)
+    {
+        particle.position = meta[blockID.y].startPosition;
+    }
+    
     outputParticleData[index] = particle;
 }
 

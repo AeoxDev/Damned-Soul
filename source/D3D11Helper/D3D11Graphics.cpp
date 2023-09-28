@@ -107,72 +107,64 @@ int SetupDirectX(HWND& w)
 void EndDirectX()
 {
 	// Release all pixel shaders
-	for (int i = 0; i < pixHolder->currentCount; ++i)
-		pixHolder->ps_arr[i]->Release();
+	for (auto& [key, val] : pixHolder->ps_map)
+		val->Release();
 
 	// Release all samplers
-	for (int i = 0; i < smpHolder->currentCount; ++i)
-		smpHolder->smp_arr[i]->Release();
+	for (auto& [key, val] : smpHolder->smp_map)
+		val->Release();
 
 	// Release all vertex shaders and their input layouts
-	for (int i = 0; i < vrtHolder->currentCount; ++i)
-	{
-		vrtHolder->vs_arr[i]->Release();
-		vrtHolder->il_arr[i]->Release();
-	}
+	for (auto& [key, val] : vrtHolder->vs_map)
+		val->Release();
+	for (auto& [key, val] : vrtHolder->il_map)
+		val->Release();
 
 	// Release all geometry shaders
-	for (int i = 0; i < geoHolder->currentCount; ++i)
-		geoHolder->gs_arr[i]->Release();
+	for (auto& [key, val] : geoHolder->gs_map)
+		val->Release();
 
 	// Release all compute shaders
-	for (int i = 0; i < comHolder->currentCount; ++i)
-	{
-		comHolder->cs_arr[i]->Release();
-	}
+	for (auto& [key, val] : comHolder->cs_map)
+		val->Release();
 
 	// Release all textures and associated resources
-	for (int i = 0; i < txHolder->currentCount; ++i)
-	{
-		txHolder->img_arr[i].Release();
-		txHolder->srv_arr[i]->Release();
-		txHolder->tx_arr[i]->Release();
-	}
+	for (auto& [key, val] : txHolder->img_map)
+		val.Release();
+	for (auto& [key, val] : txHolder->srv_map)
+		val->Release();
+	for (auto& [key, val] : txHolder->tx_map)
+		val->Release();
 
 	// Release all buffers shaders
-	for (int i = 0; i < bfrHolder->currentCount; ++i)
-		bfrHolder->buff_arr[i]->Release();
+	for (auto& [key, val] : bfrHolder->buff_map)
+		val->Release();
 
 	// Release all render target views
-	for (int i = 0; i < rtvHolder->currentCount; ++i)
-		rtvHolder->rtv_arr[i]->Release();
+	for (auto& [key, val] : rtvHolder->rtv_map)
+		val->Release();
 	
 	// Release all depth stencil views
-	for (int i = 0; i < dsvHolder->currentCount; ++i)
-	{
-		dsvHolder->dsv_arr[i]->Release();
-		dsvHolder->ds_arr[i]->Release();
-	}
+	for (auto& [key, val] : dsvHolder->dsv_map)
+		val->Release();
+	for (auto& [key, val] : dsvHolder->ds_map)
+		val->Release();
 
 	// Release all shader resource views
-	for (int i = 0; i < srvHolder->currentCount; ++i)
-	{
-		if (srvHolder->srv_arr[i])
-			srvHolder->srv_arr[i]->Release();
-		if (srvHolder->srv_resource_arr[i])
-			srvHolder->srv_resource_arr[i]->Release();
-	}
+	for (auto& [key, val] : srvHolder->srv_map)
+		val->Release();
+	for (auto& [key, val] : srvHolder->srv_resource_map)
+		val->Release();
 
 	// Release all unorderd access views
-	for (int i = 0; i < uavHolder->currentCount; ++i)
-	{
-		uavHolder->uav_arr[i]->Release();
-		uavHolder->uav_resource_arr[i]->Release();
-	}
+	for (auto& [key, val] : uavHolder->uav_map)
+		val->Release();
+	for (auto& [key, val] : uavHolder->uav_resource_map)
+		val->Release();
 
 	// Release all rasterizer states
-	for (int i = 0; i < rsHolder->currentCount; ++i)
-		rsHolder->rs_arr[i]->Release();
+	for (auto& [key, val] : rsHolder->rs_map)
+		val->Release();
 
 	// Clear and flush device context
 	d3d11Data->deviceContext->ClearState();

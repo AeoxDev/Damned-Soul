@@ -95,10 +95,10 @@ void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 {
 	SwitchInputOutput();
 
-	SetComputeShader(renderStates[RenderSlot].computeShader);
+	SetComputeShader(m_computeShaders);
 	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_COMPUTE, true);
-	SetShaderResourceView(renderStates[RenderSlot].shaderResourceView, BIND_COMPUTE, 0);
-	SetUnorderedAcessView(renderStates[RenderSlot].unorderedAccessView, 0);
+	SetShaderResourceView(m_readBuffer->SRVIndex, BIND_COMPUTE, 0);
+	SetUnorderedAcessView(m_writeBuffer->UAVIndex, 0);
 }
 
 void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])

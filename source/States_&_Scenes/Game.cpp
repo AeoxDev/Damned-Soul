@@ -79,18 +79,18 @@ void GameScene::Setup(int scene)//Load
 void GameScene::ComputeShaders()
 {
 	Particles::PrepareParticleCompute(renderStates);
-	Dispatch(1, 2, 0);
+	Dispatch(1, 0, 0);
 	Particles::FinishParticleCompute(renderStates);
 }
 void GameScene::Render()
 {
 	//Set shaders here.
-	for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-	{
-		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(entity);
-		dogCo->model.RenderAllSubmeshes();
-		RenderIndexed(dogCo->model.m_bonelessModel->m_numIndices);
-	}
+	//for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	//{
+	//	ModelComponent* dogCo = registry.GetComponent<ModelComponent>(entity);
+	//	dogCo->model.RenderAllSubmeshes();
+	//	RenderIndexed(dogCo->model.m_bonelessModel->m_numIndices);
+	//}
 
 	//Set all the shaders
 	Particles::PrepareParticlePass(renderStates);

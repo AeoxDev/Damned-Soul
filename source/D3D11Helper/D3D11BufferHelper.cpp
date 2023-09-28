@@ -6,8 +6,10 @@
 
 ID3D11Buffer* bfr_NULL = NULL;
 
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const uint8_t slot)
+CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 {
+	uint8_t currentIdx = bfrHolder->_nextIdx;
+
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
 	desc.ByteWidth = (UINT)size + (16 - ((UINT)size % 16));
@@ -21,50 +23,68 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size, const uint8_t s
 	buffData.SysMemPitch = 0;
 	buffData.SysMemSlicePitch = 0;
 
-	uint16_t currentIdx = bfrHolder->currentCount;
-
-	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &bfrHolder->buff_arr[currentIdx]);
+	ID3D11Buffer* tempBuff = 0;
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to create Constant Buffer!" << std::endl;
 		return -1;
 	}
+	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 
-	uint32_t* metadata = bfrHolder->metadata_arr[currentIdx];
-	//metadata[0] = bindto; // Set shader to bind
-	metadata[1] = slot; // Set slot to use
-	metadata[2] = (uint32_t)size;
+	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
+	return bfrHolder->_nextIdx++;
+}
 
-	return bfrHolder->currentCount++;
+CB_IDX CreateConstantBuffer(const size_t size)
+{
+	uint8_t currentIdx = bfrHolder->_nextIdx;
+
+	D3D11_BUFFER_DESC desc;
+	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
+	desc.ByteWidth = (UINT)size + (16 - ((UINT)size % 16));
+	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER; // Is a constant buffer
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // CPU needs to be able to write
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0;
+
+	ID3D11Buffer* tempBuff = 0;
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Constant Buffer!" << std::endl;
+		return -1;
+	}
+	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
+
+	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
+
+	return bfrHolder->_nextIdx++;
 }
 
 
-bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto)
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
-	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
-	//SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
-	uint8_t slot = bfrHolder->metadata_arr[idx][1];
-
 	switch (bindto)
 	{
 	case BIND_VERTEX:
-		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	case BIND_HULL:
-		d3d11Data->deviceContext->HSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		d3d11Data->deviceContext->HSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	case BIND_DOMAIN:
-		d3d11Data->deviceContext->DSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		d3d11Data->deviceContext->DSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	case BIND_GEOMETRY:
-		d3d11Data->deviceContext->GSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		d3d11Data->deviceContext->GSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	case BIND_PIXEL:
-		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	case BIND_COMPUTE:
-		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
+		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	default:
 		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
@@ -75,37 +95,27 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto)
 	return true;
 }
 
-bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, bool particles)
+bool UnloadConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
-	ID3D11Buffer* setter = bfrHolder->buff_arr[idx];
-	//SHADER_TO_BIND_RESOURCE whichShader = (SHADER_TO_BIND_RESOURCE)bfrHolder->metadata_arr[idx][0];
-	uint8_t slot = bfrHolder->metadata_arr[idx][1];
-
 	switch (bindto)
 	{
 	case BIND_VERTEX:
 		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfr_NULL);
-		d3d11Data->deviceContext->VSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
 	case BIND_HULL:
 		d3d11Data->deviceContext->HSSetConstantBuffers(slot, 1, &bfr_NULL);
-		d3d11Data->deviceContext->HSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
 	case BIND_DOMAIN:
 		d3d11Data->deviceContext->DSSetConstantBuffers(slot, 1, &bfr_NULL);
-		d3d11Data->deviceContext->DSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
 	case BIND_GEOMETRY:
 		d3d11Data->deviceContext->GSSetConstantBuffers(slot, 1, &bfr_NULL);
-		d3d11Data->deviceContext->GSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
 	case BIND_PIXEL:
 		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfr_NULL);
-		d3d11Data->deviceContext->PSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
 	case BIND_COMPUTE:
 		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfr_NULL);
-		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_arr[idx]);
 		break;
 	default:
 		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
@@ -116,10 +126,9 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, 
 	return true;
 }
 
-
 bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 {
-	if (bfrHolder->currentCount < idx || idx < 0)
+	if (bfrHolder->_nextIdx < idx || idx < 0)
 	{
 		std::cerr << "Index for update Constant Buffer out of range!" << std::endl;
 		return false;
@@ -129,7 +138,7 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	// Map the buffer
-	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_arr[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to map Constant Buffer!" << std::endl;
@@ -137,29 +146,29 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 	}
 
 	// Copy the new data to the buffer
-	memcpy(mappedResource.pData, data, bfrHolder->metadata_arr[idx][2]);
+	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
 	// Unmap the resource
-	d3d11Data->deviceContext->Unmap(bfrHolder->buff_arr[idx], 0);
+	d3d11Data->deviceContext->Unmap(bfrHolder->buff_map[idx], 0);
 
 	return true;
 }
 
 
-void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
+void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
-	static CB_IDX constantBufferIdx = -1;
-	if (constantBufferIdx == -1)
+	static CB_IDX idx = -1;
+	if (idx == -1)
 	{
 		DirectX::XMMATRIX emptyWorld;
-		constantBufferIdx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld), 0);
-		SetConstantBuffer(constantBufferIdx, bindto);
+		idx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld));
+		SetConstantBuffer(idx, bindto, slot);
 	}
 		
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	// Map the buffer
-	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_arr[constantBufferIdx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to map World Constant Buffer!" << std::endl;
@@ -167,9 +176,9 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 	}
 
 	// Copy the new data to the buffer
-	memcpy(mappedResource.pData, data, bfrHolder->metadata_arr[constantBufferIdx][2]);
+	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
 	// Unmap the resource
-	d3d11Data->deviceContext->Unmap(bfrHolder->buff_arr[constantBufferIdx], 0);
+	d3d11Data->deviceContext->Unmap(bfrHolder->buff_map[idx], 0);
 }
 
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
@@ -187,31 +196,57 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 	buffData.SysMemPitch = 0;
 	buffData.SysMemSlicePitch = 0;
 
-	uint16_t currentIdx = bfrHolder->currentCount;
+	uint16_t currentIdx = bfrHolder->_nextIdx;
 
-	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &bfrHolder->buff_arr[currentIdx]);
+	ID3D11Buffer* tempBuff = 0;
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to create Vertex Buffer!" << std::endl;
 		return -1;
 	}
+	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
+	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	bfrHolder->metadata_arr[currentIdx][0] = (uint32_t)size;
-	bfrHolder->metadata_arr[currentIdx][1] = (uint32_t)count;
+	return bfrHolder->_nextIdx++;
+}
 
-	return bfrHolder->currentCount++;
+VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
+{
+	uint16_t currentIdx = bfrHolder->_nextIdx;
+
+	D3D11_BUFFER_DESC desc;
+	desc.Usage = (D3D11_USAGE)useFlags;
+	desc.ByteWidth = (UINT)size * (UINT)count;
+	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Is a vertex buffer
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0;
+
+
+	ID3D11Buffer* tempBuff = 0;
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to create Vertex Buffer!" << std::endl;
+		return -1;
+	}
+	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
+	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
+
+	return bfrHolder->_nextIdx++;
 }
 
 // Set an active constant buffer by index (shader and slot data contained in buffer)
 bool SetVertexBuffer(const VB_IDX idx)
 {
-	if (bfrHolder->currentCount < idx || idx < 0)
+	if (bfrHolder->_nextIdx < idx || idx < 0)
 	{
 		std::cerr << "Index for Vertex Buffer out of range!" << std::endl;
 		return false;
 	}
 	UINT offset = 0;
-	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &(bfrHolder->buff_arr[idx]), &(bfrHolder->metadata_arr[idx][0]), &offset);
+	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &(bfrHolder->buff_map[idx]), &(bfrHolder->size[idx]), &offset);
 	return true;
 }
 
@@ -219,6 +254,8 @@ bool SetVertexBuffer(const VB_IDX idx)
 // Create an Index Buffer with provided data and return a unique index to it
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count)
 {
+	uint16_t currentIdx = bfrHolder->_nextIdx;
+
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.ByteWidth = (UINT)(size * count) + (16 - ((UINT)(size * count) % 16)); // Will most likely not matter, since it takes list
@@ -232,32 +269,31 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 	buffData.SysMemPitch = 0;
 	buffData.SysMemSlicePitch = 0;
 
-	uint16_t currentIdx = bfrHolder->currentCount;
-
-	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &bfrHolder->buff_arr[currentIdx]);
+	ID3D11Buffer* tempBuff = 0;
+	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to create Index Buffer!" << std::endl;
 		return -1;
 	}
+	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 
-	bfrHolder->metadata_arr[currentIdx][0] = (uint32_t)size;
-	bfrHolder->metadata_arr[currentIdx][1] = (uint32_t)count;
+	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->currentCount++;
+	return bfrHolder->_nextIdx++;
 }
 
 // Set an active Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx)
 {
-	if (bfrHolder->currentCount < idx || idx < 0)
+	if (bfrHolder->_nextIdx < idx || idx < 0)
 	{
 		std::cerr << "Index for Index Buffer out of range!" << std::endl;
 		return false;
 	}
 
 	UINT offset = 0;
-	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_arr[idx], DXGI_FORMAT_R32_UINT, offset);
+	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_map[idx], DXGI_FORMAT_R32_UINT, offset);
 	return true;
 }
 

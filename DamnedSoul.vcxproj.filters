@@ -5,16 +5,22 @@
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resource\shader\ParticleGS.hlsl" />
-    <FxCompile Include="resource\shader\ParticlePS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleVS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleGS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticlePS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleVS.hlsl" />
     <FxCompile Include="resource\shader\PixelVertex.hlsl" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
+    <FxCompile Include="resource\shader\Particles\ParticleFlamethrowerCS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleImplosionCS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleExplosionCS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleArchCS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleRainCS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleSmokeCS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleSinusCS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
     <FxCompile Include="resource\shader\TestPS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
     <Filter Include="Source Files">
@@ -35,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmoke.hlsl" />
     <FxCompile Include="resource\shader\TestPS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
     <FxCompile Include="resource\shader\DebugHitboxGeometryShader.hlsl" />
@@ -92,6 +97,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\ModelComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="header\Components\RenderableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ProximityCollision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -151,6 +162,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\AllComponents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\Backend\ProximityCollision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\PoolUtility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ParticleComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
