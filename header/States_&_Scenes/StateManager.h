@@ -28,6 +28,5 @@ struct StateManager
 	void Update();//All cpu systems here
 
 	void EndFrame();//Clears all framebased variables.
-
 	void UnloadAll();
 };

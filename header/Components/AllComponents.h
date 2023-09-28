@@ -4,3 +4,4 @@
 #include "TextComponent.h"
 #include "ImageComponent.h"
 #include "GeometryIndependentComponent.h"
+#include "PlayerComponent.h"

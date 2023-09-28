@@ -5,7 +5,7 @@
 #include "AllComponents.h"
 #include "GameRenderer.h"
 
-#define TEXTURE_DIMENSIONS 16
+#define TEXTURE_DIMENSIONS 256
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing

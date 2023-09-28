@@ -7,7 +7,6 @@
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UIRenderer.h"
-#include "ConfigManager.h"
 State currentStates;
 StateManager stateManager;
 
@@ -74,7 +73,6 @@ void SetInShop(bool value)
 
 void StateManager::Setup()
 {
-	InitiateConfig();
 	Setup3dGraphics();
 	ui.RenderSlot = SetupUIRenderState();
 

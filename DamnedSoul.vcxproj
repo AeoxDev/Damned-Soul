@@ -412,6 +412,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ImageComponent.h" />
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
     <ClInclude Include="header\Components\ModelComponent.h" />
+    <ClInclude Include="header\Components\PlayerComponent.h" />
     <ClInclude Include="header\Components\TextComponent.h" />
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Input.h" />

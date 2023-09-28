@@ -136,6 +136,8 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, 
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
 // Update the world matrix, there needs to be only one
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto);
+//No rotations, only position
+void UpdateWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto);
 
 
 // Create a Vertex Buffer with provided data and return a unique index to it

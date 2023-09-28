@@ -752,7 +752,7 @@ void SetupTestHitbox()
 	//SetHitboxIsEnemy(collisionRegistry, enemy2, circle3);
 	//SetHitboxHitPlayer(collisionRegistry, enemy2, circle3);
 
-	EntityID stage = collisionRegistry.CreateEntity();
+	/*EntityID stage = collisionRegistry.CreateEntity();
 	AddGeometryIndependentComponent(collisionRegistry, stage);
 	GeometryIndependentColliderComponent* GeoIndie = collisionRegistry.GetComponent<GeometryIndependentColliderComponent>(stage);
 	SetupGIAll(collisionRegistry, stage);
@@ -761,7 +761,17 @@ void SetupTestHitbox()
 	collisionRegistry.AddComponent<ModelComponent>(stageModel);
 	ModelComponent* m = collisionRegistry.GetComponent<ModelComponent>(stageModel);
 	m->model.Load("PlaceholderScene.mdl");
-
-	RenderGeometryIndependentCollisionToTexture(collisionRegistry, stage, stageModel);
+	RenderGeometryIndependentCollisionToTexture(collisionRegistry, stage, stageModel);*/
+	
 	//UpdatePhysics(collisionRegistry);
+}
+
+EntityID CreateAndRenderGeometryIndependentCollision(Registry& r, EntityID& m)
+{
+	EntityID stage = r.CreateEntity();
+	AddGeometryIndependentComponent(r, stage);
+	GeometryIndependentColliderComponent* GeoIndie = r.GetComponent<GeometryIndependentColliderComponent>(stage);
+
+	RenderGeometryIndependentCollisionToTexture(r, stage, m);
+	return stage;
 }

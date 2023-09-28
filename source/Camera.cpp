@@ -213,8 +213,8 @@ void Camera::InitializeCamera()
 	GameCamera = MemLib::palloc(sizeof(CameraStruct));
 	GameCamera->m_projectionType = true;
 	
-	SetPosition(0.f, 0.f, -10.f);
-	SetLookAt(0.f, 0.f, 1.f);
+	SetPosition(10.f, 10.f, -10.f);
+	SetLookAt(0.f, 0.f, 0.f);
 	SetUp(0.f, 1.f, 0.f);
 
 	SetRotation(0.f, 0.f, 0.f);

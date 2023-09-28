@@ -11,11 +11,13 @@
 #include "ComponentHelper.h"
 #include "UIRenderer.h"
 #include "States_&_Scenes\StateManager.h"
+#include "ConfigManager.h"
 
 void UpdateDebugWindowTitle(std::string& title);
 
 int main(int argc, char* args[])
 {
+	InitiateConfig();
 	MemLib::createMemoryManager();
 
 	SetupWindow();
@@ -32,8 +34,6 @@ int main(int argc, char* args[])
 		stateManager.ComputeShaders();//First do compute shader work
 		
 		stateManager.Render();//Then render all registries that are active
-
-		stateManager.Input();//Do all systems that are based on input
 		
 		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		
@@ -41,8 +41,10 @@ int main(int argc, char* args[])
 
 		Present();//Present what was drawn during the update!
 	
-		MemLib::pdefrag();
+		//MemLib::pdefrag();
 		stateManager.EndFrame();
+
+		stateManager.Input();//Do all systems that are based on input
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

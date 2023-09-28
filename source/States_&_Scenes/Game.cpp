@@ -20,6 +20,7 @@ void GameScene::Update()
 
 void GameScene::Clear()
 {
+	ClearBackBuffer();
 }
 
 void GameScene::Setup(int scene)//Load
@@ -27,6 +28,7 @@ void GameScene::Setup(int scene)//Load
 	
 	if (scene == 0)
 	{
+		
 		//Setup Game HUD
 		EntityID GameHUD = registry.CreateEntity();
 
@@ -45,6 +47,16 @@ void GameScene::Setup(int scene)//Load
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
 		stageCo->model.Load("PlaceholderScene.mdl");*/
 
+		EntityID stage = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(stage);
+		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
+		stageCo->model.Load("PlaceholderScene.mdl");
+
+		EntityID giStage = CreateAndRenderGeometryIndependentCollision(registry, stage);
+		EntityID player = registry.CreateEntity();
+		registry.AddComponent<PlayerComponent>(player);
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		pc->model = &dogCo->model;
 		
 		Begin2dFrame(ui);
 		HUDCanvas->Render(ui);
@@ -61,13 +73,19 @@ void GameScene::ComputeShaders()
 void GameScene::Render()
 {
 	RenderUI();
-
+	//Render Geometry
+	
 	//Set shaders here.
-	for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	PrepareBackBuffer();
+	for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
-		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(entity);
-		dogCo->model.RenderAllSubmeshes();
-		RenderIndexed(dogCo->model.m_bonelessModel->m_numIndices);
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		//dogCo->model.RenderAllSubmeshes();
+		UpdateWorldMatrix(player->posX, player->posY, player->posZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+		SetVertexBuffer(player->model->m_vertexBuffer);
+		SetIndexBuffer(player->model->m_indexBuffer);
+		//RenderIndexed(player->model->m_bonelessModel->m_numIndices);
+		player->model->RenderAllSubmeshes();
 	}
 }
 void GameScene::Input()
@@ -77,6 +95,7 @@ void GameScene::Input()
 		SetInMainMenu(true);
 		SetInPlay(false);
 		stateManager.menu.Setup();
+		Clear();
 		Unload();
 	}
 }

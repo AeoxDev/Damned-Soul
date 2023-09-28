@@ -128,11 +128,13 @@ void PrepareBackBuffer()
 {
 	Clear(backBufferRenderSlot);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
-
-	renderStates[backBufferRenderSlot].pixelShader = LoadPixelShader("TestPS.cso");
 	SetPixelShader(renderStates[backBufferRenderSlot].pixelShader);
-	renderStates[backBufferRenderSlot].vertexShader = LoadVertexShader("TestVS.cso");
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShader);
+}
+
+void ClearBackBuffer()
+{
+	Clear(backBufferRenderSlot);
 }
 
 void Clear(const int& s)

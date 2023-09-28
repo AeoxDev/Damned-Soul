@@ -145,6 +145,16 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 }
 
 
+void UpdateWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	world = DirectX::XMMatrixTranslation(x, y, z);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto);
+}
+
+
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 {
 	static CB_IDX constantBufferIdx = -1;
