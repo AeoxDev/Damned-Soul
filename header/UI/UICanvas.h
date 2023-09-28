@@ -8,8 +8,11 @@
 #include "MemLib\ML_Map.hpp"
 #include <DirectXMath.h>
 
+#define UI_CANVAS_HEADER 0b10101010101010101010101
+
 struct UICanvas
 {
+	int header = 0b10101010101010101010101;
 	bool m_Exit = false;
 
 	ML_Vector<UIButton> m_Buttons;

@@ -10,9 +10,10 @@ SamplerState WrapSampler : register(s0);
 
 struct VS_OUT
 {
-	float4 position : SV_POSITION;
-	float4 normal : NORMAL;
-	float2 uv : UV;
+    float4 position : SV_POSITION;
+    float4 normal : NORMAL;
+    //uint material : MATERIAL;
+    float2 uv : UV;
 };
 
 

@@ -64,7 +64,7 @@ RTV_IDX CreateBackBuffer()
 	return (rtvHolder->currentCount)++;
 }
 
-RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
+RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, FORMAT format)
 {
 	uint16_t currentIdx = rtvHolder->currentCount;
 
@@ -74,7 +74,7 @@ RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, C
 	desc.Height = height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Format = (DXGI_FORMAT)format;//DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = (D3D11_USAGE)useFlags;
@@ -506,9 +506,9 @@ bool UnloadUnorderedAcessView(const UAV_IDX idx)
 	return true;
 }
 
-void ClearRenderTargetView(const RTV_IDX idx)
+void ClearRenderTargetView(const RTV_IDX idx, float r, float g, float b, float a)
 {
-	float color[4] = { 1.0f, 0.0f, 0.84f, 0.0f };
+	float color[4] = { r, g, b, a };
 	d3d11Data->deviceContext->ClearRenderTargetView(rtvHolder->rtv_arr[idx], color);
 }
 
