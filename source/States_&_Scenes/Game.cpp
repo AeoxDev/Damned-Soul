@@ -89,4 +89,13 @@ void GameScene::Unload()
 		dogCo->model.Free();
 		registry.DestroyEntity(entity);
 	}
+	for (auto entity : View<UICanvas>(registry))
+	{
+		//Get entity with UI, release components.
+		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
+		if (ui)
+		{
+			ui->Release();
+		}
+	}
 }
