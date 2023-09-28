@@ -196,6 +196,17 @@ bool AddGeometryIndependentComponent(Registry& registry, EntityID& stageEntity)
 	return true;
 }
 
+void ReleaseGI(Registry& registry)
+{
+	for (auto entity : View<GeometryIndependentComponent>(registry))
+	{
+		//Get entity with UI, release components.
+		GeometryIndependentComponent* gi = registry.GetComponent<GeometryIndependentComponent>(entity);
+
+		//Release here
+	}
+}
+
 RTV_IDX SetupGIRenderTargetView(Registry& registry, EntityID& stageEntity)
 {
 	//Get component

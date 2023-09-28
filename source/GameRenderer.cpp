@@ -126,7 +126,6 @@ int SetupGameRenderer()
 
 void PrepareBackBuffer()
 {
-	Clear(backBufferRenderSlot);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(renderStates[backBufferRenderSlot].pixelShader);
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShader);

@@ -72,6 +72,7 @@ void GameScene::ComputeShaders()
 }
 void GameScene::Render()
 {
+	ClearBackBuffer();
 	RenderUI();
 	//Render Geometry
 	
@@ -112,7 +113,7 @@ void GameScene::Unload()
 	{
 		//Get entity with UI, release components.
 		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
-		if (ui)
+		if (ui && ui->header == UI_CANVAS_HEADER)
 		{
 			ui->Release();
 		}
