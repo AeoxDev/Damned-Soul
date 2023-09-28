@@ -33,8 +33,6 @@ void GameScene::Setup(int scene)//Load
 		SetupButtons();
 		SetupImages();
 		SetupText();
-
-
 		DrawUi();
 
 		//Doggo
@@ -46,6 +44,16 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
 		stageCo->model.Load("PlaceholderScene.mdl");*/
+		EntityID stage = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(stage);
+		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
+		stageCo->model.Load("PlaceholderScene.mdl");
+
+		EntityID giStage = CreateAndRenderGeometryIndependentCollision(registry, stage);
+		EntityID player = registry.CreateEntity();
+		registry.AddComponent<PlayerComponent>(player);
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		pc->model = &dogCo->model;
 	}
 }
 
@@ -59,24 +67,7 @@ void GameScene::SetupImages()
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/EmptyHealth.png", { 150.0f, 50.0f }, { 1.0f, 1.0f }));
 
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/FullHealth.png", { 150.0f, 50.0f }, { 0.7f, 1.0f }));
-
-		EntityID stage = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(stage);
-		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
-		stageCo->model.Load("PlaceholderScene.mdl");
-
-		EntityID giStage = CreateAndRenderGeometryIndependentCollision(registry, stage);
-		EntityID player = registry.CreateEntity();
-		registry.AddComponent<PlayerComponent>(player);
-		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
-		pc->model = &dogCo->model;
-		
-		Begin2dFrame(ui);
-		HUDCanvas->Render(ui);
-		End2dFrame(ui);
-	}
 }
-
 
 void GameScene::SetupText()
 {
