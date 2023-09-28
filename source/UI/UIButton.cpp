@@ -16,14 +16,14 @@ void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& ho
 	//Hover image is not necessarily needed
 	if (hoverImageFile != "")
 		m_Images[1] = UIImage(ui, hoverImageFile, position, scale, rotation, visibility, opacity);
-	else
-		m_Images[1] = UIImage();
+	//else
+	//	m_Images[1] = UIImage();
 	
 	//Button text is not necessarily needed
 	if (buttonText != L"")
 		m_Text = UIText(ui, buttonText, position, scale, rotation, visibility);
-	else
-		m_Text = UIText();
+	//else
+	//	m_Text = UIText();
 }
 
 void UIButton::Draw(UI& ui, ID2D1RenderTarget* rt)
@@ -43,8 +43,10 @@ void UIButton::Interact()
 
 void UIButton::Release()
 {
-	m_Images[0].Release();
-	m_Images[1].Release();
+	if (m_Images[0].GetBitmap() != nullptr)
+		m_Images[0].Release();
+	if(m_Images[1].GetBitmap() != nullptr)
+		m_Images[1].Release();
 }
 
 void UIButton::SetPosition(XMFLOAT2 position)

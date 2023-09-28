@@ -70,7 +70,6 @@ void StateManager::Setup()
 	currentStates = InMainMenu;
 	//models.Initialize();
 	menu.Setup();
-
 }
 
 void StateManager::Clear()

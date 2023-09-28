@@ -30,6 +30,4 @@ struct StateManager
 	void EndFrame();//Clears all framebased variables.
 
 	void UnloadAll();
-
-
 };

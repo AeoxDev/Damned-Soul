@@ -27,6 +27,13 @@ void Menu::Input()
 		stateManager.levelScenes[0].Setup(0);
 		Unload();
 	}
+	if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[1].m_uiComponent.Intersect({ mouseX, mouseY }))
+	{
+		SetInSettings(true);
+		SetInMainMenu(false);
+		stateManager.settings.Setup();
+		Unload();
+	}
 }
 
 void Menu::Setup()//Load
@@ -37,8 +44,9 @@ void Menu::Setup()//Load
 	EntityID mainMenuPage = registry.CreateEntity();
 
 	this->registry.AddComponent<UICanvas>(mainMenuPage);
-	UICanvas* mainMenu = registry.GetComponent<UICanvas>(mainMenuPage);
-	SetupMainMenuCanvas(*mainMenu);
+	UICanvas* mainMenuCanvas = registry.GetComponent<UICanvas>(mainMenuPage);
+	SetupMainMenuCanvas(*mainMenuCanvas);
+	UpdateUI(*mainMenuCanvas);
 
 	// Create UI and example menu
 	//*ui = UI();
@@ -47,7 +55,7 @@ void Menu::Setup()//Load
 	////ui->SetCurrentCanvas(exMenu->m_CurrentPage);
 	//DrawGUI(*mainMenu);
 	Begin2dFrame(ui);
-	mainMenu->Render(ui);
+	mainMenuCanvas->Render(ui);
 	End2dFrame(ui);
 }
 

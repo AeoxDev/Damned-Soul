@@ -10,6 +10,9 @@
 #include "Input.h"
 #include "States_&_Scenes\StateManager.h"
 
+#include "Menus.h"
+#include "UIRenderer.h"
+
 void GameScene::Update()
 {
 
@@ -24,6 +27,15 @@ void GameScene::Setup(int scene)//Load
 	
 	if (scene == 0)
 	{
+		//Setup Game HUD
+		EntityID GameHUD = registry.CreateEntity();
+
+		this->registry.AddComponent<UICanvas>(GameHUD);
+		UICanvas* HUDCanvas = registry.GetComponent<UICanvas>(GameHUD);
+		SetupHUDCanvas(*HUDCanvas);
+		UpdateUI(*HUDCanvas);
+
+		//Doggo
 		EntityID dog = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
@@ -32,6 +44,11 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
 		stageCo->model.Load("PlaceholderScene.mdl");*/
+
+		
+		Begin2dFrame(ui);
+		HUDCanvas->Render(ui);
+		End2dFrame(ui);
 	}
 }
 
@@ -43,6 +60,8 @@ void GameScene::ComputeShaders()
 }
 void GameScene::Render()
 {
+	RenderUI();
+
 	//Set shaders here.
 	for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
@@ -55,9 +74,9 @@ void GameScene::Input()
 {
 	if (keyInput[SDL_SCANCODE_ESCAPE] == pressed)
 	{
-		SetInPause(true);
+		SetInMainMenu(true);
 		SetInPlay(false);
-		stateManager.pause.Setup();
+		stateManager.menu.Setup();
 		Unload();
 	}
 }
