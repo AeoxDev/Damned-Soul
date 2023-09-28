@@ -49,7 +49,7 @@ int SetupUIRenderState()
 	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 
 	//SHADER RESOURCE VIEW
-	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, RESOURCE_FLAGS::BIND_RENDER_TARGET, 0);
+	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
 
 	texture->Release();
 
@@ -106,7 +106,8 @@ int SetupGameRenderer()
 	// Create a sampler state
 	//renderStates[currentSize].samplerState = CreateSamplerState();
 	// Set the sampler state
-	d3d11Data->deviceContext->PSSetSamplers(0, 1, &smpHolder->smp_arr[renderStates[currentSize].samplerState]);
+	SetSamplerState(renderStates[currentSize].samplerState);
+	//d3d11Data->deviceContext->PSSetSamplers(0, 1, &smpHolder->smp_map[renderStates[currentSize].samplerState]);
 
 	// Create a viewport
 	renderStates[currentSize].viewPort = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
@@ -122,6 +123,34 @@ int SetupGameRenderer()
 	SMP_IDX sampler = CreateSamplerState();
 	SetSamplerState(sampler);
 	return currentSize++;
+}
+
+int SetupParticles(uint32_t*& index)
+{
+	renderStates[currentSize].constantBuffer = CreateConstantBuffer(sizeof(ParticleMetadataBuffer)); // THIS IS FOR THE COMPUTE SHADER
+	renderStates[currentSize].rasterizerState = CreateRasterizerState(false, true);
+
+	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
+	renderStates[currentSize].vertexShader = LoadVertexShader("ParticleVS.cso", PARTICLE);
+	renderStates[currentSize].pixelShader = LoadPixelShader("ParticlePS.cso");
+	renderStates[currentSize].geometryShader = LoadGeometryShader("ParticleGS.cso");
+
+	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
+	renderStates[currentSize].renderTargetView = CreateRenderTargetView(USAGE_DEFAULT, resourceFlags, (CPU_FLAGS)0, sdl.WIDTH, sdl.HEIGHT);
+	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, BIND_RENDER_TARGET);
+	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+
+	return currentSize++;
+}
+
+void PrepareDefaultPipeline()
+{
+	SetTopology(TRIANGLELIST);
+
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShader);
+	SetPixelShader(renderStates[backBufferRenderSlot].pixelShader);
+
+	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 }
 
 void PrepareBackBuffer()
@@ -159,6 +188,11 @@ void RenderIndexed(const size_t& count)
 	d3d11Data->deviceContext->DrawIndexed((UINT)count, 0, 0);
 }
 
+void RenderOffset(const size_t& count, const size_t& offset)
+{
+	d3d11Data->deviceContext->Draw(count, offset);
+}
+
 void ClearParticles()
 {
 	ClearRenderTargetView(Particles::m_renderTargetView);
@@ -169,7 +203,6 @@ void ClearParticles()
 
 void Present()
 {
-
 	d3d11Data->swapChain->Present(0, 0);
 }
 

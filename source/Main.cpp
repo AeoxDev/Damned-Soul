@@ -35,13 +35,10 @@ int main(int argc, char* args[])
 	backBufferRenderSlot = SetupGameRenderer();
 
 	Camera::InitializeCamera();
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
-
-	Particles::InitializeParticles();
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX, 1);
 
 	SetupTestHitbox();
-
+	
 	stateManager.Setup();
 	
 	while (!sdl.quit)

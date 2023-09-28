@@ -62,23 +62,25 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
 		dogCo->model.Load("HellhoundDummy_PH.mdl");
-		registry.AddComponent<RenderableComponent>(dog);
-		RenderableComponent* renderCo = registry.GetComponent<RenderableComponent>(dog);
-
-		renderCo->ToRenderableComponent(renderStates[backBufferRenderSlot]);
+		//registry.AddComponent<RenderableComponent>(dog);
+		//RenderableComponent* renderCo = registry.GetComponent<RenderableComponent>(dog);
+		//renderCo->ToRenderableComponent(renderStates[backBufferRenderSlot]);
 		
 		/*EntityID stage = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
 		stageCo->model.Load("PlaceholderScene.mdl");*/
+
+		EntityID particleEntity = registry.CreateEntity();
+		Particles::PrepareSmokeParticles(registry, particleEntity, renderStates, 4.0f, 5.0f, 3.0f, DirectX::XMFLOAT3(0.f, 0.f, 0.f));
 	}
 }
 
 void GameScene::ComputeShaders()
 {
-	/*Particles::PrepareParticleCompute();
-	Dispatch(100, 0, 0);
-	Particles::FinishParticleCompute();*/
+	Particles::PrepareParticleCompute(renderStates);
+	Dispatch(1, 2, 0);
+	Particles::FinishParticleCompute(renderStates);
 }
 void GameScene::Render()
 {
@@ -89,6 +91,20 @@ void GameScene::Render()
 		dogCo->model.RenderAllSubmeshes();
 		RenderIndexed(dogCo->model.m_bonelessModel->m_numIndices);
 	}
+
+	//Set all the shaders
+	Particles::PrepareParticlePass(renderStates);
+	//Loop to find all metadata that are active,
+	//Render
+	for (auto pEntity : View<ParticleComponent>(registry))
+	{
+		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
+		if (pComp->metadataSlot >= 0)
+		{
+			RenderOffset(THREADS_PER_GROUP, pComp->metadataSlot * THREADS_PER_GROUP);
+		}
+	}
+	Particles::FinishParticleCompute(renderStates);
 }
 void GameScene::Input()
 {

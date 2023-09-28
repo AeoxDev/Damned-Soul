@@ -29,7 +29,8 @@ bool SetupUIRenderer(UIRenderComponents*& inOut)
 	inOut->dsv = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 
 	//SHADER RESOURCE VIEW
-	inOut->srv = CreateShaderResourceViewTexture(rtv, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, RESOURCE_FLAGS::BIND_RENDER_TARGET, 0 );
+	inOut->srv = CreateShaderResourceViewTexture(rtv, RESOURCE_FLAGS::BIND_RENDER_TARGET);
+
 
 	texture->Release();
 
@@ -128,7 +129,7 @@ void RenderUI()//Render what is drawn to rendertarget.
 		return;
 	}
 	//UnloadShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
-	if (!SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView))
+	if (!SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_PIXEL, 0))
 	{
 		std::cout << "Failed to set srv!" << std::endl;
 		return;

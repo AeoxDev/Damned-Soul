@@ -82,7 +82,7 @@ bool Model::Load(const char* filename)
 	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->GetVertices(), sizeof(VertexBoneless), m_bonelessModel->m_numVertices, USAGE_IMMUTABLE);
 	m_indexBuffer = CreateIndexBuffer(m_bonelessModel->GetIndices(), sizeof(uint32_t), m_bonelessModel->m_numIndices);
 
-	const ModelBoneless& visCopy = *m_bonelessModel;
+	//const ModelBoneless& visCopy = *m_bonelessModel;
 
 	for (unsigned int i = 0; i < m_bonelessModel->m_numMaterials; ++i)
 	{
@@ -108,7 +108,7 @@ void Model::Free()
 bool Model::SetMaterialActive() const
 {
 	const Material& mat = (**m_bonelessModel.m_pp).GetMaterial(0);
-	if (SetTexture(mat.albedoIdx, 0, BIND_PIXEL)/* &&
+	if (SetTexture(mat.albedoIdx, BIND_PIXEL, 0)/* &&
 		SetTexture(mat.normalIdx, 1, BIND_PIXEL) &&
 		SetTexture(mat.glowIdx, 2, BIND_PIXEL)*/)
 		return true;
@@ -128,13 +128,16 @@ bool Model::SetVertexAndIndexBuffersActive() const
 
 void Model::RenderAllSubmeshes()
 {
+	SetVertexBuffer(m_vertexBuffer);
+	SetIndexBuffer(m_indexBuffer);
+
 	for (unsigned int i = 0; i < m_bonelessModel->m_numSubMeshes; ++i)
 	{
 		const SubMesh& currentMesh = m_bonelessModel->GetSubMesh(i);
 		const Material& currentMaterial = m_bonelessModel->GetMaterial(currentMesh.m_material);
 
 		// Set material and draw
-		SetTexture(currentMaterial.albedoIdx, 0, BIND_PIXEL);
+		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
 }

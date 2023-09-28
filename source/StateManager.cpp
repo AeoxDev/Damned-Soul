@@ -1,6 +1,7 @@
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
 #include "Model.h"
+#include "Particles.h"
 State currentStates;
 StateManager stateManager;
 
@@ -129,7 +130,7 @@ void StateManager::Setup()
 	currentStates = InMainMenu;
 	//models.Initialize();
 	menu.Setup();
-
+	Particles::InitializeParticles();
 }
 
 void StateManager::Clear()
@@ -275,6 +276,7 @@ void StateManager::UnloadAll()
 	shop.Unload();
 	levelScenes[0].Unload();
 	levelScenes[1].Unload();
+	Particles::ReleaseParticles();
 }
 //
 //void StateManager::ReadInputs()

@@ -225,7 +225,7 @@ void Camera::InitializeCamera()
 	//Prepare the buffer to creation
 	//Update camera pos, view and projection
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f);
-	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer), 1);
+	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer));
 	UpdateView();
 	UpdateProjection();
 	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));

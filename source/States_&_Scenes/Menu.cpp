@@ -4,8 +4,9 @@
 #include "Hitbox.h"
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
-#include "RenderableComponent.h"
+#include "AllComponents.h"
 #include "GameRenderer.h"
+#include "Particles.h"
 
 //
 //void Menu::Update()
@@ -117,7 +118,9 @@
 
 void Menu::ComputeShaders()
 {
-
+	//Particles::PrepareParticleCompute();
+	//Dispatch(1, 2, 0);
+	//Particles::FinishParticleCompute();
 }
 
 void Menu::Update()
@@ -148,9 +151,16 @@ void Menu::Setup()//Load
 	UICanvas* mainMenu = registry.GetComponent<UICanvas>(mainMenuPage);
 	SetupMainMenuCanvas(*mainMenu);
 
-	registry.AddComponent<RenderableComponent>(mainMenuPage);
-	RenderableComponent* renderable = registry.GetComponent<RenderableComponent>(mainMenuPage);
-	renderable->ToRenderableComponent(renderStates[ui.RenderSlot]);
+
+	//UNCOMMENT THIS AND REGISTRY BECOMES CORRUPT, IT IS NEEDED FOR THE FUTURE THO
+	//registry.AddComponent<RenderableComponent>(mainMenuPage);
+	//RenderableComponent* renderable = registry.GetComponent<RenderableComponent>(mainMenuPage);
+	//renderable->ToRenderableComponent(renderStates[ui.RenderSlot]);
+
+	//EntityID particleEntity = registry.CreateEntity();
+	//Particles::PrepareSmokeParticles(registry, particleEntity, 4.0f, 5.0f, 3.0f, DirectX::XMFLOAT3(0.f, 0.f, 0.f));
+
+
 
 
 	// Create UI and example menu
@@ -171,6 +181,20 @@ void Menu::Render()
 	/*	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
 		RenderUI(uiComp);*/
 	}
+
+
+	////Set all the shaders
+	//Particles::PrepareParticlePass();
+	////Loop to find all metadata that are active,
+	////Render
+	//for (auto pEntity : View<ParticleComponent>(registry))
+	//{
+	//	ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
+	//	if (pComp->metadataSlot > 0.0f)
+	//	{
+	//		//RENDER PCOMP
+	//	}
+	//}
 	RenderUI();
 }
 

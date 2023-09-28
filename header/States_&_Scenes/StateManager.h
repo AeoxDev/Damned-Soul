@@ -6,6 +6,7 @@
 #include "States_&_Scenes\Game.h"
 #include "States_&_Scenes\Pause.h"
 
+
 struct StateManager;
 
 extern State currentStates;

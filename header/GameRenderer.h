@@ -26,10 +26,15 @@ extern int backBufferRenderSlot;
 bool Setup3dGraphics();
 int SetupUIRenderState();
 int SetupGameRenderer();
+int SetupParticles(uint32_t*& index);
+
+void PrepareDefaultPipeline();
 
 void PrepareBackBuffer();
 void Clear(const int& componentSlot);
 void RenderIndexed(const size_t& count);
+// Calls Draw, instead of DrawIndexed
+void RenderOffset(const size_t& count, const size_t& offset);
 void ClearParticles();
 void Present();
 void Dispatch(UINT threadX, UINT threadY, UINT threadZ);
