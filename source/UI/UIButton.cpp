@@ -2,10 +2,18 @@
 
 using namespace DirectX;
 
+UIButton::UIButton(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+{
+	Setup(ui, imageFile, hoverImageFile, buttonText, onClick, onHover, position, scale, rotation, visibility, opacity);
+}
+
 void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
 	m_uiComponent.m_Bounds = m_Images[0].m_Bounds;
+
+	m_onClick = onClick;
+	m_onHover = onHover;
 
 	m_uiComponent.SetPosition(position);
 	m_uiComponent.SetRotation(rotation);
@@ -37,8 +45,14 @@ void UIButton::Draw(UI& ui, ID2D1RenderTarget* rt)
 
 void UIButton::Interact()
 {
-	if (onClick)
-		onClick();
+	if (m_onClick)
+		m_onClick();
+}
+
+void UIButton::Hover()
+{
+	if (m_onHover)
+		m_onHover();
 }
 
 void UIButton::Release()

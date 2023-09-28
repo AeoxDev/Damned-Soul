@@ -3,8 +3,9 @@
 using namespace DirectX;
 
 UIText::UIText(UI& ui, const std::wstring& text, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
-	:UIComponent(m_Position, m_Scale, m_Rotation, m_Visibility), m_Text(text)
+	:UIComponent(m_Position, m_Scale, m_Rotation, visibility), m_Text(text)
 {
+	m_Visibility = visibility;
 	float fontSize = ui.GetTextFormat()->GetFontSize();
 
 	m_Bounds = { 0, 0, fontSize * m_Text.length(), fontSize + 5};

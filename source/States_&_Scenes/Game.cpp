@@ -28,12 +28,12 @@ void GameScene::Setup(int scene)//Load
 	if (scene == 0)
 	{
 		//Setup Game HUD
-		EntityID GameHUD = registry.CreateEntity();
+		SetupButtons();
+		SetupImages();
+		SetupText();
 
-		this->registry.AddComponent<UICanvas>(GameHUD);
-		UICanvas* HUDCanvas = registry.GetComponent<UICanvas>(GameHUD);
-		SetupHUDCanvas(*HUDCanvas);
-		UpdateUI(*HUDCanvas);
+
+		DrawUi();
 
 		//Doggo
 		EntityID dog = registry.CreateEntity();
@@ -44,12 +44,31 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
 		stageCo->model.Load("PlaceholderScene.mdl");*/
-
-		
-		Begin2dFrame(ui);
-		HUDCanvas->Render(ui);
-		End2dFrame(ui);
 	}
+}
+
+void GameScene::SetupButtons()
+{
+
+}
+
+void GameScene::SetupImages()
+{
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/EmptyHealth.png", { 150.0f, 50.0f }, { 1.0f, 1.0f }));
+
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/FullHealth.png", { 150.0f, 50.0f }, { 0.7f, 1.0f }));
+
+}
+
+
+void GameScene::SetupText()
+{
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"Current Souls: 0", { 125.0f, 100.0f }));
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"This is the HUD!", { sdl.WIDTH / 2.0f - 50.0f, 300.0f }));
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"Press ECS to return to main menu!", { sdl.WIDTH / 2.0f - 50.0f, 350.0f }));
 }
 
 void GameScene::ComputeShaders()
@@ -58,6 +77,7 @@ void GameScene::ComputeShaders()
 	Dispatch(100, 0, 0);
 	Particles::FinishParticleCompute();*/
 }
+
 void GameScene::Render()
 {
 	RenderUI();
@@ -70,6 +90,7 @@ void GameScene::Render()
 		RenderIndexed(dogCo->model.m_bonelessModel->m_numIndices);
 	}
 }
+
 void GameScene::Input()
 {
 	if (keyInput[SDL_SCANCODE_ESCAPE] == pressed)
@@ -80,6 +101,7 @@ void GameScene::Input()
 		Unload();
 	}
 }
+
 void GameScene::Unload()
 {
 	for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
@@ -89,13 +111,37 @@ void GameScene::Unload()
 		dogCo->model.Free();
 		registry.DestroyEntity(entity);
 	}
-	for (auto entity : View<UICanvas>(registry))
+
+	for (auto entity : View<ButtonComponent>(registry))
 	{
-		//Get entity with UI, release components.
-		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
-		if (ui)
-		{
-			ui->Release();
-		}
+		registry.GetComponent<ButtonComponent>(entity)->button.Release();
+		registry.RemoveComponent<ButtonComponent>(entity);
 	}
+
+	for (auto entity : View<ImageComponent>(registry))
+	{
+		registry.GetComponent<ImageComponent>(entity)->image.Release();
+		registry.RemoveComponent<ImageComponent>(entity);
+	}
+}
+
+void GameScene::DrawUi()
+{
+	ID2D1RenderTarget* rt = ui.GetRenderTarget();
+
+	UpdateUI2();
+
+	Begin2dFrame(ui);
+
+	for (auto entity : View<ButtonComponent>(registry))
+		registry.GetComponent<ButtonComponent>(entity)->button.Draw(ui, rt);
+
+	for (auto entity : View<ImageComponent>(registry))
+
+		registry.GetComponent<ImageComponent>(entity)->image.Draw(rt);
+
+	for (auto entity : View<TextComponent>(registry))
+		registry.GetComponent<TextComponent>(entity)->text.Draw(ui);
+
+	End2dFrame(ui);
 }

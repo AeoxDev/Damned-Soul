@@ -86,6 +86,17 @@ void End2dFrame(UI& ui)
 	ui.m_RenderTarget->EndDraw();
 }
 
+void UpdateUI2()
+{
+	ID3D11ShaderResourceView* nullsrv = nullptr;
+	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
+
+	ClearDepthStencilView(renderStates[ui.RenderSlot].depthStencilView);
+	ClearRenderTargetView(renderStates[ui.RenderSlot].renderTargetView);
+
+	SetRenderTargetViewAndDepthStencil(renderStates[ui.RenderSlot].renderTargetView, renderStates[ui.RenderSlot].depthStencilView);
+}
+
 void UpdateUI(UICanvas& canvas)
 {
 	ID3D11ShaderResourceView* nullsrv = nullptr;
