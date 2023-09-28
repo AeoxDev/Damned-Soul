@@ -36,10 +36,10 @@ int main(int argc, char* args[])
 		stateManager.Update();//Lastly do the cpu work
 
 		Present();//Present what was drawn during the update!
+	
 		MemLib::pdefrag();
 		stateManager.EndFrame();
 	}
-	
 	stateManager.UnloadAll();
 	SDL_Quit();
 	MemLib::destroyMemoryManager();

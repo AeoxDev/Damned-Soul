@@ -35,7 +35,7 @@ struct CameraConstantBuffer
 PoolPointer<CameraStruct> GameCamera;
 PoolPointer<CameraConstantBuffer> BufferData;
 
-float orthWidth, orthHeight;
+float orthWidth, orthHeight, orthDepth;
 
 void Camera::SetPosition(const float x, const float y, const float z)
 {
@@ -80,6 +80,10 @@ void Camera::SetWidth(const float& width)
 void Camera::SetHeight(const float& height)
 {
 	orthHeight = height;
+}
+void Camera::SetOrthographicDepth(const float& d)
+{
+	orthDepth = d;
 }
 
 void Camera::AdjustPosition(const float x, const float y, const float z)
@@ -185,7 +189,7 @@ void Camera::UpdateProjection()
 	else
 	{
 		DirectX::XMMATRIX orth;
-		orth = DirectX::XMMatrixOrthographicLH((float)orthWidth, (float)orthHeight, 0.1f, 50.f);
+		orth = DirectX::XMMatrixOrthographicLH(orthWidth, orthHeight, 0.1f, orthDepth);
 		DirectX::XMStoreFloat4x4(&GameCamera->m_orthographic, orth);
 		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(orth));
 	}
@@ -199,7 +203,7 @@ void Camera::ToggleProjection()
 {
 	//If projection is true, it will become false
 	//If projection is false, it will become true
-	GameCamera->m_projectionType ? false : true;
+	GameCamera->m_projectionType = !GameCamera->m_projectionType;
 }
 
 void Camera::InitializeCamera()

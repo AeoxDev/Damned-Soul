@@ -9,6 +9,7 @@
 #include "CollisionFunctions.h"
 #include "Backend\GeometryIndependent.h"
 #include "AllComponents.h"
+#include "GameRenderer.h"
 
 HitboxVisualizeVariables hvv;
 
@@ -762,8 +763,5 @@ void SetupTestHitbox()
 	m->model.Load("PlaceholderScene.mdl");
 
 	RenderGeometryIndependentCollisionToTexture(collisionRegistry, stage, stageModel);
-
-
-
-	UpdatePhysics(collisionRegistry);
+	//UpdatePhysics(collisionRegistry);
 }

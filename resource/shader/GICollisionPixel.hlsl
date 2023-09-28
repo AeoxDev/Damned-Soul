@@ -1,13 +1,9 @@
 
 struct PS_IN
 {
-    float4 position : SV_POSITION;
-    float4 normal : NORMAL;
-    uint material : MATERIAL;
-    float2 uv : UV;
+    float4 svPosition : SV_POSITION;
+    float4 position : POSITION;
 };
-
-//Make use of a pre-existing pixel shader constant buffer for GI data in order to reduce memory usage
 
 float4 main(PS_IN input) : SV_TARGET
 {
@@ -18,5 +14,10 @@ float4 main(PS_IN input) : SV_TARGET
     //For the hazards, Either read a texture to place 2d static hazards
     //Or use the same method from the stage and look at 3d objects
     //This time, however, the values will be either clip or 2+, depending on the hazard
-    return float4(0.0f, 0.0f, 0.0f, 1.0f);
+    int result = 0;
+    if (input.position.z > -1.0f)
+    {
+        result = 1;
+    }
+    return float4((float)result, 0.0f, 0.0f, 1.0f);
 }

@@ -3,8 +3,9 @@
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "AllComponents.h"
+#include "GameRenderer.h"
 
-#define TEXTURE_DIMENSIONS 256
+#define TEXTURE_DIMENSIONS 420
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing
@@ -21,16 +22,22 @@ struct GeometryIndependentComponent
 	CB_IDX constantBuffer;
 	TX_IDX stagingTexture;
 	DSV_IDX depthStencil;
+	RS_IDX rasterizerState;
+	VP_IDX viewport;
 	GIConstantBufferData shaderData;
 
 	//TextureComponent
-	uint8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+	int8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
 
 	~GeometryIndependentComponent();
 };
-struct giTexture
+struct giPixel
 {
-	uint8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+	float r, g, b, a;
+};
+struct giCopyTexture
+{
+	giPixel texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
 };
 void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& stageEntity, EntityID& modelEntity)
 {
@@ -47,20 +54,71 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 
 	//Set camera orthographic
 	Camera::ToggleProjection();
+	
 	DirectX::XMVECTOR previousPos = Camera::GetPosition();
 	DirectX::XMVECTOR previousLookAt = Camera::GetLookAt();
 	DirectX::XMVECTOR previousUp = Camera::GetUp();
 	DirectX::XMFLOAT3 vData;
 
-	Camera::SetPosition(0.0f, 5.0f, 0.0f);//Set this to center of stage offset upwards
-	Camera::SetLookAt(0.0f, 0.0f, 0.0f);//Set to center of stage
+	const VertexBoneless* vertices = model->model.m_bonelessModel->GetVertices();
+
+	unsigned nrVertices = model->model.m_bonelessModel->m_numVertices;
+
+	float greatestX = -1000000000.0f;
+	float greatestZ = -1000000000.0f;
+	float greatestY = -1000000000.0f;
+	float smallestX = 1000000000.0f;
+	float smallestZ = 1000000000.0f;
+	float smallestY = 1000000000.0f;
+
+	for (unsigned i = 0; i < nrVertices; i++)
+	{
+		if (vertices[i].m_position[0] < smallestX)
+		{
+			smallestX = vertices[i].m_position[0];
+		}
+		if (vertices[i].m_position[0] > greatestX)
+		{
+			greatestX = vertices[i].m_position[0];
+		}
+
+		if (vertices[i].m_position[1] < smallestY)
+		{
+			smallestY = vertices[i].m_position[1];
+		}
+		if (vertices[i].m_position[1] > greatestY)
+		{
+			greatestY = vertices[i].m_position[1];
+		}
+
+		if (vertices[i].m_position[2] < smallestZ)
+		{
+			smallestZ = vertices[i].m_position[2];
+		}
+		if (vertices[i].m_position[2] > greatestZ)
+		{
+			greatestZ = vertices[i].m_position[2];
+		}
+	}
+
+	Camera::SetPosition(0.5f * (greatestX + smallestX),greatestY+ 2.0f, 0.5f * (greatestZ + smallestZ));//Set this to center of stage offset upwards
+	Camera::SetLookAt(0.5f * (greatestX + smallestX), smallestY, 0.5f * (greatestZ + smallestZ));//Set to center of stage
 	Camera::SetUp(0.0f, 0.0f, 1.0f);
-	Camera::SetWidth(10.0f);//Set width (x) of orthogonal based on stage
-	Camera::SetHeight(10.0f);//Set height (z) of orthogonal based on stage
+	Camera::SetWidth(greatestX - smallestX + 2.0f);//Set width (x) of orthogonal based on stage
+	Camera::SetHeight(greatestZ - smallestZ + 2.0f);//Set height (z) of orthogonal based on stage
+	Camera::SetOrthographicDepth(greatestY - smallestY + 8.f);
+	Camera::UpdateView();
+	Camera::UpdateProjection();
+	int16_t cameraIdx = Camera::GetCameraBufferIndex();
+	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+	SetRasterizerState(GIcomponent->rasterizerState);
+	SetViewport(GIcomponent->viewport);
 	//Find a depthstencil to use
 	//Set VS, PS, RTV, CB
 	SetVertexShader(GIcomponent->vertexShader);
 	SetPixelShader(GIcomponent->pixelShader);
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
 	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL);
 	SetVertexBuffer(model->model.m_vertexBuffer);
@@ -75,11 +133,10 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	GetTextureByType(RTVResource, TEXTURE_HOLDER_TYPE::RENDER_TARGET_VIEW, GIcomponent->renderTargetView);
 	ID3D11Texture2D* stagingResource = nullptr;
 	GetTextureByType(stagingResource, TEXTURE_HOLDER_TYPE::TEXTURE, GIcomponent->stagingTexture);
-	d3d11Data->deviceContext->CopyResource(RTVResource, stagingResource);
+	d3d11Data->deviceContext->CopyResource(stagingResource, RTVResource);
 
-
-	//float mappingTexture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS] = {0.1f};
-	void* mappingTexture = MemLib::spush(sizeof(float) * TEXTURE_DIMENSIONS * TEXTURE_DIMENSIONS);
+	giCopyTexture* mappingTexture;
+	mappingTexture = (giCopyTexture*)MemLib::spush(sizeof(giCopyTexture));
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource{0};
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -91,18 +148,17 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	}
 
 	// Copy the new data to the buffer
-	memcpy(mappedResource.pData, mappingTexture, sizeof(float) * TEXTURE_DIMENSIONS * TEXTURE_DIMENSIONS);
+	memcpy(mappingTexture, mappedResource.pData, mappedResource.DepthPitch);
 	// Unmap the resource
 	d3d11Data->deviceContext->Unmap(stagingResource, 0);
 
 	//Another task: Save to a texture with custom size (int8 per pixel)
 
-	float* pixelValue = (float*)mappingTexture;
 	for (size_t i = 0; i < TEXTURE_DIMENSIONS; i++)
 	{
 		for (size_t j = 0; j < TEXTURE_DIMENSIONS; j++)
 		{
-			GIcomponent->texture[i][j] = (uint8_t) * (pixelValue + i * j + i);
+			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
 		}
 	}
 
@@ -117,8 +173,11 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	Camera::SetLookAt(vData.x, vData.y, vData.z);//Set to center of stage
 	DirectX::XMStoreFloat3(&vData, previousUp);
 	Camera::SetUp(vData.x, vData.y, vData.z);
-	RTVResource->Release();
-	stagingResource->Release();
+	Camera::UpdateView();
+	Camera::UpdateProjection();
+	SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	//RTVResource->Release();
+	//stagingResource->Release();
 	//Return.
 }
 
@@ -146,7 +205,8 @@ RTV_IDX SetupGIRenderTargetView(Registry& registry, EntityID& stageEntity)
 		return -1;
 	}
 	//Create a renderTargetView for the GI
-	GIcomponent->renderTargetView = CreateRenderTargetView(USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS::BIND_RENDER_TARGET, (CPU_FLAGS)0, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	GIcomponent->renderTargetView = CreateRenderTargetView(USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS::BIND_RENDER_TARGET,
+		(CPU_FLAGS)0, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS, FORMAT_R32G32B32A32_FLOAT);
 	return GIcomponent->renderTargetView;
 }
 DSV_IDX SetupGIDepthStencil(Registry& registry, EntityID& stageEntity)
@@ -182,7 +242,7 @@ VS_IDX SetupGIVertexShader(Registry& registry, EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->vertexShader = LoadVertexShader("TestVS.cso");
+	GIcomponent->vertexShader = LoadVertexShader("GICollisionVertex.cso", LAYOUT_DESC::DEFAULT);
 	return GIcomponent->vertexShader;
 }
 
@@ -206,8 +266,33 @@ TX_IDX SetupGIStagingTexture(Registry& registry, EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->stagingTexture = CreateTexture(FORMAT_R8G8B8A8_UNORM,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32G32B32A32_FLOAT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
 	return GIcomponent->stagingTexture;
+}
+
+
+RS_IDX SetupGIRasterizerState(Registry& registry, EntityID& stageEntity)
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
+	if (GIcomponent == NULL)
+	{
+		return -1;
+	}
+	//Create a pixelshader for the GI
+	GIcomponent->rasterizerState = CreateRasterizerState(false, true);
+	return GIcomponent->rasterizerState;
+}
+
+RS_IDX SetupGIViewport(Registry& registry, EntityID& stageEntity)
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
+	if (GIcomponent == NULL)
+	{
+		return -1;
+	}
+	//Create a pixelshader for the GI
+	GIcomponent->viewport = CreateViewport(TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	return GIcomponent->viewport;
 }
 
 
@@ -219,6 +304,8 @@ bool SetupGIAll(Registry& registry, EntityID& stage)
 	RTV_IDX giRTV = SetupGIRenderTargetView(registry, stage);
 	TX_IDX giTX = SetupGIStagingTexture(registry, stage);
 	DSV_IDX giDSV = SetupGIDepthStencil(registry, stage);
+	SetupGIRasterizerState(registry, stage);
+	SetupGIViewport(registry, stage);
 	if (giPS < 0 || giVS < 0 || giCB < 0 || giRTV < 0)
 	{
 		return false;

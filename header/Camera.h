@@ -13,6 +13,8 @@ namespace Camera
 	void SetWidth(const float& width);
 	//This function is for orthographic usage
 	void SetHeight(const float& height);
+	//This function is for orthographic usage
+	void SetOrthographicDepth(const float& depth);
 
 	void AdjustPosition(const float x, const float y, const float z);
 	void AdjustLookAt(const float x, const float y, const float z);
