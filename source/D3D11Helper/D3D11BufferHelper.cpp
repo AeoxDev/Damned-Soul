@@ -145,15 +145,41 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 }
 
 
-void UpdateWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto)
+
+void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto)
 {
 	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
 	world = DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
 	DirectX::XMFLOAT4X4 in;
 	DirectX::XMStoreFloat4x4(&in, world);
 	UpdateWorldMatrix(&in, bindto);
 }
 
+void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	world = DirectX::XMMatrixRotationY(rotationY);
+	world = world * DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto);
+}
+
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	DirectX::XMVECTOR v = DirectX::XMVECTOR{ 0.0f, 0.0f,0.0f };
+	DirectX::XMVECTOR f = DirectX::XMVECTOR{dirX, dirY, dirZ};
+	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
+	world = DirectX::XMMatrixLookAtLH(v, f, up);
+	world = world * DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto);
+}
 
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 {
