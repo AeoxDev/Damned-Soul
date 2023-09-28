@@ -59,4 +59,13 @@ void SettingsState::Update()
 
 void SettingsState::Unload()
 {
+	for (auto entity : View<UICanvas>(registry))
+	{
+		//Get entity with UI, release components.
+		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
+		if (ui)
+		{
+			ui->Release();
+		}
+	}
 }
