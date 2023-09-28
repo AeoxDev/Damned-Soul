@@ -60,7 +60,10 @@ UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 sc
 void UIImage::Release()
 {
 	if (m_Bitmap)
+	{
 		m_Bitmap->Release();
+		m_Bitmap = nullptr;
+	}
 }
 
 void UIImage::Draw(ID2D1RenderTarget* renderTarget)

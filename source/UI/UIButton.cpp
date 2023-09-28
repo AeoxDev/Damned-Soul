@@ -2,31 +2,28 @@
 
 using namespace DirectX;
 
-UIButton::UIButton()
-{
-}
-
 void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
+	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
+	m_uiComponent.m_Bounds = m_Images[0].m_Bounds;
+
 	m_uiComponent.SetPosition(position);
 	m_uiComponent.SetRotation(rotation);
 	m_uiComponent.SetScale(scale);
 	m_uiComponent.SetTransform(position, scale, rotation);
 	m_uiComponent.SetVisibility(visibility);
 
-	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
-
 	//Hover image is not necessarily needed
 	if (hoverImageFile != "")
 		m_Images[1] = UIImage(ui, hoverImageFile, position, scale, rotation, visibility, opacity);
-	else
-		m_Images[1] = UIImage();
+	//else
+	//	m_Images[1] = UIImage();
 	
 	//Button text is not necessarily needed
 	if (buttonText != L"")
 		m_Text = UIText(ui, buttonText, position, scale, rotation, visibility);
-	else
-		m_Text = UIText();
+	//else
+	//	m_Text = UIText();
 }
 
 void UIButton::Draw(UI& ui, ID2D1RenderTarget* rt)
@@ -46,8 +43,10 @@ void UIButton::Interact()
 
 void UIButton::Release()
 {
-	m_Images[0].Release();
-	m_Images[1].Release();
+	if (m_Images[0].GetBitmap() != nullptr)
+		m_Images[0].Release();
+	if(m_Images[1].GetBitmap() != nullptr)
+		m_Images[1].Release();
 }
 
 void UIButton::SetPosition(XMFLOAT2 position)

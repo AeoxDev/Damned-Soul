@@ -16,7 +16,7 @@ struct UIButton
 	UIImage m_Images[2];					//2 Images, button image and hover button image (can be null)
 	UIText m_Text;							//The text on the button
 
-	UIButton();
+	UIButton() = default;
 	void Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText,
 		std::function<void()> onClick, std::function<void()> onHover, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
 		bool visibility = true, float opacity = 1.0f);

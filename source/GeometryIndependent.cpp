@@ -5,7 +5,7 @@
 #include "AllComponents.h"
 #include "GameRenderer.h"
 
-#define TEXTURE_DIMENSIONS 420
+#define TEXTURE_DIMENSIONS 16
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing
@@ -33,11 +33,11 @@ struct GeometryIndependentComponent
 };
 struct giPixel
 {
-	float r, g, b, a;
+	unsigned r;
 };
 struct giCopyTexture
 {
-	giPixel texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+	giPixel texture[TEXTURE_DIMENSIONS*2][TEXTURE_DIMENSIONS];
 };
 void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& stageEntity, EntityID& modelEntity)
 {
@@ -158,7 +158,7 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	{
 		for (size_t j = 0; j < TEXTURE_DIMENSIONS; j++)
 		{
-			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
+			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i*2][j]).r;
 		}
 	}
 
@@ -206,7 +206,7 @@ RTV_IDX SetupGIRenderTargetView(Registry& registry, EntityID& stageEntity)
 	}
 	//Create a renderTargetView for the GI
 	GIcomponent->renderTargetView = CreateRenderTargetView(USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS::BIND_RENDER_TARGET,
-		(CPU_FLAGS)0, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS, FORMAT_R32G32B32A32_FLOAT);
+		(CPU_FLAGS)0, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS, FORMAT_R32_UINT);
 	return GIcomponent->renderTargetView;
 }
 DSV_IDX SetupGIDepthStencil(Registry& registry, EntityID& stageEntity)
@@ -266,7 +266,7 @@ TX_IDX SetupGIStagingTexture(Registry& registry, EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32G32B32A32_FLOAT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32_UINT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
 	return GIcomponent->stagingTexture;
 }
 

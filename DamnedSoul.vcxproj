@@ -199,18 +199,15 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Lighting.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
-    <ClCompile Include="source\MainMenu.cpp" />
+    <ClCompile Include="source\Menus.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
     <ClCompile Include="source\ButtonManager.cpp" />
-    <ClCompile Include="source\SceneManager.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp" />
-    <ClCompile Include="source\StateManager.cpp" />
+    <ClCompile Include="source\States_&amp;_Scenes\StateManager.cpp" />
     <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -411,8 +408,11 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Components\AllComponents.h" />
+    <ClInclude Include="header\Components\ButtonComponent.h" />
+    <ClInclude Include="header\Components\ImageComponent.h" />
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
     <ClInclude Include="header\Components\ModelComponent.h" />
+    <ClInclude Include="header\Components\TextComponent.h" />
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
@@ -424,7 +424,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
     <ClInclude Include="header\Relics.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
-    <ClInclude Include="header\MainMenu.h" />
+    <ClInclude Include="header\Menus.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -447,9 +447,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\Hitbox.h" />
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\ButtonManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
     <ClInclude Include="header\UI\UIButton.h" />
@@ -457,7 +454,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\UI\UIComponent.h" />
     <ClInclude Include="header\UI\UIImage.h" />
     <ClInclude Include="header\UI\UIText.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
     <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />

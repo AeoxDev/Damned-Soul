@@ -1,116 +1,9 @@
 #include "States_&_Scenes\Menu.h"
 #include "UIRenderer.h"
-#include "MainMenu.h"
+#include "Menus.h"
 #include "Hitbox.h"
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
-//
-//void Menu::Update()
-//{
-//	//std::cout << "menu" << std::endl;
-//}
-//
-//void Menu::ReadKeyInputs(int keyState[], Settings& settings)
-//{
-//	switch (currentSubState)
-//	{
-//	case MenuState::Main:
-//		std::cout << "Main\n";
-//
-//		break;
-//	case MenuState::Settings:
-//		std::cout << "Settings\n";
-//
-//		if (keyState[SDL_SCANCODE_ESCAPE])
-//			currentSubState = MenuState::Main;
-//
-//		settings.ReadKeyInputs(keyState);
-//		break;
-//	case MenuState::Credits:
-//		std::cout << "Credits\n";
-//
-//		if (keyState[SDL_SCANCODE_ESCAPE])
-//			currentSubState = MenuState::Main;
-//
-//		break;
-//	}
-//}
-//
-//void Menu::ReadKeyOutputs(int keyState[], Settings& settings)
-//{
-//	switch (currentSubState)
-//	{
-//	case MenuState::Main:
-//		std::cout << "Main\n";
-//
-//		break;
-//	case MenuState::Settings:
-//		std::cout << "Settings\n";
-//
-//		break;
-//	case MenuState::Credits:
-//		std::cout << "Credits\n";
-//
-//		break;
-//	}
-//}
-//
-//void Menu::ReadMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
-//{
-//	switch (currentSubState)
-//	{
-//	case MenuState::Main:
-//		std::cout << "Main\n";
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Play").Intersects(mousePos))
-//			buttonManager.DoButtonAction("Play");
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("MenuSettings").Intersects(mousePos))
-//			buttonManager.DoButtonAction("MenuSettings");
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Credits").Intersects(mousePos))
-//			buttonManager.DoButtonAction("Credits");
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Exit").Intersects(mousePos))
-//			buttonManager.DoButtonAction("Exit");
-//
-//		break;
-//	case MenuState::Settings:
-//		std::cout << "Settings\n";
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Main").Intersects(mousePos))
-//			buttonManager.DoButtonAction("Main");
-//
-//		settings.ReadMouseInputs(mouseEvent, buttonManager, mousePos);
-//		break;
-//	case MenuState::Credits:
-//		std::cout << "Credits\n";
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Main").Intersects(mousePos))
-//			buttonManager.DoButtonAction("Main");
-//
-//		break;
-//	}
-//}
-//
-//void Menu::ReadMouseOutputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
-//{
-//	switch (currentSubState)
-//	{
-//	case MenuState::Main:
-//		std::cout << "Main\n";
-//
-//		break;
-//	case MenuState::Settings:
-//		std::cout << "Settings\n";
-//
-//		break;
-//	case MenuState::Credits:
-//		std::cout << "Credits\n";
-//
-//		break;
-//	}
-//}
 
 void Menu::ComputeShaders()
 {
@@ -124,12 +17,21 @@ void Menu::Update()
 
 void Menu::Input()
 {
+	EntityID ui = registry.entities.at(0).id;
+	UICanvas* canvas = registry.GetComponent<UICanvas>(ui);
 	//Input controller component.
-	if (keyState[SDL_SCANCODE_1] == released)
+	if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[0].m_uiComponent.Intersect({mouseX, mouseY}))
 	{
 		SetInPlay(true);
 		SetInMainMenu(false);
 		stateManager.levelScenes[0].Setup(0);
+		Unload();
+	}
+	if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[1].m_uiComponent.Intersect({ mouseX, mouseY }))
+	{
+		SetInSettings(true);
+		SetInMainMenu(false);
+		stateManager.settings.Setup();
 		Unload();
 	}
 }
@@ -142,8 +44,9 @@ void Menu::Setup()//Load
 	EntityID mainMenuPage = registry.CreateEntity();
 
 	this->registry.AddComponent<UICanvas>(mainMenuPage);
-	UICanvas* mainMenu = registry.GetComponent<UICanvas>(mainMenuPage);
-	SetupMainMenuCanvas(*mainMenu);
+	UICanvas* mainMenuCanvas = registry.GetComponent<UICanvas>(mainMenuPage);
+	SetupMainMenuCanvas(*mainMenuCanvas);
+	UpdateUI(*mainMenuCanvas);
 
 	// Create UI and example menu
 	//*ui = UI();
@@ -152,17 +55,17 @@ void Menu::Setup()//Load
 	////ui->SetCurrentCanvas(exMenu->m_CurrentPage);
 	//DrawGUI(*mainMenu);
 	Begin2dFrame(ui);
-	mainMenu->Render(ui);
+	mainMenuCanvas->Render(ui);
 	End2dFrame(ui);
 }
 
 void Menu::Render()
 {
-	for (auto entity : View<UIRenderComponents>(registry))
+	/*for (auto entity : View<UIRenderComponents>(registry))
 	{
-	/*	UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
-		RenderUI(uiComp);*/
-	}
+		UIRenderComponents* uiComp = registry.GetComponent<UIRenderComponents>(entity);
+		RenderUI(uiComp);
+	}*/
 	RenderUI();
 }
 
