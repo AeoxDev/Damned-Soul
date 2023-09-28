@@ -9,6 +9,7 @@
 #include <map>
 
 #include "MemLib/MemLib.hpp"
+#include "MemLib/ML_Vector.hpp"
 #include "ComponentHelper.h"
 
 /*
@@ -54,17 +55,14 @@ struct EntityID
 	bool state; //Boolean to check if the entity has been destroyed or not
 };
 
-//Defines a componentBitset as a bitset made up of 32 bits, and function GetId (It's either this solution, or Registry and View redefines these)
 namespace EntityGlobals
 {
 	static constexpr int MAX_COMPONENTS = 32;
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
 	static int compCount = 0;
-	//Map
-	static std::map<void*, int> componentOnBit;
 
-	//Previously, GetId returned the current compCount and also incremented it, but let's split these
+	//compCount only gets incremented whenever GetId() is called on a NEW type of component
 	template <typename T>
 	int GetId()
 	{
@@ -107,8 +105,8 @@ public:
 
 	EntityID CreateEntity()
 	{
-		//When we destroy an entity, we store its index and version in the freeEntities-vector so we know where we can 
-		//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id with version number 0
+		//When we destroy an entity, we store its index and version in the freeEntities-vector so we know where we can create new entities later
+		//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id
 		if (!availableEntitySlots.empty())
 		{
 			int newIndex = availableEntitySlots.back();
@@ -118,6 +116,7 @@ public:
 			entities[newIndex].id = newId;
 			return newId;
 		}
+
 		entities.push_back({ CreateEntityId((int)entities.size(), false), EntityGlobals::componentBitset() });
 		return entities.back().id;
 	}
@@ -132,34 +131,74 @@ public:
 		availableEntitySlots.push_back(GetEntityIndex(id));
 	}
 
+	//template<typename T, typename ...Args>
+	//void AddComponent(EntityID id, Args ...args)
+	//{
+	//	//Don't try to access entity that has already been removed
+	//	if (entities[GetEntityIndex(id)].id.index != id.index)
+	//		return;
+
+	//	//Unique index of the component itself
+	//	int compId = EntityGlobals::GetId<T>();
+
+	//	//Adding a new component that's greater than the size of the pool requires a resize for memory reasons
+	//	//So we add +1 to the size of the array and set the value at this new spot to nullptr (NOT DOING THIS RN BECAUSE POOLPOINTER CAN'T BE STRAIGHT-UP SET TO NULLPTR, ASK HERMAN)
+	//	//if ((int)componentArrays.size() <= compId) 
+	//	//	componentArrays.resize(compId + 1);
+
+	//	//New component, make a new array, NORMALLY: componentArrays[compId] = new ComponentArray(sizeof(T))
+	//	if (componentArrays[compId].IsNullptr())
+	//	{
+	//		//Allocate space in memory and call the "constructor" for the new array
+	//		componentArrays[compId] = MemLib::palloc(sizeof(ComponentArray));
+	//		componentArrays[compId]->Initialize(sizeof(T));
+	//	}
+	//	
+	//	//PoolPointerPain to get create the actual component
+	//	//Create component and cast to ComponentArray data (char*, address), NORMALLY: T* componentPointer = new (componentArrays[compId]->data) T(args...);
+	//	PoolPointer<T> typeCasted = componentArrays[compId]->data;
+	//	typeCasted[GetEntityIndex(id)] = T(args...);
+
+	//	//Set the component bitset
+	//	entities[GetEntityIndex(id)].components.set(compId);
+	//}
+
 	template<typename T, typename ...Args>
-	void AddComponent(EntityID id, Args ...args)
+	T* AddComponent(EntityID id, Args ...args)
 	{
 		//Don't try to access entity that has already been removed
 		if (entities[GetEntityIndex(id)].id.index != id.index)
-			return;
+			return nullptr;
 
 		//Unique index of the component itself
 		int compId = EntityGlobals::GetId<T>();
 
 		//Adding a new component that's greater than the size of the pool requires a resize for memory reasons
-		if (componentArrays.size() <= compId) 
-			componentArrays.resize(compId + 1);
+		if ((int)componentArrays.size() <= compId) 
+			componentArrays.resize(compId + 1); //Want to resize this to have a nullptr at the end but memlib nullptr be wildin
 
 		//New component, make a new array
 		if (componentArrays[compId].IsNullptr())
 		{
 			//Allocate space in memory and call the "constructor" for the new array
+			//componentArrays[compId] = new ComponentArray(sizeof(T));
+			//componentArrays[compId] = 
 			componentArrays[compId] = MemLib::palloc(sizeof(ComponentArray));
-			componentArrays[compId]->Initialize(sizeof(T));
+			new(componentArrays[compId]) ComponentArray(sizeof(T));
+			//componentArrays[compId]->Initialize(sizeof(T));
 		}
-		
-		//PoolPointerPain to get create the actual component
-		PoolPointer<T> typeCasted = componentArrays[compId]->data;
-		typeCasted[GetEntityIndex(id)] = T(args...);
 
-		//Set the component bitset of the entity at the current index to 
+		//Create component and cast to ComponentArray data (char*, address)
+		//Edit: Not quite true, more like we're slotting T(args...) into the memory address at the specified index in the ComponentArray
+		T* componentPointer = new (componentArrays[compId]->GetDataAt(id)) T(args...);
+		//PoolPointer<T> typeCasted = (componentArrays[compId]->GetDataAt(id)) T(args...);
+		//typeCasted[GetEntityIndex(id)] = T(args...);
+
+		//Set the component bitset
 		entities[GetEntityIndex(id)].components.set(compId);
+
+		return componentPointer;
+		//return &componentPointer;
 	}
 
 	template <typename T>
@@ -182,13 +221,18 @@ public:
 			return nullptr;
 
 		int compId = EntityGlobals::GetId<T>();
+
 		//Test to see if a component has been removed
 		if (!entities[GetEntityIndex(id)].components.test(compId))
 			return nullptr;
 
 		//Return the component at the index of the specified entity ID
-		PoolPointer<T> componentPointer = componentArrays[compId]->data;
-		return &componentPointer[id.index];
+		//Get component by casting ComponentArray data (char*, address) back to the Component struct itself, NORMALLY: T* componentPointer = (T*)(componentArrays[compId]->data);
+		T* componentPointer = (T*)(componentArrays[compId]->GetDataAt(id));
+		//PoolPointer<T> componentPointer = componentArrays[compId]->GetDataAt(id);
+
+		//return &componentPointer;
+		return componentPointer;
 	}
 
 private:
@@ -214,6 +258,7 @@ private:
 		ComponentArray(size_t componentSize) //Allocate enough memory to hold as many entities as we allow, along with the size of components
 		{
 			this->componentSize = componentSize;
+			//this->data = new char[componentSize * MAX_ENTITIES];
 			this->data = MemLib::palloc(componentSize * MAX_ENTITIES);
 		}
 
@@ -223,16 +268,25 @@ private:
 			this->data = MemLib::palloc(componentSize * MAX_ENTITIES);
 		}
 
+		inline void* GetDataAt(EntityID id)
+		{
+			return data + id.index * componentSize;
+		}
+
 		~ComponentArray()
 		{
+			//delete[] data;
 			MemLib::pfree(data);
 		}
 
 		PoolPointer<char> data;
+		//char* data;
 		size_t componentSize = 0;
 	};
 
 	//Private member variables
+	//ML_Vector<PoolPointer<ComponentArray>> componentArrays;
+	//std::vector<ComponentArray*> componentArrays;
 	std::vector<PoolPointer<ComponentArray>> componentArrays;
 };
 
