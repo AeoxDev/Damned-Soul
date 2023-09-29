@@ -20,22 +20,7 @@ void Menu::Update()
 
 void Menu::Input()
 {
-	for (auto entity : View<ButtonComponent>(registry))
-	{
-		auto comp = registry.GetComponent<ButtonComponent>(entity);
-		if (comp->button.m_uiComponent.Intersect({ mouseX, mouseY }))
-		{
-			comp->button.Hover();
-			if (mouseButtonPressed[MouseButton::left] == released)
-				comp->button.Interact();
-		}
-	}
-	if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[2].m_uiComponent.Intersect({ mouseX, mouseY }))
-	{
-		SetInMainMenu(false);
-		sdl.quit = true;
-		Unload();
-	}
+
 }
 
 void Menu::Setup()//Load
@@ -43,7 +28,6 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupImages();
 	SetupText();
-
 
 	DrawUi();
 }
@@ -65,7 +49,8 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/StartButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f, 600 }));
+		ButtonComponent* c = registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/StartButton.png", "", L"", OnClick, OnHover, { 0.0f, 0.0f }));
+		int ase = 2;
 	}
 
 	//Options Button
@@ -83,7 +68,7 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/OptionsButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f, 700 }));
+		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/OptionsButton.png", "", L"", OnClick, OnHover, { 0.0f,  -0.1f}));
 	}
 
 	//Exit Button
@@ -98,13 +83,13 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f, 800 }));
+		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.2f }));
 	}
 }
 
 void Menu::SetupImages()
 {
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/ExTitle.png", { (sdl.WIDTH / 2.0f) - 250.0f, 100.0f }, { 3.0f, 3.0f }));
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/ExTitle.png", { 0.0f, 0.9f }, { 4.0f, 4.0f }));
 
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/Eye.png", { 50.0f, 50.0f }, { 1.5f, 1.5f }));
 

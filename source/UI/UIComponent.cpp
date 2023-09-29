@@ -49,7 +49,7 @@ void UIComponent::SetPosition(XMFLOAT2 position)
 	// (-1,-1) is the bottom left coorner, (1, 1) is the top right coorner
 	XMFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.WIDTH, (1.0f - position.y) * 0.5f * sdl.HEIGHT };
 
-	m_Position = { pixelCoords.x - (m_Bounds.right / 2.0f * m_Scale.x), pixelCoords.y - (m_Bounds.bottom / 2.0f * m_Scale.y) };
+	m_Position = { pixelCoords.x - (m_Bounds.right / 2.0f) * m_Scale.x , pixelCoords.y - (m_Bounds.bottom / 2.0f) * m_Scale.y };
 	//m_Position = { pixelCoords.x - (m_Bounds.right / 2.0f), pixelCoords.y - (m_Bounds.bottom / 2.0f)};
 	UpdateTransform();
 }
