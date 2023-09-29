@@ -99,14 +99,12 @@ void SettingsState::Unload()
 {
 	for (auto entity : View<ButtonComponent>(registry))
 	{
-		registry.GetComponent<ButtonComponent>(entity)->button.Release();
-		registry.RemoveComponent<ButtonComponent>(entity);
+		registry.DestroyEntity(entity);
 	}
 
 	for (auto entity : View<ImageComponent>(registry))
 	{
-		registry.GetComponent<ImageComponent>(entity)->image.Release();
-		registry.RemoveComponent<ImageComponent>(entity);
+		registry.DestroyEntity(entity);
 	}
 }
 
