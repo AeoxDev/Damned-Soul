@@ -20,6 +20,7 @@ void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation
 UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
 	:m_Position(position), m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
 {
+	m_Bounds = { 0,0,0,0 };
 	UpdateTransform();
 }
 
@@ -38,9 +39,10 @@ float UIComponent::GetRotation()
 	return m_Rotation;
 }
 
-void UIComponent::SetPosition(XMFLOAT2 position)
+void UIComponent::SetPosition(XMFLOAT2 center)
 {
-	m_Position = { position.x - m_Bounds.right / 2.0f, position.y - m_Bounds.bottom / 2.0f };
+	//Window position to topleft of image.
+	m_Position = { center.x - m_Bounds.right / 2.0f, center.y - m_Bounds.bottom / 2.0f };
 	UpdateTransform();
 }
 
@@ -75,4 +77,10 @@ void UIComponent::ToggleVisibility()
 bool UIComponent::IsVisible()
 {
 	return m_Visibility;
+}
+
+bool UIComponent::Intersect(DirectX::XMINT2 mousePos)
+{
+	return (mousePos.x > m_Position.x) && (mousePos.x < m_Position.x + m_Bounds.right) &&
+		(mousePos.y > m_Position.y) && (mousePos.y < m_Position.y + m_Bounds.bottom);
 }

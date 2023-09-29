@@ -98,3 +98,4 @@ void DebugRenderHitbox(ID3D11Buffer*& worldMatrix); //ID3D11Buffer*& viewAndProj
 void DestroyHitboxVisualizeVariables();
 
 void SetupTestHitbox();
+

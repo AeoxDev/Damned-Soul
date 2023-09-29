@@ -2,7 +2,7 @@
 
 using namespace DirectX;
 
-void UICanvas::DrawButtons(UI& ui, ID2D1RenderTarget* rt)
+void UICanvas::DrawButtons(UI& ui, ID2D1RenderTarget*& rt)
 {
 	/*for (auto& button : m_Buttons)
 		button->Draw(ui, rt);*/
@@ -11,7 +11,7 @@ void UICanvas::DrawButtons(UI& ui, ID2D1RenderTarget* rt)
 		m_Buttons[i].Draw(ui, rt);
 }
 
-void UICanvas::DrawImages(ID2D1RenderTarget* rt)
+void UICanvas::DrawImages(ID2D1RenderTarget*& rt)
 {
 	for (auto& [name, image] : m_Images)
 		image.Draw(rt);
@@ -125,6 +125,7 @@ void UICanvas::Render(UI& ui)
 	DrawButtons(ui, rt);
 	DrawImages(rt);
 	DrawTexts(ui);
+	//rt->Release();
 }
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <cinttypes>
+#include "Format.h"
 //This contains helper functions for setting up renderable objects
 // and manipulating their render states.
 
@@ -29,8 +30,8 @@ enum RESOURCES
 enum CPU_FLAGS
 {
 	NONE = 0,
-	READ = 0x10000L,
-	WRITE = 0x20000L
+	WRITE = 0x10000L,
+	READ = 0x20000L
 };
 
 enum USAGE_FLAGS
@@ -69,7 +70,6 @@ enum TOPOLOGY
 	POINTLIST
 };
 
-
 typedef int16_t TX_IDX;
 typedef int8_t	PS_IDX;
 typedef int8_t	VS_IDX;
@@ -88,6 +88,9 @@ typedef int8_t SMP_IDX;
 
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
+// Create an empty texture with specific attributes
+TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height);
+
 // Set a material
 bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot);
 // Release for a single texture, make sure you dont accidently release a texture that is being used by an RTV, SRV or UAV
@@ -148,6 +151,10 @@ bool UnloadConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
 // Update the world matrix, there needs to be only one
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+//No rotations, only position
+void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto);
+void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto);
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto);
 // Release for a single constant buffer
 void ReleaseCS(const CS_IDX idx);
 
@@ -182,7 +189,7 @@ void ReleaseVP(const VP_IDX idx);
 // Creates the backbuffer from swapchain
 RTV_IDX CreateBackBuffer();
 // Create a render target view
-RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height);
+RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, FORMAT format = FORMAT::FORMAT_R8G8B8A8_UNORM);
 // Release for a single render target view
 void ReleaseRTV(const RTV_IDX idx);
 
@@ -227,7 +234,7 @@ void ReleaseUAV(const UAV_IDX idx);
 
 
 // Clear the render target
-void ClearRenderTargetView(const RTV_IDX idx);
+void ClearRenderTargetView(const RTV_IDX idx, float r = 1.0f, float g = 0.f, float b = 0.84f, float a = 0.0f);
 // Clear the depth stencil
 void ClearDepthStencilView(const DSV_IDX idx);
 
@@ -237,3 +244,4 @@ bool SetRasterizerState(const RS_IDX idx);
 void ReleaseRS(const RS_IDX idx);
 
 void SetTopology(TOPOLOGY topology);
+

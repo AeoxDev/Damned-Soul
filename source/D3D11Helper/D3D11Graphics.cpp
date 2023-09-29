@@ -143,6 +143,7 @@ void EndDirectX()
 	// Release all render target views
 	for (auto& [key, val] : rtvHolder->rtv_map)
 		val->Release();
+
 	
 	// Release all depth stencil views
 	for (auto& [key, val] : dsvHolder->dsv_map)

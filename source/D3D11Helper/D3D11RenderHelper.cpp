@@ -70,7 +70,7 @@ RTV_IDX CreateBackBuffer()
 	return (rtvHolder->_nextIdx)++;
 }
 
-RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
+RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, FORMAT format)
 {
 	uint8_t currentIdx = rtvHolder->_nextIdx;
 
@@ -80,7 +80,7 @@ RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, C
 	desc.Height = height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Format = (DXGI_FORMAT)format;//DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = (D3D11_USAGE)useFlags;
@@ -279,6 +279,7 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 
 			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			texture->Release();
 			break;
 		case RESOURCE_TEXTURE2DARRAY:
 			//Define if needed
@@ -439,8 +440,9 @@ bool UnloadShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slo
 
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 {
-	ID3D11Resource* vertexBufferResource = bfrHolder->buff_map[destination];
-	d3d11Data->deviceContext->CopyResource(vertexBufferResource, srvHolder->srv_resource_map[source]);
+	ID3D11Resource* vertexBufferResource = bfrHolder->buff_arr[destination];
+	d3d11Data->deviceContext->CopyResource(vertexBufferResource, srvHolder->srv_resource_arr[source]);
+	vertexBufferResource->Release();
 }
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
@@ -543,9 +545,9 @@ bool UnloadUnorderedAcessView(uint8_t slot)
 	return true;
 }
 
-void ClearRenderTargetView(const RTV_IDX idx)
+void ClearRenderTargetView(const RTV_IDX idx, float r, float g, float b, float a)
 {
-	float color[4] = { 1.0f, 0.0f, 0.84f, 0.0f };
+	float color[4] = { r, g, b, a };
 	d3d11Data->deviceContext->ClearRenderTargetView(rtvHolder->rtv_map[idx], color);
 }
 

@@ -1,6 +1,12 @@
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
 #include "Model.h"
+#include "Hitbox.h"
+#include "Camera.h"
+#include "Particles.h"
+#include "D3D11Helper.h"
+#include "GameRenderer.h"
+#include "UIRenderer.h"
 #include "Particles.h"
 State currentStates;
 StateManager stateManager;
@@ -65,72 +71,24 @@ void SetInShop(bool value)
 		currentStates = (State)(currentStates & (~State::InShop));
 	}
 }
-//void StateManager::ReadKeyInputs(int keyState[])
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadKeyInputs(keyState, m_settings);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadKeyInputs(keyState, m_settings);
-//		break;
-//	}
-//}
-//
-//void StateManager::ReadKeyOutputs(int keyState[])
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadKeyOutputs(keyState, m_settings);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadKeyOutputs(keyState, m_settings);
-//		break;
-//	}
-//}
-//
-//void StateManager::ReadMouseInputs(SDL_MouseButtonEvent mouseEvent)
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadMouseInputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	}
-//}
-//
-//void StateManager::ReadMouseOutputs(SDL_MouseButtonEvent mouseEvent)
-//{
-//	switch (m_currentState)
-//	{
-//	case State::Menu:
-//
-//		m_menu.ReadMouseOutputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	case State::Game:
-//
-//		m_game.ReadMouseOutputs(mouseEvent, m_buttonManager, m_settings, mousePos);
-//		break;
-//	}
-//}
 
 void StateManager::Setup()
 {
+	Setup3dGraphics();
+	ui.RenderSlot = SetupUIRenderState();
+
+	ui.Setup();
+
+	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
 	//models.Initialize();
 	menu.Setup();
+	Camera::InitializeCamera();
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
+
 	Particles::InitializeParticles();
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
+	SetupTestHitbox();
 }
 
 void StateManager::Clear()
@@ -276,36 +234,10 @@ void StateManager::UnloadAll()
 	shop.Unload();
 	levelScenes[0].Unload();
 	levelScenes[1].Unload();
+
 	Particles::ReleaseParticles();
+	DestroyHitboxVisualizeVariables();
+	ReleaseUIRenderer();
+	ui.Release();
+	EndDirectX();
 }
-//
-//void StateManager::ReadInputs()
-//{
-//	while (SDL_PollEvent(&sdl.sdlEvent))
-//	{
-//
-//		if (sdl.sdlEvent.key.repeat == 0)
-//		{
-//			switch (sdl.sdlEvent.type)
-//			{
-//			case SDL_QUIT: //User requests quit
-//				sdl.quit = true;
-//				break;
-//			case SDL_KEYDOWN: //Reads that a key has been pressed
-//				keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
-//				ReadKeyInputs(keyInput);
-//				break;
-//			case SDL_KEYUP: //Reads that a key has been released
-//				ReadKeyOutputs(keyInput);
-//				keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
-//				break;
-//			case SDL_MOUSEBUTTONDOWN: //Reads that a mouse button has been pressed
-//				ReadMouseInputs(sdl.sdlEvent.button);
-//				break;
-//			case SDL_MOUSEBUTTONUP: //Reads that a mouse button has been released
-//				ReadMouseOutputs(sdl.sdlEvent.button);
-//				break;
-//			}
-//		}
-//	}
-//}

@@ -45,20 +45,22 @@ void GetInput()
 		uint32_t mouseState =  SDL_GetMouseState(&mouseX, &mouseY);
 		if (sdl.sdlEvent.key.repeat == 0)
 		{
-			switch (sdl.sdlEvent.type)
+			if (sdl.sdlEvent.type == SDL_QUIT)
 			{
-			case SDL_QUIT: //User requests quit
-				sdl.quit = true;
-				break;
-			case SDL_KEYDOWN: //Reads that a key has been pressed
+				sdl.quit = true; //User requests quit
+			}
+			else if (sdl.sdlEvent.type == SDL_KEYDOWN) //Reads that a key has been pressed
+			{
 				UpdateKeyState(sdl.sdlEvent.key.keysym.scancode);
 				keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
-				break;
-			case SDL_KEYUP: //Reads that a key has been released
+			}
+			else if (sdl.sdlEvent.type == SDL_KEYUP) //Reads that a key has been released
+			{
 				UpdateKeyState(sdl.sdlEvent.key.keysym.scancode);
 				keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
-				break;
-			case SDL_MOUSEBUTTONDOWN || SDL_MOUSEBUTTONUP: //Reads that a mouse button has been pressed
+			}
+			else if (sdl.sdlEvent.type == SDL_MOUSEBUTTONDOWN || sdl.sdlEvent.type == SDL_MOUSEBUTTONUP) //Reads that a mouse button has been pressed/released
+			{
 				//Find which mouse button
 				mouseButton = sdl.sdlEvent.button;
 				if (mouseButton.button == SDL_BUTTON_LEFT)
@@ -73,9 +75,6 @@ void GetInput()
 				{
 					UpdateMouseState(2);
 				}
-				break;
-			default:
-				break;
 			}
 		}
 	}

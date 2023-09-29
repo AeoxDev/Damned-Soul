@@ -31,6 +31,7 @@ int SetupParticles(uint32_t*& index);
 void PrepareDefaultPipeline();
 
 void PrepareBackBuffer();
+void ClearBackBuffer();
 void Clear(const int& componentSlot);
 void RenderIndexed(const size_t& count);
 // Calls Draw, instead of DrawIndexed

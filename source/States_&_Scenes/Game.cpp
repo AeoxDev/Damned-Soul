@@ -11,46 +11,17 @@
 #include "States_&_Scenes\StateManager.h"
 #include "RenderableComponent.h"
 
+#include "Menus.h"
+#include "UIRenderer.h"
+
 void GameScene::Update()
 {
-	//float move[2] = { 0, 0 };
-
-	//if (playerDirX != 0)
-	//	move[0] += playerDirX;
-
-	//if (playerDirY != 0)
-	//	move[1] += playerDirY;
-
-	//float len = sqrt(move[0] * move[0] + move[1] * move[1]);
-	//float scale = GetAverage() / (len < 0.1f ? 1 : len);
-	//playerPosition[0] += move[0] * scale;
-	//playerPosition[1] += move[1] * scale;
-
-	//std::cout << playerPosition[0] << ", " << playerPosition[1] << std::endl;
-
-	/*Camera::SetPosition(playerPosition[0], playerPosition[1], 8.0f);
-	Camera::SetLookAt(playerPosition[0], playerPosition[1], 0.0f);
-	Camera::UpdateView();
-
-	DirectX::XMMATRIX identity = DirectX::XMMatrixIdentity();
-	UpdateWorldMatrix(&identity, BIND_VERTEX);
-
-	dogModel.SetMaterialActive();
-	dogModel.SetVertexAndIndexBuffersActive();
-	SetTopology(TRIANGLELIST);
-
-	dogModel.RenderAllSubmeshes();
-	//Render(dogModel.m_bonelessModel->m_numIndices);
-	
-	Particles::PrepareParticlePass();
-	SetTopology(POINTLIST);
-	Render(100);
-	Particles::FinishParticlePass();*/
 
 }
 
 void GameScene::Clear()
 {
+	ClearBackBuffer();
 }
 
 void GameScene::Setup(int scene)//Load
@@ -58,6 +29,16 @@ void GameScene::Setup(int scene)//Load
 	
 	if (scene == 0)
 	{
+		
+		//Setup Game HUD
+		EntityID GameHUD = registry.CreateEntity();
+
+		this->registry.AddComponent<UICanvas>(GameHUD);
+		UICanvas* HUDCanvas = registry.GetComponent<UICanvas>(GameHUD);
+		SetupHUDCanvas(*HUDCanvas);
+		UpdateUI(*HUDCanvas);
+
+		//Doggo
 		EntityID dog = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
@@ -70,6 +51,21 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
 		stageCo->model.Load("PlaceholderScene.mdl");*/
+
+		EntityID stage = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(stage);
+		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
+		stageCo->model.Load("PlaceholderScene.mdl");
+
+		EntityID giStage = CreateAndRenderGeometryIndependentCollision(registry, stage);
+		EntityID player = registry.CreateEntity();
+		registry.AddComponent<PlayerComponent>(player);
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		pc->model = &dogCo->model;
+		
+		Begin2dFrame(ui);
+		HUDCanvas->Render(ui);
+		End2dFrame(ui);
 
 		EntityID particleEntity = registry.CreateEntity();
 		Particles::PrepareSmokeParticles(registry, particleEntity, renderStates, 4.0f, 5.0f, 3.0f, DirectX::XMFLOAT3(0.f, 0.f, 0.f));
@@ -84,7 +80,63 @@ void GameScene::ComputeShaders()
 }
 void GameScene::Render()
 {
+	ClearBackBuffer();
+	RenderUI();
+	//Render Geometry
+	
 	//Set shaders here.
+	PrepareBackBuffer();
+	for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ player->goalX,player->goalZ, 0.0f };
+		DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
+		DirectX::XMFLOAT3 l;
+		DirectX::XMStoreFloat3(&l, length);
+		float angle = acosf(player->dirX);
+		if (player->dirZ < 0.0f)
+		{
+			angle *= -1.0f;
+		}
+		if (l.x > 0.001f)
+		{
+			goalV = DirectX::XMVector2Normalize(goalV);
+
+			DirectX::XMFLOAT3 goalFloats;
+			DirectX::XMStoreFloat3(&goalFloats, goalV);
+			player->goalX = goalFloats.x;
+			player->goalZ = goalFloats.y;
+			float goalAngle = acosf(player->goalX);
+			if (player->goalZ < 0.0f)
+			{
+				goalAngle *= -1.0f;
+			}
+			//Check if shortest distance is right or left
+			float orthogonalX = -player->dirZ;
+			float orthogonalZ = player->dirX;
+			//float dot = playerInputs[i].aimDirection.Dot(players[i].forward);
+			float dot = player->goalX * player->dirX + player->goalZ * player->dirZ;
+			float orthDot = player->goalX * orthogonalX + player->goalZ * orthogonalZ;
+			if (orthDot > 0.0f)
+			{//Om till vänster
+				angle += GetDeltaTime() * (10.1f - dot);
+			}
+			else
+			{
+				angle -= GetDeltaTime() * (10.1f - dot);
+			}
+			player->dirX = cosf(angle);
+			player->dirZ = sinf(angle);
+			player->goalX = 0.0f;
+			player->goalZ = 0.0f;
+		}
+
+		SetWorldMatrix(player->posX, player->posY, player->posZ, -player->dirX, 0.0f, player->dirZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+		SetVertexBuffer(player->model->m_vertexBuffer);
+		SetIndexBuffer(player->model->m_indexBuffer);
+		//RenderIndexed(player->model->m_bonelessModel->m_numIndices);
+		player->model->RenderAllSubmeshes();
+	}
 	//for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	//{
 	//	ModelComponent* dogCo = registry.GetComponent<ModelComponent>(entity);
@@ -108,12 +160,49 @@ void GameScene::Render()
 }
 void GameScene::Input()
 {
-	if (keyInput[SDL_SCANCODE_ESCAPE] == pressed)
+	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 	{
-		SetInPause(true);
+		SetInMainMenu(true);
 		SetInPlay(false);
-		stateManager.pause.Setup();
+		stateManager.menu.Setup();
+		Clear();
 		Unload();
+	}
+	if (keyInput[SDL_SCANCODE_W] == down)
+	{
+		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+			p->posZ += p->movementSpeed * GetDeltaTime();
+			p->goalZ += 1.0f;
+		}
+	}
+	if (keyInput[SDL_SCANCODE_S] == down)
+	{
+		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+			p->posZ -= p->movementSpeed * GetDeltaTime();
+			p->goalZ -= 1.0f;
+		}
+	}
+	if (keyInput[SDL_SCANCODE_A] == down)
+	{
+		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+			p->posX -= p->movementSpeed * GetDeltaTime();
+			p->goalX -= 1.0f;
+		}
+	}
+	if (keyInput[SDL_SCANCODE_D] == down)
+	{
+		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+			p->posX += p->movementSpeed * GetDeltaTime();
+			p->goalX += 1.0f;
+		}
 	}
 }
 void GameScene::Unload()
@@ -125,160 +214,13 @@ void GameScene::Unload()
 		dogCo->model.Free();
 		registry.DestroyEntity(entity);
 	}
+	for (auto entity : View<UICanvas>(registry))
+	{
+		//Get entity with UI, release components.
+		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
+		if (ui && ui->header == UI_CANVAS_HEADER)
+		{
+			ui->Release();
+		}
+	}
 }
-//
-////void Game::HandleKeyInputs(int keyInput[], Settings& settings)
-//void GameScene::ReadKeyInputs(int keyState[], Settings& settings)
-//{
-//	switch (currentSubState)
-//	{
-//	case GameState::Unpause:
-//		std::cout << "Unpause\n";
-//
-//		if (keyState[SDL_SCANCODE_W])
-//			playerDirY = -1;
-//
-//		if (keyState[SDL_SCANCODE_A])
-//			playerDirX = -1;
-//
-//		if (keyState[SDL_SCANCODE_S])
-//			playerDirY = 1;
-//			
-//		if (keyState[SDL_SCANCODE_D])
-//			playerDirX = 1;
-//
-//		if (keyState[SDL_SCANCODE_0])
-//			sceneManager.SetScene("Shop");
-//
-//		else if (keyState[SDL_SCANCODE_1] && sceneManager.GetCurrentSceneName() == "Shop")
-//		{
-//			std::string name = "Level_1";
-//			sceneManager.SetScene(name);
-//		}
-//
-//		else if (keyState[SDL_SCANCODE_2] && sceneManager.GetCurrentSceneName() == "Level_1")
-//		{
-//			std::vector<std::string> entityList = { "Imp", "Imp" , "Skeleton" };
-//			std::string name = "Level_2";
-//			sceneManager.SetScene(name);
-//			sceneManager.AddScene(name, entityList);
-//		}
-//
-//		else if (keyState[SDL_SCANCODE_3] && sceneManager.GetCurrentSceneName() == "Level_2")
-//		{
-//			std::vector<std::string> entityList = { "Skeleton", "Skeleton" , "Demon" };
-//			std::string name = "Level_3";
-//			sceneManager.SetScene(name);
-//			sceneManager.AddScene(name, entityList);
-//		}
-//
-//		else if (keyState[SDL_SCANCODE_Q])
-//			sceneManager.WriteEntities();
-//
-//		else if (keyState[SDL_SCANCODE_ESCAPE])
-//			currentSubState = GameState::Pause;
-//
-//		break;
-//	case GameState::Pause:
-//		std::cout << "Pause\n";
-//
-//		break;
-//	case GameState::Settings:
-//		std::cout << "Settings\n";
-//
-//		if (keyState[SDL_SCANCODE_ESCAPE])
-//			currentSubState = GameState::Pause;
-//
-//		settings.ReadKeyInputs(keyState);
-//		break;
-//	}
-//}
-//
-//void GameScene::ReadKeyOutputs(int keyState[], Settings& settings)
-//{
-//	switch (currentSubState)
-//	{
-//	case GameState::Unpause:
-//		std::cout << "Unpause\n";
-//
-//		if (keyState[SDL_SCANCODE_W])
-//			playerDirY = 0;
-//
-//		if (keyState[SDL_SCANCODE_A])
-//			playerDirX = 0;
-//
-//		if (keyState[SDL_SCANCODE_S])
-//			playerDirY = 0;
-//
-//		if (keyState[SDL_SCANCODE_D])
-//			playerDirX = 0;
-//
-//		break;
-//	case GameState::Pause:
-//		std::cout << "Pause\n";
-//
-//		break;
-//	case GameState::Settings:
-//		std::cout << "Settings\n";
-//
-//		break;
-//	}
-//}
-//
-//void GameScene::ReadMouseInputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
-//{
-//	switch (currentSubState)
-//	{
-//	case GameState::Unpause:
-//		std::cout << "Unpause\n";
-//
-//		break;
-//	case GameState::Pause:
-//		std::cout << "Pause\n";
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("MainMenu").Intersects(mousePos))
-//			buttonManager.DoButtonAction("MainMenu");
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("GameSettings").Intersects(mousePos))
-//			buttonManager.DoButtonAction("GameSettings");
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Resume").Intersects(mousePos))
-//			buttonManager.DoButtonAction("Resume");
-//
-//		break;
-//	case GameState::Settings:
-//		std::cout << "Settings\n";
-//
-//		if (mouseEvent.button == SDL_BUTTON_LEFT && buttonManager.GetButton("Pause").Intersects(mousePos))
-//			buttonManager.DoButtonAction("Pause");
-//
-//		settings.ReadMouseInputs(mouseEvent, buttonManager, mousePos);
-//		break;
-//	}
-//}
-//
-//void GameScene::ReadMouseOutputs(SDL_MouseButtonEvent mouseEvent, ButtonManager buttonManager, Settings& settings, std::pair<int, int> mousePos)
-//{
-//	switch (currentSubState)
-//	{
-//	case GameState::Unpause:
-//		std::cout << "Unpause\n";
-//
-//		break;
-//	case GameState::Pause:
-//		std::cout << "Pause\n";
-//
-//		break;
-//	case GameState::Settings:
-//		std::cout << "Settings\n";
-//
-//		break;
-//	}
-//}
-//
-//void GameScene::Reset()
-//{
-//	currentSubState = GameState::Unpause;
-//	playerPosition[0] = playerPosition[1] = playerPosition[2] = 0;
-//	sceneManager = {};
-//}
