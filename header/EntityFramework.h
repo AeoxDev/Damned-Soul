@@ -55,12 +55,12 @@ struct EntityID
 	bool state; //Boolean to check if the entity has been destroyed or not
 };
 
+extern int compCount;
 namespace EntityGlobals
 {
 	static constexpr int MAX_COMPONENTS = 32;
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
-	static int compCount = 0;
 
 	//compCount only gets incremented whenever GetId() is called on a NEW type of component
 	template <typename T>

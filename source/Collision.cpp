@@ -3,6 +3,7 @@
 #include "Backend/CircularCollision.h"
 #include "Backend/ProximityCollision.h"
 #include "EntityFramework.h"
+#include "Registry.h"
 #include <cmath>
 #include <string>
 
@@ -111,7 +112,7 @@ int FindAvailableSlot(unsigned& bits)
 	return size;
 }
 
-void ResetCollisionVariables(Registry& registry)
+void ResetCollisionVariables()
 {
 	for (auto entity : View<HitboxComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
@@ -124,7 +125,7 @@ void ResetCollisionVariables(Registry& registry)
 	}
 }
 
-void HandleDamageCollision(Registry& registry)
+void HandleDamageCollision()
 {
 	//Stuff happens here. WOW!
 
@@ -153,14 +154,14 @@ void HandleDamageCollision(Registry& registry)
 	}
 }
 
-void HandleStaticCollision(Registry& registry)
+void HandleStaticCollision( )
 {
 	//Look at picture. Amaziung!
 }
 
-void HandleMoveableCollision(Registry& registry)//Reggie Strie
+void HandleMoveableCollision( )//Reggie Strie
 {
-	HandleProximityCollision(registry);
+	HandleProximityCollision();
 	for (auto entity : View<HitboxComponent>(registry)) //Access the first entity
 	{
 		HitboxComponent* firstHitbox = registry.GetComponent<HitboxComponent>(entity);
@@ -185,22 +186,22 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 					if (firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
 					{
 						//Both are circular, do circle to circle.
-						bool hit = IsCircularCollision(registry, entity, entity2, i, j);
+						bool hit = IsCircularCollision(entity, entity2, i, j);
 					}
 					if (firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
 					{
 						//Both are convex, do convex to convex.
-						bool hit = IsConvexCollision(registry, entity, entity2, i, j);
+						bool hit = IsConvexCollision(entity, entity2, i, j);
 					}
 					if (firstHitbox->circularFlags[i].active && firstHitbox->convexFlags[j].active)
 					{
 						//One is convex, other one is circular.
-						bool hit = IsCircularConvexCollision(registry, entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
+						bool hit = IsCircularConvexCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
 					}
 					if (firstHitbox->convexFlags[i].active && firstHitbox->circularFlags[j].active)
 					{
 						//One is convex, other one is circular.
-						bool hit = IsConvexCircularCollision(registry, entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
+						bool hit = IsConvexCircularCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
 					}
 					/*else
 					{
@@ -212,7 +213,7 @@ void HandleMoveableCollision(Registry& registry)//Reggie Strie
 	}
 }
 
-void HandleProximityCollision(Registry& registry)
+void HandleProximityCollision()
 {
 	for (auto entity : View<HitboxComponent>(registry)) //Access an entity
 	{
@@ -271,7 +272,7 @@ void HandleProximityCollision(Registry& registry)
 
 		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
 		{
-			ProximityCorrection(registry, closestWall, index, x, z);
+			ProximityCorrection(closestWall, index, x, z);
 		}
 	}
 }

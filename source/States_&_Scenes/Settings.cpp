@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Menus.h"
 #include "UIRenderer.h"
+#include "Registry.h"
 
 
 void SettingsState::Setup()
@@ -10,7 +11,7 @@ void SettingsState::Setup()
 	//Setup Settings UI
 	EntityID SettingsPage = registry.CreateEntity();
 
-	this->registry.AddComponent<UICanvas>(SettingsPage);
+	registry.AddComponent<UICanvas>(SettingsPage);
 	UICanvas* SettingsCanvas = registry.GetComponent<UICanvas>(SettingsPage);
 	SetupSettingsCanvas(*SettingsCanvas);
 	UpdateUI(*SettingsCanvas);

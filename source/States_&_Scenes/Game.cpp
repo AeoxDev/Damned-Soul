@@ -6,78 +6,15 @@
 #include "SDLHandler.h"
 #include "D3D11Helper.h"
 #include "Particles.h"
-#include "AllComponents.h"
+#include "Components.h"
 #include "Input.h"
 #include "States_&_Scenes\StateManager.h"
-
+#include "Registry.h"
 #include "Menus.h"
 #include "UIRenderer.h"
 
 void GameScene::Update()
 {
-
-}
-
-void GameScene::Clear()
-{
-	ClearBackBuffer();
-}
-
-void GameScene::Setup(int scene)//Load
-{
-	
-	if (scene == 0)
-	{
-		
-		//Setup Game HUD
-		EntityID GameHUD = registry.CreateEntity();
-
-		this->registry.AddComponent<UICanvas>(GameHUD);
-		UICanvas* HUDCanvas = registry.GetComponent<UICanvas>(GameHUD);
-		SetupHUDCanvas(*HUDCanvas);
-		UpdateUI(*HUDCanvas);
-
-		//Doggo
-		EntityID dog = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(dog);
-		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
-		dogCo->model.Load("HellhoundDummy_PH.mdl");
-		/*EntityID stage = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(stage);
-		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
-		stageCo->model.Load("PlaceholderScene.mdl");*/
-
-		EntityID stage = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(stage);
-		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
-		stageCo->model.Load("PlaceholderScene.mdl");
-
-		EntityID giStage = CreateAndRenderGeometryIndependentCollision(registry, stage);
-		EntityID player = registry.CreateEntity();
-		registry.AddComponent<PlayerComponent>(player);
-		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
-		pc->model = &dogCo->model;
-		
-		Begin2dFrame(ui);
-		HUDCanvas->Render(ui);
-		End2dFrame(ui);
-	}
-}
-
-void GameScene::ComputeShaders()
-{
-	/*Particles::PrepareParticleCompute();
-	Dispatch(100, 0, 0);
-	Particles::FinishParticleCompute();*/
-}
-void GameScene::Render()
-{
-	ClearBackBuffer();
-	RenderUI();
-	//Render Geometry
-	
-	//Set shaders here.
-	PrepareBackBuffer();
 	for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
@@ -93,7 +30,7 @@ void GameScene::Render()
 		if (l.x > 0.001f)
 		{
 			goalV = DirectX::XMVector2Normalize(goalV);
-			
+
 			DirectX::XMFLOAT3 goalFloats;
 			DirectX::XMStoreFloat3(&goalFloats, goalV);
 			player->goalX = goalFloats.x;
@@ -122,13 +59,76 @@ void GameScene::Render()
 			player->goalX = 0.0f;
 			player->goalZ = 0.0f;
 		}
-		
+
 		SetWorldMatrix(player->posX, player->posY, player->posZ, -player->dirX, 0.0f, player->dirZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
-		SetVertexBuffer(player->model->m_vertexBuffer);
-		SetIndexBuffer(player->model->m_indexBuffer);
-		//RenderIndexed(player->model->m_bonelessModel->m_numIndices);
-		player->model->RenderAllSubmeshes();
 	}
+}
+
+void GameScene::Clear()
+{
+	ClearBackBuffer();
+}
+
+void GameScene::Setup(int scene)//Load
+{
+	
+	if (scene == 0)
+	{
+		
+		//Setup Game HUD
+		EntityID GameHUD = registry.CreateEntity();
+
+	/*	registry.AddComponent<UICanvas>(GameHUD);
+		UICanvas* HUDCanvas = registry.GetComponent<UICanvas>(GameHUD);
+		SetupHUDCanvas(*HUDCanvas);
+		UpdateUI(*HUDCanvas);*/
+
+		//Doggo
+		EntityID dog = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(dog);
+		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
+		dogCo->model.Load("HellhoundDummy_PH.mdl");
+		/*EntityID stage = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(stage);
+		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
+		stageCo->model.Load("PlaceholderScene.mdl");*/
+
+		EntityID stage = registry.CreateEntity();
+		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
+		stageCo->model.Load("PlaceholderScene.mdl");
+
+		RenderGeometryIndependentCollision(stage);
+
+		EntityID player = registry.CreateEntity();
+		registry.AddComponent<PlayerComponent>(player);
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		ModelComponent* playerModel = registry.AddComponent<ModelComponent>(player);
+		playerModel->model.Load("HellhoundDummy_PH.mdl");
+		/*Begin2dFrame(ui);
+		HUDCanvas->Render(ui);
+		End2dFrame(ui);*/
+	}
+}
+
+void GameScene::ComputeShaders()
+{
+	/*Particles::PrepareParticleCompute();
+	Dispatch(100, 0, 0);
+	Particles::FinishParticleCompute();*/
+}
+void GameScene::Render()
+{
+	
+
+	//for (auto entity : View<ModelComponent>(registry))
+	//{
+	//	ModelComponent* toRender = registry.GetComponent<ModelComponent>(entity);
+	//	SetWorldMatrix(0.0f, 0.0f, 0.0f, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+	//	SetVertexBuffer(toRender->model.m_vertexBuffer);
+	//	SetIndexBuffer(toRender->model.m_indexBuffer);
+	//	//RenderIndexed(player->model->m_bonelessModel->m_numIndices);
+	//	toRender->model.RenderAllSubmeshes();
+	//}
 }
 void GameScene::Input()
 {
@@ -186,13 +186,13 @@ void GameScene::Unload()
 		dogCo->model.Free();
 		registry.DestroyEntity(entity);
 	}
-	for (auto entity : View<UICanvas>(registry))
-	{
-		//Get entity with UI, release components.
-		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
-		if (ui && ui->header == UI_CANVAS_HEADER)
-		{
-			ui->Release();
-		}
-	}
+	//for (auto entity : View<UICanvas>(registry))
+	//{
+	//	//Get entity with UI, release components.
+	//	UICanvas* ui = registry.GetComponent<UICanvas>(entity);
+	//	if (ui && ui->header == UI_CANVAS_HEADER)
+	//	{
+	//		ui->Release();
+	//	}
+	//}
 }

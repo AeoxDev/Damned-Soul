@@ -62,7 +62,7 @@ void ReleaseUIRenderer()
 	UISurface->Release();
 }
 
-//void UpdateUI(Registry& registry, EntityID& entity)
+//void UpdateUI( , EntityID& entity)
 //{
 //	ID3D11ShaderResourceView* nullsrv = nullptr;
 //	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);

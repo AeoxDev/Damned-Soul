@@ -4,6 +4,8 @@
 #include "Hitbox.h"
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
+#include "Registry.h"
+#include "Components.h"
 
 void Menu::ComputeShaders()
 {
@@ -25,14 +27,14 @@ void Menu::Input()
 		SetInPlay(true);
 		SetInMainMenu(false);
 		stateManager.levelScenes[0].Setup(0);
-		Unload();
+		//Unload();
 	}
 	if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[1].m_uiComponent.Intersect({ mouseX, mouseY }))
 	{
 		SetInSettings(true);
 		SetInMainMenu(false);
 		stateManager.settings.Setup();
-		Unload();
+		//Unload();
 	}
 }
 
@@ -41,13 +43,15 @@ void Menu::Setup()//Load
 	//Add entities and components to the registry for the main menu here
 	
 	//Entities, pageComponent (active, priority)
-	EntityID mainMenuPage = registry.CreateEntity();
-
-	this->registry.AddComponent<UICanvas>(mainMenuPage);
-	UICanvas* mainMenuCanvas = registry.GetComponent<UICanvas>(mainMenuPage);
+	if (mainMenuPage.index == -1)
+	{
+		mainMenuPage = registry.CreateEntity();
+	}
+	UICanvas* mainMenuCanvas = registry.AddComponent<UICanvas>(mainMenuPage);
 	SetupMainMenuCanvas(*mainMenuCanvas);
 	UpdateUI(*mainMenuCanvas);
 
+	PlayerComponent* pc = registry.AddComponent<PlayerComponent>(mainMenuPage);
 	// Create UI and example menu
 	//*ui = UI();
 	
@@ -80,6 +84,7 @@ void Menu::Unload()
 			//MainMenu* exMenu = registry.GetComponent<MainMenu>(entity);
 			//exMenu->m_uiCanvas.Release();
 			ui->Release();
+			registry.RemoveComponent<UICanvas>(entity);
 		}
 	}
 }

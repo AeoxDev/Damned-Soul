@@ -2,4 +2,5 @@
 
 struct GeometryIndependentComponent;
 
-EntityID CreateAndRenderGeometryIndependentCollision(Registry& registry, EntityID& modelEntity);
+EntityID CreateAndRenderGeometryIndependentCollision(EntityID& modelEntity);
+void RenderGeometryIndependentCollision(EntityID& m);

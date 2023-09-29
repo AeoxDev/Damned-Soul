@@ -3,7 +3,6 @@
 
 struct PauseState
 {
-	Registry registry;
 
 	void Setup();
 

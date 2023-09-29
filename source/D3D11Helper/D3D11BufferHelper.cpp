@@ -181,6 +181,22 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 	UpdateWorldMatrix(&in, bindto);
 }
 
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	DirectX::XMVECTOR v = DirectX::XMVECTOR{ 0.0f, 0.0f,0.0f };
+	DirectX::XMVECTOR f = DirectX::XMVECTOR{ dirX, dirY, dirZ };
+	//DirectX::XMVECTOR s = DirectX::XMVECTOR{ scaleX, scaleY, ScaleZ};
+	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
+	world = DirectX::XMMatrixScaling(scaleX, scaleY, ScaleZ);
+	world = DirectX::XMMatrixLookAtLH(v, f, up);
+	world = world * DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto);
+}
+
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 {
 	static CB_IDX constantBufferIdx = -1;

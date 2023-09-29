@@ -88,6 +88,9 @@ void StateManager::Setup()
 	Particles::InitializeParticles();
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
 	SetupTestHitbox();
+
+	//Setup systems here
+	systems.push_back(new RenderSystem());
 }
 
 void StateManager::Clear()
@@ -97,7 +100,7 @@ void StateManager::Clear()
 
 void StateManager::ComputeShaders()
 {
-	if (currentStates & State::InMainMenu)
+	/*if (currentStates & State::InMainMenu)
 	{
 		menu.ComputeShaders();
 	}
@@ -116,13 +119,15 @@ void StateManager::ComputeShaders()
 	if (currentStates & State::InShop)
 	{
 		shop.ComputeShaders();
-	}
+	}*/
 }
 
 void StateManager::Render()
 {
+	
+
 	//Find which registries for render system
-	if (currentStates & State::InMainMenu)
+	/*if (currentStates & State::InMainMenu)
 	{
 		menu.Render();
 	}
@@ -141,16 +146,16 @@ void StateManager::Render()
 	if (currentStates & State::InShop)
 	{
 		shop.Render();
-	}
+	}*/
 }
 
 void StateManager::Input()
 {
 	//First read the keys
-	GetInput();
+	
 
 	//Then go through the registries that are active
-	if (currentStates & State::InMainMenu)
+	/*if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
 	}
@@ -169,12 +174,16 @@ void StateManager::Input()
 	if (currentStates & State::InShop)
 	{
 		shop.Input();
-	}
+	}*/
 }
 
 void StateManager::Update()
 {
-	if (currentStates & State::InMainMenu)
+	for (size_t i = 0; i < systems.size(); i++)
+	{
+		systems[i]->Update();
+	}
+	/*if (currentStates & State::InMainMenu)
 	{
 		menu.Update();
 	}
@@ -193,7 +202,7 @@ void StateManager::Update()
 	if (currentStates & State::InShop)
 	{
 		shop.Update();
-	}
+	}*/
 	//Find which registries to update
 	//switch (m_currentState)
 	//{
@@ -224,7 +233,10 @@ void StateManager::Update()
 }
 void StateManager::EndFrame()
 {
+	Present();//Present what was drawn during the update!
 	ResetInput();
+	GetInput();
+	//MemLib::pdefrag();
 }
 void StateManager::UnloadAll()
 {

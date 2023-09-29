@@ -8,19 +8,20 @@
 #include "Backend/Collision.h"
 #include "CollisionFunctions.h"
 #include "Backend\GeometryIndependent.h"
-#include "AllComponents.h"
+#include "Components.h"
 #include "GameRenderer.h"
+#include "Registry.h"
 
 HitboxVisualizeVariables hvv;
 
-bool SetupHitboxVisualizer(Registry& registry)
+bool SetupHitboxVisualizer()
 {
-	InitializeBufferAndSRV(registry);
+	InitializeBufferAndSRV();
 	CreateShadersLayoutAndRasterState();
 	return true;
 }
 
-int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offsetX, float offsetZ)
+int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ)
 {
 	//Check for the HitboxComponent, return -1 if failed
 	HitboxComponent* collisionComponent = registry.GetComponent<HitboxComponent>(entity);
@@ -43,13 +44,13 @@ int CreateHitbox(Registry& registry, EntityID& entity, float radius, float offse
 	//Set to active
 	collisionComponent->circularFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
-	SetCollisionEvent(registry, entity, (int)availableSlot, NoCollision );
+	SetCollisionEvent(entity, (int)availableSlot, NoCollision );
 
 	//Return the chosen slot for the user for further uses.
 	return availableSlot;
 }
 
-void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
+void RemoveHitbox(EntityID& entity, int hitboxID)
 {
 	//Set slot flag to 0
 	unsigned mask = 0b1;//0b00000000 00000000 00000000 00000001
@@ -78,7 +79,7 @@ void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID)
 
 
 
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[])
+int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[])
 {
 	if (corners < 3 && corners >= CONVEX_CORNER_LIMIT)
 	{
@@ -200,7 +201,7 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 		if (radians > 3.14159265359f * 0.5f)
 		{
 			//Concave shape, sadge
-			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
 			return -4;
 		}
 		//Check if middle point of neighboring points is on the inside
@@ -215,13 +216,13 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 		scalar = (middleToCorner1X * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (middleToCorner1Z * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
 		if (scalar < 0.0f)
 		{
-			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
 			return -5;
 		}
 		scalar = (middleToCorner2X * collisionComponent->convexHitbox[availableSlot].normalX[(i + 1) % corners]) + (middleToCorner2Z * collisionComponent->convexHitbox[availableSlot].normalZ[(i + 1) % corners]);
 		if (scalar < 0.0f)
 		{
-			RemoveHitbox(registry, entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+			RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
 			return -5;
 		}
 	}
@@ -229,19 +230,19 @@ int CreateHitbox(Registry& registry, EntityID& entity, int corners, float corner
 	//Set to active
 	collisionComponent->convexFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
-	SetCollisionEvent(registry, entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);
+	SetCollisionEvent(entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);
 
 	//Return the chosen slot for the user for further uses.
 	return availableSlot + SAME_TYPE_HITBOX_LIMIT;
 }
 
-void AddHitboxComponent(Registry& registry, EntityID& entity)
+void AddHitboxComponent(EntityID& entity)
 {
 	registry.AddComponent<HitboxComponent>(entity);
 	
 }
 
-void CreateProximityHitbox(Registry& registry, EntityID& entity, std::string fileName)
+void CreateProximityHitbox(EntityID& entity, std::string fileName)
 {
 	//Check if the proximityComponent already exists.
 	ProximityHitboxComponent* proximityComponent = registry.GetComponent<ProximityHitboxComponent>(entity);
@@ -295,12 +296,12 @@ void CreateProximityHitbox(Registry& registry, EntityID& entity, std::string fil
 	}
 }
 
-void AddProximityHitboxComponent(Registry& registry, EntityID& entity)
+void AddProximityHitboxComponent(EntityID& entity)
 {
 	registry.AddComponent<ProximityHitboxComponent>(entity);
 }
 
-void InitializeBufferAndSRV(Registry& registry)
+void InitializeBufferAndSRV()
 {
 	hvv.hitboxes.clear();
 	//Loop through the registry, find hitboxComponents, add to a struct and link to a buffer.
@@ -362,13 +363,13 @@ void InitializeBufferAndSRV(Registry& registry)
 	}
 }
 
-void UpdateHitboxBuffer(Registry& registry)
+void UpdateHitboxBuffer( )
 {
 	//Clear previous buffer
 	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
 	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
 
-	InitializeBufferAndSRV(registry);
+	InitializeBufferAndSRV();
 }
 
 void DebugRenderHitbox(ID3D11Buffer*& worldMatrix) //ID3D11Buffer*& viewAndProjectionMatrix)
@@ -508,7 +509,7 @@ void DestroyHitboxVisualizeVariables()
 	hvv.hitboxes.clear();
 }
 
-void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxActive(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -521,7 +522,7 @@ void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool se
 	}
 }
 
-void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxIsStage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -534,7 +535,7 @@ void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool s
 	}
 }
 
-void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxIsWall(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -547,7 +548,7 @@ void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool se
 	}
 }
 
-void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxIsPlayer(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -560,7 +561,7 @@ void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 }
 
-void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxIsEnemy(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -573,7 +574,7 @@ void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool s
 	}
 }
 
-void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxIsStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -586,7 +587,7 @@ void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID,
 	}
 }
 
-void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxIsDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -599,7 +600,7 @@ void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID
 	}
 }
 
-void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxIsMoveable(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -612,7 +613,7 @@ void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, boo
 	}
 }
 
-void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -625,7 +626,7 @@ void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 }
 
-void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxHitWall(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -638,7 +639,7 @@ void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool s
 	}
 }
 
-void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxHitPlayer(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -651,7 +652,7 @@ void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool
 	}
 }
 
-void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxHitEnemy(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -664,7 +665,7 @@ void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool 
 	}
 }
 
-void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxHitStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -677,7 +678,7 @@ void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID
 	}
 }
 
-void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag)
+void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
@@ -690,15 +691,15 @@ void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxI
 	}
 }
 
-void UpdatePhysics(Registry& registry)
+void UpdatePhysics( )
 {
-	ResetCollisionVariables(registry);
-	HandleMoveableCollision(registry);
-	HandleDamageCollision(registry);
-	HandleStaticCollision(registry);
+	ResetCollisionVariables();
+	HandleMoveableCollision();
+	HandleDamageCollision();
+	HandleStaticCollision();
 }
 
-void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function)
+void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
@@ -717,61 +718,69 @@ void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void*
 void SetupTestHitbox()
 {
 	//Put into scne
-	Registry collisionRegistry;
-	EntityID player = collisionRegistry.CreateEntity();
-	AddHitboxComponent(collisionRegistry, player);
-	int circle = CreateHitbox(collisionRegistry, player, 1.0f, 15.0f, 15.0f);
-	SetHitboxIsPlayer(collisionRegistry, player, circle);
-	SetHitboxHitEnemy(collisionRegistry, player, circle);
-	SetHitboxHitWall(collisionRegistry, player, circle);
+	EntityID player = registry.CreateEntity();
+	AddHitboxComponent(player);
+	int circle = CreateHitbox(  player, 1.0f, 15.0f, 15.0f);
+	SetHitboxIsPlayer(  player, circle);
+	SetHitboxHitEnemy(  player, circle);
+	SetHitboxHitWall(  player, circle);
 	float triangleX[3] = { 0.f, 1.f, 0.5f };
 	float triangleZ[3] = { 0.f, 0.f, 1.f };
-	int triangle = CreateHitbox(collisionRegistry, player, 3, triangleX, triangleZ);
-	SetHitboxIsPlayer(collisionRegistry, player, triangle);
-	SetHitboxHitEnemy(collisionRegistry, player, triangle);
+	int triangle = CreateHitbox(  player, 3, triangleX, triangleZ);
+	SetHitboxIsPlayer(  player, triangle);
+	SetHitboxHitEnemy(  player, triangle);
 
 	float convexPentaX[5]{ 0.5f, 1.5f, 1.5f, 1.0f, 0.5f };
 	float convexPentaZ[5]{ -0.5f, -0.5f, .5f, 1.f, .5f };
 
-	EntityID enemy1 = collisionRegistry.CreateEntity();
-	AddHitboxComponent(collisionRegistry, enemy1);
-	int circle2 = CreateHitbox(collisionRegistry, enemy1, 1.0f, -11.0f, 1.0f);
-	SetHitboxIsEnemy(collisionRegistry, enemy1, circle2);
-	SetHitboxHitPlayer(collisionRegistry, enemy1, circle2);
-	SetHitboxHitWall(collisionRegistry, enemy1, circle2);
-	int enemyConvex = CreateHitbox(collisionRegistry, enemy1, 5, convexPentaX, convexPentaZ);
-	SetHitboxIsEnemy(collisionRegistry, enemy1, enemyConvex);
-	SetHitboxHitPlayer(collisionRegistry, enemy1, enemyConvex);
+	EntityID enemy1 =  registry.CreateEntity();
+	AddHitboxComponent(  enemy1);
+	int circle2 = CreateHitbox(  enemy1, 1.0f, -11.0f, 1.0f);
+	SetHitboxIsEnemy(  enemy1, circle2);
+	SetHitboxHitPlayer(  enemy1, circle2);
+	SetHitboxHitWall(  enemy1, circle2);
+	int enemyConvex = CreateHitbox(  enemy1, 5, convexPentaX, convexPentaZ);
+	SetHitboxIsEnemy(  enemy1, enemyConvex);
+	SetHitboxHitPlayer(  enemy1, enemyConvex);
 
-	EntityID wall = collisionRegistry.CreateEntity();
-	AddProximityHitboxComponent(collisionRegistry, wall);
-	CreateProximityHitbox(collisionRegistry, wall);
-	//EntityID enemy2 = collisionRegistry.CreateEntity();
-	//AddHitboxComponent(collisionRegistry, enemy2);
-	//int circle3 = CreateHitbox(collisionRegistry, enemy2, 1.0f, 2.0f, 2.0f);
-	//SetHitboxIsEnemy(collisionRegistry, enemy2, circle3);
-	//SetHitboxHitPlayer(collisionRegistry, enemy2, circle3);
+	EntityID wall =  registry.CreateEntity();
+	AddProximityHitboxComponent(  wall);
+	CreateProximityHitbox(  wall);
+	//EntityID enemy2 =  registry.CreateEntity();
+	//AddHitboxComponent( registry, enemy2);
+	//int circle3 = CreateHitbox( registry, enemy2, 1.0f, 2.0f, 2.0f);
+	//SetHitboxIsEnemy( registry, enemy2, circle3);
+	//SetHitboxHitPlayer( registry, enemy2, circle3);
 
-	/*EntityID stage = collisionRegistry.CreateEntity();
-	AddGeometryIndependentComponent(collisionRegistry, stage);
-	GeometryIndependentColliderComponent* GeoIndie = collisionRegistry.GetComponent<GeometryIndependentColliderComponent>(stage);
-	SetupGIAll(collisionRegistry, stage);
+	/*EntityID stage =  registry.CreateEntity();
+	AddGeometryIndependentComponent( registry, stage);
+	GeometryIndependentColliderComponent* GeoIndie =  registry.GetComponent<GeometryIndependentColliderComponent>(stage);
+	SetupGIAll( registry, stage);
 
-	EntityID stageModel = collisionRegistry.CreateEntity();
-	collisionRegistry.AddComponent<ModelComponent>(stageModel);
-	ModelComponent* m = collisionRegistry.GetComponent<ModelComponent>(stageModel);
+	EntityID stageModel =  registry.CreateEntity();
+	 registry.AddComponent<ModelComponent>(stageModel);
+	ModelComponent* m =  registry.GetComponent<ModelComponent>(stageModel);
 	m->model.Load("PlaceholderScene.mdl");
-	RenderGeometryIndependentCollisionToTexture(collisionRegistry, stage, stageModel);*/
+	RenderGeometryIndependentCollisionToTexture( registry, stage, stageModel);*/
 	
-	//UpdatePhysics(collisionRegistry);
+	//UpdatePhysics( registry);
 }
 
-EntityID CreateAndRenderGeometryIndependentCollision(Registry& r, EntityID& m)
+EntityID CreateAndRenderGeometryIndependentCollision(EntityID& m)
 {
-	EntityID stage = r.CreateEntity();
-	AddGeometryIndependentComponent(r, stage);
-	GeometryIndependentColliderComponent* GeoIndie = r.GetComponent<GeometryIndependentColliderComponent>(stage);
+	EntityID stage = registry.CreateEntity();
+	AddGeometryIndependentComponent(stage);
+	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stage);
 
-	RenderGeometryIndependentCollisionToTexture(r, stage, m);
+	RenderGeometryIndependentCollisionToTexture(stage);
 	return stage;
+}
+
+void RenderGeometryIndependentCollision(EntityID& m)
+{
+	AddGeometryIndependentComponent(m);
+	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(m);
+
+	RenderGeometryIndependentCollisionToTexture(m);
+	return;
 }

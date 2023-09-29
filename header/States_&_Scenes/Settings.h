@@ -4,7 +4,6 @@
 
 struct SettingsState
 {
-	Registry registry;
 	void Setup();
 
 	void Clear();

@@ -1,7 +1,8 @@
 #include "Backend\ConvexCollision.h"
 #include "Backend\Collision.h"
+#include "Registry.h"
 
-bool IsCircularConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int circleID, int convexID)
+bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleID, int convexID)
 {
 	// get a hold of hitbox components from entity
 	HitboxComponent* circle = registry.GetComponent<HitboxComponent>(entity1);
@@ -51,7 +52,6 @@ bool IsCircularConvexCollision(Registry& registry, EntityID& entity1, EntityID& 
 	}
 	//Use onCollission function for first and second respectively
 	OnCollisionParameters params = {};
-	params.registry = registry;//Reggie stiel
 	float convexToCircleX, convexToCircleZ;
 	convexToCircleX = circle->circleHitbox[circleID].offsetX - convex->convexHitbox[convexID].centerX;
 	convexToCircleZ = circle->circleHitbox[circleID].offsetZ - convex->convexHitbox[convexID].centerZ;
@@ -87,9 +87,9 @@ bool IsCircularConvexCollision(Registry& registry, EntityID& entity1, EntityID& 
 
 }
 
-bool IsConvexCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int convex, int circle)
+bool IsConvexCircularCollision(EntityID& entity1, EntityID& entity2, int convex, int circle)
 {
-	return IsCircularConvexCollision(registry, entity2, entity1, circle, convex);
+	return IsCircularConvexCollision(entity2, entity1, circle, convex);
 }
 
 //Vector4 LineLineIntersection(Vector2 l1p1, Vector2 l1p2, Vector2 l2p1, Vector2 l2p2)
@@ -166,7 +166,7 @@ ConvexReturnData LineToLineIntersection(float l1c1x, float l1c1z, float l1c2x, f
 	return toReturn;
 }
 
-bool IsConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int convexID1, int convexID2)
+bool IsConvexCollision(EntityID& entity1, EntityID& entity2, int convexID1, int convexID2)
 {
 	HitboxComponent *convex1 = registry.GetComponent<HitboxComponent>(entity1);
 	HitboxComponent *convex2 = registry.GetComponent<HitboxComponent>(entity2);
@@ -234,7 +234,6 @@ bool IsConvexCollision(Registry& registry, EntityID& entity1, EntityID& entity2,
 		}
 	}
 	OnCollisionParameters params = {};
-	params.registry = registry;//Reggie stiel
 
 	if (iShit1)
 	{
