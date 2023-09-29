@@ -47,7 +47,7 @@ bool ControllerSystem::Update()
 			{
 				angle -= GetDeltaTime() * (10.1f - dot);
 			}
-			pt->facingX = -cosf(angle);
+			pt->facingX = cosf(angle);
 			pt->facingZ = sinf(angle);
 			player->goalX = 0.0f;
 			player->goalZ = 0.0f;
