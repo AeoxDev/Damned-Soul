@@ -34,6 +34,12 @@ void Menu::Input()
 		stateManager.settings.Setup();
 		Unload();
 	}
+	if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[2].m_uiComponent.Intersect({ mouseX, mouseY }))
+	{
+		SetInMainMenu(false);
+		sdl.quit = true;
+		Unload();
+	}
 }
 
 void Menu::Setup()//Load
