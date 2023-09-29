@@ -3,28 +3,64 @@
 #include "Input.h"
 #include "Menus.h"
 #include "UIRenderer.h"
-#include "Registry.h"
+#include "AllComponents.h"
 
 
 void SettingsState::Setup()
 {
-	//Setup Settings UI
-	EntityID SettingsPage = registry.CreateEntity();
+	SetupButtons();
+	SetupImages();
+	SetupText();
 
-	registry.AddComponent<UICanvas>(SettingsPage);
-	UICanvas* SettingsCanvas = registry.GetComponent<UICanvas>(SettingsPage);
-	SetupSettingsCanvas(*SettingsCanvas);
-	UpdateUI(*SettingsCanvas);
 
-	// Create UI and example menu
-	//*ui = UI();
+	DrawUi();
 
-	//exMenu->Setup(*ui);
-	////ui->SetCurrentCanvas(exMenu->m_CurrentPage);
-	//DrawGUI(*mainMenu);
-	Begin2dFrame(ui);
-	SettingsCanvas->Render(ui);
-	End2dFrame(ui);
+}
+
+void SettingsState::SetupButtons()
+{
+	//Back Button
+	{
+		auto OnClick = [this]()
+			{
+				SetInMainMenu(true);
+				SetInSettings(false);
+				stateManager.menu.Setup();
+				Unload();
+			};
+
+		auto OnHover = [this]()
+			{
+
+			};
+		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/BackButton.png", "BackButton", L"", OnClick, OnHover, { sdl.WIDTH / 2.0f - 65.0f, 800 }));
+	}
+}
+
+
+void SettingsState::SetupImages()
+{
+
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/OptionsButtonHover.png", { (sdl.WIDTH / 2.0f) - (426.0f / 8.0f), 100.0f }, { 1.0f, 1.0f }));
+
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/D0.png", { 50.0f, 50.0f }, { 1.5f, 1.5f }));
+
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/D0.png", { sdl.WIDTH - 68.0f, 50.0f }, { 1.5f, 1.5f }));
+
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/CheckBoxBase.png", { sdl.WIDTH / 2.0f + 50.0f, 500.0f }));
+}
+
+
+void SettingsState::SetupText()
+{
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"This is the settings menu!", { sdl.WIDTH / 2.0f - 50.0f, 300.0f }));
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"Fullscreen:", { sdl.WIDTH / 2.0f - 50.0f, 500.0f }));
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"Volume: 100", { sdl.WIDTH / 2.0f - 50.0f, 600.0f }));
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"Graphics: Flawless", { sdl.WIDTH / 2.0f - 50, 700.0f }));
 }
 
 void SettingsState::Clear()
@@ -42,15 +78,16 @@ void SettingsState::Render()
 
 void SettingsState::Input()
 {
-	EntityID ui = registry.entities.at(0).id;
-	UICanvas* canvas = registry.GetComponent<UICanvas>(ui);
-	//Input controller component.
-	if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[0].m_uiComponent.Intersect({ mouseX, mouseY }))
+
+	for (auto entity : View<ButtonComponent>(registry))
 	{
-		SetInMainMenu(true);
-		SetInSettings(false);
-		stateManager.menu.Setup();
-		Unload();
+		auto comp = registry.GetComponent<ButtonComponent>(entity);
+		if (comp->button.m_uiComponent.Intersect({ mouseX, mouseY }))
+		{
+			comp->button.Hover();
+			if (mouseButtonPressed[MouseButton::left] == released)
+				comp->button.Interact();
+		}
 	}
 }
 
@@ -60,13 +97,34 @@ void SettingsState::Update()
 
 void SettingsState::Unload()
 {
-	for (auto entity : View<UICanvas>(registry))
+	for (auto entity : View<ButtonComponent>(registry))
 	{
-		//Get entity with UI, release components.
-		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
-		if (ui)
-		{
-			ui->Release();
-		}
+		registry.DestroyEntity(entity);
 	}
+
+	for (auto entity : View<ImageComponent>(registry))
+	{
+		registry.DestroyEntity(entity);
+	}
+}
+
+void SettingsState::DrawUi()
+{
+	ID2D1RenderTarget* rt = ui.GetRenderTarget();
+
+	UpdateUI2();
+
+	Begin2dFrame(ui);
+
+	for (auto entity : View<ButtonComponent>(registry))
+		registry.GetComponent<ButtonComponent>(entity)->button.Draw(ui, rt);
+
+	for (auto entity : View<ImageComponent>(registry))
+
+		registry.GetComponent<ImageComponent>(entity)->image.Draw(rt);
+
+	for (auto entity : View<TextComponent>(registry))
+		registry.GetComponent<TextComponent>(entity)->text.Draw(ui);
+
+	End2dFrame(ui);
 }

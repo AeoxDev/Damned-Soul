@@ -3,5 +3,5 @@
 
 struct ButtonComponent
 {
-
+	UIButton button;
 };

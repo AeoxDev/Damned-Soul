@@ -21,11 +21,12 @@ void SetupMainMenuCanvas(UICanvas& canvas)
 	{
 		auto OnClick = [canvas]()
 			{
-				std::cout << "First" << std::endl;
+				std::cout << "Click" << std::endl;
 			};
 
 		auto OnHover = [canvas]()
 			{
+				std::cout << "Hover" << std::endl;
 				//Change hover button, spawn particles, bla bla 
 			};
 

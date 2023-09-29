@@ -12,5 +12,11 @@ struct SettingsState
 	void Input();
 	void Update();
 
+	void SetupButtons();
+	void SetupImages();
+	void SetupText();
+
+	void DrawUi();
+
 	void Unload();
 };
