@@ -93,6 +93,7 @@ void StateManager::Setup()
 	systems.push_back(new RenderSystem());
 	systems.push_back(new ButtonSystem());
 	systems.push_back(new ControllerSystem());
+	systems.push_back(new GeometryIndependentSystem());
 }
 
 void StateManager::Clear()

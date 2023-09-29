@@ -124,13 +124,16 @@ void Menu::Unload()
 {
 	for (auto entity : View<ButtonComponent>(registry))
 	{
+		registry.RemoveComponent<ButtonComponent>(entity);
 		registry.DestroyEntity(entity);
 	}
 
 	for (auto entity : View<ImageComponent>(registry))
 	{
+		registry.RemoveComponent<ImageComponent>(entity);
 		registry.DestroyEntity(entity);
 	}
+	ClearUI();
 }
 
 void Menu::DrawUi()

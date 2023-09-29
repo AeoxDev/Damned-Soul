@@ -6,7 +6,7 @@
 #include "GameRenderer.h"
 #include "Registry.h"
 
-#define TEXTURE_DIMENSIONS 256
+#define TEXTURE_DIMENSIONS 32
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing
@@ -26,7 +26,7 @@ struct GeometryIndependentComponent
 	RS_IDX rasterizerState;
 	VP_IDX viewport;
 	GIConstantBufferData shaderData;
-
+	float width, height, offsetX, offsetZ;
 	//TextureComponent
 	int8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
 
@@ -34,11 +34,11 @@ struct GeometryIndependentComponent
 };
 struct giPixel
 {
-	unsigned r;
+	unsigned r, g, b, a;
 };
 struct giCopyTexture
 {
-	giPixel texture[TEXTURE_DIMENSIONS*2][TEXTURE_DIMENSIONS];
+	giPixel texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
 };
 
 void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
@@ -98,12 +98,15 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 			greatestZ = vertices[i].m_position[2];
 		}
 	}
-
-	Camera::SetPosition(0.5f * (greatestX + smallestX),greatestY+ 2.0f, 0.5f * (greatestZ + smallestZ));//Set this to center of stage offset upwards
-	Camera::SetLookAt(0.5f * (greatestX + smallestX), smallestY, 0.5f * (greatestZ + smallestZ));//Set to center of stage
+	GIcomponent->width = greatestX - smallestX;
+	GIcomponent->height = greatestZ - smallestZ;
+	GIcomponent->offsetX = 0.5f * (greatestX + smallestX);
+	GIcomponent->offsetZ = 0.5f * (greatestZ + smallestZ);
+	Camera::SetPosition(GIcomponent->offsetX,greatestY+ 2.0f, GIcomponent->offsetZ);//Set this to center of stage offset upwards
+	Camera::SetLookAt(GIcomponent->offsetX, smallestY, GIcomponent->offsetZ);//Set to center of stage
 	Camera::SetUp(0.0f, 0.0f, 1.0f);
-	Camera::SetWidth(greatestX - smallestX + 2.0f);//Set width (x) of orthogonal based on stage
-	Camera::SetHeight(greatestZ - smallestZ + 2.0f);//Set height (z) of orthogonal based on stage
+	Camera::SetWidth(greatestX - smallestX);//Set width (x) of orthogonal based on stage
+	Camera::SetHeight(greatestZ - smallestZ);//Set height (z) of orthogonal based on stage
 	Camera::SetOrthographicDepth(greatestY - smallestY + 8.f);
 	Camera::UpdateView();
 	Camera::UpdateProjection();
@@ -156,7 +159,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	{
 		for (size_t j = 0; j < TEXTURE_DIMENSIONS; j++)
 		{
-			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i*2][j]).r;
+			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
 		}
 	}
 
@@ -215,7 +218,7 @@ RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity)
 	}
 	//Create a renderTargetView for the GI
 	GIcomponent->renderTargetView = CreateRenderTargetView(USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS::BIND_RENDER_TARGET,
-		(CPU_FLAGS)0, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS, FORMAT_R32_UINT);
+		(CPU_FLAGS)0, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS, FORMAT_R32G32B32A32_UINT);
 	return GIcomponent->renderTargetView;
 }
 DSV_IDX SetupGIDepthStencil(EntityID& stageEntity)
@@ -275,7 +278,7 @@ TX_IDX SetupGIStagingTexture(EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32_UINT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32G32B32A32_UINT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
 	return GIcomponent->stagingTexture;
 }
 
@@ -325,4 +328,31 @@ bool SetupGIAll(EntityID& stage)
 GeometryIndependentComponent::~GeometryIndependentComponent()
 {
 	//ReleaseTexture(stagingTexture);
+}
+
+int PixelValueOnPosition(GeometryIndependentComponent*& gi, float x, float z)
+{
+	//Get component for gi
+	//Calculate size per pixel:
+	float pixelX = gi->width / TEXTURE_DIMENSIONS;
+	float pixelZ = gi->height / TEXTURE_DIMENSIONS;
+	//Calculate offset:
+	float offX = gi->width * 0.5f - gi->offsetX;
+	float offZ = gi->height * 0.5f- gi->offsetZ;
+	//Translate position to pixel using the size.
+	float px = (x + offX) /pixelX;
+	float pz = (-z + offZ) / pixelZ;
+	//Check if pixel in bounds
+	if (px < TEXTURE_DIMENSIONS && px >= 0)
+	{
+		if (pz < TEXTURE_DIMENSIONS && pz >= 0)
+		{
+			if (gi->texture[(int)pz][(int)px] == 0)
+			{
+				return gi->texture[(int)pz][(int)px];
+			}
+			return gi->texture[(int)pz][(int)px];
+		}
+	}
+	return 0;
 }

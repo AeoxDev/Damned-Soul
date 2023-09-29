@@ -5,7 +5,7 @@ struct PS_IN
     float4 position : POSITION;
 };
 
-uint main(PS_IN input) : SV_TARGET
+uint4 main(PS_IN input) : SV_TARGET
 {
     //Using an orthographic camera in the vertex stage:
     //Look at model and see whatever is above pre-determined value
@@ -19,5 +19,5 @@ uint main(PS_IN input) : SV_TARGET
     {
         result = 1;
     }
-    return result;
+    return uint4(result, 0, 0, 0);
 }

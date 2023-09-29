@@ -96,14 +96,17 @@ void UpdateUI2()
 
 	SetRenderTargetViewAndDepthStencil(renderStates[ui.RenderSlot].renderTargetView, renderStates[ui.RenderSlot].depthStencilView);
 }
-
+void ClearUI()
+{
+	ClearDepthStencilView(renderStates[ui.RenderSlot].depthStencilView);
+	ClearRenderTargetView(renderStates[ui.RenderSlot].renderTargetView);
+}
 void UpdateUI(UICanvas& canvas)
 {
 	ID3D11ShaderResourceView* nullsrv = nullptr;
 	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
 
-	ClearDepthStencilView(renderStates[ui.RenderSlot].depthStencilView);
-	ClearRenderTargetView(renderStates[ui.RenderSlot].renderTargetView);
+	ClearUI();
 
 	SetRenderTargetViewAndDepthStencil(renderStates[ui.RenderSlot].renderTargetView, renderStates[ui.RenderSlot].depthStencilView);
 

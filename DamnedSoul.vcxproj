@@ -200,6 +200,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Lighting.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\Systems\ButtonSystem.cpp" />
+    <ClCompile Include="source\Systems\CollisionSystems.cpp" />
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />

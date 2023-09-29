@@ -27,3 +27,5 @@ void Begin2dFrame(UI& ui);
 void End2dFrame(UI& ui);
 
 void UpdateUI2();
+
+void ClearUI();
