@@ -91,6 +91,8 @@ void StateManager::Setup()
 
 	//Setup systems here
 	systems.push_back(new RenderSystem());
+	systems.push_back(new ButtonSystem());
+	systems.push_back(new ControllerSystem());
 }
 
 void StateManager::Clear()

@@ -15,53 +15,53 @@
 
 void GameScene::Update()
 {
-	for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ player->goalX,player->goalZ, 0.0f };
-		DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
-		DirectX::XMFLOAT3 l;
-		DirectX::XMStoreFloat3(&l, length);
-		float angle = acosf(player->dirX);
-		if (player->dirZ < 0.0f)
-		{
-			angle *= -1.0f;
-		}
-		if (l.x > 0.001f)
-		{
-			goalV = DirectX::XMVector2Normalize(goalV);
+	//for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	//{
+	//	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+	//	DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ player->goalX,player->goalZ, 0.0f };
+	//	DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
+	//	DirectX::XMFLOAT3 l;
+	//	DirectX::XMStoreFloat3(&l, length);
+	//	float angle = acosf(player->dirX);
+	//	if (player->dirZ < 0.0f)
+	//	{
+	//		angle *= -1.0f;
+	//	}
+	//	if (l.x > 0.001f)
+	//	{
+	//		goalV = DirectX::XMVector2Normalize(goalV);
 
-			DirectX::XMFLOAT3 goalFloats;
-			DirectX::XMStoreFloat3(&goalFloats, goalV);
-			player->goalX = goalFloats.x;
-			player->goalZ = goalFloats.y;
-			float goalAngle = acosf(player->goalX);
-			if (player->goalZ < 0.0f)
-			{
-				goalAngle *= -1.0f;
-			}
-			//Check if shortest distance is right or left
-			float orthogonalX = -player->dirZ;
-			float orthogonalZ = player->dirX;
-			//float dot = playerInputs[i].aimDirection.Dot(players[i].forward);
-			float dot = player->goalX * player->dirX + player->goalZ * player->dirZ;
-			float orthDot = player->goalX * orthogonalX + player->goalZ * orthogonalZ;
-			if (orthDot > 0.0f)
-			{//Om till vänster
-				angle += GetDeltaTime() * (10.1f - dot);
-			}
-			else
-			{
-				angle -= GetDeltaTime() * (10.1f - dot);
-			}
-			player->dirX = cosf(angle);
-			player->dirZ = sinf(angle);
-			player->goalX = 0.0f;
-			player->goalZ = 0.0f;
-		}
+	//		DirectX::XMFLOAT3 goalFloats;
+	//		DirectX::XMStoreFloat3(&goalFloats, goalV);
+	//		player->goalX = goalFloats.x;
+	//		player->goalZ = goalFloats.y;
+	//		float goalAngle = acosf(player->goalX);
+	//		if (player->goalZ < 0.0f)
+	//		{
+	//			goalAngle *= -1.0f;
+	//		}
+	//		//Check if shortest distance is right or left
+	//		float orthogonalX = -player->dirZ;
+	//		float orthogonalZ = player->dirX;
+	//		//float dot = playerInputs[i].aimDirection.Dot(players[i].forward);
+	//		float dot = player->goalX * player->dirX + player->goalZ * player->dirZ;
+	//		float orthDot = player->goalX * orthogonalX + player->goalZ * orthogonalZ;
+	//		if (orthDot > 0.0f)
+	//		{//Om till vänster
+	//			angle += GetDeltaTime() * (10.1f - dot);
+	//		}
+	//		else
+	//		{
+	//			angle -= GetDeltaTime() * (10.1f - dot);
+	//		}
+	//		player->dirX = cosf(angle);
+	//		player->dirZ = sinf(angle);
+	//		player->goalX = 0.0f;
+	//		player->goalZ = 0.0f;
+	//	}
 
-		SetWorldMatrix(player->posX, player->posY, player->posZ, -player->dirX, 0.0f, player->dirZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
-	}
+	//	SetWorldMatrix(player->posX, player->posY, player->posZ, -player->dirX, 0.0f, player->dirZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+	//}
 }
 
 void GameScene::Clear()
@@ -85,6 +85,7 @@ void GameScene::Setup(int scene)//Load
 		EntityID dog = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
+		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
 		dogCo->model.Load("HellhoundDummy_PH.mdl");
 		/*EntityID stage = registry.CreateEntity();
 		registry.AddComponent<ModelComponent>(stage);
@@ -92,6 +93,7 @@ void GameScene::Setup(int scene)//Load
 		stageCo->model.Load("PlaceholderScene.mdl");*/
 		EntityID stage = registry.CreateEntity();
 		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
+		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 		stageCo->model.Load("PlaceholderScene.mdl");
 
 		RenderGeometryIndependentCollision(stage);
@@ -99,7 +101,10 @@ void GameScene::Setup(int scene)//Load
 		EntityID player = registry.CreateEntity();
 		registry.AddComponent<PlayerComponent>(player);
 		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
-		pc->model = &dogCo->model;
+		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
+		pmc->model.Load("HellhoundDummy_PH.mdl");
+		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
+
 	}
 }
 
@@ -156,42 +161,6 @@ void GameScene::Input()
 		stateManager.menu.Setup();
 		Clear();
 		Unload();
-	}
-	if (keyInput[SDL_SCANCODE_W] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posZ += p->movementSpeed * GetDeltaTime();
-			p->goalZ += 1.0f;
-		}
-	}
-	if (keyInput[SDL_SCANCODE_S] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posZ -= p->movementSpeed * GetDeltaTime();
-			p->goalZ -= 1.0f;
-		}
-	}
-	if (keyInput[SDL_SCANCODE_A] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posX -= p->movementSpeed * GetDeltaTime();
-			p->goalX -= 1.0f;
-		}
-	}
-	if (keyInput[SDL_SCANCODE_D] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posX += p->movementSpeed * GetDeltaTime();
-			p->goalX += 1.0f;
-		}
 	}
 }
 

@@ -4,7 +4,6 @@
 #include "Hitbox.h"
 #include "States_&_Scenes\StateManager.h"
 #include "Input.h"
-#include "AllComponents.h"
 #include "Registry.h"
 #include "Components.h"
 

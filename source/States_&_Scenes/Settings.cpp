@@ -3,7 +3,7 @@
 #include "Input.h"
 #include "Menus.h"
 #include "UIRenderer.h"
-#include "AllComponents.h"
+#include "Components.h"
 
 
 void SettingsState::Setup()

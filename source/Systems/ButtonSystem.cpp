@@ -7,20 +7,15 @@
 
 bool ButtonSystem::Update()
 {
-	for (auto entity : View<UICanvas>(registry))
+	for (auto entity : View<ButtonComponent>(registry))
 	{
-		UICanvas* canvas = registry.GetComponent<UICanvas>(ui);
-		//Input controller component.
-		if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[0].m_uiComponent.Intersect({ mouseX, mouseY }))
+		auto comp = registry.GetComponent<ButtonComponent>(entity);
+		if (comp->button.m_uiComponent.Intersect({ mouseX, mouseY }))
 		{
-
-			//Unload();
+			comp->button.Hover();
+			if (mouseButtonPressed[MouseButton::left] == released)
+				comp->button.Interact();
 		}
-		if (mouseButtonPressed[MouseButton::left] == released && canvas->m_Buttons[1].m_uiComponent.Intersect({ mouseX, mouseY }))
-		{
-			//Unload();
-		}
-		
 	}
 	return true;
 }
