@@ -26,6 +26,7 @@ int SetupUIRenderState();
 int SetupGameRenderer();
 
 void PrepareBackBuffer();
+void ClearBackBuffer();
 void Clear(const int& componentSlot);
 void RenderIndexed(const size_t& count);
 void ClearParticles();
