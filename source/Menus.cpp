@@ -105,4 +105,5 @@ void SetupHUDCanvas(UICanvas& canvas)
 	canvas.AddText(ui, "Souls", L"Current Souls: 0", { -0.8f, 0.8f });
 	canvas.AddText(ui, "ExampleText", L"This is the HUD!", {0.0f, 0.3f });
 	canvas.AddText(ui, "Escape", L"Press ECS to return to main menu!", { 0.0f, 0.8f });
+	canvas.AddText(ui, "Move", L"Use WASD to move doggo!", { 0.0f, 0.6f });
 }
