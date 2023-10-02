@@ -50,6 +50,7 @@ UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 sc
 	}
 
 	m_Bounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height};
+	
 	SetTransform(position, scale, rotation);
 
 	converter->Release();

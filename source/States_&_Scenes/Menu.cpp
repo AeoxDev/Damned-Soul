@@ -49,7 +49,7 @@ void Menu::SetupButtons()
 
 			};
 
-		ButtonComponent* c = registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/StartButton.png", "", L"", OnClick, OnHover, { 0.0f, 0.0f }));
+		ButtonComponent* c = registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/StartButton.png", "", L"", OnClick, OnHover, { -0.0f, -0.4f }));
 		int ase = 2;
 	}
 
@@ -68,7 +68,7 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/OptionsButton.png", "", L"", OnClick, OnHover, { 0.0f,  -0.1f}));
+		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/OptionsButton.png", "", L"", OnClick, OnHover, { -0.0f,  -0.8f}));
 	}
 
 	//Exit Button
@@ -83,22 +83,22 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.2f }));
+		//registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton(ui, "Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { -0.8f, -0.8f }));
 	}
 }
 
 void Menu::SetupImages()
 {
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/ExTitle.png", { 0.0f, 0.9f }, { 4.0f, 4.0f }));
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/ExTitle.png", { 0.0f, 0.6f }, { 2.0f, 2.0f }));
 
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/Eye.png", { 50.0f, 50.0f }, { 1.5f, 1.5f }));
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/Eye.png", { -0.5f, 0.6f }, { 1.5f, 1.5f }));
 
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/Eye.png", { sdl.WIDTH - 68.0f, 50.0f }, { 1.5f, 1.5f }));
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/Eye.png", { 0.5, 0.6f }, { 1.5f, 1.5f }));
 }
 
 void Menu::SetupText()
 {
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"This is the main menu!", { sdl.WIDTH / 2.0f - 50.0f, 300.0f }));
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"This is the main menu!", { 0.0f, 0.0f }));
 }
 
 void Menu::Render()
