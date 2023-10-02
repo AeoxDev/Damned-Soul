@@ -194,6 +194,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\EntityFramework.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
+    <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
     <ClCompile Include="source\Input.cpp" />
@@ -427,6 +428,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
+    <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
