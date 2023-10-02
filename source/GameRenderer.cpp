@@ -125,11 +125,24 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
-int SetupParticles(uint32_t*& index)
+int SetupParticles(/*Particle* particles,*/)
 {
-	renderStates[currentSize].constantBuffer = CreateConstantBuffer(sizeof(ParticleMetadataBuffer)); // THIS IS FOR THE COMPUTE SHADER
-	renderStates[currentSize].rasterizerState = CreateRasterizerState(false, true);
+	//particleRenderState.rasterizerState = CreateRasterizerState(false, true);
+	//particleRenderState.pixelShader = LoadPixelShader("ParticlePS.cso");
+	//particleRenderState.vertexShader = LoadVertexShader("ParticleVS.cso");
+	//particleRenderState.geometryShader = LoadGeometryShader("ParticleGS.cso");
+	//particleRenderState.computeShader = LoadComputeShader("ParticleCS.cso");
+	//particleRenderState.vertexBuffer = CreateVertexBuffer();
 
+	//particleRenderState.readSRV = ;
+	//particleRenderState.writeSRV = ;
+	//particleRenderState.readUAV = ;
+	//particleRenderState.writeUAV = ;
+	//particleRenderState.constantBuffer = ;
+
+
+	renderStates[currentSize].constantBuffer = CreateConstantBuffer(Particles::GetData(), sizeof(ParticleMetadataBuffer)); // THIS IS FOR THE COMPUTE SHADER
+	renderStates[currentSize].rasterizerState = CreateRasterizerState(false, true);
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
 	renderStates[currentSize].vertexShader = LoadVertexShader("ParticleVS.cso", PARTICLE);
 	renderStates[currentSize].pixelShader = LoadPixelShader("ParticlePS.cso");
@@ -155,6 +168,8 @@ void PrepareDefaultPipeline()
 
 void PrepareBackBuffer()
 {
+	SetTopology(TRIANGLELIST);
+
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(renderStates[backBufferRenderSlot].pixelShader);
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShader);

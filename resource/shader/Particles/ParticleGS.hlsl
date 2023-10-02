@@ -29,6 +29,8 @@ void main(
     //look.y = 0.f;
     look = normalize(look);
     
+    
+    // TODO: Up vector needs to be calculated independantly
     float3 up = float3(0.f, 1.f, 0.f);
     float3 right = cross(up, look);
     

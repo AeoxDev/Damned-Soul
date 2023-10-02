@@ -83,7 +83,7 @@ public:
 	uint32_t emplace(const _tKey& key, const _tVal& val)
 	{
 		// if the capacity of the map is less than the size of the map, reserve a larger chunk of memory
-		if (m_capacity < m_size)
+		if (m_capacity <= m_size)
 		{
 			reserve(m_capacity * 2 + (m_capacity == 0));
 		}

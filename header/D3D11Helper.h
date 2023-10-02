@@ -152,9 +152,9 @@ bool UpdateConstantBuffer(const CB_IDX, const void* data);
 // Update the world matrix, there needs to be only one
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 //No rotations, only position
-void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto);
-void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto);
-void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto);
+void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Release for a single constant buffer
 void ReleaseCS(const CS_IDX idx);
 
@@ -165,6 +165,8 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
 // Set an active Vertex Buffer buffer by index
 bool SetVertexBuffer(const VB_IDX idx);
+// Sets vertex buffer to NULL
+bool UnloadVertexBuffer();
 // Release for a single vertex buffer
 void ReleaseVB(const VB_IDX idx);
 
@@ -173,6 +175,8 @@ void ReleaseVB(const VB_IDX idx);
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count);
 // Set an active Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx);
+// Sets index buffer to NULL
+bool UnloadIndexBuffer();
 // Release for a single index buffer
 void ReleaseIB(const IB_IDX idx);
 

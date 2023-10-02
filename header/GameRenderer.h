@@ -20,13 +20,32 @@ struct RenderSetupComponent
 	SMP_IDX samplerState = -1;
 	CB_IDX constantBuffer = -1;
 };
+
+struct ParticleRenderSetupComponent
+{
+	RS_IDX	rasterizerState = -1;
+	PS_IDX	pixelShader = -1;
+	VS_IDX	vertexShader = -1;
+	GS_IDX	geometryShader = -1;
+	CS_IDX	computeShader = -1;
+	VB_IDX	vertexBuffer = -1;
+	RTV_IDX renderTargetView = -1;
+	SRV_IDX readSRV = -1;
+	SRV_IDX writeSRV = -1;
+	UAV_IDX readUAV = -1;
+	UAV_IDX writeUAV = -1;
+	CB_IDX constantBuffer = -1;
+};
+
 extern RenderSetupComponent renderStates[8];
+extern ParticleRenderSetupComponent particleRenderState;
+
 extern int backBufferRenderSlot;
 
 bool Setup3dGraphics();
 int SetupUIRenderState();
 int SetupGameRenderer();
-int SetupParticles(uint32_t*& index);
+int SetupParticles();
 
 void PrepareDefaultPipeline();
 

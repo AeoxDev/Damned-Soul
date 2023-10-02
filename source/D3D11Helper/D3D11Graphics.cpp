@@ -108,65 +108,107 @@ void EndDirectX()
 {
 	// Release all pixel shaders
 	for (auto& [key, val] : pixHolder->ps_map)
-		val->Release();
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 
 	// Release all samplers
 	for (auto& [key, val] : smpHolder->smp_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Release all vertex shaders and their input layouts
 	for (auto& [key, val] : vrtHolder->vs_map)
-		val->Release();
-	for (auto& [key, val] : vrtHolder->il_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}	for (auto& [key, val] : vrtHolder->il_map)
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Release all geometry shaders
 	for (auto& [key, val] : geoHolder->gs_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Release all compute shaders
 	for (auto& [key, val] : comHolder->cs_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Release all textures and associated resources
 	for (auto& [key, val] : txHolder->img_map)
-		val.Release();
+		val.Release(); // Is not a pointer
 	for (auto& [key, val] : txHolder->srv_map)
-		val->Release();
+	{
+		if (val != nullptr)
+			val->Release();
+	}	
 	for (auto& [key, val] : txHolder->tx_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Release all buffers shaders
 	for (auto& [key, val] : bfrHolder->buff_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Release all render target views
 	for (auto& [key, val] : rtvHolder->rtv_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	
 	// Release all depth stencil views
 	for (auto& [key, val] : dsvHolder->dsv_map)
-		val->Release();
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	for (auto& [key, val] : dsvHolder->ds_map)
-		val->Release();
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 
 	// Release all shader resource views
-	for (auto& [key, val] : srvHolder->srv_map)
-		val->Release();
 	for (auto& [key, val] : srvHolder->srv_resource_map)
-		val->Release();
+	{
+		if (val != nullptr)
+			val->Release();
+	}
+	for (auto& [key, val] : srvHolder->srv_map)
+	{
+		if (val != nullptr)
+			val->Release();
+	}
+
 
 	// Release all unorderd access views
 	for (auto& [key, val] : uavHolder->uav_map)
-		val->Release();
+	{
+		if (val != nullptr)
+			val->Release();
+	}	
 	for (auto& [key, val] : uavHolder->uav_resource_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Release all rasterizer states
 	for (auto& [key, val] : rsHolder->rs_map)
-		val->Release();
-
+	{
+		if (val != nullptr)
+			val->Release();
+	}
 	// Clear and flush device context
 	d3d11Data->deviceContext->ClearState();
 	d3d11Data->deviceContext->Flush();

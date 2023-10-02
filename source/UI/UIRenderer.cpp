@@ -138,4 +138,6 @@ void RenderUI()//Render what is drawn to rendertarget.
 
 	//d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[renderStates[ui.RenderSlot].shaderResourceView]);
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
+
+	UnloadShaderResourceView(BIND_PIXEL, 0);
 }

@@ -8,7 +8,7 @@ ID3D11Buffer* bfr_NULL = NULL;
 
 CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 {
-	uint8_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->_nextIdx;
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -30,8 +30,10 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 		std::cerr << "Failed to create Constant Buffer!" << std::endl;
 		return -1;
 	}
-	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 
+	size_t s = sizeof(uint16_t) + sizeof(ID3D11Buffer*);
+
+	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
 	return bfrHolder->_nextIdx++;
@@ -39,7 +41,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 
 CB_IDX CreateConstantBuffer(const size_t size)
 {
-	uint8_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->_nextIdx;
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -57,7 +59,6 @@ CB_IDX CreateConstantBuffer(const size_t size)
 		return -1;
 	}
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
-
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
 	return bfrHolder->_nextIdx++;
@@ -153,44 +154,7 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 	return true;
 }
 
-
-
-void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto)
-{
-	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-	world = DirectX::XMMatrixTranslation(x, y, z);
-	world = DirectX::XMMatrixTranspose(world);
-	DirectX::XMFLOAT4X4 in;
-	DirectX::XMStoreFloat4x4(&in, world);
-	UpdateWorldMatrix(&in, bindto);
-}
-
-void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto)
-{
-	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-	world = DirectX::XMMatrixRotationY(rotationY);
-	world = world * DirectX::XMMatrixTranslation(x, y, z);
-	world = DirectX::XMMatrixTranspose(world);
-	DirectX::XMFLOAT4X4 in;
-	DirectX::XMStoreFloat4x4(&in, world);
-	UpdateWorldMatrix(&in, bindto);
-}
-
-void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto)
-{
-	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-	DirectX::XMVECTOR v = DirectX::XMVECTOR{ 0.0f, 0.0f,0.0f };
-	DirectX::XMVECTOR f = DirectX::XMVECTOR{dirX, dirY, dirZ};
-	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
-	world = DirectX::XMMatrixLookAtLH(v, f, up);
-	world = world * DirectX::XMMatrixTranslation(x, y, z);
-	world = DirectX::XMMatrixTranspose(world);
-	DirectX::XMFLOAT4X4 in;
-	DirectX::XMStoreFloat4x4(&in, world);
-	UpdateWorldMatrix(&in, bindto);
-}
-
-void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
+void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
 	static CB_IDX idx = -1;
 	if (idx == -1)
@@ -217,8 +181,45 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 	d3d11Data->deviceContext->Unmap(bfrHolder->buff_map[idx], 0);
 }
 
+void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	world = DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto, slot);
+}
+
+void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	world = DirectX::XMMatrixRotationY(rotationY);
+	world = world * DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto, slot);
+}
+
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	DirectX::XMVECTOR v = DirectX::XMVECTOR{ 0.0f, 0.0f,0.0f };
+	DirectX::XMVECTOR f = DirectX::XMVECTOR{ dirX, dirY, dirZ };
+	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
+	world = DirectX::XMMatrixLookAtLH(v, f, up);
+	world = world * DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto, slot);
+}
+
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
+	uint16_t currentIdx = bfrHolder->_nextIdx;
+
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = (D3D11_USAGE)useFlags; 
 	desc.ByteWidth = (UINT)size * (UINT)count;
@@ -231,8 +232,6 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 	buffData.pSysMem = data;
 	buffData.SysMemPitch = 0;
 	buffData.SysMemSlicePitch = 0;
-
-	uint16_t currentIdx = bfrHolder->_nextIdx;
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
@@ -286,6 +285,12 @@ bool SetVertexBuffer(const VB_IDX idx)
 	return true;
 }
 
+bool UnloadVertexBuffer()
+{
+	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &bfr_NULL, 0, 0);
+	return true;
+}
+
 
 // Create an Index Buffer with provided data and return a unique index to it
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count)
@@ -330,6 +335,13 @@ bool SetIndexBuffer(const IB_IDX idx)
 
 	UINT offset = 0;
 	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_map[idx], DXGI_FORMAT_R32_UINT, offset);
+	return true;
+}
+
+bool UnloadIndexBuffer()
+{
+	UINT offset = 0;
+	d3d11Data->deviceContext->IASetIndexBuffer(bfr_NULL, DXGI_FORMAT_R32_UINT, offset);
 	return true;
 }
 

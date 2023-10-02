@@ -88,7 +88,8 @@ TX_IDX LoadTexture(const char* name)
 TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
 {
 	// Check hash
-	uint16_t& current = txHolder->currentCount;
+	uint16_t& currentIdx = txHolder->_nextIdx;
+
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
 	desc.Width = width;
@@ -103,16 +104,20 @@ TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFla
 	desc.CPUAccessFlags = (D3D11_CPU_ACCESS_FLAG)cpuAcess;
 	desc.MiscFlags = 0;
 
+	ID3D11Texture2D* tempTex = 0;
 	// Attempt to create a texture in the device
-	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, nullptr, &(txHolder->tx_arr[current]));
+	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, nullptr, &tempTex);
 	if (FAILED(hr))
 	{
 		std::cerr << "Failed to create empty ID3D11Texture2D" << std::endl;
 		return false;
 	}
+	txHolder->tx_map.emplace(currentIdx, tempTex);
+
 	// Set the hash last thing you do
-	txHolder->hash_arr[current] = current;
-	return current++;
+	txHolder->hash_map.emplace(currentIdx, currentIdx);
+		
+	return txHolder->_nextIdx++;
 }
 
 bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot)

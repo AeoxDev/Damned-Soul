@@ -58,9 +58,9 @@ struct SamplerStateHolder
 
 struct BufferHolder
 {
-	uint8_t								_nextIdx = 0;
-	ML_Map < uint8_t, ID3D11Buffer*>	buff_map; // MANY more buffers are needed than shaders
-	ML_Map < uint8_t, uint32_t>	size; // Size
+	uint16_t								_nextIdx = 0;
+	ML_Map < uint16_t, ID3D11Buffer*>	buff_map; // MANY more buffers are needed than shaders
+	ML_Map < uint16_t, uint32_t>	size; // Size
 };
 
 struct ViewPortHolder

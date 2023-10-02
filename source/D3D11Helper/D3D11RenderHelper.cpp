@@ -142,10 +142,10 @@ DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 	dsvHolder->ds_map.emplace(currentIdx, tempTex);
 
 	ID3D11DepthStencilView* tempDSV = 0;
-	hr = d3d11Data->device->CreateDepthStencilView(dsvHolder->ds_map[dsvHolder->_nextIdx], 0, &tempDSV);
+	hr = d3d11Data->device->CreateDepthStencilView(dsvHolder->ds_map[currentIdx], 0, &tempDSV);
 	if (FAILED(hr))
 	{
-		dsvHolder->ds_map[dsvHolder->_nextIdx]->Release(); // Release if failed
+		dsvHolder->ds_map[currentIdx]->Release(); // Release if failed
 		std::cerr << "Failed to create Depth Stencil View!" << std::endl;
 		return false;
 	}
@@ -183,7 +183,7 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 	buffData.SysMemPitch = 0;
 	buffData.SysMemSlicePitch = 0;
 
-	ID3D11Buffer* tempBuff;
+	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&bufferDesc, &buffData, &tempBuff);
 	if (FAILED(hr))
 	{
@@ -279,7 +279,6 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 
 			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			texture->Release();
 			break;
 		case RESOURCE_TEXTURE2DARRAY:
 			//Define if needed
@@ -294,6 +293,12 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 			std::cerr << "Did not create requested Shader Resource View, requested case is not defined" << std::endl;
 			return false;
 			break;
+	}
+
+	if (tempResource == nullptr)
+	{
+		std::cerr << "tempResource was null after creation, something went wrong. SRV not created" << std::endl;
+		return false;
 	}
 
 	ID3D11ShaderResourceView* tempSRV = 0;
@@ -331,6 +336,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t sourceIdx, RESOURCE_FLAGS 
 	case BIND_RENDER_TARGET:
 		tempResource = rtvHolder->tx_map[sourceIdx];
 		srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
+		srvHolder->srv_resource_map[currentIdx]->AddRef();
 
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], NULL, &tempSRV);
 		if (FAILED(hr))
@@ -353,6 +359,8 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t sourceIdx, RESOURCE_FLAGS 
 	case BIND_SHADER_RESOURCE:
 		tempResource = rtvHolder->tx_map[sourceIdx];
 		srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
+		srvHolder->srv_resource_map[currentIdx]->AddRef();
+
 
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], NULL, &tempSRV);
 		if (FAILED(hr))
@@ -362,7 +370,6 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t sourceIdx, RESOURCE_FLAGS 
 			return false;
 		}
 		srvHolder->srv_map.emplace(currentIdx, tempSRV);
-
 		srvHolder->size.emplace(currentIdx, srvHolder->size[sourceIdx]);
 
 		break;
@@ -440,9 +447,7 @@ bool UnloadShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slo
 
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 {
-	ID3D11Resource* vertexBufferResource = bfrHolder->buff_arr[destination];
-	d3d11Data->deviceContext->CopyResource(vertexBufferResource, srvHolder->srv_resource_arr[source]);
-	vertexBufferResource->Release();
+	d3d11Data->deviceContext->CopyResource(bfrHolder->buff_map[destination], srvHolder->srv_resource_map[source]);
 }
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
@@ -513,8 +518,10 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 	UAVDesc.Buffer.Flags = 0;
 	UAVDesc.Buffer.NumElements = amount;
 
-	ID3D11Resource* tempResource = 0;
-	uavHolder->uav_resource_map.emplace(currentIdx, srvHolder->srv_resource_map[idx]);
+	ID3D11Resource* tempResource = srvHolder->srv_resource_map[idx];
+	uavHolder->uav_resource_map.emplace(currentIdx, tempResource);
+	uavHolder->uav_resource_map[currentIdx]->AddRef();
+
 
 	ID3D11UnorderedAccessView* tempUAV = 0;
 	HRESULT hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_map[currentIdx], &UAVDesc, &tempUAV);

@@ -1,8 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
 #include "MemLib/PoolPointer.hpp"
-#include "EntityFramework.h"
 #include "GameRenderer.h"
+#include "ParticleComponent.h"
 
 #define PARTICLE_METADATA_LIMIT 256
 #define THREADS_PER_GROUP 256
@@ -66,6 +66,8 @@ namespace Particles
 	void InitializeParticles();
 	void ReleaseParticles();
 
+	ParticleMetadataBuffer* GetData();
+
 	//Calls for D3D11Helper to set the compute shader and the resources it requires
 	void PrepareParticleCompute(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to reset the compute shader and copy the resources of the SRV to vertex buffer
@@ -76,6 +78,6 @@ namespace Particles
 	void FinishParticlePass();
 
 	// Prepares constant buffer at metadataSlot to be rendered as smoke particles.
-	void PrepareSmokeParticles(Registry& registry, EntityID& entityID, RenderSetupComponent constantBuffer[8], float seconds, float radius, float size, DirectX::XMFLOAT3 entityPosition);
+	void PrepareSmokeParticles(ParticleComponent* pc, RenderSetupComponent constantBuffer[8], float seconds, float radius, float size, DirectX::XMFLOAT3 entityPosition);
 }
 

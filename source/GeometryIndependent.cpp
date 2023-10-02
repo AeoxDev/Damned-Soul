@@ -110,7 +110,7 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	int16_t cameraIdx = Camera::GetCameraBufferIndex();
-	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 1);
 	SetRasterizerState(GIcomponent->rasterizerState);
 	SetViewport(GIcomponent->viewport);
 	//Find a depthstencil to use
@@ -120,7 +120,7 @@ void RenderGeometryIndependentCollisionToTexture(Registry& registry, EntityID& s
 	ClearDepthStencilView(GIcomponent->depthStencil);
 	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
-	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL);
+	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 	SetVertexBuffer(model->model.m_vertexBuffer);
 	SetIndexBuffer(model->model.m_indexBuffer);
 	//Update CB
@@ -265,7 +265,7 @@ CB_IDX SetupGIConstantBuffer(Registry& registry, EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->constantBuffer = CreateConstantBuffer(&GIcomponent->shaderData, sizeof(GIConstantBufferData), 0);
+	GIcomponent->constantBuffer = CreateConstantBuffer(&GIcomponent->shaderData, sizeof(GIConstantBufferData));
 	return GIcomponent->constantBuffer;
 }
 
