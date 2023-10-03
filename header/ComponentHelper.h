@@ -2,6 +2,7 @@
 
 #include "D3D11Graphics.h"
 #include <DirectXMath.h>
+#include <bitset>
 
 #include "Relics.h"
 

@@ -100,9 +100,40 @@ void StateManager::Setup()
 	systems.push_back(new UIRenderSystem());
 }
 
-void StateManager::Clear()
+void StateManager::Input()
 {
-	//Find which registries for clear system
+	//First read the keys
+	
+
+	//Then go through the registries that are active
+	if (currentStates & State::InMainMenu)
+	{
+		menu.Input();
+	}
+	if (currentStates & State::InPause)
+	{
+		pause.Input();
+	}
+	if (currentStates & State::InSettings)
+	{
+		settings.Input();
+	}
+	if (currentStates & State::InPlay)
+	{
+		levelScenes[activeLevelScene].Input();
+	}
+	if (currentStates & State::InShop)
+	{
+		shop.Input();
+	}
+}
+
+void StateManager::Update()
+{
+	for (size_t i = 0; i < systems.size(); i++)
+	{
+		systems[i]->Update();
+	}
 }
 
 void StateManager::ComputeShaders()
@@ -129,122 +160,6 @@ void StateManager::ComputeShaders()
 	}*/
 }
 
-void StateManager::Render()
-{
-	
-
-	//Find which registries for render system
-	/*if (currentStates & State::InMainMenu)
-	{
-		menu.Render();
-	}
-	if (currentStates & State::InPause)
-	{
-		pause.Render();
-	}
-	if (currentStates & State::InSettings)
-	{
-		settings.Render();
-	}
-	if (currentStates & State::InPlay)
-	{
-		levelScenes[activeLevelScene].Render();
-	}
-	if (currentStates & State::InShop)
-	{
-		shop.Render();
-	}*/
-}
-
-void StateManager::Input()
-{
-	//First read the keys
-	
-
-	//Then go through the registries that are active
-	/*if (currentStates & State::InMainMenu)
-	{
-		menu.Input();
-	}
-	if (currentStates & State::InPause)
-	{
-		pause.Input();
-	}
-	if (currentStates & State::InSettings)
-	{
-		settings.Input();
-	}
-	if (currentStates & State::InPlay)
-	{
-		levelScenes[activeLevelScene].Input();
-	}
-	if (currentStates & State::InShop)
-	{
-		shop.Input();
-	}*/
-}
-
-void StateManager::Update()
-{
-	for (size_t i = 0; i < systems.size(); i++)
-	{
-		systems[i]->Update();
-	}
-	/*if (currentStates & State::InMainMenu)
-	{
-		menu.Update();
-	}
-	if (currentStates & State::InPause)
-	{
-		pause.Update();
-	}
-	if (currentStates & State::InSettings)
-	{
-		settings.Update();
-	}
-	if (currentStates & State::InPlay)
-	{
-		levelScenes[activeLevelScene].Update();
-	}
-	if (currentStates & State::InShop)
-	{
-		shop.Update();
-	}*/
-	//Find which registries to update
-	//switch (m_currentState)
-	//{
-	//case State::Menu:
-
-	//	if (m_menu.currentSubState == MenuState::Main)
-	//		m_menu.Update();
-	//	break;
-	//case State::Game:
-
-	//	if (m_game.currentSubState == GameState::Unpause)
-	//	{
-	//		//In the future, we may not want to update particles on every update call
-	//		//Currently lacking an indicator as to when we want to update particles
-	//		m_game.UpdateParticles();
-
-	//		m_game.Update();
-	//	}
-
-	//	break;
-	//}
-
-	//SDL_GetMouseState(&mousePos.first, &mousePos.second);
-	//if (mousePos != oldmousepos)
-	//	//std::cout << mousePos.first << ", " << mousePos.second << std::endl;
-
-	//oldmousepos = mousePos;
-}
-void StateManager::EndFrame()
-{
-	Present();//Present what was drawn during the update!
-	ResetInput();
-	GetInput();
-	//MemLib::pdefrag();
-}
 void StateManager::UnloadAll()
 {
 	menu.Unload();
@@ -256,4 +171,12 @@ void StateManager::UnloadAll()
 	ReleaseUIRenderer();
 	ui.Release();
 	EndDirectX();
+}
+
+void StateManager::EndFrame()
+{
+	Present();//Present what was drawn during the update!
+	ResetInput();
+	GetInput();
+	//MemLib::pdefrag();
 }

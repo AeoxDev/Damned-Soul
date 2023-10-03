@@ -27,12 +27,11 @@ struct StateManager
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>
 	void Setup();
-	void Clear();
-	void ComputeShaders();//All compute shaders here
-	void Render();//All gpu systems here
+
 	void Input();//All input based cpu systems here
 	void Update();//All cpu systems here
+	void ComputeShaders();//All compute shaders here
 
-	void EndFrame();//Clears all framebased variables.
 	void UnloadAll();
+	void EndFrame();//Clears all framebased variables.
 };
