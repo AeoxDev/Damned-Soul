@@ -9,6 +9,10 @@
 #define CAMERA_OFFSET_Z -200.f
 #define CAMERA_FOV 3.14f/16.f
 #define CAMERA_PERSPECTIVE_DEPTH 512.0f
+//The max zoom in
+#define CAMERA_ZOOM_IN_LIMIT 3.14f/48.f
+//THe max zoom out
+#define CAMERA_ZOOM_OUT_LIMIT 3.14f/10.f
 
 struct CameraStruct
 {
@@ -75,7 +79,18 @@ void Camera::SetRotation(const float x, const float y, const float z)
 
 void Camera::SetFOV(const float radians)
 {
-	GameCamera->m_FOV = radians;
+	if (radians < CAMERA_ZOOM_IN_LIMIT)
+	{
+		GameCamera->m_FOV = CAMERA_ZOOM_IN_LIMIT;
+	}
+	else if (radians > CAMERA_ZOOM_OUT_LIMIT)
+	{
+		GameCamera->m_FOV = CAMERA_ZOOM_OUT_LIMIT;
+	}
+	else
+	{
+		GameCamera->m_FOV = radians;
+	}
 }
 
 void Camera::SetWidth(const float& width)

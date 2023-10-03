@@ -59,6 +59,27 @@ bool PointOfInterestSystem::Update()
 	float distY = avY - cameraPosY;
 	float distZ = avZ - cameraPosZ;
 
+	//Calculate max distance from everypoint.
+	float maxDistance = -100000000.0f;
+	for (auto entity : View<PointOfInterestComponent, TransformComponent>(registry))
+	{
+		//Get POI data if needed
+		poiCo = registry.GetComponent<PointOfInterestComponent>(entity);
+
+		//Get position
+		tCo = registry.GetComponent<TransformComponent>(entity);
+		float distSquared = (tCo->positionX - avX) * (tCo->positionX - avX) + (tCo->positionZ - avZ) * (tCo->positionZ - avZ);
+		if (maxDistance < distSquared)
+		{
+			maxDistance = distSquared;
+		}
+	}
+	float lastFOV = Camera::GetFOV();
+	Camera::SetFOV((sqrtf(maxDistance)) * 0.01f);
+	float newFOV = Camera::GetFOV();
+	float fovDist = newFOV - lastFOV;
+	float fovScalar = GetDeltaTime();
+	Camera::SetFOV(lastFOV + fovDist * fovScalar);
 	float distanceFactor = 5.0f;
 
 	distX *= distanceFactor;
@@ -73,6 +94,7 @@ bool PointOfInterestSystem::Update()
 	Camera::SetPosition(posX, posY, posZ, true);
 	Camera::SetLookAt(posX, posY, posZ);
 	Camera::UpdateView();
+	Camera::UpdateProjection();
 	//Camera::UpdateProjection();//Do when zoom in out
 	return true;
 }
