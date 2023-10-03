@@ -17,3 +17,8 @@
 //GUI To Be Decapritated
 #include "TextComponent.h"
 #include "ImageComponent.h"
+#include "GeometryIndependentComponent.h"
+#include "PlayerComponent.h"
+#include "ComponentHelper.h"
+#include "TransformComponent.h"
+#include "PointOfInterestComponent.h"

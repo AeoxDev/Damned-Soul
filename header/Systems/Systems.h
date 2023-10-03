@@ -40,6 +40,10 @@ class PlayerSoulsUISystem : public System
 };
 
 
+class PointOfInterestSystem : public System
+{
+	bool Update();
+};
 //System implementation that'll pretty much need to be worked into the scene class and not fuck up the rest of the project
 //Order of operations in the main update loop is essentially:
 //1. Do general window events

@@ -94,6 +94,7 @@ void StateManager::Setup()
 	systems.push_back(new ButtonSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new GeometryIndependentSystem());
+	systems.push_back(new PointOfInterestSystem());
 	systems.push_back(new PlayerHealthUISystem());
 	systems.push_back(new PlayerSoulsUISystem());
 	systems.push_back(new UIRenderSystem());

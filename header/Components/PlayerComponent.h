@@ -14,4 +14,8 @@ struct PlayerComponent
 	//Scale
 
 	//Controller component
+	float moveTime = .0f;//This is the time the player has been moving, used for camera feel.
+	float moveFactor = 2.5f;
+	float moveResetFactor = 1.25f;
+	float moveMaxLimit = 3.0f;
 };
