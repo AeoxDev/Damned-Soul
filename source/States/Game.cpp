@@ -14,7 +14,7 @@
 
 void GameScene::Setup(int scene)//Load
 {
-	
+	RedrawUI();	
 	if (scene == 0)
 	{
 		

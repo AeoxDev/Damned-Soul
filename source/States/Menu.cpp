@@ -8,6 +8,7 @@
 
 void Menu::Setup()//Load
 {
+	RedrawUI();
 	SetupButtons();
 	SetupImages();
 	SetupText();

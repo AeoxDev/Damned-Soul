@@ -3,9 +3,11 @@
 #include "Input.h"
 #include "Components.h"
 #include "Registry.h"
+#include "UIRenderer.h"
 
 void SettingsState::Setup()
 {
+	RedrawUI();
 	SetupButtons();
 	SetupImages();
 	SetupText();

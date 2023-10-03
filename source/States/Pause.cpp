@@ -1,10 +1,11 @@
 #include "States/Pause.h"
 #include "Input.h"
 #include "States\StateManager.h"
+#include "UIRenderer.h"
 
 void PauseState::Setup()
 {
-
+	RedrawUI();
 }
 
 void PauseState::Input()

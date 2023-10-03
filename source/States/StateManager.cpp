@@ -88,6 +88,7 @@ void StateManager::Setup()
 	Particles::InitializeParticles();
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
 	SetupTestHitbox();
+	RedrawUI();
 
 	//Setup systems here
 	systems.push_back(new RenderSystem());
