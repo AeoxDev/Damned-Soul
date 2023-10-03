@@ -104,6 +104,11 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	
 }
 
+void CombatBehaviour()
+{
+
+}
+
 bool SkeletonBehaviourSystem::Update()
 {
 	//First find the skynet component
@@ -127,7 +132,11 @@ bool SkeletonBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
-			if (distance < 50) //hunting distance
+			if (distance < 2.5f)
+			{
+				CombatBehaviour();
+			}
+			else if (distance < 50) //hunting distance
 			{
 				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent);
 			}

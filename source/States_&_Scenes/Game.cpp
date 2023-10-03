@@ -115,7 +115,7 @@ void GameScene::Setup(int scene)//Load
 		skeltc->positionX = 20.0f;
 		skeltc->positionY += 3.0f;
 		skeltc->facingX = 1.0f;
-		skelCo->model.Load("HellhoundDummy_PH.mdl");
+		skelCo->model.Load("SkeletonTwoDymmy_2.mdl");
 		SkeletonBehaviour* skelBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 
 		EntityID skeleton2 = registry.CreateEntity();
