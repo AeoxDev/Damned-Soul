@@ -107,6 +107,27 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
 		ptc->positionY += 1.0f;
 
+		//trial enemy, be nice to the intern. Definitely a skeleton doing skeleton things, no doggos in sight
+		EntityID skeleton = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(skeleton);
+		ModelComponent* skelCo = registry.GetComponent<ModelComponent>(skeleton);
+		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
+		skeltc->positionX = 20.0f;
+		skeltc->positionY += 3.0f;
+		skeltc->facingX = 1.0f;
+		skelCo->model.Load("HellhoundDummy_PH.mdl");
+		SkeletonBehaviour* skelBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
+
+		EntityID skeleton2 = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(skeleton2);
+		ModelComponent* skelCo2 = registry.GetComponent<ModelComponent>(skeleton2);
+		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
+		skeltc2->positionX = -20.0f;
+		skeltc2->positionY += 3.0f;
+		skeltc2->facingX = 1.0f;
+		skelCo2->model.Load("HellhoundDummy_PH.mdl");
+		SkeletonBehaviour* skelBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
+
 	}
 }
 
