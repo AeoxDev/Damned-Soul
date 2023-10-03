@@ -3,6 +3,10 @@
 #include <cinttypes>
 #include <stdexcept>
 
+#ifndef ZeroMemory
+#define ZeroMemory(dest, len) memset((dest), 0, (len))
+#endif
+
 struct ML_String
 {
 private:

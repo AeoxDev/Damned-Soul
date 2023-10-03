@@ -186,7 +186,7 @@ void Model::RenderAllSubmeshes()
 
 	// Try to get the initial animation frame
 	uint32_t size;
-	SetPixelAndVertexShader();
+	//SetPixelAndVertexShader();
 	UpdateConstantBuffer(m_animationBuffer, m_animations[0].GetFrame(animationTime, size));
 	SetConstantBuffer(m_animationBuffer, BIND_VERTEX);
 

@@ -58,9 +58,9 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	DirectX::XMVECTOR previousUp = Camera::GetUp();
 	DirectX::XMFLOAT3 vData;
 
-	const VertexBoneless* vertices = model->model.m_bonelessModel->GetVertices();
+	const VertexBoneless* vertices = model->model.m_data->GetBonelessVertices();
 
-	unsigned nrVertices = model->model.m_bonelessModel->m_numVertices;
+	unsigned nrVertices = model->model.m_data->m_numVertices;
 
 	float greatestX = -1000000000.0f;
 	float greatestZ = -1000000000.0f;
