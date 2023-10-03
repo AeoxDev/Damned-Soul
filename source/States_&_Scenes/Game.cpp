@@ -87,10 +87,10 @@ void GameScene::Setup(int scene)//Load
 		EntityID stage = registry.CreateEntity();
 		EntityID player = registry.CreateEntity();
 
-		ModelComponent* dogCo = registry.AddComponent<ModelComponent>(dog);
-		ModelComponent* dogCo2 = registry.AddComponent<ModelComponent>(dog2);
-		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
-		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
+		ModelBonelessComponent* dogCo = registry.AddComponent<ModelBonelessComponent>(dog);
+		ModelBonelessComponent* dogCo2 = registry.AddComponent<ModelBonelessComponent>(dog2);
+		ModelBonelessComponent* stageCo = registry.AddComponent<ModelBonelessComponent>(stage);
+		ModelSkeletonComponent* pmc = registry.AddComponent<ModelSkeletonComponent>(player);
 
 		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
 		TransformComponent* dtc2 = registry.AddComponent<TransformComponent>(dog2);
@@ -109,7 +109,7 @@ void GameScene::Setup(int scene)//Load
 		dogCo->model.Load("HellhoundDummy_PH.mdl");
 		dogCo2->model.Load("HellhoundDummy_PH.mdl");
 		stageCo->model.Load("PlaceholderScene.mdl");
-		pmc->model.Load("HellhoundDummy_PH.mdl");
+		pmc->model.Load("PlayerPlaceholder.mdl");
 		RenderGeometryIndependentCollision(stage);
 		poic->active = POI_ACTIVE;
 		dtc2->positionX = 20.0f;
@@ -151,9 +151,9 @@ void GameScene::Render()
 {
 	
 
-	//for (auto entity : View<ModelComponent>(registry))
+	//for (auto entity : View<ModelBonelessComponent>(registry))
 	//{
-	//	ModelComponent* toRender = registry.GetComponent<ModelComponent>(entity);
+	//	ModelBonelessComponent* toRender = registry.GetComponent<ModelBonelessComponent>(entity);
 	//	SetWorldMatrix(0.0f, 0.0f, 0.0f, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
 	//	SetVertexBuffer(toRender->model.m_vertexBuffer);
 	//	SetIndexBuffer(toRender->model.m_indexBuffer);
@@ -176,9 +176,9 @@ void GameScene::Input()
 
 void GameScene::Unload()
 {
-	for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	{
-		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(entity);
+		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
 		dogCo->model.RenderAllSubmeshes();
 		dogCo->model.Free();
 		registry.DestroyEntity(entity);

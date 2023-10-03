@@ -55,6 +55,7 @@ float Animation::GetTimestamp(const uint32_t frameIdx)
         return ((float*)m_data->m_data)[frameIdx];
 		//return m_data->timestamps[frameIdx];
     }
+	return 0;
 }
 
 DirectX::XMMATRIX* Animation::GetFrame(const float& time, uint32_t& numberOfBones)
