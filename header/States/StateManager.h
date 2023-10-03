@@ -2,9 +2,9 @@
 #include "SDLHandler.h"
 #include "StateEnums.h"
 #include "ButtonManager.h"
-#include "States_&_Scenes\Menu.h"
-#include "States_&_Scenes\Game.h"
-#include "States_&_Scenes\Pause.h"
+#include "States\Menu.h"
+#include "States\Game.h"
+#include "States\Pause.h"
 #include "Systems\Systems.h"
 #include <vector>
 

@@ -1,24 +1,18 @@
 #pragma once
 #include "StateEnums.h"
-#include "Settings.h"
 #include "EntityFramework.h"
 
-struct GameScene
+struct SettingsState
 {
-	
-	void Setup(int scene);
+	void Setup();
 
-	void Clear();
-	void ComputeShaders();
-	void Render();
 	void Input();
 	void Update();
+	void ComputeShaders();
 
 	void SetupButtons();
 	void SetupImages();
 	void SetupText();
-
-	void DrawUi();
 
 	void Unload();
 };

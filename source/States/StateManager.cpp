@@ -1,4 +1,4 @@
-#include "States_&_Scenes\StateManager.h"
+#include "States\StateManager.h"
 #include "Input.h"
 #include "Model.h"
 #include "Hitbox.h"
@@ -94,6 +94,9 @@ void StateManager::Setup()
 	systems.push_back(new ButtonSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new GeometryIndependentSystem());
+	systems.push_back(new PlayerHealthUISystem());
+	systems.push_back(new PlayerSoulsUISystem());
+	systems.push_back(new UIRenderSystem());
 }
 
 void StateManager::Clear()

@@ -57,16 +57,16 @@ void UIComponent::SetPosition(XMFLOAT2 position)
 void UIComponent::SetScale(XMFLOAT2 scale)
 {
 	m_Scale = scale;
-	m_Bounds.right* m_Scale.x;
-	m_Bounds.bottom* m_Scale.y;
+	m_Bounds.right *= m_Scale.x;
+	m_Bounds.bottom *= m_Scale.y;
 	UpdateTransform();
 }
 
 void UIComponent::SetScale(float scale)
 {
 	m_Scale = { scale, scale };
-	m_Bounds.right* m_Scale.x;
-	m_Bounds.bottom* m_Scale.y; 
+	m_Bounds.right *= m_Scale.x;
+	m_Bounds.bottom *= m_Scale.y; 
 	UpdateTransform();
 }
 
