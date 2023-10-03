@@ -20,10 +20,11 @@ struct VS_INPUTS
 
 struct VS_OUT
 {
-    float4 position : SV_POSITION;
-    float4 normal : NORMAL;
-    //uint material : MATERIAL;
-    float2 uv : UV;
+	float4 position : SV_POSITION;
+	float4 normal : NORMAL;
+	float2 uv : UV;
+	int4 index : INDEX;
+	float4 weight : WEIGHT;
 };
 
 VS_OUT main(VS_INPUTS pos)
