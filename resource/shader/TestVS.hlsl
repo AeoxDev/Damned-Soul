@@ -23,6 +23,8 @@ struct VS_OUT
 	float4 position : SV_POSITION;
 	float4 normal : NORMAL;
 	float2 uv : UV;
+	int4 bIdx : BONE_INDEX;
+	float4 bWeight : BONE_WIEGHT;
 };
 
 VS_OUT main(VS_INPUTS pos)

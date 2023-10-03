@@ -8,6 +8,8 @@
 #include "D3D11Helper.h"
 #include "MemLib\ML_String.hpp"
 
+#include "DeltaTime.h"
+
 #define SANE_MODEL_BONELESS_NUMBER (1'234'567'890 | 0b0)
 #define SANE_MODEL_BONES_NUMBER (1'234'567'890 | 0b1)
 
@@ -52,9 +54,9 @@ const VertexBoned* modelGenericData::GetBonedVertices() const
 }
 
 #define BONED_VERTEX_BYTE_SIZE (m_numVertices * sizeof(VertexBoned))
-const BoneMatrix* modelGenericData::GetBoneMatrices() const
+DirectX::XMMATRIX* modelGenericData::GetBoneMatrices()
 {
-	return (BoneMatrix*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + INDEX_BYTE_SIZE + BONED_VERTEX_BYTE_SIZE]));
+	return (DirectX::XMMATRIX*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + INDEX_BYTE_SIZE + BONED_VERTEX_BYTE_SIZE]));
 }
 
 
@@ -127,7 +129,12 @@ const MODEL_TYPE Model::Load(const char* filename)
 	else
 		m_vertexShader = LoadVertexShader("TestSkelVS.cso");
 
-	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(BoneMatrix), 2);
+	Animation animation;
+	m_animations.push_back(animation);
+	//m_animations[0].Load("Rocket_Anim_Wave.ani");
+	m_animations[0].Load("PlayerPlaceholder_Anim_Stomp.ani");
+
+	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
 
 	return result;
 }
@@ -169,6 +176,20 @@ void Model::SetPixelAndVertexShader() const
 
 void Model::RenderAllSubmeshes()
 {
+	// Incorrect bone indices?
+	// That would sort of explain some of the wonky stuff happening
+
+	static float animationTime = 0.0f;
+	animationTime += GetDeltaTime();
+	if (animationTime > 1.0f)
+		animationTime -= 2.0f;
+
+	// Try to get the initial animation frame
+	uint32_t size;
+	SetPixelAndVertexShader();
+	UpdateConstantBuffer(m_animationBuffer, m_animations[0].GetFrame(animationTime, size));
+	SetConstantBuffer(m_animationBuffer, BIND_VERTEX);
+
 	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
 	{
 		const SubMesh& currentMesh = m_data->GetSubMesh(i);

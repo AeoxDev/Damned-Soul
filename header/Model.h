@@ -2,6 +2,8 @@
 #include <cinttypes>
 #include "MemLib\PoolPointer.hpp"
 #include "MemLib\ML_Vector.hpp"
+#include "Animation.hpp"
+#include <DirectXMath.h>
 
 enum MODEL_TYPE
 {
@@ -47,11 +49,6 @@ struct Material
 	float exponent = 1.0f;
 };
 
-struct BoneMatrix
-{
-	float mat[4][4];
-};
-
 struct modelGenericData
 {
 	const uint32_t m_sanityCheckNumber;
@@ -68,13 +65,14 @@ struct modelGenericData
 	const uint32_t* GetIndices() const; // Swap the indices and vertices in the data structure!!!!!!!!
 	const VertexBoneless* GetBonelessVertices() const;
 	const VertexBoned* GetBonedVertices() const;
-	const BoneMatrix* GetBoneMatrices() const;
+	DirectX::XMMATRIX* GetBoneMatrices();
 };
 
 struct Model
 {
 	//PoolPointer<ModelBoneless> m_modelData;
 	PoolPointer<modelGenericData> m_data;
+	ML_Vector<Animation> m_animations;
 
 
 	uint32_t m_vertexBuffer = -1, m_indexBuffer = -1;
