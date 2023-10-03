@@ -86,6 +86,7 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
 		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
+		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
 		dtc->facingX = 1.0f;
 		dogCo->model.Load("HellhoundDummy_PH.mdl");
 		/*EntityID stage = registry.CreateEntity();
