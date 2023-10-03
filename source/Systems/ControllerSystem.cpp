@@ -11,6 +11,8 @@ bool ControllerSystem::Update()
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		TransformComponent* pt = registry.GetComponent<TransformComponent>(entity);
+		pt->lastPositionZ = pt->positionZ;
+		pt->lastPositionX = pt->positionX;
 		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ player->goalX,player->goalZ, 0.0f };
 		DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
 		DirectX::XMFLOAT3 l;
@@ -53,25 +55,47 @@ bool ControllerSystem::Update()
 			player->goalZ = 0.0f;
 
 		}
+		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
+			moving = true;
+			
 			pt->positionZ += player->movementSpeed * GetDeltaTime();
 			player->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
+			moving = true;
 			pt->positionZ -= player->movementSpeed * GetDeltaTime();
 			player->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
+			moving = true;
 			pt->positionX -= player->movementSpeed * GetDeltaTime();
 			player->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
+			moving = true;
 			pt->positionX += player->movementSpeed * GetDeltaTime();
 			player->goalX += 1.0f;
+		}
+		if (moving)
+		{
+			player->moveTime += GetDeltaTime() * player->moveFactor;
+			if (player->moveMaxLimit < player->moveTime)
+			{
+				player->moveTime = player->moveMaxLimit;
+			}
+		}
+		else
+		{
+			player->moveTime -= GetDeltaTime() * player->moveFactor * player->moveResetFactor;
+			if (player->moveTime < 0.0f)
+			{
+				player->moveTime = 0.0f;
+			}
 		}
 	}
 	

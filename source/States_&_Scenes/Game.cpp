@@ -105,7 +105,9 @@ void GameScene::Setup(int scene)//Load
 		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
 		pmc->model.Load("HellhoundDummy_PH.mdl");
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
-		ptc->positionY += 1.0f;
+		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
+		poic->active = POI_ACTIVE;
+		//ptc->positionY += 1.0f;
 
 	}
 }
