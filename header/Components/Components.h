@@ -7,3 +7,4 @@
 #include "PlayerComponent.h"
 #include "ComponentHelper.h"
 #include "TransformComponent.h"
+#include "PointOfInterestComponent.h"
