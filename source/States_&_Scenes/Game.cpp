@@ -100,8 +100,7 @@ void GameScene::Setup(int scene)//Load
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
 
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
-		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
-		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
+		
 		//PointOfInterestComponent* stPoi = registry.AddComponent<PointOfInterestComponent>(stage);
 		//Doggo2
 		
@@ -123,7 +122,7 @@ void GameScene::Setup(int scene)//Load
 		skeltc->positionX = 20.0f;
 		skeltc->positionY += 3.0f;
 		skeltc->facingX = 1.0f;
-		skelCo->model.Load("SkeletonTwoDymmy_2.mdl");
+		skelCo->model.Load("HellhoundDummy_PH.mdl");
 		SkeletonBehaviour* skelBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 
 		EntityID skeleton2 = registry.CreateEntity();
@@ -136,6 +135,8 @@ void GameScene::Setup(int scene)//Load
 		skelCo2->model.Load("HellhoundDummy_PH.mdl");
 		SkeletonBehaviour* skelBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
 
+		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
+		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
 	}
 }
 

@@ -9,3 +9,4 @@
 #include "TransformComponent.h"
 #include "PointOfInterestComponent.h"
 #include "Skynet\SkeletonBehaviour.h"
+#include "Skynet\HellhoundBehaviour.h"

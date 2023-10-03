@@ -195,6 +195,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EntityFramework.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
     <ClCompile Include="source\Registry.cpp" />
+    <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
+    <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\SkeletonBehaviourSystem.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
     <ClCompile Include="source\Input.cpp" />
@@ -432,6 +434,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
+    <ClInclude Include="header\Skynet\BehaviourHelper.h" />
+    <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
     <ClInclude Include="header\Relics.h" />
