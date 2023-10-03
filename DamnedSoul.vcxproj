@@ -201,6 +201,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Lighting.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\Systems\ButtonSystem.cpp" />
+    <ClCompile Include="source\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
@@ -424,6 +425,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PlayerComponent.h" />
+    <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TextComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
     <ClInclude Include="header\Format.h" />

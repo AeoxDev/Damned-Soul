@@ -102,7 +102,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	GIcomponent->height = greatestZ - smallestZ;
 	GIcomponent->offsetX = 0.5f * (greatestX + smallestX);
 	GIcomponent->offsetZ = 0.5f * (greatestZ + smallestZ);
-	Camera::SetPosition(GIcomponent->offsetX,greatestY+ 2.0f, GIcomponent->offsetZ);//Set this to center of stage offset upwards
+	Camera::SetPosition(GIcomponent->offsetX,greatestY+ 2.0f, GIcomponent->offsetZ, false);//Set this to center of stage offset upwards
 	Camera::SetLookAt(GIcomponent->offsetX, smallestY, GIcomponent->offsetZ);//Set to center of stage
 	Camera::SetUp(0.0f, 0.0f, 1.0f);
 	Camera::SetWidth(greatestX - smallestX);//Set width (x) of orthogonal based on stage
@@ -169,7 +169,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	//Set back camera to previous mode
 	Camera::ToggleProjection();
 	DirectX::XMStoreFloat3(&vData, previousPos);
-	Camera::SetPosition(vData.x, vData.y, vData.z);//Set this to center of stage offset upwards
+	Camera::SetPosition(vData.x, vData.y, vData.z, false);//Set this to center of stage offset upwards
 	DirectX::XMStoreFloat3(&vData, previousLookAt);
 	Camera::SetLookAt(vData.x, vData.y, vData.z);//Set to center of stage
 	DirectX::XMStoreFloat3(&vData, previousUp);
@@ -184,11 +184,11 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 
 bool AddGeometryIndependentComponent(EntityID& stageEntity)
 {
-	//GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
-	//if (GIcomponent != NULL)
-	//{
-	//	return true;
-	//}
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
+	if (GIcomponent != NULL)
+	{
+		return true;
+	}
 	registry.AddComponent<GeometryIndependentComponent>(stageEntity);
 	if (SetupGIAll(stageEntity) == false)
 	{
