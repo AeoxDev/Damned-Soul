@@ -83,29 +83,37 @@ void GameScene::Setup(int scene)//Load
 
 		//Doggo
 		EntityID dog = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(dog);
-		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
+		EntityID dog2 = registry.CreateEntity();
+		EntityID stage = registry.CreateEntity();
+		EntityID player = registry.CreateEntity();
+
+		ModelComponent* dogCo = registry.AddComponent<ModelComponent>(dog);
+		ModelComponent* dogCo2 = registry.AddComponent<ModelComponent>(dog2);
+		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
+		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
+
 		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
+		TransformComponent* dtc2 = registry.AddComponent<TransformComponent>(dog2);
+		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
+		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
+
+		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
+
+		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
+		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
+		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
+		//PointOfInterestComponent* stPoi = registry.AddComponent<PointOfInterestComponent>(stage);
+		//Doggo2
+		
 		dtc->facingX = 1.0f;
 		dogCo->model.Load("HellhoundDummy_PH.mdl");
-		/*EntityID stage = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(stage);
-		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
-		stageCo->model.Load("PlaceholderScene.mdl");*/
-		EntityID stage = registry.CreateEntity();
-		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
-		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
+		dogCo2->model.Load("HellhoundDummy_PH.mdl");
 		stageCo->model.Load("PlaceholderScene.mdl");
-
-		RenderGeometryIndependentCollision(stage);
-
-		EntityID player = registry.CreateEntity();
-		registry.AddComponent<PlayerComponent>(player);
-		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
-		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
 		pmc->model.Load("HellhoundDummy_PH.mdl");
-		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
-		ptc->positionY += 1.0f;
+		RenderGeometryIndependentCollision(stage);
+		poic->active = POI_ACTIVE;
+		dtc2->positionX = 20.0f;
+		dtc2->positionZ = 20.0f;
 
 		//trial enemy, be nice to the intern. Definitely a skeleton doing skeleton things, no doggos in sight
 		EntityID skeleton = registry.CreateEntity();

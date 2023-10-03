@@ -3,7 +3,7 @@
 
 namespace Camera
 {
-	void SetPosition(const float x, const float y, const float z);
+	void SetPosition(const float x, const float y, const float z, const bool includeOffset = false);
 	void SetLookAt(const float x, const float y, const float z);
 	void SetUp(const float x, const float y, const float z);
 	void SetRotation(const float x, const float y, const float z);

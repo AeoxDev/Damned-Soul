@@ -95,6 +95,7 @@ void StateManager::Setup()
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new SkeletonBehaviourSystem());
+	systems.push_back(new PointOfInterestSystem());
 }
 
 void StateManager::Clear()

@@ -23,6 +23,10 @@ class GeometryIndependentSystem : public System
 {
 	bool Update();
 };
+class PointOfInterestSystem : public System
+{
+	bool Update();
+};
 
 class SkeletonBehaviourSystem : public System
 {

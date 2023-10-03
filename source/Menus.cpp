@@ -71,8 +71,8 @@ void SetupSettingsCanvas(UICanvas& canvas)
 	canvas.Setup();
 
 	canvas.AddImage(ui, "Title", "ExMenu/OptionsButtonHover.png", {0.0f, 0.8f }, { 2.0f, 2.0f });
-	canvas.AddImage(ui, "Pic1", "ExMenu/D0.png", { -0.95, 0.9f }, { 1.5f, 1.5f });
-	canvas.AddImage(ui, "Pic2", "ExMenu/D0.png", { 0.95, 0.9f }, { 1.5f, 1.5f });
+	canvas.AddImage(ui, "Pic1", "ExMenu/D0.png", { -0.95f, 0.9f }, { 1.5f, 1.5f });
+	canvas.AddImage(ui, "Pic2", "ExMenu/D0.png", { 0.95f, 0.9f }, { 1.5f, 1.5f });
 	canvas.AddText(ui, "ExampleText", L"This is the settings menu!", { 0.0f, 0.3f });
 
 	canvas.AddText(ui, "Fullscreen", L"Fullscreen:", { -0.1f, -0.2f });
