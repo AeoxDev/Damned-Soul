@@ -96,6 +96,7 @@ void StateManager::Setup()
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
+	systems.push_back(new HellhonudBehaviourSystem());
 }
 
 void StateManager::Clear()

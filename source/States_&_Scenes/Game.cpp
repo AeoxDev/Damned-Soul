@@ -87,8 +87,8 @@ void GameScene::Setup(int scene)//Load
 		EntityID stage = registry.CreateEntity();
 		EntityID player = registry.CreateEntity();
 
-		ModelComponent* dogCo = registry.AddComponent<ModelComponent>(dog);
-		ModelComponent* dogCo2 = registry.AddComponent<ModelComponent>(dog2);
+		
+		//ModelComponent* dogCo2 = registry.AddComponent<ModelComponent>(dog2);
 		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
 
@@ -105,10 +105,8 @@ void GameScene::Setup(int scene)//Load
 		//Doggo2
 		
 		dtc->facingX = 1.0f;
-		dogCo->model.Load("HellhoundDummy_PH.mdl");
-		dogCo2->model.Load("HellhoundDummy_PH.mdl");
 		stageCo->model.Load("PlaceholderScene.mdl");
-		pmc->model.Load("HellhoundDummy_PH.mdl");
+		pmc->model.Load("PlayerPlaceholder.mdl");
 		RenderGeometryIndependentCollision(stage);
 		poic->active = POI_ACTIVE;
 		dtc2->positionX = 20.0f;
@@ -120,9 +118,9 @@ void GameScene::Setup(int scene)//Load
 		ModelComponent* skelCo = registry.GetComponent<ModelComponent>(skeleton);
 		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
 		skeltc->positionX = 20.0f;
-		skeltc->positionY += 3.0f;
+		skeltc->positionY += 1.0f;
 		skeltc->facingX = 1.0f;
-		skelCo->model.Load("HellhoundDummy_PH.mdl");
+		skelCo->model.Load("SkeletonOne.mdl");
 		SkeletonBehaviour* skelBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 
 		EntityID skeleton2 = registry.CreateEntity();
@@ -130,10 +128,21 @@ void GameScene::Setup(int scene)//Load
 		ModelComponent* skelCo2 = registry.GetComponent<ModelComponent>(skeleton2);
 		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
 		skeltc2->positionX = -20.0f;
-		skeltc2->positionY += 3.0f;
+		skeltc2->positionY += 1.0f;
 		skeltc2->facingX = 1.0f;
-		skelCo2->model.Load("HellhoundDummy_PH.mdl");
+		skelCo2->model.Load("SkeletonOne.mdl");
 		SkeletonBehaviour* skelBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
+
+		EntityID hellhound = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(hellhound);
+		ModelComponent* hellhoundCo = registry.AddComponent<ModelComponent>(hellhound);
+		TransformComponent* hellTc = registry.AddComponent<TransformComponent>(hellhound);
+		hellTc->positionZ = 15.0f;
+		hellTc->positionY += 1.0f;
+		hellTc->facingX = 1.0f;
+		hellhoundCo->model.Load("HellhoundDummy_PH.mdl");
+		HellhoundBehaviour* hellBehevCo = registry.AddComponent<HellhoundBehaviour>(hellhound);
+
 
 		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
 		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
