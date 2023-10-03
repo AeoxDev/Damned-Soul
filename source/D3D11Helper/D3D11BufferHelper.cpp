@@ -216,6 +216,34 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 	UpdateWorldMatrix(&in, bindto, slot);
 }
 
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	DirectX::XMVECTOR v = DirectX::XMVECTOR{ 0.0f, 0.0f,0.0f };
+	DirectX::XMVECTOR f = DirectX::XMVECTOR{ dirX, dirY, dirZ };
+	//DirectX::XMVECTOR s = DirectX::XMVECTOR{ scaleX, scaleY, ScaleZ};
+	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
+	world = DirectX::XMMatrixScaling(scaleX, scaleY, ScaleZ);
+	world = DirectX::XMMatrixLookAtLH(v, f, up);
+	world = world * DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto);
+}
+
+void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
+{
+	static CB_IDX constantBufferIdx = -1;
+	if (constantBufferIdx == -1)
+	{
+		DirectX::XMMATRIX emptyWorld;
+		constantBufferIdx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld), 0);
+		SetConstantBuffer(constantBufferIdx, bindto);
+	}
+		
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
 	uint16_t currentIdx = bfrHolder->_nextIdx;

@@ -58,13 +58,9 @@
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
     <ClCompile Include="source\ButtonManager.cpp" />
-    <ClCompile Include="source\SceneManager.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp" />
-    <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -91,7 +87,6 @@
     <ClCompile Include="source\UI\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
-    <ClCompile Include="source\CompCount.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
     <ClCompile Include="source\Menus.cpp">
@@ -104,6 +99,21 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="source\ProximityCollision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States_&amp;_Scenes\StateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Registry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EntityFramework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\RenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ButtonSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,9 +144,6 @@
     <ClInclude Include="header\Physics\Hitbox.h" />
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\ButtonManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
     <ClInclude Include="header\UI\UIButton.h" />
@@ -144,7 +151,6 @@
     <ClInclude Include="header\UI\UIComponent.h" />
     <ClInclude Include="header\UI\UIImage.h" />
     <ClInclude Include="header\UI\UIText.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
     <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
@@ -162,7 +168,7 @@
     <ClInclude Include="header\Components\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\AllComponents.h">
+    <ClInclude Include="header\Components\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h">
@@ -180,7 +186,25 @@
     <ClInclude Include="header\Format.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\ParticleComponent.h">
+    <ClInclude Include="header\Components\ButtonComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ImageComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\PlayerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TextComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Systems\Systems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Registry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

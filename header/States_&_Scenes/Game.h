@@ -5,8 +5,7 @@
 
 struct GameScene
 {
-	Registry registry;
-
+	
 	void Setup(int scene);
 
 	void Clear();
@@ -14,6 +13,12 @@ struct GameScene
 	void Render();
 	void Input();
 	void Update();
+
+	void SetupButtons();
+	void SetupImages();
+	void SetupText();
+
+	void DrawUi();
 
 	void Unload();
 };

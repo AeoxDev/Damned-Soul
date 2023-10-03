@@ -9,8 +9,7 @@
 
 
 struct OnCollisionParameters
-{
-	Registry registry; 
+{ 
 	EntityID entity1; 
 	EntityID entity2; 
 	int hitboxID1;
@@ -113,11 +112,11 @@ int FindAvailableSlot(unsigned& bits);
 /// Loops through all entities with a hitboxComponent and calculates collision.
 /// </summary>
 /// <param name="registry"></param>
-void ResetCollisionVariables(Registry& registry);
-void HandleMoveableCollision(Registry& registry);//No clipping
-void HandleProximityCollision(Registry& registry); //No proximity clipping
-void HandleDamageCollision(Registry& registry);//Hitboxes for attacks and dynamic hazards
-void HandleStaticCollision(Registry& registry);//Stage and static Collisions
+void ResetCollisionVariables( );
+void HandleMoveableCollision( );//No clipping
+void HandleProximityCollision( ); //No proximity clipping
+void HandleDamageCollision( );//Hitboxes for attacks and dynamic hazards
+void HandleStaticCollision( );//Stage and static Collisions
 
 //struct onCollision
 //{

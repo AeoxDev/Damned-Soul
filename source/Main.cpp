@@ -3,13 +3,7 @@
 
 #include "SDLhandler.h"
 #include "MemLib/MemLib.hpp"
-#include "EntityFramework.h"
 #include "DeltaTime.h"
-#include "States_&_Scenes\StateManager.h"
-#include "GameRenderer.h"
-#include "Model.h"
-#include "ComponentHelper.h"
-#include "UIRenderer.h"
 #include "States_&_Scenes\StateManager.h"
 #include "ConfigManager.h"
 
@@ -22,29 +16,17 @@ int main(int argc, char* args[])
 
 	SetupWindow();
 	std::string title = "Damned Soul";
-
 	stateManager.Setup();
 	
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 		
-		Clear(backBufferRenderSlot);//Clear the render targets!
-		
-		stateManager.ComputeShaders();//First do compute shader work
-		
-		stateManager.Render();//Then render all registries that are active
-		
 		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		
 		stateManager.Update();//Lastly do the cpu work
 
-		Present();//Present what was drawn during the update!
-	
-		//MemLib::pdefrag();
 		stateManager.EndFrame();
-
-		stateManager.Input();//Do all systems that are based on input
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

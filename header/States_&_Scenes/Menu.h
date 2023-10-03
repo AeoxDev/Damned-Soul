@@ -2,11 +2,11 @@
 #include "StateEnums.h"
 #include "Settings.h"
 #include "EntityFramework.h"
+#include "Registry.h"
 
 struct Menu
 {
-	Registry registry;//This contains all entities and components for the main menu.
-
+	EntityID mainMenuPage{-1, 0};
 	//Load all main menu related
 	void Setup();
 
@@ -14,6 +14,12 @@ struct Menu
 	void Render();
 	void Input();
 	void Update();
+
+	void SetupButtons();
+	void SetupImages();
+	void SetupText();
+
+	void DrawUi();
 
 	//Unload everything in the registry, do this after turning the menu state off.
 	void Unload();

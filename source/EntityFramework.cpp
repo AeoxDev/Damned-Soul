@@ -1,3 +1,3 @@
 #include "EntityFramework.h"
 
-int compCount;
+int compCount = 0;

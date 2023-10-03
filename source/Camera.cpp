@@ -182,7 +182,7 @@ void Camera::UpdateProjection()
 	if (GameCamera->m_projectionType)
 	{
 		DirectX::XMMATRIX proj;
-		proj = DirectX::XMMatrixPerspectiveFovLH(GetFOV(), (float)sdl.WIDTH / (float)sdl.HEIGHT, 0.1f, 50.f);//proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
+		proj = DirectX::XMMatrixPerspectiveFovLH(GetFOV(), (float)sdl.WIDTH / (float)sdl.HEIGHT, 0.1f, 10000.f);//proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
 		DirectX::XMStoreFloat4x4(&GameCamera->m_perspective, proj);
 		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(proj));
 	}
@@ -213,12 +213,12 @@ void Camera::InitializeCamera()
 	GameCamera = MemLib::palloc(sizeof(CameraStruct));
 	GameCamera->m_projectionType = true;
 	
-	SetPosition(0.f, 10.f, -10.f);
+	SetPosition(0.f, 1500.f, -2000.f);
 	SetLookAt(0.f, 0.f, 0.f);
 	SetUp(0.f, 1.f, 0.f);
 
 	SetRotation(0.f, 0.f, 0.f);
-	SetFOV(3.14f/6.f);
+	SetFOV(3.14f/80.f);
 
 	//Default done, update now
 

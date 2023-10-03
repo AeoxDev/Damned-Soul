@@ -5,6 +5,8 @@
 #include "States_&_Scenes\Menu.h"
 #include "States_&_Scenes\Game.h"
 #include "States_&_Scenes\Pause.h"
+#include "Systems\Systems.h"
+#include <vector>
 
 
 struct StateManager;
@@ -14,6 +16,7 @@ extern StateManager stateManager;
 
 struct StateManager
 {
+	std::vector<System*> systems;
 	int activeLevelScene = 0;
 	GameScene levelScenes[2];
 	GameScene shop;
@@ -21,6 +24,9 @@ struct StateManager
 	SettingsState settings;
 	PauseState pause;
 
+	/// <summary>
+	/// StateManager.Setup is only called once, keep this in mind
+	/// </summary>
 	void Setup();
 	void Clear();
 	void ComputeShaders();//All compute shaders here

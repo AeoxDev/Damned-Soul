@@ -4,7 +4,6 @@
 
 struct SettingsState
 {
-	Registry registry;
 	void Setup();
 
 	void Clear();
@@ -12,6 +11,12 @@ struct SettingsState
 	void Render();
 	void Input();
 	void Update();
+
+	void SetupButtons();
+	void SetupImages();
+	void SetupText();
+
+	void DrawUi();
 
 	void Unload();
 };

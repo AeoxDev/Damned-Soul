@@ -12,15 +12,18 @@ void UIComponent::UpdateTransform()
 
 void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation)
 {
-	SetPosition(position);
 	SetScale(scale);
+	SetPosition(position);
 	SetRotation(rotation);
 }
 
 UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
-	:m_Position(position), m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
+	:m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
 {
-	m_Bounds = { 0,0,0,0 };
+	m_Bounds = { 0, 0, 0, 0 };
+	
+	m_Position = {0, 0};
+	
 	UpdateTransform();
 }
 
@@ -39,22 +42,29 @@ float UIComponent::GetRotation()
 	return m_Rotation;
 }
 
-void UIComponent::SetPosition(XMFLOAT2 center)
+void UIComponent::SetPosition(XMFLOAT2 position)
 {
-	//Window position to topleft of image.
-	m_Position = { center.x - m_Bounds.right / 2.0f, center.y - m_Bounds.bottom / 2.0f };
+	// calculate screen space to pixel coords
+	// (-1,-1) -> (1,1) => (0,0) -> (width, height)
+	// (-1,-1) is the bottom left coorner, (1, 1) is the top right coorner
+	XMFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.WIDTH, (1.0f - position.y) * 0.5f * sdl.HEIGHT };
+
+	m_Position = { pixelCoords.x - (m_Bounds.right / 2.0f) * m_Scale.x , pixelCoords.y - (m_Bounds.bottom / 2.0f) * m_Scale.y };
+	//m_Position = { pixelCoords.x - (m_Bounds.right / 2.0f), pixelCoords.y - (m_Bounds.bottom / 2.0f)};
 	UpdateTransform();
 }
 
 void UIComponent::SetScale(XMFLOAT2 scale)
 {
 	m_Scale = scale;
+	//m_Bounds = { m_Bounds.left * scale.x, m_Bounds.top * scale.y, m_Bounds.right * scale.x, m_Bounds.bottom * scale.y};
 	UpdateTransform();
 }
 
 void UIComponent::SetScale(float scale)
 {
 	m_Scale = { scale, scale };
+	//m_Bounds = { m_Bounds.left * scale, m_Bounds.top * scale, m_Bounds.right * scale, m_Bounds.bottom * scale};
 	UpdateTransform();
 }
 

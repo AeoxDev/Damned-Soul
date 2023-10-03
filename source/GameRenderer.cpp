@@ -219,6 +219,7 @@ void ClearParticles()
 
 void Present()
 {
+	//Check if frame capped
 	d3d11Data->swapChain->Present(0, 0);
 }
 

@@ -6,11 +6,10 @@
 #include "SDLHandler.h"
 #include "D3D11Helper.h"
 #include "Particles.h"
-#include "AllComponents.h"
+#include "Components.h"
 #include "Input.h"
 #include "States_&_Scenes\StateManager.h"
-#include "RenderableComponent.h"
-
+#include "Registry.h"
 #include "Menus.h"
 #include "UIRenderer.h"
 
@@ -18,87 +17,6 @@ UINT activeMetadata = 0;
 
 void GameScene::Update()
 {
-
-}
-
-void GameScene::Clear()
-{
-	ClearBackBuffer();
-}
-
-void GameScene::Setup(int scene)//Load
-{
-	
-	if (scene == 0)
-	{
-		
-		//Setup Game HUD
-		EntityID GameHUD = registry.CreateEntity();
-
-		this->registry.AddComponent<UICanvas>(GameHUD);
-		UICanvas* HUDCanvas = registry.GetComponent<UICanvas>(GameHUD);
-		SetupHUDCanvas(*HUDCanvas);
-		UpdateUI(*HUDCanvas);
-
-		//Doggo
-		EntityID dog = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(dog);
-		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
-		dogCo->model.Load("HellhoundDummy_PH.mdl");
-		//registry.AddComponent<RenderableComponent>(dog);
-		//RenderableComponent* renderCo = registry.GetComponent<RenderableComponent>(dog);
-		//renderCo->ToRenderableComponent(renderStates[backBufferRenderSlot]);
-		
-		/*EntityID stage = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(stage);
-		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
-		stageCo->model.Load("PlaceholderScene.mdl");*/
-
-		EntityID stage = registry.CreateEntity();
-		registry.AddComponent<ModelComponent>(stage);
-		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
-		stageCo->model.Load("PlaceholderScene.mdl");
-
-		EntityID giStage = CreateAndRenderGeometryIndependentCollision(registry, stage);
-		EntityID player = registry.CreateEntity();
-		registry.AddComponent<PlayerComponent>(player);
-		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
-		pc->model = &dogCo->model;
-		
-		EntityID particleEntity = registry.CreateEntity();
-		registry.AddComponent<ParticleComponent>(particleEntity);
-		ParticleComponent* particleComp = registry.GetComponent<ParticleComponent>(particleEntity);
-		Particles::PrepareSmokeParticles(particleComp, renderStates, 4.0f, 5.0f, 3.0f, DirectX::XMFLOAT3(0.f, 0.f, 0.f));
-
-		Begin2dFrame(ui);
-		HUDCanvas->Render(ui);
-		End2dFrame(ui);
-	}
-}
-
-void GameScene::ComputeShaders()
-{
-	for (auto pEntity : View<ParticleComponent>(registry))
-	{
-		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
-		if (pComp->metadataSlot >= 0)
-		{
-			activeMetadata++;
-		}
-	}
-
-	Particles::PrepareParticleCompute(renderStates);
-	Dispatch(256, activeMetadata, 0);
-	Particles::FinishParticleCompute(renderStates);
-}
-void GameScene::Render()
-{
-	ClearBackBuffer();
-	RenderUI();
-	//Render Geometry
-	
-	////Set shaders here.
-	//PrepareBackBuffer();
 	//for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
 	//{
 	//	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
@@ -144,24 +62,112 @@ void GameScene::Render()
 	//		player->goalZ = 0.0f;
 	//	}
 
-	//	SetWorldMatrix(player->posX, player->posY, player->posZ, -player->dirX, 0.0f, player->dirZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-	//	SetVertexBuffer(player->model->m_vertexBuffer);
-	//	SetIndexBuffer(player->model->m_indexBuffer);
-	//	//RenderIndexed(player->model->m_bonelessModel->m_numIndices);
-	//	player->model->RenderAllSubmeshes();
+	//	SetWorldMatrix(player->posX, player->posY, player->posZ, -player->dirX, 0.0f, player->dirZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
 	//}
+}
+
+void GameScene::Clear()
+{
+	ClearBackBuffer();
+}
+
+void GameScene::Setup(int scene)//Load
+{
 	
-	//for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	if (scene == 0)
+	{
+		
+		//Setup Game HUD
+		SetupButtons();
+		SetupImages();
+		SetupText();
+		DrawUi();
+
+		//Doggo
+		EntityID dog = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(dog);
+		ModelComponent* dogCo = registry.GetComponent<ModelComponent>(dog);
+		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
+		dtc->facingX = 1.0f;
+		dogCo->model.Load("HellhoundDummy_PH.mdl");
+		//registry.AddComponent<RenderableComponent>(dog);
+		//RenderableComponent* renderCo = registry.GetComponent<RenderableComponent>(dog);
+		//renderCo->ToRenderableComponent(renderStates[backBufferRenderSlot]);
+		
+		/*EntityID stage = registry.CreateEntity();
+		registry.AddComponent<ModelComponent>(stage);
+		ModelComponent* stageCo = registry.GetComponent<ModelComponent>(stage);
+		stageCo->model.Load("PlaceholderScene.mdl");*/
+		EntityID stage = registry.CreateEntity();
+		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
+		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
+		stageCo->model.Load("PlaceholderScene.mdl");
+
+		RenderGeometryIndependentCollision(stage);
+
+		EntityID player = registry.CreateEntity();
+		registry.AddComponent<PlayerComponent>(player);
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
+		pmc->model.Load("HellhoundDummy_PH.mdl");
+		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
+		ptc->positionY += 1.0f;
+
+	}
+}
+
+void GameScene::SetupButtons()
+{
+
+}
+
+void GameScene::SetupImages()
+{
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/EmptyHealth.png", { 150.0f, 50.0f }, { 1.0f, 1.0f }));
+
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage(ui, "ExMenu/FullHealth.png", { 150.0f, 50.0f }, { 0.7f, 1.0f }));
+}
+
+void GameScene::SetupText()
+{
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"Current Souls: 0", { 125.0f, 100.0f }));
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"This is the HUD!", { sdl.WIDTH / 2.0f - 50.0f, 300.0f }));
+
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(ui, L"Press ECS to return to main menu!", { sdl.WIDTH / 2.0f - 50.0f, 350.0f }));
+}
+
+void GameScene::ComputeShaders()
+{
+	for (auto pEntity : View<ParticleComponent>(registry))
+	{
+		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
+		if (pComp->metadataSlot >= 0)
+		{
+			activeMetadata++;
+		}
+	}
+
+	Particles::PrepareParticleCompute(renderStates);
+	Dispatch(256, activeMetadata, 0);
+	Particles::FinishParticleCompute(renderStates);
+}
+void GameScene::Render()
+{
+	
+
+	//for (auto entity : View<ModelComponent>(registry))
 	//{
-	//	ModelComponent* dogCo = registry.GetComponent<ModelComponent>(entity);
-	//	dogCo->model.RenderAllSubmeshes();
-	//	RenderIndexed(dogCo->model.m_bonelessModel->m_numIndices);
+	//	ModelComponent* toRender = registry.GetComponent<ModelComponent>(entity);
+	//	SetWorldMatrix(0.0f, 0.0f, 0.0f, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+	//	SetVertexBuffer(toRender->model.m_vertexBuffer);
+	//	SetIndexBuffer(toRender->model.m_indexBuffer);
+	//	//RenderIndexed(player->model->m_bonelessModel->m_numIndices);
+	//	toRender->model.RenderAllSubmeshes();
 	//}
 
-	//UnloadVertexBuffer();
-	//UnloadIndexBuffer();
-
-	//Set all the shaders
+		//Set all the shaders
 	Particles::PrepareParticlePass(renderStates);
 	//Loop to find all metadata that are active,
 	//Render
@@ -176,6 +182,7 @@ void GameScene::Render()
 	Particles::FinishParticlePass();
 	activeMetadata = 0;
 }
+
 void GameScene::Input()
 {
 	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
@@ -186,43 +193,8 @@ void GameScene::Input()
 		Clear();
 		Unload();
 	}
-	if (keyInput[SDL_SCANCODE_W] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posZ += p->movementSpeed * GetDeltaTime();
-			p->goalZ += 1.0f;
-		}
-	}
-	if (keyInput[SDL_SCANCODE_S] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posZ -= p->movementSpeed * GetDeltaTime();
-			p->goalZ -= 1.0f;
-		}
-	}
-	if (keyInput[SDL_SCANCODE_A] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posX -= p->movementSpeed * GetDeltaTime();
-			p->goalX -= 1.0f;
-		}
-	}
-	if (keyInput[SDL_SCANCODE_D] == down)
-	{
-		for (auto entity : View<PlayerComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
-		{
-			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
-			p->posX += p->movementSpeed * GetDeltaTime();
-			p->goalX += 1.0f;
-		}
-	}
 }
+
 void GameScene::Unload()
 {
 	for (auto entity : View<ModelComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
@@ -232,13 +204,35 @@ void GameScene::Unload()
 		dogCo->model.Free();
 		registry.DestroyEntity(entity);
 	}
-	for (auto entity : View<UICanvas>(registry))
+
+	for (auto entity : View<ButtonComponent>(registry))
 	{
-		//Get entity with UI, release components.
-		UICanvas* ui = registry.GetComponent<UICanvas>(entity);
-		if (ui && ui->header == UI_CANVAS_HEADER)
-		{
-			ui->Release();
-		}
+		registry.DestroyEntity(entity);
 	}
+
+	for (auto entity : View<ImageComponent>(registry))
+	{
+		registry.DestroyEntity(entity);
+	}
+}
+
+void GameScene::DrawUi()
+{
+	ID2D1RenderTarget* rt = ui.GetRenderTarget();
+
+	UpdateUI2();
+
+	Begin2dFrame(ui);
+
+	for (auto entity : View<ButtonComponent>(registry))
+		registry.GetComponent<ButtonComponent>(entity)->button.Draw(ui, rt);
+
+	for (auto entity : View<ImageComponent>(registry))
+
+		registry.GetComponent<ImageComponent>(entity)->image.Draw(rt);
+
+	for (auto entity : View<TextComponent>(registry))
+		registry.GetComponent<TextComponent>(entity)->text.Draw(ui);
+
+	End2dFrame(ui);
 }

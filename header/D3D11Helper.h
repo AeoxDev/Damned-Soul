@@ -155,6 +155,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, 
 void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Release for a single constant buffer
 void ReleaseCS(const CS_IDX idx);
 

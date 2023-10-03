@@ -5,5 +5,8 @@
 #include "ImageComponent.h"
 #include "GeometryIndependentComponent.h"
 #include "PlayerComponent.h"
+#include "ComponentHelper.h"
+#include "TransformComponent.h"
+#include "PlayerComponent.h"
 #include "ParticleComponent.h"
 #include "RenderableComponent.h"

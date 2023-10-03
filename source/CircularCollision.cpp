@@ -1,8 +1,9 @@
 #include "Backend\CircularCollision.h"
 #include "Backend\Collision.h"
+#include "Registry.h"
 #define NO false
 
-bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int circleID1, int circleID2)
+bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, int circleID2)
 {
 	// get a hold of hitbox components from entity
 	HitboxComponent* circle1 = registry.GetComponent<HitboxComponent>(entity1);
@@ -36,7 +37,6 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 	bool hit = distance <= (circle1->circleHitbox[circleID1].radius + circle2->circleHitbox[circleID2].radius);
 	//Use onCollission function for first and second respectively
 	OnCollisionParameters params = {};
-	params.registry = registry;//Reggie stiel
 
 	if (iShit1&&hit)
 	{

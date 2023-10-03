@@ -1,5 +1,6 @@
 #include "Physics\Backend\ProximityCollision.h"
 #include "Physics\Backend\Collision.h"
+#include "Registry.h"
 
 int GetOrientation(float& Ax, float& Az, float& Bx, float& Bz, float& Cx, float& Cz)
 {
@@ -9,7 +10,7 @@ int GetOrientation(float& Ax, float& Az, float& Bx, float& Bz, float& Cx, float&
 	return (val > 0) ? 1 : 2; //Clockwise or counterclockwise
 }
 
-void ProximityCorrection(Registry& registry, EntityID& wall, int& index, float& x, float& z)
+void ProximityCorrection(EntityID& wall, int& index, float& x, float& z)
 {
 	ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(wall);
 
