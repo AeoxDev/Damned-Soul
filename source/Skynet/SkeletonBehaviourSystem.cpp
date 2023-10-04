@@ -51,9 +51,15 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	
 }
 
-void CombatBehaviour(SkeletonBehaviour* skeletonComponent, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats)
 {
-
+	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
+	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	{
+		sc->attackTimer = 0;
+		sc->attackStunDurationCounter = 0;
+		playerStats->health -= enemyStats->damage;
+	}
 }
 
 bool SkeletonBehaviourSystem::Update()
@@ -82,8 +88,14 @@ bool SkeletonBehaviourSystem::Update()
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && true )// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			
-			if (distance < 2.5f)
+			skeletonComponent->attackTimer += GetDeltaTime();
+			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
+
+			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
+			{
+				// do nothing, stand like a bad doggo and be ashamed
+			}
+			else if (distance < 2.5f)
 			{
 				CombatBehaviour(skeletonComponent, enemyStats, playerStats);
 			}

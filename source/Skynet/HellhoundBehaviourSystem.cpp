@@ -28,9 +28,15 @@ void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool c
 	
 }
 
-void CombatBehaviour(HellhoundBehaviour* hellhoundComponent, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats)
 {
-
+	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
+	if (hc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	{
+		hc->attackTimer = 0;
+		hc->attackStunDurationCounter = 0;
+		playerStats->health -= enemyStats->damage;
+	}
 }
 
 void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBehaviour* hc, TransformComponent* htc, StatComponent* enemyStats)
@@ -191,8 +197,13 @@ bool HellhoundBehaviourSystem::Update()
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && true)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-
-			if (distance < 2.5f) // fight club
+			hellhoundComponent->attackTimer += GetDeltaTime();
+			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
+			if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
+			{
+				// do nothing, stand like a bad doggo and be ashamed
+			}
+			else if (distance < 2.5f) // fight club
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
 				CombatBehaviour(hellhoundComponent, enemyStats, playerStats);
