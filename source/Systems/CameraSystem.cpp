@@ -107,11 +107,15 @@ bool PointOfInterestSystem::Update()
 
 		//Get position
 		tCo = registry.GetComponent<TransformComponent>(entity);
-		float distSquared = (tCo->positionX - avX) * (tCo->positionX - avX) + (tCo->positionZ - avZ) * (tCo->positionZ - avZ);
-		if (maxDistance < distSquared)
+		if (poiCo->mode == POI_ACTIVE || poiCo->mode == POI_ACTIVE_FOR_X_TIME)
 		{
-			maxDistance = distSquared;
+			float distSquared = (tCo->positionX - avX) * (tCo->positionX - avX) + (tCo->positionZ - avZ) * (tCo->positionZ - avZ);
+			if (maxDistance < distSquared)
+			{
+				maxDistance = distSquared;
+			}
 		}
+		
 	}
 	float lastFOV = Camera::GetFOV();
 	Camera::SetFOV((powf(maxDistance, 0.375f)) * 0.015f);

@@ -15,7 +15,7 @@ void Menu::Setup()//Load
 	SetupText();
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
-	ModelComponent* stageM = registry.AddComponent<ModelComponent>(stage);
+	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
 	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
 	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
 
@@ -133,7 +133,7 @@ void Menu::Unload()
 	for (auto entity : View<PointOfInterestComponent>(registry))
 	{
 		registry.RemoveComponent<PointOfInterestComponent>(entity);
-		ModelComponent* m = registry.GetComponent<ModelComponent>(entity);
+		ModelBonelessComponent* m = registry.GetComponent<ModelBonelessComponent>(entity);
 		m->model.Free();
 		registry.RemoveComponent<TransformComponent>(entity);
 		registry.DestroyEntity(entity);

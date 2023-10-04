@@ -10,8 +10,8 @@ bool TransformSystem::Update()
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		tc->lastPositionX = tc->positionX;
-		tc->lastPositionY = tc->positionZ;
-		tc->lastPositionZ = tc->positionY;
+		tc->lastPositionY = tc->positionY;
+		tc->lastPositionZ = tc->positionZ;
 	}
 	return true;
 }
