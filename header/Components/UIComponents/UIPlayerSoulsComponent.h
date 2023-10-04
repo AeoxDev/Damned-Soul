@@ -7,7 +7,7 @@
 
 struct UIPlayerSoulsComponent
 {
-	float value;
+	int value;
 	DirectX::XMFLOAT2 position;
 	UIImage image;
 	UIText text;

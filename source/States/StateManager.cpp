@@ -137,6 +137,7 @@ void StateManager::Update()
 	{
 		systems[i]->Update();
 	}
+	Input();
 }
 
 void StateManager::ComputeShaders()
