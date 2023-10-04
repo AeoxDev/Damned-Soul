@@ -55,10 +55,10 @@ bool UIRenderSystem::Update()
 
 bool PlayerHealthUISystem::Update()
 {
-    for (auto entity : View<UIPlayerHealthComponent, PlayerComponent>(registry))
+    for (auto entity : View<UIPlayerHealthComponent, StatComponent>(registry))
     {
         auto uiElement = registry.GetComponent<UIPlayerHealthComponent>(entity);
-        auto player = registry.GetComponent<PlayerComponent>(entity);
+        auto player = registry.GetComponent<StatComponent>(entity);
         uiElement->value = player->health;
 
         std::string valueAsString = "Health: " + std::to_string((int)uiElement->value);

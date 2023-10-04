@@ -6,8 +6,8 @@
 struct RenderSetupComponent
 {
 	RS_IDX	rasterizerState;
-	PS_IDX	pixelShader;
-	VS_IDX	vertexShader;
+	PS_IDX	pixelShaders[2];
+	VS_IDX	vertexShaders[2];
 	CS_IDX	computeShader;
 	VB_IDX	vertexBuffer;
 	IB_IDX	indexBuffer;
@@ -25,7 +25,7 @@ bool Setup3dGraphics();
 int SetupUIRenderState();
 int SetupGameRenderer();
 
-void PrepareBackBuffer();
+void PrepareBackBuffer(const bool use_skeleton = false);
 void ClearBackBuffer();
 void Clear(const int& componentSlot);
 void RenderIndexed(const size_t& count);
