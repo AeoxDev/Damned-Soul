@@ -99,6 +99,7 @@ void StateManager::Setup()
 	systems.push_back(new PlayerHealthUISystem());
 	systems.push_back(new PlayerSoulsUISystem());
 	systems.push_back(new UIRenderSystem());
+	systems.push_back(new TransformSystem());
 }
 
 void StateManager::Input()
@@ -106,7 +107,7 @@ void StateManager::Input()
 	//First read the keys
 	
 
-	//Then go through the registries that are active
+	//Then go through the registries that are m_mode
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();

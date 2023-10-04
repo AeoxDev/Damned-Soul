@@ -41,7 +41,7 @@ int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ)
 	collisionComponent->circleHitbox[availableSlot].radius = radius;
 	collisionComponent->circleHitbox[availableSlot].offsetX = offsetX;
 	collisionComponent->circleHitbox[availableSlot].offsetZ = offsetZ;
-	//Set to active
+	//Set to m_mode
 	collisionComponent->circularFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
 	SetCollisionEvent(entity, (int)availableSlot, NoCollision );
@@ -227,7 +227,7 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 		}
 	}
 
-	//Set to active
+	//Set to m_mode
 	collisionComponent->convexFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
 	SetCollisionEvent(entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);

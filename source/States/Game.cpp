@@ -24,17 +24,14 @@ void GameScene::Setup(int scene)//Load
 		SetupText();
 
 		//Doggo
-		EntityID dog = registry.CreateEntity();
 		EntityID dog2 = registry.CreateEntity();
 		EntityID stage = registry.CreateEntity();
 		EntityID player = registry.CreateEntity();
 
-		ModelComponent* dogCo = registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo2 = registry.AddComponent<ModelComponent>(dog2);
 		ModelComponent* stageCo = registry.AddComponent<ModelComponent>(stage);
 		ModelComponent* pmc = registry.AddComponent<ModelComponent>(player);
 
-		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
 		TransformComponent* dtc2 = registry.AddComponent<TransformComponent>(dog2);
 		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
@@ -42,22 +39,25 @@ void GameScene::Setup(int scene)//Load
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
 
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
-		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
 		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
 
 		registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
 		//Doggo2
 
-		dtc->facingX = 1.0f;
-		dogCo->model.Load("HellhoundDummy_PH.mdl");
 		dogCo2->model.Load("HellhoundDummy_PH.mdl");
 		stageCo->model.Load("PlaceholderScene.mdl");
 		pmc->model.Load("HellhoundDummy_PH.mdl");
 		RenderGeometryIndependentCollision(stage);
-		poic->active = POI_ACTIVE;
-		dtc2->positionX = 20.0f;
-		dtc2->positionZ = 20.0f;
+		poic->m_mode = POI_ACTIVE;
+		poic->m_weight = 2.0f;
+		dogPoi2->m_mode = POI_ACTIVE;
+		dogPoi2->m_weight = 1.f;
+		dogPoi2->m_time = 10.0f;
+		dtc2->positionX = -80.0f;
+		dtc2->positionZ = 33.0f;
+		
+		//portPoi->SetPOImode(POI_FORCE);
 	}
 }
 

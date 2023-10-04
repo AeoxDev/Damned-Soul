@@ -128,7 +128,7 @@ bool ResetGeometryShader();
 
 // Create a constant buffer with provided data and return a unique index to it
 CB_IDX CreateConstantBuffer(const void* data, const size_t size, const uint8_t slot);
-// Set an active constant buffer by index (shader and slot data contained in buffer)
+// Set an m_mode constant buffer by index (shader and slot data contained in buffer)
 bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto);
 //Overload that sets slot to NULL before setting buffer, for particles
 bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, bool particles);
@@ -143,13 +143,13 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto);
 // Create a Vertex Buffer with provided data and return a unique index to it
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlag);
-// Set an active Vertex Buffer buffer by index
+// Set an m_mode Vertex Buffer buffer by index
 bool SetVertexBuffer(const VB_IDX idx);
 
 // Create an Index Buffer with provided data and return a unique index to it
 // Needs to take unsigned 32 bit integers as data, as that is the underlying DXGI format used
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count);
-// Set an active Index Buffer buffer by index
+// Set an m_mode Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx);
 
 // Create a Sampler
@@ -157,7 +157,7 @@ SMP_IDX CreateSamplerState();
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
-// Set an active viewport
+// Set an m_mode viewport
 bool SetViewport(const VP_IDX idx);
 
 // Creates the backbuffer from swapchain
@@ -178,7 +178,7 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 SRV_IDX CreateShaderResourceViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height, const uint8_t slot);
 // Overload to create a Shader Resource View with an already existing texture from another resource
 SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS sourceResource, const uint8_t slot);
-// Set an active shader resource view buffer by index (shader and slot data contained in buffer)
+// Set an m_mode shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx);
 //Overload that sets slot to NULL before setting SRV, for particles
 bool UnloadShaderResourceView(const SRV_IDX idx);
@@ -193,7 +193,7 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 // Create a shader resource view that holds a texture 
 // NOT DEFINED, WILL BE DEFINED IF NEEDED
 SRV_IDX CreateUnorderedAccessViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height, const uint8_t slot);
-// Set an active unordered access view buffer by index (shader and slot data contained in buffer)
+// Set an m_mode unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx);
 //Overload that sets slot to NULL before setting UAV, for particles
 bool UnloadUnorderedAcessView(const UAV_IDX idx);

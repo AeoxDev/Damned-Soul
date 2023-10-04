@@ -209,6 +209,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
+    <ClCompile Include="source\Systems\TransformSystem.cpp" />
     <ClCompile Include="source\Systems\UISystems.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
     <ClCompile Include="source\Collision.cpp" />
