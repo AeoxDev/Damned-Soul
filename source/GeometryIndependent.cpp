@@ -166,7 +166,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 
 	bool succeeded = MemLib::spop();
 
-	//Set back camera to previous m_mode
+	//Set back camera to previous mode
 	Camera::ToggleProjection();
 	DirectX::XMStoreFloat3(&vData, previousPos);
 	Camera::SetPosition(vData.x, vData.y, vData.z, false);//Set this to center of stage offset upwards

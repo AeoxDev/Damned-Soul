@@ -1,6 +1,10 @@
 #pragma once
 #include <DirectXMath.h>
 
+#define CAMERA_OFFSET_X 0
+#define CAMERA_OFFSET_Y 150.f
+#define CAMERA_OFFSET_Z -200.f
+
 namespace Camera
 {
 	void SetPosition(const float x, const float y, const float z, const bool includeOffset = false);

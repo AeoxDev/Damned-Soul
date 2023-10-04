@@ -155,7 +155,7 @@ bool Model::SetMaterialActive() const
 	return false;
 }
 
-// Set the currently m_mode index and vertex buffers to this model
+// Set the currently mode index and vertex buffers to this model
 bool Model::SetVertexAndIndexBuffersActive() const
 {
 	if (false == SetVertexBuffer(m_vertexBuffer))

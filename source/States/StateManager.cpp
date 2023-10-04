@@ -107,7 +107,7 @@ void StateManager::Input()
 	//First read the keys
 	
 
-	//Then go through the registries that are m_mode
+	//Then go through the registries that are mode
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();

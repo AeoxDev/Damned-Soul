@@ -5,9 +5,7 @@
 #include <DirectXMath.h>
 #include "PointOfInterestComponent.h"
 
-#define CAMERA_OFFSET_X 0
-#define CAMERA_OFFSET_Y 150.f
-#define CAMERA_OFFSET_Z -200.f
+
 #define CAMERA_FOV 3.14f/16.f
 #define CAMERA_PERSPECTIVE_DEPTH 512.0f
 //The max zoom in

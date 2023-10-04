@@ -1739,7 +1739,7 @@ static stbi__uint32 stbi__get32le(stbi__context *s)
 //    interleave an alpha=255 channel, but falls back to this for other cases
 //
 //  assume data buffer is malloced, so malloc a new one and free that one
-//  only failure m_mode is malloc failing
+//  only failure mode is malloc failing
 
 static stbi_uc stbi__compute_y(int r, int g, int b)
 {
@@ -5202,7 +5202,7 @@ static int stbi__parse_png_file(stbi__png *z, int scan, int req_comp)
             if (z->idata == NULL) return stbi__err("no IDAT","Corrupt PNG");
             // initial guess for decoded data size to avoid unnecessary reallocs
             bpl = (s->img_x * z->depth + 7) / 8; // bytes per line, per component
-            raw_len = bpl * s->img_y * s->img_n /* pixels */ + s->img_y /* filter m_mode per row */;
+            raw_len = bpl * s->img_y * s->img_n /* pixels */ + s->img_y /* filter mode per row */;
             z->expanded = (stbi_uc *) stbi_zlib_decode_malloc_guesssize_headerflag((char *) z->idata, ioff, raw_len, (int *) &raw_len, !is_iphone);
             if (z->expanded == NULL) return 0; // zlib should set error
             STBI_FREE(z->idata); z->idata = NULL;
@@ -5510,7 +5510,7 @@ static void *stbi__bmp_parse_header(stbi__context *s, stbi__bmp_data *info)
          info->mg = stbi__get32le(s);
          info->mb = stbi__get32le(s);
          info->ma = stbi__get32le(s);
-         if (compress != 3) // override mr/mg/mb unless in BI_BITFIELDS m_mode, as per docs
+         if (compress != 3) // override mr/mg/mb unless in BI_BITFIELDS mode, as per docs
             stbi__bmp_set_mask_defaults(info, compress);
          stbi__get32le(s); // discard color space
          for (i=0; i < 12; ++i)
@@ -5968,7 +5968,7 @@ static void *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int req
       //   load the data
       for (i=0; i < tga_width * tga_height; ++i)
       {
-         //   if I'm in RLE m_mode, do I need to get a RLE stbi__pngchunk?
+         //   if I'm in RLE mode, do I need to get a RLE stbi__pngchunk?
          if ( tga_is_RLE )
          {
             if ( RLE_count == 0 )
@@ -6019,7 +6019,7 @@ static void *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int req
          for (j = 0; j < tga_comp; ++j)
            tga_data[i*tga_comp+j] = raw_data[j];
 
-         //   in case we're in RLE m_mode, keep counting down
+         //   in case we're in RLE mode, keep counting down
          --RLE_count;
       }
       //   do I need to invert the image?
@@ -6160,7 +6160,7 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
    if (bitdepth != 8 && bitdepth != 16)
       return stbi__errpuc("unsupported bit depth", "PSD bit depth is not 8 or 16 bit");
 
-   // Make sure the color m_mode is RGB.
+   // Make sure the color mode is RGB.
    // Valid options are:
    //   0: Bitmap
    //   1: Grayscale
@@ -7930,9 +7930,9 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
       0.61    bugfixes due to Marc LeBlanc, Christopher Lloyd
       0.60    fix compiling as c++
       0.59    fix warnings: merge Dave Moore's -Wall fixes
-      0.58    fix bug: zlib uncompressed m_mode len/nlen was wrong endian
+      0.58    fix bug: zlib uncompressed mode len/nlen was wrong endian
       0.57    fix bug: jpg last huffman symbol before marker was >9 bits but less than 16 available
-      0.56    fix bug: zlib uncompressed m_mode len vs. nlen
+      0.56    fix bug: zlib uncompressed mode len vs. nlen
       0.55    fix bug: restart_interval not initialized to 0
       0.54    allow NULL for 'int *comp'
       0.53    fix bug in png 3->4; speedup png decoding

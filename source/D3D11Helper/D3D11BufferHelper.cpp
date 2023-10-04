@@ -254,7 +254,7 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 	return bfrHolder->currentCount++;
 }
 
-// Set an m_mode constant buffer by index (shader and slot data contained in buffer)
+// Set an mode constant buffer by index (shader and slot data contained in buffer)
 bool SetVertexBuffer(const VB_IDX idx)
 {
 	if (bfrHolder->currentCount < idx || idx < 0)
@@ -299,7 +299,7 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 	return bfrHolder->currentCount++;
 }
 
-// Set an m_mode Index Buffer buffer by index
+// Set an mode Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx)
 {
 	if (bfrHolder->currentCount < idx || idx < 0)

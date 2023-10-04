@@ -28,39 +28,41 @@ bool PointOfInterestSystem::Update()
 
 		//Get position
 		tCo = registry.GetComponent<TransformComponent>(entity);
-		if (poiCo->m_mode == POI_ACTIVE)
+		if (poiCo->mode == POI_ACTIVE)
 		{
 			//First add the new positions, use the last position aswell for a smoother movement (midpoint of both positions)
-			newPosX += (tCo->positionX + tCo->lastPositionX) * poiCo->m_weight;
-			newPosY += (tCo->positionY + tCo->lastPositionY) * poiCo->m_weight;
-			newPosZ += (tCo->positionZ + tCo->lastPositionZ) * poiCo->m_weight;
-			points += 2.0f * poiCo->m_weight;
+			newPosX += (tCo->positionX + tCo->lastPositionX) * poiCo->weight;
+			newPosY += (tCo->positionY + tCo->lastPositionY) * poiCo->weight;
+			newPosZ += (tCo->positionZ + tCo->lastPositionZ) * poiCo->weight;
+			points += 2.0f * poiCo->weight;
 		}
-		else if (poiCo->m_mode == POI_ACTIVE_FOR_X_TIME)
+		else if (poiCo->mode == POI_ACTIVE_FOR_X_TIME)
 		{
-			poiCo->m_time -= GetDeltaTime();
+			poiCo->time -= GetDeltaTime();
 			//First add the new positions, use the last position aswell for a smoother movement (midpoint of both positions)
-			newPosX += (tCo->positionX + tCo->lastPositionX) * poiCo->m_weight;
-			newPosY += (tCo->positionY + tCo->lastPositionY) * poiCo->m_weight;
-			newPosZ += (tCo->positionZ + tCo->lastPositionZ) * poiCo->m_weight;
+			newPosX += (tCo->positionX + tCo->lastPositionX) * poiCo->weight;
+			newPosY += (tCo->positionY + tCo->lastPositionY) * poiCo->weight;
+			newPosZ += (tCo->positionZ + tCo->lastPositionZ) * poiCo->weight;
 			//Multiply by weights
-			points += 2.0f * poiCo->m_weight;
-			if (poiCo->m_time < 0.0f)
+			points += 2.0f * poiCo->weight;
+			if (poiCo->time < 0.0f)
 			{
-				poiCo->m_mode = POI_INACTIVE;
+				poiCo->mode = POI_INACTIVE;
 			}
 		}
-		else if (poiCo->m_mode == POI_INACTIVE_FOR_X_TIME)
+		else if (poiCo->mode == POI_INACTIVE_FOR_X_TIME)
 		{
-			poiCo->m_time -= GetDeltaTime();
-			if (poiCo->m_time < 0.0f)
+			poiCo->time -= GetDeltaTime();
+			if (poiCo->time < 0.0f)
 			{
-				poiCo->m_mode = POI_ACTIVE;
+				poiCo->mode = POI_ACTIVE;
 			}
 		}
-		else if (poiCo->m_mode == POI_FORCE)
+		else if (poiCo->mode == POI_FORCE)
 		{
-			Camera::SetPosition(tCo->positionX, tCo->positionY, tCo->positionZ, true);
+			poiCo->rotationY += GetDeltaTime() * poiCo->rotationAccel;
+			//(0.0, -200) -> (200, 0.0) -> (0.0, 200) -> (-200, 0.0)
+			Camera::SetPosition(tCo->positionX + poiCo->rotationRadius * -sinf(poiCo->rotationY), tCo->positionY + poiCo->height + CAMERA_OFFSET_Y, tCo->positionZ + poiCo->rotationRadius * cosf(poiCo->rotationY), false);
 			Camera::SetLookAt(tCo->positionX, tCo->positionY, tCo->positionZ);
 			Camera::UpdateView();
 			Camera::UpdateProjection();

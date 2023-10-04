@@ -286,7 +286,7 @@ HitboxComponent::HitboxComponent()
 	this->nrMoveableCollisions = 0;
 	flags = (long long*)this->convexFlags;
 	*flags = 0;
-	//No need to zero the other values as they won't be used until m_mode is set.
+	//No need to zero the other values as they won't be used until mode is set.
 }
 
 void CollisionFlags::ResetToActive()

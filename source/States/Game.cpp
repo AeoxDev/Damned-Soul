@@ -43,17 +43,14 @@ void GameScene::Setup(int scene)//Load
 
 		registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
-		//Doggo2
+		//Doggo2Ent
 
 		dogCo2->model.Load("HellhoundDummy_PH.mdl");
 		stageCo->model.Load("PlaceholderScene.mdl");
 		pmc->model.Load("HellhoundDummy_PH.mdl");
 		RenderGeometryIndependentCollision(stage);
-		poic->m_mode = POI_ACTIVE;
-		poic->m_weight = 2.0f;
-		dogPoi2->m_mode = POI_ACTIVE;
-		dogPoi2->m_weight = 1.f;
-		dogPoi2->m_time = 10.0f;
+		poic->mode = POI_ACTIVE;
+		poic->weight = 2.f;
 		dtc2->positionX = -80.0f;
 		dtc2->positionZ = 33.0f;
 		
