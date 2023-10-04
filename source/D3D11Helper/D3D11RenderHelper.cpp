@@ -54,6 +54,7 @@ RTV_IDX CreateBackBuffer()
 		return false;
 	}
 
+
 	// use the back buffer address to create the render target
 	// null as description to base it on the backbuffers values
 	ID3D11RenderTargetView* tempBB = 0;
@@ -65,7 +66,7 @@ RTV_IDX CreateBackBuffer()
 		return false;
 	}
 	rtvHolder->rtv_map.emplace(currentIdx, tempBB);
-
+	backBuffer->Release();
 
 	return (rtvHolder->_nextIdx)++;
 }

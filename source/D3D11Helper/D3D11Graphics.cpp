@@ -112,6 +112,7 @@ void EndDirectX()
 		if (val != nullptr)
 			val->Release();
 	}
+	pixHolder->ps_map.clear();
 
 	// Release all samplers
 	for (auto& [key, val] : smpHolder->smp_map)
@@ -119,54 +120,73 @@ void EndDirectX()
 		if (val != nullptr)
 			val->Release();
 	}
+	smpHolder->smp_map.clear();
+
 	// Release all vertex shaders and their input layouts
 	for (auto& [key, val] : vrtHolder->vs_map)
 	{
 		if (val != nullptr)
 			val->Release();
-	}	
+	}
+	vrtHolder->vs_map.clear();
+
 	for (auto& [key, val] : vrtHolder->il_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	vrtHolder->il_map.clear();
+
 	// Release all geometry shaders
 	for (auto& [key, val] : geoHolder->gs_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	geoHolder->gs_map.clear();
+
 	// Release all compute shaders
 	for (auto& [key, val] : comHolder->cs_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	comHolder->cs_map.clear();
+
 	// Release all textures and associated resources
 	for (auto& [key, val] : txHolder->img_map)
 		val.Release(); // Is not a pointer
+	txHolder->img_map.clear();
+
 	for (auto& [key, val] : txHolder->srv_map)
 	{
 		if (val != nullptr)
 			val->Release();
-	}	
+	}
+	txHolder->srv_map.clear();
+
 	for (auto& [key, val] : txHolder->tx_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	txHolder->tx_map.clear();
+
 	// Release all buffers shaders
 	for (auto& [key, val] : bfrHolder->buff_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	bfrHolder->buff_map.clear();
+
 	// Release all render target views
 	for (auto& [key, val] : rtvHolder->rtv_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	rtvHolder->rtv_map.clear();
 	
 	// Release all depth stencil views
 	for (auto& [key, val] : dsvHolder->dsv_map)
@@ -174,11 +194,14 @@ void EndDirectX()
 		if (val != nullptr)
 			val->Release();
 	}
+	dsvHolder->dsv_map.clear();
+
 	for (auto& [key, val] : dsvHolder->ds_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	dsvHolder->ds_map.clear();
 
 	// Release all shader resource views
 	for (auto& [key, val] : srvHolder->srv_resource_map)
@@ -186,12 +209,14 @@ void EndDirectX()
 		if (val != nullptr)
 			val->Release();
 	}
+	srvHolder->srv_resource_map.clear();
+
 	for (auto& [key, val] : srvHolder->srv_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
-
+	srvHolder->srv_map.clear();
 
 	// Release all unorderd access views
 	for (auto& [key, val] : uavHolder->uav_map)
@@ -199,17 +224,23 @@ void EndDirectX()
 		if (val != nullptr)
 			val->Release();
 	}	
+	uavHolder->uav_map.clear();
+
 	for (auto& [key, val] : uavHolder->uav_resource_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	uavHolder->uav_resource_map.clear();
+
 	// Release all rasterizer states
 	for (auto& [key, val] : rsHolder->rs_map)
 	{
 		if (val != nullptr)
 			val->Release();
 	}
+	rsHolder->rs_map.clear();
+
 	// Clear and flush device context
 	d3d11Data->deviceContext->ClearState();
 	d3d11Data->deviceContext->Flush();

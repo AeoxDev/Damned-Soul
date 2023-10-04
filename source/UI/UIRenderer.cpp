@@ -29,8 +29,7 @@ void End2dFrame(UI& ui)
 
 void UpdateUI()
 {
-	ID3D11ShaderResourceView* nullsrv = nullptr;
-	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
+	UnsetShaderResourceView(BIND_PIXEL, 0);
 
 	ClearDepthStencilView(renderStates[ui.RenderSlot].depthStencilView);
 	ClearRenderTargetView(renderStates[ui.RenderSlot].renderTargetView);
