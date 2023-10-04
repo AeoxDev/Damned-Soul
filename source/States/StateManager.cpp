@@ -100,10 +100,10 @@ void StateManager::Setup()
 	systems.push_back(new PlayerHealthUISystem());
 	systems.push_back(new PlayerSoulsUISystem());
 	systems.push_back(new UIRenderSystem());
-	systems.push_back(new HellhonudBehaviourSystem());
+	systems.push_back(new HellhoundBehaviourSystem());
 }
 
-}
+
 
 void StateManager::Input()
 {

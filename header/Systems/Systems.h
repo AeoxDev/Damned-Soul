@@ -50,7 +50,7 @@ class SkeletonBehaviourSystem : public System
 	bool Update();
 };
 
-class HellhonudBehaviourSystem : public System
+class HellhoundBehaviourSystem : public System
 {
 	bool Update();
 };

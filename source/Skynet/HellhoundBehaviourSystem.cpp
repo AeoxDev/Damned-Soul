@@ -166,7 +166,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 
 
-bool HellhonudBehaviourSystem::Update()
+bool HellhoundBehaviourSystem::Update()
 {
 	//First find the skynet component
 	PlayerComponent* playerComponent = nullptr;

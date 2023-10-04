@@ -134,7 +134,7 @@ const MODEL_TYPE Model::Load(const char* filename)
 	//m_animations[0].Load("Rocket_Anim_Wave.ani");
 	m_animations[0].Load("PlayerPlaceholder_Anim_ Attack.ani");
 
-	//m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
+	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
 
 	return result;
 }
