@@ -6,8 +6,8 @@
 struct RenderSetupComponent
 {
 	RS_IDX	rasterizerState = -1;
-	PS_IDX	pixelShader = -1;
-	VS_IDX	vertexShader = -1;
+	PS_IDX	pixelShaders[2] = { -1, -1 };
+	VS_IDX	vertexShaders[2] = { -1, -1 };
 	GS_IDX	geometryShader = -1;
 	CS_IDX	computeShader = -1;
 	VB_IDX	vertexBuffer = -1;
@@ -32,7 +32,7 @@ int SetupParticles();
 
 void PrepareDefaultPipeline();
 
-void PrepareBackBuffer();
+void PrepareBackBuffer(const bool use_skeleton = false);
 void ClearBackBuffer();
 void ResetGraphicsPipeline();
 void Clear(const int& componentSlot);

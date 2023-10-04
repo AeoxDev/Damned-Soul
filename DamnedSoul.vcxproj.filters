@@ -19,6 +19,7 @@
     <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl" />
     <FxCompile Include="resource\shader\ParticleSinusCS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
+    <FxCompile Include="resource\shader\TestSkelVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -138,6 +139,12 @@
     <ClCompile Include="source\Systems\CameraSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\TransformSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -252,6 +259,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\PointOfInterestComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Animation.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

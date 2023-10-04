@@ -5,10 +5,15 @@
 int LoadModel(const char* filename);
 
 
-struct ModelComponent
+struct ModelBonelessComponent
 {
 	Model model;
 	//int model;
 	//Add more stuff for models
 	//int texture;
+};
+
+struct ModelSkeletonComponent
+{
+	Model model;
 };

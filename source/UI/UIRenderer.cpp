@@ -45,12 +45,12 @@ void ClearUI()
 void RenderUI()//Render what is drawn to rendertarget.
 {
 
-	if (!SetVertexShader(renderStates[ui.RenderSlot].vertexShader))
+	if (!SetVertexShader(renderStates[ui.RenderSlot].vertexShaders[0]))
 	{
 		std::cout << "Failed to set UI Vertex Shader!" << std::endl;
 		return;
 	}
-	if (!SetPixelShader(renderStates[ui.RenderSlot].pixelShader))
+	if (!SetPixelShader(renderStates[ui.RenderSlot].pixelShaders[0]))
 	{
 		std::cout << "Failed to set UI Pixel Shader!" << std::endl;
 		return;

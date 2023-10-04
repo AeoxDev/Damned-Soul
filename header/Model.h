@@ -57,6 +57,8 @@ struct modelGenericData
 	const uint32_t m_numIndices;
 	const uint32_t m_numVertices;
 	const uint32_t m_numBones;
+
+	#pragma warning(suppress : 4200)
 	const char m_data[];//Array is intentional, ignore warning
 
 	const MODEL_TYPE ValidByteData() const;
@@ -85,7 +87,7 @@ struct Model
 
 	bool SetMaterialActive() const;
 
-	// Set the currently active index and vertex buffers to this model
+	// Set the currently mode index and vertex buffers to this model
 	bool SetVertexAndIndexBuffersActive() const;
 
 	void SetPixelAndVertexShader() const;

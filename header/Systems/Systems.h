@@ -44,6 +44,10 @@ class PointOfInterestSystem : public System
 {
 	bool Update();
 };
+class TransformSystem : public System
+{
+	bool Update();
+};
 class ParticleSystemGPU : public System
 {
 	bool Update();

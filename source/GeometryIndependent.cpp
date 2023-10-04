@@ -45,7 +45,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 {
 	//Find GI component
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
-	ModelComponent* model = registry.GetComponent<ModelComponent>(stageEntity);
+	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(stageEntity);
 	//Find stage component
 
 	//Look at model using orthographic camera

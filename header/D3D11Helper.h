@@ -180,7 +180,7 @@ void ReleaseVB(const VB_IDX idx);
 // Create an Index Buffer with provided data and return a unique index to it
 // Needs to take unsigned 32 bit integers as data, as that is the underlying DXGI format used
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count);
-// Set an active Index Buffer buffer by index
+// Set an mode Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx);
 // Sets index buffer to NULL
 void UnsetIndexBuffer();
@@ -189,7 +189,7 @@ void ReleaseIB(const IB_IDX idx);
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
-// Set an active viewport
+// Set an mode viewport
 bool SetViewport(const VP_IDX idx);
 // Release for a single constant buffer
 void ReleaseVP(const VP_IDX idx);

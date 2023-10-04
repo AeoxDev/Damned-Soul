@@ -17,6 +17,7 @@ private:
 
 		// The rest of the data
 		// Ignore warning, this is intentional
+		#pragma warning(suppress : 4200)
 		const char m_data[];
 		// vector<float> timestamps
 		// vector<Matrix> frames
