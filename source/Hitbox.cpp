@@ -758,8 +758,8 @@ void SetupTestHitbox()
 	SetupGIAll( registry, stage);
 
 	EntityID stageModel =  registry.CreateEntity();
-	 registry.AddComponent<ModelComponent>(stageModel);
-	ModelComponent* m =  registry.GetComponent<ModelComponent>(stageModel);
+	 registry.AddComponent<ModelBonelessComponent>(stageModel);
+	ModelBonelessComponent* m =  registry.GetComponent<ModelBonelessComponent>(stageModel);
 	m->model.Load("PlaceholderScene.mdl");
 	RenderGeometryIndependentCollisionToTexture( registry, stage, stageModel);*/
 	

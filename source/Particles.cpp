@@ -60,7 +60,7 @@ void Particles::InitializeParticles()
 
 	data->m_spawnPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 
-	float size = sizeof(Particle) * data->m_end;
+	float size = (float)sizeof(Particle) * data->m_end;
 
 	index = MemLib::palloc(sizeof(uint32_t) * data->m_end);
 
