@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Registry.h"
 #include "Components.h"
+#include "Camera.h"
 
 void Menu::Setup()//Load
 {
@@ -12,11 +13,25 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupImages();
 	SetupText();
+	//Setup stage to rotate around
+	EntityID stage = registry.CreateEntity();
+	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
+	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
+	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
+
+	stageM->model.Load("PlaceholderScene.mdl");
+	stageP->mode = POI_FORCE;
+	stageP->height = CAMERA_OFFSET_Y * -0.85f;
+	stageP->rotationY = 0.0f;
+	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
+	stageP->rotationAccel = 0.12f;
 }
 
 void Menu::Input()
 {
-
+	//Particles::PrepareParticleCompute();
+	//Dispatch(1, 2, 0);
+	//Particles::FinishParticleCompute();
 }
 
 void Menu::Update()
@@ -114,6 +129,15 @@ void Menu::Unload()
 	for (auto entity : View<TextComponent>(registry))
 	{
 		registry.RemoveComponent<TextComponent>(entity);
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<PointOfInterestComponent>(registry))
+	{
+		registry.RemoveComponent<PointOfInterestComponent>(entity);
+		ModelBonelessComponent* m = registry.GetComponent<ModelBonelessComponent>(entity);
+		m->model.Free();
+		registry.RemoveComponent<TransformComponent>(entity);
 		registry.DestroyEntity(entity);
 	}
 

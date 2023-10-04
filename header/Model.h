@@ -87,7 +87,7 @@ struct Model
 
 	bool SetMaterialActive() const;
 
-	// Set the currently active index and vertex buffers to this model
+	// Set the currently mode index and vertex buffers to this model
 	bool SetVertexAndIndexBuffersActive() const;
 
 	void SetPixelAndVertexShader() const;

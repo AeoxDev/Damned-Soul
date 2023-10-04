@@ -18,6 +18,8 @@
 //GUI To Be Decapritated
 #include "TextComponent.h"
 #include "ImageComponent.h"
+#include "ParticleComponent.h"
+
 
 
 #include "Skynet\SkeletonBehaviour.h"

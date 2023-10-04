@@ -10,7 +10,6 @@
 bool RenderSystem::Update()
 {
 	ClearBackBuffer();
-	RenderUI();
 	//Render Geometry
 
 	//Set shaders here.
@@ -20,7 +19,7 @@ bool RenderSystem::Update()
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
 
-		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX,0);
 		SetVertexBuffer(mc->model.m_vertexBuffer);
 		SetIndexBuffer(mc->model.m_indexBuffer);
 		mc->model.RenderAllSubmeshes();
@@ -32,7 +31,7 @@ bool RenderSystem::Update()
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
 
-		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(mc->model.m_vertexBuffer);
 		SetIndexBuffer(mc->model.m_indexBuffer);
 		mc->model.RenderAllSubmeshes();

@@ -8,6 +8,7 @@
 #include "Systems\Systems.h"
 #include <vector>
 
+
 struct StateManager;
 
 extern State currentStates;

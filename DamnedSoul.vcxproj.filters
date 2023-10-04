@@ -5,9 +5,9 @@
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resource\shader\ParticleGS.hlsl" />
-    <FxCompile Include="resource\shader\ParticlePS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleVS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleGS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticlePS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleVS.hlsl" />
     <FxCompile Include="resource\shader\PixelVertex.hlsl" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
@@ -19,6 +19,7 @@
     <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl" />
     <FxCompile Include="resource\shader\ParticleSinusCS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
+    <FxCompile Include="resource\shader\TestSkelVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -87,6 +88,9 @@
     <ClCompile Include="source\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="header\Components\RenderableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\ProximityCollision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -133,6 +137,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Systems\CameraSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\TransformSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -249,6 +259,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\PointOfInterestComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Animation.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

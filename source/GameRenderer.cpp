@@ -49,7 +49,7 @@ int SetupUIRenderState()
 	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 
 	//SHADER RESOURCE VIEW
-	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, RESOURCE_FLAGS::BIND_RENDER_TARGET, 0);
+	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
 
 	texture->Release();
 
@@ -106,9 +106,9 @@ int SetupGameRenderer()
 	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create a sampler state
-	//renderStates[currentSize].samplerState = CreateSamplerState();
+	renderStates[currentSize].samplerState = CreateSamplerState();
 	// Set the sampler state
-	d3d11Data->deviceContext->PSSetSamplers(0, 1, &smpHolder->smp_arr[renderStates[currentSize].samplerState]);
+	SetSamplerState(renderStates[currentSize].samplerState, 0);
 
 	// Create a viewport
 	renderStates[currentSize].viewPort = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
@@ -120,14 +120,33 @@ int SetupGameRenderer()
 	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 	// Set a render target view and depth stencil view
 	s = SetRenderTargetViewAndDepthStencil(renderStates[currentSize].renderTargetView, renderStates[currentSize].depthStencilView);
-	//Create and set a simple sampler
-	SMP_IDX sampler = CreateSamplerState();
-	SetSamplerState(sampler);
+
+	return currentSize++;
+}
+
+int SetupParticles()
+{
+	int sizer = sizeof(ParticleMetadata);
+	sizer = sizer * PARTICLE_METADATA_LIMIT;
+	renderStates[currentSize].constantBuffer = CreateConstantBuffer(Particles::GetData(), sizeof(ParticleMetadata) * PARTICLE_METADATA_LIMIT); // THIS IS FOR THE COMPUTE SHADER
+	renderStates[currentSize].rasterizerState = CreateRasterizerState(false, true);
+	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
+	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("ParticleVS.cso", PARTICLE);
+	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("ParticlePS.cso");
+	renderStates[currentSize].geometryShader = LoadGeometryShader("ParticleGS.cso");
+
+	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
+	renderStates[currentSize].renderTargetView = CreateRenderTargetView(USAGE_DEFAULT, resourceFlags, (CPU_FLAGS)0, sdl.WIDTH, sdl.HEIGHT);
+	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, BIND_RENDER_TARGET);
+	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+
 	return currentSize++;
 }
 
 void PrepareBackBuffer(const bool use_skeleton)
 {
+	SetTopology(TRIANGLELIST);
+
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(renderStates[backBufferRenderSlot].pixelShaders[use_skeleton]);
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[use_skeleton]);
@@ -136,6 +155,28 @@ void PrepareBackBuffer(const bool use_skeleton)
 void ClearBackBuffer()
 {
 	Clear(backBufferRenderSlot);
+}
+
+void ResetGraphicsPipeline()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		UnsetConstantBuffer(BIND_GEOMETRY, i);
+		UnsetConstantBuffer(BIND_VERTEX, i);
+		UnsetConstantBuffer(BIND_PIXEL, i);
+		UnsetShaderResourceView(BIND_GEOMETRY, i);
+		UnsetShaderResourceView(BIND_VERTEX, i);
+		UnsetShaderResourceView(BIND_PIXEL, i);
+		// Sampler State is only relevant to pixel shader
+		UnsetSamplerState(i);
+	}
+
+	UnsetPixelShader();
+	UnsetVertexShader();
+	UnsetGeometryShader();
+	UnsetVertexBuffer();
+	UnsetIndexBuffer();
+	UnsetRasterizerState();
 }
 
 void Clear(const int& s)
@@ -149,25 +190,20 @@ void Clear(const int& s)
 
 void RenderIndexed(const size_t& count)
 {
-	//ID3D11Buffer* lightBuf = nullptr;
-	//bool test = CreateLightingConstantBuffer( lightBuf);
-	//LightingStruct values;
-	//values.ambientColor = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.f);
-	//values.diffuseColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.f);  // White light
-	//values.specularColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.f);  // White specular light
-	//values.intensity = 32.f;
-	//UpdateLightingBuffer(lightBuf, values);
-	//d3d11Data->deviceContext->PSSetConstantBuffers(0, 1, &lightBuf);
-
 	d3d11Data->deviceContext->DrawIndexed((UINT)count, 0, 0);
+}
+
+void RenderOffset(const size_t& count, const size_t& offset)
+{
+	d3d11Data->deviceContext->Draw(count, offset);
 }
 
 void ClearParticles()
 {
-	ClearRenderTargetView(Particles::m_renderTargetView);
-	ClearDepthStencilView(Particles::m_depthStencilView);
+	ClearRenderTargetView(renderStates[Particles::RenderSlot].renderTargetView);
+	ClearDepthStencilView(renderStates[Particles::RenderSlot].depthStencilView);
 
-	SetRenderTargetViewAndDepthStencil(Particles::m_renderTargetView, Particles::m_depthStencilView);
+	SetRenderTargetViewAndDepthStencil(renderStates[Particles::RenderSlot].renderTargetView, renderStates[Particles::RenderSlot].depthStencilView);
 }
 
 void Present()

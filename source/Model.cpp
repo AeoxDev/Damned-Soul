@@ -134,7 +134,7 @@ const MODEL_TYPE Model::Load(const char* filename)
 	//m_animations[0].Load("Rocket_Anim_Wave.ani");
 	m_animations[0].Load("PlayerPlaceholder_Anim_ Attack.ani");
 
-	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
+	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX));
 
 	return result;
 }
@@ -148,21 +148,21 @@ void Model::Free()
 bool Model::SetMaterialActive() const
 {
 	const Material& mat = (**m_data.m_pp).GetMaterial(0);
-	if (SetTexture(mat.albedoIdx, 0, BIND_PIXEL)/* &&
+	if (SetTexture(mat.albedoIdx, BIND_PIXEL, 0)/* &&
 		SetTexture(mat.normalIdx, 1, BIND_PIXEL) &&
 		SetTexture(mat.glowIdx, 2, BIND_PIXEL)*/)
 		return true;
 	return false;
 }
 
-// Set the currently active index and vertex buffers to this model
+// Set the currently mode index and vertex buffers to this model
 bool Model::SetVertexAndIndexBuffersActive() const
 {
 	if (false == SetVertexBuffer(m_vertexBuffer))
 		return false;
 	if (false == SetIndexBuffer(m_indexBuffer))
 		return false;
-	if (false == SetConstantBuffer(m_animationBuffer, BIND_VERTEX))
+	if (false == SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2))
 		return false;
 	return true;
 }
@@ -186,9 +186,8 @@ void Model::RenderAllSubmeshes()
 
 	// Try to get the initial animation frame
 	uint32_t size;
-	//SetPixelAndVertexShader();
 	UpdateConstantBuffer(m_animationBuffer, m_animations[0].GetFrame(animationTime, size));
-	SetConstantBuffer(m_animationBuffer, BIND_VERTEX);
+	SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2);
 
 	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
 	{
@@ -196,7 +195,7 @@ void Model::RenderAllSubmeshes()
 		const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
 
 		// Set material and draw
-		SetTexture(currentMaterial.albedoIdx, 0, BIND_PIXEL);
+		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
 }

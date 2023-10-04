@@ -3,16 +3,15 @@
 #include "D3D11Helper.h"
 #include "SDLHandler.h"
 #include <DirectXMath.h>
+#include "PointOfInterestComponent.h"
 
-#define CAMERA_OFFSET_X 0
-#define CAMERA_OFFSET_Y 150.f
-#define CAMERA_OFFSET_Z -200.f
+
 #define CAMERA_FOV 3.14f/16.f
 #define CAMERA_PERSPECTIVE_DEPTH 512.0f
 //The max zoom in
-#define CAMERA_ZOOM_IN_LIMIT 3.14f/48.f
+#define CAMERA_ZOOM_IN_LIMIT 3.14f/24.f
 //THe max zoom out
-#define CAMERA_ZOOM_OUT_LIMIT 3.14f/10.f
+#define CAMERA_ZOOM_OUT_LIMIT 3.14f/6.5f
 
 struct CameraStruct
 {
@@ -250,7 +249,7 @@ void Camera::InitializeCamera()
 	//Prepare the buffer to creation
 	//Update camera pos, view and projection
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f);
-	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer), 1);
+	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer));
 	UpdateView();
 	UpdateProjection();
 	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));

@@ -7,6 +7,7 @@
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UIRenderer.h"
+#include "Particles.h"
 State currentStates;
 StateManager stateManager;
 
@@ -83,17 +84,17 @@ void StateManager::Setup()
 	//models.Initialize();
 	menu.Setup();
 	Camera::InitializeCamera();
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX);
 
 	Particles::InitializeParticles();
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY);
 	SetupTestHitbox();
 	RedrawUI();
 
 	//Setup systems here
+	systems.push_back(new ParticleSystemGPU());
 	systems.push_back(new RenderSystem());
 	systems.push_back(new ButtonSystem());
 	systems.push_back(new ControllerSystem());
+	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
@@ -101,6 +102,7 @@ void StateManager::Setup()
 	systems.push_back(new PlayerSoulsUISystem());
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
+	systems.push_back(new TransformSystem());
 }
 
 
@@ -110,7 +112,7 @@ void StateManager::Input()
 	//First read the keys
 	
 
-	//Then go through the registries that are active
+	//Then go through the registries that are mode
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
@@ -139,6 +141,7 @@ void StateManager::Update()
 	{
 		systems[i]->Update();
 	}
+	Input();
 }
 
 void StateManager::ComputeShaders()
@@ -172,6 +175,8 @@ void StateManager::UnloadAll()
 	shop.Unload();
 	levelScenes[0].Unload();
 	levelScenes[1].Unload();
+
+	Particles::ReleaseParticles();
 	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
