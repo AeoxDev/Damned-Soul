@@ -17,5 +17,5 @@ struct CurrentHitboxVariables
 	std::string fileName = "";
 };
 
-void HitboxEditorLoop();
+void HitboxEditorLoop(std::string& fileName);
 

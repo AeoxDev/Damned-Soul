@@ -2,9 +2,12 @@
 
 CurrentHitboxVariables CHV;
 
-void HitboxEditorLoop()
+void HitboxEditorLoop(std::string& fileName)
 {
 	bool done = false;
+
+	//Read hitbox file if it exists
+
 	while (!done)
 	{
 		//Render the entire level as a top down view
