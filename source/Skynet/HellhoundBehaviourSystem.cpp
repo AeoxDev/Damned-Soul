@@ -7,6 +7,26 @@
 
 
 
+// input true on stuff you want to reset
+void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
+{
+	if (circleBehavior)
+	{
+		hc->giveUpChaseCounter += GetDeltaTime();
+		if (hc->giveUpChaseCounter >= 1.0f)
+		{
+			hc->isBehind = false;
+			hc->isBehindCounter = 0.f;
+			hc->circleBehaviour = false;
+			hc->giveUpChaseCounter = 0.f;
+		}
+	}
+	if (charge)
+	{
+		hc->charge = false;
+	}
+	
+}
 
 void CombatBehaviour(HellhoundBehaviour* hellhoundComponent)
 {
@@ -21,7 +41,29 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	float relativeDirectionX = ptc->facingX - htc->facingX;
 	float relativeDirectionZ = ptc->facingZ - htc->facingZ;
 
+	//this will be used to determine if we are exactly
+	 // a = spelare. b = hellhound
+	float playerToHellhoundX = htc->positionX - ptc->positionX;
+	float playerToHellhoundZ = htc->positionZ - ptc->positionZ;
+	float behindDot = playerToHellhoundX * ptc->facingX + playerToHellhoundZ * ptc->facingZ;
+	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
+	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
+
+	float tolerance = 0.2; // THIS IS FOR ANGLE SMOOTHING
+	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
+	{
+		hc->isBehind = true;
+		hc->isBehindCounter += GetDeltaTime();
+	}
+	else
+	{
+		ResetHellhoundVariables(hc, true, true);
+	}
+
+
 	float dot = relativePosX * relativeDirectionZ - relativePosZ * relativeDirectionX;
+
+
 	float magnitude = 0.f;
 	float dirX = 0.f;
 	float dirZ = 0.f;
@@ -52,9 +94,13 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 		SmoothRotation(htc, dirX, dirZ);
 	}
-
-	htc->positionX += dirX/ magnitude * 10.0f * GetDeltaTime();
-	htc->positionZ += dirZ / magnitude * 10.0f * GetDeltaTime();
+	if (magnitude > 0.001f)
+	{
+		dirX /= magnitude;
+		dirZ /= magnitude;
+	}
+	htc->positionX += dirX * 10.0f * GetDeltaTime();
+	htc->positionZ += dirZ * 10.0f * GetDeltaTime();
 	hc->goalDirectionX = ptc->positionX - htc->positionX;
 	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
 }
@@ -76,8 +122,13 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 
 	//speed set to 10.0f, use enemy component later
-	hellhoundTransformComponent->positionX += dirX * 10.0f * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += dirZ * 10.0f * GetDeltaTime();
+	float speed = 10.f;
+	if (hellhoundComponent->charge)
+	{
+		speed = 18.f;
+	}
+	hellhoundTransformComponent->positionX += dirX * speed * GetDeltaTime();
+	hellhoundTransformComponent->positionZ += dirZ * speed * GetDeltaTime();
 }
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent)
@@ -139,23 +190,31 @@ bool HellhonudBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 
-			if (distance < 3.5f)
+			if (distance < 3.5f) // fight club
 			{
-				hellhoundComponent->circleBehaviour = false;
+				ResetHellhoundVariables(hellhoundComponent, true, true);
 				CombatBehaviour(hellhoundComponent);
 			}
-			else if (distance <= 12 + hellhoundComponent->circleBehaviour)
+			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
-				CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
+				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
+				{
+					hellhoundComponent->charge = true;
+					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
+				}
+				else //keep circling
+				{
+					CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
+				}
 			}
-			else if (distance < 50) //hunting distance
+			else if (distance < 50) //hunting distance, go chase
 			{
-				hellhoundComponent->circleBehaviour = false;
+				ResetHellhoundVariables(hellhoundComponent, true, true);
 				ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
 			}
 			else // idle
 			{
-				hellhoundComponent->circleBehaviour = false;
+				ResetHellhoundVariables(hellhoundComponent, true, true);
 				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
 			}
 		}

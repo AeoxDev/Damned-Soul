@@ -6,4 +6,8 @@ struct HellhoundBehaviour
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	bool clockwiseCircle = false;
 	bool circleBehaviour = false;
+	bool isBehind = false;
+	float isBehindCounter = 0.f;
+	float giveUpChaseCounter = 0.f;
+	bool charge = false;
 };
