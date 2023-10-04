@@ -7,7 +7,7 @@
 
 
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats)
 {
 	skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
 	skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
@@ -21,13 +21,11 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-
-	//speed set to 10.0f, use enemy component later
-	skeletonTransformComponent->positionX += dirX * 10.0f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += dirZ * 10.0f * GetDeltaTime();
+	skeletonTransformComponent->positionX += dirX * stats->moveSpeed * GetDeltaTime();
+	skeletonTransformComponent->positionZ += dirZ * stats->moveSpeed * GetDeltaTime();
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent)
+void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats)
 {
 	skeletonComponent->timeCounter += GetDeltaTime();
 	if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
@@ -48,13 +46,12 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 
 	
-	//speed set to 10.0f, use enemy component later
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * 5.0f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * 5.0f * GetDeltaTime();
+	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->moveSpeed/ 2.f * GetDeltaTime();
+	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->moveSpeed / 2.f * GetDeltaTime();
 	
 }
 
-void CombatBehaviour(SkeletonBehaviour* skeletonComponent)
+void CombatBehaviour(SkeletonBehaviour* skeletonComponent, StatComponent* enemyStats, StatComponent* playerStats)
 {
 
 }
@@ -66,17 +63,21 @@ bool SkeletonBehaviourSystem::Update()
 	TransformComponent* playerTransformCompenent = nullptr;
 	SkeletonBehaviour* skeletonComponent = nullptr;
 	TransformComponent* skeletonTransformComponent = nullptr;
+	StatComponent* enemyStats = nullptr;
+	StatComponent* playerStats = nullptr;
 	
-	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
 	{
 		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
 		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
 
-	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent>(registry))
+	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
 	{
 		skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
+		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && true )// check if enemy is alive, change later
 		{
@@ -84,15 +85,15 @@ bool SkeletonBehaviourSystem::Update()
 			
 			if (distance < 2.5f)
 			{
-				CombatBehaviour(skeletonComponent);
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats);
 			}
 			else if (distance < 50) //hunting distance
 			{
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent);
+				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
 			}
 			else // idle
 			{
-				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent);
+				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
 			}
 		}
 	}

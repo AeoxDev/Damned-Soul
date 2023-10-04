@@ -28,12 +28,12 @@ void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool c
 	
 }
 
-void CombatBehaviour(HellhoundBehaviour* hellhoundComponent)
+void CombatBehaviour(HellhoundBehaviour* hellhoundComponent, StatComponent* enemyStats, StatComponent* playerStats)
 {
 
 }
 
-void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBehaviour* hc, TransformComponent* htc)
+void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBehaviour* hc, TransformComponent* htc, StatComponent* enemyStats)
 {
 	float relativePosX = ptc->positionX - htc->positionX;
 	float relativePosZ = ptc->positionZ - htc->positionZ;
@@ -99,14 +99,14 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 		dirX /= magnitude;
 		dirZ /= magnitude;
 	}
-	htc->positionX += dirX * 10.0f * GetDeltaTime();
-	htc->positionZ += dirZ * 10.0f * GetDeltaTime();
+	htc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
+	htc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
 	hc->goalDirectionX = ptc->positionX - htc->positionX;
 	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
 }
 
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats)
 {
 	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
@@ -122,16 +122,16 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 
 	//speed set to 10.0f, use enemy component later
-	float speed = 10.f;
+	float speedMultiplier = 1.f;
 	if (hellhoundComponent->charge)
 	{
-		speed = 18.f;
+		speedMultiplier = 2.f;
 	}
-	hellhoundTransformComponent->positionX += dirX * speed * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += dirZ * speed * GetDeltaTime();
+	hellhoundTransformComponent->positionX += dirX * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
+	hellhoundTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent)
+void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats)
 {
 	hellhoundComponent->timeCounter += GetDeltaTime();
 	if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
@@ -152,9 +152,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ);
 
 
-	//speed set to 10.0f, use enemy component later
-	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * 5.0f * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * 5.0f * GetDeltaTime();
+	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
+	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
 }
 
 
@@ -173,18 +172,21 @@ bool HellhoundBehaviourSystem::Update()
 	TransformComponent* playerTransformCompenent = nullptr;
 	HellhoundBehaviour* hellhoundComponent = nullptr;
 	TransformComponent* hellhoundTransformComponent = nullptr;
-	
+	StatComponent* enemyStats = nullptr;
+	StatComponent* playerStats = nullptr;
 
 	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	{
 		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
 		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
 
 	for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent>(registry))
 	{
 		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
 		hellhoundTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
+		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && true)// check if enemy is alive, change later
 		{
@@ -193,29 +195,29 @@ bool HellhoundBehaviourSystem::Update()
 			if (distance < 2.5f) // fight club
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
-				CombatBehaviour(hellhoundComponent);
+				CombatBehaviour(hellhoundComponent, enemyStats, playerStats);
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
 				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
 				{
 					hellhoundComponent->charge = true;
-					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
+					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
 				}
 				else //keep circling
 				{
-					CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
+					CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
 				}
 			}
 			else if (distance < 50) //hunting distance, go chase
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
-				ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
+				ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
 			}
 			else // idle
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
-				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent);
+				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
 			}
 		}
 	}
