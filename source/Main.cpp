@@ -6,6 +6,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
+#include "ProximityHitboxEditor.h"
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -27,6 +28,8 @@ int main(int argc, char* args[])
 		stateManager.Update();//Lastly do the cpu work
 
 		stateManager.EndFrame();
+
+		HitboxEditorLoop("test");
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

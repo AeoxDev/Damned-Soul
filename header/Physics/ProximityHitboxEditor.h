@@ -13,9 +13,8 @@ struct ProximityPoint
 struct CurrentHitboxVariables
 {
 	int clockwise = 1; //Clockwise or counter-clockwise
-	ML_Vector<ProximityPoint> pointList;
-	std::string fileName = "";
+	ML_Vector<ProximityPoint> list;
 };
 
-void HitboxEditorLoop(std::string& fileName);
+void HitboxEditorLoop(std::string fileName);
 
