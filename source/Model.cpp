@@ -132,7 +132,7 @@ const MODEL_TYPE Model::Load(const char* filename)
 	Animation animation;
 	m_animations.push_back(animation);
 	//m_animations[0].Load("Rocket_Anim_Wave.ani");
-	m_animations[0].Load("PlayerPlaceholder_Anim_Stomp.ani");
+	m_animations[0].Load("PlayerPlaceholder_Anim_ Attack.ani");
 
 	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
 
@@ -180,7 +180,7 @@ void Model::RenderAllSubmeshes()
 	// That would sort of explain some of the wonky stuff happening
 
 	static float animationTime = 0.0f;
-	animationTime += GetDeltaTime();
+	animationTime += GetDeltaTime() * 0.3f;
 	if (animationTime > 1.0f)
 		animationTime -= 2.0f;
 
