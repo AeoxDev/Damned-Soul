@@ -2,14 +2,14 @@
 
 using namespace DirectX;
 
-UIButton::UIButton(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+UIButton::UIButton(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
-	Setup(ui, imageFile, hoverImageFile, buttonText, onClick, onHover, position, scale, rotation, visibility, opacity);
+	Setup(imageFile, hoverImageFile, buttonText, onClick, onHover, position, scale, rotation, visibility, opacity);
 }
 
-void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIButton::Setup(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
-	m_Images[0] = UIImage(ui, imageFile, position, scale, rotation, visibility, opacity);
+	m_Images[0] = UIImage(imageFile, position, scale, rotation, visibility, opacity);
 	m_uiComponent.m_Bounds = m_Images[0].m_Bounds;
 
 	m_onClick = onClick;
@@ -23,23 +23,23 @@ void UIButton::Setup(UI& ui, const std::string& imageFile, const std::string& ho
 
 	//Hover image is not necessarily needed
 	if (hoverImageFile != "")
-		m_Images[1] = UIImage(ui, hoverImageFile, position, scale, rotation, visibility, opacity);
+		m_Images[1] = UIImage(hoverImageFile, position, scale, rotation, visibility, opacity);
 	//else
 	//	m_Images[1] = UIImage();
 	
 	//Button text is not necessarily needed
 	if (buttonText != L"")
-		m_Text = UIText(ui, buttonText, position, scale, rotation, visibility);
+		m_Text = UIText(buttonText, position, scale, rotation, visibility);
 	//else
 	//	m_Text = UIText();
 }
 
-void UIButton::Draw(UI& ui, ID2D1RenderTarget* rt)
+void UIButton::Draw()
 {
 	if (true == m_uiComponent.m_Visibility)
 	{
-		m_Images[m_CurrentImage].Draw(rt);
-		m_Text.Draw(ui);
+		m_Images[m_CurrentImage].Draw();
+		m_Text.Draw();
 	}
 }
 

@@ -4,8 +4,6 @@
 #include <dwrite.h>
 #include "MemLib/PoolPointer.hpp"
 
-struct UICanvas; //compiler hack
-
 struct UI;
 
 extern UI ui;
@@ -27,8 +25,6 @@ struct UI
 	UI();
 	void Setup();
 	void Release();
-
-	void Render(UICanvas& canvas);
 
 	void ResizeRelease();
 	void Resize();
