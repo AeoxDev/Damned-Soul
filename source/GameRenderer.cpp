@@ -131,8 +131,8 @@ int SetupParticles()
 	renderStates[currentSize].constantBuffer = CreateConstantBuffer(Particles::GetData(), sizeof(ParticleMetadata) * PARTICLE_METADATA_LIMIT); // THIS IS FOR THE COMPUTE SHADER
 	renderStates[currentSize].rasterizerState = CreateRasterizerState(false, true);
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
-	renderStates[currentSize].vertexShader = LoadVertexShader("ParticleVS.cso", PARTICLE);
-	renderStates[currentSize].pixelShader = LoadPixelShader("ParticlePS.cso");
+	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("ParticleVS.cso", PARTICLE);
+	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("ParticlePS.cso");
 	renderStates[currentSize].geometryShader = LoadGeometryShader("ParticleGS.cso");
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
@@ -143,17 +143,6 @@ int SetupParticles()
 	return currentSize++;
 }
 
-void PrepareDefaultPipeline()
-{
-	SetTopology(TRIANGLELIST);
-
-	SetVertexShader(renderStates[backBufferRenderSlot].vertexShader);
-	SetPixelShader(renderStates[backBufferRenderSlot].pixelShader);
-
-	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
-}
-
-void PrepareBackBuffer()
 void PrepareBackBuffer(const bool use_skeleton)
 {
 	SetTopology(TRIANGLELIST);

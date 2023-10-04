@@ -22,8 +22,8 @@ private:
 public:
 	void ToRenderableComponent(RenderSetupComponent& setupComponent)
 	{
-		vsIdx = &setupComponent.vertexShader;
-		psIdx = &setupComponent.pixelShader;
+		vsIdx = &setupComponent.vertexShaders[0];
+		psIdx = &setupComponent.pixelShaders[0];
 		gsIdx = &setupComponent.geometryShader;
 		csIdx = &setupComponent.computeShader;
 		vbIdx = &setupComponent.vertexBuffer;

@@ -118,9 +118,9 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 
 	SetWorldMatrix(1.f, 1.f, 1.f, BIND_VERTEX, 0);
 
-	SetVertexShader(renderStates[RenderSlot].vertexShader);
+	SetVertexShader(renderStates[RenderSlot].vertexShaders[0]);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
-	SetPixelShader(renderStates[RenderSlot].pixelShader);
+	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
 
 	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
