@@ -49,7 +49,7 @@ void Menu::SetupButtons()
 		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/StartButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.4f }));
 	}
 
-	//Options Button
+	//Settings Button
 	{
 		auto OnClick = [this]()
 			{
