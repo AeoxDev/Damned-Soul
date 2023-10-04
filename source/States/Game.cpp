@@ -51,11 +51,11 @@ void GameScene::Setup(int scene)//Load
 		pmc->model.Load("PlayerPlaceholder.mdl");
 		RenderGeometryIndependentCollision(stage);
 		poic->mode = POI_ACTIVE;
-		poic->weight = 2.f;
+		poic->weight = 3.f;
 		dtc2->positionX = -78.0f;
 		dtc2->positionZ = -33.0f;
 		dogPoi2->mode = POI_INACTIVE_FOR_X_TIME;
-		dogPoi2->weight = 0.5f;
+		dogPoi2->weight = 1.75f;
 		dogPoi2->time = 15.0f;
 		
 		//portPoi->SetPOImode(POI_FORCE);
