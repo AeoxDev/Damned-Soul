@@ -17,10 +17,10 @@ bool GeometryIndependentSystem::Update()
 	//Then check the position of all players and enemies:
 	if (geoCo != nullptr)
 	{
-		for (auto entity : View<PlayerComponent, TransformComponent>(registry))
+		for (auto entity : View<ControllerComponent, TransformComponent>(registry))
 		{
 			TransformComponent* p = registry.GetComponent<TransformComponent>(entity);
-			PlayerComponent* pl = registry.GetComponent< PlayerComponent>(entity);
+			ControllerComponent* pl = registry.GetComponent< ControllerComponent>(entity);
 			//We have found a player component with a transform
 			//Now take position and translate to pixel on texture and check if stage, if not, reset pos for now
 			int r = PixelValueOnPosition(geoCo, p->positionX, p->positionZ);

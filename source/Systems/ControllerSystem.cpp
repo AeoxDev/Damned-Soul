@@ -7,19 +7,23 @@
 
 bool ControllerSystem::Update()
 {
-	for (auto entity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
+	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent>(registry))
 	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		//Get the relevant components from the entity
+		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-		TransformComponent* pt = registry.GetComponent<TransformComponent>(entity);
-		pt->lastPositionZ = pt->positionZ;
-		pt->lastPositionX = pt->positionX;
-		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ player->goalX,player->goalZ, 0.0f };
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+
+		//Store variables for checking to see how far the entity has moved, relevant to the camera
+		transform->lastPositionZ = transform->positionZ;
+		transform->lastPositionX = transform->positionX;
+		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ controller->goalX,controller->goalZ, 0.0f };
 		DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
 		DirectX::XMFLOAT3 l;
 		DirectX::XMStoreFloat3(&l, length);
-		float angle = acosf(pt->facingX);
-		if (pt->facingZ < 0.0f)
+		float angle = acosf(transform->facingX);
+
+		if (transform->facingZ < 0.0f)
 		{
 			angle *= -1.0f;
 		}
@@ -29,19 +33,19 @@ bool ControllerSystem::Update()
 
 			DirectX::XMFLOAT3 goalFloats;
 			DirectX::XMStoreFloat3(&goalFloats, goalV);
-			player->goalX = goalFloats.x;
-			player->goalZ = goalFloats.y;
-			float goalAngle = acosf(player->goalX);
-			if (player->goalZ < 0.0f)
+			controller->goalX = goalFloats.x;
+			controller->goalZ = goalFloats.y;
+			float goalAngle = acosf(controller->goalX);
+			if (controller->goalZ < 0.0f)
 			{
 				goalAngle *= -1.0f;
 			}
 			//Check if shortest distance is right or left
-			float orthogonalX = -pt->facingZ;
-			float orthogonalZ = pt->facingX;
+			float orthogonalX = -transform->facingZ;
+			float orthogonalZ = transform->facingX;
 			//float dot = playerInputs[i].aimDirection.Dot(players[i].forward);
-			float dot = player->goalX * pt->facingX + player->goalZ * pt->facingZ;
-			float orthDot = player->goalX * orthogonalX + player->goalZ * orthogonalZ;
+			float dot = controller->goalX * transform->facingX + controller->goalZ * transform->facingZ;
+			float orthDot = controller->goalX * orthogonalX + controller->goalZ * orthogonalZ;
 			if (orthDot > 0.0f)
 			{//Om till vänster
 				angle += GetDeltaTime() * (10.1f - dot);
@@ -50,57 +54,67 @@ bool ControllerSystem::Update()
 			{
 				angle -= GetDeltaTime() * (10.1f - dot);
 			}
-			pt->facingX = cosf(angle);
-			pt->facingZ = sinf(angle);
-			player->goalX = 0.0f;
-			player->goalZ = 0.0f;
+			transform->facingX = cosf(angle);
+			transform->facingZ = sinf(angle);
+			controller->goalX = 0.0f;
+			controller->goalZ = 0.0f;
 
 		}
+
+		/*COMBAT INPUT*/
+		//Test code for now but we fuckin about
+		float speed = stat->moveSpeed;
+		if (keyInput[SCANCODE_LSHIFT] == down)
+		{
+			speed *= 3.0f;
+			transform->scaleX = 10.0f;
+		}
+
+		/*MOVEMENT INPUT*/
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
 			moving = true;
 			
-			pt->positionZ += stat->moveSpeed * GetDeltaTime();
-			player->goalZ += 1.0f;
+			transform->positionZ += speed * GetDeltaTime();
+			controller->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
 			moving = true;
-			pt->positionZ -= stat->moveSpeed * GetDeltaTime();
-			player->goalZ -= 1.0f;
+			transform->positionZ -= speed * GetDeltaTime();
+			controller->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
 			moving = true;
-			pt->positionX -= stat->moveSpeed * GetDeltaTime();
-			player->goalX -= 1.0f;
+			transform->positionX -= speed * GetDeltaTime();
+			controller->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
 			moving = true;
-			pt->positionX += stat->moveSpeed * GetDeltaTime();
-			player->goalX += 1.0f;
+			transform->positionX += speed * GetDeltaTime();
+			controller->goalX += 1.0f;
 		}
+
 		if (moving)
 		{
-			player->moveTime += GetDeltaTime() * player->moveFactor;
-			if (player->moveMaxLimit < player->moveTime)
+			controller->moveTime += GetDeltaTime() * controller->moveFactor;
+			if (controller->moveMaxLimit < controller->moveTime) //clamp moveTime to upper limit
 			{
-				player->moveTime = player->moveMaxLimit;
+				controller->moveTime = controller->moveMaxLimit;
 			}
 		}
 		else
 		{
-			player->moveTime -= GetDeltaTime() * player->moveFactor * player->moveResetFactor;
-			if (player->moveTime < 0.0f)
+			controller->moveTime -= GetDeltaTime() * controller->moveFactor * controller->moveResetFactor;
+			if (controller->moveTime < 0.0f) //clamp moveTime to lower limit
 			{
-				player->moveTime = 0.0f;
+				controller->moveTime = 0.0f;
 			}
 		}
 	}
-	
-		
 		
 	return true;
 }

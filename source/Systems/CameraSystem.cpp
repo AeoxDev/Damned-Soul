@@ -36,26 +36,26 @@ bool PointOfInterestSystem::Update()
 	float avX = (cameraPosX + newPosX) / (float)points;
 	float avY = (cameraPosY + newPosY) / (float)points;
 	float avZ = (cameraPosZ + newPosZ) / (float)points;
-	PlayerComponent* p = nullptr;
+	ControllerComponent* c = nullptr;
 	TransformComponent* pt = nullptr;
 	StatComponent* s = nullptr;
 	//Offset forward by player's movement:
 	//Only supports one player at the moment
-	for (auto entity : View<PointOfInterestComponent, TransformComponent, PlayerComponent, StatComponent>(registry))
+	for (auto entity : View<PointOfInterestComponent, TransformComponent, ControllerComponent, StatComponent>(registry))
 	{
 		 s = registry.GetComponent<StatComponent>(entity);
-		 p = registry.GetComponent<PlayerComponent>(entity);
+		 c = registry.GetComponent<ControllerComponent>(entity);
 		 pt = registry.GetComponent<TransformComponent>(entity);
 		
 	}
-	if (p == nullptr || pt == nullptr)
+	if (c == nullptr || pt == nullptr)
 	{
 		return true;
 	}
 	float playerMoveX = pt->facingX;
 	float playerMoveY = pt->facingY;
 	float playerMoveZ = pt->facingZ;
-	float moveScalar = s->moveSpeed * p->moveTime;
+	float moveScalar = s->moveSpeed * c->moveTime;
 
 	float distX = avX - cameraPosX;
 	float distY = avY - cameraPosY;

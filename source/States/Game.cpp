@@ -39,8 +39,9 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
 
-		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125, 20.0f, 10, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+		StatComponent* sc = registry.AddComponent<StatComponent>(player, 125, 20.0f, 10, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
+		ControllerComponent* cc = registry.AddComponent<ControllerComponent>(player);
 
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
