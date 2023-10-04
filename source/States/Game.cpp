@@ -49,8 +49,7 @@ void GameScene::Setup(int scene)//Load
 		StatComponent* ss = registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
 		StatComponent* ss2 = registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
 
-		StatComponent* es = registry.AddComponent<StatComponent>(dog2, 20, 10.0f, 5, 1.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-		EnemyComponent* ec = registry.AddComponent<EnemyComponent>(dog2, 1);
+
 
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
@@ -60,9 +59,9 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<UIHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		registry.AddComponent<UIPlayerSoulsComponent>(player, 1, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
 
-		registry.AddComponent<UIHealthComponent>(dog2, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
+		//registry.AddComponent<UIHealthComponent>(dog2, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 
-		ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
+		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 		//particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
 		//Doggo2
@@ -74,7 +73,7 @@ void GameScene::Setup(int scene)//Load
 		stageCo->model.Load("PlaceholderScene.mdl");
 		pmc->model.Load("PlayerPlaceholder.mdl");
 		RenderGeometryIndependentCollision(stage);
-		poic->active = POI_ACTIVE;
+		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
 		skeltc->positionZ = 20.0f;
 		skeltc2->positionZ = 15.0f;
