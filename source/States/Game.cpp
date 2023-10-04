@@ -86,8 +86,8 @@ void GameScene::Setup(int scene)//Load
 
 void GameScene::Input()
 {
-	/*if (keyState[SDL_SCANCODE_SPACE] == pressed)
-	{*/
+	if (keyState[SDL_SCANCODE_SPACE] == pressed)
+	{
 		float dmg = 0.0f;
 		int souls = 0;
 		for (auto entity : View<EnemyComponent, StatComponent>(registry))
@@ -99,7 +99,7 @@ void GameScene::Input()
 			souls = enemy->soulCount;
 		}
 
-		/*for (auto entity : View<PlayerComponent, StatComponent>(registry))
+		for (auto entity : View<PlayerComponent, StatComponent>(registry))
 		{
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			auto player = registry.GetComponent<PlayerComponent>(entity);
@@ -107,9 +107,9 @@ void GameScene::Input()
 			stats->health -= (int)dmg;
 			player->souls += souls;
 
-		}*/
+		}
 		RedrawUI();
-	//}
+	}
 
 	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 	{
