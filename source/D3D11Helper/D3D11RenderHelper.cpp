@@ -1,7 +1,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "SDLHandler.h"
 #include <iostream>
 

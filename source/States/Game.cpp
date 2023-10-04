@@ -10,7 +10,7 @@
 #include "Input.h"
 #include "States\StateManager.h"
 #include "Registry.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 
 void GameScene::Setup(int scene)//Load
 {

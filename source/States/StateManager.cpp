@@ -6,7 +6,7 @@
 #include "Particles.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "Particles.h"
 State currentStates;
 StateManager stateManager;

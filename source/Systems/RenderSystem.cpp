@@ -5,7 +5,7 @@
 #include "Components.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 
 bool RenderSystem::Update()
 {
