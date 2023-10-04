@@ -3,14 +3,11 @@
 
 struct PauseState
 {
-
 	void Setup();
 
-	void Clear();
-	void ComputeShaders();
-	void Render();
 	void Input();
 	void Update();
+	void ComputeShaders();
 
 	void Unload();
 };

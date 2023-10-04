@@ -129,10 +129,10 @@ const MODEL_TYPE Model::Load(const char* filename)
 	else
 		m_vertexShader = LoadVertexShader("TestSkelVS.cso");
 
-	//Animation animation;
-	//m_animations.push_back(animation);
-	////m_animations[0].Load("Rocket_Anim_Wave.ani");
-	//m_animations[0].Load("PlayerPlaceholder_Anim_Stomp.ani");
+	Animation animation;
+	m_animations.push_back(animation);
+	//m_animations[0].Load("Rocket_Anim_Wave.ani");
+	m_animations[0].Load("PlayerPlaceholder_Anim_ Attack.ani");
 
 	//m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
 
@@ -179,16 +179,16 @@ void Model::RenderAllSubmeshes()
 	// Incorrect bone indices?
 	// That would sort of explain some of the wonky stuff happening
 
-	//static float animationTime = 0.0f;
-	//animationTime += GetDeltaTime();
-	//if (animationTime > 1.0f)
-	//	animationTime -= 2.0f;
+	static float animationTime = 0.0f;
+	animationTime += GetDeltaTime() * 0.3f;
+	if (animationTime > 1.0f)
+		animationTime -= 2.0f;
 
-	//// Try to get the initial animation frame
-	//uint32_t size;
-	////SetPixelAndVertexShader();
-	//UpdateConstantBuffer(m_animationBuffer, m_animations[0].GetFrame(animationTime, size));
-	//SetConstantBuffer(m_animationBuffer, BIND_VERTEX);
+	// Try to get the initial animation frame
+	uint32_t size;
+	//SetPixelAndVertexShader();
+	UpdateConstantBuffer(m_animationBuffer, m_animations[0].GetFrame(animationTime, size));
+	SetConstantBuffer(m_animationBuffer, BIND_VERTEX);
 
 	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
 	{

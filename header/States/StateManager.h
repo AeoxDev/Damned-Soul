@@ -2,9 +2,9 @@
 #include "SDLHandler.h"
 #include "StateEnums.h"
 #include "ButtonManager.h"
-#include "States_&_Scenes\Menu.h"
-#include "States_&_Scenes\Game.h"
-#include "States_&_Scenes\Pause.h"
+#include "States\Menu.h"
+#include "States\Game.h"
+#include "States\Pause.h"
 #include "Systems\Systems.h"
 #include <vector>
 
@@ -27,12 +27,11 @@ struct StateManager
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>
 	void Setup();
-	void Clear();
-	void ComputeShaders();//All compute shaders here
-	void Render();//All gpu systems here
+
 	void Input();//All input based cpu systems here
 	void Update();//All cpu systems here
+	void ComputeShaders();//All compute shaders here
 
-	void EndFrame();//Clears all framebased variables.
 	void UnloadAll();
+	void EndFrame();//Clears all framebased variables.
 };

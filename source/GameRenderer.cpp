@@ -73,8 +73,8 @@ int SetupUIRenderState()
 	uint32_t idxs[] = { 0, 1, 2, 2, 1, 3 };
 	renderStates[currentSize].indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), ARRAYSIZE(idxs));
 
-	renderStates[currentSize].vertexShader = LoadVertexShader("UIVS.cso", LAYOUT_DESC::SCREEN);
-	renderStates[currentSize].pixelShader = LoadPixelShader("UIPS.cso");
+	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("UIVS.cso", LAYOUT_DESC::SCREEN);
+	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("UIPS.cso");
 
 	return currentSize++;
 }
@@ -85,9 +85,11 @@ int SetupGameRenderer()
 	renderStates[currentSize].rasterizerState = CreateRasterizerState(true, true);
 	//bool s = SetRasterizerState(renderStates[currentSize].rasterizerState);
 
-	renderStates[currentSize].pixelShader = LoadPixelShader("TestPS.cso");
+	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("TestPS.cso");
+	renderStates[currentSize].pixelShaders[1] = LoadPixelShader("TestPS.cso");
 	//s = SetPixelShader(renderStates[currentSize].pixelShader);
-	renderStates[currentSize].vertexShader = LoadVertexShader("TestVS.cso");
+	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("TestVS.cso");
+	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("TestSkelVS.cso");
 	//s = SetVertexShader(renderStates[currentSize].vertexShader);
 
 	Vertex triangle[3] = {
@@ -124,11 +126,11 @@ int SetupGameRenderer()
 	return currentSize++;
 }
 
-void PrepareBackBuffer()
+void PrepareBackBuffer(const bool use_skeleton)
 {
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
-	SetPixelShader(renderStates[backBufferRenderSlot].pixelShader);
-	SetVertexShader(renderStates[backBufferRenderSlot].vertexShader);
+	SetPixelShader(renderStates[backBufferRenderSlot].pixelShaders[use_skeleton]);
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[use_skeleton]);
 }
 
 void ClearBackBuffer()

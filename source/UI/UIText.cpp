@@ -2,7 +2,7 @@
 
 using namespace DirectX;
 
-UIText::UIText(UI& ui, const std::wstring& text, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
+UIText::UIText(const std::wstring& text, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
 	:UIComponent(m_Position, m_Scale, m_Rotation, visibility), m_Text(text)
 {
 	m_Visibility = visibility;
@@ -12,7 +12,7 @@ UIText::UIText(UI& ui, const std::wstring& text, XMFLOAT2 position, XMFLOAT2 sca
 	SetTransform(position, scale, rotation);
 }
 
-void UIText::Draw(UI& ui)
+void UIText::Draw()
 {
 	if (m_Visibility)
 	{
@@ -26,4 +26,7 @@ void UIText::Draw(UI& ui)
 void UIText::UpdateText(std::wstring text)
 {
 	m_Text = text;
+	float fontSize = ui.GetTextFormat()->GetFontSize();
+
+	m_Bounds = { 0, 0, fontSize * m_Text.length(), fontSize + 5 };
 }
