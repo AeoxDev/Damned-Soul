@@ -21,24 +21,7 @@ struct RenderSetupComponent
 	CB_IDX constantBuffer = -1;
 };
 
-struct ParticleRenderSetupComponent
-{
-	RS_IDX	rasterizerState = -1;
-	PS_IDX	pixelShader = -1;
-	VS_IDX	vertexShader = -1;
-	GS_IDX	geometryShader = -1;
-	CS_IDX	computeShader = -1;
-	VB_IDX	vertexBuffer = -1;
-	RTV_IDX renderTargetView = -1;
-	SRV_IDX readSRV = -1;
-	SRV_IDX writeSRV = -1;
-	UAV_IDX readUAV = -1;
-	UAV_IDX writeUAV = -1;
-	CB_IDX constantBuffer = -1;
-};
-
 extern RenderSetupComponent renderStates[8];
-extern ParticleRenderSetupComponent particleRenderState;
 
 extern int backBufferRenderSlot;
 
@@ -51,6 +34,7 @@ void PrepareDefaultPipeline();
 
 void PrepareBackBuffer();
 void ClearBackBuffer();
+void ResetGraphicsPipeline();
 void Clear(const int& componentSlot);
 void RenderIndexed(const size_t& count);
 // Calls Draw, instead of DrawIndexed

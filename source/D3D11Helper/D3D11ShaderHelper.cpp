@@ -6,8 +6,10 @@
 #include <fstream>
 
 // Theese shaders exist to enable removing shaders from the pipeline
-ID3D11ComputeShader* comShader_NULL = NULL;
-ID3D11GeometryShader* geoShader_NULL = NULL;
+ID3D11VertexShader* vrtShader_NULL = nullptr;
+ID3D11PixelShader* pixShader_NULL = nullptr;
+ID3D11ComputeShader* comShader_NULL = nullptr;
+ID3D11GeometryShader* geoShader_NULL = nullptr;
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
@@ -58,6 +60,11 @@ bool SetPixelShader(const PS_IDX idx)
 
 	d3d11Data->deviceContext->PSSetShader(pixHolder->ps_map[idx], nullptr, 0);
 	return true;
+}
+
+void UnsetPixelShader()
+{
+	d3d11Data->deviceContext->PSSetShader(pixShader_NULL, nullptr, 0);
 }
 
 // Does this string reference create more memory used on the stack?
@@ -197,6 +204,12 @@ bool SetVertexShader(const VS_IDX idx)
 	return true;
 }
 
+void UnsetVertexShader()
+{
+	d3d11Data->deviceContext->VSSetShader(vrtShader_NULL, nullptr, 0);
+
+}
+
 CS_IDX LoadComputeShader(const char* name)
 {
 	std::ifstream reader;
@@ -252,10 +265,9 @@ bool SetComputeShader(const CS_IDX idx)
 	return true;
 }
 
-bool ResetComputeShader()
+void UnsetComputeShader()
 {
 	d3d11Data->deviceContext->CSSetShader(comShader_NULL, nullptr, 0);
-	return true;
 }
 
 GS_IDX LoadGeometryShader(const char* name)
@@ -313,10 +325,9 @@ bool SetGeometryShader(const GS_IDX idx)
 	return true;
 }
 
-bool ResetGeometryShader()
+void UnsetGeometryShader()
 {
 	d3d11Data->deviceContext->GSSetShader(geoShader_NULL, nullptr, 0);
-	return true;
 }
 
 void SetTopology(TOPOLOGY topology)

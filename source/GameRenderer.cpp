@@ -106,8 +106,7 @@ int SetupGameRenderer()
 	// Create a sampler state
 	renderStates[currentSize].samplerState = CreateSamplerState();
 	// Set the sampler state
-	SetSamplerState(renderStates[currentSize].samplerState);
-	//d3d11Data->deviceContext->PSSetSamplers(0, 1, &smpHolder->smp_map[renderStates[currentSize].samplerState]);
+	SetSamplerState(renderStates[currentSize].samplerState, 0);
 
 	// Create a viewport
 	renderStates[currentSize].viewPort = CreateViewport(sdl.WIDTH, sdl.HEIGHT);
@@ -119,28 +118,12 @@ int SetupGameRenderer()
 	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
 	// Set a render target view and depth stencil view
 	s = SetRenderTargetViewAndDepthStencil(renderStates[currentSize].renderTargetView, renderStates[currentSize].depthStencilView);
-	//Create and set a simple sampler
-	SMP_IDX sampler = CreateSamplerState();
-	SetSamplerState(sampler);
+
 	return currentSize++;
 }
 
-int SetupParticles(/*Particle* particles,*/)
+int SetupParticles()
 {
-	//particleRenderState.rasterizerState = CreateRasterizerState(false, true);
-	//particleRenderState.pixelShader = LoadPixelShader("ParticlePS.cso");
-	//particleRenderState.vertexShader = LoadVertexShader("ParticleVS.cso");
-	//particleRenderState.geometryShader = LoadGeometryShader("ParticleGS.cso");
-	//particleRenderState.computeShader = LoadComputeShader("ParticleCS.cso");
-	//particleRenderState.vertexBuffer = CreateVertexBuffer();
-
-	//particleRenderState.readSRV = ;
-	//particleRenderState.writeSRV = ;
-	//particleRenderState.readUAV = ;
-	//particleRenderState.writeUAV = ;
-	//particleRenderState.constantBuffer = ;
-
-
 	renderStates[currentSize].constantBuffer = CreateConstantBuffer(Particles::GetData(), sizeof(ParticleMetadataBuffer)); // THIS IS FOR THE COMPUTE SHADER
 	renderStates[currentSize].rasterizerState = CreateRasterizerState(false, true);
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
@@ -180,6 +163,28 @@ void ClearBackBuffer()
 	Clear(backBufferRenderSlot);
 }
 
+void ResetGraphicsPipeline()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		UnsetConstantBuffer(BIND_GEOMETRY, i);
+		UnsetConstantBuffer(BIND_VERTEX, i);
+		UnsetConstantBuffer(BIND_PIXEL, i);
+		UnsetShaderResourceView(BIND_GEOMETRY, i);
+		UnsetShaderResourceView(BIND_VERTEX, i);
+		UnsetShaderResourceView(BIND_PIXEL, i);
+		// Sampler State is only relevant to pixel shader
+		UnsetSamplerState(i);
+	}
+
+	UnsetPixelShader();
+	UnsetVertexShader();
+	UnsetGeometryShader();
+	UnsetVertexBuffer();
+	UnsetIndexBuffer();
+	UnsetRasterizerState();
+}
+
 void Clear(const int& s)
 {
 	ClearRenderTargetView(renderStates[s].renderTargetView);
@@ -211,10 +216,10 @@ void RenderOffset(const size_t& count, const size_t& offset)
 
 void ClearParticles()
 {
-	ClearRenderTargetView(Particles::m_renderTargetView);
-	ClearDepthStencilView(Particles::m_depthStencilView);
+	ClearRenderTargetView(renderStates[Particles::RenderSlot].renderTargetView);
+	ClearDepthStencilView(renderStates[Particles::RenderSlot].depthStencilView);
 
-	SetRenderTargetViewAndDepthStencil(Particles::m_renderTargetView, Particles::m_depthStencilView);
+	SetRenderTargetViewAndDepthStencil(renderStates[Particles::RenderSlot].renderTargetView, renderStates[Particles::RenderSlot].depthStencilView);
 }
 
 void Present()

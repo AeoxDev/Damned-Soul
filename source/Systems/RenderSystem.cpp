@@ -20,7 +20,7 @@ bool RenderSystem::Update()
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelComponent* mc = registry.GetComponent<ModelComponent>(entity);
 
-		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, -tc->facingX, tc->facingY, tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, -tc->facingX, tc->facingY, tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(mc->model.m_vertexBuffer);
 		SetIndexBuffer(mc->model.m_indexBuffer);
 		mc->model.RenderAllSubmeshes();

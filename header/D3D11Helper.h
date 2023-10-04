@@ -100,7 +100,9 @@ void ReleaseTX(const TX_IDX idx);
 // Create a Sampler
 SMP_IDX CreateSamplerState();
 // Set a sampler (currently only binds to the pixel shader
-void SetSamplerState(const SMP_IDX idx);
+void SetSamplerState(const SMP_IDX idx, uint8_t slot);
+// Set sampler state at paramter slot to NULL
+void UnsetSamplerState(uint8_t slot);
 // Release for a single sampler
 void ReleaseSMP(const SMP_IDX idx);
 
@@ -108,6 +110,8 @@ void ReleaseSMP(const SMP_IDX idx);
 PS_IDX LoadPixelShader(const char* name);
 // Set a new pixel shader by index
 bool SetPixelShader(const PS_IDX idx);
+// Set pixel shader to NULL
+void UnsetPixelShader();
 // Release for a single pixel shader
 void ReleasePS(const PS_IDX idx);
 
@@ -116,6 +120,8 @@ void ReleasePS(const PS_IDX idx);
 VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout = LAYOUT_DESC::SKELETAL);
 // Set a new vertex (and accompanying input layout) shader by index
 bool SetVertexShader(const VS_IDX idx);
+// Set vertex shader to NULL
+void UnsetVertexShader();
 // Release for a single vertex shader
 void ReleaseVS(const VS_IDX idx);
 
@@ -123,8 +129,8 @@ void ReleaseVS(const VS_IDX idx);
 CS_IDX LoadComputeShader(const char* name);
 // Set a new compute shader by index
 bool SetComputeShader(const CS_IDX idx);
-// Sets compute shader to null
-bool ResetComputeShader();
+// Sets compute shader to NULL
+void UnsetComputeShader();
 // Release for a single compute shader
 void ReleaseCS(const CS_IDX idx);
 
@@ -132,8 +138,8 @@ void ReleaseCS(const CS_IDX idx);
 GS_IDX LoadGeometryShader(const char* name);
 // Set a new geometry shader by index
 bool SetGeometryShader(const GS_IDX idx);
-// Sets geometry shader to null
-bool ResetGeometryShader();
+// Sets geometry shader to NULL
+void UnsetGeometryShader();
 // Release for a single geometry shader
 void ReleaseGS(const GS_IDX idx);
 
@@ -146,7 +152,7 @@ CB_IDX CreateConstantBuffer(const size_t size);
 // Set an active constant buffer by index (shader and slot data contained in buffer)
 bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Sets constant buffer of parameter slot to NULL in the shader of parameter bindto
-bool UnloadConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Update a constant buffer by index with given data
 bool UpdateConstantBuffer(const CB_IDX, const void* data);
 // Update the world matrix, there needs to be only one
@@ -167,7 +173,7 @@ VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_F
 // Set an active Vertex Buffer buffer by index
 bool SetVertexBuffer(const VB_IDX idx);
 // Sets vertex buffer to NULL
-bool UnloadVertexBuffer();
+void UnsetVertexBuffer();
 // Release for a single vertex buffer
 void ReleaseVB(const VB_IDX idx);
 
@@ -177,12 +183,9 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 // Set an active Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx);
 // Sets index buffer to NULL
-bool UnloadIndexBuffer();
+void UnsetIndexBuffer();
 // Release for a single index buffer
 void ReleaseIB(const IB_IDX idx);
-
-// Create a Sampler
-SMP_IDX CreateSamplerState();
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
@@ -202,6 +205,8 @@ void ReleaseRTV(const RTV_IDX idx);
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
 // Set a render target view and depth stencil view
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_ds);
+// Set render target view and depth stencil view to NULL
+void UnsetRenderTargetViewAndDepthStencil();
 // Release for a single depth stencil view
 void ReleaseDSV(const DSV_IDX idx);
 
@@ -216,7 +221,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int16_t sourceIdx, RESOURCE_FLAGS 
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Sets shader resource view of parameter slot to NULL in the shader of parameter bindto
-bool UnloadShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Release for a shader resource view
 void ReleaseSRV(const SRV_IDX idx);
 
@@ -233,7 +238,7 @@ SRV_IDX CreateUnorderedAccessViewTexture(const RESOURCES& resource, RESOURCE_FLA
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx, uint8_t slot);
 // Sets unordered access view of parameter slot to NULL in the shader of parameter bindto
-bool UnloadUnorderedAcessView(uint8_t slot);
+void UnsetUnorderedAcessView(uint8_t slot);
 // Release for a single unordered access view
 void ReleaseUAV(const UAV_IDX idx);
 
@@ -244,7 +249,10 @@ void ClearRenderTargetView(const RTV_IDX idx, float r = 1.0f, float g = 0.f, flo
 void ClearDepthStencilView(const DSV_IDX idx);
 
 RS_IDX CreateRasterizerState(const bool cull, const bool solid);
+// Set rasterizer state by index
 bool SetRasterizerState(const RS_IDX idx);
+// Set rasterizer state to NULL
+void UnsetRasterizerState();
 // Release for a single rasterizer state
 void ReleaseRS(const RS_IDX idx);
 

@@ -166,6 +166,11 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 	return true;
 }
 
+void UnsetRenderTargetViewAndDepthStencil()
+{
+	d3d11Data->deviceContext->OMSetRenderTargets(1, &rtv_NULL, dsv_NULL);
+}
+
 SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
 {
 	uint8_t currentIdx = srvHolder->_nextIdx;
@@ -413,9 +418,8 @@ bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bin
 	return true;
 }
 
-bool UnloadShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
-	//In this overload, the slot is first set to NULL then the SRV is set
 	switch (bindto)
 	{
 	case BIND_VERTEX:
@@ -438,11 +442,9 @@ bool UnloadShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slo
 		break;
 	default:
 		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
-		return false;
-		break; // Yes, this break is unnessecary, but it looks nice
+		break;
 	}
 
-	return true;
 }
 
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
@@ -545,11 +547,9 @@ bool SetUnorderedAcessView(const UAV_IDX idx, uint8_t slot)
 	return true;
 }
 
-bool UnloadUnorderedAcessView(uint8_t slot)
+void UnsetUnorderedAcessView(uint8_t slot)
 {
 	d3d11Data->deviceContext->CSSetUnorderedAccessViews(slot, 1, &uav_NULL, NULL);
-
-	return true;
 }
 
 void ClearRenderTargetView(const RTV_IDX idx, float r, float g, float b, float a)
@@ -602,4 +602,9 @@ bool SetRasterizerState(const RS_IDX idx)
 
 	d3d11Data->deviceContext->RSSetState(rsHolder->rs_map[idx]);
 	return true;
+}
+
+void UnsetRasterizerState()
+{
+	d3d11Data->deviceContext->RSSetState(rs_NULL);
 }

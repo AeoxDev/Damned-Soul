@@ -128,9 +128,6 @@ bool Model::SetVertexAndIndexBuffersActive() const
 
 void Model::RenderAllSubmeshes()
 {
-	SetVertexBuffer(m_vertexBuffer);
-	SetIndexBuffer(m_indexBuffer);
-
 	for (unsigned int i = 0; i < m_bonelessModel->m_numSubMeshes; ++i)
 	{
 		const SubMesh& currentMesh = m_bonelessModel->GetSubMesh(i);

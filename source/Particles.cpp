@@ -2,6 +2,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
+#include "Systems\Systems.h"
 #include "SDLHandler.h"
 
 
@@ -100,17 +101,17 @@ void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 	SwitchInputOutput();
 
 	SetComputeShader(m_computeShaders);
-	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_COMPUTE, true);
+	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_COMPUTE, 0);
 	SetShaderResourceView(m_readBuffer->SRVIndex, BIND_COMPUTE, 0);
 	SetUnorderedAcessView(m_writeBuffer->UAVIndex, 0);
 }
 
 void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 {
-	UnloadShaderResourceView(BIND_COMPUTE, 0);
-	UnloadUnorderedAcessView(0);
-	ResetComputeShader();
-	ResetGeometryShader();
+	UnsetShaderResourceView(BIND_COMPUTE, 0);
+	UnsetUnorderedAcessView(0);
+	UnsetConstantBuffer(BIND_COMPUTE, 0);
+	UnsetComputeShader();
 
  	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_writeBuffer->SRVIndex);
 }
@@ -124,8 +125,6 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	SetPixelShader(renderStates[RenderSlot].pixelShader);
 
 	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
-	//SetIndexBuffer(m_indexBuffer);
-
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
 	//The camera constant buffer is set to the geometry shader outside of this function
@@ -133,29 +132,37 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 
 void Particles::FinishParticlePass()
 {
-	ResetGeometryShader();
+	SetTopology(TRIANGLELIST);
+
+	UnsetVertexShader();
+	UnsetGeometryShader();
+	UnsetPixelShader();
+
+	//UnsetVertexBuffer();
+	UnsetRasterizerState();
 }
 
-void Particles::PrepareSmokeParticles(ParticleComponent* pc, RenderSetupComponent constantBuffer[8], float seconds, float radius, float size, DirectX::XMFLOAT3 entityPosition)
+// -- ECS FUNCTION DEFINTIONS -- //
+//ParticleComponent::ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
+//{
+//	metadataSlot = FindSlot();
+//
+//	data->metadata[metadataSlot].life = seconds;
+//	data->metadata[metadataSlot].maxRange = radius;
+//	data->metadata[metadataSlot].size = size;
+//	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
+//	data->metadata[metadataSlot].pattern = pattern;
+//
+//	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, particleCompData);
+//}
+
+ParticleComponent::~ParticleComponent()
 {
-	pc->metadataSlot = pc->Setup();
-
-	pc->SetLife(seconds);
-	pc->SetMaxRange(radius);
-	pc->SetSize(size);
-	pc->SetPosition(entityPosition.x, entityPosition.y, entityPosition.z);
-	pc->SetPattern(SMOKE);
-
-	particleCompData->life = seconds;
-	particleCompData->maxRange = radius;
-	particleCompData->size = size;
-	particleCompData->spawnPos = entityPosition;
-	particleCompData->pattern = SMOKE;
-
-	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, particleCompData);
+	data->metadata[metadataSlot].life = -1.f;
+	metadataSlot = -1;
 }
 
-int ParticleComponent::Setup()
+int ParticleComponent::FindSlot()
 {
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
@@ -166,6 +173,19 @@ int ParticleComponent::Setup()
 		}
 	}
 	return metadataSlot;
+}
+
+void ParticleComponent::Setup(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
+	data->metadata[metadataSlot].pattern = pattern;
+
+	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, particleCompData);
 }
 
 void ParticleComponent::SetLife(float seconds)

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <DirectXMath.h>
 
-ID3D11Buffer* bfr_NULL = NULL;
+ID3D11Buffer* bfr_NULL = nullptr;
 
 CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 {
@@ -96,7 +96,7 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, 
 	return true;
 }
 
-bool UnloadConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
 	switch (bindto)
 	{
@@ -120,11 +120,8 @@ bool UnloadConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 		break;
 	default:
 		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
-		return false;
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
-
-	return true;
 }
 
 bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
@@ -229,7 +226,7 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 	world = DirectX::XMMatrixTranspose(world);
 	DirectX::XMFLOAT4X4 in;
 	DirectX::XMStoreFloat4x4(&in, world);
-	UpdateWorldMatrix(&in, bindto);
+	UpdateWorldMatrix(&in, bindto, 0);
 }
 
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
@@ -238,12 +235,27 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 	if (constantBufferIdx == -1)
 	{
 		DirectX::XMMATRIX emptyWorld;
-		constantBufferIdx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld), 0);
-		SetConstantBuffer(constantBufferIdx, bindto);
+		constantBufferIdx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld));
+		SetConstantBuffer(constantBufferIdx, bindto, 0);
 	}
-		
+
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	// Map the buffer
+	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[constantBufferIdx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(hr))
+	{
+		std::cerr << "Failed to map World Constant Buffer!" << std::endl;
+		return;
+	}
+
+	// Copy the new data to the buffer
+	memcpy(mappedResource.pData, data, bfrHolder->size[constantBufferIdx]);
+	// Unmap the resource
+	d3d11Data->deviceContext->Unmap(bfrHolder->buff_map[constantBufferIdx], 0);
+
+}
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
 	uint16_t currentIdx = bfrHolder->_nextIdx;
@@ -313,10 +325,9 @@ bool SetVertexBuffer(const VB_IDX idx)
 	return true;
 }
 
-bool UnloadVertexBuffer()
+void UnsetVertexBuffer()
 {
 	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &bfr_NULL, 0, 0);
-	return true;
 }
 
 
@@ -366,10 +377,9 @@ bool SetIndexBuffer(const IB_IDX idx)
 	return true;
 }
 
-bool UnloadIndexBuffer()
+void UnsetIndexBuffer()
 {
 	UINT offset = 0;
 	d3d11Data->deviceContext->IASetIndexBuffer(bfr_NULL, DXGI_FORMAT_R32_UINT, offset);
-	return true;
 }
 

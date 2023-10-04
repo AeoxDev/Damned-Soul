@@ -3,6 +3,8 @@
 #include "STB_Helper.h"
 #include <iostream>
 
+ID3D11SamplerState* smp_NULL = nullptr;
+
 // djb2 | Do we need a faster hash?
 uint64_t C_StringToHash(const char* c_str)
 {
@@ -215,9 +217,14 @@ SMP_IDX CreateSamplerState()
 	return smpHolder->_nextIdx++;
 }
 
-void SetSamplerState(const SMP_IDX idx)
+void SetSamplerState(const SMP_IDX idx, uint8_t slot)
 {
-	d3d11Data->deviceContext->PSSetSamplers(0, 1, &(smpHolder->smp_map[idx]));
+	d3d11Data->deviceContext->PSSetSamplers(slot, 1, &(smpHolder->smp_map[idx]));
+}
+
+void UnsetSamplerState(uint8_t slot)
+{
+	d3d11Data->deviceContext->PSSetSamplers(slot, 1, &smp_NULL);
 }
 
 void ReleaseSMP(const SMP_IDX idx)

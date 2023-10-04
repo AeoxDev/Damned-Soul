@@ -113,6 +113,10 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
 		ptc->positionY += 1.0f;
 
+		EntityID particles = registry.CreateEntity();
+		registry.AddComponent<ParticleComponent>(particles);
+		ParticleComponent* particleComp = registry.GetComponent<ParticleComponent>(particles);
+		particleComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 	}
 }
 
@@ -211,6 +215,11 @@ void GameScene::Unload()
 	}
 
 	for (auto entity : View<ImageComponent>(registry))
+	{
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<ParticleComponent>(registry))
 	{
 		registry.DestroyEntity(entity);
 	}

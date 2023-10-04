@@ -1,4 +1,5 @@
 #pragma once
+#include "GameRenderer.h"
 
 enum ComputeShaders
 {
@@ -16,9 +17,14 @@ struct ParticleComponent
 	int metadataSlot = -1;
 
 	// -- Functions defined in Particles.cpp --//
-
 	// Finds the index of the metadata for this component
-	int Setup();
+	int FindSlot();
+
+	//ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+	~ParticleComponent();
+
+	void Setup(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+
 
 	void SetLife(float seconds);
 	void SetMaxRange(float radius);

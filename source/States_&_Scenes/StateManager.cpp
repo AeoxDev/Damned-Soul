@@ -91,9 +91,11 @@ void StateManager::Setup()
 	SetupTestHitbox();
 
 	//Setup systems here
+	systems.push_back(new ParticleSystemGPU());
 	systems.push_back(new RenderSystem());
 	systems.push_back(new ButtonSystem());
 	systems.push_back(new ControllerSystem());
+	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
 }
 

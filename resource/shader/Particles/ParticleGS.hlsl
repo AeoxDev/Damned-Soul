@@ -1,4 +1,4 @@
-cbuffer CameraBuffer : register(b1)
+cbuffer CameraBuffer : register(b0)
 {
     float4 cameraPosition;
     matrix view;

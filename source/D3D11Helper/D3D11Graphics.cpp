@@ -124,7 +124,8 @@ void EndDirectX()
 	{
 		if (val != nullptr)
 			val->Release();
-	}	for (auto& [key, val] : vrtHolder->il_map)
+	}	
+	for (auto& [key, val] : vrtHolder->il_map)
 	{
 		if (val != nullptr)
 			val->Release();
