@@ -144,8 +144,9 @@ void GameScene::Setup(int scene)//Load
 		HellhoundBehaviour* hellBehevCo = registry.AddComponent<HellhoundBehaviour>(hellhound);
 
 
-		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
-		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
+		PointOfInterestComponent* skelPoi1 = registry.AddComponent<PointOfInterestComponent>(skeleton);
+		PointOfInterestComponent* shekPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
+		PointOfInterestComponent* dogPoi1 = registry.AddComponent<PointOfInterestComponent>(hellhound);
 	}
 }
 
