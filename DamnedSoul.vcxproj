@@ -192,30 +192,32 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\EntityFramework.cpp" />
     <ClCompile Include="header\Components\RenderableComponent.h" />
     <ClCompile Include="source\ModelComponent.cpp" />
     <ClCompile Include="source\Registry.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
+    <ClCompile Include="source\States\Game.cpp" />
+    <ClCompile Include="source\States\Menu.cpp" />
+    <ClCompile Include="source\States\Pause.cpp" />
+    <ClCompile Include="source\States\Settings.cpp" />
+    <ClCompile Include="source\States\StateManager.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Lighting.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\Systems\ButtonSystem.cpp" />
+    <ClCompile Include="source\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemCPU.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemGPU.cpp" />
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
+    <ClCompile Include="source\Systems\UISystems.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
-    <ClCompile Include="source\Menus.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
     <ClCompile Include="source\ButtonManager.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\StateManager.cpp" />
     <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -236,7 +238,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI\UI.cpp" />
     <ClCompile Include="source\UI\UIButton.cpp" />
-    <ClCompile Include="source\UI\UICanvas.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\UI\UIImage.cpp" />
     <ClCompile Include="source\UI\UIText.cpp" />
@@ -329,6 +330,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\TestSkelVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\TestVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -355,14 +360,21 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Animation.hpp" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\ButtonComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PlayerComponent.h" />
+    <ClInclude Include="header\Components\PointOfInterestComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerHealthComponent.h" />
     <ClInclude Include="header\Components\TextComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Components\ParticleComponent.h" />
     <ClInclude Include="header\Input.h" />
@@ -373,11 +385,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
+    <ClInclude Include="header\States\Pause.h" />
     <ClInclude Include="header\Relics.h" />
     <ClInclude Include="header\Systems\Systems.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
-    <ClInclude Include="header\Menus.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -403,18 +414,16 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
     <ClInclude Include="header\UI\UIButton.h" />
-    <ClInclude Include="header\UI\UICanvas.h" />
     <ClInclude Include="header\UI\UIComponent.h" />
     <ClInclude Include="header\UI\UIImage.h" />
     <ClInclude Include="header\UI\UIText.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
+    <ClInclude Include="header\States\StateManager.h" />
+    <ClInclude Include="header\States\Game.h" />
+    <ClInclude Include="header\States\Menu.h" />
+    <ClInclude Include="header\States\StateEnums.h" />
+    <ClInclude Include="header\States\Settings.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="source\States.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />

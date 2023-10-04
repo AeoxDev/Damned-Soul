@@ -76,8 +76,8 @@ RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, C
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
-	desc.Width = width;
-	desc.Height = height;
+	desc.Width = (UINT)width;
+	desc.Height = (UINT)height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
 	desc.Format = (DXGI_FORMAT)format;//DXGI_FORMAT_R8G8B8A8_UNORM;

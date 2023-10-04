@@ -4,6 +4,16 @@
 #include "SDLHandler.h"
 #include <DirectXMath.h>
 
+#define CAMERA_OFFSET_X 0
+#define CAMERA_OFFSET_Y 150.f
+#define CAMERA_OFFSET_Z -200.f
+#define CAMERA_FOV 3.14f/16.f
+#define CAMERA_PERSPECTIVE_DEPTH 512.0f
+//The max zoom in
+#define CAMERA_ZOOM_IN_LIMIT 3.14f/48.f
+//THe max zoom out
+#define CAMERA_ZOOM_OUT_LIMIT 3.14f/10.f
+
 struct CameraStruct
 {
 	DirectX::XMFLOAT3 m_position;
@@ -37,11 +47,11 @@ PoolPointer<CameraConstantBuffer> BufferData;
 
 float orthWidth, orthHeight, orthDepth;
 
-void Camera::SetPosition(const float x, const float y, const float z)
+void Camera::SetPosition(const float x, const float y, const float z, const bool includeOffset)
 {
-	GameCamera->m_position.x = x;
-	GameCamera->m_position.y = y;
-	GameCamera->m_position.z = z;
+	GameCamera->m_position.x = x + (includeOffset * CAMERA_OFFSET_X);
+	GameCamera->m_position.y = y + (includeOffset * CAMERA_OFFSET_Y);
+	GameCamera->m_position.z = z + (includeOffset * CAMERA_OFFSET_Z);
 
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
@@ -69,7 +79,18 @@ void Camera::SetRotation(const float x, const float y, const float z)
 
 void Camera::SetFOV(const float radians)
 {
-	GameCamera->m_FOV = radians;
+	if (radians < CAMERA_ZOOM_IN_LIMIT)
+	{
+		GameCamera->m_FOV = CAMERA_ZOOM_IN_LIMIT;
+	}
+	else if (radians > CAMERA_ZOOM_OUT_LIMIT)
+	{
+		GameCamera->m_FOV = CAMERA_ZOOM_OUT_LIMIT;
+	}
+	else
+	{
+		GameCamera->m_FOV = radians;
+	}
 }
 
 void Camera::SetWidth(const float& width)
@@ -182,7 +203,7 @@ void Camera::UpdateProjection()
 	if (GameCamera->m_projectionType)
 	{
 		DirectX::XMMATRIX proj;
-		proj = DirectX::XMMatrixPerspectiveFovLH(GetFOV(), (float)sdl.WIDTH / (float)sdl.HEIGHT, 0.1f, 10000.f);//proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
+		proj = DirectX::XMMatrixPerspectiveFovLH(GetFOV(), (float)sdl.WIDTH / (float)sdl.HEIGHT, 0.1f, CAMERA_PERSPECTIVE_DEPTH);//proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
 		DirectX::XMStoreFloat4x4(&GameCamera->m_perspective, proj);
 		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(proj));
 	}
@@ -213,12 +234,12 @@ void Camera::InitializeCamera()
 	GameCamera = MemLib::palloc(sizeof(CameraStruct));
 	GameCamera->m_projectionType = true;
 	
-	SetPosition(0.f, 1500.f, -2000.f);
+	SetPosition(CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, false);
 	SetLookAt(0.f, 0.f, 0.f);
 	SetUp(0.f, 1.f, 0.f);
 
 	SetRotation(0.f, 0.f, 0.f);
-	SetFOV(3.14f/80.f);
+	SetFOV(CAMERA_FOV);
 
 	//Default done, update now
 

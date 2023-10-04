@@ -57,10 +57,7 @@
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
     <ClCompile Include="source\ButtonManager.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
     <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -81,17 +78,12 @@
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI\UI.cpp" />
     <ClCompile Include="source\UI\UIButton.cpp" />
-    <ClCompile Include="source\UI\UICanvas.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\UI\UIImage.cpp" />
     <ClCompile Include="source\UI\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\Input.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
-    <ClCompile Include="source\Menus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,9 +91,6 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="source\ProximityCollision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\States_&amp;_Scenes\StateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Registry.cpp">
@@ -114,6 +103,39 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Systems\ButtonSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\CollisionSystems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ControllerSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Pause.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\StateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\UISystems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\CollisionSystems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ControllerSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\CameraSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -147,24 +169,13 @@
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
     <ClInclude Include="header\UI\UIButton.h" />
-    <ClInclude Include="header\UI\UICanvas.h" />
     <ClInclude Include="header\UI\UIComponent.h" />
     <ClInclude Include="header\UI\UIImage.h" />
     <ClInclude Include="header\UI\UIText.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="source\States.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
     <ClInclude Include="header\Input.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
-    <ClInclude Include="header\Menus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -205,6 +216,42 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Pause.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\StateManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\StateEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIPlayerHealthComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\PointOfInterestComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
