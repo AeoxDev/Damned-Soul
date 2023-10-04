@@ -34,6 +34,8 @@ struct ParticleMetadata
 	int pattern = 0; // The movement pattern of the particle
 
 	DirectX::XMFLOAT3 spawnPos{ 0.f, 0.f, 0.f };
+
+	float padding = 0;
 };
 
 struct ParticleMetadataBuffer

@@ -28,6 +28,7 @@ void GameScene::Setup(int scene)//Load
 		EntityID dog2 = registry.CreateEntity();
 		EntityID stage = registry.CreateEntity();
 		EntityID player = registry.CreateEntity();
+		EntityID particle = registry.CreateEntity();
 
 		ModelComponent* dogCo = registry.AddComponent<ModelComponent>(dog);
 		ModelComponent* dogCo2 = registry.AddComponent<ModelComponent>(dog2);
@@ -44,6 +45,9 @@ void GameScene::Setup(int scene)//Load
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
 		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
+
+		ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
+		//particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
 		registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));

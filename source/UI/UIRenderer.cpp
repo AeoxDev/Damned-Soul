@@ -71,17 +71,11 @@ void RenderUI()//Render what is drawn to rendertarget.
 		std::cout << "Failed to set rtv or dsv!" << std::endl;
 		return;
 	}
-	//UnloadShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
 	if (!SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_PIXEL, 0))
 	{
 		std::cout << "Failed to set srv!" << std::endl;
 		return;
 	}
 
-	//SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
-
-	//d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[renderStates[ui.RenderSlot].shaderResourceView]);
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
-
-	UnsetShaderResourceView(BIND_PIXEL, 0);
 }

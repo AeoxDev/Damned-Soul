@@ -20,7 +20,7 @@ struct ParticleComponent
 	// Finds the index of the metadata for this component
 	int FindSlot();
 
-	//ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+	ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
 	~ParticleComponent();
 
 	void Setup(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);

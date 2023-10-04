@@ -124,7 +124,9 @@ int SetupGameRenderer()
 
 int SetupParticles()
 {
-	renderStates[currentSize].constantBuffer = CreateConstantBuffer(Particles::GetData(), sizeof(ParticleMetadataBuffer)); // THIS IS FOR THE COMPUTE SHADER
+	int sizer = sizeof(ParticleMetadata);
+	sizer = sizer * PARTICLE_METADATA_LIMIT;
+	renderStates[currentSize].constantBuffer = CreateConstantBuffer(Particles::GetData(), sizeof(ParticleMetadata) * PARTICLE_METADATA_LIMIT); // THIS IS FOR THE COMPUTE SHADER
 	renderStates[currentSize].rasterizerState = CreateRasterizerState(false, true);
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
 	renderStates[currentSize].vertexShader = LoadVertexShader("ParticleVS.cso", PARTICLE);
@@ -196,16 +198,6 @@ void Clear(const int& s)
 
 void RenderIndexed(const size_t& count)
 {
-	//ID3D11Buffer* lightBuf = nullptr;
-	//bool test = CreateLightingConstantBuffer( lightBuf);
-	//LightingStruct values;
-	//values.ambientColor = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.f);
-	//values.diffuseColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.f);  // White light
-	//values.specularColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.f);  // White specular light
-	//values.intensity = 32.f;
-	//UpdateLightingBuffer(lightBuf, values);
-	//d3d11Data->deviceContext->PSSetConstantBuffers(0, 1, &lightBuf);
-
 	d3d11Data->deviceContext->DrawIndexed((UINT)count, 0, 0);
 }
 

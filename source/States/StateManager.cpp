@@ -84,10 +84,8 @@ void StateManager::Setup()
 	//models.Initialize();
 	menu.Setup();
 	Camera::InitializeCamera();
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_VERTEX, 1);
 
 	Particles::InitializeParticles();
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 	SetupTestHitbox();
 	RedrawUI();
 

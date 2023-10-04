@@ -18,6 +18,8 @@ struct metadata
     int pattern; // The movement pattern of the particle and decidor of size
     
     float3 startPosition;
+    
+    float padding;
 };
 
 cbuffer metadataBuffer : register(b0)

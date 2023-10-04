@@ -10,7 +10,6 @@
 bool RenderSystem::Update()
 {
 	ClearBackBuffer();
-	RenderUI();
 	//Render Geometry
 
 	//Set shaders here.

@@ -9,7 +9,6 @@
 Particle* particles;
 ParticleInputOutput* Particles::m_readBuffer;
 ParticleInputOutput* Particles::m_writeBuffer;
-ParticleMetadata* particleCompData;
 ParticleMetadataBuffer* data;
 
 
@@ -39,11 +38,7 @@ void Particles::SwitchInputOutput()
 
 void Particles::InitializeParticles()
 {
-	particleCompData = (ParticleMetadata*)MemLib::spush(sizeof(ParticleMetadata));
 	data = (ParticleMetadataBuffer*)MemLib::spush(sizeof(ParticleMetadataBuffer));
-
-	float size = sizeof(Particle) * MAX_PARTICLES;
-
 	m_readBuffer = (ParticleInputOutput*)MemLib::spush(sizeof(ParticleInputOutput));
 	m_writeBuffer = (ParticleInputOutput*)MemLib::spush(sizeof(ParticleInputOutput));
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
@@ -76,6 +71,8 @@ void Particles::InitializeParticles()
 		data->metadata[i].pattern = -1.f;
 		data->metadata[i].size = -1.f;
 		data->metadata[i].spawnPos = DirectX::XMFLOAT3(-999.f, -999.f, -999.f);
+
+		data->metadata[i].padding = 0;
 	}
 
 	RenderSlot = SetupParticles();
@@ -87,7 +84,6 @@ void Particles::ReleaseParticles()
 	MemLib::spop(); // for particles
 	MemLib::spop(); // read buffer
 	MemLib::spop(); // write buffer
-	MemLib::spop(); // For particle metadata
 	MemLib::spop(); // For data
 }
 
@@ -120,6 +116,8 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 {
 	SetTopology(POINTLIST);
 
+	SetWorldMatrix(1.f, 1.f, 1.f, BIND_VERTEX, 0);
+
 	SetVertexShader(renderStates[RenderSlot].vertexShader);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	SetPixelShader(renderStates[RenderSlot].pixelShader);
@@ -143,18 +141,18 @@ void Particles::FinishParticlePass()
 }
 
 // -- ECS FUNCTION DEFINTIONS -- //
-//ParticleComponent::ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
-//{
-//	metadataSlot = FindSlot();
-//
-//	data->metadata[metadataSlot].life = seconds;
-//	data->metadata[metadataSlot].maxRange = radius;
-//	data->metadata[metadataSlot].size = size;
-//	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
-//	data->metadata[metadataSlot].pattern = pattern;
-//
-//	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, particleCompData);
-//}
+ParticleComponent::ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
+	data->metadata[metadataSlot].pattern = pattern;
+
+	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, data->metadata);
+}
 
 ParticleComponent::~ParticleComponent()
 {
@@ -185,7 +183,7 @@ void ParticleComponent::Setup(RenderSetupComponent constantBuffer[8], int Render
 	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
 	data->metadata[metadataSlot].pattern = pattern;
 
-	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, particleCompData);
+	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, data->metadata);
 }
 
 void ParticleComponent::SetLife(float seconds)
