@@ -4,7 +4,7 @@
 #include "SDLhandler.h"
 #include "MemLib/MemLib.hpp"
 #include "DeltaTime.h"
-#include "States_&_Scenes\StateManager.h"
+#include "States\StateManager.h"
 #include "ConfigManager.h"
 
 void UpdateDebugWindowTitle(std::string& title);

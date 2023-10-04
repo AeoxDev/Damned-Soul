@@ -3,7 +3,7 @@
 
 using namespace DirectX;
 
-UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+UIImage::UIImage(const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 	:UIComponent(position, scale, rotation, visibility), m_Bitmap(nullptr), m_Opacity(opacity)
 {
 	HRESULT hr;
@@ -50,6 +50,7 @@ UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 sc
 	}
 
 	m_Bounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height};
+	
 	SetTransform(position, scale, rotation);
 
 	converter->Release();
@@ -66,12 +67,13 @@ void UIImage::Release()
 	}
 }
 
-void UIImage::Draw(ID2D1RenderTarget* renderTarget)
+void UIImage::Draw()
 {
 	if (true == m_Visibility)
 	{
-		renderTarget->SetTransform(m_Transform);
-		renderTarget->DrawBitmap(m_Bitmap, m_Bounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_Bounds);
+		ID2D1RenderTarget* rt = ui.GetRenderTarget();
+		rt->SetTransform(m_Transform);
+		rt->DrawBitmap(m_Bitmap, m_Bounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_Bounds);
 	}
 }
 

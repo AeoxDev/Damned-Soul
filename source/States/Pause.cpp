@@ -1,22 +1,11 @@
-#include "States_&_Scenes/Pause.h"
+#include "States/Pause.h"
 #include "Input.h"
-#include "States_&_Scenes\StateManager.h"
+#include "States\StateManager.h"
+#include "UIRenderer.h"
 
 void PauseState::Setup()
 {
-
-}
-
-void PauseState::Clear()
-{
-}
-
-void PauseState::ComputeShaders()
-{
-}
-
-void PauseState::Render()
-{
+	RedrawUI();
 }
 
 void PauseState::Input()
@@ -32,6 +21,11 @@ void PauseState::Input()
 
 void PauseState::Update()
 {
+}
+
+void PauseState::ComputeShaders()
+{
+
 }
 
 void PauseState::Unload()

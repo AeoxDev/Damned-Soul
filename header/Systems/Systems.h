@@ -23,6 +23,23 @@ class GeometryIndependentSystem : public System
 {
 	bool Update();
 };
+
+class UIRenderSystem : public System
+{
+	bool Update();
+};
+
+class PlayerHealthUISystem : public System
+{
+	bool Update();
+};
+
+class PlayerSoulsUISystem : public System
+{
+	bool Update();
+};
+
+
 class PointOfInterestSystem : public System
 {
 	bool Update();

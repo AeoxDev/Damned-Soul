@@ -9,7 +9,8 @@ struct PlayerComponent
 	float movementSpeed = 20.0f;
 	//Rotation
 	float goalX = 0.0f, goalZ = -1.0f;//Goal direction
-
+	float health = 10.0f;
+	int souls = 4;
 	//Scale
 
 	//Controller component
