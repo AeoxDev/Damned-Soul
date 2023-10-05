@@ -6,14 +6,21 @@
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UIRenderer.h"
+#include "Camera.h"
 
 bool RenderSystem::Update()
 {
 	ClearBackBuffer();
+
+	// Render UI
+	RenderUI();
+
 	//Render Geometry
 
 	//Set shaders here.
 	PrepareBackBuffer();
+	
+
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);

@@ -79,7 +79,7 @@ struct Model
 
 	uint32_t m_vertexBuffer = -1, m_indexBuffer = -1;
 	uint16_t m_animationBuffer = -1;
-	uint8_t m_pixelShader = -1, m_vertexShader = -1;
+	//uint8_t m_pixelShader = -1, m_vertexShader = -1;
 
 	// Load a .mdl file
 	// No other file formats are supported!
@@ -87,10 +87,10 @@ struct Model
 
 	bool SetMaterialActive() const;
 
-	// Set the currently mode index and vertex buffers to this model
-	bool SetVertexAndIndexBuffersActive() const;
+	//// Set the currently mode index and vertex buffers to this model
+	//bool SetVertexAndIndexBuffersActive() const;
 
-	void SetPixelAndVertexShader() const;
+	//void SetPixelAndVertexShader() const;
 
 	// Render all the model's submeshes one after another
 	void RenderAllSubmeshes();

@@ -19,7 +19,7 @@ void Menu::Setup()//Load
 	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
 	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
 
-	stageM->model.Load("PlaceholderScene.mdl");
+	stageM->model = LoadModel("PlaceholderScene.mdl");
 	stageP->mode = POI_FORCE;
 	stageP->height = CAMERA_OFFSET_Y * -0.85f;
 	stageP->rotationY = 0.0f;
@@ -136,7 +136,7 @@ void Menu::Unload()
 	{
 		registry.RemoveComponent<PointOfInterestComponent>(entity);
 		ModelBonelessComponent* m = registry.GetComponent<ModelBonelessComponent>(entity);
-		m->model.Free();
+		ReleaseModel(m->model);
 		registry.RemoveComponent<TransformComponent>(entity);
 		registry.DestroyEntity(entity);
 	}

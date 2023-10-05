@@ -123,11 +123,11 @@ const MODEL_TYPE Model::Load(const char* filename)
 		mat.glowIdx = LoadTexture(mat.glow);
 	}
 
-	m_pixelShader = LoadPixelShader("TestPS.cso");
-	if (MODEL_BONELESS == result)
-		m_vertexShader = LoadVertexShader("TestVS.cso");
-	else
-		m_vertexShader = LoadVertexShader("TestSkelVS.cso");
+	//m_pixelShader = LoadPixelShader("TestPS.cso");
+	//if (MODEL_BONELESS == result)
+	//	m_vertexShader = LoadVertexShader("TestVS.cso");
+	//else
+	//	m_vertexShader = LoadVertexShader("TestSkelVS.cso");
 
 	Animation animation;
 	m_animations.push_back(animation);
@@ -141,6 +141,14 @@ const MODEL_TYPE Model::Load(const char* filename)
 
 void Model::Free()
 {
+	DeleteD3D11Buffer(m_animationBuffer);
+	DeleteD3D11Buffer(m_vertexBuffer);
+	DeleteD3D11Buffer(m_indexBuffer);
+	// Unnessecary loop?
+	for (Animation& anim : m_animations)
+	{
+		anim.~Animation();
+	}
 	MemLib::pfree(m_data);
 }
 
@@ -155,23 +163,23 @@ bool Model::SetMaterialActive() const
 	return false;
 }
 
-// Set the currently mode index and vertex buffers to this model
-bool Model::SetVertexAndIndexBuffersActive() const
-{
-	if (false == SetVertexBuffer(m_vertexBuffer))
-		return false;
-	if (false == SetIndexBuffer(m_indexBuffer))
-		return false;
-	if (false == SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2))
-		return false;
-	return true;
-}
+//// Set the currently mode index and vertex buffers to this model
+//bool Model::SetVertexAndIndexBuffersActive() const
+//{
+//	if (false == SetVertexBuffer(m_vertexBuffer))
+//		return false;
+//	if (false == SetIndexBuffer(m_indexBuffer))
+//		return false;
+//	if (false == SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2))
+//		return false;
+//	return true;
+//}
 
-void Model::SetPixelAndVertexShader() const
-{
-	SetPixelShader(m_pixelShader);
-	SetVertexShader(m_vertexShader);
-}
+//void Model::SetPixelAndVertexShader() const
+//{
+//	SetPixelShader(m_pixelShader);
+//	SetVertexShader(m_vertexShader);
+//}
 
 
 void Model::RenderAllSubmeshes()
@@ -198,4 +206,45 @@ void Model::RenderAllSubmeshes()
 		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
+}
+
+const uint64_t LoadModel(const char* filename)
+{
+	
+	if (nullptr == loadedModels)
+	{
+		loadedModels = (ML_Map<uint64_t, Model>*)MemLib::spush(sizeof(ML_Map<uint64_t, Model>));
+		new(loadedModels) ML_Map<uint64_t, Model>();
+	}
+
+	uint64_t hash = C_StringToHash(filename);
+
+	if (loadedModels->find(hash) == loadedModels->end())
+	{
+		loadedModels->emplace(hash, Model());
+		LOADED_MODELS[hash].Load(filename);
+		LOADED_MODELS[hash].m_refCount = 0;
+	}
+
+	// Increment refcount and return hash
+	++(LOADED_MODELS[hash].m_refCount);
+	return hash;
+}
+
+const bool ReleaseModel(const uint64_t& modelHash)
+{
+	if (loadedModels->find(modelHash) != loadedModels->end())
+	{
+		// Reduce the refcount
+		--(LOADED_MODELS[modelHash].m_refCount);
+		// If the refcount is zero, erase the model
+		if (0 == LOADED_MODELS[modelHash].m_refCount)
+		{
+			Model& modelRef = LOADED_MODELS[modelHash];
+			modelRef.Free();
+			LOADED_MODELS.erase(modelHash);
+			return true;
+		}
+	}
+	return false;
 }
