@@ -691,12 +691,52 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 	}
 }
 
-void UpdatePhysics( )
+void SetupEnemyCollisionBox(EntityID& entity, float radius)
 {
-	ResetCollisionVariables();
-	HandleMoveableCollision();
-	HandleDamageCollision();
-	HandleStaticCollision();
+	AddHitboxComponent(entity);
+	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
+	SetCollisionEvent(entity, sID, SoftCollision);
+	SetHitboxIsEnemy(entity, sID);
+	SetHitboxHitPlayer(entity, sID);
+	SetHitboxHitEnemy(entity, sID);
+	SetHitboxActive(entity, sID);
+	SetHitboxIsMoveable(entity, sID);
+
+	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsEnemy(entity, hID);
+	SetHitboxHitPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
+}
+
+void SetupPlayerCollisionBox(EntityID& entity, float radius)
+{
+	AddHitboxComponent(entity);
+	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
+	SetCollisionEvent(entity, sID, SoftCollision);
+	SetHitboxIsPlayer(entity, sID);
+	SetHitboxHitEnemy(entity, sID);
+	SetHitboxActive(entity, sID);
+	SetHitboxIsMoveable(entity, sID);
+
+	int hID = CreateHitbox(entity, radius * 0.35f, 0.f, 0.f);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
+}
+
+bool HitboxCanHitGI(EntityID& entity)
+{
+	HitboxComponent* h = registry.GetComponent<HitboxComponent>(entity);
+	if ((h->circularFlags[0].isMoveable && h->circularFlags[0].active) || (h->convexFlags[0].isMoveable && h->convexFlags[0].active))
+	{
+		return true;
+	}
+	return false;
 }
 
 void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)

@@ -20,7 +20,8 @@
 #include "ImageComponent.h"
 #include "ParticleComponent.h"
 
-
+//Collision
+#include "HitboxComponent.h"
 
 #include "Skynet\SkeletonBehaviour.h"
 #include "Skynet\HellhoundBehaviour.h"

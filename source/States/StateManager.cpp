@@ -86,14 +86,21 @@ void StateManager::Setup()
 	Camera::InitializeCamera();
 
 	Particles::InitializeParticles();
-	SetupTestHitbox();
+	//SetupTestHitbox();
 	RedrawUI();
 
 	//Setup systems here
+	//Compute
 	systems.push_back(new ParticleSystemGPU());
+
+	//Render /Other GPU
 	systems.push_back(new RenderSystem());
 	systems.push_back(new ButtonSystem());
+
+	//Input based CPU
 	systems.push_back(new ControllerSystem());
+
+	//CPU work
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new SkeletonBehaviourSystem());
@@ -103,6 +110,7 @@ void StateManager::Setup()
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new TransformSystem());
+	systems.push_back(new CollisionSystem());
 }
 
 

@@ -11,6 +11,7 @@
 #include "States\StateManager.h"
 #include "Registry.h"
 #include "UI/UIRenderer.h"
+#include "CollisionFunctions.h"
 
 void GameScene::Setup(int scene)//Load
 {
@@ -43,7 +44,13 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
 		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
 
-		
+		SetupPlayerCollisionBox(player, 1.0f);
+
+		SetupEnemyCollisionBox(skeleton, 0.9f);
+		SetupEnemyCollisionBox(skeleton2, 0.9f);
+		SetupEnemyCollisionBox(dog, 1.0f);
+
+
 
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
