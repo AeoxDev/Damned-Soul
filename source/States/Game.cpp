@@ -77,11 +77,12 @@ void GameScene::Setup(int scene)//Load
 		//Doggo2Ent
 
 		dtc->facingX = 1.0f;
-		dogCo->model.Load("HellhoundDummy_PH.mdl");
-		skelCo->model.Load("SkeletonOneDymmy.mdl");
-		skelCo2->model.Load("SkeletonOneDymmy.mdl");
-		stageCo->model.Load("PlaceholderScene.mdl");
-		pmc->model.Load("PlayerPlaceholder.mdl");
+		dogCo->model = LoadModel("HellhoundDummy_PH.mdl");
+		skelCo->model = LoadModel("SkeletonOneDymmy.mdl");
+		skelCo2->model = LoadModel("SkeletonOneDymmy.mdl");
+		stageCo->model = LoadModel("PlaceholderScene.mdl");
+		pmc->model = LoadModel("PlayerPlaceholder.mdl");
+		eyeCo->model = LoadModel("PlayerPlaceholder.mdl");
 		RenderGeometryIndependentCollision(stage);
 		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
@@ -91,18 +92,12 @@ void GameScene::Setup(int scene)//Load
 		HellhoundBehaviour* hellhoundBehevCo = registry.AddComponent<HellhoundBehaviour>(dog);
 		SkeletonBehaviour* skeletonBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
-		dogCo2->model = LoadModel("HellhoundDummy_PH.mdl");
 
 		// Causes a memory leak with a ID3D11Texture2D
 		//RenderGeometryIndependentCollision(stage);
 
 		poic->mode = POI_ACTIVE;
 		poic->weight = 3.f;
-		dtc2->positionX = -78.0f;
-		dtc2->positionZ = -33.0f;
-		dogPoi2->mode = POI_INACTIVE_FOR_X_TIME;
-		dogPoi2->weight = 1.75f;
-		dogPoi2->time = 15.0f;
 		
 		//portPoi->SetPOImode(POI_FORCE);
 	}
