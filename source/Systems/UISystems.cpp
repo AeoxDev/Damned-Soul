@@ -47,8 +47,6 @@ bool UIRenderSystem::Update()
         }
         End2dFrame(ui);
     }
-    
-    RenderUI();
 
     return true;
 }

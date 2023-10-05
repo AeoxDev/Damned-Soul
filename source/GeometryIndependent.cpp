@@ -58,9 +58,9 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	DirectX::XMVECTOR previousUp = Camera::GetUp();
 	DirectX::XMFLOAT3 vData;
 
-	const VertexBoneless* vertices = model->model.m_data->GetBonelessVertices();
+	const VertexBoneless* vertices = LOADED_MODELS[model->model].m_data->GetBonelessVertices();
 
-	unsigned nrVertices = model->model.m_data->m_numVertices;
+	unsigned nrVertices = LOADED_MODELS[model->model].m_data->m_numVertices;
 
 	float greatestX = -1000000000.0f;
 	float greatestZ = -1000000000.0f;
@@ -122,13 +122,13 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
 	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
-	SetVertexBuffer(model->model.m_vertexBuffer);
-	SetIndexBuffer(model->model.m_indexBuffer);
+	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
 	//Update CB
 	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 
 	//Render texture to RTV
-	model->model.RenderAllSubmeshes();
+	LOADED_MODELS[model->model].RenderAllSubmeshes();
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;
 	GetTextureByType(RTVResource, TEXTURE_HOLDER_TYPE::RENDER_TARGET_VIEW, GIcomponent->renderTargetView);
