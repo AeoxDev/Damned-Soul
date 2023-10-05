@@ -23,36 +23,41 @@ void GameScene::Setup(int scene)//Load
 		SetupImages();
 		SetupText();
 
-		//Doggo
+		//Entities
 		EntityID dog = registry.CreateEntity();
 		EntityID stage = registry.CreateEntity();
 		EntityID player = registry.CreateEntity();
 		EntityID skeleton = registry.CreateEntity();
 		EntityID skeleton2 = registry.CreateEntity();
+		EntityID eye = registry.CreateEntity();
 		EntityID particle = registry.CreateEntity();
 
+		//Models
 		ModelBonelessComponent* dogCo = registry.AddComponent<ModelBonelessComponent>(dog);
 		ModelBonelessComponent* stageCo = registry.AddComponent<ModelBonelessComponent>(stage);
 		ModelSkeletonComponent* pmc = registry.AddComponent<ModelSkeletonComponent>(player);
 		ModelBonelessComponent* skelCo = registry.AddComponent<ModelBonelessComponent>(skeleton);
 		ModelBonelessComponent* skelCo2 = registry.AddComponent<ModelBonelessComponent>(skeleton2);
+		ModelBonelessComponent* eyeCo = registry.AddComponent<ModelBonelessComponent>(eye);
 
+		//Transforms
 		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
 		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
 		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
 		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
+		TransformComponent* eyetc = registry.AddComponent<TransformComponent>(eye);
 
 		
-
+		//Stats
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
 		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 100.f, 10.f, 25.f, 5.f);
 		StatComponent* ss = registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
 		StatComponent* ss2 = registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
+		StatComponent* eyeStats = registry.AddComponent<StatComponent>(eye, 100.0f, 8.0f, 15.0f, 3.0f);
 
-
-
+		//Camera points
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
 		PointOfInterestComponent* skelPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);

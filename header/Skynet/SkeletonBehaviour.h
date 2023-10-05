@@ -1,6 +1,5 @@
 #pragma once
 
-
 struct SkeletonBehaviour
 {
 	float updateInterval = 0.4f;

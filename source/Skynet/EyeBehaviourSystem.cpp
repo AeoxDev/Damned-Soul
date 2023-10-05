@@ -2,31 +2,11 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include "DeltaTime.h"
-#include <random>
 #include "Skynet\BehaviourHelper.h"
+#include <random>
 
-// input true on stuff you want to reset
-void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
-{
-	if (circleBehavior)
-	{
-		hc->giveUpChaseCounter += GetDeltaTime();
-		if (hc->giveUpChaseCounter >= 1.0f)
-		{
-			hc->isBehind = false;
-			hc->isBehindCounter = 0.f;
-			hc->circleBehaviour = false;
-			hc->giveUpChaseCounter = 0.f;
-		}
-	}
-	if (charge)
-	{
-		hc->charge = false;
-	}
-	
-}
 
-void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(EyeBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats)
 {
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (hc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
@@ -37,7 +17,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 	}
 }
 
-void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBehaviour* hc, TransformComponent* htc, StatComponent* enemyStats)
+void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* hc, TransformComponent* htc, StatComponent* enemyStats)
 {
 	float relativePosX = ptc->positionX - htc->positionX;
 	float relativePosZ = ptc->positionZ - htc->positionZ;
@@ -61,7 +41,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	}
 	else
 	{
-		ResetHellhoundVariables(hc, true, true);
+
 	}
 
 
@@ -110,7 +90,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 }
 
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats)
 {
 	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
@@ -135,7 +115,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	hellhoundTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats)
+void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats)
 {
 	hellhoundComponent->timeCounter += GetDeltaTime();
 	if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
@@ -161,13 +141,13 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 }
 
 
-bool HellhoundBehaviourSystem::Update()
+bool EyeBehaviourSystem::Update()
 {
 	//First find the skynet component
 	PlayerComponent* playerComponent = nullptr;
 	TransformComponent* playerTransformCompenent = nullptr;
-	HellhoundBehaviour* hellhoundComponent = nullptr;
-	TransformComponent* hellhoundTransformComponent = nullptr;
+	EyeBehaviour* eyeComponent = nullptr;
+	TransformComponent* eyeTransformComponent = nullptr;
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 
@@ -178,48 +158,49 @@ bool HellhoundBehaviourSystem::Update()
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
 
-	for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent>(registry))
+	for (auto enemyEntity : View<EyeBehaviour, TransformComponent>(registry))
 	{
-		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
-		hellhoundTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
-		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
+		eyeTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
+		enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
 
-		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && true)// check if enemy is alive, change later
+		if (enemyStats->health > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr)// check if enemy is alive
 		{
-			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			hellhoundComponent->attackTimer += GetDeltaTime();
-			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
-			if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
+			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
+			eyeComponent->attackTimer += GetDeltaTime();
+			eyeComponent->attackStunDurationCounter += GetDeltaTime();
+			if (eyeComponent->attackStunDurationCounter <= eyeComponent->attackStunDuration)
 			{
 				// do nothing, stand like a bad doggo and be ashamed
 			}
 			else if (distance < 2.5f) // fight club
 			{
-				ResetHellhoundVariables(hellhoundComponent, true, true);
-				CombatBehaviour(hellhoundComponent, enemyStats, playerStats);
+				CombatBehaviour(eyeComponent, enemyStats, playerStats);
 			}
-			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
+			else if (distance <= 15 + eyeComponent->circleBehaviour) // circle player
 			{
-				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
+				if (eyeComponent->isBehind && eyeComponent->isBehindCounter >= 0.3f) // attack the back
 				{
-					hellhoundComponent->charge = true;
-					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
+					eyeComponent->charge = true;
+					ChaseBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 				}
 				else //keep circling
 				{
-					CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
+					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 				}
 			}
 			else if (distance < 50) //hunting distance, go chase
 			{
-				ResetHellhoundVariables(hellhoundComponent, true, true);
-				ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
+				ChaseBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
 			else // idle
 			{
-				ResetHellhoundVariables(hellhoundComponent, true, true);
-				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
+				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
+		}
+		else
+		{
+			//COMMIT DIE
 		}
 	}
 	return true;

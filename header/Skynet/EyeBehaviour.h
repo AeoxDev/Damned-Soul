@@ -1,6 +1,6 @@
 #pragma once
 
-struct HellhoundBehaviour
+struct EyeBehaviour
 {
 	float updateInterval = 0.4f;
 	float timeCounter = 0.f;
