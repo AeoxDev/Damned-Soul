@@ -329,7 +329,7 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 	return (srvHolder->_nextIdx)++;
 }
 
-SRV_IDX CreateShaderResourceViewTexture(const int16_t sourceIdx, RESOURCE_FLAGS sourceResource)
+SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS sourceResource)
 {
 	uint8_t currentIdx = srvHolder->_nextIdx;
 	HRESULT hr = NULL;
@@ -505,7 +505,7 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, co
 	}
 	uavHolder->uav_map.emplace(currentIdx, tempUAV);
 
-	uavHolder->size.emplace(currentIdx, size);
+	uavHolder->size.emplace(currentIdx, (uint32_t)size);
 
 	return (uavHolder->_nextIdx)++;
 }
@@ -535,7 +535,7 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 		return false;
 	}
 	uavHolder->uav_map.emplace(currentIdx, tempUAV);
-	uavHolder->size.emplace(currentIdx, size);
+	uavHolder->size.emplace(currentIdx, (uint32_t)size);
 
 
 	return (uavHolder->_nextIdx)++;
