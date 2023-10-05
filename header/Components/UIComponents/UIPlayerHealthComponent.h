@@ -5,7 +5,7 @@
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 
-struct UIHealthComponent
+struct UIPlayerHealthComponent
 {
 	float value;
 	DirectX::XMFLOAT2 position;
