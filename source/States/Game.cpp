@@ -43,8 +43,7 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
 		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
 
-		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125, 20.0f, 10, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player, 4);
+		
 
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
@@ -59,8 +58,6 @@ void GameScene::Setup(int scene)//Load
 		PointOfInterestComponent* skelPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
 		PointOfInterestComponent* skelPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
 
-		registry.AddComponent<UIHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		registry.AddComponent<UIPlayerSoulsComponent>(player, 1, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
 
 		//registry.AddComponent<UIHealthComponent>(dog2, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 
