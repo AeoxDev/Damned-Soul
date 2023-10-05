@@ -59,7 +59,9 @@ void GameScene::Setup(int scene)//Load
 		StatComponent* ss = registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
 		StatComponent* ss2 = registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
 
-		AddTimedEventComponent(player, player, 1.0f, RandomPosition);
+		AddTimedEventComponentStartContinousEnd(player, player, 1.0f, RandomPosition,
+			dog, RandomPosition, 
+			player, 2.0f, RandomPosition);
 
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
