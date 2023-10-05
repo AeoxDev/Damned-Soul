@@ -383,3 +383,17 @@ void UnsetIndexBuffer()
 	d3d11Data->deviceContext->IASetIndexBuffer(bfr_NULL, DXGI_FORMAT_R32_UINT, offset);
 }
 
+bool DeleteD3D11Buffer(const CB_IDX idx)
+{
+	if (false == bfrHolder->buff_map.contains(idx))
+	{
+		std::cerr << "Index for Delete Constant Buffer out of range!" << std::endl;
+		return false;
+	}
+
+	bfrHolder->buff_map[idx]->Release();
+	bfrHolder->buff_map.erase(idx);
+	bfrHolder->size.erase(idx);
+
+	return true;
+}

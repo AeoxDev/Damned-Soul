@@ -2,6 +2,7 @@
 #include <cinttypes>
 #include "MemLib\PoolPointer.hpp"
 #include "MemLib\ML_Vector.hpp"
+#include "MemLib\ML_Map.hpp"
 #include "Animation.hpp"
 #include <DirectXMath.h>
 
@@ -78,8 +79,9 @@ struct Model
 
 
 	uint32_t m_vertexBuffer = -1, m_indexBuffer = -1;
-	uint16_t m_animationBuffer = -1;
-	uint8_t m_pixelShader = -1, m_vertexShader = -1;
+	uint16_t m_animationBuffer = -1, m_refCount = 0;
+	
+	~Model();
 
 	// Load a .mdl file
 	// No other file formats are supported!
@@ -87,13 +89,24 @@ struct Model
 
 	bool SetMaterialActive() const;
 
-	// Set the currently mode index and vertex buffers to this model
-	bool SetVertexAndIndexBuffersActive() const;
-
-	void SetPixelAndVertexShader() const;
-
 	// Render all the model's submeshes one after another
 	void RenderAllSubmeshes();
 
 	void Free();
 };
+
+// Load a model by filename, keeping a reference counter
+// If the model was already loaded, increase the reference counter instead
+// Returns a hash to the model
+const uint64_t LoadModel(const char* filename);
+
+// Release a model by hash, reducing the reference counter
+// If the reference counter is reduced to 0, the model is completely removed from the system
+const bool ReleaseModel(const uint64_t& hash);
+
+// A macro that fetches the data in the loaded models pointer
+#define LOADED_MODELS (*loadedModels)
+
+// A pointer to a map of the loaded models
+extern ML_Map<uint64_t, Model>* loadedModels;
+

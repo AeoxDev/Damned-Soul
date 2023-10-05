@@ -86,12 +86,19 @@ void StateManager::Setup()
 	Camera::InitializeCamera();
 
 	Particles::InitializeParticles();
-	SetupTestHitbox();
+	//SetupTestHitbox();
 	RedrawUI();
 
 	//Setup systems here
+
+	// Compute
 	systems.push_back(new ParticleSystemGPU());
+
+	// Render/GPU
+	systems.push_back(new UIRenderSystem());
 	systems.push_back(new RenderSystem());
+
+	// CPU
 	systems.push_back(new ButtonSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new ParticleSystemCPU());
@@ -99,7 +106,6 @@ void StateManager::Setup()
 	systems.push_back(new PointOfInterestSystem());
 	systems.push_back(new PlayerHealthUISystem());
 	systems.push_back(new PlayerSoulsUISystem());
-	systems.push_back(new UIRenderSystem());
 	systems.push_back(new TransformSystem());
 }
 

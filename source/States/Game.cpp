@@ -50,9 +50,9 @@ void GameScene::Setup(int scene)//Load
 		registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
 		//Doggo2Ent
 
-		dogCo2->model.Load("HellhoundDummy_PH.mdl");
-		stageCo->model.Load("PlaceholderScene.mdl");
-		pmc->model.Load("PlayerPlaceholder.mdl");
+		dogCo2->model = LoadModel("HellhoundDummy_PH.mdl");
+		stageCo->model = LoadModel("PlaceholderScene.mdl");
+		pmc->model = LoadModel("PlayerPlaceholder.mdl");
 		RenderGeometryIndependentCollision(stage);
 		poic->mode = POI_ACTIVE;
 		poic->weight = 3.f;
@@ -116,16 +116,56 @@ void GameScene::Unload()
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
 		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
-		dogCo->model.RenderAllSubmeshes();
-		dogCo->model.Free();
+		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<TransformComponent>(registry))
+	{
+		registry.RemoveComponent<TransformComponent>(entity);
 		registry.DestroyEntity(entity);
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
-		dogCo->model.RenderAllSubmeshes();
-		dogCo->model.Free();
+		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<UIPlayerSoulsComponent>(registry))
+	{
+		registry.RemoveComponent<UIPlayerSoulsComponent>(entity);
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<UIPlayerHealthComponent>(registry))
+	{
+		registry.RemoveComponent<UIPlayerHealthComponent>(entity);
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<PointOfInterestComponent>(registry))
+	{
+		registry.RemoveComponent<PointOfInterestComponent>(entity);
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<EnemyComponent>(registry))
+	{
+		registry.RemoveComponent<EnemyComponent>(entity);
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<PlayerComponent>(registry))
+	{
+		registry.RemoveComponent<PlayerComponent>(entity);
+		registry.DestroyEntity(entity);
+	}
+
+	for (auto entity : View<StatComponent>(registry))
+	{
+		registry.RemoveComponent<StatComponent>(entity);
 		registry.DestroyEntity(entity);
 	}
 

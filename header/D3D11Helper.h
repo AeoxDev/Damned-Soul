@@ -154,7 +154,8 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, 
 // Sets constant buffer of parameter slot to NULL in the shader of parameter bindto
 void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Update a constant buffer by index with given data
-bool UpdateConstantBuffer(const CB_IDX, const void* data);
+bool UpdateConstantBuffer(const CB_IDX idx, const void* data);
+// Remove a constant buffer completely
 // Update the world matrix, there needs to be only one
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 //No rotations, only position
@@ -170,6 +171,7 @@ void ReleaseCS(const CS_IDX idx);
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
 // Overload for when there is no initial data
 VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
+// Remove a vertex buffer completely
 // Set an active Vertex Buffer buffer by index
 bool SetVertexBuffer(const VB_IDX idx);
 // Sets vertex buffer to NULL
@@ -186,6 +188,9 @@ bool SetIndexBuffer(const IB_IDX idx);
 void UnsetIndexBuffer();
 // Release for a single index buffer
 void ReleaseIB(const IB_IDX idx);
+
+// Completely remove a D3D11Buffer
+bool DeleteD3D11Buffer(const CB_IDX idx);
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);

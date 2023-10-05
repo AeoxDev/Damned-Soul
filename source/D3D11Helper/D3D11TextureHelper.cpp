@@ -1,21 +1,10 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "STB_Helper.h"
+#include "Hashing.h"
 #include <iostream>
 
 ID3D11SamplerState* smp_NULL = nullptr;
-
-// djb2 | Do we need a faster hash?
-uint64_t C_StringToHash(const char* c_str)
-{
-    unsigned long hash = 5381;
-    int c;
-
-    while (c = *c_str++)
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-    return hash;
-}
 
 TX_IDX LoadTexture(const char* name)
 {
