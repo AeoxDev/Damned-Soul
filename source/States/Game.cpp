@@ -58,7 +58,7 @@ void GameScene::Setup(int scene)//Load
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
 
 		// Causes a memory leak with a ID3D11Texture2D
-		//RenderGeometryIndependentCollision(stage);
+		RenderGeometryIndependentCollision(stage);
 
 		poic->mode = POI_ACTIVE;
 		poic->weight = 3.f;

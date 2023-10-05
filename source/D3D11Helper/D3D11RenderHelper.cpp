@@ -4,6 +4,7 @@
 #include "UIRenderer.h"
 #include "SDLHandler.h"
 #include <iostream>
+#include <assert.h>
 
 
 ID3D11View* vp_NULL = NULL;
@@ -521,7 +522,7 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 	UAVDesc.Buffer.Flags = 0;
 	UAVDesc.Buffer.NumElements = amount;
 
-	ID3D11Resource* tempResource = srvHolder->srv_resource_map[idx];
+	ID3D11Resource* tempResource = srvHolder->srv_resource_map[(int8_t)idx];
 	uavHolder->uav_resource_map.emplace(currentIdx, tempResource);
 	uavHolder->uav_resource_map[currentIdx]->AddRef();
 
@@ -608,4 +609,41 @@ bool SetRasterizerState(const RS_IDX idx)
 void UnsetRasterizerState()
 {
 	d3d11Data->deviceContext->RSSetState(rs_NULL);
+}
+
+
+bool DeleteD3D11RenderTargetView(const RTV_IDX idx)
+{
+	assert(rtvHolder->rtv_map.contains(idx));
+	if (rtvHolder->rtv_map.contains(idx))
+	{
+		rtvHolder->rtv_map[idx]->Release();
+		rtvHolder->rtv_map.erase(idx);
+	}
+	if (rtvHolder->tx_map.contains(idx))
+	{
+		rtvHolder->tx_map[idx]->Release();
+		rtvHolder->tx_map.erase(idx);
+	}
+
+	return true;
+}
+
+
+bool DeleteD3D11DepthStencilView(const DSV_IDX idx)
+{
+	assert(dsvHolder->dsv_map.contains(idx));
+	dsvHolder->dsv_map[idx]->Release();
+	dsvHolder->dsv_map.erase(idx);
+	dsvHolder->ds_map[idx]->Release();
+	dsvHolder->ds_map.erase(idx);
+	return true;
+}
+
+bool DeleteD3D11RasterizerState(const RS_IDX idx)
+{
+	assert(rsHolder->rs_map.contains(idx));
+	rsHolder->rs_map[idx]->Release();
+	rsHolder->rs_map.erase(idx);
+	return true;
 }

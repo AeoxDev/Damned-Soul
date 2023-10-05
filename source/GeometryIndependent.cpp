@@ -178,7 +178,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	Camera::UpdateProjection();
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	//RTVResource->Release();
-	//stagingResource->Release();
+	stagingResource->Release();
 	//Return.
 }
 
@@ -203,7 +203,13 @@ void ReleaseGI( )
 	{
 		//Get entity with UI, release components.
 		GeometryIndependentComponent* gi = registry.GetComponent<GeometryIndependentComponent>(entity);
-
+		DeleteD3D11Buffer(gi->constantBuffer);
+		DeleteD3D11Texture(gi->stagingTexture);
+		DeleteD3D11RenderTargetView(gi->renderTargetView);
+		DeleteD3D11PixelShader(gi->pixelShader);
+		DeleteD3D11VertexShader(gi->vertexShader);
+		DeleteD3D11DepthStencilView(gi->depthStencil);
+		DeleteD3D11RasterizerState(gi->rasterizerState);
 		//Release here
 	}
 }
