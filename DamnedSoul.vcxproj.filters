@@ -11,15 +11,9 @@
     <FxCompile Include="resource\shader\PixelVertex.hlsl" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
-    <FxCompile Include="resource\shader\ParticleFlamethrowerCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleImplosionCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleExplosionCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleArchCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleRainCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSinusCS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
     <FxCompile Include="resource\shader\TestSkelVS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleCS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -145,6 +139,15 @@
     <ClCompile Include="source\Systems\TransformSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Systems\ParticleSystemCPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ParticleSystemGPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\EventSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -262,6 +265,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Animation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ParticleComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TimedEventComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

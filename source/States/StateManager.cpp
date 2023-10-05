@@ -111,6 +111,7 @@ void StateManager::Setup()
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());
+	systems.push_back(new EventSystem());
 }
 
 

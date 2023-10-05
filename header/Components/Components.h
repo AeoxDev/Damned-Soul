@@ -6,6 +6,7 @@
 #include "GeometryIndependentComponent.h"
 #include "PlayerComponent.h"
 #include "TransformComponent.h"
+#include "TimedEventComponent.h"
 
 //GUI
 #include "ButtonComponent.h"
