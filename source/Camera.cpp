@@ -141,27 +141,27 @@ void Camera::AdjustFOV(const float radians)
 	GameCamera->m_FOV += radians;
 }
 
-const DirectX::XMVECTOR& Camera::GetPosition()
+const DirectX::XMVECTOR Camera::GetPosition()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f };
 }
 
-const DirectX::XMVECTOR& Camera::GetLookAt()
+const DirectX::XMVECTOR Camera::GetLookAt()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_lookAt.x, GameCamera->m_lookAt.y, GameCamera->m_lookAt.z, 1.0f };
 }
 
-const DirectX::XMVECTOR& Camera::GetUp()
+const DirectX::XMVECTOR Camera::GetUp()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_up.x, GameCamera->m_up.y, GameCamera->m_up.z, 0.0f };
 }
 
-const DirectX::XMVECTOR& Camera::GetRotation()
+const DirectX::XMVECTOR Camera::GetRotation()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_rotation.x, GameCamera->m_rotation.y, GameCamera->m_rotation.z, 0.0f };
 }
 
-const DirectX::XMMATRIX& Camera::GetView()
+const DirectX::XMMATRIX Camera::GetView()
 {
 	return DirectX::XMLoadFloat4x4(&GameCamera->m_view);
 }
@@ -171,12 +171,12 @@ float Camera::GetFOV()
 	return GameCamera->m_FOV;
 }
 
-const DirectX::XMMATRIX& Camera::GetPerspective()
+const DirectX::XMMATRIX Camera::GetPerspective()
 {
 	return DirectX::XMLoadFloat4x4(&GameCamera->m_perspective);
 }
 
-const DirectX::XMMATRIX& Camera::GetOrthographic()
+const DirectX::XMMATRIX Camera::GetOrthographic()
 {
 	return DirectX::XMLoadFloat4x4(&GameCamera->m_orthographic);
 }

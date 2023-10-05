@@ -8,7 +8,7 @@ ID3D11SamplerState* smp_NULL = nullptr;
 
 TX_IDX LoadTexture(const char* name)
 {
-	uint16_t& currentIdx = txHolder->_nextIdx;
+	TX_IDX& currentIdx = txHolder->_nextIdx;
 
     // Check hash
     const uint64_t hash = C_StringToHash(name);
@@ -79,7 +79,7 @@ TX_IDX LoadTexture(const char* name)
 TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
 {
 	// Check hash
-	uint16_t& currentIdx = txHolder->_nextIdx;
+	TX_IDX& currentIdx = txHolder->_nextIdx;
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture

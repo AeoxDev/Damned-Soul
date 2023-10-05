@@ -11,12 +11,15 @@
 #include "States\StateManager.h"
 #include "Registry.h"
 #include "UIRenderer.h"
+#include "States\CleanupMacros.h"
 
 void GameScene::Setup(int scene)//Load
 {
 	RedrawUI();	
 	if (scene == 0)
 	{
+		// Set active
+		m_active = true;
 		
 		//Setup Game HUD
 		SetupButtons();
@@ -43,17 +46,20 @@ void GameScene::Setup(int scene)//Load
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
 
-		ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
-		//particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
+		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
+		////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
-		registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
+		UIPlayerHealthComponent* pcUiHpC = registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
+		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
 		//Doggo2Ent
 
 		dogCo2->model = LoadModel("HellhoundDummy_PH.mdl");
 		stageCo->model = LoadModel("PlaceholderScene.mdl");
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
-		RenderGeometryIndependentCollision(stage);
+
+		// Causes a memory leak with a ID3D11Texture2D
+		//RenderGeometryIndependentCollision(stage);
+
 		poic->mode = POI_ACTIVE;
 		poic->weight = 3.f;
 		dtc2->positionX = -78.0f;
@@ -113,77 +119,106 @@ void GameScene::SetupText()
 
 void GameScene::Unload()
 {
+	// If this state is not active, simply skip the unload
+	if (false == m_active)
+		return;
+	m_active = false; // Set active to false
+
+	CREATE_ENTITY_MAP_entities;
+
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
 		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<TransformComponent>(registry))
 	{
 		registry.RemoveComponent<TransformComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIPlayerSoulsComponent>(registry))
 	{
+		UIPlayerSoulsComponent* ps = registry.GetComponent<UIPlayerSoulsComponent>(entity);
+		ps->image.Release();
 		registry.RemoveComponent<UIPlayerSoulsComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIPlayerHealthComponent>(registry))
 	{
+		UIPlayerHealthComponent* ph = registry.GetComponent<UIPlayerHealthComponent>(entity);
+		ph->image.Release();
 		registry.RemoveComponent<UIPlayerHealthComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<PointOfInterestComponent>(registry))
 	{
 		registry.RemoveComponent<PointOfInterestComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<EnemyComponent>(registry))
 	{
 		registry.RemoveComponent<EnemyComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<PlayerComponent>(registry))
 	{
 		registry.RemoveComponent<PlayerComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<StatComponent>(registry))
 	{
 		registry.RemoveComponent<StatComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<ButtonComponent>(registry))
 	{
+		ButtonComponent* b = registry.GetComponent<ButtonComponent>(entity);
+		b->button.Release();
 		registry.RemoveComponent<ButtonComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<ImageComponent>(registry))
 	{
+		ImageComponent* i = registry.GetComponent<ImageComponent>(entity);
+		i->image.Release();
 		registry.RemoveComponent<ImageComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<TextComponent>(registry))
 	{
 		registry.RemoveComponent<TextComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
+
+	uint16_t destCount = DestroyEntities(entities);
 }

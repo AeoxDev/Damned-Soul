@@ -1,6 +1,7 @@
 #pragma once
 #include <cinttypes>
 #include "Format.h"
+#include "IDX_Types.h"
 //This contains helper functions for setting up renderable objects
 // and manipulating their render states.
 
@@ -70,21 +71,21 @@ enum TOPOLOGY
 	POINTLIST
 };
 
-typedef int16_t TX_IDX;
-typedef int8_t	PS_IDX;
-typedef int8_t	VS_IDX;
-typedef int8_t	GS_IDX;
-typedef int8_t	CS_IDX;
-typedef int16_t CB_IDX;
-typedef int16_t VB_IDX;
-typedef int16_t IB_IDX;
-typedef int8_t	VP_IDX;
-typedef int8_t RTV_IDX;
-typedef int8_t DSV_IDX;
-typedef int8_t SRV_IDX;
-typedef int8_t UAV_IDX;
-typedef int8_t	RS_IDX;
-typedef int8_t SMP_IDX;
+//typedef int16_t TX_IDX;
+//typedef int8_t	PS_IDX;
+//typedef int8_t	VS_IDX;
+//typedef int8_t	GS_IDX;
+//typedef int8_t	CS_IDX;
+//typedef int16_t CB_IDX;
+//typedef int16_t VB_IDX;
+//typedef int16_t IB_IDX;
+//typedef int8_t	VP_IDX;
+//typedef int8_t RTV_IDX;
+//typedef int8_t DSV_IDX;
+//typedef int8_t SRV_IDX;
+//typedef int8_t UAV_IDX;
+//typedef int8_t	RS_IDX;
+//typedef int8_t SMP_IDX;
 
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
@@ -222,7 +223,7 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 // Currently only supports Texture2D, support for other formats will be implemented if needed
 SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height);
 // Overload to create a Shader Resource View with an already existing texture from another resource
-SRV_IDX CreateShaderResourceViewTexture(const int16_t sourceIdx, RESOURCE_FLAGS sourceResource);
+SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS sourceResource);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Sets shader resource view of parameter slot to NULL in the shader of parameter bindto

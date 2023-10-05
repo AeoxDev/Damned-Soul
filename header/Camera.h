@@ -27,15 +27,15 @@ namespace Camera
 
 	void AdjustFOV(const float radians);
 
-	const DirectX::XMVECTOR& GetPosition();
-	const DirectX::XMVECTOR& GetLookAt();
-	const DirectX::XMVECTOR& GetUp();
-	const DirectX::XMVECTOR& GetRotation();
+	const DirectX::XMVECTOR GetPosition();
+	const DirectX::XMVECTOR GetLookAt();
+	const DirectX::XMVECTOR GetUp();
+	const DirectX::XMVECTOR GetRotation();
 	float GetFOV();
 
-	const DirectX::XMMATRIX& GetView();
-	const DirectX::XMMATRIX& GetPerspective();
-	const DirectX::XMMATRIX& GetOrthographic();
+	const DirectX::XMMATRIX GetView();
+	const DirectX::XMMATRIX GetPerspective();
+	const DirectX::XMMATRIX GetOrthographic();
 
 	int16_t GetCameraBufferIndex();
 
