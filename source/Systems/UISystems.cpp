@@ -32,9 +32,9 @@ bool UIRenderSystem::Update()
         for (auto entity : View<TextComponent>(registry))
             registry.GetComponent<TextComponent>(entity)->text.Draw();
 
-        for (auto entity : View<UIHealthComponent>(registry))
+        for (auto entity : View<UIPlayerHealthComponent>(registry))
         {
-            auto comp = registry.GetComponent<UIHealthComponent>(entity);
+            auto comp = registry.GetComponent<UIPlayerHealthComponent>(entity);
             comp->image.Draw();
             comp->text.Draw();
         }
@@ -46,7 +46,6 @@ bool UIRenderSystem::Update()
             comp->text.Draw();
         }
         End2dFrame(ui);
-
     }
     
     RenderUI();
@@ -56,11 +55,11 @@ bool UIRenderSystem::Update()
 
 bool PlayerHealthUISystem::Update()
 {
-    for (auto entity : View<UIHealthComponent, PlayerComponent, StatComponent>(registry))
+    for (auto entity : View<UIPlayerHealthComponent, StatComponent>(registry))
     {
-        auto uiElement = registry.GetComponent<UIHealthComponent>(entity);
-        auto stats = registry.GetComponent<StatComponent>(entity);
-        uiElement->value = stats->health;
+        auto uiElement = registry.GetComponent<UIPlayerHealthComponent>(entity);
+        auto player = registry.GetComponent<StatComponent>(entity);
+        uiElement->value = player->health;
 
         std::string valueAsString = "Health: " + std::to_string((int)uiElement->value);
 

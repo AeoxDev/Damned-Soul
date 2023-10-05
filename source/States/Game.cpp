@@ -38,23 +38,17 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
 
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125, 20.0f, 10, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player, 4);
-
-		StatComponent* es = registry.AddComponent<StatComponent>(dog2, 20, 10.0f, 5, 1.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-		EnemyComponent* ec = registry.AddComponent<EnemyComponent>(dog2, 1);
+		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
 
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
 
-		registry.AddComponent<UIHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		registry.AddComponent<UIPlayerSoulsComponent>(player, 1, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
-
-		registry.AddComponent<UIHealthComponent>(dog2, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-
 		ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 		//particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
-		//Doggo2
+		registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
+		registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
+		//Doggo2Ent
 
 		dogCo2->model.Load("HellhoundDummy_PH.mdl");
 		stageCo->model.Load("PlaceholderScene.mdl");
@@ -74,31 +68,6 @@ void GameScene::Setup(int scene)//Load
 
 void GameScene::Input()
 {
-	if (keyState[SDL_SCANCODE_SPACE] == pressed)
-	{
-		float dmg = 0.0f;
-		int souls = 0;
-		for (auto entity : View<EnemyComponent, StatComponent>(registry))
-		{
-			auto stats = registry.GetComponent<StatComponent>(entity);
-			auto enemy = registry.GetComponent<EnemyComponent>(entity);
-
-			dmg = (float)stats->damage;
-			souls = enemy->soulCount;
-		}
-
-		for (auto entity : View<PlayerComponent, StatComponent>(registry))
-		{
-			auto stats = registry.GetComponent<StatComponent>(entity);
-			auto player = registry.GetComponent<PlayerComponent>(entity);
-
-			stats->health -= (int)dmg;
-			player->souls += souls;
-
-		}
-		RedrawUI();
-	}
-
 	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 	{
 		SetInMainMenu(true);
@@ -152,53 +121,11 @@ void GameScene::Unload()
 		registry.DestroyEntity(entity);
 	}
 
-	for (auto entity : View<TransformComponent>(registry))
-	{
-		registry.RemoveComponent<TransformComponent>(entity);
-		registry.DestroyEntity(entity);
-	}
-
 	for (auto entity : View<ModelSkeletonComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
 		dogCo->model.RenderAllSubmeshes();
 		dogCo->model.Free();
-		registry.DestroyEntity(entity);
-	}
-
-	for (auto entity : View<UIPlayerSoulsComponent>(registry))
-	{
-		registry.RemoveComponent<UIPlayerSoulsComponent>(entity);
-		registry.DestroyEntity(entity);
-	}
-
-	for (auto entity : View<UIHealthComponent>(registry))
-	{
-		registry.RemoveComponent<UIHealthComponent>(entity);
-		registry.DestroyEntity(entity);
-	}
-
-	for (auto entity : View<PointOfInterestComponent>(registry))
-	{
-		registry.RemoveComponent<PointOfInterestComponent>(entity);
-		registry.DestroyEntity(entity);
-	}
-
-	for (auto entity : View<EnemyComponent>(registry))
-	{
-		registry.RemoveComponent<EnemyComponent>(entity);
-		registry.DestroyEntity(entity);
-	}
-
-	for (auto entity : View<PlayerComponent>(registry))
-	{
-		registry.RemoveComponent<PlayerComponent>(entity);
-		registry.DestroyEntity(entity);
-	}
-
-	for (auto entity : View<StatComponent>(registry))
-	{
-		registry.RemoveComponent<StatComponent>(entity);
 		registry.DestroyEntity(entity);
 	}
 
