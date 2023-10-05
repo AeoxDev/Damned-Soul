@@ -55,7 +55,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
 	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
 
-	float tolerance = 0.3f; // THIS IS FOR ANGLE SMOOTHING
+	float tolerance = 0.3; // THIS IS FOR ANGLE SMOOTHING
 	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
 	{
 		hc->isBehind = true;
@@ -201,7 +201,7 @@ bool HellhoundBehaviourSystem::Update()
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
 			if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
-				// do nothing, stand like a bad doggo and be ashamed
+				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo
 			}
 			else if (distance < 2.5f) // fight club
 			{
@@ -210,7 +210,11 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
-				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
+				if (!hellhoundComponent->hasShot)
+				{
+					hellhoundComponent->hasShot = true; 
+				}
+				else if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
 				{
 					hellhoundComponent->charge = true;
 					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);

@@ -13,4 +13,7 @@ struct HellhoundBehaviour
 	float attackTimer = 0.f;
 	float attackStunDurationCounter = 0.f;
 	float attackStunDuration = 0.8f;
+	float shootingCounter = 0.f;
+	float shootingDuration = 1.5f;
+	bool hasShot = false;
 };
