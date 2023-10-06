@@ -2,6 +2,7 @@
 #include "MemLib\MemLib.hpp"
 #include <cinttypes>
 #include <stdexcept>
+#include <algorithm>
 
 #define HEADER_ID 0b0101010101010101010
 
@@ -29,6 +30,48 @@ public:
 	std::pair<_tKey, _tVal>* end() const
 	{
 		return &(m_data[m_size]);
+	}
+
+	const bool contains(const _tKey& key) const
+	{
+		for (uint32_t i = 0; i < m_size; ++i)
+		{
+			if (key == m_data[i].first)
+				return true;
+		}
+
+		return false;
+		//// The lowest possible index if could be
+		//uint32_t lowest = 0;
+		//// The highest possible index it could be
+		//uint32_t highest = m_size - 1;
+		//// The index currently being evaluated
+		//uint32_t current = m_size / 2;
+		//// Weither or not the current and desired key are the same
+		//bool compValue = false;
+
+		//// A reference to the current item to check against
+		//std::pair<_tKey, _tVal>& item = m_data[current];
+
+		//do // Loop to find the element
+		//{
+		//	current = (lowest + highest) / 2; // Set current to the middle of the lowest and highest
+		//	item = m_data[current]; // Redundant the first time around
+
+		//	// Check if the key and current are equal
+		//	compValue = key == item.first;
+
+		//	lowest = lowest * (item.first < key) +	// If the current item is lower, do nothing 
+		//		current * (key <= item.first);		// If the current item is higher or equal, set lowest to current
+
+		//	highest = highest * (key < item.first) +// If the current item is lower, do nothing 
+		//		current * (item.first <= key);		// If the current item is higher or equal, set lowest to current
+
+		//	// Loop until the match is found or the lowest equals the highest, as all elements have been checked then
+		//} while (false == compValue && lowest != highest);
+
+		//// Return the value
+		//return key == item.first;
 	}
 
 	const uint32_t& size() const
@@ -83,7 +126,7 @@ public:
 	uint32_t emplace(const _tKey& key, const _tVal& val)
 	{
 		// if the capacity of the map is less than the size of the map, reserve a larger chunk of memory
-		if (m_capacity < m_size)
+		if (m_capacity <= m_size)
 		{
 			reserve(m_capacity * 2 + (m_capacity == 0));
 		}
@@ -102,6 +145,12 @@ public:
 		//std::memcpy(&m_data[m_size], &temp, m_tSize);
 		new(&m_data[m_size]) std::pair<_tKey,_tVal>(key, val);
 
+		//// Increase the size
+		//m_size++;
+
+		//// Sort the contents
+		//std::sort(begin(), end());
+
 		// Return the index of the newly pushed object
 		return m_size++;
 	};
@@ -114,6 +163,11 @@ public:
 		{
 			if (key == m_data[i].first)
 			{
+				// Call destructor on contents
+				m_data[i].first.~_tKey();
+				m_data[i].second.~_tVal();
+				m_data[i].~pair();
+
 				// Overwrite
 				std::memcpy(&(m_data[i]), &(m_data[i + 1]), (m_size - i) * m_tSize);
 				return --m_size;

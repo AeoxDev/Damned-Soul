@@ -2,13 +2,15 @@
 #include "Model.h"
 #include "MemLib\ML_Vector.hpp"
 
-int LoadModel(const char* filename);
-
-
-struct ModelComponent
+struct ModelBonelessComponent
 {
-	Model model;
+	uint64_t model;
 	//int model;
 	//Add more stuff for models
 	//int texture;
+};
+
+struct ModelSkeletonComponent
+{
+	uint64_t model;
 };

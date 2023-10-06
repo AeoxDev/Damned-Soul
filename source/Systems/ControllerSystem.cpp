@@ -7,9 +7,10 @@
 
 bool ControllerSystem::Update()
 {
-	for (auto entity : View<PlayerComponent, TransformComponent>(registry))
+	for (auto entity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 		TransformComponent* pt = registry.GetComponent<TransformComponent>(entity);
 		pt->lastPositionZ = pt->positionZ;
 		pt->lastPositionX = pt->positionX;
@@ -60,25 +61,25 @@ bool ControllerSystem::Update()
 		{
 			moving = true;
 			
-			pt->positionZ += player->movementSpeed * GetDeltaTime();
+			pt->positionZ += stat->moveSpeed * GetDeltaTime();
 			player->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
 			moving = true;
-			pt->positionZ -= player->movementSpeed * GetDeltaTime();
+			pt->positionZ -= stat->moveSpeed * GetDeltaTime();
 			player->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
 			moving = true;
-			pt->positionX -= player->movementSpeed * GetDeltaTime();
+			pt->positionX -= stat->moveSpeed * GetDeltaTime();
 			player->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
 			moving = true;
-			pt->positionX += player->movementSpeed * GetDeltaTime();
+			pt->positionX += stat->moveSpeed * GetDeltaTime();
 			player->goalX += 1.0f;
 		}
 		if (moving)

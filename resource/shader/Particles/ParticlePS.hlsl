@@ -1,7 +1,6 @@
 struct GS_OUT
 {
-    float4 position : SV_POSITION;
-    float3 velocity : VELOCITY;
+    float4 worldPosition : SV_POSITION;
     float4 rbg : RBG;
 };
 

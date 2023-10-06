@@ -1,5 +1,6 @@
 #include "States\Settings.h"
 #include "States\StateManager.h"
+#include "States\CleanupMacros.h"
 #include "Input.h"
 #include "Components.h"
 #include "Registry.h"
@@ -7,6 +8,8 @@
 
 void SettingsState::Setup()
 {
+	m_active = true;
+
 	RedrawUI();
 	SetupButtons();
 	SetupImages();
@@ -42,7 +45,7 @@ void SettingsState::SetupButtons()
 			{
 
 			};
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/BackButton.png", "BackButton", L"", OnClick, OnHover, { 0.0f, -0.8f }));
+		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/BackButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
 	}
 }
 
@@ -72,21 +75,37 @@ void SettingsState::SetupText()
 
 void SettingsState::Unload()
 {
+	// If this state is not active, simply skip the unload
+	if (false == m_active)
+		return;
+	m_active = false; // Set active to false
+
+	CREATE_ENTITY_MAP_entities;
+
 	for (auto entity : View<ButtonComponent>(registry))
 	{
+		ButtonComponent* b = registry.GetComponent<ButtonComponent>(entity);
+		b->button.Release();
 		registry.RemoveComponent<ButtonComponent>(entity);
-		registry.DestroyEntity(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<ImageComponent>(registry))
 	{
+		ImageComponent* i = registry.GetComponent<ImageComponent>(entity);
+		i->image.Release();
 		registry.RemoveComponent<ImageComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<TextComponent>(registry))
 	{
 		registry.RemoveComponent<TextComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
+
+	uint16_t destCount = DestroyEntities(entities);
 }
