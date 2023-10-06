@@ -164,6 +164,15 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 
 
+void ShootingBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBehaviour* hc, TransformComponent* htc, StatComponent* enemyStats)
+{
+	// create a hitbox from doggo position, as a triangle, with 2 corners expanding outwards with the help of variables in behavior. 
+	//once max range has been reached, this function will reset all stats and let the doggo go on with a different behavior. 
+	// each check until then will create a slightly longer (not wider) triangle hit box to simulate a flamethrower. Each check, the player will take damage if it
+	// make sure to balance the damage so it's not a fast one-shot thing
+}
+
+
 
 
 
@@ -199,20 +208,34 @@ bool HellhoundBehaviourSystem::Update()
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			hellhoundComponent->attackTimer += GetDeltaTime();
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
-			if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
+			hellhoundComponent->shootingCooldownCounter += GetDeltaTime();
+
+			if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
+			{
+				hellhoundComponent->shootingCounter += GetDeltaTime();
+				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingDuration) // have we charged long enough?
+				{
+					//it seems we have. Time to start shooting behaviour
+					ShootingBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
+				}
+				//else we do nothing, we're just charging.
+			}
+			else if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
 				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo
 			}
-			else if (distance < 2.5f) // fight club
+			else if (distance < 2.5f) // fight club and not currently shooting
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
 				CombatBehaviour(hellhoundComponent, enemyStats, playerStats);
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
-				if (!hellhoundComponent->hasShot)
+				if (!hellhoundComponent->isShooting && hellhoundComponent->shootingCooldownCounter >= hellhoundComponent->shootingCooldown) //is not shooting and cooldown is ready
 				{
-					hellhoundComponent->hasShot = true; 
+					hellhoundComponent->isShooting = true;
+					hellhoundComponent->shootingTargetX = playerTransformCompenent->positionX;
+					hellhoundComponent->shootingTargetZ = playerTransformCompenent->positionZ;
 				}
 				else if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
 				{
