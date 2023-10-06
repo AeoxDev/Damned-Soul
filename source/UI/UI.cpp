@@ -1,7 +1,7 @@
-#include "UI.h"
+#include "UI/UI.h"
 #include <iostream>
 #include "SDLhandler.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 
 UI ui;
 

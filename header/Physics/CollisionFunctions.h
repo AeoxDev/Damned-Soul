@@ -8,3 +8,8 @@
 //  const  float& normal2X, const  float& normal2Z);
 
 void NoCollision(OnCollisionParameters& params);
+
+void SoftCollision(OnCollisionParameters& params);
+void HardCollision(OnCollisionParameters& params);
+
+void AttackCollision(OnCollisionParameters& params);
