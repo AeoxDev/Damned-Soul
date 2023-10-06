@@ -6,97 +6,86 @@
 #include <random>
 
 
-void CombatBehaviour(EyeBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(EyeBehaviour* eyeComponent, StatComponent* enemyStats, StatComponent* playerStats)
 {
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	if (hc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	if (eyeComponent->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
-		hc->attackTimer = 0;
-		hc->attackStunDurationCounter = 0;
+		eyeComponent->attackTimer = 0;
+		eyeComponent->attackStunDurationCounter = 0;
 		playerStats->health -= enemyStats->damage;
 	}
 }
 
-void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* hc, TransformComponent* htc, StatComponent* enemyStats)
+void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats)
 {
-	float relativePosX = ptc->positionX - htc->positionX;
-	float relativePosZ = ptc->positionZ - htc->positionZ;
+	float relativePosX = ptc->positionX - etc->positionX;
+	float relativePosZ = ptc->positionZ - etc->positionZ;
 
-	float relativeDirectionX = ptc->facingX - htc->facingX;
-	float relativeDirectionZ = ptc->facingZ - htc->facingZ;
+	float relativeDirectionX = ptc->facingX - etc->facingX;
+	float relativeDirectionZ = ptc->facingZ - etc->facingZ;
 
 	//this will be used to determine if we are exactly
 	 // a = spelare. b = hellhound
-	float playerToHellhoundX = htc->positionX - ptc->positionX;
-	float playerToHellhoundZ = htc->positionZ - ptc->positionZ;
+	float playerToHellhoundX = etc->positionX - ptc->positionX;
+	float playerToHellhoundZ = etc->positionZ - ptc->positionZ;
 	float behindDot = playerToHellhoundX * ptc->facingX + playerToHellhoundZ * ptc->facingZ;
 	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
 	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
 
 	float tolerance = 0.3; // THIS IS FOR ANGLE SMOOTHING
-	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
-	{
-		hc->isBehind = true;
-		hc->isBehindCounter += GetDeltaTime();
-	}
-	else
-	{
-
-	}
-
 
 	float dot = relativePosX * relativeDirectionZ - relativePosZ * relativeDirectionX;
-
 
 	float magnitude = 0.f;
 	float dirX = 0.f;
 	float dirZ = 0.f;
-	if (!hc->circleBehaviour)
+	if (!ec->circleBehaviour)
 	{
-		hc->circleBehaviour = true;
+		ec->circleBehaviour = true;
 		if (dot < 0) // clockwise
 		{
-			hc->clockwiseCircle = true;
+			ec->clockwiseCircle = true;
 		}
 		else // counter clockwise
 		{
-			hc->clockwiseCircle = false;
+			ec->clockwiseCircle = false;
 		}
 	}
 
-	if (hc->clockwiseCircle) //clockwise
+	if (ec->clockwiseCircle) //clockwise
 	{
-		dirX = -hc->goalDirectionZ;
-		dirZ = hc->goalDirectionX;
+		dirX = -ec->goalDirectionZ;
+		dirZ = ec->goalDirectionX;
 		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		SmoothRotation(htc, dirX, dirZ);
+		SmoothRotation(etc, dirX, dirZ);
 	}
 	else // counter clockwise
 	{
-		dirX = hc->goalDirectionZ;
-		dirZ = -hc->goalDirectionX;
+		dirX = ec->goalDirectionZ;
+		dirZ = -ec->goalDirectionX;
 		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		SmoothRotation(htc, dirX, dirZ);
+		SmoothRotation(etc, dirX, dirZ);
 	}
 	if (magnitude > 0.001f)
 	{
 		dirX /= magnitude;
 		dirZ /= magnitude;
 	}
-	htc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
-	htc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
-	hc->goalDirectionX = ptc->positionX - htc->positionX;
-	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
+	etc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
+	etc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
+	ec->goalDirectionX = ptc->positionX - etc->positionX;
+	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 }
 
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats)
 {
-	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
-	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
+	eyeComponent->goalDirectionX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
+	eyeComponent->goalDirectionZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
 
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ);
-	float dirX = hellhoundTransformComponent->facingX, dirZ = hellhoundTransformComponent->facingZ;
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+	float dirX = eyeTransformComponent->facingX, dirZ = eyeTransformComponent->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude > 0.001f)
 	{
@@ -104,40 +93,38 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-
 	//speed set to 10.0f, use enemy component later
 	float speedMultiplier = 1.f;
-	if (hellhoundComponent->charge)
+	if (eyeComponent->charge)
 	{
 		speedMultiplier = 2.f;
 	}
-	hellhoundTransformComponent->positionX += dirX * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
+	eyeTransformComponent->positionX += dirX * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
+	eyeTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats)
+void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats)
 {
-	hellhoundComponent->timeCounter += GetDeltaTime();
-	if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
+	eyeComponent->timeCounter += GetDeltaTime();
+	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
 	{
-		hellhoundComponent->timeCounter = 0.f;
+		eyeComponent->timeCounter = 0.f;
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		// Define a uniform distribution for the range [-1.0, 1.0]
 		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 		float randomX = distribution(gen);
 		float randomZ = distribution(gen);
-		hellhoundComponent->goalDirectionX = randomX;
-		hellhoundComponent->goalDirectionZ = randomZ;
+		eyeComponent->goalDirectionX = randomX;
+		eyeComponent->goalDirectionZ = randomZ;
 		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		hellhoundComponent->updateInterval = randomInterval(gen);
+		eyeComponent->updateInterval = randomInterval(gen);
 	}
 
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ);
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 
-
-	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
+	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
+	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
 }
 
 
@@ -179,15 +166,7 @@ bool EyeBehaviourSystem::Update()
 			}
 			else if (distance <= 15 + eyeComponent->circleBehaviour) // circle player
 			{
-				if (eyeComponent->isBehind && eyeComponent->isBehindCounter >= 0.3f) // attack the back
-				{
-					eyeComponent->charge = true;
-					ChaseBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
-				}
-				else //keep circling
-				{
-					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
-				}
+				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
 			else if (distance < 50) //hunting distance, go chase
 			{
