@@ -134,6 +134,7 @@ int SetupParticles()
 	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("ParticleVS.cso", PARTICLE);
 	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("ParticlePS.cso");
 	renderStates[currentSize].geometryShader = LoadGeometryShader("ParticleGS.cso");
+	renderStates[currentSize].computeShader = LoadComputeShader("ParticleCS.cso");
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
 	renderStates[currentSize].renderTargetView = CreateRenderTargetView(USAGE_DEFAULT, resourceFlags, (CPU_FLAGS)0, sdl.WIDTH, sdl.HEIGHT);

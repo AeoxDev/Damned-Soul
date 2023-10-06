@@ -91,7 +91,7 @@ void StateManager::Setup()
 
 	//Setup systems here
 
-	//// Compute
+	// Compute
 	//systems.push_back(new ParticleSystemGPU());
 
 	// Render/GPU

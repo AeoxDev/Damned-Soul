@@ -50,19 +50,6 @@ namespace Particles
 	extern ParticleInputOutput* m_readBuffer;
 	extern ParticleInputOutput* m_writeBuffer;
 
-	extern int8_t m_computeShaders;
-	extern int8_t m_vertexShader;
-	extern int8_t m_pixelShader;
-	extern int8_t m_geometryShader;
-	extern int16_t m_metadata;
-	extern int16_t m_vertexBuffer;
-	extern int16_t m_indexBuffer;
-	extern int8_t m_rasterizer;
-
-	extern int8_t m_renderTargetView;
-	extern int8_t m_depthStencilView;
-	extern int8_t m_shaderResourceView;
-
 
 	void SwitchInputOutput();
 	void InitializeParticles();
