@@ -28,8 +28,6 @@ int main(int argc, char* args[])
 		stateManager.Update();//Lastly do the cpu work
 
 		stateManager.EndFrame();
-
-		HitboxEditorLoop("test");
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

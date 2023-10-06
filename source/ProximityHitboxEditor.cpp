@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 
-void HitboxEditorLoop(std::string fileName)
+void HitboxEditorLoop(std::string fileName, bool clockwise)
 {
 	CurrentHitboxVariables CHV;
 	bool done = false;
@@ -25,13 +25,7 @@ void HitboxEditorLoop(std::string fileName)
 			std::string prefix;
 			ss >> prefix;
 
-			if (prefix == "Point")
-			{
-				//Set currentPoint index to value
-				ss >> value;
-				currentPoint.index = std::stoi(value);
-			}
-			else if (prefix == "X")
+			if (prefix == "X")
 			{
 				ss >> value;
 				currentPoint.x = std::stoi(value);
@@ -51,6 +45,16 @@ void HitboxEditorLoop(std::string fileName)
 		file.close();
 	}
 
+	//Set clockwise/counter-clockwise
+	if (clockwise)
+	{
+		CHV.clockwise = 1;
+	}
+	else
+	{
+		CHV.clockwise = 0;
+	}
+
 	//If points exist, turn them from world space to screen space.
 
 	int DeleteCounter = 0;
@@ -67,30 +71,25 @@ void HitboxEditorLoop(std::string fileName)
 
 		if (mouseButtonPressed[MouseButton::right] == pressed)
 		{
-			std::cout << "Right Click pressed" << std::endl;
 			bool found = false;
 			//Check if the mouse is within the radius of a point
 			for (int i = 0; i < (int)CHV.list.size(); i++)
 			{
 				if ((abs(CHV.list[i].x - (float)mouseX) <= 5.0f) && (abs(CHV.list[i].z - (float)mouseY) <= 5.0f)) //If within radius
 				{
-					std::cout << "Within radius" << std::endl;
+					std::cout << "Removed selected point" << std::endl;
 					//Delete selected point
 					found = true;
 					CHV.list.erase(i);
-					for (int i = 0; i < (int)CHV.list.size(); i++)
-					{
-						CHV.list[i].index = i;
-					}
 					break;
 				}
 			}
 
 			//If no point close enough was found, remove the last placed element
-			if (!found)
+			if (!found && CHV.list.size() > 0)
 			{
 				CHV.list.pop_back();
-				std::cout << "Remove last point" << std::endl;
+				std::cout << "Removed last point" << std::endl;
 			}
 
 			while (1)
@@ -101,19 +100,24 @@ void HitboxEditorLoop(std::string fileName)
 					break;
 				}
 			}
+			//Check for edge cases
+			if (CHV.list.size() > 2)
+			{
+				EdgeCaseFixer(CHV, false);
+			}
 		}
 
 			//If left click && within a point's radius --> Move selected point.
 			//Else if left click && not within a point's radius --> Place out a new point.
 		if (mouseButtonPressed[MouseButton::left] == pressed)
 		{
-			std::cout << "Left Click pressed" << std::endl;
 			bool found = false;
 			//Check if the mouse is within the radius of a point
 			for (int i = 0; i < (int)CHV.list.size(); i++)
 			{
 				if ((abs(CHV.list[i].x - (float)mouseX) <= 5.0f) && (abs(CHV.list[i].z - (float)mouseY) <= 5.0f)) //If within radius
 				{
+					std::cout << "Move selected point" << std::endl;
 					found = true;
 					while (mouseButtonPressed[MouseButton::left] == down)
 					{
@@ -125,7 +129,7 @@ void HitboxEditorLoop(std::string fileName)
 						}
 					}
 					//Move point to where down was released
-					std::cout << "Within radius and released" << std::endl;
+					std::cout << "Moved point to mouse" << std::endl;
 					CHV.list[i].x = (float)mouseX;
 					CHV.list[i].z = (float)mouseY;
 					break;
@@ -135,15 +139,13 @@ void HitboxEditorLoop(std::string fileName)
 			//If no point close enough was found, create a new point at current location
 			if (!found)
 			{
-				std::cout << "Add new point" << std::endl;
+				std::cout << "Added new point" << std::endl;
 				//Create point
 				ProximityPoint toAdd;
-				toAdd.index = CHV.list.size();
 				toAdd.x = (float)mouseX;
 				toAdd.z = (float)mouseY;
 
 				CHV.list.push_back(toAdd);
-
 				while (1)
 				{
 					GetInput();
@@ -153,18 +155,33 @@ void HitboxEditorLoop(std::string fileName)
 					}
 				}
 			}
+			//Check for edge cases
+			if (CHV.list.size() > 2)
+			{
+				EdgeCaseFixer(CHV, false);
+			}
 		}
 
 
 		//If Enter is pressed twice handle file creation/editing depending on fileName
 		if (keyState[Keys::SCANCODE_RETURN] == pressed)
 		{
-			std::cout << "pressed Return" << std::endl;
 			DeleteCounter = 0;
 			CreateCounter++;
-			std::cout << CreateCounter << std::endl;
+
+			if (CHV.list.size() > 100)
+			{
+				std::cout << "There are currently more than 100 points, are you sure you want to have this many?" << std::endl;
+			}
+
 			if (CreateCounter > 1)
 			{
+				//Check for edge cases
+				if (CHV.list.size() > 2)
+				{
+					EdgeCaseFixer(CHV, true);
+				}
+
 				std::ifstream file(fileName);
 				if (file.is_open())
 				{
@@ -181,13 +198,17 @@ void HitboxEditorLoop(std::string fileName)
 					outFile << "Clockwise " << CHV.clockwise << "\n";
 					for (int i = 0; i < (int)CHV.list.size(); i++)
 					{
-						outFile << "Point " << CHV.list[i].index << "\n";
+						outFile << "Point " << i << "\n";
 						outFile << "X " << CHV.list[i].x << "\n";
 						outFile << "Z " << CHV.list[i].z << "\n";
 					}
 					std::cout << "Created new file" << std::endl;
 					done = true;
 				}
+			}
+			else
+			{
+				std::cout << "Press Return again to confirm creation" << std::endl;
 			}
 
 			while (1)
@@ -205,6 +226,7 @@ void HitboxEditorLoop(std::string fileName)
 		{
 			CreateCounter = 0;
 			DeleteCounter++;
+
 			if (DeleteCounter > 1)
 			{
 				std::ifstream file(fileName);
@@ -217,6 +239,10 @@ void HitboxEditorLoop(std::string fileName)
 				}
 				done = true;
 			}
+			else
+			{
+				std::cout << "Press Backspace again to confirm deletion" << std::endl;
+			}
 
 			while (1)
 			{
@@ -225,6 +251,49 @@ void HitboxEditorLoop(std::string fileName)
 				{
 					break;
 				}
+			}
+		}
+	}
+}
+
+void EdgeCaseFixer(CurrentHitboxVariables& CHV, bool lastIncluded)
+{
+	int currentSize = 0;
+	if (lastIncluded)
+	{
+		currentSize = (int)CHV.list.size();
+	}
+	else
+	{
+		currentSize = (int)CHV.list.size() - 1;
+	}
+
+	//Loop through the list and check if the middle point of lines are closer to another point not connected to that line
+	for (int i = 0; i < currentSize; i++)
+	{
+		//Create point that's in the middle of the line.
+		ProximityPoint test;
+		int secondIndex = i + 1;
+		if (secondIndex == (int)CHV.list.size())
+		{
+			secondIndex = 0;
+		}
+		test.x = (CHV.list[i].x + CHV.list[secondIndex].x) / 2.0f;
+		test.z = (CHV.list[i].z + CHV.list[secondIndex].z) / 2.0f;
+		float minDist = abs(sqrt(pow((test.x - CHV.list[i].x), 2.0f) + pow((test.z - CHV.list[i].z), 2.0f)));
+
+		for (int j = 0; j < CHV.list.size(); j++)
+		{
+			float newDist = abs(sqrt(pow((test.x - CHV.list[j].x), 2.0f) + pow((test.z - CHV.list[j].z), 2.0f)));
+			if ((minDist > newDist) && (minDist > 50.0f)) //Alter the minDist > X check to be the units the player can move per frame (Preferably a high number cause otherwise it's very expensive)
+			{
+				std::cout << "Added new point to fix edge case at: (" << test.x << ", " << test.z << ")" << std::endl;
+				//Add the middle point to the list of points
+				CHV.list.emplace(secondIndex, test);
+				EdgeCaseFixer(CHV, lastIncluded);
+				//Increase the currentSize and break.
+				currentSize++;
+				break;
 			}
 		}
 	}

@@ -5,7 +5,6 @@
 
 struct ProximityPoint
 {
-	int index;
 	float x;
 	float z;
 };
@@ -16,5 +15,6 @@ struct CurrentHitboxVariables
 	ML_Vector<ProximityPoint> list;
 };
 
-void HitboxEditorLoop(std::string fileName);
+void HitboxEditorLoop(std::string fileName, bool clockwise = true);
 
+void EdgeCaseFixer(CurrentHitboxVariables& CHV, bool lastIncluded);
