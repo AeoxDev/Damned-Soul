@@ -82,8 +82,8 @@ void StateManager::Setup()
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
 	//models.Initialize();
-	menu.Setup();
 	Camera::InitializeCamera();
+	menu.Setup();
 
 	//Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
 	//SetupTestHitbox();

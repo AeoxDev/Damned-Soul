@@ -14,6 +14,7 @@
 #include "CollisionFunctions.h"
 #include "EventFunctions.h"
 #include "States\CleanupMacros.h"
+#include "Camera.h"
 
 void GameScene::Setup(int scene)//Load
 {
@@ -27,6 +28,8 @@ void GameScene::Setup(int scene)//Load
 		SetupButtons();
 		SetupImages();
 		SetupText();
+
+		Camera::ResetCamera();
 
 		//Doggo
 		EntityID dog = registry.CreateEntity();

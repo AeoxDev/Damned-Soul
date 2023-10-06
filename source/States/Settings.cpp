@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Registry.h"
 #include "UI/UIRenderer.h"
+#include "Camera.h"
 
 void SettingsState::Setup()
 {
@@ -14,6 +15,8 @@ void SettingsState::Setup()
 	SetupButtons();
 	SetupImages();
 	SetupText();
+
+	Camera::ResetCamera();
 }
 
 void SettingsState::Input()

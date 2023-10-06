@@ -16,6 +16,9 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupImages();
 	SetupText();
+
+	Camera::ResetCamera();
+
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
 	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
