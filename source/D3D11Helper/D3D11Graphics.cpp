@@ -253,10 +253,12 @@ void EndDirectX()
 	// Check for stuffs
 	ID3D11Debug* debugInterface;
 	HRESULT hr = d3d11Data->device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debugInterface));
-
-	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-	debugInterface->Release();
 #endif
 
 	d3d11Data->device->Release();
+#ifdef _DEBUG
+	// Check for stuffs
+	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	debugInterface->Release();
+#endif
 }

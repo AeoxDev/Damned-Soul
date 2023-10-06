@@ -94,7 +94,7 @@ void GameScene::Setup(int scene)//Load
 		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
 
 		// Causes a memory leak with a ID3D11Texture2D
-		//RenderGeometryIndependentCollision(stage);
+		RenderGeometryIndependentCollision(stage);
 
 		poic->mode = POI_ACTIVE;
 		poic->weight = 3.f;

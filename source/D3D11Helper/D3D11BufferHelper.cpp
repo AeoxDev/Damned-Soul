@@ -3,6 +3,7 @@
 #include "MemLib/MemLib.hpp"
 #include <iostream>
 #include <DirectXMath.h>
+#include <assert.h>
 
 ID3D11Buffer* bfr_NULL = nullptr;
 
@@ -385,11 +386,7 @@ void UnsetIndexBuffer()
 
 bool DeleteD3D11Buffer(const CB_IDX idx)
 {
-	if (false == bfrHolder->buff_map.contains(idx))
-	{
-		std::cerr << "Index for Delete Constant Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(bfrHolder->buff_map.contains(idx));
 
 	bfrHolder->buff_map[idx]->Release();
 	bfrHolder->buff_map.erase(idx);

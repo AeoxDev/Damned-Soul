@@ -3,6 +3,7 @@
 #include "STB_Helper.h"
 #include "Hashing.h"
 #include <iostream>
+#include <assert.h>
 
 ID3D11SamplerState* smp_NULL = nullptr;
 
@@ -220,4 +221,31 @@ void ReleaseSMP(const SMP_IDX idx)
 {
 	if (smpHolder->smp_map[idx] != nullptr)
 		smpHolder->smp_map[idx]->Release();
+}
+
+
+bool DeleteD3D11Texture(const TX_IDX idx)
+{
+	assert(txHolder->tx_map.contains(idx));
+	if (txHolder->srv_map.contains(idx))
+	{
+		txHolder->srv_map[idx]->Release();
+		txHolder->srv_map.erase(idx);
+	}
+	if (txHolder->tx_map.contains(idx))
+	{
+		txHolder->tx_map[idx]->Release();
+		txHolder->tx_map.erase(idx);
+	}
+	if (txHolder->img_map.contains(idx))
+	{
+		txHolder->img_map[idx].Release();
+		txHolder->img_map.erase(idx);
+	}
+	if (txHolder->hash_map.contains(idx))
+	{
+		txHolder->hash_map.erase(idx);
+	}
+
+	return true;
 }

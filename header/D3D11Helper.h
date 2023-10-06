@@ -165,7 +165,7 @@ void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Release for a single constant buffer
-void ReleaseCS(const CS_IDX idx);
+void ReleaseCB(const CS_IDX idx);
 
 
 // Create a Vertex Buffer with provided data and return a unique index to it
@@ -264,3 +264,10 @@ void ReleaseRS(const RS_IDX idx);
 
 void SetTopology(TOPOLOGY topology);
 
+//Release
+bool DeleteD3D11Texture(const TX_IDX idx);
+bool DeleteD3D11RenderTargetView(const RTV_IDX idx);
+bool DeleteD3D11PixelShader(const PS_IDX idx); 
+bool DeleteD3D11VertexShader(const VS_IDX idx);
+bool DeleteD3D11DepthStencilView(const DSV_IDX idx);
+bool DeleteD3D11RasterizerState(const RS_IDX idx);
