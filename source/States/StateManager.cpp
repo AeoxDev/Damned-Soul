@@ -6,7 +6,7 @@
 #include "Particles.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "Particles.h"
 State currentStates;
 StateManager stateManager;
@@ -100,14 +100,23 @@ void StateManager::Setup()
 
 	// CPU
 	systems.push_back(new ButtonSystem());
+
+	//Input based CPU
 	systems.push_back(new ControllerSystem());
 	//systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
+	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
 	systems.push_back(new PlayerHealthUISystem());
 	systems.push_back(new PlayerSoulsUISystem());
+	//systems.push_back(new UIRenderSystem());
+	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new TransformSystem());
+	systems.push_back(new CollisionSystem());
+	systems.push_back(new EventSystem());
 }
+
+
 
 void StateManager::Input()
 {

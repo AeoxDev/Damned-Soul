@@ -1,7 +1,7 @@
 #include "States/Pause.h"
 #include "Input.h"
 #include "States\StateManager.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 
 void PauseState::Setup()
 {

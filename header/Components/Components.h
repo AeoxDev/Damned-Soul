@@ -10,7 +10,7 @@
 // Physics Components
 #include "GeometryIndependentComponent.h"
 #include "PlayerComponent.h"
-
+#include "TimedEventComponent.h"
 
 //GUI
 #include "ButtonComponent.h"
@@ -25,3 +25,8 @@
 #include "ImageComponent.h"
 #include "ParticleComponent.h"
 
+//Collision
+#include "HitboxComponent.h"
+
+#include "Skynet\SkeletonBehaviour.h"
+#include "Skynet\HellhoundBehaviour.h"

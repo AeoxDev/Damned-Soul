@@ -6,6 +6,7 @@
 #include "Registry.h"
 #include <cmath>
 #include <string>
+#include "Systems\Systems.h"
 
 /// <summary>
 /// Calculates the closest distance of two circles.
@@ -300,4 +301,18 @@ void CollisionFlags::ResetToActive()
 ProximityHitboxComponent::ProximityHitboxComponent()
 {
 	this->clockwise = 1;
+}
+
+void UpdatePhysics()
+{
+	ResetCollisionVariables();
+	HandleMoveableCollision();
+	HandleDamageCollision();
+	HandleStaticCollision();
+}
+
+bool CollisionSystem::Update()
+{
+	UpdatePhysics();
+	return true;
 }
