@@ -116,14 +116,6 @@ void GameScene::Input()
 		Unload();
 		stateManager.menu.Setup();
 	}
-
-	for (auto entity : View<PlayerComponent, StatComponent>(registry))
-	{
-		auto uiElement = registry.GetComponent<UIHealthComponent>(entity);
-		auto stats = registry.GetComponent<StatComponent>(entity);
-
-		std::cout << stats->health << std::endl;
-	}
 }
 
 void GameScene::Update()

@@ -36,23 +36,23 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 
 void UIButton::Draw()
 {
-	if (true == m_uiComponent.m_Visibility)
+	if (m_uiComponent.m_Visibility)
 	{
 		m_Images[m_CurrentImage].Draw();
 		m_Text.Draw();
+		m_CurrentImage = 0;
 	}
-	m_CurrentImage = 0;
 }
 
 void UIButton::Interact()
 {
-	if (m_onClick)
+	if (m_onClick && m_uiComponent.m_Visibility)
 		m_onClick();
 }
 
 void UIButton::Hover()
 {
-	if (m_onHover)
+	if (m_onHover && m_uiComponent.m_Visibility)
 	{
 		m_CurrentImage = 1;
 		m_onHover();
