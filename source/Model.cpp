@@ -7,6 +7,7 @@
 #include "STB_Helper.h"
 #include "D3D11Helper.h"
 #include "MemLib\ML_String.hpp"
+#include "Hashing.h"
 
 #include "DeltaTime.h"
 
@@ -59,6 +60,11 @@ DirectX::XMMATRIX* modelGenericData::GetBoneMatrices()
 	return (DirectX::XMMATRIX*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + INDEX_BYTE_SIZE + BONED_VERTEX_BYTE_SIZE]));
 }
 
+
+Model::~Model()
+{
+	//Free();
+}
 
 const MODEL_TYPE Model::Load(const char* filename)
 {
@@ -123,24 +129,28 @@ const MODEL_TYPE Model::Load(const char* filename)
 		mat.glowIdx = LoadTexture(mat.glow);
 	}
 
-	m_pixelShader = LoadPixelShader("TestPS.cso");
-	if (MODEL_BONELESS == result)
-		m_vertexShader = LoadVertexShader("TestVS.cso");
-	else
-		m_vertexShader = LoadVertexShader("TestSkelVS.cso");
+	//m_pixelShader = LoadPixelShader("TestPS.cso");
+	//if (MODEL_BONELESS == result)
+	//	m_vertexShader = LoadVertexShader("TestVS.cso");
+	//else
+	//	m_vertexShader = LoadVertexShader("TestSkelVS.cso");
 
 	Animation animation;
 	m_animations.push_back(animation);
 	//m_animations[0].Load("Rocket_Anim_Wave.ani");
 	m_animations[0].Load("PlayerPlaceholder_Anim_ Attack.ani");
 
-	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
+	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX));
 
 	return result;
 }
 
 void Model::Free()
 {
+	DeleteD3D11Buffer(m_animationBuffer);
+	DeleteD3D11Buffer(m_vertexBuffer);
+	DeleteD3D11Buffer(m_indexBuffer);
+	m_animations.~ML_Vector<Animation>();
 	MemLib::pfree(m_data);
 }
 
@@ -148,30 +158,30 @@ void Model::Free()
 bool Model::SetMaterialActive() const
 {
 	const Material& mat = (**m_data.m_pp).GetMaterial(0);
-	if (SetTexture(mat.albedoIdx, 0, BIND_PIXEL)/* &&
+	if (SetTexture(mat.albedoIdx, BIND_PIXEL, 0)/* &&
 		SetTexture(mat.normalIdx, 1, BIND_PIXEL) &&
 		SetTexture(mat.glowIdx, 2, BIND_PIXEL)*/)
 		return true;
 	return false;
 }
 
-// Set the currently active index and vertex buffers to this model
-bool Model::SetVertexAndIndexBuffersActive() const
-{
-	if (false == SetVertexBuffer(m_vertexBuffer))
-		return false;
-	if (false == SetIndexBuffer(m_indexBuffer))
-		return false;
-	if (false == SetConstantBuffer(m_animationBuffer, BIND_VERTEX))
-		return false;
-	return true;
-}
+//// Set the currently mode index and vertex buffers to this model
+//bool Model::SetVertexAndIndexBuffersActive() const
+//{
+//	if (false == SetVertexBuffer(m_vertexBuffer))
+//		return false;
+//	if (false == SetIndexBuffer(m_indexBuffer))
+//		return false;
+//	if (false == SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2))
+//		return false;
+//	return true;
+//}
 
-void Model::SetPixelAndVertexShader() const
-{
-	SetPixelShader(m_pixelShader);
-	SetVertexShader(m_vertexShader);
-}
+//void Model::SetPixelAndVertexShader() const
+//{
+//	SetPixelShader(m_pixelShader);
+//	SetVertexShader(m_vertexShader);
+//}
 
 
 void Model::RenderAllSubmeshes()
@@ -186,9 +196,8 @@ void Model::RenderAllSubmeshes()
 
 	// Try to get the initial animation frame
 	uint32_t size;
-	//SetPixelAndVertexShader();
 	UpdateConstantBuffer(m_animationBuffer, m_animations[0].GetFrame(animationTime, size));
-	SetConstantBuffer(m_animationBuffer, BIND_VERTEX);
+	SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2);
 
 	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
 	{
@@ -196,7 +205,53 @@ void Model::RenderAllSubmeshes()
 		const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
 
 		// Set material and draw
-		SetTexture(currentMaterial.albedoIdx, 0, BIND_PIXEL);
+		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
+}
+
+// The semiglobal map of loaded models
+ML_Map<uint64_t, Model>* loadedModels = nullptr;
+
+const uint64_t LoadModel(const char* filename)
+{
+	
+	if (nullptr == loadedModels)
+	{
+		loadedModels = (ML_Map<uint64_t, Model>*)MemLib::spush(sizeof(ML_Map<uint64_t, Model>));
+		new(loadedModels) ML_Map<uint64_t, Model>();
+	}
+
+	uint64_t hash = C_StringToHash(filename);
+
+	if (loadedModels->contains(hash))
+	{
+		// Increment refcount and return hash
+		++(LOADED_MODELS[hash].m_refCount);
+		return hash;
+	}
+
+	loadedModels->emplace(hash, Model()); // Emplace if the first
+	LOADED_MODELS[hash].Load(filename); // Load if the first
+	LOADED_MODELS[hash].m_refCount = 1; // Set refcount to 1 if this is the first
+
+	return hash;
+}
+
+const bool ReleaseModel(const uint64_t& hash)
+{
+	if (loadedModels->contains(hash))
+	{
+		// Reduce the refcount
+		--(LOADED_MODELS[hash].m_refCount);
+		// If the refcount is zero, erase the model
+		if (0 == LOADED_MODELS[hash].m_refCount)
+		{
+			Model& modelRef = LOADED_MODELS[hash];
+			modelRef.Free();
+			LOADED_MODELS.erase(hash);
+			return true;
+		}
+	}
+	return false;
 }

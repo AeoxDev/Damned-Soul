@@ -58,9 +58,9 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	DirectX::XMVECTOR previousUp = Camera::GetUp();
 	DirectX::XMFLOAT3 vData;
 
-	const VertexBoneless* vertices = model->model.m_data->GetBonelessVertices();
+	const VertexBoneless* vertices = LOADED_MODELS[model->model].m_data->GetBonelessVertices();
 
-	unsigned nrVertices = model->model.m_data->m_numVertices;
+	unsigned nrVertices = LOADED_MODELS[model->model].m_data->m_numVertices;
 
 	float greatestX = -1000000000.0f;
 	float greatestZ = -1000000000.0f;
@@ -111,7 +111,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	int16_t cameraIdx = Camera::GetCameraBufferIndex();
-	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX);
+	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 1);
 	SetRasterizerState(GIcomponent->rasterizerState);
 	SetViewport(GIcomponent->viewport);
 	//Find a depthstencil to use
@@ -121,14 +121,14 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	ClearDepthStencilView(GIcomponent->depthStencil);
 	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
-	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL);
-	SetVertexBuffer(model->model.m_vertexBuffer);
-	SetIndexBuffer(model->model.m_indexBuffer);
+	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
 	//Update CB
 	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 
 	//Render texture to RTV
-	model->model.RenderAllSubmeshes();
+	LOADED_MODELS[model->model].RenderAllSubmeshes();
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;
 	GetTextureByType(RTVResource, TEXTURE_HOLDER_TYPE::RENDER_TARGET_VIEW, GIcomponent->renderTargetView);
@@ -178,7 +178,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	Camera::UpdateProjection();
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	//RTVResource->Release();
-	//stagingResource->Release();
+	stagingResource->Release();
 	//Return.
 }
 
@@ -203,7 +203,13 @@ void ReleaseGI( )
 	{
 		//Get entity with UI, release components.
 		GeometryIndependentComponent* gi = registry.GetComponent<GeometryIndependentComponent>(entity);
-
+		DeleteD3D11Buffer(gi->constantBuffer);
+		DeleteD3D11Texture(gi->stagingTexture);
+		DeleteD3D11RenderTargetView(gi->renderTargetView);
+		DeleteD3D11PixelShader(gi->pixelShader);
+		DeleteD3D11VertexShader(gi->vertexShader);
+		DeleteD3D11DepthStencilView(gi->depthStencil);
+		DeleteD3D11RasterizerState(gi->rasterizerState);
 		//Release here
 	}
 }
@@ -266,7 +272,7 @@ CB_IDX SetupGIConstantBuffer(EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->constantBuffer = CreateConstantBuffer(&GIcomponent->shaderData, sizeof(GIConstantBufferData), 0);
+	GIcomponent->constantBuffer = CreateConstantBuffer(&GIcomponent->shaderData, sizeof(GIConstantBufferData));
 	return GIcomponent->constantBuffer;
 }
 
