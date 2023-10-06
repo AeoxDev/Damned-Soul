@@ -14,7 +14,7 @@ bool ControllerSystem::Update()
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 
-		//Store variables for checking to see how far the entity has moved, relevant to the camera
+		//Store variables for checking to see how far the entity has moved, these are relevant to the camera
 		transform->lastPositionZ = transform->positionZ;
 		transform->lastPositionX = transform->positionX;
 		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ controller->goalX,controller->goalZ, 0.0f };
@@ -23,6 +23,7 @@ bool ControllerSystem::Update()
 		DirectX::XMStoreFloat3(&l, length);
 		float angle = acosf(transform->facingX);
 
+		//Calculations for the system of camera following points of interest etc
 		if (transform->facingZ < 0.0f)
 		{
 			angle *= -1.0f;
@@ -60,6 +61,7 @@ bool ControllerSystem::Update()
 			controller->goalZ = 0.0f;
 
 		}
+		//End of: Camera System thing
 
 		/*COMBAT INPUT*/
 		//Test code for now but we fuckin about
@@ -67,7 +69,6 @@ bool ControllerSystem::Update()
 		if (keyInput[SCANCODE_LSHIFT] == down)
 		{
 			speed *= 3.0f;
-			transform->scaleX = 10.0f;
 		}
 
 		/*MOVEMENT INPUT*/
