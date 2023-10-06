@@ -57,7 +57,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
 	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
 
-	float tolerance = 0.3; // THIS IS FOR ANGLE SMOOTHING
+	float tolerance = 0.3f; // THIS IS FOR ANGLE SMOOTHING
 	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
 	{
 		hc->isBehind = true;
