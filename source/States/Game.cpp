@@ -79,11 +79,11 @@ void GameScene::Setup(int scene)//Load
 		//Doggo2Ent
 
 		dtc->facingX = 1.0f;
-		dogCo->model.Load("HellhoundDummy_PH.mdl");
-		skelCo->model.Load("SkeletonOneDymmy.mdl");
-		skelCo2->model.Load("SkeletonOneDymmy.mdl");
-		stageCo->model.Load("PlaceholderScene.mdl");
-		pmc->model.Load("PlayerPlaceholder.mdl");
+		dogCo->model = LoadModel("HellhoundDummy_PH.mdl");
+		skelCo->model = LoadModel("SkeletonOneDymmy.mdl");
+		skelCo2->model = LoadModel("SkeletonOneDymmy.mdl");
+		stageCo->model = LoadModel("PlaceholderScene.mdl");
+		pmc->model = LoadModel("PlayerPlaceholder.mdl");
 		RenderGeometryIndependentCollision(stage);
 		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
