@@ -191,7 +191,7 @@ bool HellhoundBehaviourSystem::Update()
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
 			if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
-				// do nothing, stand like a bad doggo and be ashamed
+				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo
 			}
 			else if (distance < 2.5f) // fight club
 			{
@@ -200,7 +200,11 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
-				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
+				if (!hellhoundComponent->hasShot)
+				{
+					hellhoundComponent->hasShot = true; 
+				}
+				else if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
 				{
 					hellhoundComponent->charge = true;
 					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);

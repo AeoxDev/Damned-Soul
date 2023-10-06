@@ -6,6 +6,7 @@
 #include "GeometryIndependentComponent.h"
 #include "PlayerComponent.h"
 #include "TransformComponent.h"
+#include "TimedEventComponent.h"
 
 //GUI
 #include "ButtonComponent.h"
@@ -20,6 +21,8 @@
 #include "ImageComponent.h"
 #include "ParticleComponent.h"
 
+//Collision
+#include "HitboxComponent.h"
 
 //AI Behaviours
 #include "Skynet\SkeletonBehaviour.h"

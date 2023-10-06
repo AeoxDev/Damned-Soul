@@ -10,7 +10,9 @@
 #include "Input.h"
 #include "States\StateManager.h"
 #include "Registry.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
+#include "CollisionFunctions.h"
+#include "EventFunctions.h"
 #include "States\CleanupMacros.h"
 
 void GameScene::Setup(int scene)//Load
@@ -52,6 +54,14 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* eyetc = registry.AddComponent<TransformComponent>(eye);
 
 		
+		
+		SetupPlayerCollisionBox(player, 1.0f);
+		
+		SetupEnemyCollisionBox(skeleton, 0.9f);
+		SetupEnemyCollisionBox(skeleton2, 0.9f);
+		SetupEnemyCollisionBox(dog, 1.0f);
+
+
 		//Stats
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
@@ -60,14 +70,16 @@ void GameScene::Setup(int scene)//Load
 		StatComponent* ss2 = registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
 		StatComponent* eyeStats = registry.AddComponent<StatComponent>(eye, 100.0f, 8.0f, 15.0f, 3.0f);
 
+		
+		/*AddTimedEventComponentStartContinousEnd(player, player, 1.0f, RandomPosition,
+			dog, RandomPosition, 
+			player, 2.0f, RandomPosition);*/
+			
 		//Camera points
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
 		PointOfInterestComponent* skelPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
 		PointOfInterestComponent* skelPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
-
-
-		//registry.AddComponent<UIHealthComponent>(dog2, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 
 		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 		////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
@@ -83,6 +95,7 @@ void GameScene::Setup(int scene)//Load
 		stageCo->model = LoadModel("PlaceholderScene.mdl");
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
 		eyeCo->model = LoadModel("PlayerPlaceholder.mdl");
+		
 		RenderGeometryIndependentCollision(stage);
 		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
@@ -92,14 +105,6 @@ void GameScene::Setup(int scene)//Load
 		HellhoundBehaviour* hellhoundBehevCo = registry.AddComponent<HellhoundBehaviour>(dog);
 		SkeletonBehaviour* skeletonBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
-
-		// Causes a memory leak with a ID3D11Texture2D
-		RenderGeometryIndependentCollision(stage);
-
-		poic->mode = POI_ACTIVE;
-		poic->weight = 3.f;
-		
-		//portPoi->SetPOImode(POI_FORCE);
 	}
 }
 

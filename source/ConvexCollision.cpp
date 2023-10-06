@@ -1,9 +1,26 @@
 #include "Backend\ConvexCollision.h"
 #include "Backend\Collision.h"
 #include "Registry.h"
+#include "Components.h"
 
 bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleID, int convexID)
 {
+	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(entity1);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(entity2);
+	float pos1x = 0.0f;
+	float pos1z = 0.0f;
+	float pos2x = 0.0f;
+	float pos2z = 0.0f;
+	if (transform1 != nullptr)
+	{
+		pos1x = transform1->positionX;
+		pos1z = transform1->positionZ;
+	}
+	if (transform2 != nullptr)
+	{
+		pos2x = transform2->positionX;
+		pos2z = transform2->positionZ;
+	}
 	// get a hold of hitbox components from entity
 	HitboxComponent* circle = registry.GetComponent<HitboxComponent>(entity1);
 	HitboxComponent* convex = registry.GetComponent<HitboxComponent>(entity2);
@@ -35,8 +52,8 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 	for (size_t i = 0; i < convex->convexHitbox[convexID].cornerAmount; i++)
 	{
 		//Get line
-		cornerToCircleX = circle->circleHitbox[i].offsetX - convex->convexHitbox[convexID].cornerX[i];
-		cornerToCircleZ = circle->circleHitbox[i].offsetZ - convex->convexHitbox[convexID].cornerZ[i];
+		cornerToCircleX = (pos1x + circle->circleHitbox[i].offsetX) - (pos2x + convex->convexHitbox[convexID].cornerX[i]);
+		cornerToCircleZ = (pos1z + circle->circleHitbox[i].offsetZ) - (pos2z + convex->convexHitbox[convexID].cornerZ[i]);
 
 		//Do scalar with normal
 		scalarDist = (cornerToCircleX * convex->convexHitbox[convexID].normalX[i]) + (cornerToCircleZ * convex->convexHitbox[convexID].normalZ[i]);
@@ -53,8 +70,8 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 	//Use onCollission function for first and second respectively
 	OnCollisionParameters params = {};
 	float convexToCircleX, convexToCircleZ;
-	convexToCircleX = circle->circleHitbox[circleID].offsetX - convex->convexHitbox[convexID].centerX;
-	convexToCircleZ = circle->circleHitbox[circleID].offsetZ - convex->convexHitbox[convexID].centerZ;
+	convexToCircleX = (pos1x + circle->circleHitbox[circleID].offsetX) - (pos2x + convex->convexHitbox[convexID].centerX);
+	convexToCircleZ = (pos1z + circle->circleHitbox[circleID].offsetZ) - (pos2z + convex->convexHitbox[convexID].centerZ);
 	if (iShit1)
 	{
 		params.entity1 = entity1;
@@ -168,6 +185,22 @@ ConvexReturnData LineToLineIntersection(float l1c1x, float l1c1z, float l1c2x, f
 
 bool IsConvexCollision(EntityID& entity1, EntityID& entity2, int convexID1, int convexID2)
 {
+	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(entity1);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(entity2);
+	float pos1x = 0.0f;
+	float pos1z = 0.0f;
+	float pos2x = 0.0f;
+	float pos2z = 0.0f;
+	if (transform1 != nullptr)
+	{
+		pos1x = transform1->positionX;
+		pos1z = transform1->positionZ;
+	}
+	if (transform2 != nullptr)
+	{
+		pos2x = transform2->positionX;
+		pos2z = transform2->positionZ;
+	}
 	HitboxComponent *convex1 = registry.GetComponent<HitboxComponent>(entity1);
 	HitboxComponent *convex2 = registry.GetComponent<HitboxComponent>(entity2);
 
@@ -194,10 +227,10 @@ bool IsConvexCollision(EntityID& entity1, EntityID& entity2, int convexID1, int 
 
 	bool collided = false;
 	//First check if bounding radius reach each other
-	float posX = convex1->convexHitbox[convexID1].centerX;
-	float posZ = convex1->convexHitbox[convexID1].centerZ;
-	float pos2X = convex2->convexHitbox[convexID2].centerX;
-	float pos2Z = convex2->convexHitbox[convexID2].centerZ;
+	float posX = pos1x + convex1->convexHitbox[convexID1].centerX;
+	float posZ = pos1z + convex1->convexHitbox[convexID1].centerZ;
+	float pos2X = pos2x + convex2->convexHitbox[convexID2].centerX;
+	float pos2Z = pos2z + convex2->convexHitbox[convexID2].centerZ;
 
 	float dx = posX - pos2X;
 	float dz = posZ - pos2Z;
@@ -215,11 +248,11 @@ bool IsConvexCollision(EntityID& entity1, EntityID& entity2, int convexID1, int 
 		for (int j = 0; j < convex2->convexHitbox[convexID2].cornerAmount; j++)
 		{
 			//Check from center to corner of one convex shape onto the sides of another.
-			returnedData = LineToLineIntersection(convex1->convexHitbox[convexID1].centerX,
-				convex1->convexHitbox[convexID1].centerZ,
-				convex1->convexHitbox[convexID1].cornerX[i], convex1->convexHitbox[convexID1].cornerZ[i],
-				convex2->convexHitbox[convexID2].cornerX[j], convex2->convexHitbox[convexID2].cornerZ[j],
-				convex2->convexHitbox[convexID2].cornerX[(1 + j) % CONVEX_CORNER_LIMIT], convex2->convexHitbox[convexID2].cornerZ[(1 + j) % CONVEX_CORNER_LIMIT]);
+			returnedData = LineToLineIntersection(pos1x + convex1->convexHitbox[convexID1].centerX,
+				pos1z + convex1->convexHitbox[convexID1].centerZ,
+				pos1x + convex1->convexHitbox[convexID1].cornerX[i], pos1z + convex1->convexHitbox[convexID1].cornerZ[i],
+				pos2x + convex2->convexHitbox[convexID2].cornerX[j], pos2z + convex2->convexHitbox[convexID2].cornerZ[j],
+				pos2x + convex2->convexHitbox[convexID2].cornerX[(1 + j) % CONVEX_CORNER_LIMIT], pos2z + convex2->convexHitbox[convexID2].cornerZ[(1 + j) % CONVEX_CORNER_LIMIT]);
 			if (returnedData.hit)
 			{	
 				whichLine = j;

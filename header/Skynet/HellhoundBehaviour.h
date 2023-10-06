@@ -11,7 +11,10 @@ struct HellhoundBehaviour
 	float isBehindCounter = 0.f;
 	float giveUpChaseCounter = 0.f;
 	bool charge = false;
-	float attackTimer = 0.f;
+	float attackTimer = 0.f; //used as counter
 	float attackStunDurationCounter = 0.f;
 	float attackStunDuration = 0.8f;
+	float shootingCounter = 0.f;
+	float shootingDuration = 1.5f;
+	bool hasShot = false;
 };
