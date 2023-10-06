@@ -370,7 +370,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClInclude Include="header\Animation.hpp" />
     <ClInclude Include="header\Components\Components.h" />
-    <ClInclude Include="header\Components\ButtonComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
@@ -380,7 +380,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPlayerHealthComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h" />
     <ClInclude Include="header\Components\TextComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />

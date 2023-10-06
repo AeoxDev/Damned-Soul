@@ -9,11 +9,10 @@
 #include "TimedEventComponent.h"
 
 //GUI
-#include "ButtonComponent.h"
-#include "UIComponents/UIPlayerHealthComponent.h"
+#include "UIComponents/UIButtonComponent.h"
+#include "UIComponents/UIHealthComponent.h"
 #include "UIComponents/UIPlayerSoulsComponent.h"
 #include "UIComponents/UIPlayerRelicsComponent.h"
-#include "UIComponents/UIBossHealthComponent.h"
 #include "UIComponents/UIGameLevelComponent.h"
 
 //GUI To Be Decapritated

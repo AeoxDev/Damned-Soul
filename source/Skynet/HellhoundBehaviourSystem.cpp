@@ -2,6 +2,7 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include "DeltaTime.h"
+#include "UI/UIRenderer.h"
 #include <random>
 #include "Skynet\BehaviourHelper.h"
 
@@ -36,6 +37,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 		hc->attackTimer = 0;
 		hc->attackStunDurationCounter = 0;
 		playerStats->health -= enemyStats->damage;
+		RedrawUI();
 	}
 }
 

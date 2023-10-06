@@ -94,6 +94,10 @@ void StateManager::Setup()
 	//// Compute
 	//systems.push_back(new ParticleSystemGPU());
 
+	// Updating UI Elements (Needs to happen before Render)
+	systems.push_back(new UIHealthSystem());
+	systems.push_back(new UIPlayerSoulsSystem());
+
 	// Render/GPU
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new RenderSystem());
@@ -107,9 +111,6 @@ void StateManager::Setup()
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
-	systems.push_back(new PlayerHealthUISystem());
-	systems.push_back(new PlayerSoulsUISystem());
-	//systems.push_back(new UIRenderSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());
@@ -152,6 +153,7 @@ void StateManager::Update()
 	{
 		systems[i]->Update();
 	}
+	Input();
 }
 
 void StateManager::ComputeShaders()
