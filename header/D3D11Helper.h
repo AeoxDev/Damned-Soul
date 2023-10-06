@@ -1,6 +1,7 @@
 #pragma once
 #include <cinttypes>
 #include "Format.h"
+#include "IDX_Types.h"
 //This contains helper functions for setting up renderable objects
 // and manipulating their render states.
 
@@ -70,21 +71,21 @@ enum TOPOLOGY
 	POINTLIST
 };
 
-typedef int16_t TX_IDX;
-typedef int8_t	PS_IDX;
-typedef int8_t	VS_IDX;
-typedef int8_t	GS_IDX;
-typedef int8_t	CS_IDX;
-typedef int16_t CB_IDX;
-typedef int16_t VB_IDX;
-typedef int16_t IB_IDX;
-typedef int8_t	VP_IDX;
-typedef int8_t RTV_IDX;
-typedef int8_t DSV_IDX;
-typedef int8_t SRV_IDX;
-typedef int8_t UAV_IDX;
-typedef int8_t	RS_IDX;
-typedef int8_t SMP_IDX;
+//typedef int16_t TX_IDX;
+//typedef int8_t	PS_IDX;
+//typedef int8_t	VS_IDX;
+//typedef int8_t	GS_IDX;
+//typedef int8_t	CS_IDX;
+//typedef int16_t CB_IDX;
+//typedef int16_t VB_IDX;
+//typedef int16_t IB_IDX;
+//typedef int8_t	VP_IDX;
+//typedef int8_t RTV_IDX;
+//typedef int8_t DSV_IDX;
+//typedef int8_t SRV_IDX;
+//typedef int8_t UAV_IDX;
+//typedef int8_t	RS_IDX;
+//typedef int8_t SMP_IDX;
 
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
@@ -154,7 +155,8 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, 
 // Sets constant buffer of parameter slot to NULL in the shader of parameter bindto
 void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Update a constant buffer by index with given data
-bool UpdateConstantBuffer(const CB_IDX, const void* data);
+bool UpdateConstantBuffer(const CB_IDX idx, const void* data);
+// Remove a constant buffer completely
 // Update the world matrix, there needs to be only one
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 //No rotations, only position
@@ -163,13 +165,14 @@ void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Release for a single constant buffer
-void ReleaseCS(const CS_IDX idx);
+void ReleaseCB(const CS_IDX idx);
 
 
 // Create a Vertex Buffer with provided data and return a unique index to it
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
 // Overload for when there is no initial data
 VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
+// Remove a vertex buffer completely
 // Set an active Vertex Buffer buffer by index
 bool SetVertexBuffer(const VB_IDX idx);
 // Sets vertex buffer to NULL
@@ -186,6 +189,9 @@ bool SetIndexBuffer(const IB_IDX idx);
 void UnsetIndexBuffer();
 // Release for a single index buffer
 void ReleaseIB(const IB_IDX idx);
+
+// Completely remove a D3D11Buffer
+bool DeleteD3D11Buffer(const CB_IDX idx);
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
@@ -217,7 +223,7 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 // Currently only supports Texture2D, support for other formats will be implemented if needed
 SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height);
 // Overload to create a Shader Resource View with an already existing texture from another resource
-SRV_IDX CreateShaderResourceViewTexture(const int16_t sourceIdx, RESOURCE_FLAGS sourceResource);
+SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS sourceResource);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Sets shader resource view of parameter slot to NULL in the shader of parameter bindto
@@ -258,3 +264,10 @@ void ReleaseRS(const RS_IDX idx);
 
 void SetTopology(TOPOLOGY topology);
 
+//Release
+bool DeleteD3D11Texture(const TX_IDX idx);
+bool DeleteD3D11RenderTargetView(const RTV_IDX idx);
+bool DeleteD3D11PixelShader(const PS_IDX idx); 
+bool DeleteD3D11VertexShader(const VS_IDX idx);
+bool DeleteD3D11DepthStencilView(const DSV_IDX idx);
+bool DeleteD3D11RasterizerState(const RS_IDX idx);

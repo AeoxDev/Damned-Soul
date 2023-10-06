@@ -85,21 +85,27 @@ void StateManager::Setup()
 	menu.Setup();
 	Camera::InitializeCamera();
 
-	Particles::InitializeParticles();
-	SetupTestHitbox();
+	//Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
+	//SetupTestHitbox();
 	RedrawUI();
 
 	//Setup systems here
-	systems.push_back(new ParticleSystemGPU());
+
+	//// Compute
+	//systems.push_back(new ParticleSystemGPU());
+
+	// Render/GPU
+	systems.push_back(new UIRenderSystem());
 	systems.push_back(new RenderSystem());
+
+	// CPU
 	systems.push_back(new ButtonSystem());
 	systems.push_back(new ControllerSystem());
-	systems.push_back(new ParticleSystemCPU());
+	//systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new PointOfInterestSystem());
 	systems.push_back(new PlayerHealthUISystem());
 	systems.push_back(new PlayerSoulsUISystem());
-	systems.push_back(new UIRenderSystem());
 	systems.push_back(new TransformSystem());
 }
 

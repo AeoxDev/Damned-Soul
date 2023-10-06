@@ -47,8 +47,6 @@ bool UIRenderSystem::Update()
         }
         End2dFrame(ui);
     }
-    
-    RenderUI();
 
     return true;
 }
@@ -59,7 +57,7 @@ bool PlayerHealthUISystem::Update()
     {
         auto uiElement = registry.GetComponent<UIPlayerHealthComponent>(entity);
         auto player = registry.GetComponent<StatComponent>(entity);
-        uiElement->value = player->health;
+        uiElement->value = (float)(player->health);
 
         std::string valueAsString = "Health: " + std::to_string((int)uiElement->value);
 
@@ -80,7 +78,7 @@ bool PlayerSoulsUISystem::Update()
     {
         auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(entity);
         auto player = registry.GetComponent<PlayerComponent>(entity);
-        uiElement->value = player->souls;
+        uiElement->value = (float)(player->souls);
 
         std::string valueAsString = "Souls: " + std::to_string((int)uiElement->value);
 

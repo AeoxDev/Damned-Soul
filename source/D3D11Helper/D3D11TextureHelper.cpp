@@ -1,25 +1,15 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "STB_Helper.h"
+#include "Hashing.h"
 #include <iostream>
+#include <assert.h>
 
 ID3D11SamplerState* smp_NULL = nullptr;
 
-// djb2 | Do we need a faster hash?
-uint64_t C_StringToHash(const char* c_str)
-{
-    unsigned long hash = 5381;
-    int c;
-
-    while (c = *c_str++)
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-    return hash;
-}
-
 TX_IDX LoadTexture(const char* name)
 {
-	uint16_t& currentIdx = txHolder->_nextIdx;
+	TX_IDX& currentIdx = txHolder->_nextIdx;
 
     // Check hash
     const uint64_t hash = C_StringToHash(name);
@@ -90,7 +80,7 @@ TX_IDX LoadTexture(const char* name)
 TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
 {
 	// Check hash
-	uint16_t& currentIdx = txHolder->_nextIdx;
+	TX_IDX& currentIdx = txHolder->_nextIdx;
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
@@ -231,4 +221,31 @@ void ReleaseSMP(const SMP_IDX idx)
 {
 	if (smpHolder->smp_map[idx] != nullptr)
 		smpHolder->smp_map[idx]->Release();
+}
+
+
+bool DeleteD3D11Texture(const TX_IDX idx)
+{
+	assert(txHolder->tx_map.contains(idx));
+	if (txHolder->srv_map.contains(idx))
+	{
+		txHolder->srv_map[idx]->Release();
+		txHolder->srv_map.erase(idx);
+	}
+	if (txHolder->tx_map.contains(idx))
+	{
+		txHolder->tx_map[idx]->Release();
+		txHolder->tx_map.erase(idx);
+	}
+	if (txHolder->img_map.contains(idx))
+	{
+		txHolder->img_map[idx].Release();
+		txHolder->img_map.erase(idx);
+	}
+	if (txHolder->hash_map.contains(idx))
+	{
+		txHolder->hash_map.erase(idx);
+	}
+
+	return true;
 }
