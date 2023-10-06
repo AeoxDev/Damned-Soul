@@ -30,9 +30,16 @@ void PlayerDash(EntityID& entity)
 	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
-	if (!stat || !transform || !dac) //Invalid entity doesn't have the required components
+	if (!stat || !transform || !dac || !anim) //Invalid entity doesn't have the required components
 		return;
+
+	// Loop using DT
+	anim->aAnim = ANIMATION_ATTACK;
+	anim->aAnimIdx = 0;
+	anim->aAnimTime += GetDeltaTime() * 5.0f;
+	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();

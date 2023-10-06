@@ -103,12 +103,6 @@ bool ControllerSystem::Update()
 			{
 				controller->moveTime = controller->moveMaxLimit;
 			}
-
-			// Loop using DT
-			anim->aAnim = ANIMATION_ATTACK;
-			anim->aAnimIdx = 0;
-			anim->aAnimTime += GetDeltaTime();
-			anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 		}
 		else
 		{
@@ -129,8 +123,8 @@ bool ControllerSystem::Update()
 			//Step 1: Take away control from the player
 			//Step 2: Dash in a direction based off of goalX and goalZ
 			//Step 3: Return control to the player
-			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 3.0f);
-			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.15f, PlayerRegainControl);
+			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 2.5f);
+			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl);
 		}
 	}
 	return true;
