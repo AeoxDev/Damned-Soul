@@ -26,6 +26,7 @@ struct StatComponent
 struct PlayerComponent
 {
 	int souls = 0;
+	int attackHitboxID = -1;
 };
 
 struct ControllerComponent
@@ -36,6 +37,17 @@ struct ControllerComponent
 	float moveFactor = 2.5f;
 	float moveResetFactor = 1.25f;
 	float moveMaxLimit = 3.0f;
+};
+
+//I hate
+struct DashArgumentComponent
+{
+	//Exists to be able to be passed into functions without making the function arguments templated
+	float x = 1.0f, z = 1.0f;
+	float dashModifier = 2.0f;
+	float arc = 0.0f; //Feliiiix
+
+	DashArgumentComponent(float x, float z, float dashModifier, float arc = 0.0f) : x(x), z(z), dashModifier(dashModifier) {}
 };
 
 //

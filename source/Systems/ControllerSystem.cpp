@@ -4,6 +4,7 @@
 #include "DeltaTime.h"
 #include "Components.h"
 #include "Input.h"
+#include "EventFunctions.h"
 
 bool ControllerSystem::Update()
 {
@@ -59,17 +60,8 @@ bool ControllerSystem::Update()
 			transform->facingZ = sinf(angle);
 			controller->goalX = 0.0f;
 			controller->goalZ = 0.0f;
-
 		}
 		//End of: Camera System thing
-
-		/*COMBAT INPUT*/
-		//Test code for now but we fuckin about
-		float speed = stat->moveSpeed;
-		if (keyInput[SCANCODE_LSHIFT] == down)
-		{
-			speed *= 3.0f;
-		}
 
 		/*MOVEMENT INPUT*/
 		bool moving = false;
@@ -77,25 +69,25 @@ bool ControllerSystem::Update()
 		{
 			moving = true;
 			
-			transform->positionZ += speed * GetDeltaTime();
+			transform->positionZ += stat->moveSpeed * GetDeltaTime();
 			controller->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
 			moving = true;
-			transform->positionZ -= speed * GetDeltaTime();
+			transform->positionZ -= stat->moveSpeed * GetDeltaTime();
 			controller->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
 			moving = true;
-			transform->positionX -= speed * GetDeltaTime();
+			transform->positionX -= stat->moveSpeed * GetDeltaTime();
 			controller->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
 			moving = true;
-			transform->positionX += speed * GetDeltaTime();
+			transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
 
@@ -114,6 +106,20 @@ bool ControllerSystem::Update()
 			{
 				controller->moveTime = 0.0f;
 			}
+		}
+
+		/*COMBAT INPUT*/
+		//Test code for now but we fuckin about
+		if (keyState[SCANCODE_SPACE] == pressed)
+		{
+			//speed *= 3.0f;
+
+			//Make a 3-step timed event:
+			//Step 1: Take away control from the player
+			//Step 2: Dash in a direction based off of goalX and goalZ
+			//Step 3: Return control to the player
+			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 3.0f);
+			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.15f, PlayerRegainControl);
 		}
 	}
 		

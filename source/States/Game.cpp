@@ -48,12 +48,6 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
 		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
 
-		SetupPlayerCollisionBox(player, 1.0f);
-
-		SetupEnemyCollisionBox(skeleton, 0.9f);
-		SetupEnemyCollisionBox(skeleton2, 0.9f);
-		SetupEnemyCollisionBox(dog, 1.0f);
-
 
 
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
@@ -90,10 +84,18 @@ void GameScene::Setup(int scene)//Load
 		dtc->positionX = 20.0f;
 		skeltc->positionZ = 20.0f;
 		skeltc2->positionZ = 15.0f;
+		poic->weight = 10.0f;
 
 		HellhoundBehaviour* hellhoundBehevCo = registry.AddComponent<HellhoundBehaviour>(dog);
 		SkeletonBehaviour* skeletonBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
+
+		//Finally set the collision boxes
+		SetupPlayerCollisionBox(player, 1.0f);
+
+		SetupEnemyCollisionBox(skeleton, 0.9f);
+		SetupEnemyCollisionBox(skeleton2, 0.9f);
+		SetupEnemyCollisionBox(dog, 1.0f);
 	}
 }
 
