@@ -6,7 +6,6 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
-#include "ProximityHitboxEditor.h"
 
 void UpdateDebugWindowTitle(std::string& title);
 
