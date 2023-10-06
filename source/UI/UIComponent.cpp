@@ -1,4 +1,4 @@
-#include "UIComponent.h"
+#include "UI/UIComponent.h"
 #include "SDLHandler.h"
 
 using namespace DirectX;

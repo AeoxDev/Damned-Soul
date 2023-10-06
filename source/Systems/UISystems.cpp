@@ -2,7 +2,7 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include "DeltaTime.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "Components.h"
 
 #include <iostream>
