@@ -63,8 +63,6 @@ bool ControllerSystem::Update()
 		}
 		//End of: Camera System thing
 
-		}
-
 		// Get animation component
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 		// Idle as default
@@ -135,6 +133,5 @@ bool ControllerSystem::Update()
 			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.15f, PlayerRegainControl);
 		}
 	}
-		
 	return true;
 }
