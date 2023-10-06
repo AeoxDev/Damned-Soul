@@ -68,7 +68,7 @@ void Particles::InitializeParticles()
 	{
 		data->metadata[i].life = -1.f;
 		data->metadata[i].maxRange = -1.f;
-		data->metadata[i].pattern = -1.f;
+		data->metadata[i].pattern = -1; //-1.f;
 		data->metadata[i].size = -1.f;
 		data->metadata[i].spawnPos = DirectX::XMFLOAT3(-999.f, -999.f, -999.f);
 
@@ -81,10 +81,13 @@ void Particles::InitializeParticles()
 
 void Particles::ReleaseParticles()
 {
-	MemLib::spop(); // for particles
-	MemLib::spop(); // read buffer
-	MemLib::spop(); // write buffer
-	MemLib::spop(); // For data
+	// Absolutely not! You either pop in the same scope, during the same frame, or never at all
+	// It is entirely possible, and extremely likely that this will pop other completely unrelated that was added to the stack afterwards
+
+	//MemLib::spop(); // for particles
+	//MemLib::spop(); // read buffer
+	//MemLib::spop(); // write buffer
+	//MemLib::spop(); // For data
 }
 
 ParticleMetadataBuffer* Particles::GetData()

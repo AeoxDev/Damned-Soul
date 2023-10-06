@@ -4,6 +4,7 @@
 #include "GameRenderer.h"
 #include <iostream>
 #include <fstream>
+#include <assert.h>
 
 // Theese shaders exist to enable removing shaders from the pipeline
 ID3D11VertexShader* vrtShader_NULL = nullptr;
@@ -343,4 +344,24 @@ void SetTopology(TOPOLOGY topology)
 	default:
 		break;
 	}
+}
+
+bool DeleteD3D11PixelShader(const PS_IDX idx)
+{
+	assert(pixHolder->ps_map.contains(idx));
+	pixHolder->ps_map[idx]->Release();
+	pixHolder->ps_map.erase(idx);
+
+
+	return true;
+}
+
+bool DeleteD3D11VertexShader(const VS_IDX idx)
+{
+	assert(vrtHolder->vs_map.contains(idx));
+	vrtHolder->vs_map[idx]->Release();
+	vrtHolder->vs_map.erase(idx);
+	vrtHolder->il_map[idx]->Release();
+	vrtHolder->il_map.erase(idx);
+	return true;
 }

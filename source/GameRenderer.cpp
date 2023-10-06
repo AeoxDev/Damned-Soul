@@ -195,7 +195,7 @@ void RenderIndexed(const size_t& count)
 
 void RenderOffset(const size_t& count, const size_t& offset)
 {
-	d3d11Data->deviceContext->Draw(count, offset);
+	d3d11Data->deviceContext->Draw((UINT)count, (UINT)offset);
 }
 
 void ClearParticles()
