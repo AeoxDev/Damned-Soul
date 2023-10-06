@@ -195,9 +195,11 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\EntityFramework.cpp" />
     <ClCompile Include="header\Components\RenderableComponent.h" />
+    <ClCompile Include="source\EventFunctions\PlayerEvents.cpp" />
     <ClCompile Include="source\Hashing.cpp" />
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
+    <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
@@ -369,6 +371,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Animation.hpp" />
+    <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
@@ -396,6 +399,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
+    <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />

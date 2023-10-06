@@ -166,3 +166,18 @@ void HardCollision(OnCollisionParameters& params)
 	//transform2->positionX += dirX;//Push of by
 	//transform2->positionZ += dirZ;//Push of by
 }
+
+void AttackCollision(OnCollisionParameters& params)
+{
+	//Get the components of the attacker (entity 1)
+	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+
+	//Get the components of the attackee (entity 2)
+	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	
+	//Super basic just to test
+	//stat2->health -= stat1->damage;
+	transform2->positionX = 0.0f;
+	transform2->positionZ = 0.0f;
+}

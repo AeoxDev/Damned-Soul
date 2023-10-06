@@ -42,6 +42,7 @@ void GameScene::Setup(int scene)//Load
 		ModelBonelessComponent* dogCo = registry.AddComponent<ModelBonelessComponent>(dog);
 		ModelBonelessComponent* stageCo = registry.AddComponent<ModelBonelessComponent>(stage);
 		ModelSkeletonComponent* pmc = registry.AddComponent<ModelSkeletonComponent>(player);
+		AnimationComponent* pac = registry.AddComponent<AnimationComponent>(player);
 		ModelBonelessComponent* skelCo = registry.AddComponent<ModelBonelessComponent>(skeleton);
 		ModelBonelessComponent* skelCo2 = registry.AddComponent<ModelBonelessComponent>(skeleton2);
 
@@ -51,11 +52,7 @@ void GameScene::Setup(int scene)//Load
 		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
 		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
 
-		SetupPlayerCollisionBox(player, 1.0f);
 
-		SetupEnemyCollisionBox(skeleton, 0.9f);
-		SetupEnemyCollisionBox(skeleton2, 0.9f);
-		SetupEnemyCollisionBox(dog, 1.0f);
 
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
@@ -72,6 +69,7 @@ void GameScene::Setup(int scene)//Load
 		/*AddTimedEventComponentStartContinousEnd(player, player, 1.0f, RandomPosition,
 			dog, RandomPosition, 
 			player, 2.0f, RandomPosition);*/
+		ControllerComponent* cc = registry.AddComponent<ControllerComponent>(player);
 
 		
 
@@ -98,15 +96,26 @@ void GameScene::Setup(int scene)//Load
 		skelCo2->model = LoadModel("SkeletonOneDymmy.mdl");
 		stageCo->model = LoadModel("PlaceholderScene.mdl");
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
+		(*pac) = AnimationComponent();
+
+		
 		RenderGeometryIndependentCollision(stage);
 		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
 		skeltc->positionZ = 20.0f;
 		skeltc2->positionZ = 15.0f;
+		poic->weight = 10.0f;
 
 		HellhoundBehaviour* hellhoundBehevCo = registry.AddComponent<HellhoundBehaviour>(dog);
 		SkeletonBehaviour* skeletonBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
+
+		//Finally set the collision boxes
+		SetupPlayerCollisionBox(player, 1.0f);
+
+		SetupEnemyCollisionBox(skeleton, 0.9f);
+		SetupEnemyCollisionBox(skeleton2, 0.9f);
+		SetupEnemyCollisionBox(dog, 1.0f);
 	}
 }
 

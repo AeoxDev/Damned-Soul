@@ -81,6 +81,14 @@ void AddTimedEventComponentStartContinous(EntityID& entityID, EntityID& startEnt
 	tc->endTime = continousTime;
 	tc->continousFunction = (void(*)(EntityID&))continousFunction;
 }
+
+void AddTimedEventComponentStartContinousEnd(EntityID& entityID, float startTime, void* startFunction, void* continousFunction, float endTime, void* endFunction)
+{
+	AddTimedEventComponentStartContinousEnd(entityID, entityID, startTime, startFunction,
+		entityID, continousFunction,
+		entityID, endTime, endFunction);
+}
+
 void AddTimedEventComponentStartContinousEnd(EntityID& entityID, EntityID& startEntity, float startTime, void* startFunction,
 	EntityID& continousEntity, void* continousFunction,
 	EntityID& endEntity, float endTime, void* endFunction)
