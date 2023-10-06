@@ -8,19 +8,23 @@
 
 bool ParticleSystemGPU::Update()
 {
-	int activeMetadata = 0;
+	int highestActiveSlot = -1;
 	for (auto pEntity : View<ParticleComponent>(registry))
 	{
 		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
 		if (pComp->metadataSlot >= 0)
 		{
-			activeMetadata++;
+			if (highestActiveSlot < pComp->metadataSlot)
+				highestActiveSlot = pComp->metadataSlot;
 		}
 	}
 
-	Particles::PrepareParticleCompute(renderStates);
-	Dispatch(256, activeMetadata, 0);
-	Particles::FinishParticleCompute(renderStates);
+	if (highestActiveSlot >= 0)
+	{
+		Particles::PrepareParticleCompute(renderStates);
+		Dispatch(1, highestActiveSlot + 1, 0);
+		Particles::FinishParticleCompute(renderStates);
+	}
 
 	return true;
 }

@@ -78,8 +78,5 @@ namespace Particles
 	void PrepareParticlePass(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
 	void FinishParticlePass();
-
-	// Prepares constant buffer at metadataSlot to be rendered as smoke particles.
-	void PrepareSmokeParticles(ParticleComponent* pc, RenderSetupComponent constantBuffer[8], float seconds, float radius, float size, DirectX::XMFLOAT3 entityPosition);
 }
 

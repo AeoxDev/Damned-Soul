@@ -4,7 +4,7 @@
 #include "MemLib/MemLib.hpp"
 #include "Systems\Systems.h"
 #include "SDLHandler.h"
-
+#include "Camera.h"
 
 Particle* particles;
 ParticleInputOutput* Particles::m_readBuffer;
@@ -109,6 +109,8 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
 
+	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
+
  	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_writeBuffer->SRVIndex);
 }
 
@@ -117,6 +119,7 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	SetTopology(POINTLIST);
 
 	SetWorldMatrix(1.f, 1.f, 1.f, BIND_VERTEX, 0);
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0]);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
@@ -125,12 +128,13 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	//The camera constant buffer is set to the geometry shader outside of this function
 }
 
 void Particles::FinishParticlePass()
 {
 	SetTopology(TRIANGLELIST);
+
+	UnsetConstantBuffer(BIND_GEOMETRY, 1);
 
 	UnsetVertexShader();
 	UnsetGeometryShader();

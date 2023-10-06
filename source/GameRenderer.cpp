@@ -157,28 +157,6 @@ void ClearBackBuffer()
 	Clear(backBufferRenderSlot);
 }
 
-void ResetGraphicsPipeline()
-{
-	for (int i = 0; i < 4; i++)
-	{
-		UnsetConstantBuffer(BIND_GEOMETRY, i);
-		UnsetConstantBuffer(BIND_VERTEX, i);
-		UnsetConstantBuffer(BIND_PIXEL, i);
-		UnsetShaderResourceView(BIND_GEOMETRY, i);
-		UnsetShaderResourceView(BIND_VERTEX, i);
-		UnsetShaderResourceView(BIND_PIXEL, i);
-		// Sampler State is only relevant to pixel shader
-		UnsetSamplerState(i);
-	}
-
-	UnsetPixelShader();
-	UnsetVertexShader();
-	UnsetGeometryShader();
-	UnsetVertexBuffer();
-	UnsetIndexBuffer();
-	UnsetRasterizerState();
-}
-
 void Clear(const int& s)
 {
 	ClearRenderTargetView(renderStates[s].renderTargetView);

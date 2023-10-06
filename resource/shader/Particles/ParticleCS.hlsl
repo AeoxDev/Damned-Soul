@@ -41,6 +41,23 @@ RWStructuredBuffer<Input> outputParticleData : register(u0);
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID, uint3 blockID : SV_GroupID)
 {
+    int index = DTid.x + blockID.y * NUM_THREADS;
+    
+    Input particle = inputParticleData[DTid.x];
+    //____________________________________________________________________
+    float noiseAmp = 100.f; //just noise amplitude, adjust value as needed
+    float3 noise = noiseAmp * normalize(float3(sin(DTid.x), cos(DTid.x), sin(DTid.x + cos(DTid.x))));
+    particle.position += noise;
+    //____________________________________________________________________
+    //test.position = test.position;
+    
+    if (particle.time >= meta[blockID.y].life)
+    {
+        particle.position = meta[blockID.y].startPosition;
+    }
+    
+    outputParticleData[index] = particle;
+    
     if (meta[blockID.y].life > 0 )
     {
         // 0 = SMOKE
