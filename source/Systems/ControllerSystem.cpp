@@ -7,7 +7,7 @@
 
 bool ControllerSystem::Update()
 {
-	for (auto entity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
+	for (auto entity : View<PlayerComponent, TransformComponent, StatComponent, AnimationComponent>(registry))
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -56,6 +56,13 @@ bool ControllerSystem::Update()
 			player->goalZ = 0.0f;
 
 		}
+
+		// Get animation component
+		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+		// Idle as default
+		anim->aAnim = ANIMATION_IDLE;
+		anim->aAnimIdx = 0;
+
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
@@ -89,6 +96,12 @@ bool ControllerSystem::Update()
 			{
 				player->moveTime = player->moveMaxLimit;
 			}
+
+			// Loop using DT
+			anim->aAnim = ANIMATION_ATTACK;
+			anim->aAnimIdx = 0;
+			anim->aAnimTime += GetDeltaTime();
+			anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 		}
 		else
 		{

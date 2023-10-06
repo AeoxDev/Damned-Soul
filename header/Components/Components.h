@@ -2,10 +2,15 @@
 #include "ComponentHelper.h"
 #include "PointOfInterestComponent.h"
 
+// Renderable Components
 #include "ModelComponent.h"
+#include "AnimationComponent.h"
+// Special child belongs to both groups
+#include "TransformComponent.h"
+// Physics Components
 #include "GeometryIndependentComponent.h"
 #include "PlayerComponent.h"
-#include "TransformComponent.h"
+
 
 //GUI
 #include "ButtonComponent.h"

@@ -35,6 +35,7 @@ void GameScene::Setup(int scene)//Load
 		ModelBonelessComponent* dogCo2 = registry.AddComponent<ModelBonelessComponent>(dog2);
 		ModelBonelessComponent* stageCo = registry.AddComponent<ModelBonelessComponent>(stage);
 		ModelSkeletonComponent* pmc = registry.AddComponent<ModelSkeletonComponent>(player);
+		AnimationComponent* pac = registry.AddComponent<AnimationComponent>(player);
 
 		TransformComponent* dtc2 = registry.AddComponent<TransformComponent>(dog2);
 		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
@@ -56,8 +57,9 @@ void GameScene::Setup(int scene)//Load
 		dogCo2->model = LoadModel("HellhoundDummy_PH.mdl");
 		stageCo->model = LoadModel("PlaceholderScene.mdl");
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
+		(*pac) = AnimationComponent();
 
-		// Causes a memory leak with a ID3D11Texture2D
+		// Caused a memory leak with a ID3D11Texture2D - Not anymore though!
 		RenderGeometryIndependentCollision(stage);
 
 		poic->mode = POI_ACTIVE;
