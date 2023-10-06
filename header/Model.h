@@ -1,5 +1,5 @@
 #pragma once
-#include <cinttypes>
+#include "IDX_Types.h"
 #include "MemLib\PoolPointer.hpp"
 #include "MemLib\ML_Vector.hpp"
 #include "MemLib\ML_Map.hpp"
@@ -75,11 +75,14 @@ struct Model
 {
 	//PoolPointer<ModelBoneless> m_modelData;
 	PoolPointer<modelGenericData> m_data;
-	ML_Vector<Animation> m_animations;
+	ML_Map<char, ML_Vector<Animation>> m_animations;
 
 
-	uint32_t m_vertexBuffer = -1, m_indexBuffer = -1;
-	uint16_t m_animationBuffer = -1, m_refCount = 0;
+	VB_IDX m_vertexBuffer = -1;
+	IB_IDX m_indexBuffer = -1;
+	CB_IDX m_animationBuffer = -1;
+	uint16_t m_refCount = 0;
+	
 	
 	~Model();
 
@@ -89,8 +92,10 @@ struct Model
 
 	bool SetMaterialActive() const;
 
+	DirectX::XMMATRIX* GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime);
+
 	// Render all the model's submeshes one after another
-	void RenderAllSubmeshes();
+	void RenderAllSubmeshes(const ANIMATION_TYPE aType = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f);
 
 	void Free();
 };

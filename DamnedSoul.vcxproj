@@ -370,6 +370,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Animation.hpp" />
+    <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\ButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />

@@ -8,7 +8,7 @@
 
 bool ControllerSystem::Update()
 {
-	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent>(registry))
+	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent>(registry))
 	{
 		//Get the relevant components from the entity
 		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
@@ -63,7 +63,14 @@ bool ControllerSystem::Update()
 		}
 		//End of: Camera System thing
 
-		/*MOVEMENT INPUT*/
+		}
+
+		// Get animation component
+		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+		// Idle as default
+		anim->aAnim = ANIMATION_IDLE;
+		anim->aAnimIdx = 0;
+
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
@@ -98,6 +105,12 @@ bool ControllerSystem::Update()
 			{
 				controller->moveTime = controller->moveMaxLimit;
 			}
+
+			// Loop using DT
+			anim->aAnim = ANIMATION_ATTACK;
+			anim->aAnimIdx = 0;
+			anim->aAnimTime += GetDeltaTime();
+			anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 		}
 		else
 		{

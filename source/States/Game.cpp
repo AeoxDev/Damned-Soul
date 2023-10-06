@@ -39,6 +39,7 @@ void GameScene::Setup(int scene)//Load
 		ModelBonelessComponent* dogCo = registry.AddComponent<ModelBonelessComponent>(dog);
 		ModelBonelessComponent* stageCo = registry.AddComponent<ModelBonelessComponent>(stage);
 		ModelSkeletonComponent* pmc = registry.AddComponent<ModelSkeletonComponent>(player);
+		AnimationComponent* pac = registry.AddComponent<AnimationComponent>(player);
 		ModelBonelessComponent* skelCo = registry.AddComponent<ModelBonelessComponent>(skeleton);
 		ModelBonelessComponent* skelCo2 = registry.AddComponent<ModelBonelessComponent>(skeleton2);
 
@@ -79,6 +80,9 @@ void GameScene::Setup(int scene)//Load
 		skelCo2->model = LoadModel("SkeletonOneDymmy.mdl");
 		stageCo->model = LoadModel("PlaceholderScene.mdl");
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
+		(*pac) = AnimationComponent();
+
+		
 		RenderGeometryIndependentCollision(stage);
 		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
