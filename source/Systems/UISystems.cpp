@@ -23,11 +23,11 @@ bool UIRenderSystem::Update()
         UpdateUI();
         Begin2dFrame(ui);
 
-        for (auto entity : View<UIButtonComponent>(registry))
-            registry.GetComponent<UIButtonComponent>(entity)->button.Draw();
-
         for (auto entity : View<ImageComponent>(registry))
             registry.GetComponent<ImageComponent>(entity)->image.Draw();
+
+        for (auto entity : View<UIButtonComponent>(registry))
+            registry.GetComponent<UIButtonComponent>(entity)->button.Draw();
 
         for (auto entity : View<TextComponent>(registry))
             registry.GetComponent<TextComponent>(entity)->text.Draw();

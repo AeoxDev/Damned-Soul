@@ -12,8 +12,8 @@ void SettingsState::Setup()
 	m_active = true;
 
 	RedrawUI();
-	SetupButtons();
 	SetupImages();
+	SetupButtons();
 	SetupText();
 
 	Camera::ResetCamera();
@@ -45,60 +45,68 @@ void SettingsState::ComputeShaders()
 
 void SettingsState::SetupButtons()
 {
-	//1280x720
+	// Changes resolution to 1280x720
 	{
 		auto OnClick = [this]()
 			{
-
+				SDL_SetWindowSize(sdl.sdlWindow, 1280, 720);
 			};
 
 		auto OnHover = [this]()
 			{
-
+				
 			};
-		//registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("", "1280x720", L"1280x720", OnClick, OnHover, { 0.0f, 0.0f }, { 2.0f, 2.0f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"1280x720", OnClick, OnHover, { -0.4f, 0.0f }, {0.8f, 0.8f}));
 	}
 
-	//1600x900
+	// Changes resolution to 1600x900
 	{
 		auto OnClick = [this]()
 			{
-
+				SDL_SetWindowSize(sdl.sdlWindow, 1600, 900);
 			};
 
 		auto OnHover = [this]()
 			{
 
 			};
-		//registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("", "1600x900", L"1600x900", OnClick, OnHover, { 0.0f, -0.2f }, { 2.0f, 2.0f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"1600x900", OnClick, OnHover, { 0.0f, 0.0f }, { 0.8f, 0.8f }));
 	}
 	
-	//1920x1080
+	// Changes resolution to 1920x1080
 	{
 		auto OnClick = [this]()
 			{
-
+				SDL_SetWindowSize(sdl.sdlWindow, 1920, 1080);
 			};
 
 		auto OnHover = [this]()
 			{
 
 			};
-		//registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("", "1920x1080", L"1920x1080", OnClick, OnHover, { 0.0f, -0.4f }, { 2.0f, 2.0f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"1920x1080", OnClick, OnHover, { 0.4f, 0.0f }, { 0.8f, 0.8f }));
 	}
 
-	//Fullscreen
+	//Enables/Disables Fullscreen depending on current state
 	{
 		auto OnClick = [this]()
 			{
-			
+				Uint32 windowFlags = SDL_GetWindowFlags(sdl.sdlWindow);
+				if ((windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
+				{
+					SDL_SetWindowFullscreen(sdl.sdlWindow, 0);
+				}
+				else
+				{
+					SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+				}
 			};
 
 		auto OnHover = [this]()
 			{
 
 			};
-		//registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("", "FullscreenButton", L"Fullscreen", OnClick, OnHover, { 0.0f, -0.6f }, { 2.0f, 2.0f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Fullscreen", OnClick, OnHover, { 0.0f, -0.4f }, { 0.8f, 0.8f }));
 	}
 
 	//Back Button
@@ -115,36 +123,36 @@ void SettingsState::SetupButtons()
 			{
 
 			};
-		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/BackButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Back", OnClick, OnHover, { -0.8f, -0.8f }, { 0.8f, 0.8f }));
 	}
 }
 
 void SettingsState::SetupImages()
 {
-
+	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/ButtonBackgroundHover.png", { 0.0, 0.0f }, { 1.7f, 1.7f }));
+/*
 	//registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/OptionsButtonHover.png", { (sdl.WIDTH / 2.0f) - (426.0f / 8.0f), 100.0f }, { 1.0f, 1.0f }));
 
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/D0.png", { -0.5f, 0.6f }, { 1.5f, 1.5f }));
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/D0.png", { 0.5, 0.6f }, { 1.5f, 1.5f }));
 
-/*
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { 0.0f, -0.3f }));
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { -0.3f, 0.0f }, { 2.0f, 1.5f }));
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { -0.0f, 0.0f }, { 2.0f, 1.5f }));
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { 0.3f, 0.0f }, { 2.0f, 1.5f }));
-	*/
+*/
 }
 
 void SettingsState::SetupText()
 {
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Settings", { 0.0f, 0.4f }, {1.5f, 1.5f}));
 
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Settings", { 0.0f, 0.6f }));
+	/*
 	//registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Fullscreen:", { 0.0f, -0.2f }));
-
 	//registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Volume: 100", { 0.0f, -0.4f }));
 	//registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Graphics: Flawless", { 0.0f, -0.6f }));
 
-	/*
+
 	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"1280x720", { -0.3f, 0.0f }));
 	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"1600x900", { -0.0f, 0.0f }));
 	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"1920x1080", { 0.3f, 0.0f }));
