@@ -1,7 +1,16 @@
 #pragma once
-#include <cinttypes>
+#include "IDX_Types.h"
 #include "MemLib\PoolPointer.hpp"
 #include <DirectXMath.h>
+
+enum ANIMATION_TYPE
+{
+	ANIMATION_IDLE = 'I',
+	ANIMATION_WALK = 'W',
+	ANIMATION_ATTACK = 'A',
+	ANIMATION_TAKE_DAMAGE = 'D',
+	ANIMATION_DEATH = 'X'
+};
 
 struct Animation
 {
@@ -17,6 +26,7 @@ private:
 
 		// The rest of the data
 		// Ignore warning, this is intentional
+		#pragma warning(suppress : 4200)
 		const char m_data[];
 		// vector<float> timestamps
 		// vector<Matrix> frames
@@ -32,7 +42,7 @@ public:
 	float GetTimestamp(const uint32_t frameIdx);
 
 	// Get a frame from a time
-	DirectX::XMMATRIX* GetFrame(const float& time, uint32_t& numberOfBones);
+	DirectX::XMMATRIX* GetFrame(const float& time/*, uint32_t& numberOfBones*/);
 
 	~Animation();
 };

@@ -41,7 +41,7 @@ int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ)
 	collisionComponent->circleHitbox[availableSlot].radius = radius;
 	collisionComponent->circleHitbox[availableSlot].offsetX = offsetX;
 	collisionComponent->circleHitbox[availableSlot].offsetZ = offsetZ;
-	//Set to active
+	//Set to mode
 	collisionComponent->circularFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
 	SetCollisionEvent(entity, (int)availableSlot, NoCollision );
@@ -227,7 +227,7 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 		}
 	}
 
-	//Set to active
+	//Set to mode
 	collisionComponent->convexFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
 	SetCollisionEvent(entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);
@@ -691,12 +691,59 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 	}
 }
 
-void UpdatePhysics( )
+void SetupEnemyCollisionBox(EntityID& entity, float radius)
 {
-	ResetCollisionVariables();
-	HandleMoveableCollision();
-	HandleDamageCollision();
-	HandleStaticCollision();
+	AddHitboxComponent(entity);
+	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
+	SetCollisionEvent(entity, sID, SoftCollision);
+	SetHitboxIsEnemy(entity, sID);
+	SetHitboxHitPlayer(entity, sID);
+	SetHitboxHitEnemy(entity, sID);
+	SetHitboxActive(entity, sID);
+	SetHitboxIsMoveable(entity, sID);
+
+	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsEnemy(entity, hID);
+	SetHitboxHitPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
+}
+
+void SetupPlayerCollisionBox(EntityID& entity, float radius)
+{
+	AddHitboxComponent(entity);
+	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
+	SetCollisionEvent(entity, sID, SoftCollision);
+	SetHitboxIsPlayer(entity, sID);
+	SetHitboxHitEnemy(entity, sID);
+	SetHitboxActive(entity, sID);
+	SetHitboxIsMoveable(entity, sID);
+
+	int hID = CreateHitbox(entity, radius * 0.35f, 0.f, 0.f);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
+
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.1f, 0.f, 0.f);
+	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
+	SetHitboxIsPlayer(entity, playerComp->attackHitboxID);
+	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
+	SetHitboxActive(entity, playerComp->attackHitboxID, false);
+}
+
+bool HitboxCanHitGI(EntityID& entity)
+{
+	HitboxComponent* h = registry.GetComponent<HitboxComponent>(entity);
+	if ((h->circularFlags[0].isMoveable && h->circularFlags[0].active) || (h->convexFlags[0].isMoveable && h->convexFlags[0].active))
+	{
+		return true;
+	}
+	return false;
 }
 
 void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
@@ -758,8 +805,8 @@ void SetupTestHitbox()
 	SetupGIAll( registry, stage);
 
 	EntityID stageModel =  registry.CreateEntity();
-	 registry.AddComponent<ModelComponent>(stageModel);
-	ModelComponent* m =  registry.GetComponent<ModelComponent>(stageModel);
+	 registry.AddComponent<ModelBonelessComponent>(stageModel);
+	ModelBonelessComponent* m =  registry.GetComponent<ModelBonelessComponent>(stageModel);
 	m->model.Load("PlaceholderScene.mdl");
 	RenderGeometryIndependentCollisionToTexture( registry, stage, stageModel);*/
 	
@@ -782,5 +829,6 @@ void RenderGeometryIndependentCollision(EntityID& m)
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(m);
 
 	RenderGeometryIndependentCollisionToTexture(m);
+	ReleaseGI();
 	return;
 }

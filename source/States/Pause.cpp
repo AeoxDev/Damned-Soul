@@ -1,11 +1,16 @@
 #include "States/Pause.h"
 #include "Input.h"
 #include "States\StateManager.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
+#include "Camera.h"
 
 void PauseState::Setup()
 {
 	RedrawUI();
+
+	Camera::ResetCamera();
+
+	m_active = true;
 }
 
 void PauseState::Input()
@@ -30,4 +35,8 @@ void PauseState::ComputeShaders()
 
 void PauseState::Unload()
 {
+	// If this state is not active, simply skip the unload
+	if (false == m_active)
+		return;
+	m_active = false; // Set active to false
 }

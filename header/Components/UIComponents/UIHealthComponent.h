@@ -5,10 +5,11 @@
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 
-struct UIBossHealthComponent
+struct UIHealthComponent
 {
 	float value;
 	DirectX::XMFLOAT2 position;
+	DirectX::XMFLOAT2 scale;
 	UIImage image;
 	UIText text;
 };

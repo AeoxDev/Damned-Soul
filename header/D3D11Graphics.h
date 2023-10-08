@@ -1,117 +1,111 @@
 #pragma once
 #include <d3d11.h>
 #include <cinttypes>
+#include <MemLib\ML_Map.hpp>
+
+// For _IDX types
+#include "IDX_Types.h"
 // For Image
 #include "STB_Helper.h"
 //This is the back end
 
+
 struct D3D11Data
 {
-	ID3D11Device* device;
-	ID3D11DeviceContext* deviceContext;
-	IDXGISwapChain* swapChain;
+	ID3D11Device*			device;
+	ID3D11DeviceContext*	deviceContext;
+	IDXGISwapChain*			swapChain;
 
 };
 
 struct GeometryShaderHolder
 {
-	uint8_t currentCount = 0;
-	ID3D11GeometryShader* gs_arr[16];
+	GS_IDX									_nextIdx = 0;
+	ML_Map<GS_IDX, ID3D11GeometryShader*>	gs_map;
 };
 
 
 struct PixelShaderHolder
 {
-#define PS_HOLD_LIM 16
-	uint8_t				currentCount = 0;
-	ID3D11PixelShader*	ps_arr[PS_HOLD_LIM];
+	PS_IDX								_nextIdx = 0;
+	ML_Map<PS_IDX, ID3D11PixelShader*>	ps_map;
 };
 
 struct VertexShaderHolder
 {
-#define VS_HOLD_LIM 16
-	uint8_t					currentCount = 0;
-	ID3D11VertexShader*		vs_arr[VS_HOLD_LIM];
-	ID3D11InputLayout*		il_arr[VS_HOLD_LIM];
+	VS_IDX								_nextIdx = 0;
+	ML_Map<VS_IDX, ID3D11VertexShader*>	vs_map;
+	ML_Map<VS_IDX, ID3D11InputLayout*>	il_map;
 };
 
 struct ComputeShaderHolder
 {
-#define CS_HOLD_LIM 16
-	uint8_t					currentCount = 0;
-	ID3D11ComputeShader*	cs_arr[CS_HOLD_LIM];
+	CS_IDX									_nextIdx = 0;
+	ML_Map <CS_IDX, ID3D11ComputeShader*>	cs_map;
 };
 
 struct TextureHolder
 {
-#define TX_HOLD_LIM 64
-	uint16_t					currentCount = 0; // How many textures are currently loaded
-	uint64_t					hash_arr[TX_HOLD_LIM]; // Used to check if Texture has already been loaded
-	Image						img_arr[TX_HOLD_LIM]; // Unnessecary?
-	ID3D11Texture2D* tx_arr[TX_HOLD_LIM]; // Used to store the Textures, Unnessecary?
-	ID3D11ShaderResourceView* srv_arr[TX_HOLD_LIM]; // Ysed to store the Shader Resource Views for the textures
+	TX_IDX										_nextIdx = 0; // How many textures are currently loaded
+	ML_Map<TX_IDX, uint64_t>					hash_map; // Used to check if Texture has already been loaded
+	ML_Map<TX_IDX, Image>						img_map; // Unnessecary?
+	ML_Map<TX_IDX, ID3D11Texture2D*>			tx_map; // Used to store the Textures, Unnessecary?
+	ML_Map<TX_IDX, ID3D11ShaderResourceView*>	srv_map; // Ysed to store the Shader Resource Views for the textures
 };
 
 struct SamplerStateHolder
 {
-	uint8_t currentCount = 0;
-	ID3D11SamplerState* smp_arr[4];
+	SMP_IDX _nextIdx = 0;
+	ML_Map<SMP_IDX, ID3D11SamplerState*> smp_map;
 };
 
 struct BufferHolder
 {
-#define BUFF_HOLD_LIM 512
-	uint8_t			currentCount = 0;
-	ID3D11Buffer*	buff_arr[BUFF_HOLD_LIM]; // MANY more buffers are needed than shaders
-	uint32_t		metadata_arr[BUFF_HOLD_LIM][3]; // Buffers needs an indicator on where and how to be used
+	uint16_t							_nextIdx = 0;
+	ML_Map < uint16_t, ID3D11Buffer*>	buff_map; // MANY more buffers are needed than shaders
+	ML_Map < uint16_t, uint32_t>		size; // Size
 };
 
 struct ViewPortHolder
 {
-#define VP_HOLD_LIM 4
-	uint8_t			currentCount = 0;
-	D3D11_VIEWPORT	vp_arr[VP_HOLD_LIM]; // We, most likely, will not require a lot of view ports
+	VP_IDX							_nextIdx = 0;
+	ML_Map<VP_IDX, D3D11_VIEWPORT>	vp_map; // We, most likely, will not require a lot of view ports
 };
 
 struct RTVHolder
 {
-#define RTV_HOLD_LIM 8
-	uint8_t					currentCount = 0;
-	ID3D11Texture2D*		tx_arr[RTV_HOLD_LIM]; // Needs a texture for the depth stencil as well
-	ID3D11RenderTargetView*	rtv_arr[RTV_HOLD_LIM]; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
+	RTV_IDX										_nextIdx = 0;
+	ML_Map<RTV_IDX, ID3D11Texture2D*	>		tx_map; // Needs a texture for the depth stencil as well
+	ML_Map<RTV_IDX, ID3D11RenderTargetView*>	rtv_map; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
 };
 
 struct DSVHolder
 {
-#define DSV_HOLD_LIM 8
-	uint8_t					currentCount = 0;
-	ID3D11Texture2D*		ds_arr[DSV_HOLD_LIM]; // Needs a texture for the depth stencil as well
-	ID3D11DepthStencilView*	dsv_arr[DSV_HOLD_LIM]; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
+	DSV_IDX										_nextIdx = 0;
+	ML_Map<DSV_IDX, ID3D11Texture2D*	>		ds_map; // Needs a texture for the depth stencil as well
+	ML_Map<DSV_IDX, ID3D11DepthStencilView*>	dsv_map; // Since we are not using deferred rendering, we probably wont use a lot of these, but we definitely will use more than one
 };
 
 struct SRVHolder
 {
-#define SRV_HOLD_LIM 8
-	uint8_t						currentCount = 0;
-	ID3D11Resource*				srv_resource_arr[SRV_HOLD_LIM]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
-	ID3D11ShaderResourceView*	srv_arr[SRV_HOLD_LIM]; // NOTE: I dont think 8 is enough, will probably need more in the future
-	uint32_t					metadata_arr[SRV_HOLD_LIM][3]; // Shader Resource View needs an indicator on where and how to be used
+	SRV_IDX											_nextIdx = 0;
+	ML_Map<SRV_IDX, ID3D11Resource*>				srv_resource_map; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
+	ML_Map<SRV_IDX, ID3D11ShaderResourceView*>		srv_map; // NOTE: I dont think 8 is enough, will probably need more in the future
+	ML_Map<SRV_IDX, uint32_t>						size; // Size
 };
 
 struct UAVHolder
 {
-#define UAV_HOLD_LIM 8
-	uint8_t						currentCount = 0;
-	ID3D11Resource*				uav_resource_arr[UAV_HOLD_LIM]; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
-	ID3D11UnorderedAccessView*	uav_arr[UAV_HOLD_LIM]; // NOTE: I dont think 8 is enough, will probably need more in the future
-	uint32_t					metadata_arr[UAV_HOLD_LIM][2]; // Unordered Access View needs an indicator on how to be used, UAVs can only bind to compute shaders therefore no indication of where to use is needed
+	UAV_IDX											_nextIdx = 0;
+	ML_Map<UAV_IDX, ID3D11Resource*>				uav_resource_map; // Sometimes SRVs are created with textures, other times buffers therefore a resource is used
+	ML_Map<UAV_IDX, ID3D11UnorderedAccessView*>		uav_map; // NOTE: I dont think 8 is enough, will probably need more in the future
+	ML_Map<UAV_IDX, uint32_t>						size; // Size
 };
 
 struct RasterizerHolder
 {
-#define RS_HOLD_LIM 4
-	uint8_t					currentCount = 0;
-	ID3D11RasterizerState*	rs_arr[RS_HOLD_LIM];
+	RS_IDX									_nextIdx = 0;
+	ML_Map<RS_IDX, ID3D11RasterizerState*>	rs_map;
 };
 
 // Uses MemLib's persistent stack

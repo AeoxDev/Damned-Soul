@@ -363,7 +363,7 @@ enum Keys
    SCANCODE_BRIGHTNESSDOWN = 275,
    SCANCODE_BRIGHTNESSUP = 276,
    SCANCODE_DISPLAYSWITCH = 277, /**< display mirroring/dual display
-                                      switch, video mode switch */
+                                      switch, video m_mode switch */
    SCANCODE_KBDILLUMTOGGLE = 278,
    SCANCODE_KBDILLUMDOWN = 279,
    SCANCODE_KBDILLUMUP = 280,

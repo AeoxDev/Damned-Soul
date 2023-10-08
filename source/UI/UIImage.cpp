@@ -1,4 +1,4 @@
-#include "UIImage.h"
+#include "UI/UIImage.h"
 #include <iostream>
 
 using namespace DirectX;
@@ -49,7 +49,7 @@ UIImage::UIImage(const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, flo
 		return;
 	}
 
-	m_Bounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height};
+	m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
 	
 	SetTransform(position, scale, rotation);
 
@@ -73,7 +73,7 @@ void UIImage::Draw()
 	{
 		ID2D1RenderTarget* rt = ui.GetRenderTarget();
 		rt->SetTransform(m_Transform);
-		rt->DrawBitmap(m_Bitmap, m_Bounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_Bounds);
+		rt->DrawBitmap(m_Bitmap, m_CurrentBounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_CurrentBounds);
 	}
 }
 

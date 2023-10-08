@@ -1,22 +1,43 @@
 #include "States\Menu.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "Hitbox.h"
 #include "States\StateManager.h"
 #include "Input.h"
 #include "Registry.h"
 #include "Components.h"
+#include "Camera.h"
+#include "States\CleanupMacros.h"
 
 void Menu::Setup()//Load
 {
+	m_active = true;
+
 	RedrawUI();
 	SetupButtons();
 	SetupImages();
 	SetupText();
+
+	Camera::ResetCamera();
+
+	//Setup stage to rotate around
+	EntityID stage = registry.CreateEntity();
+	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
+	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
+	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
+
+	stageM->model = LoadModel("PlaceholderScene.mdl");
+	stageP->mode = POI_FORCE;
+	stageP->height = CAMERA_OFFSET_Y * -0.85f;
+	stageP->rotationY = 0.0f;
+	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
+	stageP->rotationAccel = 0.12f;
 }
 
 void Menu::Input()
 {
-
+	//Particles::PrepareParticleCompute();
+	//Dispatch(1, 2, 0);
+	//Particles::FinishParticleCompute();
 }
 
 void Menu::Update()
@@ -46,7 +67,7 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/StartButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.4f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", OnClick, OnHover, { 0.0f, -0.4f }));
 	}
 
 	//Settings Button
@@ -64,14 +85,14 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/OptionsButton.png", "", L"", OnClick, OnHover, { 0.0f,  -0.6f}));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/OptionsButton.png", "Exmenu/OptionsButtonHover.png", L"", OnClick, OnHover, { 0.0f,  -0.6f}));
 	}
 
 	//Exit Button
 	{
 		auto OnClick = [this]()
 			{
-				
+				sdl.quit = true;
 			};
 
 		auto OnHover = [this]()
@@ -79,7 +100,7 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/ExitButton.png", "Exmenu/ExitButtonHover.png", L"", OnClick, OnHover, { 0.0f, -0.8f }));
 	}
 }
 
@@ -99,23 +120,65 @@ void Menu::SetupText()
 
 void Menu::Unload()
 {
-	for (auto entity : View<ButtonComponent>(registry))
+	// If this state is not active, simply skip the unload
+	if (false == m_active)
+		return;
+	m_active = false; // Set active to false
+
+	CREATE_ENTITY_MAP_entities;
+
+	for (auto entity : View<UIButtonComponent>(registry))
 	{
-		registry.RemoveComponent<ButtonComponent>(entity);
-		registry.DestroyEntity(entity);
+		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
+		b->button.Release();
+		registry.RemoveComponent<UIButtonComponent>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<ImageComponent>(registry))
 	{
+		ImageComponent* i = registry.GetComponent<ImageComponent>(entity);
+		i->image.Release();
 		registry.RemoveComponent<ImageComponent>(entity);
-		registry.DestroyEntity(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<TextComponent>(registry))
 	{
+		// Text doesn't need to be released
 		registry.RemoveComponent<TextComponent>(entity);
-		registry.DestroyEntity(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
+
+	for (auto entity : View<PointOfInterestComponent>(registry))
+	{
+		registry.RemoveComponent<PointOfInterestComponent>(entity);
+		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<ModelBonelessComponent>(registry))
+	{
+		ModelBonelessComponent* m = registry.GetComponent<ModelBonelessComponent>(entity);
+		ReleaseModel(m->model);
+		registry.RemoveComponent<TransformComponent>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<ModelSkeletonComponent>(registry))
+	{
+		ModelSkeletonComponent* m = registry.GetComponent<ModelSkeletonComponent>(entity);
+		ReleaseModel(m->model);
+		registry.RemoveComponent<TransformComponent>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	uint16_t destCount = DestroyEntities(entities);
 
 	ClearUI();
 }

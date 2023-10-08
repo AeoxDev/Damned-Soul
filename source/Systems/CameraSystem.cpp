@@ -5,6 +5,8 @@
 #include "Registry.h"
 #include "DeltaTime.h"
 
+#define CAMERA_MOVESPEED 1.2f
+
 bool PointOfInterestSystem::Update()
 {
 	PointOfInterestComponent* poiCo = nullptr;
@@ -19,7 +21,7 @@ bool PointOfInterestSystem::Update()
 	float newPosX = 0;
 	float newPosY = 0;
 	float newPosZ = 0;
-	int points = 1;
+	float points = 1;//The 1 is the camera itself
 	//DirectX::XMStoreFloat3(&cameraPos, cameraVPos);
 	for (auto entity : View<PointOfInterestComponent, TransformComponent>(registry))
 	{
@@ -28,32 +30,74 @@ bool PointOfInterestSystem::Update()
 
 		//Get position
 		tCo = registry.GetComponent<TransformComponent>(entity);
-		newPosX += tCo->positionX + tCo->lastPositionX;
-		newPosY += tCo->positionY + tCo->lastPositionY;
-		newPosZ += tCo->positionZ + tCo->lastPositionZ;
-		points += 2;
+		if (poiCo->mode == POI_ACTIVE)
+		{
+			//First add the new positions, use the last position aswell for a smoother movement (midpoint of both positions)
+			newPosX += (tCo->positionX + tCo->lastPositionX) * poiCo->weight;
+			newPosY += (tCo->positionY + tCo->lastPositionY) * poiCo->weight;
+			newPosZ += (tCo->positionZ + tCo->lastPositionZ) * poiCo->weight;
+			points += 2.0f * poiCo->weight;
+		}
+		else if (poiCo->mode == POI_ACTIVE_FOR_X_TIME)
+		{
+			poiCo->time -= GetDeltaTime();
+			//First add the new positions, use the last position aswell for a smoother movement (midpoint of both positions)
+			newPosX += (tCo->positionX + tCo->lastPositionX) * poiCo->weight;
+			newPosY += (tCo->positionY + tCo->lastPositionY) * poiCo->weight;
+			newPosZ += (tCo->positionZ + tCo->lastPositionZ) * poiCo->weight;
+			//Multiply by weights
+			points += 2.0f * poiCo->weight;
+			if (poiCo->time < 0.0f)
+			{
+				poiCo->mode = POI_INACTIVE;
+			}
+		}
+		else if (poiCo->mode == POI_INACTIVE_FOR_X_TIME)
+		{
+			poiCo->time -= GetDeltaTime();
+			if (poiCo->time < 0.0f)
+			{
+				poiCo->mode = POI_ACTIVE;
+			}
+		}
+		else if (poiCo->mode == POI_FORCE)
+		{
+			poiCo->rotationY += GetDeltaTime() * poiCo->rotationAccel;
+			//(0.0, -200) -> (200, 0.0) -> (0.0, 200) -> (-200, 0.0)
+			Camera::SetPosition(tCo->positionX + poiCo->rotationRadius * -sinf(poiCo->rotationY), tCo->positionY + poiCo->height + CAMERA_OFFSET_Y, tCo->positionZ + poiCo->rotationRadius * cosf(poiCo->rotationY), false);
+			Camera::SetLookAt(tCo->positionX, tCo->positionY, tCo->positionZ);
+			Camera::UpdateView();
+			Camera::UpdateProjection();
+			return true;
+		}
+		
 	}
 	float avX = (cameraPosX + newPosX) / (float)points;
 	float avY = (cameraPosY + newPosY) / (float)points;
 	float avZ = (cameraPosZ + newPosZ) / (float)points;
-	PlayerComponent* p = nullptr;
+	ControllerComponent* c = nullptr;
 	TransformComponent* pt = nullptr;
+	StatComponent* s = nullptr;
+	float moveScalar = 0.0f;
+	float playerMoveX = 0.0f;
+	float playerMoveY = 0.0f;
+	float playerMoveZ = 0.0f;
 	//Offset forward by player's movement:
 	//Only supports one player at the moment
-	for (auto entity : View<PointOfInterestComponent, TransformComponent, PlayerComponent>(registry))
+	for (auto entity : View<PointOfInterestComponent, TransformComponent, ControllerComponent, StatComponent>(registry))
 	{
-		 p = registry.GetComponent<PlayerComponent>(entity);
+		 s = registry.GetComponent<StatComponent>(entity);
+		 c = registry.GetComponent<ControllerComponent>(entity);
 		 pt = registry.GetComponent<TransformComponent>(entity);
 		
 	}
-	if (p == nullptr || pt == nullptr)
+	if (c != nullptr && s != nullptr && pt != nullptr)
 	{
-		return true;
+		moveScalar = s->moveSpeed * c->moveTime;
+		playerMoveX = pt->facingX;
+		playerMoveY = pt->facingY;
+		playerMoveZ = pt->facingZ;
 	}
-	float playerMoveX = pt->facingX;
-	float playerMoveY = pt->facingY;
-	float playerMoveZ = pt->facingZ;
-	float moveScalar = p->movementSpeed * p->moveTime;
 
 	float distX = avX - cameraPosX;
 	float distY = avY - cameraPosY;
@@ -68,14 +112,18 @@ bool PointOfInterestSystem::Update()
 
 		//Get position
 		tCo = registry.GetComponent<TransformComponent>(entity);
-		float distSquared = (tCo->positionX - avX) * (tCo->positionX - avX) + (tCo->positionZ - avZ) * (tCo->positionZ - avZ);
-		if (maxDistance < distSquared)
+		if (poiCo->mode == POI_ACTIVE || poiCo->mode == POI_ACTIVE_FOR_X_TIME)
 		{
-			maxDistance = distSquared;
+			float distSquared = (tCo->positionX - avX) * (tCo->positionX - avX) + (tCo->positionZ - avZ) * (tCo->positionZ - avZ);
+			if (maxDistance < distSquared)
+			{
+				maxDistance = distSquared;
+			}
 		}
+		
 	}
 	float lastFOV = Camera::GetFOV();
-	Camera::SetFOV((sqrtf(maxDistance)) * 0.01f);
+	Camera::SetFOV((powf(maxDistance, 0.375f)) * 0.015f);
 	float newFOV = Camera::GetFOV();
 	float fovDist = newFOV - lastFOV;
 	float fovScalar = GetDeltaTime();
@@ -86,7 +134,7 @@ bool PointOfInterestSystem::Update()
 	distY *= distanceFactor;
 	distZ *= distanceFactor;
 
-	float scalar = GetDeltaTime() * 0.8f;
+	float scalar = GetDeltaTime() * CAMERA_MOVESPEED;
 	float posX = cameraPosX + (distX + playerMoveX * moveScalar)*scalar;
 	float posY = cameraPosY + (distY + playerMoveY * moveScalar)*scalar;
 	float posZ = cameraPosZ + (distZ + playerMoveZ * moveScalar)*scalar;

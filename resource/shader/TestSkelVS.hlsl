@@ -20,7 +20,7 @@ struct VS_INPUTS
 	float4 position : POSITION;
 	float4 normal : NORMAL;
 	float2 uv : UV;
-	int4 bIdx : BONE_INDEX;
+	uint4 bIdx : BONE_INDEX;
 	float4 bWeight : BONE_WIEGHT;
 };
 
@@ -29,7 +29,7 @@ struct VS_OUT
 	float4 position : SV_POSITION;
 	float4 normal : NORMAL;
 	float2 uv : UV;
-	int4 index : INDEX;
+	uint4 index : INDEX;
 	float4 weight : WEIGHT;
 };
 

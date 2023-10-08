@@ -5,12 +5,12 @@
 
 bool Animation::Load(const char* filename)
 {
-	ML_String name = "Models\\Ani\\";
-	name.append(filename);
+	//ML_String name = "Models\\Ani\\";
+	//name.append(filename);
 
 	std::ifstream reader;
 	auto flags = std::ios::binary; // | std::ios::ate;
-	reader.open(name.c_str(), flags);
+	reader.open(filename/*name.c_str()*/, flags);
 
 	if (false == reader.is_open())
 	{
@@ -55,12 +55,13 @@ float Animation::GetTimestamp(const uint32_t frameIdx)
         return ((float*)m_data->m_data)[frameIdx];
 		//return m_data->timestamps[frameIdx];
     }
+	return 0;
 }
 
-DirectX::XMMATRIX* Animation::GetFrame(const float& time, uint32_t& numberOfBones)
+DirectX::XMMATRIX* Animation::GetFrame(const float& time/*, uint32_t& numberOfBones*/)
 {
 	// Assignment inside if statement is on purpose!
-	if (numberOfBones = m_data->m_boneCount)
+	if (/*numberOfBones = */m_data->m_boneCount)
 	{
 		uint32_t i;
 		// Find the most appropriate frame

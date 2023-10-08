@@ -7,8 +7,11 @@
 #include "STB_Helper.h"
 #include "D3D11Helper.h"
 #include "MemLib\ML_String.hpp"
+#include "Hashing.h"
 
 #include "DeltaTime.h"
+
+#include <filesystem>
 
 #define SANE_MODEL_BONELESS_NUMBER (1'234'567'890 | 0b0)
 #define SANE_MODEL_BONES_NUMBER (1'234'567'890 | 0b1)
@@ -60,6 +63,11 @@ DirectX::XMMATRIX* modelGenericData::GetBoneMatrices()
 }
 
 
+Model::~Model()
+{
+	//Free();
+}
+
 const MODEL_TYPE Model::Load(const char* filename)
 {
 	ML_String name = "Models\\Mdl\\";
@@ -106,7 +114,45 @@ const MODEL_TYPE Model::Load(const char* filename)
 	if (MODEL_BONELESS == result)
 		m_vertexBuffer = CreateVertexBuffer(m_data->GetBonelessVertices(), sizeof(VertexBoneless), m_data->m_numVertices, USAGE_IMMUTABLE);
 	else
+	{
+		// Create the animation buffer
+		m_animationBuffer = CreateConstantBuffer(sizeof(DirectX::XMMATRIX) * m_data->m_numBones);
+
+		// Load bone data
 		m_vertexBuffer = CreateVertexBuffer(m_data->GetBonedVertices(), sizeof(VertexBoned), m_data->m_numVertices, USAGE_IMMUTABLE);
+
+		// Construct filepath for the animations
+		ML_String animationPath = "Models\\Ani\\";
+		ML_String withoutMdl(filename);
+		withoutMdl = withoutMdl.substr(0, withoutMdl.find_last_of("."));
+		animationPath.append(withoutMdl);
+
+		// Get the directory
+		std::filesystem::directory_iterator animationDirectory(animationPath.c_str());
+
+		ML_String can = "";
+		for (const auto& entry : animationDirectory)
+		{
+			// Set the current animation name
+			can = entry.path().string().c_str();
+			can = can.substr(can.find_last_of("\\")+1, can.length());
+			char animType = can[0];
+
+			// Emplace if it doesn't exist
+			if (false == m_animations.contains(animType))
+			{
+				m_animations.emplace(animType, ML_Vector<Animation>());
+			}
+
+			// Push the animation
+			m_animations[animType].push_back(Animation());
+			// Load the animation
+			m_animations[animType][can[1] - '0'].Load(entry.path().string().c_str());
+		}
+
+		m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX));
+	}
+		
 	m_indexBuffer = CreateIndexBuffer(m_data->GetIndices(), sizeof(uint32_t), m_data->m_numIndices);
 
 	const modelGenericData& visCopy = *m_data;
@@ -123,24 +169,16 @@ const MODEL_TYPE Model::Load(const char* filename)
 		mat.glowIdx = LoadTexture(mat.glow);
 	}
 
-	m_pixelShader = LoadPixelShader("TestPS.cso");
-	if (MODEL_BONELESS == result)
-		m_vertexShader = LoadVertexShader("TestVS.cso");
-	else
-		m_vertexShader = LoadVertexShader("TestSkelVS.cso");
-
-	Animation animation;
-	m_animations.push_back(animation);
-	//m_animations[0].Load("Rocket_Anim_Wave.ani");
-	m_animations[0].Load("PlayerPlaceholder_Anim_Stomp.ani");
-
-	m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX), 2);
-
 	return result;
 }
 
 void Model::Free()
 {
+	if (m_animationBuffer != -1)
+		DeleteD3D11Buffer(m_animationBuffer);
+	DeleteD3D11Buffer(m_vertexBuffer);
+	DeleteD3D11Buffer(m_indexBuffer);
+	m_animations.~ML_Map();
 	MemLib::pfree(m_data);
 }
 
@@ -148,47 +186,36 @@ void Model::Free()
 bool Model::SetMaterialActive() const
 {
 	const Material& mat = (**m_data.m_pp).GetMaterial(0);
-	if (SetTexture(mat.albedoIdx, 0, BIND_PIXEL)/* &&
+	if (SetTexture(mat.albedoIdx, BIND_PIXEL, 0)/* &&
 		SetTexture(mat.normalIdx, 1, BIND_PIXEL) &&
 		SetTexture(mat.glowIdx, 2, BIND_PIXEL)*/)
 		return true;
 	return false;
 }
 
-// Set the currently active index and vertex buffers to this model
-bool Model::SetVertexAndIndexBuffersActive() const
+DirectX::XMMATRIX* Model::GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
 {
-	if (false == SetVertexBuffer(m_vertexBuffer))
-		return false;
-	if (false == SetIndexBuffer(m_indexBuffer))
-		return false;
-	if (false == SetConstantBuffer(m_animationBuffer, BIND_VERTEX))
-		return false;
-	return true;
+	if (m_animations.contains(aType) && aIdx < m_animations[aType].size())
+	{
+		return m_animations[aType][aIdx].GetFrame(aTime);
+	}
+
+	// Handle this later on
+	return m_animations[ANIMATION_IDLE][0].GetFrame(0);
 }
 
-void Model::SetPixelAndVertexShader() const
-{
-	SetPixelShader(m_pixelShader);
-	SetVertexShader(m_vertexShader);
-}
-
-
-void Model::RenderAllSubmeshes()
+void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
 {
 	// Incorrect bone indices?
 	// That would sort of explain some of the wonky stuff happening
 
-	static float animationTime = 0.0f;
-	animationTime += GetDeltaTime();
-	if (animationTime > 1.0f)
-		animationTime -= 2.0f;
-
 	// Try to get the initial animation frame
-	uint32_t size;
-	//SetPixelAndVertexShader();
-	UpdateConstantBuffer(m_animationBuffer, m_animations[0].GetFrame(animationTime, size));
-	SetConstantBuffer(m_animationBuffer, BIND_VERTEX);
+	if (m_animationBuffer != -1)
+	{
+		UpdateConstantBuffer(m_animationBuffer, GetAnimation(aType, aIdx, aTime));
+		SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2);
+	}
+
 
 	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
 	{
@@ -196,7 +223,53 @@ void Model::RenderAllSubmeshes()
 		const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
 
 		// Set material and draw
-		SetTexture(currentMaterial.albedoIdx, 0, BIND_PIXEL);
+		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
+}
+
+// The semiglobal map of loaded models
+ML_Map<uint64_t, Model>* loadedModels = nullptr;
+
+const uint64_t LoadModel(const char* filename)
+{
+	
+	if (nullptr == loadedModels)
+	{
+		loadedModels = (ML_Map<uint64_t, Model>*)MemLib::spush(sizeof(ML_Map<uint64_t, Model>));
+		new(loadedModels) ML_Map<uint64_t, Model>();
+	}
+
+	uint64_t hash = C_StringToHash(filename);
+
+	if (loadedModels->contains(hash))
+	{
+		// Increment refcount and return hash
+		++(LOADED_MODELS[hash].m_refCount);
+		return hash;
+	}
+
+	loadedModels->emplace(hash, Model()); // Emplace if the first
+	LOADED_MODELS[hash].Load(filename); // Load if the first
+	LOADED_MODELS[hash].m_refCount = 1; // Set refcount to 1 if this is the first
+
+	return hash;
+}
+
+const bool ReleaseModel(const uint64_t& hash)
+{
+	if (loadedModels->contains(hash))
+	{
+		// Reduce the refcount
+		--(LOADED_MODELS[hash].m_refCount);
+		// If the refcount is zero, erase the model
+		if (0 == LOADED_MODELS[hash].m_refCount)
+		{
+			Model& modelRef = LOADED_MODELS[hash];
+			modelRef.Free();
+			LOADED_MODELS.erase(hash);
+			return true;
+		}
+	}
+	return false;
 }

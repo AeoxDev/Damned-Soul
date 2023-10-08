@@ -5,6 +5,9 @@
 
 struct GameScene
 {
+	// Wether or not the scene is active
+	bool m_active = false;
+
 	void Setup(int scene);
 
 	void Input();

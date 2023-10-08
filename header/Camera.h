@@ -1,6 +1,10 @@
 #pragma once
 #include <DirectXMath.h>
 
+#define CAMERA_OFFSET_X 0
+#define CAMERA_OFFSET_Y 150.f
+#define CAMERA_OFFSET_Z -200.f
+
 namespace Camera
 {
 	void SetPosition(const float x, const float y, const float z, const bool includeOffset = false);
@@ -23,15 +27,15 @@ namespace Camera
 
 	void AdjustFOV(const float radians);
 
-	DirectX::XMVECTOR GetPosition();
-	DirectX::XMVECTOR GetLookAt();
-	DirectX::XMVECTOR GetUp();
-	DirectX::XMVECTOR GetRotation();
+	const DirectX::XMVECTOR GetPosition();
+	const DirectX::XMVECTOR GetLookAt();
+	const DirectX::XMVECTOR GetUp();
+	const DirectX::XMVECTOR GetRotation();
 	float GetFOV();
 
-	DirectX::XMMATRIX GetView();
-	DirectX::XMMATRIX GetPerspective();
-	DirectX::XMMATRIX GetOrthographic();
+	const DirectX::XMMATRIX GetView();
+	const DirectX::XMMATRIX GetPerspective();
+	const DirectX::XMMATRIX GetOrthographic();
 
 	int16_t GetCameraBufferIndex();
 
@@ -52,6 +56,8 @@ namespace Camera
 	/// Up = (0, 1, 0)
 	/// LookAt = (0, 0, 1)
 	/// </summary>
+	
+	void ResetCamera();
 	void InitializeCamera();
 	void FreeCamera();
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "SDLHandler.h"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
@@ -29,8 +29,7 @@ void End2dFrame(UI& ui)
 
 void UpdateUI()
 {
-	ID3D11ShaderResourceView* nullsrv = nullptr;
-	d3d11Data->deviceContext->PSSetShaderResources(0, 1, &nullsrv);
+	UnsetShaderResourceView(BIND_PIXEL, 0);
 
 	ClearDepthStencilView(renderStates[ui.RenderSlot].depthStencilView);
 	ClearRenderTargetView(renderStates[ui.RenderSlot].renderTargetView);
@@ -46,12 +45,12 @@ void ClearUI()
 void RenderUI()//Render what is drawn to rendertarget.
 {
 
-	if (!SetVertexShader(renderStates[ui.RenderSlot].vertexShader))
+	if (!SetVertexShader(renderStates[ui.RenderSlot].vertexShaders[0]))
 	{
 		std::cout << "Failed to set UI Vertex Shader!" << std::endl;
 		return;
 	}
-	if (!SetPixelShader(renderStates[ui.RenderSlot].pixelShader))
+	if (!SetPixelShader(renderStates[ui.RenderSlot].pixelShaders[0]))
 	{
 		std::cout << "Failed to set UI Pixel Shader!" << std::endl;
 		return;
@@ -71,15 +70,11 @@ void RenderUI()//Render what is drawn to rendertarget.
 		std::cout << "Failed to set rtv or dsv!" << std::endl;
 		return;
 	}
-	//UnloadShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
-	if (!SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView))
+	if (!SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_PIXEL, 0))
 	{
 		std::cout << "Failed to set srv!" << std::endl;
 		return;
 	}
 
-	//SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView);
-
-	//d3d11Data->deviceContext->PSSetShaderResources(0, 1, &srvHolder->srv_arr[renderStates[ui.RenderSlot].shaderResourceView]);
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
 }

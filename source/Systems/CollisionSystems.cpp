@@ -17,19 +17,22 @@ bool GeometryIndependentSystem::Update()
 	//Then check the position of all players and enemies:
 	if (geoCo != nullptr)
 	{
-		for (auto entity : View<PlayerComponent, TransformComponent>(registry))
+		for (auto entity : View<TransformComponent, HitboxComponent>(registry))
 		{
 			TransformComponent* p = registry.GetComponent<TransformComponent>(entity);
-			PlayerComponent* pl = registry.GetComponent< PlayerComponent>(entity);
+			HitboxComponent* h = registry.GetComponent<HitboxComponent>(entity);
 			//We have found a player component with a transform
 			//Now take position and translate to pixel on texture and check if stage, if not, reset pos for now
-			int r = PixelValueOnPosition(geoCo, p->positionX, p->positionZ);
-			if (r == 0)
+			if (HitboxCanHitGI(entity))
 			{
-				p->positionX = 0.f;
-				p->positionZ = 0.f;
-				pl->moveTime = 0.0f;
+				int r = PixelValueOnPosition(geoCo, p->positionX, p->positionZ);
+				if (r == 0)
+				{
+					p->positionX = 0.f;
+					p->positionZ = 0.f;
+				}
 			}
+			
 		}
 	}
 	
