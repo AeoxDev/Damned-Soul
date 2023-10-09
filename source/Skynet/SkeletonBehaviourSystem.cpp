@@ -74,43 +74,43 @@ bool SkeletonBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	
-	//for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
-	//{
-	//	playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-	//	playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-	//	playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	//}
+	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
+	{
+		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+		playerStats = registry.GetComponent< StatComponent>(playerEntity);
+	}
 
-	//for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
-	//{
-	//	skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
-	//	skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
-	//	enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
+	{
+		skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
+		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
+		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 
-	//	if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && true )// check if enemy is alive, change later
-	//	{
-	//		float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-	//		skeletonComponent->attackTimer += GetDeltaTime();
-	//		skeletonComponent->attackStunDurationCounter += GetDeltaTime();
+		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && true )// check if enemy is alive, change later
+		{
+			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
+			skeletonComponent->attackTimer += GetDeltaTime();
+			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
 
-	//		if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
-	//		{
-	//			// do nothing, stand like a bad doggo and be ashamed
-	//		}
-	//		else if (distance < 2.5f)
-	//		{
-	//			CombatBehaviour(skeletonComponent, enemyStats, playerStats);
-	//		}
-	//		else if (distance < 50) //hunting distance
-	//		{
-	//			ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
-	//		}
-	//		else // idle
-	//		{
-	//			IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
-	//		}
-	//	}
-	//}
+			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
+			{
+				// do nothing, stand like a bad doggo and be ashamed
+			}
+			else if (distance < 2.5f)
+			{
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats);
+			}
+			else if (distance < 50) //hunting distance
+			{
+				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
+			}
+			else // idle
+			{
+				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
+			}
+		}
+	}
 
 
 	return true;

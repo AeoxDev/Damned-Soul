@@ -33,13 +33,13 @@ struct HellhoundBehaviour
 	//----------------
 	float shootingStartX = 0.f;
 	float shootingStartZ = 0.f;
-	float maxShootingAttackRange = 0.0f;//used to determine max range in an attack
+	//float maxShootingAttackRange = 0.0f;//used to determine max range in an attack
 	float shootingSideTarget1X = 0.f;
 	float shootingSideTarget1Z = 0.f;
 	float shootingSideTarget2X = 0.f;//these are used for creating a hitbox triangle
 	float shootingSideTarget2Z = 0.f;
-	const float offsetSide = 15.f; // used to get the extra 2 points for the triangle in shooting
-	const float offsetForward = 20.f; // used to aim a little behind player, so it's not super easy to dodge
+	const float offsetSide = 10.f; // used to get the extra 2 points for the triangle in shooting
+	const float offsetForward = 25.f; // used to aim a little behind player, so it's not super easy to dodge
 	//---------------------
 	float facingX = 0.f;
 	float facingZ = 0.f;

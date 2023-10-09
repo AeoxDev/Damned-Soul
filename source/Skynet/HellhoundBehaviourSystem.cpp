@@ -177,9 +177,20 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 	float dx = ptc->positionX - htc->positionX;
 	float dz = ptc->positionZ - htc->positionZ;
 	float magnitude = sqrt(dx * dx + dz * dz);
+	if (magnitude < 0.001f)
+	{
+		magnitude = 0.001f;
+	}
 
-	float targetX =  dx / magnitude * hc->offsetForward;
-	float targetZ =  dz / magnitude * hc->offsetForward;
+	float orthoX = -dz;
+	float orthoZ = dx;
+
+	dx /= magnitude;
+	dz /= magnitude;
+	
+
+	float targetX =  dx * hc->offsetForward;
+	float targetZ =  dz  * hc->offsetForward;
 
 	
 
@@ -187,11 +198,15 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 	hc->facingZ = targetZ;
 	
 
-	hc->maxShootingAttackRange = sqrt(targetX * targetX + targetZ * targetZ);
 
-	float orthoX = -dz;
-	float orthoZ = dx;
+	
 	magnitude = sqrt(orthoX * orthoX + orthoZ * orthoZ);
+
+	if (magnitude < 0.001f)
+	{
+		magnitude = 0.001f;
+	}
+
 	orthoX /= magnitude;
 	orthoZ /= magnitude;
 
@@ -215,7 +230,7 @@ bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float
 	return (cross1 >= 0 && cross2 >= 0 && cross3 >= 0) || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0);
 }
 
-void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* testing, TransformComponent* testing2)
+void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats)
 {
 	// create a hitbox from doggo position, as a triangle, with 2 corners expanding outwards with the help of variables in behavior. 
 	//once max range has been reached, this function will reset all stats and let the doggo go on with a different behavior. 
@@ -223,24 +238,29 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	// make sure to balance the damage so it's not a fast one-shot thing
 	
 	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox; //updates the range of the "flamethrower"
-	float test1 = (hc->shootingSideTarget1X - hc->shootingStartX);
+
+	//TESTING CODE______________________________________________________________________________________
+	/*float test1 = (hc->shootingSideTarget1X - hc->shootingStartX);
 	float test2 = (hc->shootingSideTarget1Z - hc->shootingStartZ);
 
 	float test3 = (hc->shootingSideTarget2X - hc->shootingStartX);
 	float test4 = (hc->shootingSideTarget2Z - hc->shootingStartZ);
 
 	float mag = sqrt(test1 * test1 + test2 * test2);
-	if (mag > 0.001f)
+	if (mag < 0.001f)
 	{
-		test1 /= mag;
-		test2 /= mag;
-		test3 /= mag;
-		test4 /= mag;
+		mag = 0.001f;
 	}
+	test1 /= mag;
+	test2 /= mag;
+	test3 /= mag;
+	test4 /= mag;
+	
 	testing->positionX = hc->shootingStartX + test1  * hc->currentShootingAttackRange;
 	testing->positionZ = hc->shootingStartZ + test2  * hc->currentShootingAttackRange;
 	testing2->positionX = hc->shootingStartX + test3 * hc->currentShootingAttackRange;
-	testing2->positionZ = hc->shootingStartZ + test4 * hc->currentShootingAttackRange;
+	testing2->positionZ = hc->shootingStartZ + test4 * hc->currentShootingAttackRange;*/
+	//__________________________________________________________________________________________________________________________
 
 	if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
 	{
@@ -257,7 +277,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 
 
 	//end óf function. check if current range >= max, that would end the attacks
-	if (hc->currentShootingAttackRange >= hc->maxShootingAttackRange)
+	if (hc->currentShootingAttackRange >= hc->offsetForward)
 	{
 		hc->isShooting = false;
 		hc->shootingCounter = 0.0f;
@@ -284,8 +304,9 @@ bool HellhoundBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 
-	TransformComponent* stc = nullptr;
-	TransformComponent* stcTwo = nullptr;
+	// for testing
+	//TransformComponent* stc = nullptr;
+	//TransformComponent* stcTwo = nullptr;
 
 	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	{
@@ -293,18 +314,22 @@ bool HellhoundBehaviourSystem::Update()
 		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
-	int i = 0;
-	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
-	{
-		if (i == 0)
-		{
-			stc = registry.GetComponent<TransformComponent>(enemyEntity);
-			i++;
-		}
-			
-		if(i == 1)
-			stcTwo = registry.GetComponent<TransformComponent>(enemyEntity);
-	}
+
+	// FOR TESTING
+	//int i = 0; 
+	//for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
+	//{
+	//	if (i == 0)
+	//	{
+	//		stc = registry.GetComponent<TransformComponent>(enemyEntity);
+	//		i++;
+	//	}
+	//		
+	//	if(i == 1)
+	//		stcTwo = registry.GetComponent<TransformComponent>(enemyEntity);
+	//}
+
+
 	for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent>(registry))
 	{
 		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
@@ -325,7 +350,7 @@ bool HellhoundBehaviourSystem::Update()
 				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingDuration) // have we charged long enough?
 				{
 					//it seems we have. Time to start shooting behaviour
-					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats, stc, stcTwo); //this is damage thing
+					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats); //this is damage thing
 				}
 				//else we do nothing, we're just charging.
 			}
