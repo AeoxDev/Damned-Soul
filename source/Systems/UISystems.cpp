@@ -32,18 +32,25 @@ bool UIRenderSystem::Update()
         for (auto entity : View<TextComponent>(registry))
             registry.GetComponent<TextComponent>(entity)->text.Draw();
 
+        for (auto entity : View<UIGameLevelComponent>(registry))
+        {
+            auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
+            uiElement->image.Draw();
+            uiElement->text.Draw();
+        }
+
         for (auto entity : View<UIHealthComponent>(registry))
         {
-            auto comp = registry.GetComponent<UIHealthComponent>(entity);
-            comp->image.Draw();
-            comp->text.Draw();
+            auto uiElement = registry.GetComponent<UIHealthComponent>(entity);
+            uiElement->image.Draw();
+            uiElement->text.Draw();
         }
 
         for (auto entity : View<UIPlayerSoulsComponent>(registry))
         {
-            auto comp = registry.GetComponent<UIPlayerSoulsComponent>(entity);
-            comp->image.Draw();
-            comp->text.Draw();
+            auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(entity);
+            uiElement->image.Draw();
+            uiElement->text.Draw();
         }
 
         End2dFrame(ui);
@@ -95,5 +102,26 @@ bool UIPlayerSoulsSystem::Update()
         uiElement->image.SetPosition(uiElement->position);
     }
 
+    return true;
+}
+
+
+bool UIGameLevelSystem::Update()
+{
+    for (auto entity : View<UIGameLevelComponent>(registry))
+    {
+        auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
+
+        std::string valueAsString = std::to_string(uiElement->value);
+        std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
+
+        uiElement->text.UpdateText(valueAsWString);
+
+        uiElement->text.SetScale(uiElement->scale);
+        uiElement->text.SetPosition(uiElement->position);
+
+        uiElement->image.SetScale(uiElement->scale);
+        uiElement->image.SetPosition(uiElement->position);
+    }
     return true;
 }

@@ -4,4 +4,5 @@
 struct UIButtonComponent
 {
 	UIButton button;
+	bool doRedraw = true;
 };

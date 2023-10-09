@@ -32,6 +32,7 @@ void GameScene::Setup(int scene)//Load
 		Camera::ResetCamera();
 
 		//Doggo
+		EntityID gameLevel = registry.CreateEntity();
 		EntityID dog = registry.CreateEntity();
 		EntityID stage = registry.CreateEntity();
 		EntityID player = registry.CreateEntity();
@@ -88,6 +89,10 @@ void GameScene::Setup(int scene)//Load
 		UIHealthComponent* skelUIHpC1 = registry.AddComponent<UIHealthComponent>(skeleton, 1.0f, DirectX::XMFLOAT2(0.8f, 0.6f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		UIHealthComponent* skelUIHpC2 = registry.AddComponent<UIHealthComponent>(skeleton2, 1.0f, DirectX::XMFLOAT2(0.8f, 0.4f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		
+		std::string valueAsString = std::to_string(scene);
+		std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
+		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1.0f, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
+
 		//Doggo2Ent
 
 		dtc->facingX = 1.0f;
@@ -198,6 +203,15 @@ void GameScene::Unload()
 		ps->image.Release();
 		registry.RemoveComponent<UIPlayerSoulsComponent>(entity);
 		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<UIGameLevelComponent>(registry))
+	{
+		UIGameLevelComponent* ps = registry.GetComponent<UIGameLevelComponent>(entity);
+		ps->image.Release();
+		registry.RemoveComponent<UIGameLevelComponent>(entity);
+
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 

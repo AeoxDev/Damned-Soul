@@ -13,10 +13,28 @@ bool ButtonSystem::Update()
 		auto comp = registry.GetComponent<UIButtonComponent>(entity);
 		if (comp->button.m_uiComponent.Intersect({ mouseX, mouseY }))
 		{
-			RedrawUI();
+			if (comp->button.m_CurrentImage == 1 && comp->doRedraw)
+			{
+				RedrawUI();
+				comp->doRedraw = false;
+			}
+
 			comp->button.Hover();
 			if (mouseButtonPressed[MouseButton::left] == released)
+			{
 				comp->button.Interact();
+				return true;
+			}
+		}
+		else
+		{
+			if (comp->button.m_CurrentImage == 1)
+			{
+				RedrawUI();
+				comp->button.m_CurrentImage = 0;
+				comp->doRedraw = true;
+			}
+			
 		}
 	}
 	return true;
