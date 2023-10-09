@@ -252,7 +252,7 @@ private:
 	}
 
 	//Let's say only 10 entities can have the same component, just because we need to state something when we allocate memory
-	static constexpr int MAX_ENTITIES = 10;
+	static constexpr int MAX_ENTITIES = 100; //changed to 100 to "fix" crashes
 	struct ComponentArray
 	{
 		ComponentArray(size_t componentSize) //Allocate enough memory to hold as many entities as we allow, along with the size of components

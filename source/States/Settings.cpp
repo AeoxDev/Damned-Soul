@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Registry.h"
 #include "UI/UIRenderer.h"
+#include "Camera.h"
 
 void SettingsState::Setup()
 {
@@ -14,6 +15,8 @@ void SettingsState::Setup()
 	SetupButtons();
 	SetupImages();
 	SetupText();
+
+	Camera::ResetCamera();
 }
 
 void SettingsState::Input()
@@ -45,7 +48,7 @@ void SettingsState::SetupButtons()
 			{
 
 			};
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/BackButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/BackButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
 	}
 }
 
@@ -82,11 +85,11 @@ void SettingsState::Unload()
 
 	CREATE_ENTITY_MAP_entities;
 
-	for (auto entity : View<ButtonComponent>(registry))
+	for (auto entity : View<UIButtonComponent>(registry))
 	{
-		ButtonComponent* b = registry.GetComponent<ButtonComponent>(entity);
+		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
 		b->button.Release();
-		registry.RemoveComponent<ButtonComponent>(entity);
+		registry.RemoveComponent<UIButtonComponent>(entity);
 
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}

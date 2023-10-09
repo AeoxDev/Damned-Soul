@@ -3,6 +3,7 @@
 #include "Registry.h"
 #include "Skynet\BehaviourHelper.h"
 #include "DeltaTime.h"
+#include "UI/UIRenderer.h"
 #include <random>
 
 
@@ -59,6 +60,7 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 		sc->attackTimer = 0;
 		sc->attackStunDurationCounter = 0;
 		playerStats->health -= enemyStats->damage;
+		RedrawUI();
 	}
 }
 

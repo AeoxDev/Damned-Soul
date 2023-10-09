@@ -5,6 +5,8 @@
 #include "Registry.h"
 #include "DeltaTime.h"
 
+#define CAMERA_MOVESPEED 1.2f
+
 bool PointOfInterestSystem::Update()
 {
 	PointOfInterestComponent* poiCo = nullptr;
@@ -73,26 +75,29 @@ bool PointOfInterestSystem::Update()
 	float avX = (cameraPosX + newPosX) / (float)points;
 	float avY = (cameraPosY + newPosY) / (float)points;
 	float avZ = (cameraPosZ + newPosZ) / (float)points;
-	PlayerComponent* p = nullptr;
+	ControllerComponent* c = nullptr;
 	TransformComponent* pt = nullptr;
 	StatComponent* s = nullptr;
+	float moveScalar = 0.0f;
+	float playerMoveX = 0.0f;
+	float playerMoveY = 0.0f;
+	float playerMoveZ = 0.0f;
 	//Offset forward by player's movement:
 	//Only supports one player at the moment
-	for (auto entity : View<PointOfInterestComponent, TransformComponent, PlayerComponent, StatComponent>(registry))
+	for (auto entity : View<PointOfInterestComponent, TransformComponent, ControllerComponent, StatComponent>(registry))
 	{
 		 s = registry.GetComponent<StatComponent>(entity);
-		 p = registry.GetComponent<PlayerComponent>(entity);
+		 c = registry.GetComponent<ControllerComponent>(entity);
 		 pt = registry.GetComponent<TransformComponent>(entity);
 		
 	}
-	if (p == nullptr || pt == nullptr)
+	if (c != nullptr && s != nullptr && pt != nullptr)
 	{
-		return true;
+		moveScalar = s->moveSpeed * c->moveTime;
+		playerMoveX = pt->facingX;
+		playerMoveY = pt->facingY;
+		playerMoveZ = pt->facingZ;
 	}
-	float playerMoveX = pt->facingX;
-	float playerMoveY = pt->facingY;
-	float playerMoveZ = pt->facingZ;
-	float moveScalar = s->moveSpeed * p->moveTime;
 
 	float distX = avX - cameraPosX;
 	float distY = avY - cameraPosY;
@@ -129,7 +134,7 @@ bool PointOfInterestSystem::Update()
 	distY *= distanceFactor;
 	distZ *= distanceFactor;
 
-	float scalar = GetDeltaTime() * 0.8f;
+	float scalar = GetDeltaTime() * CAMERA_MOVESPEED;
 	float posX = cameraPosX + (distX + playerMoveX * moveScalar)*scalar;
 	float posY = cameraPosY + (distY + playerMoveY * moveScalar)*scalar;
 	float posZ = cameraPosZ + (distZ + playerMoveZ * moveScalar)*scalar;
