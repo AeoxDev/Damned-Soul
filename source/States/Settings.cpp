@@ -6,6 +6,8 @@
 #include "Registry.h"
 #include "UI/UIRenderer.h"
 #include "Camera.h"
+#include "D3D11Helper.h"
+#include "GameRenderer.h"
 
 void SettingsState::Setup()
 {
@@ -49,7 +51,24 @@ void SettingsState::SetupButtons()
 	{
 		auto OnClick = [this]()
 			{
-				SDL_SetWindowSize(sdl.sdlWindow, 1280, 720);
+				if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
+				{
+					SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
+				}
+				else
+				{
+					sdl.WIDTH = 1280;
+					sdl.HEIGHT = 720;
+					sdl.WINDOWED_WIDTH = sdl.WIDTH;
+					sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+					SDL_SetWindowSize(sdl.sdlWindow, 1280, 720);
+					SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, 1280, 720);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
+				}
 			};
 
 		auto OnHover = [this]()
@@ -63,7 +82,25 @@ void SettingsState::SetupButtons()
 	{
 		auto OnClick = [this]()
 			{
-				SDL_SetWindowSize(sdl.sdlWindow, 1600, 900);
+				if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
+				{
+					SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
+				}
+				else
+				{
+					sdl.WIDTH = 1600;
+					sdl.HEIGHT = 900;
+					sdl.WINDOWED_WIDTH = sdl.WIDTH;
+					sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+					SDL_SetWindowSize(sdl.sdlWindow, 1600, 900);
+					SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, 1600, 900);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
+				}
+				
 			};
 
 		auto OnHover = [this]()
@@ -77,7 +114,25 @@ void SettingsState::SetupButtons()
 	{
 		auto OnClick = [this]()
 			{
-				SDL_SetWindowSize(sdl.sdlWindow, 1920, 1080);
+				if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
+				{
+					SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
+					
+				}
+				else
+				{
+					SDL_SetWindowSize(sdl.sdlWindow, 1920, 1080);
+					sdl.WIDTH = 1920;
+					sdl.HEIGHT = 1080;
+					sdl.WINDOWED_WIDTH = sdl.WIDTH;
+					sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
+				}
+				
 			};
 
 		auto OnHover = [this]()
@@ -91,15 +146,27 @@ void SettingsState::SetupButtons()
 	{
 		auto OnClick = [this]()
 			{
-				Uint32 windowFlags = SDL_GetWindowFlags(sdl.sdlWindow);
-				if ((windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
+				sdl.windowFlags = SDL_GetWindowFlags(sdl.sdlWindow);
+				if ((sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 				{
 					SDL_SetWindowFullscreen(sdl.sdlWindow, 0);
+					sdl.windowFlags = sdl.windowFlags & (~SDL_WINDOW_FULLSCREEN_DESKTOP);
+					sdl.WIDTH = sdl.WINDOWED_WIDTH;
+					sdl.HEIGHT = sdl.WINDOWED_HEIGHT;
+					SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
+					SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
 				}
 				else
 				{
+					sdl.windowFlags = sdl.windowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP;
 					SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+					EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+					SetViewport(renderStates[backBufferRenderSlot].viewPort);
 				}
+
 			};
 
 		auto OnHover = [this]()
@@ -123,40 +190,18 @@ void SettingsState::SetupButtons()
 			{
 
 			};
-		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Back", OnClick, OnHover, { -0.8f, -0.8f }, { 0.8f, 0.8f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Back", OnClick, OnHover, { -0.6f, 0.0f }, { 0.8f, 0.8f }));
 	}
 }
 
 void SettingsState::SetupImages()
 {
 	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/ButtonBackgroundHover.png", { 0.0, 0.0f }, { 1.7f, 1.7f }));
-/*
-	//registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/OptionsButtonHover.png", { (sdl.WIDTH / 2.0f) - (426.0f / 8.0f), 100.0f }, { 1.0f, 1.0f }));
-
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/D0.png", { -0.5f, 0.6f }, { 1.5f, 1.5f }));
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/D0.png", { 0.5, 0.6f }, { 1.5f, 1.5f }));
-
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { 0.0f, -0.3f }));
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { -0.3f, 0.0f }, { 2.0f, 1.5f }));
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { -0.0f, 0.0f }, { 2.0f, 1.5f }));
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { 0.3f, 0.0f }, { 2.0f, 1.5f }));
-*/
 }
 
 void SettingsState::SetupText()
 {
 	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Settings", { 0.0f, 0.4f }, {1.5f, 1.5f}));
-
-	/*
-	//registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Fullscreen:", { 0.0f, -0.2f }));
-	//registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Volume: 100", { 0.0f, -0.4f }));
-	//registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Graphics: Flawless", { 0.0f, -0.6f }));
-
-
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"1280x720", { -0.3f, 0.0f }));
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"1600x900", { -0.0f, 0.0f }));
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"1920x1080", { 0.3f, 0.0f }));
-	*/
 }
 
 void SettingsState::Unload()

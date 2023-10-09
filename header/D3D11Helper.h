@@ -199,6 +199,8 @@ VP_IDX CreateViewport(const size_t& width, const size_t& height);
 bool SetViewport(const VP_IDX idx);
 // Release for a single constant buffer
 void ReleaseVP(const VP_IDX idx);
+//Set new values for viewport
+void EditViewport(const VP_IDX idx, const size_t& width, const size_t& height);
 
 // Creates the backbuffer from swapchain
 RTV_IDX CreateBackBuffer();

@@ -5,13 +5,14 @@
 #include "Components.h"
 #include "Input.h"
 #include "UI/UIRenderer.h"
+#include "SDLHandler.h"
 
 bool ButtonSystem::Update()
 {
 	for (auto entity : View<UIButtonComponent>(registry))
 	{
 		auto comp = registry.GetComponent<UIButtonComponent>(entity);
-		if (comp->button.m_uiComponent.Intersect({ mouseX, mouseY }))
+		if (comp->button.m_uiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
 		{
 			RedrawUI();
 			comp->button.Hover();

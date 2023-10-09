@@ -115,7 +115,7 @@ void Menu::SetupImages()
 
 void Menu::SetupText()
 {
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"This is the main menu!", { 0.0f, 0.0f }));
+	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"This is the main menu!", { 0.0f, 0.0f }, {1.0f, 1.0f}));
 }
 
 void Menu::Unload()

@@ -148,12 +148,21 @@ void StateManager::Input()
 	}
 }
 
+std::pair<int, int> oldmousepos = { 0, 0 };
+
 void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
 		systems[i]->Update();
 	}
+
+	if (mouseX != oldmousepos.first && mouseY != oldmousepos.second)
+	{
+		std::cout << mouseX << ", " << mouseY << std::endl;
+	}
+	oldmousepos.first = mouseX;
+	oldmousepos.second = mouseY;
 	Input();
 }
 

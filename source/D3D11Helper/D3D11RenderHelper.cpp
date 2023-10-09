@@ -30,6 +30,17 @@ VP_IDX CreateViewport(const size_t& width, const size_t& height)
 	return (vpHolder->_nextIdx)++;
 }
 
+void EditViewport(const VP_IDX idx, const size_t& width, const size_t& height)
+{
+	D3D11_VIEWPORT vp = vpHolder->vp_map[idx];
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	vp.Width = static_cast<float>(width);
+	vp.Height = static_cast<float>(height);
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+}
+
 bool SetViewport(const VP_IDX idx)
 {
 	if (vpHolder->_nextIdx < idx || idx < 0)

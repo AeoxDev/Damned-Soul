@@ -10,7 +10,7 @@ UIButton::UIButton(const std::string& imageFile, const std::string& hoverImageFi
 void UIButton::Setup(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_Images[0] = UIImage(imageFile, position, scale, rotation, visibility, opacity);
-	m_uiComponent.m_OriginalBounds = m_Images[0].m_CurrentBounds;
+	m_uiComponent.m_OriginalBounds = m_Images[0].m_OriginalBounds;
 
 	m_onClick = onClick;
 	m_onHover = onHover;

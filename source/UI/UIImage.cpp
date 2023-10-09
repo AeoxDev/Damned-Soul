@@ -73,7 +73,7 @@ void UIImage::Draw()
 	{
 		ID2D1RenderTarget* rt = ui.GetRenderTarget();
 		rt->SetTransform(m_Transform);
-		rt->DrawBitmap(m_Bitmap, m_CurrentBounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_CurrentBounds);
+		rt->DrawBitmap(m_Bitmap, m_CurrentBounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_OriginalBounds);
 	}
 }
 
