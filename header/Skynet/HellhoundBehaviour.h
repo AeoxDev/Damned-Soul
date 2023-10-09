@@ -1,6 +1,7 @@
 #pragma once
 struct HellhoundBehaviour
 {
+	// MOVEMENT VARIABLES
 	float updateInterval = 0.4f; //not const, this is modified
 	float timeCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
@@ -10,12 +11,12 @@ struct HellhoundBehaviour
 	float isBehindCounter = 0.f;
 	float giveUpChaseCounter = 0.f;
 	bool charge = false;
+	bool retreat = false;
 
 
 
 
-
-
+	// MELEE VARIABLES
 	float attackTimer = 0.f; //used as counter
 	float attackStunDurationCounter = 0.f;
 	const float attackStunDuration = 0.8f;
@@ -23,10 +24,10 @@ struct HellhoundBehaviour
 
 
 
-
+	// SHOOTING VARIABLES
 
 	float shootingCounter = 0.f;
-	const float shootingDuration = 1.5f; //how long it takes to shoot
+	const float shootingDuration = 2.5f; //how long it takes to shoot
 	bool isShooting = false;
 	const float shootingCooldown = 10.0f; //seconds. ability cooldown
 	float shootingCooldownCounter = shootingCooldown; // so it can start shooting from start, it gets changed to 0 in code
@@ -46,4 +47,8 @@ struct HellhoundBehaviour
 	const float shootingAttackSpeedForHitbox = 20.f; //change as you see fit
 	float currentShootingAttackRange = 0.0f; // used as a counter 
 	
+
+
+
+
 };

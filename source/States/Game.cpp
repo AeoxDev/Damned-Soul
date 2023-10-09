@@ -58,7 +58,7 @@ void GameScene::Setup(int scene)//Load
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
 
-		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 50.f, 10.f, 25.f, 5.f);
+		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 50.f, 30.f, 25.f, 5.f);
 		EnemyComponent* ec1 = registry.AddComponent<EnemyComponent>(dog, 1);
 
 		StatComponent* ss = registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);

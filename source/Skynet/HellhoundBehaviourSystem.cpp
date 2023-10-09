@@ -286,6 +286,11 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 }
 
 
+void TacticalRetreatBehaviour()
+{
+
+}
+
 
 
 
@@ -342,7 +347,12 @@ bool HellhoundBehaviourSystem::Update()
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
 			hellhoundComponent->shootingCooldownCounter += GetDeltaTime();
 
-			if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
+
+			if (hellhoundComponent->retreat)
+			{
+				hellhoundComponent->retreat = false;
+			}
+			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
 				SmoothRotation(hellhoundTransformComponent, hellhoundComponent->facingX, hellhoundComponent->facingZ);
 				hellhoundComponent->shootingCounter += GetDeltaTime();
@@ -351,11 +361,13 @@ bool HellhoundBehaviourSystem::Update()
 					//it seems we have. Time to start shooting behaviour
 					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats/*, stc, stcTwo*/); //this is damage thing
 				}
-				//else we do nothing, we're just charging.
+				//else we do nothing, we're just charging the flames.
 			}
 			else if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
-				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo
+				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo...
+				// maybe retreat to shoot again, eh?
+				hellhoundComponent->retreat = true;
 			}
 			else if (distance < 2.5f) // fight club and not currently shooting
 			{
