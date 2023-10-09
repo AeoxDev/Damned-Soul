@@ -1,7 +1,7 @@
 #pragma once
 struct HellhoundBehaviour
 {
-	float updateInterval = 0.4f;
+	float updateInterval = 0.4f; //not const, this is modified
 	float timeCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	bool clockwiseCircle = false;
@@ -10,10 +10,40 @@ struct HellhoundBehaviour
 	float isBehindCounter = 0.f;
 	float giveUpChaseCounter = 0.f;
 	bool charge = false;
+
+
+
+
+
+
 	float attackTimer = 0.f; //used as counter
 	float attackStunDurationCounter = 0.f;
-	float attackStunDuration = 0.8f;
+	const float attackStunDuration = 0.8f;
+
+
+
+
+
+
 	float shootingCounter = 0.f;
-	float shootingDuration = 1.5f;
-	bool hasShot = false;
+	const float shootingDuration = 1.5f; //how long it takes to shoot
+	bool isShooting = false;
+	const float shootingCooldown = 10.0f; //seconds. ability cooldown
+	float shootingCooldownCounter = shootingCooldown; // so it can start shooting from start, it gets changed to 0 in code
+	//----------------
+	float shootingStartX = 0.f;
+	float shootingStartZ = 0.f;
+	//float maxShootingAttackRange = 0.0f;//used to determine max range in an attack
+	float shootingSideTarget1X = 0.f;
+	float shootingSideTarget1Z = 0.f;
+	float shootingSideTarget2X = 0.f;//these are used for creating a hitbox triangle
+	float shootingSideTarget2Z = 0.f;
+	const float offsetSide = 10.f; // used to get the extra 2 points for the triangle in shooting
+	const float offsetForward = 25.f; // used to aim a little behind player, so it's not super easy to dodge
+	//---------------------
+	float facingX = 0.f;
+	float facingZ = 0.f;
+	const float shootingAttackSpeedForHitbox = 20.f; //change as you see fit
+	float currentShootingAttackRange = 0.0f; // used as a counter 
+	
 };
