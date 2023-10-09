@@ -102,20 +102,23 @@ void GameScene::Setup(int scene)//Load
 		RenderGeometryIndependentCollision(stage);
 		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
+		dtc->mass = 8.0f;
 		skeltc->positionZ = 20.0f;
 		skeltc2->positionZ = 15.0f;
-		poic->weight = 10.0f;
+		poic->weight = .01f;
+		ptc->mass = 2.0f;
+		
 
 		HellhoundBehaviour* hellhoundBehevCo = registry.AddComponent<HellhoundBehaviour>(dog);
 		SkeletonBehaviour* skeletonBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
 
 		//Finally set the collision boxes
-		SetupPlayerCollisionBox(player, 1.0f);
+		SetupPlayerCollisionBox(player, 1.5f);
 
-		SetupEnemyCollisionBox(skeleton, 0.9f);
-		SetupEnemyCollisionBox(skeleton2, 0.9f);
-		SetupEnemyCollisionBox(dog, 1.0f);
+		SetupEnemyCollisionBox(skeleton, 1.0f);
+		SetupEnemyCollisionBox(skeleton2, 1.0f);
+		SetupEnemyCollisionBox(dog, 1.2f);
 	}
 }
 
