@@ -10,8 +10,11 @@
 #include "Input.h"
 #include "States\StateManager.h"
 #include "Registry.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
+#include "CollisionFunctions.h"
+#include "EventFunctions.h"
 #include "States\CleanupMacros.h"
+#include "Camera.h"
 
 void GameScene::Setup(int scene)//Load
 {
@@ -26,49 +29,97 @@ void GameScene::Setup(int scene)//Load
 		SetupImages();
 		SetupText();
 
+		Camera::ResetCamera();
+
 		//Doggo
-		EntityID dog2 = registry.CreateEntity();
+		EntityID gameLevel = registry.CreateEntity();
+		EntityID dog = registry.CreateEntity();
 		EntityID stage = registry.CreateEntity();
 		EntityID player = registry.CreateEntity();
+		EntityID skeleton = registry.CreateEntity();
+		EntityID skeleton2 = registry.CreateEntity();
 		EntityID particle = registry.CreateEntity();
 
-		ModelBonelessComponent* dogCo2 = registry.AddComponent<ModelBonelessComponent>(dog2);
+		ModelBonelessComponent* dogCo = registry.AddComponent<ModelBonelessComponent>(dog);
 		ModelBonelessComponent* stageCo = registry.AddComponent<ModelBonelessComponent>(stage);
 		ModelSkeletonComponent* pmc = registry.AddComponent<ModelSkeletonComponent>(player);
+		AnimationComponent* pac = registry.AddComponent<AnimationComponent>(player);
+		ModelBonelessComponent* skelCo = registry.AddComponent<ModelBonelessComponent>(skeleton);
+		ModelBonelessComponent* skelCo2 = registry.AddComponent<ModelBonelessComponent>(skeleton2);
 
-		TransformComponent* dtc2 = registry.AddComponent<TransformComponent>(dog2);
+		TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
 		TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 		TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
+		TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
+		TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
 
-		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125, 20.0f, 10, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+
+
+		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
 
+		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 50.f, 10.f, 25.f, 5.f);
+		EnemyComponent* ec1 = registry.AddComponent<EnemyComponent>(dog, 1);
+
+		StatComponent* ss = registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
+		EnemyComponent* ec2 = registry.AddComponent<EnemyComponent>(skeleton, 2);
+
+		StatComponent* ss2 = registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
+		EnemyComponent* ec3 = registry.AddComponent<EnemyComponent>(skeleton2, 2);
+
+		/*AddTimedEventComponentStartContinousEnd(player, player, 1.0f, RandomPosition,
+			dog, RandomPosition, 
+			player, 2.0f, RandomPosition);*/
+		ControllerComponent* cc = registry.AddComponent<ControllerComponent>(player);
+
+		
+
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
-		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
+		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
+		PointOfInterestComponent* skelPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
+		PointOfInterestComponent* skelPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
 
 		ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 99.f, 50.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
-		UIPlayerHealthComponent* pcUiHpC = registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
+		UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
+		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
+
+		UIHealthComponent* dogUIHpc = registry.AddComponent<UIHealthComponent>(dog, 1.0f, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
+		UIHealthComponent* skelUIHpC1 = registry.AddComponent<UIHealthComponent>(skeleton, 1.0f, DirectX::XMFLOAT2(0.8f, 0.6f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
+		UIHealthComponent* skelUIHpC2 = registry.AddComponent<UIHealthComponent>(skeleton2, 1.0f, DirectX::XMFLOAT2(0.8f, 0.4f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		
+		std::string valueAsString = std::to_string(scene);
+		std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
+		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1.0f, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
+
 		//Doggo2Ent
 
-		dogCo2->model = LoadModel("HellhoundDummy_PH.mdl");
+		dtc->facingX = 1.0f;
+		dogCo->model = LoadModel("HellhoundDummy_PH.mdl");
+		skelCo->model = LoadModel("SkeletonOneDymmy.mdl");
+		skelCo2->model = LoadModel("SkeletonOneDymmy.mdl");
 		stageCo->model = LoadModel("PlaceholderScene.mdl");
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
+		(*pac) = AnimationComponent();
 
-		// Causes a memory leak with a ID3D11Texture2D
-		RenderGeometryIndependentCollision(stage);
-
-		poic->mode = POI_ACTIVE;
-		poic->weight = 3.f;
-		dtc2->positionX = -78.0f;
-		dtc2->positionZ = -33.0f;
-		dogPoi2->mode = POI_INACTIVE_FOR_X_TIME;
-		dogPoi2->weight = 1.75f;
-		dogPoi2->time = 15.0f;
 		
-		//portPoi->SetPOImode(POI_FORCE);
+		RenderGeometryIndependentCollision(stage);
+		//poic->active = POI_ACTIVE;
+		dtc->positionX = 20.0f;
+		skeltc->positionZ = 20.0f;
+		skeltc2->positionZ = 15.0f;
+		poic->weight = 10.0f;
+
+		HellhoundBehaviour* hellhoundBehevCo = registry.AddComponent<HellhoundBehaviour>(dog);
+		SkeletonBehaviour* skeletonBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
+		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
+
+		//Finally set the collision boxes
+		SetupPlayerCollisionBox(player, 1.0f);
+
+		SetupEnemyCollisionBox(skeleton, 0.9f);
+		SetupEnemyCollisionBox(skeleton2, 0.9f);
+		SetupEnemyCollisionBox(dog, 1.0f);
 	}
 }
 
@@ -102,15 +153,11 @@ void GameScene::SetupButtons()
 
 void GameScene::SetupImages()
 {
-	//registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/FullHealth.png", { -0.9f, 0.8f }, { 0.7f, 1.0f }));
 
-	//registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/EmptyHealth.png", { -0.8f, 0.8f }, { 1.0f, 1.0f }));
 }
 
 void GameScene::SetupText()
 {
-
-	//registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Current Souls: 0", { -0.8f, 0.6f }));
 
 	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"This is the HUD!", { 0.0f, 0.6f }));
 
@@ -158,11 +205,20 @@ void GameScene::Unload()
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
-	for (auto entity : View<UIPlayerHealthComponent>(registry))
+	for (auto entity : View<UIGameLevelComponent>(registry))
 	{
-		UIPlayerHealthComponent* ph = registry.GetComponent<UIPlayerHealthComponent>(entity);
+		UIGameLevelComponent* ps = registry.GetComponent<UIGameLevelComponent>(entity);
+		ps->image.Release();
+		registry.RemoveComponent<UIGameLevelComponent>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<UIHealthComponent>(registry))
+	{
+		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
 		ph->image.Release();
-		registry.RemoveComponent<UIPlayerHealthComponent>(entity);
+		registry.RemoveComponent<UIHealthComponent>(entity);
 		
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
@@ -195,11 +251,11 @@ void GameScene::Unload()
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
-	for (auto entity : View<ButtonComponent>(registry))
+	for (auto entity : View<UIButtonComponent>(registry))
 	{
-		ButtonComponent* b = registry.GetComponent<ButtonComponent>(entity);
+		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
 		b->button.Release();
-		registry.RemoveComponent<ButtonComponent>(entity);
+		registry.RemoveComponent<UIButtonComponent>(entity);
 		
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}

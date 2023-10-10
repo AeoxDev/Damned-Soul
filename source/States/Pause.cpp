@@ -1,11 +1,14 @@
 #include "States/Pause.h"
 #include "Input.h"
 #include "States\StateManager.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
+#include "Camera.h"
 
 void PauseState::Setup()
 {
 	RedrawUI();
+
+	Camera::ResetCamera();
 
 	m_active = true;
 }

@@ -1,5 +1,5 @@
 #include "States\Menu.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "Hitbox.h"
 #include "States\StateManager.h"
 #include "Input.h"
@@ -16,6 +16,9 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupImages();
 	SetupText();
+
+	Camera::ResetCamera();
+
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
 	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
@@ -64,7 +67,7 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/StartButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.4f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", OnClick, OnHover, { 0.0f, -0.4f }));
 	}
 
 	//Options Button
@@ -82,14 +85,14 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/OptionsButton.png", "", L"", OnClick, OnHover, { 0.0f,  -0.6f}));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/OptionsButton.png", "Exmenu/OptionsButtonHover.png", L"", OnClick, OnHover, { 0.0f,  -0.6f}));
 	}
 
 	//Exit Button
 	{
 		auto OnClick = [this]()
 			{
-				
+				sdl.quit = true;
 			};
 
 		auto OnHover = [this]()
@@ -97,7 +100,7 @@ void Menu::SetupButtons()
 
 			};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
+		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/ExitButton.png", "Exmenu/ExitButtonHover.png", L"", OnClick, OnHover, { 0.0f, -0.8f }));
 	}
 }
 
@@ -124,11 +127,11 @@ void Menu::Unload()
 
 	CREATE_ENTITY_MAP_entities;
 
-	for (auto entity : View<ButtonComponent>(registry))
+	for (auto entity : View<UIButtonComponent>(registry))
 	{
-		ButtonComponent* b = registry.GetComponent<ButtonComponent>(entity);
+		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
 		b->button.Release();
-		registry.RemoveComponent<ButtonComponent>(entity);
+		registry.RemoveComponent<UIButtonComponent>(entity);
 
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}

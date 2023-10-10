@@ -2,7 +2,7 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "SDLHandler.h"
-#include "UIRenderer.h"
+#include "UI/UIRenderer.h"
 #include "Lighting.h"
 #include "Particles.h"
 

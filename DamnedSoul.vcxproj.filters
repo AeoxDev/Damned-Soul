@@ -11,15 +11,9 @@
     <FxCompile Include="resource\shader\PixelVertex.hlsl" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
-    <FxCompile Include="resource\shader\ParticleFlamethrowerCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleImplosionCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleExplosionCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleArchCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleRainCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSinusCS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
     <FxCompile Include="resource\shader\TestSkelVS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleCS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -145,6 +139,39 @@
     <ClCompile Include="source\Systems\TransformSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Systems\ParticleSystemCPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ParticleSystemGPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\EventSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\PlayerEvents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Hashing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\RandomPosition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ProximityHitboxEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\BehaviourHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\SkeletonBehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\CleanupMacros.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -204,9 +231,6 @@
     <ClInclude Include="header\Format.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\ButtonComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\ImageComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -243,9 +267,6 @@
     <ClInclude Include="header\States\Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIPlayerHealthComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -262,6 +283,48 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Animation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ParticleComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TimedEventComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\AnimationComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\HitboxComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\EventFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Hashing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\IDX_Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\ProximityHitboxEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\BehaviourHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\HellhoundBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\SkeletonBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\CleanupMacros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

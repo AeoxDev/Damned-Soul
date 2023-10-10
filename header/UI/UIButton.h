@@ -31,6 +31,8 @@ struct UIButton
 	void Hover();
 	void Release();
 
+	void SetHover(int);
+
 	void SetPosition(DirectX::XMFLOAT2 position);
 	void SetScale(DirectX::XMFLOAT2 scale);
 	void SetScale(float scale);
