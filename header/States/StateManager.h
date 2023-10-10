@@ -35,4 +35,6 @@ struct StateManager
 
 	void UnloadAll();
 	void EndFrame();//Clears all framebased variables.
+
+	GameScene GetCurrentLevel();
 };

@@ -97,11 +97,11 @@ void StateManager::Setup()
 	// Render/GPU
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new RenderSystem());
-
-	// CPU
+	
+	//Input based CPU
 	systems.push_back(new ButtonSystem());
 
-	//Input based CPU
+	// CPU
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
@@ -111,6 +111,7 @@ void StateManager::Setup()
 	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());
 	systems.push_back(new EventSystem());
+	systems.push_back(new StateSwitcherSystem());
 
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
@@ -203,4 +204,9 @@ void StateManager::EndFrame()
 	ResetInput();
 	GetInput();
 	//MemLib::pdefrag();
+}
+
+GameScene StateManager::GetCurrentLevel()
+{
+	return levelScenes[activeLevelScene];
 }

@@ -50,6 +50,7 @@ class TransformSystem : public System
 {
 	bool Update();
 };
+
 class ParticleSystemGPU : public System
 {
 	bool Update();
@@ -75,6 +76,11 @@ class CollisionSystem : public System
 };
 
 class EventSystem : public System
+{
+	bool Update();
+};
+
+class StateSwitcherSystem : public System
 {
 	bool Update();
 };
