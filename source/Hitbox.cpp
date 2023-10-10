@@ -702,7 +702,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
 
-	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
+	int hID = CreateHitbox(entity, radius*0.15f, 0.f, 0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsEnemy(entity, hID);
 	SetHitboxHitPlayer(entity, hID);
@@ -721,7 +721,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
 
-	int hID = CreateHitbox(entity, radius * 0.35f, 0.f, 0.f);
+	int hID = CreateHitbox(entity, radius * 0.15f, 0.f, 0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsPlayer(entity, hID);
 	SetHitboxHitEnemy(entity, hID);
@@ -730,7 +730,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxIsMoveable(entity, hID);
 
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
-	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.1f, 0.f, 0.f);
+	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, 0.f);
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
 	SetHitboxIsPlayer(entity, playerComp->attackHitboxID);
 	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
