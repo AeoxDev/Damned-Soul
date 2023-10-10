@@ -28,12 +28,15 @@ class UIRenderSystem : public System
 {
 	bool Update();
 };
-
 class UIHealthSystem : public System
 {
 	bool Update();
 };
 class UIPlayerSoulsSystem : public System
+{
+	bool Update();
+};
+class UIPlayerRelicsSystem : public System
 {
 	bool Update();
 };
