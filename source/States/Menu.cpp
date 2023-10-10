@@ -7,6 +7,7 @@
 #include "Components.h"
 #include "Camera.h"
 #include "States\CleanupMacros.h"
+#include "Level.h"
 
 void Menu::Setup()//Load
 {
@@ -59,7 +60,7 @@ void Menu::SetupButtons()
 				SetInPlay(true);
 				SetInMainMenu(false);
 				Unload();
-				stateManager.levelScenes[0].Setup(0);
+				LoadLevel(1);
 			};
 
 		auto OnHover = [this]()

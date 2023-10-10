@@ -725,6 +725,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsPlayer(entity, hID);
 	SetHitboxHitEnemy(entity, hID);
+	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
 
@@ -820,6 +821,7 @@ EntityID CreateAndRenderGeometryIndependentCollision(EntityID& m)
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stage);
 
 	RenderGeometryIndependentCollisionToTexture(stage);
+	ReleaseGI();
 	return stage;
 }
 
@@ -827,7 +829,11 @@ void RenderGeometryIndependentCollision(EntityID& m)
 {
 	AddGeometryIndependentComponent(m);
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(m);
-
+	/*while (true)
+	{
+		RenderGeometryIndependentCollisionToTexture(m);
+		Present();
+	}*/
 	RenderGeometryIndependentCollisionToTexture(m);
 	ReleaseGI();
 	return;

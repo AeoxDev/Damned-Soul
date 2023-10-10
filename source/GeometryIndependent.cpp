@@ -6,7 +6,7 @@
 #include "GameRenderer.h"
 #include "Registry.h"
 
-#define TEXTURE_DIMENSIONS 32
+#define TEXTURE_DIMENSIONS 128
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing
@@ -62,6 +62,23 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 
 	unsigned nrVertices = LOADED_MODELS[model->model].m_data->m_numVertices;
 
+	//Get the offset, facing direction and scale of the object
+	//For now we ignore the facing direction for the vertex.
+	float x = 0.0f, y = 0.0f, z = 0.0f, rX = 0.0f, rY = 0.0f, rZ = -1.0f, sX = 1.0f, sY = 1.0f, sZ = 1.0f;
+	TransformComponent* transformComponent = registry.GetComponent<TransformComponent>(stageEntity);
+	if (transformComponent != nullptr)
+	{
+		x = transformComponent->positionX;
+		y = transformComponent->positionY;
+		z = transformComponent->positionZ;
+		rX = transformComponent->facingX;
+		rY = transformComponent->facingY;
+		rZ = transformComponent->facingZ;
+		sX = transformComponent->scaleX;
+		sY = transformComponent->scaleY;
+		sZ = transformComponent->scaleZ;
+	}
+
 	float greatestX = -1000000000.0f;
 	float greatestZ = -1000000000.0f;
 	float greatestY = -1000000000.0f;
@@ -71,46 +88,48 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 
 	for (unsigned i = 0; i < nrVertices; i++)
 	{
-		if (vertices[i].m_position[0] < smallestX)
+		float xPos = sX * vertices[i].m_position[0] + x;
+		if (xPos < smallestX)
 		{
-			smallestX = vertices[i].m_position[0];
+			smallestX = xPos;
 		}
-		if (vertices[i].m_position[0] > greatestX)
+		if (xPos > greatestX)
 		{
-			greatestX = vertices[i].m_position[0];
+			greatestX = xPos;
 		}
-
-		if (vertices[i].m_position[1] < smallestY)
+		float yPos = sY * vertices[i].m_position[1] + y;
+		if (yPos < smallestY)
 		{
-			smallestY = vertices[i].m_position[1];
+			smallestY = yPos;
 		}
-		if (vertices[i].m_position[1] > greatestY)
+		if (yPos > greatestY)
 		{
-			greatestY = vertices[i].m_position[1];
+			greatestY = yPos;
 		}
-
-		if (vertices[i].m_position[2] < smallestZ)
+		float zPos = sZ * vertices[i].m_position[2] + z;
+		if (zPos < smallestZ)
 		{
-			smallestZ = vertices[i].m_position[2];
+			smallestZ = zPos;
 		}
-		if (vertices[i].m_position[2] > greatestZ)
+		if (zPos > greatestZ)
 		{
-			greatestZ = vertices[i].m_position[2];
+			greatestZ = zPos;
 		}
 	}
-	GIcomponent->width = greatestX - smallestX;
-	GIcomponent->height = greatestZ - smallestZ;
+	GIcomponent->width = 10.0f + greatestX - smallestX;
+	GIcomponent->height = 10.0f + greatestZ - smallestZ;
 	GIcomponent->offsetX = 0.5f * (greatestX + smallestX);
 	GIcomponent->offsetZ = 0.5f * (greatestZ + smallestZ);
 	Camera::SetPosition(GIcomponent->offsetX,greatestY+ 2.0f, GIcomponent->offsetZ, false);//Set this to center of stage offset upwards
 	Camera::SetLookAt(GIcomponent->offsetX, smallestY, GIcomponent->offsetZ);//Set to center of stage
 	Camera::SetUp(0.0f, 0.0f, 1.0f);
-	Camera::SetWidth(greatestX - smallestX);//Set width (x) of orthogonal based on stage
-	Camera::SetHeight(greatestZ - smallestZ);//Set height (z) of orthogonal based on stage
+	Camera::SetWidth(GIcomponent->width);//Set width (x) of orthogonal based on stage
+	Camera::SetHeight(GIcomponent->height);//Set height (z) of orthogonal based on stage
 	Camera::SetOrthographicDepth(greatestY - smallestY + 8.f);
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	int16_t cameraIdx = Camera::GetCameraBufferIndex();
+	SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 1);
 	SetRasterizerState(GIcomponent->rasterizerState);
 	SetViewport(GIcomponent->viewport);
@@ -124,6 +143,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
 	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+	
+
 	//Update CB
 	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 

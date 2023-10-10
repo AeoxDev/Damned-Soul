@@ -2,6 +2,8 @@
 #include "Registry.h"
 #include "Components.h"
 #include "DeltaTime.h"
+#include "States\StateManager.h"
+#include "Level.h"
 #include <assert.h>
 //#include <iostream>
 #define SOFT_COLLISION_FACTOR 0.4f
@@ -179,3 +181,9 @@ void AttackCollision(OnCollisionParameters& params)
 	stat2->health -= stat1->damage;
 	
 }
+
+void LoadNextLevel(OnCollisionParameters& params)
+{
+	LoadLevel(stateManager.activeLevelScene + 1);
+}
+

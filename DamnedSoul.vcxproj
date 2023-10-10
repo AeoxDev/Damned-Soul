@@ -196,8 +196,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EntityFramework.cpp" />
     <ClCompile Include="header\Components\RenderableComponent.h" />
     <ClCompile Include="source\EventFunctions\PlayerEvents.cpp" />
+    <ClCompile Include="source\EventFunctions\PortalEvents.cpp" />
     <ClCompile Include="source\Hashing.cpp" />
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
+    <ClCompile Include="source\Level\Level.cpp" />
+    <ClCompile Include="source\Level\Level1.cpp" />
+    <ClCompile Include="source\Level\Level2.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
@@ -394,6 +398,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Hashing.h" />
     <ClInclude Include="header\IDX_Types.h" />
     <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Level.h" />
+    <ClInclude Include="header\Levels\LevelLoader.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />

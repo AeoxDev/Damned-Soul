@@ -7,3 +7,6 @@ void RandomPosition(EntityID& entity);
 void PlayerLoseControl(EntityID& entity);
 void PlayerRegainControl(EntityID& entity);
 void PlayerDash(EntityID& entity);
+
+//Portal
+void CreatePortal(EntityID& entity);

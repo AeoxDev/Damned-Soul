@@ -14,9 +14,5 @@ struct GameScene
 	void Update();
 	void ComputeShaders();
 
-	void SetupButtons();
-	void SetupImages();
-	void SetupText();
-
 	void Unload();
 };
