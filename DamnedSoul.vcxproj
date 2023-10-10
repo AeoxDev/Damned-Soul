@@ -198,6 +198,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EventFunctions\PlayerEvents.cpp" />
     <ClCompile Include="source\Hashing.cpp" />
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
+    <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
@@ -223,6 +224,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
     <ClCompile Include="source\Systems\TransformSystem.cpp" />
     <ClCompile Include="source\Systems\UISystems.cpp" />
+    <ClCompile Include="source\UI\UIButtonFunctions.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
@@ -395,6 +397,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\IDX_Types.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
+    <ClInclude Include="header\MemLib\ML_ComponentMap.hpp" />
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Lighting.h" />
@@ -409,6 +412,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\States\Pause.h" />
     <ClInclude Include="header\Relics.h" />
     <ClInclude Include="header\Systems\Systems.h" />
+    <ClInclude Include="header\UI\UIButtonFunctions.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />

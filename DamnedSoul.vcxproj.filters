@@ -148,6 +148,36 @@
     <ClCompile Include="source\Systems\EventSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\EventFunctions\PlayerEvents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Hashing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\RandomPosition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ProximityHitboxEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\BehaviourHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\SkeletonBehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\CleanupMacros.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\UIButtonFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -207,9 +237,6 @@
     <ClInclude Include="header\Format.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\ButtonComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\ImageComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -246,9 +273,6 @@
     <ClInclude Include="header\States\Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIPlayerHealthComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -271,6 +295,48 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\TimedEventComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\AnimationComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\HitboxComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\EventFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Hashing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\IDX_Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\MemLib\ML_ComponentMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\ProximityHitboxEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\BehaviourHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\HellhoundBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\SkeletonBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\CleanupMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\UI\UIButtonFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
