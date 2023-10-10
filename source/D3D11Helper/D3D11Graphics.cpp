@@ -187,6 +187,15 @@ void EndDirectX()
 			val->Release();
 	}
 	rtvHolder->rtv_map.clear();
+
+	// TODO THIS IS PROBABLY THE CAUSE FOR THE UNRELEASED TEXTURE BUT UNCOMMENTING THIS
+	// CRASHES SRV'S RELEASE EVEN THOUGH IT SHOULD NOT AS REFERENCE IS PROPERLY ADDED IN RENDERHELPER
+	//for (auto& [key, val] : rtvHolder->tx_map)
+	//{
+	//	if (val != nullptr)
+	//		val->Release();
+	//}
+	//rtvHolder->tx_map.clear();
 	
 	// Release all depth stencil views
 	for (auto& [key, val] : dsvHolder->dsv_map)

@@ -230,6 +230,9 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 	srvHolder->srv_map.emplace(currentIdx, tempSRV);
 	srvHolder->size.emplace(currentIdx, (uint32_t)size);
 
+	// Release tempBuff as the queryInterface is the resource appended
+	tempBuff->Release();
+
 	return (srvHolder->_nextIdx)++;
 }
 
@@ -286,6 +289,9 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 
 			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+			// Release tempTex as the queryInterface is the resource appended
+			tempTex->Release();
 			break;
 		case RESOURCE_TEXTURE2DARRAY:
 			//Define if needed
@@ -341,9 +347,11 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 	switch (sourceResource)
 	{
 	case BIND_RENDER_TARGET:
-		tempResource = rtvHolder->tx_map[sourceIdx];
+		rtvHolder->tx_map[sourceIdx]->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
+		//tempResource = rtvHolder->tx_map[sourceIdx];
 		srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
-		srvHolder->srv_resource_map[currentIdx]->AddRef();
+		//rtvHolder->tx_map[sourceIdx]->AddRef();
+		//srvHolder->srv_resource_map[currentIdx]->AddRef();
 
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], NULL, &tempSRV);
 		if (FAILED(hr))
@@ -505,9 +513,9 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, co
 		return false;
 	}
 	uavHolder->uav_map.emplace(currentIdx, tempUAV);
-
 	uavHolder->size.emplace(currentIdx, (uint32_t)size);
 
+	tempBuff->Release();
 	return (uavHolder->_nextIdx)++;
 }
 

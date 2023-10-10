@@ -4,44 +4,33 @@
 #include "MemLib/MemLib.hpp"
 #include "Systems\Systems.h"
 #include "SDLHandler.h"
+#include "Camera.h"
+#include "DeltaTime.h"
 
-
-Particle* particles;
-ParticleInputOutput* Particles::m_readBuffer;
-ParticleInputOutput* Particles::m_writeBuffer;
-ParticleMetadataBuffer* data;
-
-
-int8_t  Particles::m_computeShaders;
-int8_t  Particles::m_vertexShader;
-int8_t  Particles::m_pixelShader;
-int8_t  Particles::m_geometryShader;
-int16_t Particles::m_metadata;
-int16_t Particles::m_vertexBuffer;
-int16_t Particles::m_indexBuffer;
-int8_t  Particles::m_rasterizer; 
-
-int8_t Particles::m_renderTargetView;
-int8_t Particles::m_depthStencilView;
-int8_t Particles::m_shaderResourceView;
+PoolPointer<ParticleInputOutput> Particles::m_readBuffer;
+PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
+PoolPointer<ParticleMetadataBuffer> data;
 
 int Particles::RenderSlot;
 
 void Particles::SwitchInputOutput()
 {
-	////Store read
-	//ParticleInputOutput tempHolder = *m_readBuffer;
+	//Store read
+	ParticleInputOutput tempHolder = *m_readBuffer;
 
-	//*m_readBuffer = *m_writeBuffer;
-	//*m_writeBuffer = tempHolder;
+	*m_readBuffer = *m_writeBuffer;
+	*m_writeBuffer = tempHolder;
 }
 
 void Particles::InitializeParticles()
 {
-	data = (ParticleMetadataBuffer*)MemLib::spush(sizeof(ParticleMetadataBuffer));
-	m_readBuffer = (ParticleInputOutput*)MemLib::spush(sizeof(ParticleInputOutput));
-	m_writeBuffer = (ParticleInputOutput*)MemLib::spush(sizeof(ParticleInputOutput));
+	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));
+	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+
+	Particle* particles;
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
+
 
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
@@ -55,39 +44,36 @@ void Particles::InitializeParticles()
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
-	m_readBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
-	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES,resourceFlags, (CPU_FLAGS)0);
+	// THEESE ARE THE BOOVAR OF MEMORY LEAKS
+	m_readBuffer->SRVIndex =  CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
+	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 
-	m_readBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_readBuffer->SRVIndex);
+	m_readBuffer->UAVIndex =  CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_readBuffer->SRVIndex);
 	m_writeBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_writeBuffer->SRVIndex);
 
-	m_computeShaders = LoadComputeShader("ParticleCS.cso");
+	MemLib::spop(); // for particles
+
 
 
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
 		data->metadata[i].life = -1.f;
 		data->metadata[i].maxRange = -1.f;
-		data->metadata[i].pattern = -1; //-1.f;
+		data->metadata[i].pattern = -1;
 		data->metadata[i].size = -1.f;
 		data->metadata[i].spawnPos = DirectX::XMFLOAT3(-999.f, -999.f, -999.f);
 
-		data->metadata[i].padding = 0;
+		data->metadata[i].deltaTime = 0;
 	}
 
 	RenderSlot = SetupParticles();
-
 }
 
 void Particles::ReleaseParticles()
 {
-	// Absolutely not! You either pop in the same scope, during the same frame, or never at all
-	// It is entirely possible, and extremely likely that this will pop other completely unrelated that was added to the stack afterwards
-
-	//MemLib::spop(); // for particles
-	//MemLib::spop(); // read buffer
-	//MemLib::spop(); // write buffer
-	//MemLib::spop(); // For data
+	MemLib::pfree(data);
+	MemLib::pfree(m_readBuffer);
+	MemLib::pfree(m_writeBuffer);
 }
 
 ParticleMetadataBuffer* Particles::GetData()
@@ -99,7 +85,7 @@ void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 {
 	SwitchInputOutput();
 
-	SetComputeShader(m_computeShaders);
+	SetComputeShader(renderStates[RenderSlot].computeShader);
 	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_COMPUTE, 0);
 	SetShaderResourceView(m_readBuffer->SRVIndex, BIND_COMPUTE, 0);
 	SetUnorderedAcessView(m_writeBuffer->UAVIndex, 0);
@@ -112,6 +98,12 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
 
+
+	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
+		data->metadata[i].deltaTime = GetDeltaTime();
+
+	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
+
  	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_writeBuffer->SRVIndex);
 }
 
@@ -119,7 +111,8 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 {
 	SetTopology(POINTLIST);
 
-	SetWorldMatrix(1.f, 1.f, 1.f, BIND_VERTEX, 0);
+	SetWorldMatrix(0.f, 0.f, 0.f, BIND_VERTEX, 0);
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0]);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
@@ -128,12 +121,13 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	//The camera constant buffer is set to the geometry shader outside of this function
 }
 
 void Particles::FinishParticlePass()
 {
 	SetTopology(TRIANGLELIST);
+
+	UnsetConstantBuffer(BIND_GEOMETRY, 1);
 
 	UnsetVertexShader();
 	UnsetGeometryShader();
@@ -187,41 +181,4 @@ void ParticleComponent::Setup(RenderSetupComponent constantBuffer[8], int Render
 	data->metadata[metadataSlot].pattern = pattern;
 
 	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, data->metadata);
-}
-
-void ParticleComponent::SetLife(float seconds)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].life = seconds;
-}
-
-void ParticleComponent::SetMaxRange(float radius)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].maxRange = radius;
-}
-
-void ParticleComponent::SetSize(float size)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].size = size;
-}
-
-void ParticleComponent::SetPattern(ComputeShaders pattern)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].pattern = pattern;
-}
-
-void ParticleComponent::SetPosition(float x, float y, float z)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].spawnPos.x = x;
-	data->metadata[metadataSlot].spawnPos.y = y;
-	data->metadata[metadataSlot].spawnPos.z = z;
 }
