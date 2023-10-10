@@ -28,6 +28,56 @@ public:
 		return &(m_data[m_len]);
 	}
 
+	uint32_t find_first_of(const char* other)
+	{
+		uint8_t oLen = (uint8_t)std::strlen(other);
+
+		// Find the first that maches a single char of the other string
+		for (uint32_t i = 0; i < m_len; ++i)
+		{
+			for (uint8_t u = 0; u < oLen; ++u)
+			{
+				if (m_data[i] == other[u])
+					return i;
+			}
+		}
+		// Return max otherwise
+		return UINT32_MAX;
+	}
+
+	uint32_t find_last_of(const char* other)
+	{
+		uint8_t oLen = (uint8_t)std::strlen(other);
+
+		// Find the last that maches a single char of the other string
+		for (uint32_t i = m_len; 0 <= i; --i)
+		{
+			for (uint8_t u = 0; u < oLen; ++u)
+			{
+				if (m_data[i] == other[u])
+					return i;
+			}
+		}
+		// Return max otherwise
+		return UINT32_MAX;
+	}
+
+	ML_String substr(uint32_t beg, uint32_t len)
+	{
+		ML_String other;
+		beg = beg < m_len ? beg : m_len;
+		len = ((beg + len) < m_len) ? len : m_len - beg;
+
+		if (other.m_capacity < len + 1)
+			other.reserve(len + 1);
+		other.m_len = len;
+
+		std::memcpy(other.m_data, &(m_data[beg]), len);
+		other.m_data[len + 1] = '\0';
+
+		return other;
+	}
+
 	const uint32_t& length() const
 	{
 		return m_len;
@@ -82,8 +132,8 @@ public:
 	{
 		uint32_t newLen = m_len + other.m_len;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
-		while (m_capacity < newLen)
-			reserve(newLen + ((newLen == 0) * 32));
+		while (m_capacity <= newLen)
+			reserve(2 * m_capacity + ((newLen == 0) * 32));
 
 		// Set data at location
 		std::memcpy(&m_data[m_len], &(*other), other.m_len);

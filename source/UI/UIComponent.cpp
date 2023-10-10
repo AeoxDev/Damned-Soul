@@ -20,7 +20,8 @@ void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation
 UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
 	:m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
 {
-	m_Bounds = { 0, 0, 0, 0 };
+	m_CurrentBounds = { 0, 0, 0, 0 };
+	m_OriginalBounds = { 0, 0, 0, 0 };
 	
 	m_Position = {0, 0};
 	
@@ -49,24 +50,23 @@ void UIComponent::SetPosition(XMFLOAT2 position)
 	// (-1,-1) is the bottom left coorner, (1, 1) is the top right coorner
 	XMFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.WIDTH, (1.0f - position.y) * 0.5f * sdl.HEIGHT };
 
-	m_Position = { pixelCoords.x - (m_Bounds.right / 2.0f) * m_Scale.x , pixelCoords.y - (m_Bounds.bottom / 2.0f) * m_Scale.y };
-	//m_Position = { pixelCoords.x - (m_Bounds.right / 2.0f), pixelCoords.y - (m_Bounds.bottom / 2.0f)};
+	m_Position = { pixelCoords.x - (m_CurrentBounds.right / 2.0f) * m_Scale.x , pixelCoords.y - (m_CurrentBounds.bottom / 2.0f) * m_Scale.y };
 	UpdateTransform();
 }
 
 void UIComponent::SetScale(XMFLOAT2 scale)
 {
 	m_Scale = scale;
-	m_Bounds.right *= m_Scale.x;
-	m_Bounds.bottom *= m_Scale.y;
+	m_CurrentBounds.right = m_OriginalBounds.right * m_Scale.x;
+	m_CurrentBounds.bottom = m_OriginalBounds.bottom * m_Scale.y;
 	UpdateTransform();
 }
 
 void UIComponent::SetScale(float scale)
 {
 	m_Scale = { scale, scale };
-	m_Bounds.right *= m_Scale.x;
-	m_Bounds.bottom *= m_Scale.y; 
+	m_CurrentBounds.right = m_OriginalBounds.right * m_Scale.x;
+	m_CurrentBounds.bottom = m_OriginalBounds.bottom * m_Scale.y;
 	UpdateTransform();
 }
 
@@ -93,6 +93,6 @@ bool UIComponent::IsVisible()
 
 bool UIComponent::Intersect(DirectX::XMINT2 mousePos)
 {
-	return (mousePos.x > m_Position.x) && (mousePos.x < m_Position.x + m_Bounds.right) &&
-		(mousePos.y > m_Position.y) && (mousePos.y < m_Position.y + m_Bounds.bottom);
+	return (mousePos.x > m_Position.x) && (mousePos.x < m_Position.x + m_CurrentBounds.right) &&
+		(mousePos.y > m_Position.y) && (mousePos.y < m_Position.y + m_CurrentBounds.bottom);
 }

@@ -1,7 +1,8 @@
 #pragma once
 #include "UI/UIButton.h"
 
-struct ButtonComponent
+struct UIButtonComponent
 {
 	UIButton button;
+	bool doRedraw = true;
 };

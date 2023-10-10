@@ -727,6 +727,13 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
+
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.1f, 0.f, 0.f);
+	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
+	SetHitboxIsPlayer(entity, playerComp->attackHitboxID);
+	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
+	SetHitboxActive(entity, playerComp->attackHitboxID, false);
 }
 
 bool HitboxCanHitGI(EntityID& entity)

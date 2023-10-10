@@ -226,13 +226,10 @@ void Camera::ToggleProjection()
 	GameCamera->m_projectionType = !GameCamera->m_projectionType;
 }
 
-void Camera::InitializeCamera()
+void Camera::ResetCamera()
 {
-	BufferData = MemLib::palloc(sizeof(CameraConstantBuffer));
-
-	GameCamera = MemLib::palloc(sizeof(CameraStruct));
 	GameCamera->m_projectionType = true;
-	
+
 	SetPosition(CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, false);
 	SetLookAt(0.f, 0.f, 0.f);
 	SetUp(0.f, 1.f, 0.f);
@@ -249,15 +246,23 @@ void Camera::InitializeCamera()
 	//Prepare the buffer to creation
 	//Update camera pos, view and projection
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f);
-	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer));
+	
 	UpdateView();
 	UpdateProjection();
 	UpdateConstantBuffer(GameCamera->m_cameraBufferIndex, &(BufferData->m_cameraPosition));
 	SetConstantBuffer(GameCamera->m_cameraBufferIndex, BIND_VERTEX, 1);
+}
+
+void Camera::InitializeCamera()
+{
+	BufferData = MemLib::palloc(sizeof(CameraConstantBuffer));
+	GameCamera = MemLib::palloc(sizeof(CameraStruct));
+
+	GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer));
+	ResetCamera();
+
 	//SHADER_TO_BIND_BUFFER flags = BIND_VERTEX | BIND_PIXEL;
 	//GameCamera->m_cameraBufferIndex = CreateConstantBuffer(&(BufferData->m_cameraPosition), sizeof(CameraConstantBuffer), BIND_VERTEX, 0);
-
-
 }
 
 void Camera::FreeCamera()

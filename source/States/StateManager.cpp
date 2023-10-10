@@ -83,8 +83,8 @@ void StateManager::Setup()
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
 	//models.Initialize();
-	menu.Setup();
 	Camera::InitializeCamera();
+	menu.Setup();
 
 	//Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
 	//SetupTestHitbox();
@@ -107,8 +107,6 @@ void StateManager::Setup()
 	//systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new PointOfInterestSystem());
-	systems.push_back(new PlayerHealthUISystem());
-	systems.push_back(new PlayerSoulsUISystem());
 
 	//AI Systems
 	systems.push_back(new SkeletonBehaviourSystem());
@@ -118,6 +116,12 @@ void StateManager::Setup()
 	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());
 	systems.push_back(new EventSystem());
+
+	// Updating UI Elements (Needs to be last)
+	systems.push_back(new UIHealthSystem());
+	systems.push_back(new UIPlayerSoulsSystem());
+	systems.push_back(new UIGameLevelSystem());
+
 }
 
 
@@ -156,6 +160,7 @@ void StateManager::Update()
 	{
 		systems[i]->Update();
 	}
+	Input();
 }
 
 void StateManager::ComputeShaders()
