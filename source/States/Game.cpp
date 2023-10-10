@@ -16,9 +16,17 @@
 #include "States\CleanupMacros.h"
 #include "Camera.h"
 
+#include "MemLib\ML_String.hpp"
+#include "MemLib\ML_Vector.hpp"
+
+
 void GameScene::Setup(int scene)//Load
 {
 	RedrawUI();	
+
+	ML_String valueAsString = std::to_string(scene).c_str();
+	std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
+
 	if (scene == 0)
 	{
 		// Set active
@@ -57,8 +65,9 @@ void GameScene::Setup(int scene)//Load
 
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
+		RelicHolderComponent* pRhc= registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
 
-		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 50.f, 10.f, 25.f, 5.f);
+		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 50.f, 20.f, 25.f, 5.f);
 		EnemyComponent* ec1 = registry.AddComponent<EnemyComponent>(dog, 1);
 
 		StatComponent* ss = registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
@@ -83,14 +92,15 @@ void GameScene::Setup(int scene)//Load
 
 		UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
+		
+		ML_Vector<UIImage> uiRelics;
+		UIPlayerRelicsComponent* pcUiRC = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.4f), DirectX::XMFLOAT2(1.0f, 0.5f), UIImage("TempRelicHolder.png"), uiRelics, 0);
 
 		UIHealthComponent* dogUIHpc = registry.AddComponent<UIHealthComponent>(dog, 1.0f, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		UIHealthComponent* skelUIHpC1 = registry.AddComponent<UIHealthComponent>(skeleton, 1.0f, DirectX::XMFLOAT2(0.8f, 0.6f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		UIHealthComponent* skelUIHpC2 = registry.AddComponent<UIHealthComponent>(skeleton2, 1.0f, DirectX::XMFLOAT2(0.8f, 0.4f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		
-		std::string valueAsString = std::to_string(scene);
-		std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
-		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1.0f, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
+		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
 
 		//Doggo2Ent
 
@@ -131,6 +141,33 @@ void GameScene::Input()
 		SetInPlay(false);
 		Unload();
 		stateManager.menu.Setup();
+	}
+
+	if (keyState[SDL_SCANCODE_1] == pressed)
+	{
+		for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+		{
+			auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
+			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+
+			relicHolder->AddRelic<DamageRelic>();
+
+			UIImage tempImage("TempRelic1.png");
+			uiElement->images.push_back(tempImage);
+		}
+	}
+	if (keyState[SDL_SCANCODE_2] == pressed)
+	{
+		for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+		{
+			auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
+			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+
+			relicHolder->AddRelic<SpeedRelic>();
+
+			UIImage tempImage("TempRelic2.png");
+			uiElement->images.push_back(tempImage);
+		}
 	}
 }
 
@@ -244,6 +281,13 @@ void GameScene::Unload()
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
+	for (auto entity : View<RelicHolderComponent>(registry))
+	{
+		registry.RemoveComponent<RelicHolderComponent>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
 	for (auto entity : View<StatComponent>(registry))
 	{
 		registry.RemoveComponent<StatComponent>(entity);
@@ -273,6 +317,19 @@ void GameScene::Unload()
 	{
 		registry.RemoveComponent<TextComponent>(entity);
 		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<UIPlayerRelicsComponent>(registry))
+	{
+		UIPlayerRelicsComponent* uprc = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+		uprc->baseImage.Release();
+
+		for (int i = 0; i < uprc->images.size(); i++)
+			uprc->images[i].Release();
+		uprc->images.~ML_Vector();
+
+		registry.RemoveComponent<UIPlayerRelicsComponent>(entity);
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 

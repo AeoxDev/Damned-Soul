@@ -1,15 +1,17 @@
 #pragma once
 #include <string>
 #include <DirectXMath.h>
+#include <vector>
 
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 
 struct UIPlayerRelicsComponent
 {
-	float value;
 	DirectX::XMFLOAT2 position;
 	DirectX::XMFLOAT2 scale;
-	UIImage image;
-	UIText text;
+	UIImage baseImage;
+	ML_Vector<UIImage> images;
+	int imageIndex;
+
 };
