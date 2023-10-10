@@ -94,7 +94,7 @@ void GameScene::Setup(int scene)//Load
 		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
 		
 		ML_Vector<UIImage> uiRelics;
-		//UIPlayerRelicsComponent* pcUiRC = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.4f), DirectX::XMFLOAT2(1.0f, 0.5f), UIImage("TempRelicHolder.png"), uiRelics, 0);
+		UIPlayerRelicsComponent* pcUiRC = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.4f), DirectX::XMFLOAT2(1.0f, 0.5f), UIImage("TempRelicHolder.png"), uiRelics, 0);
 
 		UIHealthComponent* dogUIHpc = registry.AddComponent<UIHealthComponent>(dog, 1.0f, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		UIHealthComponent* skelUIHpC1 = registry.AddComponent<UIHealthComponent>(skeleton, 1.0f, DirectX::XMFLOAT2(0.8f, 0.6f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
