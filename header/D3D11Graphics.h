@@ -32,7 +32,7 @@ public:
 struct PixelShaderHolder
 {
 private:
-	PS_IDX								_nextIdx = 120;
+	PS_IDX								_nextIdx = 0;
 public:
 	ML_Map<PS_IDX, ID3D11PixelShader*>	ps_map;
 

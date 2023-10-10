@@ -7,12 +7,6 @@
 struct ML_ComponentMap
 {
 private:
-//#define BIT_64 (8)
-//#define PAIR_SIZE (m_tSize + BIT_64)
-//#define GET_KEY(idx) ((size_t)(m_data[idx * PAIR_SIZE]))
-//#define GET_KEY_POINTER(idx) (&(m_data[idx * PAIR_SIZE]))
-//#define GET_VALUE_POINTER(idx) (&(m_data[idx * PAIR_SIZE + BIT_64]))
-
 	int header = HEADER_ID;
 	// Pool pointer to internal data
 	PoolPointer<char> m_data;

@@ -2,7 +2,7 @@
 
 #define FIND_NEXT_SUITABLE(main_map, var)			\
 uint32_t infinityLoopCheck = 0;						\
-const uint32_t stopValue = 2 << (sizeof(var) / 2);	\
+const uint32_t stopValue = 2 << (sizeof(var) * 4);	\
 while (_nextIdx < 0 || main_map.contains(_nextIdx))	\
 {													\
 	++_nextIdx;										\
