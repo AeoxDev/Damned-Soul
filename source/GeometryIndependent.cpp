@@ -178,7 +178,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	Camera::UpdateProjection();
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	//RTVResource->Release();
-	stagingResource->Release();
+	//stagingResource->Release();
 	//Return.
 }
 
