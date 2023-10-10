@@ -95,10 +95,6 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 	//speed set to 10.0f, use enemy component later
 	float speedMultiplier = 1.f;
-	if (eyeComponent->charge)
-	{
-		speedMultiplier = 2.f;
-	}
 	eyeTransformComponent->positionX += dirX * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
 	eyeTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
 }
@@ -112,12 +108,13 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
+		std::uniform_real_distribution<float> distributionX(eyeTransformComponent->facingX - 0.3f, eyeTransformComponent->facingX + 0.3f);
+		std::uniform_real_distribution<float> distributionZ(eyeTransformComponent->facingZ - 0.3f, eyeTransformComponent->facingZ + 0.3f);
+		float randomX = distributionX(gen);
+		float randomZ = distributionZ(gen);
 		eyeComponent->goalDirectionX = randomX;
 		eyeComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+		std::uniform_real_distribution<float> randomInterval(0.4f, 0.8f);
 		eyeComponent->updateInterval = randomInterval(gen);
 	}
 
@@ -168,7 +165,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
-			else if (distance < 50) //hunting distance, go chase
+			else if (distance < 30) //hunting distance, go chase
 			{
 				ChaseBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}

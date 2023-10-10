@@ -63,8 +63,8 @@ void GameScene::Setup(int scene)//Load
 
 
 		//Stats
-		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
+		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 100.f, 10.f, 25.f, 5.f);
 		StatComponent* ss = registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
 		StatComponent* ss2 = registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
@@ -77,9 +77,11 @@ void GameScene::Setup(int scene)//Load
 			
 		//Camera points
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
-		PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
-		PointOfInterestComponent* skelPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
-		PointOfInterestComponent* skelPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
+		//PointOfInterestComponent* dogPoi = registry.AddComponent<PointOfInterestComponent>(dog);
+		//PointOfInterestComponent* skelPoi = registry.AddComponent<PointOfInterestComponent>(skeleton);
+		//PointOfInterestComponent* skelPoi2 = registry.AddComponent<PointOfInterestComponent>(skeleton2);
+		PointOfInterestComponent* eyePoi = registry.AddComponent<PointOfInterestComponent>(eye);
+
 
 		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 		////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
@@ -93,18 +95,22 @@ void GameScene::Setup(int scene)//Load
 		skelCo->model = LoadModel("SkeletonOneDymmy.mdl");
 		skelCo2->model = LoadModel("SkeletonOneDymmy.mdl");
 		stageCo->model = LoadModel("PlaceholderScene.mdl");
+		eyeCo->model = LoadModel("PHBoss.mdl");
 		pmc->model = LoadModel("PlayerPlaceholder.mdl");
-		eyeCo->model = LoadModel("PlayerPlaceholder.mdl");
 		
 		RenderGeometryIndependentCollision(stage);
 		//poic->active = POI_ACTIVE;
 		dtc->positionX = 20.0f;
 		skeltc->positionZ = 20.0f;
 		skeltc2->positionZ = 15.0f;
+	/*	eyetc->positionX = 20.f;
+		eyetc->positionZ = 20.f;*/
+
 
 		HellhoundBehaviour* hellhoundBehevCo = registry.AddComponent<HellhoundBehaviour>(dog);
 		SkeletonBehaviour* skeletonBehevCo = registry.AddComponent<SkeletonBehaviour>(skeleton);
 		SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
+		EyeBehaviour* eyeBehevCo = registry.AddComponent<EyeBehaviour>(eye);
 	}
 }
 
