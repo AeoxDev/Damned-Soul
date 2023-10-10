@@ -6,7 +6,7 @@
 #include "Level.h"
 #include <assert.h>
 //#include <iostream>
-#define SOFT_COLLISION_FACTOR 0.25f
+#define SOFT_COLLISION_FACTOR 0.35f
 
 
 void NoCollision(OnCollisionParameters &params)

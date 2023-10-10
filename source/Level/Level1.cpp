@@ -28,9 +28,9 @@ void LoadLevel1()
 	ModelBonelessComponent* skelCo2 = registry.AddComponent<ModelBonelessComponent>(skeleton2);
 	
 
-	TransformComponent* dtc = registry.AddComponent<TransformComponent>(dog);
+	TransformComponent* dogTransform = registry.AddComponent<TransformComponent>(dog);
 	TransformComponent* stageTransform = registry.AddComponent<TransformComponent>(stage);
-	TransformComponent* ptc = registry.AddComponent<TransformComponent>(player);
+	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
 	TransformComponent* skeltc = registry.AddComponent<TransformComponent>(skeleton);
 	TransformComponent* skeltc2 = registry.AddComponent<TransformComponent>(skeleton2);
 	
@@ -76,7 +76,7 @@ void LoadLevel1()
 
 	//Doggo2Ent
 
-	dtc->facingX = 1.0f;
+	dogTransform->facingX = 1.0f;
 	dogCo->model = LoadModel("HellhoundDummy_PH.mdl");
 	skelCo->model = LoadModel("SkeletonOneDymmy.mdl");
 	skelCo2->model = LoadModel("SkeletonOneDymmy.mdl");
@@ -91,7 +91,7 @@ void LoadLevel1()
 
 	RenderGeometryIndependentCollision(stage);
 	//poic->active = POI_ACTIVE;
-	dtc->positionX = 20.0f;
+	dogTransform->positionX = 20.0f;
 	skeltc->positionZ = 20.0f;
 	skeltc2->positionZ = 15.0f;
 	poic->weight = 10.0f;
@@ -102,11 +102,17 @@ void LoadLevel1()
 	SkeletonBehaviour* skeletonBehevCo2 = registry.AddComponent<SkeletonBehaviour>(skeleton2);
 
 	//Finally set the collision boxes
-	SetupPlayerCollisionBox(player, 1.0f);
 
-	SetupEnemyCollisionBox(skeleton, 0.9f);
-	SetupEnemyCollisionBox(skeleton2, 0.9f);
-	SetupEnemyCollisionBox(dog, 1.0f);
+	playerTransform->mass = 3.0f;
+	dogTransform->mass = 9.0f;
 
-	AddTimedEventComponentStart(portal, portal, 1.0f, CreatePortal);
+
+	//Finally set the collision boxes
+	SetupPlayerCollisionBox(player, 1.25f);
+
+	SetupEnemyCollisionBox(skeleton, 1.0f);
+	SetupEnemyCollisionBox(skeleton2, 1.0f);
+	SetupEnemyCollisionBox(dog, 1.5f);
+
+	AddTimedEventComponentStart(portal, portal, 10.0f, CreatePortal);
 }
