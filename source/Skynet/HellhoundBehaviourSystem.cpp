@@ -57,7 +57,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
 	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
 
-	float tolerance = 0.3f; // THIS IS FOR ANGLE SMOOTHING
+	float tolerance = 0.7f; // THIS IS FOR ANGLE SMOOTHING
 	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
 	{
 		hc->isBehind = true;
@@ -92,16 +92,15 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	{
 		dirX = -hc->goalDirectionZ;
 		dirZ = hc->goalDirectionX;
-		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		SmoothRotation(htc, dirX, dirZ);
+		
 	}
 	else // counter clockwise
 	{
 		dirX = hc->goalDirectionZ;
 		dirZ = -hc->goalDirectionX;
-		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		SmoothRotation(htc, dirX, dirZ);
 	}
+	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+	SmoothRotation(htc, dirX, dirZ, 10.f);
 	if (magnitude > 0.001f)
 	{
 		dirX /= magnitude;
@@ -119,7 +118,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
 
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ);
+	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 10.f);
 	float dirX = hellhoundTransformComponent->facingX, dirZ = hellhoundTransformComponent->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude > 0.001f)
@@ -285,10 +284,39 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	}
 }
 
-
-void TacticalRetreatBehaviour()
+void SetInfiniteDirection(TransformComponent* htc, HellhoundBehaviour* hc)
 {
+	float x = hc->lastPositionX - htc->positionX;
+	float z = hc->lastPositionZ - htc->positionZ;
+	float magnitude = sqrt(x * x + z * z);
+	if (magnitude > 0.001f)
+	{
+		x /= magnitude;
+		z /= magnitude;
+	}
+	hc->cowardDirectionX = x;
+	hc->cowardDirectionZ = z;
+}
 
+
+void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats)
+{
+	
+	float newGoalX = htc->positionX + hc->cowardDirectionX * 100.f;
+	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
+	SmoothRotation(htc, newGoalX, newGoalZ, 10.f);
+
+	htc->positionX += hc->cowardDirectionX * enemyStats->moveSpeed * GetDeltaTime();
+	htc->positionZ += hc->cowardDirectionZ * enemyStats->moveSpeed * GetDeltaTime();
+
+	hc->cowardCounter += GetDeltaTime();
+
+	if (hc->cowardCounter >= hc->cowardDuration) // have we been tactically retreating long enough?
+	{
+		hc->cowardCounter = 0.f;
+		hc->retreat = false;
+		ResetHellhoundVariables(hc, true, true);
+	}
 }
 
 
@@ -339,6 +367,7 @@ bool HellhoundBehaviourSystem::Update()
 		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
 		hellhoundTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+		
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && true)// check if enemy is alive, change later
 		{
@@ -350,7 +379,7 @@ bool HellhoundBehaviourSystem::Update()
 
 			if (hellhoundComponent->retreat)
 			{
-				hellhoundComponent->retreat = false;
+				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
@@ -366,7 +395,12 @@ bool HellhoundBehaviourSystem::Update()
 			else if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
 				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo...
-				// maybe retreat to shoot again, eh?
+				hellhoundComponent->isWating = true;
+			}
+			else if (hellhoundComponent->isWating)// maybe retreat to shoot again, eh?
+			{
+				hellhoundComponent->isWating = false;
+				SetInfiniteDirection(hellhoundTransformComponent, hellhoundComponent);
 				hellhoundComponent->retreat = true;
 			}
 			else if (distance < 2.5f) // fight club and not currently shooting
@@ -388,6 +422,8 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if ((distance <= 17) && (!hellhoundComponent->isShooting && hellhoundComponent->shootingCooldownCounter >= hellhoundComponent->shootingCooldown)) //is not shooting and cooldown is ready
 			{
+				hellhoundComponent->lastPositionX = hellhoundTransformComponent->positionX;
+				hellhoundComponent->lastPositionZ = hellhoundTransformComponent->positionZ;
 				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent); //set a target for the ranged attack
 			}
 			else if (distance < 50) //hunting distance, go chase

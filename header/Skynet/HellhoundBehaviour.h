@@ -11,14 +11,14 @@ struct HellhoundBehaviour
 	float isBehindCounter = 0.f;
 	float giveUpChaseCounter = 0.f;
 	bool charge = false;
-	bool retreat = false;
+	
 
 
 
 
 	// MELEE VARIABLES
 	float attackTimer = 0.f; //used as counter
-	float attackStunDurationCounter = 0.f;
+	float attackStunDurationCounter = 0.8f;
 	const float attackStunDuration = 0.8f;
 
 
@@ -49,6 +49,14 @@ struct HellhoundBehaviour
 	
 
 
-
-
+	// COWARD VARIABLES
+	const float cowardDuration = 2.f; // How long the dog will run away
+	float cowardCounter = 0.f;
+	float lastPositionX = 0.f;// These 2 positions are used to determine which
+	float lastPositionZ = 0.f;// way to run, minimizing the risk of running into 
+							  // a wall
+	float cowardDirectionX = 0.f; // the direction pos give us
+	float cowardDirectionZ = 0.f;
+	bool retreat = false;
+	bool isWating = false; // kind of dumb, but needed for checks
 };
