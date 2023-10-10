@@ -178,6 +178,9 @@
     <ClCompile Include="source\UI\UIButtonFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\D3D11Helper\HolderFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />

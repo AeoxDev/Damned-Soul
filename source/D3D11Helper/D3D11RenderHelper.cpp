@@ -25,14 +25,15 @@ VP_IDX CreateViewport(const size_t& width, const size_t& height)
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 
-	vpHolder->vp_map.emplace(vpHolder->_nextIdx, vp);
+	VP_IDX idx = vpHolder->NextIdx();
+	vpHolder->vp_map.emplace(idx, vp);
 
-	return (vpHolder->_nextIdx)++;
+	return idx;
 }
 
 bool SetViewport(const VP_IDX idx)
 {
-	if (vpHolder->_nextIdx < idx || idx < 0)
+	if (false == vpHolder->vp_map.contains(idx))
 	{
 		std::cerr << "Viewport index out of range!" << std::endl;
 		return false;
@@ -45,7 +46,7 @@ bool SetViewport(const VP_IDX idx)
 
 RTV_IDX CreateBackBuffer()
 {
-	uint8_t currentIdx = rtvHolder->_nextIdx;
+	uint8_t currentIdx = rtvHolder->NextIdx();
 
 	// get the address of the back buffer
 	ID3D11Texture2D* backBuffer = nullptr;
@@ -69,12 +70,12 @@ RTV_IDX CreateBackBuffer()
 	rtvHolder->rtv_map.emplace(currentIdx, tempBB);
 	backBuffer->Release();
 
-	return (rtvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, FORMAT format)
 {
-	uint8_t currentIdx = rtvHolder->_nextIdx;
+	uint8_t currentIdx = rtvHolder->NextIdx();
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
@@ -112,13 +113,13 @@ RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, C
 	rtvHolder->rtv_map.emplace(currentIdx, tempRTV);
 
 	// Set the hash last thing you do
-	return (rtvHolder->_nextIdx)++;
+	return currentIdx;
 
 }
 
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 {
-	uint8_t currentIdx = dsvHolder->_nextIdx;
+	uint8_t currentIdx = dsvHolder->NextIdx();
 
 
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -153,12 +154,12 @@ DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 	}
 	dsvHolder->dsv_map.emplace(currentIdx, tempDSV);
 
-	return (dsvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_dsv)
 {
-	if (rtvHolder->_nextIdx < idx_rtv || idx_rtv < 0 || dsvHolder->_nextIdx < idx_dsv || idx_dsv < 0)
+	if (false == rtvHolder->rtv_map.contains(idx_rtv) || false == dsvHolder->dsv_map.contains(idx_dsv))
 	{
 		std::cerr << "Failed to set render target view and depth stencil view, out of range!" << std::endl;
 		return false;
@@ -175,7 +176,7 @@ void UnsetRenderTargetViewAndDepthStencil()
 
 SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
 {
-	uint8_t currentIdx = srvHolder->_nextIdx;
+	uint8_t currentIdx = srvHolder->NextIdx();
 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -230,13 +231,13 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 	srvHolder->srv_map.emplace(currentIdx, tempSRV);
 	srvHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return (srvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height)
 {
 	HRESULT hr;
-	uint8_t currentIdx = srvHolder->_nextIdx;
+	uint8_t currentIdx = srvHolder->NextIdx();
 	ID3D11Texture2D* tempTex = 0;
 	ID3D11Resource* tempResource = 0;
 
@@ -327,12 +328,12 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 	//d3d11Data->deviceContext->Unmap(srvHolder->srv_resource_map[currentIdx], 0);
 
 
-	return (srvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS sourceResource)
 {
-	uint8_t currentIdx = srvHolder->_nextIdx;
+	uint8_t currentIdx = srvHolder->NextIdx();
 	HRESULT hr = NULL;
 	ID3D11ShaderResourceView* tempSRV = 0;
 	ID3D11Resource* tempResource = 0;
@@ -386,7 +387,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 		break;
 	}
 
-	return (srvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
@@ -456,7 +457,7 @@ void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
 {
-	uint8_t currentIdx = uavHolder->_nextIdx;
+	uint8_t currentIdx = uavHolder->NextIdx();
 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -508,12 +509,12 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, co
 
 	uavHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return (uavHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx)
 {
-	uint8_t currentIdx = uavHolder->_nextIdx;
+	uint8_t currentIdx = uavHolder->NextIdx();
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
 	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -539,7 +540,7 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 	uavHolder->size.emplace(currentIdx, (uint32_t)size);
 
 
-	return (uavHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetUnorderedAcessView(const UAV_IDX idx, uint8_t slot)
@@ -568,7 +569,7 @@ void ClearDepthStencilView(const DSV_IDX idx)
 
 RS_IDX CreateRasterizerState(const bool cull, const bool solid)
 {
-	uint8_t currentIdx = rsHolder->_nextIdx;
+	uint8_t currentIdx = rsHolder->NextIdx();
 
 	D3D11_RASTERIZER_DESC desc;
 	desc.FillMode = solid ? D3D11_FILL_SOLID : D3D11_FILL_WIREFRAME;
@@ -591,12 +592,12 @@ RS_IDX CreateRasterizerState(const bool cull, const bool solid)
 	}
 	rsHolder->rs_map.emplace(currentIdx, tempRaster);
 
-	return (rsHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetRasterizerState(const RS_IDX idx)
 {
-	if (idx < 0 || rsHolder->_nextIdx < idx)
+	if (false == rsHolder->rs_map.contains(idx))
 	{
 		std::cerr << "Rasterizer state out of range!" << std::endl;
 		return false;
@@ -611,6 +612,14 @@ void UnsetRasterizerState()
 	d3d11Data->deviceContext->RSSetState(rs_NULL);
 }
 
+bool DeleteD3D11Viewport(const VP_IDX idx)
+{
+	assert(vpHolder->vp_map.contains(idx));
+
+	vpHolder->vp_map.erase(idx);
+
+	return true;
+}
 
 bool DeleteD3D11RenderTargetView(const RTV_IDX idx)
 {
