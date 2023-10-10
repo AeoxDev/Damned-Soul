@@ -46,11 +46,11 @@ void GameScene::Setup(int scene)//Load
 		PointOfInterestComponent* poic = registry.AddComponent<PointOfInterestComponent>(player);
 		PointOfInterestComponent* dogPoi2 = registry.AddComponent<PointOfInterestComponent>(dog2);
 
-		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
-		//particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
+		ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 99.f, 50.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
 		UIPlayerHealthComponent* pcUiHpC = registry.AddComponent<UIPlayerHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
+		
 		//Doggo2Ent
 
 		dogCo2->model = LoadModel("HellhoundDummy_PH.mdl");

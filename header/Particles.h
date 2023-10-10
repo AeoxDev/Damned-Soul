@@ -35,7 +35,7 @@ struct ParticleMetadata
 
 	DirectX::XMFLOAT3 spawnPos{ 0.f, 0.f, 0.f };
 
-	float padding = 0;
+	float deltaTime = 0;
 };
 
 struct ParticleMetadataBuffer
@@ -47,8 +47,8 @@ namespace Particles
 {
 	extern int RenderSlot;
 
-	extern ParticleInputOutput* m_readBuffer;
-	extern ParticleInputOutput* m_writeBuffer;
+	extern PoolPointer<ParticleInputOutput> m_readBuffer;
+	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
 
 
 	void SwitchInputOutput();

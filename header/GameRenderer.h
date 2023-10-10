@@ -30,11 +30,8 @@ int SetupUIRenderState();
 int SetupGameRenderer();
 int SetupParticles();
 
-void PrepareDefaultPipeline();
-
 void PrepareBackBuffer(const bool use_skeleton = false);
 void ClearBackBuffer();
-void ResetGraphicsPipeline();
 void Clear(const int& componentSlot);
 void RenderIndexed(const size_t& count);
 // Calls Draw, instead of DrawIndexed

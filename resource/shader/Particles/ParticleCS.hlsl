@@ -18,8 +18,7 @@ struct metadata
     int pattern; // The movement pattern of the particle and decidor of size
     
     float3 startPosition;
-    
-    float padding;
+    float deltaTime;
 };
 
 cbuffer metadataBuffer : register(b0)
@@ -42,55 +41,57 @@ RWStructuredBuffer<Input> outputParticleData : register(u0);
 void main(uint3 DTid : SV_DispatchThreadID, uint3 blockID : SV_GroupID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
+    Input particle = inputParticleData[index - 1];
     
-    Input particle = inputParticleData[DTid.x];
-    //____________________________________________________________________
-    float noiseAmp = 100.f; //just noise amplitude, adjust value as needed
-    float3 noise = noiseAmp * normalize(float3(sin(DTid.x), cos(DTid.x), sin(DTid.x + cos(DTid.x))));
-    particle.position += noise;
-    //____________________________________________________________________
-    //test.position = test.position;
-    
-    if (particle.time >= meta[blockID.y].life)
+    particle.position.y += 1.0f;
+    particle.time += meta[blockID.y].deltaTime;
+   
+    if (particle.position.y >= 10.f)
     {
-        particle.position = meta[blockID.y].startPosition;
+        particle.position.y = 0.f;
+        particle.time = 0.f;
+    }
+    else if (particle.time >= meta[blockID.y].life)
+    {
+        particle.position.y = 0.f;
+        particle.time = 0.f;
     }
     
-    outputParticleData[index] = particle;
-    
-    if (meta[blockID.y].life > 0 )
-    {
-        // 0 = SMOKE
-        if (meta[blockID.y].pattern == 0)
-            SmokeMovement(DTid, blockID);
-        // 1 = ARCH
-        else if (meta[blockID.y].pattern == 1)
-            ArchMovement(DTid, blockID);
-        // 2 = EXPLOSION
-        else if (meta[blockID.y].pattern == 2)
-            ExplosionMovement(DTid, blockID);
-        // 3 = FLAMETHROWER
-        else if (meta[blockID.y].pattern == 3)
-            FlamethrowerMovement(DTid, blockID);
-        // 4 = IMPLOSION
-        else if (meta[blockID.y].pattern == 4)
-            ImplosionMovement(DTid, blockID);
-        // 5 = RAIN
-        else if (meta[blockID.y].pattern == 5)
-            RainMovement(DTid, blockID);
-        // 6 = SINUS
-        else if (meta[blockID.y].pattern == 6)
-            SinusMovement(DTid, blockID);
-        
-    }
+    //if (meta[blockID.y].life > 0)
+    //{
+    //    // 0 = SMOKE
+    //    if (meta[blockID.y].pattern == 0)
+    //        SmokeMovement(DTid, blockID);
+    //    // 1 = ARCH
+    //    else if (meta[blockID.y].pattern == 1)
+    //        ArchMovement(DTid, blockID);
+    //    // 2 = EXPLOSION
+    //    else if (meta[blockID.y].pattern == 2)
+    //        ExplosionMovement(DTid, blockID);
+    //    // 3 = FLAMETHROWER
+    //    else if (meta[blockID.y].pattern == 3)
+    //        FlamethrowerMovement(DTid, blockID);
+    //    // 4 = IMPLOSION
+    //    else if (meta[blockID.y].pattern == 4)
+    //        ImplosionMovement(DTid, blockID);
+    //    // 5 = RAIN
+    //    else if (meta[blockID.y].pattern == 5)
+    //        RainMovement(DTid, blockID);
+    //    // 6 = SINUS
+    //    else if (meta[blockID.y].pattern == 6)
+    //        SinusMovement(DTid, blockID);
+    //}
 
 }
 
 void SmokeMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
+   
     
     Input particle = inputParticleData[index];
+    
+    particle.time += meta[blockID.y].deltaTime;
     //____________________________________________________________________
     float noiseAmp = 0.1f; //just noise amplitude, adjust value as needed
     float3 noise = noiseAmp * normalize(float3(sin(DTid.x), cos(DTid.x), sin(DTid.x + cos(DTid.x))));
@@ -98,10 +99,18 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
     //____________________________________________________________________
     //test.position = test.position;
     
+    float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
+    
+    float distance = dot(particle.position, meta[blockID.y].startPosition);
+    
+    float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
+    
+    if (distance >= meta[blockID.y].maxRange)
+        particle.position = startPosition;
     if (particle.time >= meta[blockID.y].life)
-    {
-        particle.position = meta[blockID.y].startPosition;
-    }
+        particle.position = startPosition;
+    
+    
     
     outputParticleData[index] = particle;
 }
@@ -112,7 +121,7 @@ void ArchMovement(in uint3 DTid, in uint3 blockID)
     
     Input particle = inputParticleData[DTid.x];
     //____________________________________________________________________
-    float time = DTid.x;// * (end - start) / float(end); FIX THIS FELIX PLEASE,
+    float time = DTid.x; // * (end - start) / float(end); FIX THIS FELIX PLEASE,
     float coefficient = 0.5; //for parabolic path, change as you see fit
     particle.position.y = meta[index].startPosition.y + coefficient * time * time;
     //____________________________________________________________________
@@ -147,7 +156,7 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     //this is in radians, basically the spread of the cone
     float angleOfCone = 45.0f * (3.14159f / 180.0f); // Convert degrees to radians. Feel free to change angle (first number) as you see fit
     
-    float radianAngle = 0;  // FIX THIS FELIX PLEASE, ((float) DTid.x / float(end) - 0.5f) * angleOfCone;
+    float radianAngle = 0; // FIX THIS FELIX PLEASE, ((float) DTid.x / float(end) - 0.5f) * angleOfCone;
     float3 direction = normalize(float3(cos(radianAngle), -1.0f, sin(radianAngle)));
     
     particle.position += direction * speedOfProjectile;

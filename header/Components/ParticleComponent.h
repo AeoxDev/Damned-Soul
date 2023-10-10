@@ -24,11 +24,4 @@ struct ParticleComponent
 	~ParticleComponent();
 
 	void Setup(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
-
-
-	void SetLife(float seconds);
-	void SetMaxRange(float radius);
-	void SetSize(float size);
-	void SetPattern(ComputeShaders pattern);
-	void SetPosition(float x, float y, float z);
 };

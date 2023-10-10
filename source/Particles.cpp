@@ -5,6 +5,7 @@
 #include "Systems\Systems.h"
 #include "SDLHandler.h"
 #include "Camera.h"
+#include "DeltaTime.h"
 
 PoolPointer<ParticleInputOutput> Particles::m_readBuffer;
 PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
@@ -43,6 +44,7 @@ void Particles::InitializeParticles()
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
+	// THEESE ARE THE BOOVAR OF MEMORY LEAKS
 	m_readBuffer->SRVIndex =  CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 
@@ -57,11 +59,11 @@ void Particles::InitializeParticles()
 	{
 		data->metadata[i].life = -1.f;
 		data->metadata[i].maxRange = -1.f;
-		data->metadata[i].pattern = -1; //-1.f;
+		data->metadata[i].pattern = -1;
 		data->metadata[i].size = -1.f;
 		data->metadata[i].spawnPos = DirectX::XMFLOAT3(-999.f, -999.f, -999.f);
 
-		data->metadata[i].padding = 0;
+		data->metadata[i].deltaTime = 0;
 	}
 
 	RenderSlot = SetupParticles();
@@ -95,6 +97,10 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 	UnsetUnorderedAcessView(0);
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
+
+
+	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
+		data->metadata[i].deltaTime = GetDeltaTime();
 
 	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
 
@@ -175,41 +181,4 @@ void ParticleComponent::Setup(RenderSetupComponent constantBuffer[8], int Render
 	data->metadata[metadataSlot].pattern = pattern;
 
 	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, data->metadata);
-}
-
-void ParticleComponent::SetLife(float seconds)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].life = seconds;
-}
-
-void ParticleComponent::SetMaxRange(float radius)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].maxRange = radius;
-}
-
-void ParticleComponent::SetSize(float size)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].size = size;
-}
-
-void ParticleComponent::SetPattern(ComputeShaders pattern)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].pattern = pattern;
-}
-
-void ParticleComponent::SetPosition(float x, float y, float z)
-{
-	assert(metadataSlot > -1 || metadataSlot < PARTICLE_METADATA_LIMIT);
-
-	data->metadata[metadataSlot].spawnPos.x = x;
-	data->metadata[metadataSlot].spawnPos.y = y;
-	data->metadata[metadataSlot].spawnPos.z = z;
 }

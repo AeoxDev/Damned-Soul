@@ -9,6 +9,8 @@
 bool ParticleSystemGPU::Update()
 {
 	int highestActiveSlot = -1;
+
+
 	for (auto pEntity : View<ParticleComponent>(registry))
 	{
 		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
@@ -22,7 +24,7 @@ bool ParticleSystemGPU::Update()
 	if (highestActiveSlot >= 0)
 	{
 		Particles::PrepareParticleCompute(renderStates);
-		Dispatch(1, highestActiveSlot + 1, 0);
+		Dispatch(1, highestActiveSlot + 1, 1); //x * y * z
 		Particles::FinishParticleCompute(renderStates);
 	}
 
