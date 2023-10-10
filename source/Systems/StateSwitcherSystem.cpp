@@ -2,6 +2,7 @@
 #include "EntityFramework.h"
 #include "Components.h"
 #include "Registry.h"
+#include "EventFunctions.h"
 #include "States\StateManager.h"
 
 bool StateSwitcherSystem::Update()
@@ -19,6 +20,19 @@ bool StateSwitcherSystem::Update()
 			{
 				stateManager.GetCurrentLevel().GameOver();
 			}
+		}
+	}
+
+	for (auto entity : View<EnemyComponent, StatComponent>(registry))
+	{
+		// Get enemy entity stat component
+		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
+		if (statComp->health <= 0 && statComp->performingDeathAnimation == false)
+		{
+			statComp->performingDeathAnimation = true;
+			
+			// start timed event
+			AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 		}
 	}
 
