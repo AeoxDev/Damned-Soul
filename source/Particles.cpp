@@ -111,7 +111,7 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 {
 	SetTopology(POINTLIST);
 
-	SetWorldMatrix(1.f, 1.f, 1.f, BIND_VERTEX, 0);
+	SetWorldMatrix(0.f, 0.f, 0.f, BIND_VERTEX, 0);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0]);

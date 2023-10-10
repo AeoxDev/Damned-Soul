@@ -52,9 +52,9 @@ void main(
     [unroll]
     for (int i = 0; i < 6; i++)
     {
-        retappend.position = mul(float4(vertices[i].xyz, 1.f), viewProj); // times rotationZ here?
+        retappend.position = mul(float4(vertices[i].xyz, inval[0].position.w), viewProj); // times rotationZ here?
         // INSERT rotate on Z-axis
-        //retappend.position = retappend.position / retappend.position.w;
+        retappend.position = retappend.position / retappend.position.w;
         retappend.rgb = inval[0].rgb;
 
 

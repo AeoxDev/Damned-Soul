@@ -40,22 +40,39 @@ RWStructuredBuffer<Input> outputParticleData : register(u0);
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID, uint3 blockID : SV_GroupID)
 {
-    int index = DTid.x + blockID.y * NUM_THREADS;
-    Input particle = inputParticleData[index - 1];
+    int index = (DTid.x + blockID.y * NUM_THREADS) - 1; // -1 because we start on 0
     
-    particle.position.y += 1.0f;
-    particle.time += meta[blockID.y].deltaTime;
+    outputParticleData[index].position.y = inputParticleData[index].position.y + 1.0f;
+    outputParticleData[index].time = inputParticleData[index].time + meta[blockID.y].deltaTime;
+    outputParticleData[index].size = meta[blockID.y].size;
+    
+    float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
+    float distance = dot(outputParticleData[index].position, meta[blockID.y].startPosition);
+    float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
+    
+    if (distance >= meta[blockID.y].maxRange)
+    {
+        outputParticleData[index].position = startPosition;
+        outputParticleData[index].time = 0.f;
+    }
+    if (outputParticleData[index].time >= meta[blockID.y].life)
+    {
+        outputParticleData[index].position = startPosition;
+        outputParticleData[index].time = 0.f;
+    }
+
+    
    
-    if (particle.position.y >= 10.f)
-    {
-        particle.position.y = 0.f;
-        particle.time = 0.f;
-    }
-    else if (particle.time >= meta[blockID.y].life)
-    {
-        particle.position.y = 0.f;
-        particle.time = 0.f;
-    }
+    //if (particle.position.y >= 10.f)
+    //{
+    //    particle.position.y = 0.f;
+    //    particle.time = 0.f;
+    //}
+    //else if (particle.time >= meta[blockID.y].life)
+    //{
+    //    particle.position.y = 0.f;
+    //    particle.time = 0.f;
+    //}
     
     //if (meta[blockID.y].life > 0)
     //{
