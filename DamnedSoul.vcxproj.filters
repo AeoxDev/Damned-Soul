@@ -157,6 +157,9 @@
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\ProximityHitboxEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -170,6 +173,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\States\CleanupMacros.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\UIButtonFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\D3D11Helper\HolderFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -312,6 +321,9 @@
     <ClInclude Include="header\IDX_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\MemLib\ML_ComponentMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -325,6 +337,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\States\CleanupMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\UI\UIButtonFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

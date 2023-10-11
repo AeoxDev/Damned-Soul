@@ -6,6 +6,7 @@
 #include "Registry.h"
 #include "UI/UIRenderer.h"
 #include "Camera.h"
+#include "UI/UIButtonFunctions.h"
 
 void SettingsState::Setup()
 {
@@ -36,19 +37,20 @@ void SettingsState::SetupButtons()
 {
 	//Back Button
 	{
-		auto OnClick = [this]()
-			{
-				SetInMainMenu(true);
-				SetInSettings(false);
-				Unload();
-				stateManager.menu.Setup();
-			};
+		//auto OnClick = [this]()
+		//	{
+		//		SetInMainMenu(true);
+		//		SetInSettings(false);
+		//		Unload();
+		//		stateManager.menu.Setup();
+		//	};
 
-		auto OnHover = [this]()
-			{
+		//auto OnHover = [this]()
+		//	{
 
-			};
-		registry.AddComponent<UIButtonComponent>(registry.CreateEntity(), UIButton("ExMenu/BackButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
+		//	};
+		UIButtonComponent* button = registry.AddComponent<UIButtonComponent>(registry.CreateEntity());
+		button->button.Setup("ExMenu/BackButton.png", "", L"", UIFunc::Settings_Back, /*OnClick, OnHover,*/{ 0.0f, -0.8f });
 	}
 }
 

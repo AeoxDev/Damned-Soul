@@ -203,6 +203,7 @@ void ReleaseGI( )
 	{
 		//Get entity with UI, release components.
 		GeometryIndependentComponent* gi = registry.GetComponent<GeometryIndependentComponent>(entity);
+		DeleteD3D11Viewport(gi->viewport);
 		DeleteD3D11Buffer(gi->constantBuffer);
 		DeleteD3D11Texture(gi->stagingTexture);
 		DeleteD3D11RenderTargetView(gi->renderTargetView);
