@@ -64,7 +64,7 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 	float normalX = dx / distance;
 	float normalZ = dz / distance;
 
-	if (iShit1&&hit)
+	if (iShit2&&hit)
 	{
 		params.entity1 = entity1;
 		params.entity2 = entity2;
@@ -82,7 +82,7 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
 		circle1->onCircleCollision[circleID1].CollisionFunction(params);
 	}
-	if (iShit2&&hit)
+	if (iShit1&&hit)
 	{
 		params.entity1 = entity2;
 		params.entity2 = entity1;
