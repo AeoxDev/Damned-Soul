@@ -61,7 +61,7 @@ void Menu::SetupButtons()
 		comp->Setup("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", UIFunc::MainMenu_Start, { 0.0f, -0.4f });
 	}
 
-	//Options Button
+	//Settings Button
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);

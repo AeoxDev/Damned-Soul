@@ -39,7 +39,7 @@ bool UIRenderSystem::Update()
             auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
             uiElement->baseImage.Draw();
 
-            for (int i = 0; i < uiElement->images.size(); i++)
+            for (uint32_t i = 0; i < uiElement->images.size(); i++)
                 uiElement->images[i].Draw();
 
         }

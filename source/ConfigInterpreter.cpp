@@ -10,11 +10,13 @@ void InterpretRow(const std::string& name, const std::string& value)
 	{
 		//Convert Value to int
 		sdl.WIDTH = (unsigned)std::stoi(value);
+		sdl.BASE_WIDTH = (unsigned)std::stoi(value);
 	}
 	else if(name == "ResolutionY")
 	{
 		//Convert Value to int
 		sdl.HEIGHT = (unsigned)std::stoi(value);
+		sdl.BASE_HEIGHT = (unsigned)std::stoi(value);
 	}
 	else if (name == "WindowMode")
 	{
