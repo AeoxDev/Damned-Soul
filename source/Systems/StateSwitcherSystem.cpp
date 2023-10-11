@@ -5,6 +5,7 @@
 #include "EventFunctions.h"
 #include "States\StateManager.h"
 
+
 bool StateSwitcherSystem::Update()
 {
 	PlayerComponent* playersComp = nullptr;
@@ -40,7 +41,19 @@ bool StateSwitcherSystem::Update()
 		}
 	}
 
+	
 
+	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (playersComp != nullptr)
+	{
+		if (playersComp->killingSpree >= 3 && !playersComp->portalCreated)
+		{
+			playersComp->portalCreated = true;
+			EntityID portal = registry.CreateEntity();
+			AddTimedEventComponentStart(portal, portal, 1.0f, CreatePortal);
+		}
+	}
+	
 	
 
 	return true;
