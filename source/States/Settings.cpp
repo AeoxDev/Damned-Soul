@@ -54,12 +54,12 @@ void SettingsState::SetupButtons()
 	//Enables/Disables Fullscreen depending on current state
 	auto fullscreenButton = registry.CreateEntity();
 	auto fullscreenComp = registry.AddComponent<UIButton>(fullscreenButton);
-	fullscreenComp->Setup("ExMenu / ButtonBackground.png", "ExMenu / ButtonBackgroundHover.png", L"Fullscreen", UIFunc::Settings_Fullscreen, { 0.0f, -0.4f }, { 0.8f, 0.8f });
+	fullscreenComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Fullscreen", UIFunc::Settings_Fullscreen, { 0.0f, -0.4f }, { 0.8f, 0.8f });
 
 	//Back Button
 	auto backButton = registry.CreateEntity();
 	auto backComp = registry.AddComponent<UIButton>(backButton);
-	backComp->Setup("ExMenu / ButtonBackground.png", "ExMenu / ButtonBackgroundHover.png", L"Back", UIFunc::Settings_Back, { -0.6f, 0.0f }, { 0.8f, 0.8f });	
+	backComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Back", UIFunc::Settings_Back, { -0.6f, 0.0f }, { 0.8f, 0.8f });	
 }
 
 void SettingsState::SetupImages()
@@ -85,32 +85,22 @@ void SettingsState::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	CREATE_ENTITY_MAP_entities;
-
-	for (auto entity : View<UIButtonComponent>(registry))
+	for (auto entity : View<UIButton>(registry))
 	{
-		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
-		b->button.Release();
-		registry.RemoveComponent<UIButtonComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIButton* b = registry.GetComponent<UIButton>(entity);
+		b->Release();
 	}
 
-	for (auto entity : View<ImageComponent>(registry))
+	for (auto entity : View<UIImage>(registry))
 	{
-		ImageComponent* i = registry.GetComponent<ImageComponent>(entity);
-		i->image.Release();
-		registry.RemoveComponent<ImageComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIImage* i = registry.GetComponent<UIImage>(entity);
+		i->Release();
 	}
 
-	for (auto entity : View<TextComponent>(registry))
+	//Destroy entity resets component bitmasks
+	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.RemoveComponent<TextComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		registry.DestroyEntity({ i, false });
 	}
-
-	uint16_t destCount = DestroyEntities(entities);
+	
 }

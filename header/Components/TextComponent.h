@@ -1,7 +1,9 @@
 #pragma once
 #include "UI\UIText.h"
 
-struct TextComponent
-{
-	UIText text;
-};
+//Never touch these again ty
+
+//struct TextComponent
+//{
+//	UIText text;
+//};
