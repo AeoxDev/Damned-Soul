@@ -32,6 +32,7 @@ struct PlayerComponent
 	int souls = 0;
 	int attackHitboxID = -1;
 	int killingSpree = 0;
+	bool portalCreated = false;
 };
 
 struct ControllerComponent

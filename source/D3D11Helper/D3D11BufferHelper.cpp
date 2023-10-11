@@ -222,7 +222,7 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 	//DirectX::XMVECTOR s = DirectX::XMVECTOR{ scaleX, scaleY, ScaleZ};
 	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
 	world = DirectX::XMMatrixScaling(scaleX, scaleY, ScaleZ);
-	world = DirectX::XMMatrixLookAtLH(v, f, up);
+	world = world * DirectX::XMMatrixLookAtLH(v, f, up);
 	world = world * DirectX::XMMatrixTranslation(x, y, z);
 	world = DirectX::XMMatrixTranspose(world);
 	DirectX::XMFLOAT4X4 in;

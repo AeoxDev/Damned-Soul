@@ -15,7 +15,7 @@ uint4 main(PS_IN input) : SV_TARGET
     //Or use the same method from the stage and look at 3d objects
     //This time, however, the values will be either clip or 2+, depending on the hazard
     uint result = 0;
-    if (input.position.z > -1.0f)
+    if (input.position.z > -10.0f)
     {
         result = 1;
     }
