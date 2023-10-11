@@ -56,6 +56,8 @@ namespace Camera
 	/// Up = (0, 1, 0)
 	/// LookAt = (0, 0, 1)
 	/// </summary>
+	
+	void ResetCamera();
 	void InitializeCamera();
 	void FreeCamera();
 }

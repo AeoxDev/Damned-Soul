@@ -9,7 +9,7 @@ ID3D11SamplerState* smp_NULL = nullptr;
 
 TX_IDX LoadTexture(const char* name)
 {
-	TX_IDX& currentIdx = txHolder->_nextIdx;
+	TX_IDX currentIdx = txHolder->NextIdx();
 
     // Check hash
     const uint64_t hash = C_StringToHash(name);
@@ -74,13 +74,13 @@ TX_IDX LoadTexture(const char* name)
 	// Set the hash last thing you do
 	txHolder->hash_map.emplace(currentIdx, hash);
 	
-	return txHolder->_nextIdx++;
+	return currentIdx;
 }
 
 TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
 {
 	// Check hash
-	TX_IDX& currentIdx = txHolder->_nextIdx;
+	TX_IDX currentIdx = txHolder->NextIdx();
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
@@ -109,12 +109,12 @@ TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFla
 	// Set the hash last thing you do
 	txHolder->hash_map.emplace(currentIdx, currentIdx);
 		
-	return txHolder->_nextIdx++;
+	return currentIdx;
 }
 
 bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot)
 {
-	if (txHolder->_nextIdx < idx || idx < 0)
+	if (false == txHolder->tx_map.contains(idx))
 	{
 		std::cerr << "Failed to set compute shader: Index out of range!" << std::endl;
 		return false;
@@ -182,7 +182,7 @@ void GetTextureByType(ID3D11Texture2D*& out, TEXTURE_HOLDER_TYPE type, int16_t i
 
 SMP_IDX CreateSamplerState()
 {
-	uint8_t currentIdx = smpHolder->_nextIdx;
+	uint8_t currentIdx = smpHolder->NextIdx();
 	 
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -204,7 +204,7 @@ SMP_IDX CreateSamplerState()
 	}
 	smpHolder->smp_map.emplace(currentIdx, tempSamp);
 
-	return smpHolder->_nextIdx++;
+	return currentIdx;
 }
 
 void SetSamplerState(const SMP_IDX idx, uint8_t slot)

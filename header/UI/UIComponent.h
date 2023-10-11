@@ -8,7 +8,8 @@ struct UIComponent
 	DirectX::XMFLOAT2 m_Scale;
 	float m_Rotation;
 	D2D1::Matrix3x2F m_Transform;
-	D2D1_RECT_F m_Bounds;
+	D2D1_RECT_F m_CurrentBounds;
+	D2D1_RECT_F m_OriginalBounds;
 	bool m_Visibility;
 	void UpdateTransform();
 	void SetTransform(DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f);

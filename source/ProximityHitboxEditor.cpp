@@ -28,12 +28,12 @@ void HitboxEditorLoop(std::string fileName, bool clockwise)
 			if (prefix == "X")
 			{
 				ss >> value;
-				currentPoint.x = std::stoi(value);
+				currentPoint.x = (float)std::stoi(value);
 			}
 			else if (prefix == "Z")
 			{
 				ss >> value;
-				currentPoint.z = std::stoi(value);
+				currentPoint.z = (float)std::stoi(value);
 				CHV.list.push_back(currentPoint);
 			}
 			else if (prefix == "Clockwise")
@@ -282,7 +282,7 @@ void EdgeCaseFixer(CurrentHitboxVariables& CHV, bool lastIncluded)
 		test.z = (CHV.list[i].z + CHV.list[secondIndex].z) / 2.0f;
 		float minDist = abs(sqrt(pow((test.x - CHV.list[i].x), 2.0f) + pow((test.z - CHV.list[i].z), 2.0f)));
 
-		for (int j = 0; j < CHV.list.size(); j++)
+		for (uint32_t j = 0; j < CHV.list.size(); j++)
 		{
 			float newDist = abs(sqrt(pow((test.x - CHV.list[j].x), 2.0f) + pow((test.z - CHV.list[j].z), 2.0f)));
 			if ((minDist > newDist) && (minDist > 50.0f)) //Alter the minDist > X check to be the units the player can move per frame (Preferably a high number cause otherwise it's very expensive)

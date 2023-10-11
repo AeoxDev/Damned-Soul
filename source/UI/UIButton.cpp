@@ -2,22 +2,22 @@
 
 using namespace DirectX;
 
-UIButton::UIButton(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
-{
-	Setup(imageFile, hoverImageFile, buttonText, onClick, onHover, position, scale, rotation, visibility, opacity);
-}
+//UIButton::UIButton(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+//{
+//	Setup(imageFile, hoverImageFile, buttonText, onClick, onHover, position, scale, rotation, visibility, opacity);
+//}
 
-void UIButton::Setup(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, std::function<void()> onClick, std::function<void()> onHover, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIButton::Setup(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, void* onClick, /*std::function<void()> onClick, std::function<void()> onHover,*/ XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_Images[0] = UIImage(imageFile, position, scale, rotation, visibility, opacity);
-	m_uiComponent.m_Bounds = m_Images[0].m_Bounds;
+	m_uiComponent.m_OriginalBounds = m_Images[0].m_CurrentBounds;
 
 	m_onClick = onClick;
-	m_onHover = onHover;
+	//m_onHover = onHover;
 
+	m_uiComponent.SetScale(scale);
 	m_uiComponent.SetPosition(position);
 	m_uiComponent.SetRotation(rotation);
-	m_uiComponent.SetScale(scale);
 	m_uiComponent.SetTransform(position, scale, rotation);
 	m_uiComponent.SetVisibility(visibility);
 
@@ -36,23 +36,27 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 
 void UIButton::Draw()
 {
-	if (true == m_uiComponent.m_Visibility)
+	if (m_uiComponent.m_Visibility)
 	{
 		m_Images[m_CurrentImage].Draw();
 		m_Text.Draw();
+		m_CurrentImage = 0;
 	}
 }
 
-void UIButton::Interact()
+void UIButton::Interact(void* args)
 {
-	if (m_onClick)
-		m_onClick();
+	if (m_onClick && m_uiComponent.m_Visibility)
+		((void(*)(void* args))m_onClick)(args);
 }
 
 void UIButton::Hover()
 {
-	if (m_onHover)
-		m_onHover();
+	if (/*m_onHover && */m_uiComponent.m_Visibility)
+	{
+		m_CurrentImage = 1;
+		//m_onHover();
+	}
 }
 
 void UIButton::Release()

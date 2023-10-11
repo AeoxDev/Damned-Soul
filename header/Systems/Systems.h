@@ -28,17 +28,22 @@ class UIRenderSystem : public System
 {
 	bool Update();
 };
-
-class PlayerHealthUISystem : public System
+class UIHealthSystem : public System
 {
 	bool Update();
 };
-
-class PlayerSoulsUISystem : public System
+class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-
+class UIPlayerRelicsSystem : public System
+{
+	bool Update();
+};
+class UIGameLevelSystem : public System
+{
+	bool Update();
+};
 
 class PointOfInterestSystem : public System
 {
@@ -48,6 +53,7 @@ class TransformSystem : public System
 {
 	bool Update();
 };
+
 class ParticleSystemGPU : public System
 {
 	bool Update();
@@ -73,6 +79,11 @@ class CollisionSystem : public System
 };
 
 class EventSystem : public System
+{
+	bool Update();
+};
+
+class StateSwitcherSystem : public System
 {
 	bool Update();
 };

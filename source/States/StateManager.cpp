@@ -82,38 +82,43 @@ void StateManager::Setup()
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
 	//models.Initialize();
-	menu.Setup();
 	Camera::InitializeCamera();
+	menu.Setup();
 
-	//Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
+	Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
 	//SetupTestHitbox();
 	RedrawUI();
 
 	//Setup systems here
 
-	//// Compute
-	//systems.push_back(new ParticleSystemGPU());
+	// Compute
+	systems.push_back(new ParticleSystemGPU());
 
 	// Render/GPU
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new RenderSystem());
-
-	// CPU
+	
+	//Input based CPU
 	systems.push_back(new ButtonSystem());
 
-	//Input based CPU
+	// CPU
 	systems.push_back(new ControllerSystem());
-	//systems.push_back(new ParticleSystemCPU());
+	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
-	systems.push_back(new PlayerHealthUISystem());
-	systems.push_back(new PlayerSoulsUISystem());
-	//systems.push_back(new UIRenderSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());
 	systems.push_back(new EventSystem());
+	systems.push_back(new StateSwitcherSystem());
+
+	// Updating UI Elements (Needs to be last)
+	systems.push_back(new UIHealthSystem());
+	systems.push_back(new UIPlayerSoulsSystem());
+	systems.push_back(new UIPlayerRelicsSystem());
+	systems.push_back(new UIGameLevelSystem());
+
 }
 
 
@@ -152,6 +157,7 @@ void StateManager::Update()
 	{
 		systems[i]->Update();
 	}
+	Input();
 }
 
 void StateManager::ComputeShaders()
@@ -199,4 +205,9 @@ void StateManager::EndFrame()
 	ResetInput();
 	GetInput();
 	//MemLib::pdefrag();
+}
+
+GameScene StateManager::GetCurrentLevel()
+{
+	return levelScenes[activeLevelScene];
 }

@@ -47,7 +47,7 @@ public:
 
 	uint32_t find_last_of(const char* other)
 	{
-		uint8_t oLen = std::strlen(other);
+		uint8_t oLen = (uint8_t)std::strlen(other);
 
 		// Find the last that maches a single char of the other string
 		for (uint32_t i = m_len; 0 <= i; --i)

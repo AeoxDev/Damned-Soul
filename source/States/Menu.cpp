@@ -7,6 +7,7 @@
 #include "Components.h"
 #include "Camera.h"
 #include "States\CleanupMacros.h"
+#include "UI/UIButtonFunctions.h"
 
 void Menu::Setup()//Load
 {
@@ -16,6 +17,9 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupImages();
 	SetupText();
+
+	Camera::ResetCamera();
+
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
 	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
@@ -51,53 +55,56 @@ void Menu::SetupButtons()
 {
 	//Start Button
 	{
-		auto OnClick = [this]()
-			{
-				SetInPlay(true);
-				SetInMainMenu(false);
-				Unload();
-				stateManager.levelScenes[0].Setup(0);
-			};
+		//auto OnClick = [this]()
+		//	{
+		//		SetInPlay(true);
+		//		SetInMainMenu(false);
+		//		Unload();
+		//		stateManager.levelScenes[0].Setup(0);
+		//	};
 
-		auto OnHover = [this]()
-			{
+		//auto OnHover = [this]()
+		//	{
 
-			};
+		//	};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/StartButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.4f }));
+		UIButtonComponent* button = registry.AddComponent<UIButtonComponent>(registry.CreateEntity());
+		button->button.Setup("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", UIFunc::MainMenu_Start, /*OnClick, OnHover,*/ { 0.0f, -0.4f });
 	}
 
 	//Options Button
 	{
-		auto OnClick = [this]()
-			{
-				SetInSettings(true);
-				SetInMainMenu(false);
-				Unload();
-				stateManager.settings.Setup();
-			};
+		//auto OnClick = [this]()
+		//	{
+		//		SetInSettings(true);
+		//		SetInMainMenu(false);
+		//		Unload();
+		//		stateManager.settings.Setup();
+		//	};
 
-		auto OnHover = [this]()
-			{
+		//auto OnHover = [this]()
+		//	{
 
-			};
+		//	};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/OptionsButton.png", "", L"", OnClick, OnHover, { 0.0f,  -0.6f}));
+		UIButtonComponent* button = registry.AddComponent<UIButtonComponent>(registry.CreateEntity());
+		button->button.Setup("Exmenu/OptionsButton.png", "Exmenu/OptionsButtonHover.png", L"", UIFunc::MainMenu_Settings, /*OnClick, OnHover,*/ { 0.0f,  -0.6f });
 	}
 
 	//Exit Button
 	{
-		auto OnClick = [this]()
-			{
-				
-			};
+		//auto OnClick = [this]()
+		//	{
+		//		sdl.quit = true;
+		//	};
 
-		auto OnHover = [this]()
-			{
+		//auto OnHover = [this]()
+		//	{
 
-			};
+		//	};
 
-		registry.AddComponent<ButtonComponent>(registry.CreateEntity(), UIButton("Exmenu/ExitButton.png", "", L"", OnClick, OnHover, { 0.0f, -0.8f }));
+		UIButtonComponent* button = registry.AddComponent<UIButtonComponent>(registry.CreateEntity());
+		button->button.Setup("Exmenu/ExitButton.png", "Exmenu/ExitButtonHover.png", L"", UIFunc::MainMenu_Quit, /*OnClick, OnHover, */{ 0.0f, -0.8f });
 	}
 }
 
@@ -124,11 +131,11 @@ void Menu::Unload()
 
 	CREATE_ENTITY_MAP_entities;
 
-	for (auto entity : View<ButtonComponent>(registry))
+	for (auto entity : View<UIButtonComponent>(registry))
 	{
-		ButtonComponent* b = registry.GetComponent<ButtonComponent>(entity);
+		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
 		b->button.Release();
-		registry.RemoveComponent<ButtonComponent>(entity);
+		registry.RemoveComponent<UIButtonComponent>(entity);
 
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}

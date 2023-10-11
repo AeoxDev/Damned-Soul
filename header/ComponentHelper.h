@@ -10,16 +10,20 @@
 struct StatComponent
 {
 	//Base stats
-	int health = 100;
+	float health = 100.0f;
 	//defense? percentage-based or flat?
 	float moveSpeed = 1.0f;
 
 
 	//Weapon stats
-	int damage = 10;
+	float damage = 10.0f;
 	float attackSpeed = 1.0f;
 
-	StatComponent(int hp, float ms, int dmg, float as) : health(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
+
+	// for death animation
+	bool performingDeathAnimation = false;
+
+	StatComponent(float hp, float ms, float dmg, float as) : health(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
 };
 
 //Stats specific to the player
@@ -27,6 +31,7 @@ struct PlayerComponent
 {
 	int souls = 0;
 	int attackHitboxID = -1;
+	int killingSpree = 0;
 };
 
 struct ControllerComponent
@@ -65,15 +70,9 @@ struct RelicHolderComponent
 #define MAX_LENGTH 16
 
 	char name[MAX_LENGTH] = "Default Name";
-	int hp = 100;
-
 	std::bitset<MAX_RELICS> relicBitset; //I have become bitset enjoyer
 
-	float damage = 20.0f;
-	float defense = 0.0f; //percentage
-	float speed = 0.25f;
-
-	RelicHolderComponent(const char name_in[MAX_LENGTH], const int hp) :hp(hp)
+	RelicHolderComponent(const char name_in[MAX_LENGTH])
 	{
 		std::memcpy(name, name_in, MAX_LENGTH);
 	}
