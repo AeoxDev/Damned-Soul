@@ -7,9 +7,11 @@
 
 struct UIGameLevelComponent
 {
-	int value;
 	DirectX::XMFLOAT2 position;
 	DirectX::XMFLOAT2 scale;
+
+	int value = -1; //Defaulted so we don't have to init to redundant value since it gets set at runtime
+
 	UIImage image;
 	UIText text;
 };

@@ -7,14 +7,16 @@
 #include "UI/UIRenderer.h"
 #include "Camera.h"
 #include "UI/UIButtonFunctions.h"
+#include "D3D11Helper.h"
+#include "GameRenderer.h"
 
 void SettingsState::Setup()
 {
 	m_active = true;
 
 	RedrawUI();
-	SetupButtons();
 	SetupImages();
+	SetupButtons();
 	SetupText();
 
 	Camera::ResetCamera();
@@ -22,7 +24,6 @@ void SettingsState::Setup()
 
 void SettingsState::Input()
 {
-
 }
 
 void SettingsState::Update()
@@ -35,47 +36,46 @@ void SettingsState::ComputeShaders()
 
 void SettingsState::SetupButtons()
 {
+	// Changes resolution to 1280x720	
+	auto lowResButton = registry.CreateEntity();
+	auto lowResComp = registry.AddComponent<UIButton>(lowResButton);
+	lowResComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"1280x720", UIFunc::Settings_LowRes, { -0.4f, 0.0f }, { 0.8f, 0.8f });
+
+	// Changes resolution to 1600x900
+	auto mediumResButton = registry.CreateEntity();
+	auto mediumResComp = registry.AddComponent<UIButton>(mediumResButton);
+	mediumResComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"1600x900", UIFunc::Settings_MediumRes, { 0.0f, 0.0f }, { 0.8f, 0.8f });
+	
+	// Changes resolution to 1920x1080
+	auto highResButton = registry.CreateEntity();
+	auto highResComp = registry.AddComponent<UIButton>(highResButton);
+	highResComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"1920x1080", UIFunc::Settings_HighRes, { 0.4f, 0.0f }, { 0.8f, 0.8f });
+
+	//Enables/Disables Fullscreen depending on current state
+	auto fullscreenButton = registry.CreateEntity();
+	auto fullscreenComp = registry.AddComponent<UIButton>(fullscreenButton);
+	fullscreenComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Fullscreen", UIFunc::Settings_Fullscreen, { 0.0f, -0.4f }, { 0.8f, 0.8f });
+
 	//Back Button
-	{
-		//auto OnClick = [this]()
-		//	{
-		//		SetInMainMenu(true);
-		//		SetInSettings(false);
-		//		Unload();
-		//		stateManager.menu.Setup();
-		//	};
-
-		//auto OnHover = [this]()
-		//	{
-
-		//	};
-		UIButtonComponent* button = registry.AddComponent<UIButtonComponent>(registry.CreateEntity());
-		button->button.Setup("ExMenu/BackButton.png", "", L"", UIFunc::Settings_Back, /*OnClick, OnHover,*/{ 0.0f, -0.8f });
-	}
+	auto backButton = registry.CreateEntity();
+	auto backComp = registry.AddComponent<UIButton>(backButton);
+	backComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Back", UIFunc::Settings_Back, { -0.6f, 0.0f }, { 0.8f, 0.8f });	
 }
 
 void SettingsState::SetupImages()
 {
-
-	//registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/OptionsButtonHover.png", { (sdl.WIDTH / 2.0f) - (426.0f / 8.0f), 100.0f }, { 1.0f, 1.0f }));
-
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/D0.png", { -0.5f, 0.6f }, { 1.5f, 1.5f }));
-
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/D0.png", { 0.5, 0.6f }, { 1.5f, 1.5f }));
-
-	registry.AddComponent<ImageComponent>(registry.CreateEntity(), UIImage("ExMenu/CheckBoxBase.png", { 0.1f, -0.2f }));
+	// Settings backdrop panel
+	auto settingsPanel = registry.CreateEntity();
+	auto panelComp = registry.AddComponent<UIImage>(settingsPanel);
+	//panelComp->Setup("ExMenu/ButtonBackgroundHover.png", { 0.0f, 0.0f }, { 1.7f, 1.7f });
 }
 
 void SettingsState::SetupText()
 {
-
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"This is the settings menu!", { 0.0f, 0.6f }));
-
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Fullscreen:", { -0.1f, -0.2f }));
-
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Volume: 100", { 0.0f, -0.4f }));
-
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Graphics: Flawless", { 0.0f, -0.6f }));
+	// Settings Text Header
+	auto settingsHeader = registry.CreateEntity();
+	auto headerComp = registry.AddComponent<UIText>(settingsHeader);
+	//headerComp->Setup(L"Settings", { 0.0f, 0.4f }, {1.5f, 1.5f});
 }
 
 void SettingsState::Unload()
@@ -85,32 +85,22 @@ void SettingsState::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	CREATE_ENTITY_MAP_entities;
-
-	for (auto entity : View<UIButtonComponent>(registry))
+	for (auto entity : View<UIButton>(registry))
 	{
-		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
-		b->button.Release();
-		registry.RemoveComponent<UIButtonComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIButton* b = registry.GetComponent<UIButton>(entity);
+		b->Release();
 	}
 
-	for (auto entity : View<ImageComponent>(registry))
+	for (auto entity : View<UIImage>(registry))
 	{
-		ImageComponent* i = registry.GetComponent<ImageComponent>(entity);
-		i->image.Release();
-		registry.RemoveComponent<ImageComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIImage* i = registry.GetComponent<UIImage>(entity);
+		i->Release();
 	}
 
-	for (auto entity : View<TextComponent>(registry))
+	//Destroy entity resets component bitmasks
+	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.RemoveComponent<TextComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		registry.DestroyEntity({ i, false });
 	}
-
-	uint16_t destCount = DestroyEntities(entities);
+	
 }

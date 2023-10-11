@@ -6,6 +6,7 @@
 #include "Level.h"
 #include "UIRenderer.h"
 #include <assert.h>
+#include "UIRenderer.h"
 //#include <iostream>
 #define SOFT_COLLISION_FACTOR 0.5f
 
@@ -127,7 +128,6 @@ void AttackCollision(OnCollisionParameters& params)
 	
 	stat2->health -= stat1->damage;
 	RedrawUI();
-	
 }
 
 void LoadNextLevel(OnCollisionParameters& params)

@@ -28,7 +28,6 @@ void GameScene::Setup(int scene)//Load
 
 		Camera::ResetCamera();
 
-		//Doggo
 	}
 }
 
@@ -55,7 +54,6 @@ void GameScene::ComputeShaders()
 	Particles::FinishParticleCompute();*/
 }
 
-
 void GameScene::Unload()
 {
 	// If this state is not active, simply skip the unload
@@ -63,157 +61,53 @@ void GameScene::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	CREATE_ENTITY_MAP_entities;
-
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
 		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		registry.RemoveComponent<ModelBonelessComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<TransformComponent>(registry))
-	{
-		registry.RemoveComponent<TransformComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry))
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		registry.RemoveComponent<ModelSkeletonComponent>(entity);
-
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<AnimationComponent>(registry))
-	{
-		registry.RemoveComponent<AnimationComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<GeometryIndependentComponent>(registry))
-	{
-		registry.RemoveComponent<GeometryIndependentComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIPlayerSoulsComponent>(registry))
 	{
 		UIPlayerSoulsComponent* ps = registry.GetComponent<UIPlayerSoulsComponent>(entity);
 		ps->image.Release();
-		registry.RemoveComponent<UIPlayerSoulsComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIGameLevelComponent>(registry))
 	{
 		UIGameLevelComponent* ps = registry.GetComponent<UIGameLevelComponent>(entity);
 		ps->image.Release();
-		registry.RemoveComponent<UIGameLevelComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIHealthComponent>(registry))
 	{
 		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
 		ph->image.Release();
-		registry.RemoveComponent<UIHealthComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
-	for (auto entity : View<PointOfInterestComponent>(registry))
+	for (auto entity : View<UIButton>(registry))
 	{
-		registry.RemoveComponent<PointOfInterestComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIButton* b = registry.GetComponent<UIButton>(entity);
+		b->Release();
 	}
 
-	for (auto entity : View<EnemyComponent>(registry))
+	for (auto entity : View<UIImage>(registry))
 	{
-		registry.RemoveComponent<EnemyComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIImage* i = registry.GetComponent<UIImage>(entity);
+		i->Release();
 	}
 
-	for (auto entity : View<PlayerComponent>(registry))
+	//Destroy entity resets component bitmasks
+	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.RemoveComponent<PlayerComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		registry.DestroyEntity({ i, false });
 	}
-
-	for (auto entity : View<ControllerComponent>(registry))
-	{
-		registry.RemoveComponent<ControllerComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<StatComponent>(registry))
-	{
-		registry.RemoveComponent<StatComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<SkeletonBehaviour>(registry))
-	{
-		registry.RemoveComponent<SkeletonBehaviour>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<HellhoundBehaviour>(registry))
-	{
-		registry.RemoveComponent<HellhoundBehaviour>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<HitboxComponent>(registry))
-	{
-		registry.RemoveComponent<HitboxComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<UIButtonComponent>(registry))
-	{
-		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
-		b->button.Release();
-		registry.RemoveComponent<UIButtonComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<ImageComponent>(registry))
-	{
-		ImageComponent* i = registry.GetComponent<ImageComponent>(entity);
-		i->image.Release();
-		registry.RemoveComponent<ImageComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<TextComponent>(registry))
-	{
-		registry.RemoveComponent<TextComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	uint16_t destCount = DestroyEntities(entities);
 }
 
 void GameScene::GameOver()
