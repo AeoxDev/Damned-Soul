@@ -18,7 +18,7 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupImages();
 	SetupText();
-
+	stateManager.activeLevelScene = 0;
 	Camera::ResetCamera();
 
 	//Setup stage to rotate around
