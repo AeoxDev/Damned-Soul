@@ -10,15 +10,15 @@ float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z)
 	return sqrt((pos1X - pos2X) * (pos1X - pos2X) + (pos1Z - pos2Z) * (pos1Z - pos2Z));
 }
 
-void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ)
+void SmoothRotation(TransformComponent* tc, float goalX, float goalZ)
 {
 	DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ goalX, goalZ, 0.0f };
 	DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
 	DirectX::XMFLOAT3 l;
 	DirectX::XMStoreFloat3(&l, length);
-	float angle = acosf(ptc->facingX);
+	float angle = acosf(tc->facingX);
 
-	if (ptc->facingZ < 0.0f)
+	if (tc->facingZ < 0.0f)
 	{
 		angle *= -1.0f;
 	}
@@ -37,9 +37,9 @@ void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ)
 			goalAngle *= -1.0f;
 		}
 		//Check if shortest distance is right or left
-		float orthogonalX = -ptc->facingZ;
-		float orthogonalZ = ptc->facingX;
-		float dot = goalX * ptc->facingX + goalZ * ptc->facingZ;
+		float orthogonalX = -tc->facingZ;
+		float orthogonalZ = tc->facingX;
+		float dot = goalX * tc->facingX + goalZ * tc->facingZ;
 		float orthDot = goalX * orthogonalX + goalZ * orthogonalZ;
 		if (orthDot > 0.0f)
 		{//Om till vänster
@@ -49,8 +49,8 @@ void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ)
 		{
 			angle -= GetDeltaTime() * (5.1f - dot);
 		}
-		ptc->facingX = cosf(angle);
-		ptc->facingZ = sinf(angle);
+		tc->facingX = cosf(angle);
+		tc->facingZ = sinf(angle);
 		goalX = 0.0f;
 		goalZ = 0.0f;
 	}

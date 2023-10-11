@@ -63,7 +63,6 @@ void GameScene::Setup(int scene)//Load
 		//Stats
 		PlayerComponent* pc = registry.AddComponent<PlayerComponent>(player);
 		StatComponent* ps = registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 100.f, 10.f, 25.f, 5.f);
 
 		StatComponent* ds = registry.AddComponent<StatComponent>(dog, 50.f, 10.f, 25.f, 5.f);
 		EnemyComponent* ec1 = registry.AddComponent<EnemyComponent>(dog, 1);
@@ -123,8 +122,8 @@ void GameScene::Setup(int scene)//Load
 		dtc->positionX = 20.0f;
 		skeltc->positionZ = 20.0f;
 		skeltc2->positionZ = 15.0f;
-	/*	eyetc->positionX = 20.f;
-		eyetc->positionZ = 20.f;*/
+		eyetc->positionX = 20.f;
+		eyetc->positionZ = 20.f;
 
 		poic->weight = 10.0f;
 
@@ -139,6 +138,8 @@ void GameScene::Setup(int scene)//Load
 		SetupEnemyCollisionBox(skeleton, 0.9f);
 		SetupEnemyCollisionBox(skeleton2, 0.9f);
 		SetupEnemyCollisionBox(dog, 1.0f);
+		SetupEnemyCollisionBox(eye, 1.0f);
+
 	}
 }
 
