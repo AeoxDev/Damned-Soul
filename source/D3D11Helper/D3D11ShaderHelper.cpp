@@ -40,15 +40,18 @@ PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 		std::cerr << "Failed to create PS test shader!" << std::endl;
 		return -1;
 	}
-	pixHolder->ps_map.emplace(pixHolder->_nextIdx, tempPS);
+
+	PS_IDX idx = pixHolder->NextIdx();
+
+	pixHolder->ps_map.emplace(idx, tempPS);
 
 	MemLib::spop(); // Free if it succeeded because it is destined to die
-	return pixHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetPixelShader(const PS_IDX idx)
 {
-	if (pixHolder->_nextIdx < idx)
+	if (false == pixHolder->ps_map.contains(idx))
 	{
 		std::cerr << "Failed to set pixel shader: Index out of range!" << std::endl;
 		return false;
@@ -166,30 +169,31 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 		std::cerr << "Failed to create Vertex Shader!" << std::endl;
 		return -1;
 	}
-	vrtHolder->vs_map.emplace(vrtHolder->_nextIdx, tempVS);
+	VS_IDX idx = vrtHolder->NextIdx();
+	vrtHolder->vs_map.emplace(idx, tempVS);
 
 	ID3D11InputLayout* tempIL = 0;
 	// Try to create accompanying input layout
 	if (false == CreateInputLayout(shaderData, size, tempIL, layout))
 	{
 		MemLib::spop(); // Pop if failiure
-		vrtHolder->vs_map[vrtHolder->_nextIdx]->Release(); // Release the newly created shader if the input layout failed
+		vrtHolder->vs_map[idx]->Release(); // Release the newly created shader if the input layout failed
 		std::cerr << "Failed to create Input Layout for Vertex Shader!" << std::endl;
 		return -1;
 	}
-	vrtHolder->il_map.emplace(vrtHolder->_nextIdx, tempIL);
+	vrtHolder->il_map.emplace(idx, tempIL);
 
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return vrtHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetVertexShader(const VS_IDX idx)
 {
-	if (vrtHolder->_nextIdx < idx)
+	if (false == vrtHolder->vs_map.contains(idx))
 	{
 		std::cerr << "Failed to set vertex shader/input layout pair: Index out of range!" << std::endl;
 		return false;
@@ -240,18 +244,19 @@ CS_IDX LoadComputeShader(const char* name)
 		std::cerr << "Failed to create Compute Shader!" << std::endl;
 		return -1;
 	}
-	comHolder->cs_map.emplace(comHolder->_nextIdx, tempCS);
+	CS_IDX idx = comHolder->NextIdx();
+	comHolder->cs_map.emplace(idx, tempCS);
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return comHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetComputeShader(const CS_IDX idx)
 {
-	if (comHolder->_nextIdx < idx)
+	if (false == comHolder->cs_map.contains(idx))
 	{
 		std::cerr << "Failed to set compute shader: Index out of range!" << std::endl;
 		return false;
@@ -300,18 +305,19 @@ GS_IDX LoadGeometryShader(const char* name)
 		std::cerr << "Failed to create Geometry Shader!" << std::endl;
 		return -1;
 	}
-	geoHolder->gs_map.emplace(geoHolder->_nextIdx, tempGS);
+	GS_IDX idx = geoHolder->NextIdx();
+	geoHolder->gs_map.emplace(idx, tempGS);
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return geoHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetGeometryShader(const GS_IDX idx)
 {
-	if (geoHolder->_nextIdx < idx)
+	if (false == geoHolder->gs_map.contains(idx))
 	{
 		std::cerr << "Failed to set geometry shader: Index out of range!" << std::endl;
 		return false;

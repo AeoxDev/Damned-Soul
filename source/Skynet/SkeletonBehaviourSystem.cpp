@@ -87,7 +87,7 @@ bool SkeletonBehaviourSystem::Update()
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 
-		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && true )// check if enemy is alive, change later
+		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->health > 0 )// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			skeletonComponent->attackTimer += GetDeltaTime();

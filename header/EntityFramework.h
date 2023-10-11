@@ -10,6 +10,7 @@
 
 #include "MemLib/MemLib.hpp"
 #include "MemLib/ML_Vector.hpp"
+#include "MemLib/ML_ComponentMap.hpp"
 #include "ComponentHelper.h"
 
 /*
@@ -178,19 +179,22 @@ public:
 			componentArrays.resize(compId + 1); //Want to resize this to have a nullptr at the end but memlib nullptr be wildin
 
 		//New component, make a new array
-		if (componentArrays[compId].IsNullptr())
+		if (false == componentArrays[compId].initialized())
 		{
 			//Allocate space in memory and call the "constructor" for the new array
 			//componentArrays[compId] = new ComponentArray(sizeof(T));
 			//componentArrays[compId] = 
-			componentArrays[compId] = MemLib::palloc(sizeof(ComponentArray));
-			new(componentArrays[compId]) ComponentArray(sizeof(T));
+			componentArrays[compId].Initialize(sizeof(T));
+			//componentArrays[compId] = MemLib::palloc(sizeof(ComponentArray));
+			//new(componentArrays[compId]) ComponentArray(sizeof(T));
 			//componentArrays[compId]->Initialize(sizeof(T));
 		}
 
 		//Create component and cast to ComponentArray data (char*, address)
 		//Edit: Not quite true, more like we're slotting T(args...) into the memory address at the specified index in the ComponentArray
-		T* componentPointer = new (componentArrays[compId]->GetDataAt(id)) T(args...);
+		//T* componentPointer = new (componentArrays[compId]->GetDataAt(id)) T(args...);
+		
+		T* componentPointer = new (componentArrays[compId].emplace(id.index)) T(args...);
 		//PoolPointer<T> typeCasted = (componentArrays[compId]->GetDataAt(id)) T(args...);
 		//typeCasted[GetEntityIndex(id)] = T(args...);
 
@@ -210,6 +214,7 @@ public:
 
 		//Remove any component in this entity's component bitset that matches the component ID we're looking for
 		int compId = EntityGlobals::GetId<T>();
+		componentArrays[compId].erase(id.index);
 		entities[GetEntityIndex(id)].components.reset(compId);
 	}
 
@@ -228,7 +233,8 @@ public:
 
 		//Return the component at the index of the specified entity ID
 		//Get component by casting ComponentArray data (char*, address) back to the Component struct itself, NORMALLY: T* componentPointer = (T*)(componentArrays[compId]->data);
-		T* componentPointer = (T*)(componentArrays[compId]->GetDataAt(id));
+		//T* componentPointer = (T*)(componentArrays[compId]->GetDataAt(id));
+		T* componentPointer = (T*)(componentArrays[compId][id.index]);
 		//PoolPointer<T> componentPointer = componentArrays[compId]->GetDataAt(id);
 
 		//return &componentPointer;
@@ -287,7 +293,8 @@ private:
 	//Private member variables
 	//ML_Vector<PoolPointer<ComponentArray>> componentArrays;
 	//std::vector<ComponentArray*> componentArrays;
-	std::vector<PoolPointer<ComponentArray>> componentArrays;
+	//std::vector<PoolPointer<ComponentArray>> componentArrays;
+	std::vector<ML_ComponentMap> componentArrays;
 };
 
 //Templated to allow for views that can contain entities with any combination of components

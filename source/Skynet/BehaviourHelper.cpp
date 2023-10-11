@@ -3,14 +3,12 @@
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
 
-
-
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z)
 {
 	return sqrt((pos1X - pos2X) * (pos1X - pos2X) + (pos1Z - pos2Z) * (pos1Z - pos2Z));
 }
 
-void SmoothRotation(TransformComponent* tc, float goalX, float goalZ)
+void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor)
 {
 	DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ goalX, goalZ, 0.0f };
 	DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
@@ -18,7 +16,12 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ)
 	DirectX::XMStoreFloat3(&l, length);
 	float angle = acosf(tc->facingX);
 
-	if (tc->facingZ < 0.0f)
+	if (rotationFactor <= 1.0f)
+	{
+		rotationFactor = 1.1f;
+	}
+
+	if (ptc->facingZ < 0.0f)
 	{
 		angle *= -1.0f;
 	}
@@ -42,12 +45,12 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ)
 		float dot = goalX * tc->facingX + goalZ * tc->facingZ;
 		float orthDot = goalX * orthogonalX + goalZ * orthogonalZ;
 		if (orthDot > 0.0f)
-		{//Om till vänster
-			angle += GetDeltaTime() * (5.1f - dot);
+		{//if left
+			angle += GetDeltaTime() * (rotationFactor - dot);
 		}
 		else
 		{
-			angle -= GetDeltaTime() * (5.1f - dot);
+			angle -= GetDeltaTime() * (rotationFactor - dot);
 		}
 		tc->facingX = cosf(angle);
 		tc->facingZ = sinf(angle);
