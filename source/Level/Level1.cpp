@@ -30,11 +30,14 @@ void LoadLevel1()
 	// Dog
 	TransformComponent dogTransformComponent;
 	dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 20.0f; dogTransformComponent.facingX = 1.0f;
+	dogTransformComponent.mass = 9.0f;
 	/*TransformComponent* dtc = */registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
 	// Stage (Default)
 	/*TransformComponent* stc = */registry.AddComponent<TransformComponent>(stage);
 	// Player (Default)
-	/*TransformComponent* ptc = */registry.AddComponent<TransformComponent>(player);
+	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
+	playerTransform->facingZ = 1.0f;
+	playerTransform->mass = 3.0f;
 	// First skeleton
 	TransformComponent fsTransformComponent;
 	fsTransformComponent.positionZ = 20.0f;
@@ -83,14 +86,14 @@ void LoadLevel1()
 	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1.0f, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
 
 
-	/*HellhoundBehaviour* hellhoundBehevCo = */registry.AddComponent<HellhoundBehaviour>(dog);
-	/*SkeletonBehaviour* skeletonBehevCo = */registry.AddComponent<SkeletonBehaviour>(skeleton);
-	/*SkeletonBehaviour* skeletonBehevCo2 = */registry.AddComponent<SkeletonBehaviour>(skeleton2);
+	///*HellhoundBehaviour* hellhoundBehevCo = */registry.AddComponent<HellhoundBehaviour>(dog);
+	///*SkeletonBehaviour* skeletonBehevCo = */registry.AddComponent<SkeletonBehaviour>(skeleton);
+	///*SkeletonBehaviour* skeletonBehevCo2 = */registry.AddComponent<SkeletonBehaviour>(skeleton2);
 
 
 	RenderGeometryIndependentCollision(stage);
 	//Finally set the collision boxes
-	SetupPlayerCollisionBox(player, 1.0f);
+	SetupPlayerCollisionBox(player, 2.0f);
 
 	SetupEnemyCollisionBox(skeleton, 0.9f);
 	SetupEnemyCollisionBox(skeleton2, 0.9f);

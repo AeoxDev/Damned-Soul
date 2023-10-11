@@ -19,6 +19,10 @@ struct OnCollisionParameters
 	float normal1Z;
 	float normal2X;
 	float normal2Z;
+	float pos1X;
+	float pos1Z;
+	float pos2X;
+	float pos2Z;
 };
 
 struct OnCollision
@@ -78,7 +82,7 @@ struct GeometryIndependentColliderComponent
 struct HitboxComponent
 {
 	int nrMoveableCollisions;
-
+	
 	unsigned usedCirclesHitboxes;//This is a collection of bits that indicate which are used or not
 	CollisionFlags circularFlags[SAME_TYPE_HITBOX_LIMIT] = {0};
 	OnCollision onCircleCollision[SAME_TYPE_HITBOX_LIMIT] = { 0 };//What happens when this hitbox collides with something
@@ -88,6 +92,10 @@ struct HitboxComponent
 	CollisionFlags convexFlags[SAME_TYPE_HITBOX_LIMIT] = { 0 };
 	OnCollision onConvexCollision[SAME_TYPE_HITBOX_LIMIT] = { 0 };//What happens when this hitbox collides with something
 	ConvexColliderComponent convexHitbox[SAME_TYPE_HITBOX_LIMIT] = { 0 };
+
+	//offset multiplier values:
+	float offsetXx = 1.0f, offsetXz = 0.0f;
+	float offsetZx = 0.0f, offsetZz = 1.0f;
 
 	HitboxComponent();
 	

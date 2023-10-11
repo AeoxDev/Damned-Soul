@@ -46,14 +46,23 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 	{
 		return false;
 	}
-
+	if (circle1->circleHitbox[circleID1].offsetZ != 0.0f)
+	{
+		circle1->circleHitbox[circleID1].offsetZ += 0.0f;
+	}
 	// if not, find the hitboxes and see if they actually collide
-	float dx = (pos1x + circle1->circleHitbox[circleID1].offsetX) - (pos2x + circle2->circleHitbox[circleID2].offsetX); //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
-	float dy = (pos1z + circle1->circleHitbox[circleID1].offsetZ) - (pos2z + circle2->circleHitbox[circleID2].offsetZ); //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
-	float distance = std::sqrt(dx * dx + dy * dy);
+	float offset1X = circle1->circleHitbox[circleID1].offsetX * circle1->offsetXx + circle1->circleHitbox[circleID1].offsetZ * circle1->offsetXz;
+	float offset2X = circle2->circleHitbox[circleID2].offsetX * circle2->offsetXx + circle2->circleHitbox[circleID2].offsetZ * circle2->offsetXz;
+	float offset1Z = circle1->circleHitbox[circleID1].offsetZ * circle1->offsetZz + circle1->circleHitbox[circleID1].offsetX * circle1->offsetZx;
+	float offset2Z = circle2->circleHitbox[circleID2].offsetZ * circle2->offsetZz + circle2->circleHitbox[circleID2].offsetX * circle2->offsetZx;
+	float dx = (pos1x + offset1X) - (pos2x + offset2X); 
+	float dz = (pos1z + offset1Z) - (pos2z + offset2Z); 
+	float distance = std::sqrt(dx * dx + dz * dz);
 	bool hit = distance <= (circle1->circleHitbox[circleID1].radius + circle2->circleHitbox[circleID2].radius);
 	//Use onCollission function for first and second respectively
 	OnCollisionParameters params = {};
+	float normalX = dx / distance;
+	float normalZ = dz / distance;
 
 	if (iShit1&&hit)
 	{
@@ -61,10 +70,14 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 		params.entity2 = entity2;
 		params.hitboxID1 = circleID1;
 		params.hitboxID2 = circleID2;
-		params.normal1X = -dx;
-		params.normal1Z = -dy;
-		params.normal2X = dx;
-		params.normal2Z = dy;
+		params.normal1X = -normalX;
+		params.normal1Z = -normalZ;
+		params.normal2X = normalX;
+		params.normal2Z = normalZ;
+		params.pos1X = offset1X + pos1x;
+		params.pos1Z = offset1Z + pos1z;
+		params.pos2X = offset2X + pos2x;
+		params.pos2Z = offset2Z + pos2z;
 		//If circle1 collides with circle2 and has a function:
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
 		circle1->onCircleCollision[circleID1].CollisionFunction(params);
@@ -75,10 +88,14 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 		params.entity2 = entity1;
 		params.hitboxID1 = circleID2;
 		params.hitboxID2 = circleID1;
-		params.normal1X = dx;
-		params.normal1Z = dy;
-		params.normal2X = -dx;
-		params.normal2Z = -dy;
+		params.normal1X = normalX;
+		params.normal1Z = normalZ;
+		params.normal2X = -normalX;
+		params.normal2Z = -normalZ;
+		params.pos2X = offset1X + pos1x;
+		params.pos2Z = offset1Z + pos1z;
+		params.pos1X = offset2X + pos2x;
+		params.pos1Z = offset2Z + pos2z;
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
 		circle2->onCircleCollision[circleID2].CollisionFunction(params);
 	}

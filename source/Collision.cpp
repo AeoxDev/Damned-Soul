@@ -7,6 +7,7 @@
 #include <cmath>
 #include <string>
 #include "Systems\Systems.h"
+#include "Components.h"
 
 /// <summary>
 /// Calculates the closest distance of two circles.
@@ -123,6 +124,24 @@ void ResetCollisionVariables()
 			continue;
 		}
 		hitboxes->nrMoveableCollisions = MOVEABLE_COLLISIONS_PER_FRAME;
+	}
+	for (auto entity : View<HitboxComponent, TransformComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	{
+		HitboxComponent* hitboxes = registry.GetComponent<HitboxComponent>(entity);
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		if (hitboxes == nullptr || transform == nullptr)
+		{
+			continue;
+		}
+		float radians = acosf(transform->facingX);
+		if (transform->facingZ < 0.0f)
+		{
+			radians *= -1.0f;
+		}
+		hitboxes->offsetXx = -sinf(radians);
+		hitboxes->offsetZz = -sinf(radians);
+		hitboxes->offsetXz = -cosf(radians);
+		hitboxes->offsetZx = cosf(radians);
 	}
 }
 
