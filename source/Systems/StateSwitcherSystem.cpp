@@ -7,12 +7,13 @@
 
 bool StateSwitcherSystem::Update()
 {
-	PlayerComponent* statComp = nullptr;
+	PlayerComponent* playersComp = nullptr;
 
 	// Loop through registry to find an entity that has PlayerComponent AND StatComponent
 	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 	{
 		// Get player entity stat component
+		playersComp = registry.GetComponent<PlayerComponent>(entity);
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 		if (statComp != nullptr)
 		{
@@ -30,11 +31,17 @@ bool StateSwitcherSystem::Update()
 		if (statComp->health <= 0 && statComp->performingDeathAnimation == false)
 		{
 			statComp->performingDeathAnimation = true;
-			
+			if (playersComp != nullptr)
+			{
+				playersComp->killingSpree += 1;
+			}
 			// start timed event
 			AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 		}
 	}
+
+
+	
 
 	return true;
 }
