@@ -94,10 +94,7 @@ void GameScene::Setup(int scene)//Load
 		UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
 		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
 
-		UIHealthComponent* dogUIHpc = registry.AddComponent<UIHealthComponent>(dog, 1.0f, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		UIHealthComponent* skelUIHpC1 = registry.AddComponent<UIHealthComponent>(skeleton, 1.0f, DirectX::XMFLOAT2(0.8f, 0.6f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		UIHealthComponent* skelUIHpC2 = registry.AddComponent<UIHealthComponent>(skeleton2, 1.0f, DirectX::XMFLOAT2(0.8f, 0.4f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		
+	
 		std::string valueAsString = std::to_string(scene);
 		std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
 		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1.0f, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
