@@ -91,17 +91,20 @@ void GameScene::Setup(int scene)//Load
 		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 		////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
-		UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, 1.0f, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/EmptyHealth.png"), UIText(L""));
+		UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
+		pcUiHpC->image.Setup("ExMenu/FullHealth.png");
+		pcUiHpC->text.Setup(L"");
 
-		UIHealthComponent* dogUIHpc = registry.AddComponent<UIHealthComponent>(dog, 1.0f, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		UIHealthComponent* skelUIHpC1 = registry.AddComponent<UIHealthComponent>(skeleton, 1.0f, DirectX::XMFLOAT2(0.8f, 0.6f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		UIHealthComponent* skelUIHpC2 = registry.AddComponent<UIHealthComponent>(skeleton2, 1.0f, DirectX::XMFLOAT2(0.8f, 0.4f), DirectX::XMFLOAT2(0.6f, 0.6f), UIImage("ExMenu/FullHealth.png"), UIText(L""));
-		
+		UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
+		pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
+		pcUiSC->text.Setup(L"");
+
+		//Thing in the top right corner showing what level we're on
 		std::string valueAsString = std::to_string(scene);
 		std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
-		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1.0f, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
-		
+		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f));
+		gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
+		gameLevelUIc->text.Setup(valueAsWString);
 
 		/*HellhoundBehaviour* hellhoundBehevCo = */registry.AddComponent<HellhoundBehaviour>(dog);
 		/*SkeletonBehaviour* skeletonBehevCo = */registry.AddComponent<SkeletonBehaviour>(skeleton);
@@ -153,10 +156,13 @@ void GameScene::SetupImages()
 
 void GameScene::SetupText()
 {
+	auto t1 = registry.CreateEntity();
+	auto tc1 = registry.AddComponent<UIText>(t1);
+	tc1->Setup(L"This is the HUD!", { 0.0f, 0.6f });
 
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"This is the HUD!", { 0.0f, 0.6f }));
-
-	registry.AddComponent<TextComponent>(registry.CreateEntity(), UIText(L"Press ECS to return to main menu!", { 0.0f, 0.4f }));
+	auto t2 = registry.CreateEntity();
+	auto tc2 = registry.AddComponent<UIText>(t2);
+	tc2->Setup(L"Press ECS to return to main menu!", { 0.0f, 0.4f });
 }
 
 void GameScene::Unload()
@@ -166,157 +172,53 @@ void GameScene::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	CREATE_ENTITY_MAP_entities;
-
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
 		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		registry.RemoveComponent<ModelBonelessComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<TransformComponent>(registry))
-	{
-		registry.RemoveComponent<TransformComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry))
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		registry.RemoveComponent<ModelSkeletonComponent>(entity);
-
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<AnimationComponent>(registry))
-	{
-		registry.RemoveComponent<AnimationComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<GeometryIndependentComponent>(registry))
-	{
-		registry.RemoveComponent<GeometryIndependentComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIPlayerSoulsComponent>(registry))
 	{
 		UIPlayerSoulsComponent* ps = registry.GetComponent<UIPlayerSoulsComponent>(entity);
 		ps->image.Release();
-		registry.RemoveComponent<UIPlayerSoulsComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIGameLevelComponent>(registry))
 	{
 		UIGameLevelComponent* ps = registry.GetComponent<UIGameLevelComponent>(entity);
 		ps->image.Release();
-		registry.RemoveComponent<UIGameLevelComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
 	for (auto entity : View<UIHealthComponent>(registry))
 	{
 		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
 		ph->image.Release();
-		registry.RemoveComponent<UIHealthComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
-	for (auto entity : View<PointOfInterestComponent>(registry))
+	for (auto entity : View<UIButton>(registry))
 	{
-		registry.RemoveComponent<PointOfInterestComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIButton* b = registry.GetComponent<UIButton>(entity);
+		b->Release();
 	}
 
-	for (auto entity : View<EnemyComponent>(registry))
+	for (auto entity : View<UIImage>(registry))
 	{
-		registry.RemoveComponent<EnemyComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		UIImage* i = registry.GetComponent<UIImage>(entity);
+		i->Release();
 	}
 
-	for (auto entity : View<PlayerComponent>(registry))
+	//Destroy entity resets component bitmasks
+	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.RemoveComponent<PlayerComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+		registry.DestroyEntity({ i, false });
 	}
-
-	for (auto entity : View<ControllerComponent>(registry))
-	{
-		registry.RemoveComponent<ControllerComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<StatComponent>(registry))
-	{
-		registry.RemoveComponent<StatComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<SkeletonBehaviour>(registry))
-	{
-		registry.RemoveComponent<SkeletonBehaviour>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<HellhoundBehaviour>(registry))
-	{
-		registry.RemoveComponent<HellhoundBehaviour>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<HitboxComponent>(registry))
-	{
-		registry.RemoveComponent<HitboxComponent>(entity);
-
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<UIButtonComponent>(registry))
-	{
-		UIButtonComponent* b = registry.GetComponent<UIButtonComponent>(entity);
-		b->button.Release();
-		registry.RemoveComponent<UIButtonComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<ImageComponent>(registry))
-	{
-		ImageComponent* i = registry.GetComponent<ImageComponent>(entity);
-		i->image.Release();
-		registry.RemoveComponent<ImageComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	for (auto entity : View<TextComponent>(registry))
-	{
-		registry.RemoveComponent<TextComponent>(entity);
-		
-		ADD_TO_entities_IF_NOT_INCLUDED(entity);
-	}
-
-	uint16_t destCount = DestroyEntities(entities);
 }
 
 void GameScene::GameOver()

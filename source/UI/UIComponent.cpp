@@ -17,16 +17,16 @@ void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation
 	SetRotation(rotation);
 }
 
-UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
-	:m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
-{
-	m_CurrentBounds = { 0, 0, 0, 0 };
-	m_OriginalBounds = { 0, 0, 0, 0 };
-	
-	m_Position = {0, 0};
-	
-	UpdateTransform();
-}
+//UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
+//	:m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
+//{
+//	m_CurrentBounds = { 0, 0, 0, 0 };
+//	m_OriginalBounds = { 0, 0, 0, 0 };
+//	
+//	m_Position = {0, 0};
+//	
+//	UpdateTransform();
+//}
 
 XMFLOAT2 UIComponent::GetPosition()
 {
@@ -41,6 +41,20 @@ XMFLOAT2 UIComponent::GetScale()
 float UIComponent::GetRotation()
 {
 	return m_Rotation;
+}
+
+void UIComponent::Setup(DirectX::XMFLOAT2 scale, float rotation, bool visibility)
+{
+	m_Scale = scale;
+	m_Rotation = rotation;
+	m_Visibility = visibility;
+
+	m_CurrentBounds = { 0, 0, 0, 0 };
+	m_OriginalBounds = { 0, 0, 0, 0 };
+
+	m_Position = { 0, 0 };
+
+	UpdateTransform();
 }
 
 void UIComponent::SetPosition(XMFLOAT2 position)
