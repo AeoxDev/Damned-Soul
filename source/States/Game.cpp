@@ -318,3 +318,11 @@ void GameScene::Unload()
 
 	uint16_t destCount = DestroyEntities(entities);
 }
+
+void GameScene::GameOver()
+{
+	SetInMainMenu(true);
+	SetInPlay(false);
+	Unload();
+	stateManager.menu.Setup();
+}

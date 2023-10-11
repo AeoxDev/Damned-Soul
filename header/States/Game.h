@@ -19,4 +19,5 @@ struct GameScene
 	void SetupText();
 
 	void Unload();
+	void GameOver();
 };
