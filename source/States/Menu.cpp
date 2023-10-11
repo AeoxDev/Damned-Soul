@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "States\CleanupMacros.h"
 #include "UI/UIButtonFunctions.h"
+#include "Level.h"
 
 void Menu::Setup()//Load
 {

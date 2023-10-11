@@ -4,13 +4,14 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include "Components.h"
+#include "Level.h"
 
 void UIFunc::MainMenu_Start(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
 	stateManager.menu.Unload();
-	stateManager.levelScenes[0].Setup(0);
+	LoadLevel(1);
 }
 
 void UIFunc::MainMenu_Settings(void* args)
