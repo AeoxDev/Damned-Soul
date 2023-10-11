@@ -9,6 +9,7 @@ float fps = 0.f;
 float lastFPS = 0.0f;
 float average;
 float deltaTime;
+
 const float& GetDeltaTime()
 {
 	return deltaTime;

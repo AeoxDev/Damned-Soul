@@ -18,6 +18,7 @@ int main(int argc, char* args[])
 	std::string title = "Damned Soul";
 	stateManager.Setup();
 	
+
 	while (!sdl.quit)
 	{
 		CountDeltaTime();

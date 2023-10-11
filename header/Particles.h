@@ -35,7 +35,7 @@ struct ParticleMetadata
 
 	DirectX::XMFLOAT3 spawnPos{ 0.f, 0.f, 0.f };
 
-	float padding = 0;
+	float deltaTime = 0;
 };
 
 struct ParticleMetadataBuffer
@@ -47,21 +47,8 @@ namespace Particles
 {
 	extern int RenderSlot;
 
-	extern ParticleInputOutput* m_readBuffer;
-	extern ParticleInputOutput* m_writeBuffer;
-
-	extern int8_t m_computeShaders;
-	extern int8_t m_vertexShader;
-	extern int8_t m_pixelShader;
-	extern int8_t m_geometryShader;
-	extern int16_t m_metadata;
-	extern int16_t m_vertexBuffer;
-	extern int16_t m_indexBuffer;
-	extern int8_t m_rasterizer;
-
-	extern int8_t m_renderTargetView;
-	extern int8_t m_depthStencilView;
-	extern int8_t m_shaderResourceView;
+	extern PoolPointer<ParticleInputOutput> m_readBuffer;
+	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
 
 
 	void SwitchInputOutput();
@@ -78,8 +65,5 @@ namespace Particles
 	void PrepareParticlePass(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
 	void FinishParticlePass();
-
-	// Prepares constant buffer at metadataSlot to be rendered as smoke particles.
-	void PrepareSmokeParticles(ParticleComponent* pc, RenderSetupComponent constantBuffer[8], float seconds, float radius, float size, DirectX::XMFLOAT3 entityPosition);
 }
 

@@ -6,6 +6,7 @@
 #include "Registry.h"
 #include "UI/UIRenderer.h"
 #include "Camera.h"
+#include "UI/UIButtonFunctions.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 

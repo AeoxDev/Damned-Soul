@@ -57,7 +57,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
 	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
 
-	float tolerance = 0.3f; // THIS IS FOR ANGLE SMOOTHING
+	float tolerance = 0.7f; // THIS IS FOR ANGLE SMOOTHING
 	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
 	{
 		hc->isBehind = true;
@@ -92,16 +92,15 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 	{
 		dirX = -hc->goalDirectionZ;
 		dirZ = hc->goalDirectionX;
-		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		SmoothRotation(htc, dirX, dirZ);
+		
 	}
 	else // counter clockwise
 	{
 		dirX = hc->goalDirectionZ;
 		dirZ = -hc->goalDirectionX;
-		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		SmoothRotation(htc, dirX, dirZ);
 	}
+	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+	SmoothRotation(htc, dirX, dirZ, 10.f);
 	if (magnitude > 0.001f)
 	{
 		dirX /= magnitude;
@@ -119,7 +118,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
 
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ);
+	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 10.f);
 	float dirX = hellhoundTransformComponent->facingX, dirZ = hellhoundTransformComponent->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude > 0.001f)
@@ -166,6 +165,160 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 
 
+void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc)
+{
+	hc->isShooting = true;
+
+	//from hound  to player
+ 	float dx = ptc->positionX - htc->positionX;
+	float dz = ptc->positionZ - htc->positionZ;
+	float magnitude = sqrt(dx * dx + dz * dz);
+	if (magnitude < 0.001f)
+	{
+		magnitude = 0.001f;
+	}
+
+	float orthoX = -dz;
+	float orthoZ = dx;
+
+	dx /= magnitude;
+	dz /= magnitude;
+	
+
+	float targetX = htc->positionX + dx * hc->offsetForward;
+	float targetZ = htc->positionZ +  dz  * hc->offsetForward;
+
+	
+
+	hc->facingX = targetX;
+	hc->facingZ = targetZ;
+	
+
+
+	
+	magnitude = sqrt(orthoX * orthoX + orthoZ * orthoZ);
+
+	if (magnitude < 0.001f)
+	{
+		magnitude = 0.001f;
+	}
+
+	orthoX /= magnitude;
+	orthoZ /= magnitude;
+
+	hc->shootingSideTarget1X = targetX + orthoX * hc->offsetSide;
+	hc->shootingSideTarget1Z = targetZ  + orthoZ * hc->offsetSide;
+	hc->shootingSideTarget2X = targetX  - orthoX * hc->offsetSide;
+	hc->shootingSideTarget2Z = targetZ - orthoZ * hc->offsetSide;
+	hc->shootingStartX = htc->positionX;
+	hc->shootingStartZ = htc->positionZ;
+
+	
+}
+
+
+bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float p3X, float p3Z, float playerX, float playerZ)
+{
+	float denominator = ((p2Z - p3Z) * (p1X - p3X) + (p3X - p2X) * (p1Z - p3Z));
+	float alpha = ((p2Z - p3Z) * (playerX - p3X) + (p3X - p2X) * (playerZ - p3Z)) / denominator;
+	float beta = ((p3Z - p1Z) * (playerX - p3X) + (p1X - p3X) * (playerZ - p3Z)) / denominator;
+	float gamma = 1.0f - alpha - beta;
+
+	return alpha >= 0 && beta >= 0 && gamma >= 0 && alpha + beta + gamma == 1.0;
+}
+
+void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats/*, TransformComponent* testing, TransformComponent* testing2*/)
+{
+	// create a hitbox from doggo position, as a triangle, with 2 corners expanding outwards with the help of variables in behavior. 
+	//once max range has been reached, this function will reset all stats and let the doggo go on with a different behavior. 
+	// each check until then will create a slightly longer (not wider) triangle hit box to simulate a flamethrower. Each check, the player will take damage if it
+	// make sure to balance the damage so it's not a fast one-shot thing
+	
+	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox; //updates the range of the "flamethrower"
+
+	//TESTING CODE______________________________________________________________________________________
+	//float test1 = (hc->shootingSideTarget1X - hc->shootingStartX);
+	//float test2 = (hc->shootingSideTarget1Z - hc->shootingStartZ);
+
+	//float test3 = (hc->shootingSideTarget2X - hc->shootingStartX);
+	//float test4 = (hc->shootingSideTarget2Z - hc->shootingStartZ);
+
+	//float mag = sqrt(test1 * test1 + test2 * test2);
+	//if (mag < 0.001f)
+	//{
+	//	mag = 0.001f;
+	//}
+	//test1 /= mag;
+	//test2 /= mag;
+	//test3 /= mag;
+	//test4 /= mag;
+	//
+	//testing->positionX = hc->shootingStartX + test1  * hc->currentShootingAttackRange;
+	//testing->positionZ = hc->shootingStartZ + test2  * hc->currentShootingAttackRange;
+	//testing2->positionX = hc->shootingStartX + test3 * hc->currentShootingAttackRange;
+	//testing2->positionZ = hc->shootingStartZ + test4 * hc->currentShootingAttackRange;
+	//__________________________________________________________________________________________________________________________
+
+	if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
+	{
+		// player is inside max triangle, is player within range ?
+		float dx = ptc->positionX - hc->shootingStartX;
+		float dz = ptc->positionZ - hc->shootingStartZ;
+		float distance = sqrt(dx * dx + dz * dz);
+		if (distance <= hc->currentShootingAttackRange)
+		{
+			//yes, player should get hit. Take damage
+			playerStats->health -= enemyStats->damage; // DEFINITELY MODIFY THIS LATER, very likely too much damage
+			RedrawUI();
+		}
+	}
+
+
+	//end óf function. check if current range >= max, that would end the attacks
+	if (hc->currentShootingAttackRange >= hc->offsetForward)
+	{
+		hc->isShooting = false;
+		hc->shootingCounter = 0.0f;
+		hc->shootingCooldownCounter = 0.0f;
+		hc->currentShootingAttackRange = 0.f;
+	}
+}
+
+void SetInfiniteDirection(TransformComponent* htc, HellhoundBehaviour* hc)
+{
+	float x = hc->lastPositionX - htc->positionX;
+	float z = hc->lastPositionZ - htc->positionZ;
+	float magnitude = sqrt(x * x + z * z);
+	if (magnitude > 0.001f)
+	{
+		x /= magnitude;
+		z /= magnitude;
+	}
+	hc->cowardDirectionX = x;
+	hc->cowardDirectionZ = z;
+}
+
+
+void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats)
+{
+	
+	float newGoalX = htc->positionX + hc->cowardDirectionX * 100.f;
+	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
+	SmoothRotation(htc, newGoalX, newGoalZ, 10.f);
+
+	htc->positionX += hc->cowardDirectionX * enemyStats->moveSpeed * GetDeltaTime();
+	htc->positionZ += hc->cowardDirectionZ * enemyStats->moveSpeed * GetDeltaTime();
+
+	hc->cowardCounter += GetDeltaTime();
+
+	if (hc->cowardCounter >= hc->cowardDuration) // have we been tactically retreating long enough?
+	{
+		hc->cowardCounter = 0.f;
+		hc->retreat = false;
+		ResetHellhoundVariables(hc, true, true);
+	}
+}
+
 
 
 
@@ -183,6 +336,8 @@ bool HellhoundBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 
+
+
 	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	{
 		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
@@ -190,33 +345,72 @@ bool HellhoundBehaviourSystem::Update()
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
 
+	// FOR TESTING
+	/*int i = 0; 
+	TransformComponent* stc = nullptr;
+	TransformComponent* stcTwo = nullptr;
+	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
+	{
+		if (i == 0)
+		{
+			stc = registry.GetComponent<TransformComponent>(enemyEntity);
+			i++;
+		}
+			
+		if(i == 1)
+			stcTwo = registry.GetComponent<TransformComponent>(enemyEntity);
+	}*/
+
+
 	for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent>(registry))
 	{
 		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
 		hellhoundTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+		
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && true)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			hellhoundComponent->attackTimer += GetDeltaTime();
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
-			if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
+			hellhoundComponent->shootingCooldownCounter += GetDeltaTime();
+
+
+			if (hellhoundComponent->retreat)
 			{
-				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo
+				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats);
 			}
-			else if (distance < 2.5f) // fight club
+			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
+			{
+				SmoothRotation(hellhoundTransformComponent, hellhoundComponent->facingX, hellhoundComponent->facingZ);
+				hellhoundComponent->shootingCounter += GetDeltaTime();
+				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingDuration) // have we charged long enough?
+				{
+					//it seems we have. Time to start shooting behaviour
+					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats/*, stc, stcTwo*/); //this is damage thing
+				}
+				//else we do nothing, we're just charging the flames.
+			}
+			else if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
+			{
+				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo...
+				hellhoundComponent->isWating = true;
+			}
+			else if (hellhoundComponent->isWating)// maybe retreat to shoot again, eh?
+			{
+				hellhoundComponent->isWating = false;
+				SetInfiniteDirection(hellhoundTransformComponent, hellhoundComponent);
+				hellhoundComponent->retreat = true;
+			}
+			else if (distance < 2.5f) // fight club and not currently shooting
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
 				CombatBehaviour(hellhoundComponent, enemyStats, playerStats);
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
-				if (!hellhoundComponent->hasShot)
-				{
-					hellhoundComponent->hasShot = true; 
-				}
-				else if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
+				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
 				{
 					hellhoundComponent->charge = true;
 					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
@@ -225,6 +419,12 @@ bool HellhoundBehaviourSystem::Update()
 				{
 					CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
 				}
+			}
+			else if ((distance <= 17) && (!hellhoundComponent->isShooting && hellhoundComponent->shootingCooldownCounter >= hellhoundComponent->shootingCooldown)) //is not shooting and cooldown is ready
+			{
+				hellhoundComponent->lastPositionX = hellhoundTransformComponent->positionX;
+				hellhoundComponent->lastPositionZ = hellhoundTransformComponent->positionZ;
+				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent); //set a target for the ranged attack
 			}
 			else if (distance < 50) //hunting distance, go chase
 			{

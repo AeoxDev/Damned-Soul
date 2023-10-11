@@ -187,8 +187,6 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 bool SetIndexBuffer(const IB_IDX idx);
 // Sets index buffer to NULL
 void UnsetIndexBuffer();
-// Release for a single index buffer
-void ReleaseIB(const IB_IDX idx);
 
 // Completely remove a D3D11Buffer
 bool DeleteD3D11Buffer(const CB_IDX idx);
@@ -197,6 +195,8 @@ bool DeleteD3D11Buffer(const CB_IDX idx);
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
 // Set an mode viewport
 bool SetViewport(const VP_IDX idx);
+// Erase a viewport
+bool DeleteD3D11Viewport(const VP_IDX idx);
 // Release for a single constant buffer
 void ReleaseVP(const VP_IDX idx);
 //Set new values for viewport
