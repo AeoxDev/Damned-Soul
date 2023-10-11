@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include <assert.h>
+#include "UIRenderer.h"
 //#include <iostream>
 #define SOFT_COLLISION_FACTOR 0.4f
 
@@ -177,5 +178,5 @@ void AttackCollision(OnCollisionParameters& params)
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	
 	stat2->health -= stat1->damage;
-	
+	RedrawUI();
 }

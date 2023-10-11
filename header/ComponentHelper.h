@@ -19,6 +19,10 @@ struct StatComponent
 	float damage = 10.0f;
 	float attackSpeed = 1.0f;
 
+
+	// for death animation
+	bool performingDeathAnimation = false;
+
 	StatComponent(float hp, float ms, float dmg, float as) : health(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
 };
 
@@ -27,6 +31,7 @@ struct PlayerComponent
 {
 	int souls = 0;
 	int attackHitboxID = -1;
+	int killingSpree = 0;
 };
 
 struct ControllerComponent
