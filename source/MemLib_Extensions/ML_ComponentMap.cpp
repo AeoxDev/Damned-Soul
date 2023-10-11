@@ -10,6 +10,7 @@
 #define GET_KEY_POINTER(idx) (&(m_data[(idx) * PAIR_SIZE]))
 #define GET_VALUE_POINTER(idx) (&(m_data[(idx) * PAIR_SIZE + BIT_64]))
 
+// Not used at the moment, but might be useful in the future?
 void swapData(void* first, void* second, const size_t pairSize)
 {
 	// Allocate on stack

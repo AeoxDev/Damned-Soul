@@ -821,7 +821,7 @@ EntityID CreateAndRenderGeometryIndependentCollision(EntityID& m)
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stage);
 
 	RenderGeometryIndependentCollisionToTexture(stage);
-	ReleaseGI();
+	ReleaseGI(stage);
 	return stage;
 }
 
@@ -835,6 +835,6 @@ void RenderGeometryIndependentCollision(EntityID& m)
 		Present();
 	}*/
 	RenderGeometryIndependentCollisionToTexture(m);
-	ReleaseGI();
+	ReleaseGI(m);
 	return;
 }

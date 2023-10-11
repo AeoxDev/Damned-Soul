@@ -15,4 +15,5 @@ struct GameScene
 	void ComputeShaders();
 
 	void Unload();
+	void GameOver();
 };

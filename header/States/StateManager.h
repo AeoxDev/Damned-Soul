@@ -6,7 +6,8 @@
 #include "States\Game.h"
 #include "States\Pause.h"
 #include "Systems\Systems.h"
-#include <vector>
+
+#include "MemLib\ML_Vector.hpp"
 
 
 struct StateManager;
@@ -35,4 +36,6 @@ struct StateManager
 
 	void UnloadAll();
 	void EndFrame();//Clears all framebased variables.
+
+	GameScene GetCurrentLevel();
 };

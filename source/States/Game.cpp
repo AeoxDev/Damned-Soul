@@ -17,8 +17,19 @@
 #include "Camera.h"
 
 void GameScene::Setup(int scene)//Load
-{	
-	m_active = true;
+{
+	RedrawUI();	
+	if (scene == 0)
+	{
+		// Set active
+		m_active = true;
+		
+		//Setup Game HUD
+
+		Camera::ResetCamera();
+
+		//Doggo
+	}
 }
 
 void GameScene::Input()
@@ -58,6 +69,7 @@ void GameScene::Unload()
 	{
 		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		registry.RemoveComponent<ModelBonelessComponent>(entity);
 		
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
@@ -69,11 +81,27 @@ void GameScene::Unload()
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
-	for (auto entity : View<ModelSkeletonComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
+	for (auto entity : View<ModelSkeletonComponent>(registry))
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		registry.RemoveComponent<ModelSkeletonComponent>(entity);
+
 		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<AnimationComponent>(registry))
+	{
+		registry.RemoveComponent<AnimationComponent>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<GeometryIndependentComponent>(registry))
+	{
+		registry.RemoveComponent<GeometryIndependentComponent>(entity);
+
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
@@ -125,10 +153,38 @@ void GameScene::Unload()
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
+	for (auto entity : View<ControllerComponent>(registry))
+	{
+		registry.RemoveComponent<ControllerComponent>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
 	for (auto entity : View<StatComponent>(registry))
 	{
 		registry.RemoveComponent<StatComponent>(entity);
 		
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<SkeletonBehaviour>(registry))
+	{
+		registry.RemoveComponent<SkeletonBehaviour>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<HellhoundBehaviour>(registry))
+	{
+		registry.RemoveComponent<HellhoundBehaviour>(entity);
+
+		ADD_TO_entities_IF_NOT_INCLUDED(entity);
+	}
+
+	for (auto entity : View<HitboxComponent>(registry))
+	{
+		registry.RemoveComponent<HitboxComponent>(entity);
+
 		ADD_TO_entities_IF_NOT_INCLUDED(entity);
 	}
 
@@ -158,4 +214,12 @@ void GameScene::Unload()
 	}
 
 	uint16_t destCount = DestroyEntities(entities);
+}
+
+void GameScene::GameOver()
+{
+	SetInMainMenu(true);
+	SetInPlay(false);
+	Unload();
+	stateManager.menu.Setup();
 }

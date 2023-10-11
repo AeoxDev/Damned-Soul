@@ -9,7 +9,7 @@ ID3D11Buffer* bfr_NULL = nullptr;
 
 CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -37,12 +37,12 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 CB_IDX CreateConstantBuffer(const size_t size)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -62,7 +62,7 @@ CB_IDX CreateConstantBuffer(const size_t size)
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 
@@ -127,7 +127,7 @@ void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 
 bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 {
-	if (bfrHolder->_nextIdx < idx || idx < 0)
+	if (false == bfrHolder->buff_map.contains(idx))
 	{
 		std::cerr << "Index for update Constant Buffer out of range!" << std::endl;
 		return false;
@@ -259,7 +259,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 }
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = (D3D11_USAGE)useFlags; 
@@ -284,12 +284,12 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = (D3D11_USAGE)useFlags;
@@ -310,13 +310,13 @@ VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_F
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 // Set an mode constant buffer by index (shader and slot data contained in buffer)
 bool SetVertexBuffer(const VB_IDX idx)
 {
-	if (bfrHolder->_nextIdx < idx || idx < 0)
+	if (false == bfrHolder->buff_map.contains(idx))
 	{
 		std::cerr << "Index for Vertex Buffer out of range!" << std::endl;
 		return false;
@@ -335,7 +335,7 @@ void UnsetVertexBuffer()
 // Create an Index Buffer with provided data and return a unique index to it
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -361,13 +361,13 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 // Set an mode Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx)
 {
-	if (bfrHolder->_nextIdx < idx || idx < 0)
+	if (false == bfrHolder->buff_map.contains(idx))
 	{
 		std::cerr << "Index for Index Buffer out of range!" << std::endl;
 		return false;

@@ -13,8 +13,10 @@ void LoadLevel(int level)
 
 	stateManager.levelScenes[0].Unload();
 	stateManager.levelScenes[1].Unload();
+	
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 2;
 	stateManager.levelScenes[stateManager.activeLevelScene].Setup(1);
+	stateManager.levelScenes[stateManager.activeLevelScene].m_active = true;
 	switch (level)
 	{
 	case 1:	LoadLevel1(); break;

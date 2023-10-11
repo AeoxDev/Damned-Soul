@@ -218,21 +218,19 @@ bool AddGeometryIndependentComponent(EntityID& stageEntity)
 	return true;
 }
 
-void ReleaseGI( )
+void ReleaseGI(EntityID& entity )
 {
-	for (auto entity : View<GeometryIndependentComponent>(registry))
-	{
-		//Get entity with UI, release components.
-		GeometryIndependentComponent* gi = registry.GetComponent<GeometryIndependentComponent>(entity);
-		DeleteD3D11Buffer(gi->constantBuffer);
-		DeleteD3D11Texture(gi->stagingTexture);
-		DeleteD3D11RenderTargetView(gi->renderTargetView);
-		DeleteD3D11PixelShader(gi->pixelShader);
-		DeleteD3D11VertexShader(gi->vertexShader);
-		DeleteD3D11DepthStencilView(gi->depthStencil);
-		DeleteD3D11RasterizerState(gi->rasterizerState);
-		//Release here
-	}
+	//Get entity with UI, release components.
+	GeometryIndependentComponent* gi = registry.GetComponent<GeometryIndependentComponent>(entity);
+	//DeleteD3D11Viewport(gi->viewport);
+	DeleteD3D11Buffer(gi->constantBuffer);
+	DeleteD3D11Texture(gi->stagingTexture);
+	DeleteD3D11RenderTargetView(gi->renderTargetView);
+	DeleteD3D11PixelShader(gi->pixelShader);
+	DeleteD3D11VertexShader(gi->vertexShader);
+	DeleteD3D11DepthStencilView(gi->depthStencil);
+	DeleteD3D11RasterizerState(gi->rasterizerState);
+	//Release here
 }
 
 RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity)
