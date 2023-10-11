@@ -1,7 +1,6 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
-#include <iostream>
 #include <DirectXMath.h>
 #include <assert.h>
 
@@ -26,11 +25,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Constant Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 
 	size_t s = sizeof(uint16_t) + sizeof(ID3D11Buffer*);
 
@@ -54,11 +49,7 @@ CB_IDX CreateConstantBuffer(const size_t size)
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Constant Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
@@ -89,7 +80,7 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, 
 		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	default:
-		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
 		return false;
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
@@ -120,29 +111,21 @@ void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfr_NULL);
 		break;
 	default:
-		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
 }
 
 bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 {
-	if (false == bfrHolder->buff_map.contains(idx))
-	{
-		std::cerr << "Index for update Constant Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(true == bfrHolder->buff_map.contains(idx));
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map Constant Buffer!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
@@ -167,11 +150,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, 
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map World Constant Buffer!" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
@@ -245,11 +224,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[constantBufferIdx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map World Constant Buffer!" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[constantBufferIdx]);
@@ -276,11 +251,7 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Vertex Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
@@ -302,11 +273,7 @@ VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_F
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Vertex Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
@@ -316,11 +283,7 @@ VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_F
 // Set an mode constant buffer by index (shader and slot data contained in buffer)
 bool SetVertexBuffer(const VB_IDX idx)
 {
-	if (false == bfrHolder->buff_map.contains(idx))
-	{
-		std::cerr << "Index for Vertex Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(true == bfrHolder->buff_map.contains(idx));
 	UINT offset = 0;
 	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &(bfrHolder->buff_map[idx]), &(bfrHolder->size[idx]), &offset);
 	return true;
@@ -352,11 +315,7 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Index Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
@@ -367,11 +326,7 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 // Set an mode Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx)
 {
-	if (false == bfrHolder->buff_map.contains(idx))
-	{
-		std::cerr << "Index for Index Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(true == bfrHolder->buff_map.contains(idx));
 
 	UINT offset = 0;
 	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_map[idx], DXGI_FORMAT_R32_UINT, offset);

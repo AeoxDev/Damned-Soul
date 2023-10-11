@@ -162,7 +162,7 @@ void StateManager::Update()
 
 	if (mouseX != oldmousepos.first && mouseY != oldmousepos.second)
 	{
-		std::cout << mouseX << ", " << mouseY << std::endl;
+		//std::cout << mouseX << ", " << mouseY << std::endl;
 	}
 	oldmousepos.first = mouseX;
 	oldmousepos.second = mouseY;

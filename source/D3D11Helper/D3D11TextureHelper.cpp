@@ -2,7 +2,6 @@
 #include "D3D11Graphics.h"
 #include "STB_Helper.h"
 #include "Hashing.h"
-#include <iostream>
 #include <assert.h>
 
 ID3D11SamplerState* smp_NULL = nullptr;
@@ -24,11 +23,7 @@ TX_IDX LoadTexture(const char* name)
 	}
 	txHolder->img_map.emplace(currentIdx, Image());
 	Image& img = txHolder->img_map[currentIdx];
-	if (false == img.load(name))
-	{
-		std::cerr << "Failed to open texture file \"" << name << "\"!" << std::endl;
-		return -1;
-	}
+	assert(img.load(name) == true);
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
@@ -54,21 +49,13 @@ TX_IDX LoadTexture(const char* name)
 	// Attempt to create a texture in the device
 	ID3D11Texture2D* tempTex = 0;
 	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, &data, &tempTex);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create ID3D11Texture2D from '" << name << "'" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
+	
 	txHolder->tx_map.emplace(currentIdx, tempTex);
 
 	ID3D11ShaderResourceView* tempSRV = 0;
 	hr = d3d11Data->device->CreateShaderResourceView(txHolder->tx_map[currentIdx], nullptr, &tempSRV);
-	if (FAILED(hr))
-	{
-		txHolder->tx_map[currentIdx]->Release();
-		std::cerr << "Failed to create ID3D11ShaderResourceView for '" << name << "'" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 	txHolder->srv_map.emplace(currentIdx, tempSRV);
 
 	// Set the hash last thing you do
@@ -99,11 +86,7 @@ TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFla
 	ID3D11Texture2D* tempTex = 0;
 	// Attempt to create a texture in the device
 	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, nullptr, &tempTex);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create empty ID3D11Texture2D" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 	txHolder->tx_map.emplace(currentIdx, tempTex);
 
 	// Set the hash last thing you do
@@ -114,11 +97,7 @@ TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFla
 
 bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot)
 {
-	if (false == txHolder->tx_map.contains(idx))
-	{
-		std::cerr << "Failed to set compute shader: Index out of range!" << std::endl;
-		return false;
-	}
+	assert(true == txHolder->tx_map.contains(idx));
 
 	switch (shader)
 	{
@@ -138,7 +117,7 @@ bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t
 		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &txHolder->srv_map[idx]);
 		break;
 	default:
-		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		assert("Corrupt or incorrent Shader Type to bind!"[0] == "ERROR"[0]);
 		return false;
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
@@ -197,11 +176,7 @@ SMP_IDX CreateSamplerState()
 
 	ID3D11SamplerState* tempSamp = 0;
 	HRESULT hr = d3d11Data->device->CreateSamplerState(&samplerDesc, &tempSamp);
-	if FAILED(hr)
-	{
-		std::cout << "Failed to create Sampler State" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	smpHolder->smp_map.emplace(currentIdx, tempSamp);
 
 	return currentIdx;

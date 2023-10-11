@@ -1,6 +1,5 @@
 #include "UI/UIComponent.h"
 #include "SDLHandler.h"
-#include <iostream>
 
 using namespace DirectX;
 
@@ -64,12 +63,12 @@ void UIComponent::SetPosition(XMFLOAT2 position)
 	// calculate screen space to pixel coords
 	// (-1,-1) -> (1,1) => (0,0) -> (width, height)
 	// (-1,-1) is the bottom left coorner, (1, 1) is the top right coorner
-	int currentWindowWidth, currentWindowHeight;
+	//int currentWindowWidth, currentWindowHeight;
 	//SDL_GetWindowSize(sdl.sdlWindow, &currentWindowWidth, &currentWindowHeight);
 	XMFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.BASE_WIDTH, (1.0f - position.y) * 0.5f * sdl.BASE_HEIGHT };
 
 	m_Position = { pixelCoords.x - (m_CurrentBounds.right / 2.0f) * m_Scale.x , pixelCoords.y - (m_CurrentBounds.bottom / 2.0f) * m_Scale.y };
-	std::cout << "Position: " << m_Position.x << ", " << m_Position.y << std::endl;
+	//std::cout << "Position: " << m_Position.x << ", " << m_Position.y << std::endl;
 	UpdateTransform();
 }
 

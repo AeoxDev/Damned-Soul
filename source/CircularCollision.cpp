@@ -2,6 +2,7 @@
 #include "Backend\Collision.h"
 #include "Registry.h"
 #include "Components.h"
+#include <cmath>
 #define NO false
 
 bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, int circleID2)
@@ -57,7 +58,7 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 	float offset2Z = circle2->circleHitbox[circleID2].offsetZ * circle2->offsetZz + circle2->circleHitbox[circleID2].offsetX * circle2->offsetZx;
 	float dx = (pos1x + offset1X) - (pos2x + offset2X); 
 	float dz = (pos1z + offset1Z) - (pos2z + offset2Z); 
-	float distance = std::sqrt(dx * dx + dz * dz);
+	float distance = std::sqrtf(dx * dx + dz * dz);
 	bool hit = distance <= (circle1->circleHitbox[circleID1].radius + circle2->circleHitbox[circleID2].radius);
 	//Use onCollission function for first and second respectively
 	OnCollisionParameters params = {};

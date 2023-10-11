@@ -7,7 +7,6 @@
 #include "UIRenderer.h"
 #include <assert.h>
 #include "UIRenderer.h"
-//#include <iostream>
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -99,8 +98,8 @@ void HardCollision(OnCollisionParameters& params)
 	dirZ = params.pos2Z - params.pos1Z;
 	if (dirX == 0.0f && dirZ == 0.0f)
 	{
-		dirX == -transform1->positionX + 0.001f;
-		dirZ == -transform1->positionZ + 0.001f;
+		dirX = -transform1->positionX + 0.001f;
+		dirZ = -transform1->positionZ + 0.001f;
 	}
 	//Get distance, get ratio between radi and distance
 	float dist = sqrtf(dirX * dirX + dirZ * dirZ);
