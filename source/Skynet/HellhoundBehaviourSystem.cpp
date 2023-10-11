@@ -369,7 +369,7 @@ bool HellhoundBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		
 
-		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && true)// check if enemy is alive, change later
+		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enemyStats->health > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			hellhoundComponent->attackTimer += GetDeltaTime();

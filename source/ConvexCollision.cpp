@@ -35,7 +35,7 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 	unsigned short iSmask = 0b0000000001111110;// is mask
 	unsigned short hitMask = 0b0001111110000000;
 	unsigned short* r1 = (unsigned short*)&circle->circularFlags[circleID];
-	unsigned short* r2 = (unsigned short*)&convex->circularFlags[convexID];
+	unsigned short* r2 = (unsigned short*)&convex->convexFlags[convexID];
 
 	bool iShit1 = ((*r1 & iSmask) << 6) & (*r2 & hitMask);//circle1 hit circle2. is hit
 	bool iShit2 = ((*r2 & iSmask) << 6) & (*r1 & hitMask);//circle2 hit circle1. is hit
@@ -97,7 +97,7 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 		params.normal2X = -convexToCircleX;
 		params.normal2Z = -convexToCircleZ;
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
-		convex->onCircleCollision[convexID].CollisionFunction(params);
+		convex->onConvexCollision[convexID].CollisionFunction(params);
 	}
 
 	return true;
