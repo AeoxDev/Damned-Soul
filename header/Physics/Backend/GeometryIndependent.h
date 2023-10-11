@@ -10,5 +10,5 @@ bool SetupGIAll(EntityID& stageEntity);
 //Creates a stage collision texture out of the modelcomponent in the given entity
 //void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity);
 bool AddGeometryIndependentComponent(EntityID& stageEntity);
-void ReleaseGI();
+void ReleaseGI(EntityID& entity);
 

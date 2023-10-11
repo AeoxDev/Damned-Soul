@@ -7,3 +7,9 @@ void RandomPosition(EntityID& entity);
 void PlayerLoseControl(EntityID& entity);
 void PlayerRegainControl(EntityID& entity);
 void PlayerDash(EntityID& entity);
+
+//Portal
+void CreatePortal(EntityID& entity);
+//void EnemyExclusion(EntityID& entity); not needed?
+void PlayDeathAnimation(EntityID& entity);
+void RemoveEnemy(EntityID& entity);

@@ -370,7 +370,6 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 		//d3d11Data->deviceContext->Map(srvHolder->srv_resource_map[currentIdx], 0, D3D11_MAP_WRITE, 0, &mappedResource);
 		//srvHolder->size.emplace(currentIdx, mappedResource.DepthPitch);
 		//d3d11Data->deviceContext->Unmap(srvHolder->srv_resource_map[currentIdx], 0);
-
 		break;
 	case BIND_SHADER_RESOURCE:
 		tempResource = rtvHolder->tx_map[sourceIdx];
@@ -387,7 +386,6 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 		}
 		srvHolder->srv_map.emplace(currentIdx, tempSRV);
 		srvHolder->size.emplace(currentIdx, srvHolder->size[sourceIdx]);
-
 		break;
 	default:
 		std::cerr << "Did not create requested Shader Resource View (overload), requested case is not defined" << std::endl;

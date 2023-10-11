@@ -28,11 +28,11 @@ bool UIRenderSystem::Update()
         UpdateUI();
         Begin2dFrame(ui);
 
-        for (auto entity : View<UIButtonComponent>(registry))
-            registry.GetComponent<UIButtonComponent>(entity)->button.Draw();
+        for (auto entity : View<UIButton>(registry))
+            registry.GetComponent<UIButton>(entity)->Draw();
 
-        for (auto entity : View<ImageComponent>(registry))
-            registry.GetComponent<ImageComponent>(entity)->image.Draw();
+        for (auto entity : View<UIImage>(registry))
+            registry.GetComponent<UIImage>(entity)->Draw();
 
         for (auto entity : View<UIPlayerRelicsComponent>(registry))
         {
@@ -44,8 +44,8 @@ bool UIRenderSystem::Update()
 
         }
 
-        for (auto entity : View<TextComponent>(registry))
-            registry.GetComponent<TextComponent>(entity)->text.Draw();
+        for (auto entity : View<UIText>(registry))
+            registry.GetComponent<UIText>(entity)->Draw();
 
         for (auto entity : View<UIGameLevelComponent>(registry))
         {
@@ -111,17 +111,17 @@ bool UIPlayerRelicsSystem::Update()
         auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
         auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
 
-        uiElement->baseImage.SetScale(uiElement->scale);
-        uiElement->baseImage.SetPosition(uiElement->position);
+        uiElement->baseImage.m_UiComponent.SetScale(uiElement->scale);
+        uiElement->baseImage.m_UiComponent.SetPosition(uiElement->position);
 
 
         if (uiElement->imageIndex + 1 == uiElement->images.size())
         {
-            float xPos = abs(uiElement->baseImage.GetPosition().x - uiElement->baseImage.m_CurrentBounds.right / 2);
+            float xPos = abs(uiElement->baseImage.m_UiComponent.GetPosition().x - uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 2);
             float pixelCoordsX = (xPos / 0.5f / sdl.WIDTH) - 1.0f;
 
-            uiElement->images[uiElement->imageIndex].SetScale({ 1.0f , 1.0f });
-            uiElement->images[uiElement->imageIndex].SetPosition({ pixelCoordsX + (0.1f * uiElement->imageIndex), uiElement->position.y /*+ (0.01f * uiElement->imageIndex)*/ });
+            uiElement->images[uiElement->imageIndex].m_UiComponent.SetScale({ 1.0f , 1.0f });
+            uiElement->images[uiElement->imageIndex].m_UiComponent.SetPosition({ pixelCoordsX + (0.1f * uiElement->imageIndex), uiElement->position.y /*+ (0.01f * uiElement->imageIndex)*/ });
             uiElement->imageIndex++;
             RedrawUI();
         }
@@ -150,10 +150,10 @@ void SetTextAndImageProperties(ML_String text, UIText& uiText, UIImage& uiImage,
 
     uiText.UpdateText(valueAsWString);
 
-    uiText.SetScale(scale);
-    uiText.SetPosition(position);
+    uiText.m_UiComponent.SetScale(scale);
+    uiText.m_UiComponent.SetPosition(position);
 
-    uiImage.SetScale(scale);
-    uiImage.SetPosition(position);
+    uiImage.m_UiComponent.SetScale(scale);
+    uiImage.m_UiComponent.SetPosition(position);
 
 }

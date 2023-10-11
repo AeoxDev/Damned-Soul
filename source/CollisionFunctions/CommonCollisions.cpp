@@ -2,9 +2,12 @@
 #include "Registry.h"
 #include "Components.h"
 #include "DeltaTime.h"
+#include "States\StateManager.h"
+#include "Level.h"
 #include <assert.h>
+#include "UIRenderer.h"
 //#include <iostream>
-#define SOFT_COLLISION_FACTOR 0.4f
+#define SOFT_COLLISION_FACTOR 0.35f
 
 
 void NoCollision(OnCollisionParameters &params)
@@ -78,14 +81,19 @@ void SoftCollision(OnCollisionParameters& params)
 
 	dirX = offset2X - offset1X;
 	dirZ = offset2Z - offset1Z;
-	
-	
+	if (dirX == 0.0f && dirZ == 0.0f)
+	{
+		dirX = (float)(rand() % 4);
+		dirZ = (float)(rand() % 4);
+	}
+	//Offset by ratio of mass
+	float massRatio = transform1->mass / transform2->mass;
 
-	transform1->positionX -= dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR;//Push of by
-	transform1->positionZ -= dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR;//Push of by
+	transform1->positionX -= dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR / massRatio;//Push of by
+	transform1->positionZ -= dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR / massRatio;//Push of by
 
-	transform2->positionX += dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR;//Push of by
-	transform2->positionZ += dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR;//Push of by
+	//transform2->positionX += dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
+	//transform2->positionZ += dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
 
 }
 
@@ -155,11 +163,19 @@ void HardCollision(OnCollisionParameters& params)
 
 	dirX = offset2X - offset1X;
 	dirZ = offset2Z - offset1Z;
-
+	if (dirX == 0.0f && dirZ == 0.0f)
+	{
+		dirX == -transform1->positionX + 0.001f;
+		dirZ == -transform1->positionZ + 0.001f;
+	}
 	//Get distance, get ratio between radi and distance
 	float dist = sqrtf(dirX * dirX + dirZ * dirZ);
 	float len = dist - radius1 - radius2;
 	//
+	//Offset by ratio of mass
+	float massRatio = transform2->mass / transform1->mass;
+	//float massRatioR = 1.0f / massRatio;//Reversed mass ratio
+
 	transform1->positionX += dirX * len;//Push of by
 	transform1->positionZ += dirZ * len;//Push of by
 
@@ -177,5 +193,11 @@ void AttackCollision(OnCollisionParameters& params)
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	
 	stat2->health -= stat1->damage;
-	
+	RedrawUI();
 }
+
+void LoadNextLevel(OnCollisionParameters& params)
+{
+	LoadLevel(stateManager.activeLevelScene + 1);
+}
+

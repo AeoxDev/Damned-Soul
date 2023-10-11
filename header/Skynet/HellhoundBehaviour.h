@@ -59,4 +59,7 @@ struct HellhoundBehaviour
 	float cowardDirectionZ = 0.f;
 	bool retreat = false;
 	bool isWating = false; // kind of dumb, but needed for checks
+
+
+	
 };

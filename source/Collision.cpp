@@ -194,12 +194,12 @@ void HandleMoveableCollision( )//Reggie Strie
 						//Both are convex, do convex to convex.
 						bool hit = IsConvexCollision(entity, entity2, i, j);
 					}
-					if (firstHitbox->circularFlags[i].active && firstHitbox->convexFlags[j].active)
+					if (firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
 					{
 						//One is convex, other one is circular.
 						bool hit = IsCircularConvexCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
 					}
-					if (firstHitbox->convexFlags[i].active && firstHitbox->circularFlags[j].active)
+					if (firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active)
 					{
 						//One is convex, other one is circular.
 						bool hit = IsConvexCircularCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
