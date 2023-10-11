@@ -205,7 +205,7 @@ void ReleaseGI( )
 		GeometryIndependentComponent* gi = registry.GetComponent<GeometryIndependentComponent>(entity);
 		DeleteD3D11Buffer(gi->constantBuffer);
 		DeleteD3D11Texture(gi->stagingTexture);
-		DeleteD3D11RenderTargetView(gi->renderTargetView);
+ 		DeleteD3D11RenderTargetView(gi->renderTargetView);
 		DeleteD3D11PixelShader(gi->pixelShader);
 		DeleteD3D11VertexShader(gi->vertexShader);
 		DeleteD3D11DepthStencilView(gi->depthStencil);

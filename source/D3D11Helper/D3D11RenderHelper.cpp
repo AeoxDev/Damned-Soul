@@ -113,7 +113,6 @@ RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, C
 
 	// Set the hash last thing you do
 	return (rtvHolder->_nextIdx)++;
-
 }
 
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
@@ -341,17 +340,22 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 	uint8_t currentIdx = srvHolder->_nextIdx;
 	HRESULT hr = NULL;
 	ID3D11ShaderResourceView* tempSRV = 0;
+	ID3D11Texture2D* tempTex = 0;
 	ID3D11Resource* tempResource = 0;
 
 
 	switch (sourceResource)
 	{
 	case BIND_RENDER_TARGET:
-		rtvHolder->tx_map[sourceIdx]->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
-		//tempResource = rtvHolder->tx_map[sourceIdx];
+		tempTex = rtvHolder->tx_map[sourceIdx];
+		hr = tempTex->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
+		if (FAILED(hr)) {
+			std::cerr << "Failed to QueryInterface into buffer" << std::endl;
+			tempTex->Release();
+			return false;
+		}
+
 		srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
-		//rtvHolder->tx_map[sourceIdx]->AddRef();
-		//srvHolder->srv_resource_map[currentIdx]->AddRef();
 
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], NULL, &tempSRV);
 		if (FAILED(hr))
@@ -372,7 +376,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 
 		break;
 	case BIND_SHADER_RESOURCE:
-		tempResource = rtvHolder->tx_map[sourceIdx];
+		tempResource = srvHolder->srv_resource_map[sourceIdx];
 		srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
 		srvHolder->srv_resource_map[currentIdx]->AddRef();
 
