@@ -4,13 +4,31 @@
 
 int GetOrientation(float& Ax, float& Az, float& Bx, float& Bz, float& Cx, float& Cz)
 {
+	//Add a length checker to see if the line intersects only within the points bounds and not infinity.
 	float val = (Bz - Az) * (Cx - Bx) - (Bx - Ax) * (Cz - Bz);
 
 	if (val == 0) return 0; //Collinear
 	return (val > 0) ? 1 : 2; //Clockwise or counterclockwise
 }
 
-void ProximityCorrection(EntityID& wall, int& index, float& x, float& z)
+void FindIntersection(float& x, float& z, ProximityPoint& p1, ProximityPoint& p2, float& otherX, float& otherZ)
+{
+	//Calculates where two lines intersect, should only be used when division = 0 for the other cases.
+	float a1 = p1.z - p2.z;
+	float b1 = p2.x - p1.x;
+	float c1 = a1 * p2.x + b1 * p2.z;
+
+	float a2 = otherZ - z;
+	float b2 = x - otherX;
+	float c2 = a2 * x + b2 * z;
+
+	float determinant = a1 * b2 - a2 * b1;
+
+	x = (b2 * c1 - b1 * c2) / determinant;
+	z = (a1 * c2 - a2 * c1) / determinant;
+}
+
+void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& previousX, float& previousZ)
 {
 	ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(wall);
 
@@ -61,7 +79,7 @@ void ProximityCorrection(EntityID& wall, int& index, float& x, float& z)
 		}
 		else if (!first && !second)
 		{
-			ProximityStepChart(A, B, C, x, z, x, z); //Change second pair of x, z -> Previous position X and Z.
+			ProximityStepChart(A, B, C, x, z, previousX, previousZ); //Go through the step chart.
 		}
 		else
 		{
@@ -136,7 +154,7 @@ void ProximityCorrection(EntityID& wall, int& index, float& x, float& z)
 		}
 		else if (!first && !second)
 		{
-			ProximityStepChart(A, B, C, x, z, x, z); //Change second pair of x, z -> Previous position X and Z.
+			ProximityStepChart(A, B, C, x, z, previousX, previousZ); //Go through step chart.
 		}
 		else
 		{
@@ -185,6 +203,10 @@ void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 		//Calculate the coefficient that tells the amount to move
 		if (((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)) == 0) //Division by zero is BAD! >:(
 		{
+			//First point = (x, z), Second point = ((-dz * magnitude), (-dx * magnitude)), Third point = (p1.x, p1.z), Fourth point = (p2.x, p2.z)
+			float otherX = x - dz * magnitude;
+			float otherZ = z - dx * magnitude;
+			FindIntersection(x, z, p1, p2, otherX, otherZ);
 			return;
 		}
 		float X = abs(((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)));
@@ -201,6 +223,10 @@ void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 		//Calculate the coefficient that tells the amount to move
 		if (((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)) == 0) //Division by zero is BAD! >:(
 		{
+			//First point = (x, z), Second point = ((-dz * magnitude), (-dx * magnitude)), Third point = (p1.x, p1.z), Fourth point = (p2.x, p2.z)
+			float otherX = x - dz * magnitude;
+			float otherZ = z - dx * magnitude;
+			FindIntersection(x, z, p1, p2, otherX, otherZ);
 			return;
 		}
 		float X = abs(((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)));

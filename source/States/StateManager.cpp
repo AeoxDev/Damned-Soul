@@ -108,8 +108,8 @@ void StateManager::Setup()
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
-	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());
+	systems.push_back(new TransformSystem());
 	systems.push_back(new EventSystem());
 	systems.push_back(new StateSwitcherSystem());
 

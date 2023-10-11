@@ -16,8 +16,6 @@ bool ControllerSystem::Update()
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 
 		//Store variables for checking to see how far the entity has moved, these are relevant to the camera
-		transform->lastPositionZ = transform->positionZ;
-		transform->lastPositionX = transform->positionX;
 		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ controller->goalX,controller->goalZ, 0.0f };
 		DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
 		DirectX::XMFLOAT3 l;

@@ -17,7 +17,7 @@ int main(int argc, char* args[])
 	SetupWindow();
 	std::string title = "Damned Soul";
 	stateManager.Setup();
-	
+
 
 	while (!sdl.quit)
 	{

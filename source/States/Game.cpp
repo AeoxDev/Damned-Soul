@@ -53,6 +53,8 @@ void GameScene::Setup(int scene)//Load
 		/*TransformComponent* dtc = */registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
 		// Stage (Default)
 		/*TransformComponent* stc = */registry.AddComponent<TransformComponent>(stage);
+		ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+		phc->Load("default");
 		// Player (Default)
 		/*TransformComponent* ptc = */registry.AddComponent<TransformComponent>(player);
 		// First skeleton
