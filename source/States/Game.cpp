@@ -42,53 +42,67 @@ void GameScene::Setup(int scene)//Load
 		EntityID eye = registry.CreateEntity();
 		EntityID particle = registry.CreateEntity();
 
-		/*ModelBonelessComponent* dogCo = */registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
-		/*ModelBonelessComponent* stageCo = */registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-		/*ModelSkeletonComponent* pmc = */registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-		/*AnimationComponent* pac = */registry.AddComponent<AnimationComponent>(player, AnimationComponent());
-		/*ModelBonelessComponent* skelCo = */registry.AddComponent<ModelBonelessComponent>(skeleton, LoadModel("SkeletonOneDymmy.mdl"));
-		/*ModelBonelessComponent* skelCo2 = */registry.AddComponent<ModelBonelessComponent>(skeleton2, LoadModel("SkeletonOneDymmy.mdl"));
+		registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
+		registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+		registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
+		registry.AddComponent<AnimationComponent>(player, AnimationComponent());
+		registry.AddComponent<ModelBonelessComponent>(skeleton, LoadModel("SkeletonOneDymmy.mdl"));
+		registry.AddComponent<ModelBonelessComponent>(skeleton2, LoadModel("SkeletonOneDymmy.mdl"));
+		registry.AddComponent<ModelBonelessComponent>(eye, LoadModel("FlyingEyeDymmy.mdl"));
+
 
 		// Dog
 		TransformComponent dogTransformComponent;
 		dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 20.0f; dogTransformComponent.facingX = 1.0f;
-		/*TransformComponent* dtc = */registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
+		registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
+		
 		// Stage (Default)
-		/*TransformComponent* stc = */registry.AddComponent<TransformComponent>(stage);
+		registry.AddComponent<TransformComponent>(stage);
+		
 		// Player (Default)
-		/*TransformComponent* ptc = */registry.AddComponent<TransformComponent>(player);
+		registry.AddComponent<TransformComponent>(player);
+		
 		// First skeleton
 		TransformComponent fsTransformComponent;
 		fsTransformComponent.positionZ = 20.0f;
-		/*TransformComponent* skeltc = */registry.AddComponent<TransformComponent>(skeleton, fsTransformComponent);
+		registry.AddComponent<TransformComponent>(skeleton, fsTransformComponent);
+		
 		// Second skeleton
 		TransformComponent ssTransformComponent;
 		ssTransformComponent.positionZ = 15.0f;
-		/*TransformComponent* skeltc2 = */registry.AddComponent<TransformComponent>(skeleton2, ssTransformComponent);
+		registry.AddComponent<TransformComponent>(skeleton2, ssTransformComponent);
+
+		// Eye
+		TransformComponent eyeTransformComponent;
+		eyeTransformComponent.positionZ = 15.f;
+		eyeTransformComponent.positionX = 15.f;
+		registry.AddComponent<TransformComponent>(eye, eyeTransformComponent);
 
 
+		registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+		registry.AddComponent<PlayerComponent>(player);
 
-		/*StatComponent* ps = */registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-		/*PlayerComponent* pc = */registry.AddComponent<PlayerComponent>(player);
+		registry.AddComponent<StatComponent>(dog, 50.f, 20.f, 25.f, 5.f);
+		registry.AddComponent<EnemyComponent>(dog, 1);
 
-		/*StatComponent* ds = */registry.AddComponent<StatComponent>(dog, 50.f, 20.f, 25.f, 5.f);
-		/*EnemyComponent* ec1 = */registry.AddComponent<EnemyComponent>(dog, 1);
+		registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
+		registry.AddComponent<EnemyComponent>(skeleton, 2);
 
-		/*StatComponent* ss = */registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
-		/*EnemyComponent* ec2 = */registry.AddComponent<EnemyComponent>(skeleton, 2);
+		registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
+		registry.AddComponent<EnemyComponent>(skeleton2, 2);
 
-		/*StatComponent* ss2 = */registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
-		/*EnemyComponent* ec3 = */registry.AddComponent<EnemyComponent>(skeleton2, 2);
+		registry.AddComponent<StatComponent>(eye, 50.f, 20.f, 25.f, 5.f);
+		registry.AddComponent<EnemyComponent>(eye, 1);
 
-		/*ControllerComponent* cc = */registry.AddComponent<ControllerComponent>(player);
+		registry.AddComponent<ControllerComponent>(player);
 
 				ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 		PointOfInterestComponent poic;
 		poic.weight = 10.0f;
-		/*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
-		/*PointOfInterestComponent* dogPoi = */registry.AddComponent<PointOfInterestComponent>(dog);
-		/*PointOfInterestComponent* skelPoi = */registry.AddComponent<PointOfInterestComponent>(skeleton);
-		/*PointOfInterestComponent* skelPoi2 = */registry.AddComponent<PointOfInterestComponent>(skeleton2);
+		registry.AddComponent<PointOfInterestComponent>(player, poic);
+		registry.AddComponent<PointOfInterestComponent>(dog);
+		registry.AddComponent<PointOfInterestComponent>(skeleton);
+		registry.AddComponent<PointOfInterestComponent>(skeleton2);
 
 		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 		////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
@@ -102,9 +116,10 @@ void GameScene::Setup(int scene)//Load
 		UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, 1.0f, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), UIImage("ExMenu/CheckboxBase.png"), UIText(valueAsWString));
 		
 
-		/*HellhoundBehaviour* hellhoundBehevCo = */registry.AddComponent<HellhoundBehaviour>(dog);
-		/*SkeletonBehaviour* skeletonBehevCo = */registry.AddComponent<SkeletonBehaviour>(skeleton);
-		/*SkeletonBehaviour* skeletonBehevCo2 = */registry.AddComponent<SkeletonBehaviour>(skeleton2);
+		//registry.AddComponent<HellhoundBehaviour>(dog);
+		//registry.AddComponent<SkeletonBehaviour>(skeleton);
+		//registry.AddComponent<SkeletonBehaviour>(skeleton2);
+		registry.AddComponent<EyeBehaviour>(eye);
 
 
 		RenderGeometryIndependentCollision(stage);

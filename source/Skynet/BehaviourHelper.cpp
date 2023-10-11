@@ -8,7 +8,7 @@ float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z)
 	return sqrt((pos1X - pos2X) * (pos1X - pos2X) + (pos1Z - pos2Z) * (pos1Z - pos2Z));
 }
 
-void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor)
+void SmoothRotation(TransformComponent* tc, float goalX, float goalZ, float rotationFactor)
 {
 	DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ goalX, goalZ, 0.0f };
 	DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
@@ -21,7 +21,7 @@ void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rot
 		rotationFactor = 1.1f;
 	}
 
-	if (ptc->facingZ < 0.0f)
+	if (tc->facingZ < 0.0f)
 	{
 		angle *= -1.0f;
 	}

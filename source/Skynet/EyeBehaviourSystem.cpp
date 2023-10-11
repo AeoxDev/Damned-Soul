@@ -147,25 +147,74 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, HitboxComponent* enemyHitbox, EntityID eID)
 {
-	float dirX = eyeTransformComponent->positionX - playerTransformCompenent->positionX;
-	float dirZ = eyeTransformComponent->positionZ - playerTransformCompenent->positionZ;
+	if (!eyeComponent->charging)
+	{
+		eyeComponent->specialCounter = 0;
+		eyeComponent->charging = true;
 
-	float targetX = playerTransformCompenent->positionX + dirX * 10.0f;
-	float targetZ = playerTransformCompenent->positionZ + dirZ * 10.0f;
+		SetHitboxIsMoveable(eID, 0, false);
+		SetHitboxIsMoveable(eID, 1, false);
 
-	SetHitboxIsMoveable(eID, 0, false);
-	SetHitboxIsMoveable(eID, 1, false);
+		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
+		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
 
+		float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+		if (magnitude < 0.001f)
+		{
+			magnitude = 0.001f;
+		}
 
-	eyeComponent->goalDirectionX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
-	eyeComponent->goalDirectionZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
+		dirX /= magnitude;
+		dirZ /= magnitude;
 
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+		eyeComponent->targetX = playerTransformCompenent->positionX + dirX * 5.0f;
+		eyeComponent->targetZ = playerTransformCompenent->positionZ + dirZ * 5.0f;
 
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed * 4.f * GetDeltaTime();
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+		eyeComponent->goalDirectionX = dirX;
+		eyeComponent->goalDirectionZ = dirZ;
+		eyeComponent->changeDirX = dirX;
+		eyeComponent->changeDirZ = dirZ;
+
+		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+
+	}
+	else 
+	{
+		//First enemy to point direction
+		//Then charging direction
+		//If charging scalar point direction > 0.0, charge
+
+		float dirX = (eyeComponent->targetX - eyeTransformComponent->positionX);
+		float dirZ = (eyeComponent->targetZ - eyeTransformComponent->positionZ);
+
+		float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+		if (magnitude < 0.001f)
+		{
+			magnitude = 0.001f;
+		}
+		dirX /= magnitude;
+		dirZ /= magnitude;
+
+		float scalar = dirX * eyeComponent->changeDirX + dirZ * eyeComponent->changeDirZ;
+
+		if (scalar < 0)
+		{
+			eyeComponent->charging = false;
+
+			SetHitboxIsMoveable(eID, 0, true);
+			SetHitboxIsMoveable(eID, 1, true);
+		}
+		else
+		{
+			SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+
+			eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+			eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+		}
+	}
 }
 
+static int REMOVEMEPLEASE = 0;
 
 bool EyeBehaviourSystem::Update()
 {
@@ -184,7 +233,7 @@ bool EyeBehaviourSystem::Update()
 		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
-
+	
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent>(registry))
 	{
 		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
@@ -202,15 +251,14 @@ bool EyeBehaviourSystem::Update()
 			{
 				// do nothing, stand still and be ashamed
 			}
-			else if (distance < 15.0f) // Retreat to safe distance
+			else if (distance < 15.0f && !eyeComponent->charging) // Retreat to safe distance
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
-			else if ( true/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/)
+			else if (eyeComponent->specialCounter > eyeComponent->specialBreakpoint)
 			{
 				//CHAAAAARGE
 				
-				eyeComponent->specialCounter = 0;
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyHitbox, enemyEntity);
 
 			}
@@ -218,11 +266,22 @@ bool EyeBehaviourSystem::Update()
 			{
 				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
-				//	CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats);
+				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats);
+				REMOVEMEPLEASE++;
+				if (REMOVEMEPLEASE % 20 == 0)
+				{
+					eyeComponent->specialCounter++;
+				}
+
 			}
 			else // idle
 			{
 				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
+				REMOVEMEPLEASE++;
+				if (REMOVEMEPLEASE % 20 == 0)
+				{
+					eyeComponent->specialCounter++;
+				}
 			}
 		}
 		else
