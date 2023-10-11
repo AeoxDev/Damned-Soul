@@ -458,6 +458,25 @@ void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot
 
 }
 
+bool DeleteD3D11SRV(const SRV_IDX idx)
+{
+	assert(srvHolder->srv_map.contains(idx));
+	// Release SRV
+	srvHolder->srv_map[idx]->Release();
+	srvHolder->srv_map.erase(idx);
+
+	srvHolder->size.erase(idx); // Size
+
+	// Release resource if it exists
+	if (srvHolder->srv_resource_map.contains(idx))
+	{
+		srvHolder->srv_resource_map[idx]->Release();
+		srvHolder->srv_resource_map.erase(idx);
+	}
+
+	return true;
+}
+
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 {
 	d3d11Data->deviceContext->CopyResource(bfrHolder->buff_map[destination], srvHolder->srv_resource_map[source]);

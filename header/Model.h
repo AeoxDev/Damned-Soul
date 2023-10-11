@@ -80,7 +80,8 @@ struct Model
 
 	VB_IDX m_vertexBuffer = -1;
 	IB_IDX m_indexBuffer = -1;
-	CB_IDX m_animationBuffer = -1;
+	SB_IDX m_animationBuffer = -1;
+	SRV_IDX m_animationBufferSRV = -1;
 	uint16_t m_refCount = 0;
 	
 	

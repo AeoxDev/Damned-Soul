@@ -10,10 +10,8 @@ cbuffer CameraBuffer : register(b1)
     matrix projection;
 }
 
-cbuffer Skeleton : register(b2)
-{
-	matrix skeleMath[21];
-}
+// Structured buffer of bones
+StructuredBuffer<matrix> skeleMath : register(t0);
 
 struct VS_INPUTS
 {

@@ -90,6 +90,7 @@ private:
 public:
 	ML_Map < uint16_t, ID3D11Buffer*>	buff_map; // MANY more buffers are needed than shaders
 	ML_Map < uint16_t, uint32_t>		size; // Size
+	ML_Map < uint16_t, uint32_t>		count; // Count, used for structured buffers
 
 	uint16_t NextIdx();
 };

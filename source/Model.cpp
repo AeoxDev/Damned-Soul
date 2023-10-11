@@ -115,9 +115,6 @@ const MODEL_TYPE Model::Load(const char* filename)
 		m_vertexBuffer = CreateVertexBuffer(m_data->GetBonelessVertices(), sizeof(VertexBoneless), m_data->m_numVertices, USAGE_IMMUTABLE);
 	else
 	{
-		// Create the animation buffer
-		m_animationBuffer = CreateConstantBuffer(sizeof(DirectX::XMMATRIX) * m_data->m_numBones);
-
 		// Load bone data
 		m_vertexBuffer = CreateVertexBuffer(m_data->GetBonedVertices(), sizeof(VertexBoned), m_data->m_numVertices, USAGE_IMMUTABLE);
 
@@ -150,7 +147,8 @@ const MODEL_TYPE Model::Load(const char* filename)
 			m_animations[animType][can[1] - '0'].Load(entry.path().string().c_str());
 		}
 
-		m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX));
+		// Create the animation buffer
+		m_animationBuffer = CreateStructuredBuffer(m_data->GetBoneMatrices(), sizeof(DirectX::XMMATRIX), m_data->m_numBones, m_animationBufferSRV);
 	}
 		
 	m_indexBuffer = CreateIndexBuffer(m_data->GetIndices(), sizeof(uint32_t), m_data->m_numIndices);
@@ -175,7 +173,10 @@ const MODEL_TYPE Model::Load(const char* filename)
 void Model::Free()
 {
 	if (m_animationBuffer != -1)
+	{
 		DeleteD3D11Buffer(m_animationBuffer);
+		DeleteD3D11SRV(m_animationBufferSRV);
+	}
 	DeleteD3D11Buffer(m_vertexBuffer);
 	DeleteD3D11Buffer(m_indexBuffer);
 	m_animations.~ML_Map();
@@ -212,8 +213,8 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 	// Try to get the initial animation frame
 	if (m_animationBuffer != -1)
 	{
-		UpdateConstantBuffer(m_animationBuffer, GetAnimation(aType, aIdx, aTime));
-		SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2);
+		UpdateStructuredBuffer(m_animationBuffer, GetAnimation(aType, aIdx, aTime));
+		SetShaderResourceView(m_animationBufferSRV, BIND_VERTEX, 0);
 	}
 
 
