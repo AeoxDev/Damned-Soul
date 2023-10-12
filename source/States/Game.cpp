@@ -28,8 +28,8 @@ void GameScene::Setup(int scene)//Load
 		
 		//Setup Game HUD
 
+		
 		Camera::ResetCamera();
-
 	}
 }
 

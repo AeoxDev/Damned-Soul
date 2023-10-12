@@ -27,5 +27,7 @@
 //Collision
 #include "HitboxComponent.h"
 
+//AI Behaviours
 #include "Skynet\SkeletonBehaviour.h"
 #include "Skynet\HellhoundBehaviour.h"
+#include "Skynet/EyeBehaviour.h"
