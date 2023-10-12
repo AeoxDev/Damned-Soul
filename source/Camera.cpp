@@ -9,7 +9,7 @@
 #define CAMERA_FOV 3.14f/16.f
 #define CAMERA_PERSPECTIVE_DEPTH 512.0f
 //The max zoom in
-#define CAMERA_ZOOM_IN_LIMIT 3.14f/24.f
+#define CAMERA_ZOOM_IN_LIMIT 3.14f/12.f
 //THe max zoom out
 #define CAMERA_ZOOM_OUT_LIMIT 3.14f/6.5f
 

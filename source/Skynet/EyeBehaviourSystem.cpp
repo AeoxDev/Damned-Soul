@@ -24,7 +24,6 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 
 	eyeTransformComponent->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
 	eyeTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
-
 }
 
 bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats)
@@ -250,7 +249,7 @@ bool EyeBehaviourSystem::Update()
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 
 
-		if (enemyStats->health > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr)// check if enemy is alive
+		if (enemyStats->health > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr)// check if enemy is alive
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			eyeComponent->attackTimer += GetDeltaTime();

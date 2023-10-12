@@ -56,7 +56,7 @@ void LoadLevel1()
 	eyeTransformComponent.positionZ = 15.0f;
 	registry.AddComponent<TransformComponent>(eye, eyeTransformComponent);
 
-	registry.AddComponent<StatComponent>(player, 125000000.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
 	registry.AddComponent<StatComponent>(dog, 50.f, 20.f, 25.f, 5.f);
@@ -68,7 +68,7 @@ void LoadLevel1()
 	registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
 	registry.AddComponent<EnemyComponent>(skeleton2, 2);
 
-	registry.AddComponent<StatComponent>(eye, 50.f, 15.f, 25.f, 5.f);
+	registry.AddComponent<StatComponent>(eye, 50.f, 15.f, 37.f, 5.f);
 	registry.AddComponent<EnemyComponent>(eye, 1);
 
 	registry.AddComponent<ControllerComponent>(player);
@@ -80,7 +80,7 @@ void LoadLevel1()
 	//registry.AddComponent<PointOfInterestComponent>(dog);
 	//registry.AddComponent<PointOfInterestComponent>(skeleton);
 	//registry.AddComponent<PointOfInterestComponent>(skeleton2);
-	registry.AddComponent<PointOfInterestComponent>(eye);
+	//registry.AddComponent<PointOfInterestComponent>(eye);
 
 	//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 	////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
@@ -108,12 +108,10 @@ void LoadLevel1()
 	RenderGeometryIndependentCollision(stage);
 	
 	//Finally set the collision boxes
-	SetupPlayerCollisionBox(player, 2.0f);
 
+	SetupPlayerCollisionBox(player, 1.0f);
 	SetupEnemyCollisionBox(skeleton, 0.9f);
 	SetupEnemyCollisionBox(skeleton2, 0.9f);
 	SetupEnemyCollisionBox(dog, 1.0f);
 	SetupEnemyCollisionBox(eye, 1.0f);
-
-	
 }
