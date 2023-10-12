@@ -52,10 +52,10 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 		circle1->circleHitbox[circleID1].offsetZ += 0.0f;
 	}
 	// if not, find the hitboxes and see if they actually collide
-	float offset1X = circle1->circleHitbox[circleID1].offsetX * circle1->offsetXx + circle1->circleHitbox[circleID1].offsetZ * circle1->offsetXz;
-	float offset2X = circle2->circleHitbox[circleID2].offsetX * circle2->offsetXx + circle2->circleHitbox[circleID2].offsetZ * circle2->offsetXz;
-	float offset1Z = circle1->circleHitbox[circleID1].offsetZ * circle1->offsetZz + circle1->circleHitbox[circleID1].offsetX * circle1->offsetZx;
-	float offset2Z = circle2->circleHitbox[circleID2].offsetZ * circle2->offsetZz + circle2->circleHitbox[circleID2].offsetX * circle2->offsetZx;
+	float offset1X = RotateOffset(circle1->circleHitbox[circleID1].offsetX, circle1->circleHitbox[circleID1].offsetZ, circle1->offsetXx, circle1->offsetXz);
+	float offset2X = RotateOffset(circle2->circleHitbox[circleID2].offsetX, circle2->circleHitbox[circleID2].offsetZ, circle2->offsetXx, circle2->offsetXz);
+	float offset1Z = RotateOffset(circle1->circleHitbox[circleID1].offsetZ, circle1->circleHitbox[circleID1].offsetX, circle1->offsetZz, circle1->offsetZx);
+	float offset2Z = RotateOffset(circle2->circleHitbox[circleID2].offsetZ, circle2->circleHitbox[circleID2].offsetX, circle2->offsetZz, circle2->offsetZx);
 	float dx = (pos1x + offset1X) - (pos2x + offset2X); 
 	float dz = (pos1z + offset1Z) - (pos2z + offset2Z); 
 	float distance = std::sqrtf(dx * dx + dz * dz);

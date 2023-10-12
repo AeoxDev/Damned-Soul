@@ -330,6 +330,11 @@ void UpdatePhysics()
 	HandleStaticCollision();
 }
 
+float RotateOffset(float offsetX, float offsetZ, float xFactor, float zFactor)
+{
+	return offsetX * xFactor + offsetZ * zFactor;
+}
+
 bool CollisionSystem::Update()
 {
 	UpdatePhysics();

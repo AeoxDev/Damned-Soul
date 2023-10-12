@@ -701,6 +701,16 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
 
+	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
+	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
+	int hID = CreateHitbox(entity, 4, cornersX, cornersZ);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxHitStage(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);*/
+
 	int sID = CreateHitbox(entity, radius, .0f, -0.0f);
 	SetCollisionEvent(entity, sID, SoftCollision);
 	SetHitboxIsPlayer(entity, sID);
