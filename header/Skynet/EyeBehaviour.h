@@ -18,9 +18,10 @@ struct EyeBehaviour
 
 
 	int specialCounter = 0;		//how many attacks since last special
-	int specialBreakpoint = 2;	//how many attacks are needed for next special
+	int specialBreakpoint = 5;	//how many attacks are needed for next special
 
-	bool clockwiseCircle = false;
+	bool clockwiseCircle = true;
 	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
+	bool dealtDamage = false;
 };

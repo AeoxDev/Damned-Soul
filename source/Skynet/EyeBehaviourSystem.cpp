@@ -3,11 +3,13 @@
 #include "Registry.h"
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
+#include "UI/UIRenderer.h"
 #include <random>
 
 
 void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats)
 {
+	//calculate the direction away from the player
 	eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
 	eyeComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - eyeTransformComponent->positionZ);
 
@@ -73,29 +75,9 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 
 void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, StatComponent* playerStats)
 {
-	float relativePosX = ptc->positionX - etc->positionX;
-	float relativePosZ = ptc->positionZ - etc->positionZ;
-
-	float relativeDirectionX = ptc->facingX - etc->facingX;
-	float relativeDirectionZ = ptc->facingZ - etc->facingZ;
-
-	float dot = relativePosX * relativeDirectionZ - relativePosZ * relativeDirectionX;
-
 	float magnitude = 0.f;
 	float dirX = 0.f;
 	float dirZ = 0.f;
-	if (!ec->circleBehaviour)
-	{
-		ec->circleBehaviour = true;
-		if (dot < 0) // clockwise
-		{
-			ec->clockwiseCircle = true;
-		}
-		else // counter clockwise
-		{
-			ec->clockwiseCircle = false;
-		}
-	}
 
 	if (ec->clockwiseCircle) //clockwise
 	{
@@ -108,12 +90,13 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 		dirZ = -ec->goalDirectionX;
 	}
 	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	SmoothRotation(etc, dirX, dirZ);
+	SmoothRotation(etc, dirX, dirZ, 10.f);
 	if (magnitude > 0.001f)
 	{
 		dirX /= magnitude;
 		dirZ /= magnitude;
 	}
+
 	etc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
 	etc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
@@ -128,13 +111,14 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		eyeComponent->timeCounter = 0.f;
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
+
 		std::uniform_real_distribution<float> distributionX(eyeTransformComponent->facingX - 0.3f, eyeTransformComponent->facingX + 0.3f);
 		std::uniform_real_distribution<float> distributionZ(eyeTransformComponent->facingZ - 0.3f, eyeTransformComponent->facingZ + 0.3f);
 		float randomX = distributionX(gen);
 		float randomZ = distributionZ(gen);
 		eyeComponent->goalDirectionX = randomX;
 		eyeComponent->goalDirectionZ = randomZ;
+
 		std::uniform_real_distribution<float> randomInterval(0.4f, 0.8f);
 		eyeComponent->updateInterval = randomInterval(gen);
 	}
@@ -145,16 +129,27 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
 }
 
-void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, HitboxComponent* enemyHitbox, EntityID eID)
+bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = enemy pos, B = player pos, tolerance = 
+{
+	if (aX < bX + tolerance && aX > bX - tolerance &&
+		aZ < bZ + tolerance && aZ > bZ - tolerance)
+		return true;
+	else
+		return false;
+}
+
+void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID)
 {
 	if (!eyeComponent->charging)
 	{
 		eyeComponent->specialCounter = 0;
 		eyeComponent->charging = true;
 
-		SetHitboxIsMoveable(eID, 0, false);
-		SetHitboxIsMoveable(eID, 1, false);
+		//while charging disable hitboxes
+		SetHitboxActive(eID, 0, false);
+		SetHitboxActive(eID, 1, false);
 
+		//direction from the enemy towards the player
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
 		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
 
@@ -167,23 +162,21 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		dirX /= magnitude;
 		dirZ /= magnitude;
 
+		//target is the stopping point of the charge, a set distance behind the players position
 		eyeComponent->targetX = playerTransformCompenent->positionX + dirX * 10.0f;
 		eyeComponent->targetZ = playerTransformCompenent->positionZ + dirZ * 10.0f;
 
-		eyeComponent->goalDirectionX = dirX;
-		eyeComponent->goalDirectionZ = dirZ;
-		eyeComponent->changeDirX = dirX;
-		eyeComponent->changeDirZ = dirZ;
+		eyeComponent->changeDirX = dirX; // charge direction is only set once per charge and will not change
+		eyeComponent->changeDirZ = dirZ; 
 
-		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+		//change what direction the eye is circling after each dash
+		(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
 
+		SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 20.0f);
 	}
 	else 
 	{
-		//First enemy to point direction
-		//Then charging direction
-		//If charging scalar point direction > 0.0, charge
-
+		//calculate the current direction towards player
 		float dirX = (eyeComponent->targetX - eyeTransformComponent->positionX);
 		float dirZ = (eyeComponent->targetZ - eyeTransformComponent->positionZ);
 
@@ -195,26 +188,41 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		dirX /= magnitude;
 		dirZ /= magnitude;
 
+		//scalar between the current direction and the original chagre direction
 		float scalar = dirX * eyeComponent->changeDirX + dirZ * eyeComponent->changeDirZ;
 
-		if (scalar < 0)
+		//If charging scalar point direction > 0.0, charge
+		if (scalar > 0)
 		{
-			eyeComponent->charging = false;
-
-			SetHitboxIsMoveable(eID, 0, true);
-			SetHitboxIsMoveable(eID, 1, true);
-		}
-		else
-		{
-			SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 10.0f);
 
 			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 4.f * GetDeltaTime();
 			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+
+			//check if eye has collided with player
+			if (eyeComponent->dealtDamage == false && Collision(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ, 0.2f))
+			{
+				playerStats->health -= enemyStats->damage;
+				eyeComponent->dealtDamage = true;
+				RedrawUI();
+			}
+		}
+		else //else charge is finished
+		{
+			//reenable hitboxes
+			SetHitboxActive(eID, 0, true);
+			SetHitboxActive(eID, 1, true);
+
+			//reset values
+			eyeComponent->charging = false;
+			eyeComponent->attackTimer = 0;
+			eyeComponent->attackStunDurationCounter = 0;
+			eyeComponent->dealtDamage = false;
 		}
 	}
 }
 
-static int REMOVEMEPLEASE = 0;
+static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
 
 bool EyeBehaviourSystem::Update()
 {
@@ -251,28 +259,28 @@ bool EyeBehaviourSystem::Update()
 			{
 				// do nothing, stand still and be ashamed
 			}
-			else if (distance < 15.0f && !eyeComponent->charging) // Retreat to safe distance
+			else if (distance < 15.0f && !eyeComponent->charging) // Retreat to safe distance if not charging
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
-			else if (eyeComponent->specialCounter > eyeComponent->specialBreakpoint)
+			else if (eyeComponent->charging || eyeComponent->specialCounter > eyeComponent->specialBreakpoint) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				
-				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyHitbox, enemyEntity);
+				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity);
 
 			}
-			else if (distance <= 30.0f + eyeComponent->circleBehaviour) // circle player & attack when possible
+			else if (distance <= 30.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
 				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats);
-				REMOVEMEPLEASE++;
-				if (REMOVEMEPLEASE % 50 == 0)
+				
+				TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
+				if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
 				{
 					eyeComponent->specialCounter++;
 				}
-
 			}
 			else // idle
 			{
