@@ -1,5 +1,5 @@
-#include <iostream>
 #include <string>
+#include <assert.h>
 #include "STB_Helper.h"
 #include "MemLib\MemLib.hpp"
 
@@ -24,11 +24,7 @@ bool Image::load(const char* filename)
 	unsigned char* data = stbi_load(filepath.c_str(), &m_width, &m_height, nullptr, CHANNELS);
 	m_channels = CHANNELS; // Should always be 4
 	
-	if (nullptr == data)
-	{
-		std::cout << "Error loading " << filepath << std::endl;
-		return false;
-	}
+	assert(nullptr != data);
 
 	// Make a deep copy of the data
 	unsigned int size = this->m_width * this->m_height * this->m_channels;

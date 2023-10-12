@@ -1,5 +1,4 @@
 #include "Model.h"
-#include <iostream>
 #include <fstream>
 #include "MemLib\MemLib.hpp"
 #include "D3D11Helper.h"
@@ -77,11 +76,7 @@ const MODEL_TYPE Model::Load(const char* filename)
 	auto flags = std::ios::binary; // | std::ios::ate;
 	reader.open(name.c_str(), flags);
 
-	if (false == reader.is_open())
-	{
-		std::cerr << "Failed to open model for \"" << filename << "\"! Please verify file!" << std::endl;
-		return MODEL_INSANE;
-	}
+	assert(true == reader.is_open());
 
 	// Allocate temporarily onto the stack
 	reader.seekg(0, std::ios::end);
@@ -98,15 +93,7 @@ const MODEL_TYPE Model::Load(const char* filename)
 	std::memcpy(&(*m_data), modelData, size);
 
 	const MODEL_TYPE result = m_data->ValidByteData();
-	if (MODEL_INSANE == result)
-	{
-		// pop the stack
-		MemLib::spop();
-		// Free the data
-		MemLib::pfree(m_data);
-		std::cerr << "Failed to load model \"" << filename << "\" correctly! Likely endian error!" << std::endl;
-		return result;
-	}
+	assert(MODEL_INSANE != result);
 
 	// pop the stack
 	MemLib::spop();

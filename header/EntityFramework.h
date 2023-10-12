@@ -1,17 +1,12 @@
 #pragma once
-#include <iostream>
 #include <vector>
-#include <windows.h>
-
 #include <bitset>
-#include <Windows.h>
-
-#include <map>
 
 #include "MemLib/MemLib.hpp"
 #include "MemLib/ML_Vector.hpp"
 #include "MemLib/ML_ComponentMap.hpp"
 #include "ComponentHelper.h"
+
 
 /*
 	//HOW TO USE (Basic version):

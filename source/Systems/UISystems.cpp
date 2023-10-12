@@ -8,7 +8,6 @@
 
 #include "MemLib\ML_String.hpp"
 
-#include <iostream>
 #include <iomanip>
 
 bool uiUpdated = true;

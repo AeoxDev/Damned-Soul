@@ -1,5 +1,6 @@
 #include "Lighting.h"
 #include "D3D11Graphics.h"
+#include <assert.h>
 
 bool CreateLightingConstantBuffer(ID3D11Buffer*& constantBuffer)
 {
@@ -15,11 +16,7 @@ bool CreateLightingConstantBuffer(ID3D11Buffer*& constantBuffer)
 
     HRESULT hr = d3d11Data->device->CreateBuffer(&desc, nullptr, &constantBuffer);
 
-    if (FAILED(hr))
-    {
-        std::cout << "ERROR! COULD NOT CREATE LIGHTING BUFFER!" << std::endl;
-        return false;
-    }
+    assert(!FAILED(hr));
 
     return true;
 }

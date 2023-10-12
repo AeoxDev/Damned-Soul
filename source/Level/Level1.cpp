@@ -29,13 +29,16 @@ void LoadLevel1()
 	// Dog
 	TransformComponent dogTransformComponent;
 	dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 20.0f; dogTransformComponent.facingX = 1.0f;
+	dogTransformComponent.mass = 9.0f;
 	registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
 	
 	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);
 	
 	// Player (Default)
-	registry.AddComponent<TransformComponent>(player);
+	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
+	playerTransform->facingZ = 1.0f;
+	playerTransform->mass = 3.0f;
 	
 	// First skeleton
 	TransformComponent fsTransformComponent;
@@ -105,7 +108,8 @@ void LoadLevel1()
 	RenderGeometryIndependentCollision(stage);
 	
 	//Finally set the collision boxes
-	SetupPlayerCollisionBox(player, 1.0f);
+	SetupPlayerCollisionBox(player, 2.0f);
+
 	SetupEnemyCollisionBox(skeleton, 0.9f);
 	SetupEnemyCollisionBox(skeleton2, 0.9f);
 	SetupEnemyCollisionBox(dog, 1.0f);
