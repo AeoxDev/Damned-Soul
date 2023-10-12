@@ -40,13 +40,13 @@ bool UIRenderSystem::Update()
             uiElement->baseImage.Draw();
 
             for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-            {
                 uiElement->relics[i].sprite.Draw();
-                uiElement->relics[i].flavorImage.Draw();
-                uiElement->relics[i].flavorTitle.Draw();
-                uiElement->relics[i].flavorText.Draw();
-            }
 
+            for (uint32_t i = 0; i < uiElement->relics.size(); i++)
+                uiElement->relics[i].flavorImage.Draw();
+
+            for (uint32_t i = 0; i < uiElement->relics.size(); i++)
+                uiElement->relics[i].flavorTitle.Draw();
         }
 
         for (auto entity : View<UIText>(registry))

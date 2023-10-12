@@ -122,30 +122,7 @@ void GameScene::Input()
 			RedrawUI();
 		}
 	}
-	
-	if (keyState[SDL_SCANCODE_TAB] == pressed)
-	{
-		for (auto entity : View<UIPlayerRelicsComponent>(registry))
-		{
-			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
 
-			
-
-			
-		}
-	}
-
-	if (keyState[SDL_SCANCODE_TAB] == released)
-	{
-		for (auto entity : View<UIPlayerRelicsComponent>(registry))
-		{
-			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-
-			
-
-			RedrawUI();
-		}
-	}
 }
 
 void GameScene::Update()
