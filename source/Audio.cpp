@@ -1,22 +1,14 @@
 #include "Audio.h"
-
+#include <assert.h>
 Audio SetupAudio()
 {
 	Audio audio;
 	
 	audio.result = FMOD::System_Create(&audio.system);      // Create the main system object.
-	if (audio.result != FMOD_OK)
-	{
-		printf("FMOD error! (%d)\n", audio.result);
-		exit(-1);
-	}
+	assert(audio.result == FMOD_OK);
 
 	audio.result = audio.system->init(32, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
-	if (audio.result != FMOD_OK)
-	{
-		printf("FMOD error! (%d)\n", audio.result);
-		exit(-1);
-	}
+	assert(audio.result == FMOD_OK);
 
 	audio.system->createDSPByType(FMOD_DSP_TYPE_PITCHSHIFT, &audio.pitchDSP);
 

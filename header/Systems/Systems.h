@@ -73,6 +73,11 @@ class HellhoundBehaviourSystem : public System
 	bool Update();
 };
 
+class EyeBehaviourSystem : public System
+{
+	bool Update();
+};
+
 class CollisionSystem : public System
 {
 	bool Update();

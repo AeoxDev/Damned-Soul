@@ -1,7 +1,6 @@
 #include "Animation.hpp"
 #include "MemLib\ML_String.hpp"
 #include <fstream>
-#include <iostream>
 
 bool Animation::Load(const char* filename)
 {
@@ -12,11 +11,7 @@ bool Animation::Load(const char* filename)
 	auto flags = std::ios::binary; // | std::ios::ate;
 	reader.open(filename/*name.c_str()*/, flags);
 
-	if (false == reader.is_open())
-	{
-		std::cerr << "Failed to open animation \"" << filename << "\"! Please verify file!" << std::endl;
-		return false;
-	}
+	assert(true == reader.is_open());
 
 	// Allocate temporarily onto the stack
 	reader.seekg(0, std::ios::end);
@@ -32,15 +27,7 @@ bool Animation::Load(const char* filename)
 	m_data = MemLib::palloc(size);
 	std::memcpy(&(*m_data), modelData, size);
 
-	if (m_data->m_sanityCheck != 1'234'567'890)
-	{
-		// pop the stack
-		MemLib::spop();
-		// Free the data
-		MemLib::pfree(m_data);
-		std::cerr << "Failed to load animation \"" << filename << "\" correctly! Likely endian error!" << std::endl;
-		return false;
-	}
+	assert(m_data->m_sanityCheck == 1'234'567'890);
 
 	// pop the stack
 	MemLib::spop();

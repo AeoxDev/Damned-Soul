@@ -6,8 +6,6 @@
 #include <random>
 #include "Skynet\BehaviourHelper.h"
 
-
-
 // input true on stuff you want to reset
 void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
 {
@@ -274,7 +272,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	}
 
 
-	//end óf function. check if current range >= max, that would end the attacks
+	//end ï¿½f function. check if current range >= max, that would end the attacks
 	if (hc->currentShootingAttackRange >= hc->offsetForward)
 	{
 		hc->isShooting = false;
