@@ -274,6 +274,7 @@ void Light::CreateLight(int type) //inte klar --constantbuffer
 {
     if (type == 1)
     {
+        m_directionLightBufferIndex = CreateConstantBuffer(&(DirLight.m_dirLightColor), sizeof(DirectionLightStruct));
         SetColor(type, 1.0f, 1.0f, 1.0f);
         SetDirection(type, -1.0f, -1.0f, 1.0f);
 
@@ -283,7 +284,6 @@ void Light::CreateLight(int type) //inte klar --constantbuffer
 
         //Prepare the buffer to creation
  
-        m_directionLightBufferIndex = CreateConstantBuffer(&(DirLight.m_dirLightColor), sizeof(DirectionLightStruct));
         
         UpdateConstantBuffer(m_directionLightBufferIndex, &(DirLight.m_dirLightColor));
     
@@ -291,6 +291,7 @@ void Light::CreateLight(int type) //inte klar --constantbuffer
     }
     else if (type == 2)
     {
+        m_pointLightBufferIndex = CreateConstantBuffer(&(PointLight.m_pointLightColor), sizeof(PointLightStruct));
         SetColor(type, 3.0f, 0.0f, 0.0f);
         SetPosition(type, -78.0f, 3.0f, -32.0f);
         SetRange(type, 30.0f);
@@ -303,13 +304,13 @@ void Light::CreateLight(int type) //inte klar --constantbuffer
 
         //Prepare the buffer to creation
 
-        m_pointLightBufferIndex = CreateConstantBuffer(&(PointLight.m_pointLightColor), sizeof(PointLightStruct));
 
         UpdateConstantBuffer(m_pointLightBufferIndex, &(PointLight.m_pointLightColor));
 
     }
     else if (type == 3)
     {
+        m_spotLightBufferIndex = CreateConstantBuffer(&(SpotLight.m_spotLightColor), sizeof(SpotLightStruct));
         SetColor(type, 1.0f, 1.0f, 1.0f);
         SetPosition(type, 50.0f, 5.0f, 40.0f);
         SetDirection(type, -1.0f, -1.0f, -1.0f);
@@ -323,7 +324,6 @@ void Light::CreateLight(int type) //inte klar --constantbuffer
 
         //Prepare the buffer to creation
 
-        m_spotLightBufferIndex = CreateConstantBuffer(&(SpotLight.m_spotLightColor), sizeof(SpotLightStruct));
 
         UpdateConstantBuffer(m_spotLightBufferIndex, &(SpotLight.m_spotLightColor));
     }
