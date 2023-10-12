@@ -196,7 +196,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
     <ClCompile Include="source\CompCount.cpp" />
     <ClCompile Include="source\Input.cpp" />
-    <ClCompile Include="source\Lighting.cpp" />
+    <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
     <ClCompile Include="source\Menus.cpp" />
@@ -317,6 +317,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\PixelVertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -400,10 +403,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="resource\shader\VertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -419,7 +420,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
-    <ClInclude Include="header\Lighting.h" />
+    <ClInclude Include="header\Light.h" />
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />

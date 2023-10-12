@@ -3,7 +3,7 @@
 #include "D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "UIRenderer.h"
-#include "Lighting.h"
+#include "Light.h"
 #include "Particles.h"
 
 
@@ -81,14 +81,16 @@ int SetupUIRenderState()
 
 int SetupGameRenderer()
 {
+	
 	//int hr = SetupDirectX(sdl.window);
 	renderStates[currentSize].rasterizerState = CreateRasterizerState(true, true);
 	//bool s = SetRasterizerState(renderStates[currentSize].rasterizerState);
 
-	renderStates[currentSize].pixelShader = LoadPixelShader("TestPS.cso");
-	//s = SetPixelShader(renderStates[currentSize].pixelShader);
-	renderStates[currentSize].vertexShader = LoadVertexShader("TestVS.cso");
-	//s = SetVertexShader(renderStates[currentSize].vertexShader);
+	renderStates[currentSize].pixelShader = LoadPixelShader("PixelShader.cso");
+	SetPixelShader(renderStates[currentSize].pixelShader);////////
+	renderStates[currentSize].vertexShader = LoadVertexShader("VertexShader.cso");
+	SetVertexShader(renderStates[currentSize].vertexShader);////////
+	Light::CreateLight(1);
 
 	Vertex triangle[3] = {
 		0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,

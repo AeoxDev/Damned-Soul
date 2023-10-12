@@ -19,6 +19,8 @@
     <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl" />
     <FxCompile Include="resource\shader\ParticleSinusCS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
+    <FxCompile Include="resource\shader\VertexShader.hlsl" />
+    <FxCompile Include="resource\shader\PixelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -49,22 +51,17 @@
     <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
     <FxCompile Include="resource\shader\UIPS.hlsl" />
     <FxCompile Include="resource\shader\UIVS.hlsl" />
-    <FxCompile Include="resource\shader\VertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Lighting.cpp" />
+    <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Level.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
     <ClCompile Include="source\ButtonManager.cpp" />
-    <ClCompile Include="source\SceneManager.cpp" />
     <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Shop.cpp" />
-    <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -103,11 +100,14 @@
     <ClCompile Include="source\ProximityCollision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\States_&amp;_Scenes\StateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
-    <ClInclude Include="header\Lighting.h" />
+    <ClInclude Include="header\Light.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
@@ -131,9 +131,6 @@
     <ClInclude Include="header\Physics\Hitbox.h" />
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\ButtonManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Level.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\SceneManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\SceneEnums.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
     <ClInclude Include="header\UI\UIButton.h" />
@@ -141,7 +138,6 @@
     <ClInclude Include="header\UI\UIComponent.h" />
     <ClInclude Include="header\UI\UIImage.h" />
     <ClInclude Include="header\UI\UIText.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Shop.h" />
     <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
     <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
@@ -175,6 +171,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ButtonComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ImageComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\PlayerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TextComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
