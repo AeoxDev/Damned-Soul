@@ -16,6 +16,8 @@
 #include "States\CleanupMacros.h"
 #include "Camera.h"
 
+#include "MemLib\ML_String.hpp"
+
 void GameScene::Setup(int scene)//Load
 {
 	RedrawUI();	
@@ -39,6 +41,110 @@ void GameScene::Input()
 		SetInPlay(false);
 		Unload();
 		stateManager.menu.Setup();
+	}
+
+	if (keyState[SDL_SCANCODE_1] == pressed)
+	{
+		for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+		{
+			auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
+			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+
+			if (uiElement->relics.size() > 8)
+				break;
+
+			relicHolder->AddRelic<DamageRelic>();
+
+			UIImage relicImage, relicFlavorImage;
+			relicImage.Setup("TempRelic1.png");
+			relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
+
+			relicFlavorImage.m_UiComponent.SetVisibility(false);
+			relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
+
+			UIText flavorTitle, flavorText;
+			ML_String name = relicHolder->GetRelic<DamageRelic>()->name;
+			ML_String text = relicHolder->GetRelic<DamageRelic>()->flavorText;
+
+			std::wstring nameAsWString(name.begin(), name.end());
+			std::wstring textAsWString(text.begin(), text.end());
+
+			flavorTitle.Setup(nameAsWString);
+			flavorText.Setup(textAsWString);
+
+			flavorTitle.m_UiComponent.SetVisibility(false);
+			flavorText.m_UiComponent.SetVisibility(false);
+
+			UIRelicComponent relic({ 0.0f, 0.0f }, { 0.0f, 0.0f }, relicImage, relicFlavorImage, flavorTitle, flavorText);
+
+			uiElement->relics.push_back(relic);
+
+			RedrawUI();
+		}
+	}
+	
+	if (keyState[SDL_SCANCODE_2] == pressed)
+	{
+		for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+		{
+			auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
+			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+			
+			if (uiElement->relics.size() > 8)
+				break;
+
+			relicHolder->AddRelic<SpeedRelic>();
+
+			UIImage relicImage, relicFlavorImage;
+			relicImage.Setup("TempRelic2.png");
+			relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
+
+			relicFlavorImage.m_UiComponent.SetVisibility(false);
+			relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
+
+			UIText flavorTitle, flavorText;
+			ML_String name = relicHolder->GetRelic<SpeedRelic>()->name;
+			ML_String text = relicHolder->GetRelic<SpeedRelic>()->flavorText;
+
+			std::wstring nameAsWString(name.begin(), name.end());
+			std::wstring textAsWString(text.begin(), text.end());
+
+			flavorTitle.Setup(nameAsWString);
+			flavorText.Setup(textAsWString);
+
+			flavorTitle.m_UiComponent.SetVisibility(false);
+			flavorText.m_UiComponent.SetVisibility(false);
+
+			UIRelicComponent relic({ 0.0f, 0.0f }, { 0.0f, 0.0f }, relicImage, relicFlavorImage, flavorTitle, flavorText);
+
+			uiElement->relics.push_back(relic);
+
+			RedrawUI();
+		}
+	}
+	
+	if (keyState[SDL_SCANCODE_TAB] == pressed)
+	{
+		for (auto entity : View<UIPlayerRelicsComponent>(registry))
+		{
+			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+
+			
+
+			
+		}
+	}
+
+	if (keyState[SDL_SCANCODE_TAB] == released)
+	{
+		for (auto entity : View<UIPlayerRelicsComponent>(registry))
+		{
+			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+
+			
+
+			RedrawUI();
+		}
 	}
 }
 
@@ -85,6 +191,20 @@ void GameScene::Unload()
 		ps->image.Release();
 	}
 
+	for (auto entity : View<UIPlayerRelicsComponent>(registry))
+	{
+		UIPlayerRelicsComponent* r = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+		r->baseImage.Release();
+
+		for (int i = 0; i < r->relics.size(); i++)
+		{
+			r->relics[i].sprite.Release();
+			r->relics[i].flavorImage.Release();
+		}
+
+		r->relics.~ML_Vector();
+	}
+
 	for (auto entity : View<UIHealthComponent>(registry))
 	{
 		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
@@ -102,6 +222,8 @@ void GameScene::Unload()
 		UIImage* i = registry.GetComponent<UIImage>(entity);
 		i->Release();
 	}
+
+	
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
