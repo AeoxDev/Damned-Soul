@@ -43,53 +43,53 @@ struct HitboxVisualizeVariables
 /// <returns>The id of the circle, use this to edit and destroy this hitbox for the given component
 /// Returns -1 if component does not exist
 /// -2 if Maximum amount of hitboxes achieved</returns>
-int CreateHitbox(Registry& registry,EntityID& entity, float radius, float offsetX, float offsetZ);
-void RemoveHitbox(Registry& registry, EntityID& entity, int hitboxID);
-//Manual Flag setting functions.
+//int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ);
+//void RemoveHitbox( EntityID& entity, int hitboxID);
+////Manual Flag setting functions.
+//
+//void SetHitboxActive( EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxIsStage( EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxIsWall( EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxIsPlayer(  EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxIsEnemy(  EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxIsStaticHazard(  EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxIsDynamicHazard(  EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxIsMoveable( EntityID& entity, int hitboxID, bool setFlag = true);
+//
+//void SetHitboxHitStage( EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxHitWall( EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxHitPlayer(EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxHitEnemy(EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxHitStaticHazard(EntityID& entity, int hitboxID, bool setFlag = true);
+//void SetHitboxHitDynamicHazard(  EntityID& entity, int hitboxID, bool setFlag = true);
+//
+//
+//
+//void SetCollisionEvent(EntityID& entity, int hitboxID, void* function);
+//
+///// <summary>
+///// Create a convex shape with corners relative to the position of the entity, then offset.
+///// </summary>
+///// <param name="entity"></param>
+///// <param name="offsetX"></param>
+///// <param name="offsetZ"></param>
+///// <param name="corners">Max size of CONVEX_CORNER_LIMIT, currently 8</param>
+///// <param name="cornerPosX"></param>
+///// <param name="cornerPosY"></param>
+///// <returns></returns>
+//int CreateHitbox(EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[]);
 
-void SetHitboxActive(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxIsStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxIsWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxIsPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxIsEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxIsStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxIsDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxIsMoveable(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void AddHitboxComponent(EntityID& entity);
 
-void SetHitboxHitStage(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxHitWall(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxHitPlayer(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxHitEnemy(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxHitStaticHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
-void SetHitboxHitDynamicHazard(Registry& registry, EntityID& entity, int hitboxID, bool setFlag = true);
+void CreateProximityHitbox(EntityID& entity, std::string fileName = "default"); //File name without extension ending
 
-void UpdatePhysics(Registry& registry);
+void AddProximityHitboxComponent(EntityID& entity);
 
-void SetCollisionEvent(Registry& registry, EntityID& entity, int hitboxID, void* function);
+bool SetupHitboxVisualizer( );
 
-/// <summary>
-/// Create a convex shape with corners relative to the position of the entity, then offset.
-/// </summary>
-/// <param name="entity"></param>
-/// <param name="offsetX"></param>
-/// <param name="offsetZ"></param>
-/// <param name="corners">Max size of CONVEX_CORNER_LIMIT, currently 8</param>
-/// <param name="cornerPosX"></param>
-/// <param name="cornerPosY"></param>
-/// <returns></returns>
-int CreateHitbox(Registry& registry, EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[]);
+void InitializeBufferAndSRV( );
 
-void AddHitboxComponent(Registry& registry, EntityID& entity);
-
-void CreateProximityHitbox(Registry& registry, EntityID& entity, std::string fileName = "default"); //File name without extension ending
-
-void AddProximityHitboxComponent(Registry& registry, EntityID& entity);
-
-bool SetupHitboxVisualizer(Registry& registry);
-
-void InitializeBufferAndSRV(Registry& registry);
-
-void UpdateHitboxBuffer(Registry& registry);
+void UpdateHitboxBuffer( );
 
 void CreateShadersLayoutAndRasterState();
 
@@ -99,3 +99,4 @@ void DestroyHitboxVisualizeVariables();
 
 void SetupTestHitbox();
 
+void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity);

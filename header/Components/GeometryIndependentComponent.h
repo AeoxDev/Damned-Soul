@@ -1,5 +1,10 @@
 #pragma once
+#include "EntityFramework.h"
 
 struct GeometryIndependentComponent;
 
-EntityID CreateAndRenderGeometryIndependentCollision(Registry& registry, EntityID& modelEntity);
+EntityID CreateAndRenderGeometryIndependentCollision(EntityID& modelEntity);
+void RenderGeometryIndependentCollision(EntityID& m);
+
+//Functions for getting information:
+int PixelValueOnPosition(GeometryIndependentComponent*& giComponent, float x, float z);

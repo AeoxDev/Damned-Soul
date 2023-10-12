@@ -1,10 +1,17 @@
 #pragma once
-#include <cinttypes>
+#include "IDX_Types.h"
 #include "MemLib\PoolPointer.hpp"
 #include "MemLib\ML_Vector.hpp"
-struct Model;
+#include "MemLib\ML_Map.hpp"
+#include "Animation.hpp"
+#include <DirectXMath.h>
 
-//extern ML_Vector<Model> models;
+enum MODEL_TYPE
+{
+	MODEL_INSANE = 0,
+	MODEL_BONELESS = 1, // Model loaded without bones
+	MODEL_WITH_BONES = 2 // Model loaded with bones
+};
 
 
 struct VertexBoneless
@@ -12,6 +19,15 @@ struct VertexBoneless
 	float m_position[4];
 	float m_normal[4];
 	float m_uv[2];
+};
+
+struct VertexBoned
+{
+	float m_position[4];
+	float m_normal[4];
+	float m_uv[2];
+	uint32_t m_boneIdx[4];
+	float m_boneWeight[4];
 };
 
 struct SubMesh
@@ -34,38 +50,68 @@ struct Material
 	float exponent = 1.0f;
 };
 
-struct ModelBoneless
+struct modelGenericData
 {
 	const uint32_t m_sanityCheckNumber;
 	const uint32_t m_numSubMeshes;
 	const uint32_t m_numMaterials;
-	const uint32_t m_numVertices;
 	const uint32_t m_numIndices;
+	const uint32_t m_numVertices;
+	const uint32_t m_numBones;
+
+	#pragma warning(suppress : 4200)
 	const char m_data[];//Array is intentional, ignore warning
 
-	const bool ValidByteData() const;
+	const MODEL_TYPE ValidByteData() const;
 	const SubMesh& GetSubMesh(const size_t idx) const;
 	const Material& GetMaterial(const size_t idx) const;
-	const VertexBoneless* GetVertices() const;
-	const uint32_t* GetIndices() const;
+	const uint32_t* GetIndices() const; // Swap the indices and vertices in the data structure!!!!!!!!
+	const VertexBoneless* GetBonelessVertices() const;
+	const VertexBoned* GetBonedVertices() const;
+	DirectX::XMMATRIX* GetBoneMatrices();
 };
 
 struct Model
 {
-	PoolPointer<ModelBoneless> m_bonelessModel;
-	uint32_t m_vertexBuffer = -1, m_indexBuffer = -1;
+	//PoolPointer<ModelBoneless> m_modelData;
+	PoolPointer<modelGenericData> m_data;
+	ML_Map<char, ML_Vector<Animation>> m_animations;
+
+
+	VB_IDX m_vertexBuffer = -1;
+	IB_IDX m_indexBuffer = -1;
+	CB_IDX m_animationBuffer = -1;
+	uint16_t m_refCount = 0;
+	
+	
+	~Model();
 
 	// Load a .mdl file
 	// No other file formats are supported!
-	bool Load(const char* filename);
+	const MODEL_TYPE Load(const char* filename);
 
 	bool SetMaterialActive() const;
 
-	// Set the currently active index and vertex buffers to this model
-	bool SetVertexAndIndexBuffersActive() const;
+	DirectX::XMMATRIX* GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime);
 
 	// Render all the model's submeshes one after another
-	void RenderAllSubmeshes();
+	void RenderAllSubmeshes(const ANIMATION_TYPE aType = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f);
 
 	void Free();
 };
+
+// Load a model by filename, keeping a reference counter
+// If the model was already loaded, increase the reference counter instead
+// Returns a hash to the model
+const uint64_t LoadModel(const char* filename);
+
+// Release a model by hash, reducing the reference counter
+// If the reference counter is reduced to 0, the model is completely removed from the system
+const bool ReleaseModel(const uint64_t& hash);
+
+// A macro that fetches the data in the loaded models pointer
+#define LOADED_MODELS (*loadedModels)
+
+// A pointer to a map of the loaded models
+extern ML_Map<uint64_t, Model>* loadedModels;
+

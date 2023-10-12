@@ -1,8 +1,10 @@
 #pragma once
 #include <cinttypes>
 #include "Format.h"
+#include "IDX_Types.h"
 //This contains helper functions for setting up renderable objects
 // and manipulating their render states.
+
 
 
 enum SHADER_TO_BIND_RESOURCE
@@ -69,21 +71,21 @@ enum TOPOLOGY
 	POINTLIST
 };
 
-typedef int16_t TX_IDX;
-typedef int8_t	PS_IDX;
-typedef int8_t	VS_IDX;
-typedef int8_t	GS_IDX;
-typedef int8_t	CS_IDX;
-typedef int16_t CB_IDX;
-typedef int16_t VB_IDX;
-typedef int16_t IB_IDX;
-typedef int8_t	VP_IDX;
-typedef int8_t RTV_IDX;
-typedef int8_t DSV_IDX;
-typedef int8_t SRV_IDX;
-typedef int8_t UAV_IDX;
-typedef int8_t	RS_IDX;
-typedef int8_t SMP_IDX;
+//typedef int16_t TX_IDX;
+//typedef int8_t	PS_IDX;
+//typedef int8_t	VS_IDX;
+//typedef int8_t	GS_IDX;
+//typedef int8_t	CS_IDX;
+//typedef int16_t CB_IDX;
+//typedef int16_t VB_IDX;
+//typedef int16_t IB_IDX;
+//typedef int8_t	VP_IDX;
+//typedef int8_t RTV_IDX;
+//typedef int8_t DSV_IDX;
+//typedef int8_t SRV_IDX;
+//typedef int8_t UAV_IDX;
+//typedef int8_t	RS_IDX;
+//typedef int8_t SMP_IDX;
 
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
@@ -91,111 +93,162 @@ TX_IDX LoadTexture(const char* name);
 TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height);
 
 // Set a material
-bool SetTexture(const TX_IDX idx, const uint8_t slot, const SHADER_TO_BIND_RESOURCE& shader);
+bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot);
+// Release for a single texture, make sure you dont accidently release a texture that is being used by an RTV, SRV or UAV
+void ReleaseTX(const TX_IDX idx);
 
 
 // Create a Sampler
 SMP_IDX CreateSamplerState();
 // Set a sampler (currently only binds to the pixel shader
-void SetSamplerState(const SMP_IDX idx);
+void SetSamplerState(const SMP_IDX idx, uint8_t slot);
+// Set sampler state at paramter slot to NULL
+void UnsetSamplerState(uint8_t slot);
+// Release for a single sampler
+void ReleaseSMP(const SMP_IDX idx);
 
 // Load a Pixel Shader by name (ps.cso) and return a global index that can be used to reference it
 PS_IDX LoadPixelShader(const char* name);
 // Set a new pixel shader by index
 bool SetPixelShader(const PS_IDX idx);
+// Set pixel shader to NULL
+void UnsetPixelShader();
+// Release for a single pixel shader
+void ReleasePS(const PS_IDX idx);
 
 // Load a Vertex Shader by name (vs.cso) and return a global index that can be used to reference it
 // Also creates an input layout to accompany it
 VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout = LAYOUT_DESC::SKELETAL);
 // Set a new vertex (and accompanying input layout) shader by index
 bool SetVertexShader(const VS_IDX idx);
+// Set vertex shader to NULL
+void UnsetVertexShader();
+// Release for a single vertex shader
+void ReleaseVS(const VS_IDX idx);
 
 // Load a Compute Shader by name (cs.cso) and return a global index that can be used to reference it
 CS_IDX LoadComputeShader(const char* name);
 // Set a new compute shader by index
 bool SetComputeShader(const CS_IDX idx);
-// Sets compute shader to null
-bool ResetComputeShader();
+// Sets compute shader to NULL
+void UnsetComputeShader();
+// Release for a single compute shader
+void ReleaseCS(const CS_IDX idx);
 
 // Load a Geometry Shader by name (cs.cso) and return a global index that can be used to reference it
 GS_IDX LoadGeometryShader(const char* name);
 // Set a new geometry shader by index
 bool SetGeometryShader(const GS_IDX idx);
-// Sets geometry shader to null
-bool ResetGeometryShader();
+// Sets geometry shader to NULL
+void UnsetGeometryShader();
+// Release for a single geometry shader
+void ReleaseGS(const GS_IDX idx);
 
 
 
 // Create a constant buffer with provided data and return a unique index to it
-CB_IDX CreateConstantBuffer(const void* data, const size_t size, const uint8_t slot);
+CB_IDX CreateConstantBuffer(const void* data, const size_t size);
+// Overload for when there is no initial data
+CB_IDX CreateConstantBuffer(const size_t size);
 // Set an active constant buffer by index (shader and slot data contained in buffer)
-bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto);
-//Overload that sets slot to NULL before setting buffer, for particles
-bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, bool particles);
+bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+// Sets constant buffer of parameter slot to NULL in the shader of parameter bindto
+void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Update a constant buffer by index with given data
-bool UpdateConstantBuffer(const CB_IDX, const void* data);
+bool UpdateConstantBuffer(const CB_IDX idx, const void* data);
+// Remove a constant buffer completely
 // Update the world matrix, there needs to be only one
-void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto);
+void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 //No rotations, only position
-void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto);
-void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto);
-void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto);
+void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+// Release for a single constant buffer
+void ReleaseCB(const CS_IDX idx);
+
+
 // Create a Vertex Buffer with provided data and return a unique index to it
-VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlag);
+VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
+// Overload for when there is no initial data
+VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
+// Remove a vertex buffer completely
 // Set an active Vertex Buffer buffer by index
 bool SetVertexBuffer(const VB_IDX idx);
+// Sets vertex buffer to NULL
+void UnsetVertexBuffer();
+// Release for a single vertex buffer
+void ReleaseVB(const VB_IDX idx);
 
 // Create an Index Buffer with provided data and return a unique index to it
 // Needs to take unsigned 32 bit integers as data, as that is the underlying DXGI format used
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count);
-// Set an active Index Buffer buffer by index
+// Set an mode Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx);
+// Sets index buffer to NULL
+void UnsetIndexBuffer();
 
-// Create a Sampler
-SMP_IDX CreateSamplerState();
+// Completely remove a D3D11Buffer
+bool DeleteD3D11Buffer(const CB_IDX idx);
 
 // Create a viewport
 VP_IDX CreateViewport(const size_t& width, const size_t& height);
-// Set an active viewport
+// Set an mode viewport
 bool SetViewport(const VP_IDX idx);
+// Erase a viewport
+bool DeleteD3D11Viewport(const VP_IDX idx);
+// Release for a single constant buffer
+void ReleaseVP(const VP_IDX idx);
+//Set new values for viewport
+void EditViewport(const VP_IDX idx, const size_t& width, const size_t& height);
 
 // Creates the backbuffer from swapchain
 RTV_IDX CreateBackBuffer();
 // Create a render target view
 RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, FORMAT format = FORMAT::FORMAT_R8G8B8A8_UNORM);
+// Release for a single render target view
+void ReleaseRTV(const RTV_IDX idx);
 
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
 // Set a render target view and depth stencil view
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_ds);
+// Set render target view and depth stencil view to NULL
+void UnsetRenderTargetViewAndDepthStencil();
+// Release for a single depth stencil view
+void ReleaseDSV(const DSV_IDX idx);
 
 
 // Create a shader resource view that holds a buffer
-SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, const int amount, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
+SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags);
 // Create a shader resource view that holds a texture
 // Currently only supports Texture2D, support for other formats will be implemented if needed
-SRV_IDX CreateShaderResourceViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height, const uint8_t slot);
+SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height);
 // Overload to create a Shader Resource View with an already existing texture from another resource
-SRV_IDX CreateShaderResourceViewTexture(const int16_t idx, const SHADER_TO_BIND_RESOURCE& bindto, RESOURCE_FLAGS sourceResource, const uint8_t slot);
+SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS sourceResource);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
-bool SetShaderResourceView(const SRV_IDX idx);
-//Overload that sets slot to NULL before setting SRV, for particles
-bool UnloadShaderResourceView(const SRV_IDX idx);
+bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+// Sets shader resource view of parameter slot to NULL in the shader of parameter bindto
+void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+// Release for a shader resource view
+void ReleaseSRV(const SRV_IDX idx);
 
 // Copies the data in a SRV to a vertex buffer, for particles
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source);
 
 // Create a shader resource view that holds a buffer
-SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const uint8_t slot);
+SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags);
 // Overload to create a Unordered Access View with an already existing buffer from a Shader Resource View
-SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx, const uint8_t slot);
+SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx);
 // Create a shader resource view that holds a texture 
 // NOT DEFINED, WILL BE DEFINED IF NEEDED
-SRV_IDX CreateUnorderedAccessViewTexture(const SHADER_TO_BIND_RESOURCE& bindto, const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height, const uint8_t slot);
+SRV_IDX CreateUnorderedAccessViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
-bool SetUnorderedAcessView(const UAV_IDX idx);
-//Overload that sets slot to NULL before setting UAV, for particles
-bool UnloadUnorderedAcessView(const UAV_IDX idx);
+bool SetUnorderedAcessView(const UAV_IDX idx, uint8_t slot);
+// Sets unordered access view of parameter slot to NULL in the shader of parameter bindto
+void UnsetUnorderedAcessView(uint8_t slot);
+// Release for a single unordered access view
+void ReleaseUAV(const UAV_IDX idx);
 
 
 // Clear the render target
@@ -204,7 +257,19 @@ void ClearRenderTargetView(const RTV_IDX idx, float r = 1.0f, float g = 0.f, flo
 void ClearDepthStencilView(const DSV_IDX idx);
 
 RS_IDX CreateRasterizerState(const bool cull, const bool solid);
+// Set rasterizer state by index
 bool SetRasterizerState(const RS_IDX idx);
+// Set rasterizer state to NULL
+void UnsetRasterizerState();
+// Release for a single rasterizer state
+void ReleaseRS(const RS_IDX idx);
 
 void SetTopology(TOPOLOGY topology);
 
+//Release
+bool DeleteD3D11Texture(const TX_IDX idx);
+bool DeleteD3D11RenderTargetView(const RTV_IDX idx);
+bool DeleteD3D11PixelShader(const PS_IDX idx); 
+bool DeleteD3D11VertexShader(const VS_IDX idx);
+bool DeleteD3D11DepthStencilView(const DSV_IDX idx);
+bool DeleteD3D11RasterizerState(const RS_IDX idx);

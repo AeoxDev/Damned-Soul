@@ -7,41 +7,68 @@
 #include "STB_Helper.h"
 #include "D3D11Helper.h"
 #include "MemLib\ML_String.hpp"
+#include "Hashing.h"
 
-#define SANE_MODEL_VALIDATION_NUMBER (1'234'567'890)
+#include "DeltaTime.h"
 
-//ML_Vector<Model> models = ML_Vector<Model>();
+#include <filesystem>
 
-const bool ModelBoneless::ValidByteData() const
+#define SANE_MODEL_BONELESS_NUMBER (1'234'567'890 | 0b0)
+#define SANE_MODEL_BONES_NUMBER (1'234'567'890 | 0b1)
+
+const MODEL_TYPE modelGenericData::ValidByteData() const
 {
-	return m_sanityCheckNumber == SANE_MODEL_VALIDATION_NUMBER;
+	switch (m_sanityCheckNumber)
+	{
+	case SANE_MODEL_BONELESS_NUMBER:
+		return MODEL_BONELESS;
+	case SANE_MODEL_BONES_NUMBER:
+		return MODEL_WITH_BONES;
+	default:
+		return MODEL_INSANE;
+	}
 }
 
-const SubMesh& ModelBoneless::GetSubMesh(const size_t idx) const
+const SubMesh& modelGenericData::GetSubMesh(const size_t idx) const
 {
 	return ((SubMesh*)m_data)[idx];
 }
 
 #define SUBMESH_BYTE_SIZE (m_numSubMeshes * sizeof(SubMesh))
-const Material& ModelBoneless::GetMaterial(const size_t idx) const
+const Material& modelGenericData::GetMaterial(const size_t idx) const
 {
 	return ((Material*)(&(m_data[SUBMESH_BYTE_SIZE])))[idx];
 }
 
 #define MATERIAL_BYTE_SIZE (m_numMaterials * sizeof(Material))
-const VertexBoneless* ModelBoneless::GetVertices() const
+const uint32_t* modelGenericData::GetIndices() const
 {
-	return (VertexBoneless*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE]));
+	return (uint32_t*)((&m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE]));
 }
 
-#define VERTEX_BYTE_SIZE (m_numVertices * sizeof(VertexBoneless))
-const uint32_t* ModelBoneless::GetIndices() const
+#define INDEX_BYTE_SIZE (m_numIndices * sizeof(uint32_t))
+const VertexBoneless* modelGenericData::GetBonelessVertices() const
 {
-	return (uint32_t*)((&m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + VERTEX_BYTE_SIZE]));
+	return (VertexBoneless*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + INDEX_BYTE_SIZE]));
+}
+const VertexBoned* modelGenericData::GetBonedVertices() const
+{
+	return (VertexBoned*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + INDEX_BYTE_SIZE]));
+}
+
+#define BONED_VERTEX_BYTE_SIZE (m_numVertices * sizeof(VertexBoned))
+DirectX::XMMATRIX* modelGenericData::GetBoneMatrices()
+{
+	return (DirectX::XMMATRIX*)(&(m_data[SUBMESH_BYTE_SIZE + MATERIAL_BYTE_SIZE + INDEX_BYTE_SIZE + BONED_VERTEX_BYTE_SIZE]));
 }
 
 
-bool Model::Load(const char* filename)
+Model::~Model()
+{
+	//Free();
+}
+
+const MODEL_TYPE Model::Load(const char* filename)
 {
 	ML_String name = "Models\\Mdl\\";
 	name.append(filename);
@@ -53,7 +80,7 @@ bool Model::Load(const char* filename)
 	if (false == reader.is_open())
 	{
 		std::cerr << "Failed to open model for \"" << filename << "\"! Please verify file!" << std::endl;
-		return false;
+		return MODEL_INSANE;
 	}
 
 	// Allocate temporarily onto the stack
@@ -67,27 +94,73 @@ bool Model::Load(const char* filename)
 	reader.close();
 
 	// Copy data to the boneless model
-	m_bonelessModel = MemLib::palloc(size);
-	std::memcpy(&(*m_bonelessModel), modelData, size);
+	m_data = MemLib::palloc(size);
+	std::memcpy(&(*m_data), modelData, size);
 
-	if (false == m_bonelessModel->ValidByteData())
+	const MODEL_TYPE result = m_data->ValidByteData();
+	if (MODEL_INSANE == result)
 	{
+		// pop the stack
+		MemLib::spop();
+		// Free the data
+		MemLib::pfree(m_data);
 		std::cerr << "Failed to load model \"" << filename << "\" correctly! Likely endian error!" << std::endl;
-		return false;
+		return result;
 	}
 
 	// pop the stack
 	MemLib::spop();
 
-	m_vertexBuffer = CreateVertexBuffer(m_bonelessModel->GetVertices(), sizeof(VertexBoneless), m_bonelessModel->m_numVertices, USAGE_IMMUTABLE);
-	m_indexBuffer = CreateIndexBuffer(m_bonelessModel->GetIndices(), sizeof(uint32_t), m_bonelessModel->m_numIndices);
+	if (MODEL_BONELESS == result)
+		m_vertexBuffer = CreateVertexBuffer(m_data->GetBonelessVertices(), sizeof(VertexBoneless), m_data->m_numVertices, USAGE_IMMUTABLE);
+	else
+	{
+		// Create the animation buffer
+		m_animationBuffer = CreateConstantBuffer(sizeof(DirectX::XMMATRIX) * m_data->m_numBones);
 
-	const ModelBoneless& visCopy = *m_bonelessModel;
+		// Load bone data
+		m_vertexBuffer = CreateVertexBuffer(m_data->GetBonedVertices(), sizeof(VertexBoned), m_data->m_numVertices, USAGE_IMMUTABLE);
 
-	for (unsigned int i = 0; i < m_bonelessModel->m_numMaterials; ++i)
+		// Construct filepath for the animations
+		ML_String animationPath = "Models\\Ani\\";
+		ML_String withoutMdl(filename);
+		withoutMdl = withoutMdl.substr(0, withoutMdl.find_last_of("."));
+		animationPath.append(withoutMdl);
+
+		// Get the directory
+		std::filesystem::directory_iterator animationDirectory(animationPath.c_str());
+
+		ML_String can = "";
+		for (const auto& entry : animationDirectory)
+		{
+			// Set the current animation name
+			can = entry.path().string().c_str();
+			can = can.substr(can.find_last_of("\\")+1, can.length());
+			char animType = can[0];
+
+			// Emplace if it doesn't exist
+			if (false == m_animations.contains(animType))
+			{
+				m_animations.emplace(animType, ML_Vector<Animation>());
+			}
+
+			// Push the animation
+			m_animations[animType].push_back(Animation());
+			// Load the animation
+			m_animations[animType][can[1] - '0'].Load(entry.path().string().c_str());
+		}
+
+		m_animationBuffer = CreateConstantBuffer(m_data->GetBoneMatrices(), m_data->m_numBones * sizeof(DirectX::XMMATRIX));
+	}
+		
+	m_indexBuffer = CreateIndexBuffer(m_data->GetIndices(), sizeof(uint32_t), m_data->m_numIndices);
+
+	const modelGenericData& visCopy = *m_data;
+
+	for (unsigned int i = 0; i < m_data->m_numMaterials; ++i)
 	{
 		// Same operation as GetMaterial(size_t), but not const
-		Material& mat = ((Material*)(&(m_bonelessModel->m_data[m_bonelessModel->m_numSubMeshes * sizeof(SubMesh)])))[i];
+		Material& mat = ((Material*)(&(m_data->m_data[m_data->m_numSubMeshes * sizeof(SubMesh)])))[i];
 		// Load colors
 		mat.albedoIdx = LoadTexture(mat.albedo);
 		// Load normal map
@@ -96,45 +169,107 @@ bool Model::Load(const char* filename)
 		mat.glowIdx = LoadTexture(mat.glow);
 	}
 
-	return true;
+	return result;
 }
 
 void Model::Free()
 {
-	MemLib::pfree(m_bonelessModel);
+	if (m_animationBuffer != -1)
+		DeleteD3D11Buffer(m_animationBuffer);
+	DeleteD3D11Buffer(m_vertexBuffer);
+	DeleteD3D11Buffer(m_indexBuffer);
+	m_animations.~ML_Map();
+	MemLib::pfree(m_data);
 }
 
 
 bool Model::SetMaterialActive() const
 {
-	const Material& mat = (**m_bonelessModel.m_pp).GetMaterial(0);
-	if (SetTexture(mat.albedoIdx, 0, BIND_PIXEL)/* &&
+	const Material& mat = (**m_data.m_pp).GetMaterial(0);
+	if (SetTexture(mat.albedoIdx, BIND_PIXEL, 0)/* &&
 		SetTexture(mat.normalIdx, 1, BIND_PIXEL) &&
 		SetTexture(mat.glowIdx, 2, BIND_PIXEL)*/)
 		return true;
 	return false;
 }
 
-// Set the currently active index and vertex buffers to this model
-bool Model::SetVertexAndIndexBuffersActive() const
+DirectX::XMMATRIX* Model::GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
 {
-	if (false == SetVertexBuffer(m_vertexBuffer))
-		return false;
-	if (false == SetIndexBuffer(m_indexBuffer))
-		return false;
-	return true;
+	if (m_animations.contains(aType) && aIdx < m_animations[aType].size())
+	{
+		return m_animations[aType][aIdx].GetFrame(aTime);
+	}
+
+	// Handle this later on
+	return m_animations[ANIMATION_IDLE][0].GetFrame(0);
 }
 
-
-void Model::RenderAllSubmeshes()
+void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
 {
-	for (unsigned int i = 0; i < m_bonelessModel->m_numSubMeshes; ++i)
+	// Incorrect bone indices?
+	// That would sort of explain some of the wonky stuff happening
+
+	// Try to get the initial animation frame
+	if (m_animationBuffer != -1)
 	{
-		const SubMesh& currentMesh = m_bonelessModel->GetSubMesh(i);
-		const Material& currentMaterial = m_bonelessModel->GetMaterial(currentMesh.m_material);
+		UpdateConstantBuffer(m_animationBuffer, GetAnimation(aType, aIdx, aTime));
+		SetConstantBuffer(m_animationBuffer, BIND_VERTEX, 2);
+	}
+
+
+	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
+	{
+		const SubMesh& currentMesh = m_data->GetSubMesh(i);
+		const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
 
 		// Set material and draw
-		SetTexture(currentMaterial.albedoIdx, 0, BIND_PIXEL);
+		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
+}
+
+// The semiglobal map of loaded models
+ML_Map<uint64_t, Model>* loadedModels = nullptr;
+
+const uint64_t LoadModel(const char* filename)
+{
+	
+	if (nullptr == loadedModels)
+	{
+		loadedModels = (ML_Map<uint64_t, Model>*)MemLib::spush(sizeof(ML_Map<uint64_t, Model>));
+		new(loadedModels) ML_Map<uint64_t, Model>();
+	}
+
+	uint64_t hash = C_StringToHash(filename);
+
+	if (loadedModels->contains(hash))
+	{
+		// Increment refcount and return hash
+		++(LOADED_MODELS[hash].m_refCount);
+		return hash;
+	}
+
+	loadedModels->emplace(hash, Model()); // Emplace if the first
+	LOADED_MODELS[hash].Load(filename); // Load if the first
+	LOADED_MODELS[hash].m_refCount = 1; // Set refcount to 1 if this is the first
+
+	return hash;
+}
+
+const bool ReleaseModel(const uint64_t& hash)
+{
+	if (loadedModels->contains(hash))
+	{
+		// Reduce the refcount
+		--(LOADED_MODELS[hash].m_refCount);
+		// If the refcount is zero, erase the model
+		if (0 == LOADED_MODELS[hash].m_refCount)
+		{
+			Model& modelRef = LOADED_MODELS[hash];
+			modelRef.Free();
+			LOADED_MODELS.erase(hash);
+			return true;
+		}
+	}
+	return false;
 }

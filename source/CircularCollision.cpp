@@ -1,9 +1,27 @@
 #include "Backend\CircularCollision.h"
 #include "Backend\Collision.h"
+#include "Registry.h"
+#include "Components.h"
 #define NO false
 
-bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity2, int circleID1, int circleID2)
+bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, int circleID2)
 {
+	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(entity1);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(entity2);
+	float pos1x = 0.0f;
+	float pos1z = 0.0f;
+	float pos2x = 0.0f;
+	float pos2z = 0.0f;
+	if (transform1 != nullptr)
+	{
+		pos1x = transform1->positionX;
+		pos1z = transform1->positionZ;
+	}
+	if (transform2 != nullptr)
+	{
+		pos2x = transform2->positionX;
+		pos2z = transform2->positionZ;
+	}
 	// get a hold of hitbox components from entity
 	HitboxComponent* circle1 = registry.GetComponent<HitboxComponent>(entity1);
 	HitboxComponent* circle2 = registry.GetComponent<HitboxComponent>(entity2);
@@ -30,13 +48,12 @@ bool IsCircularCollision(Registry& registry, EntityID& entity1, EntityID& entity
 	}
 
 	// if not, find the hitboxes and see if they actually collide
-	float dx = circle1->circleHitbox[circleID1].offsetX - circle2->circleHitbox[circleID2].offsetX; //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
-	float dy = circle1->circleHitbox[circleID1].offsetZ - circle2->circleHitbox[circleID2].offsetZ; //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
+	float dx = (pos1x + circle1->circleHitbox[circleID1].offsetX) - (pos2x + circle2->circleHitbox[circleID2].offsetX); //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
+	float dy = (pos1z + circle1->circleHitbox[circleID1].offsetZ) - (pos2z + circle2->circleHitbox[circleID2].offsetZ); //change offsetX/Y to position x/y later!!!!!!!!!!!!!!!!!!!!!!!!
 	float distance = std::sqrt(dx * dx + dy * dy);
 	bool hit = distance <= (circle1->circleHitbox[circleID1].radius + circle2->circleHitbox[circleID2].radius);
 	//Use onCollission function for first and second respectively
 	OnCollisionParameters params = {};
-	params.registry = registry;//Reggie stiel
 
 	if (iShit1&&hit)
 	{

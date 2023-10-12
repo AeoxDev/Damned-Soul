@@ -1,6 +1,9 @@
 #pragma once
+#include "UI\UIImage.h"
 
-struct ImageComponent
-{
+//Not removing files because cooper would yell at me
 
-};
+//struct ImageComponent
+//{
+//	UIImage image;
+//};

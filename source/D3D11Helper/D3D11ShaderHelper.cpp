@@ -4,15 +4,17 @@
 #include "GameRenderer.h"
 #include <iostream>
 #include <fstream>
+#include <assert.h>
 
 // Theese shaders exist to enable removing shaders from the pipeline
-ID3D11ComputeShader* comShader_NULL = NULL;
-ID3D11GeometryShader* geoShader_NULL = NULL;
+ID3D11VertexShader* vrtShader_NULL = nullptr;
+ID3D11PixelShader* pixShader_NULL = nullptr;
+ID3D11ComputeShader* comShader_NULL = nullptr;
+ID3D11GeometryShader* geoShader_NULL = nullptr;
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
 	std::ifstream reader;
-
 	reader.open(name, std::ios::binary | std::ios::ate);
 	if (false == reader.is_open())
 	{
@@ -30,7 +32,8 @@ PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 	reader.read(shaderData, size);
 	reader.close();
 
-	HRESULT hr = d3d11Data->device->CreatePixelShader(shaderData, size, NULL, &pixHolder->ps_arr[pixHolder->currentCount]);
+	ID3D11PixelShader* tempPS = 0;
+	HRESULT hr = d3d11Data->device->CreatePixelShader(shaderData, size, NULL, &tempPS);
 	if (FAILED(hr))
 	{
 		MemLib::spop(); // Free if failiure
@@ -38,13 +41,17 @@ PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 		return -1;
 	}
 
+	PS_IDX idx = pixHolder->NextIdx();
+
+	pixHolder->ps_map.emplace(idx, tempPS);
+
 	MemLib::spop(); // Free if it succeeded because it is destined to die
-	return pixHolder->currentCount++;
+	return idx;
 }
 
 bool SetPixelShader(const PS_IDX idx)
 {
-	if (pixHolder->currentCount < idx)
+	if (false == pixHolder->ps_map.contains(idx))
 	{
 		std::cerr << "Failed to set pixel shader: Index out of range!" << std::endl;
 		return false;
@@ -55,8 +62,13 @@ bool SetPixelShader(const PS_IDX idx)
 		return false;
 	}
 
-	d3d11Data->deviceContext->PSSetShader(pixHolder->ps_arr[idx], nullptr, 0);
+	d3d11Data->deviceContext->PSSetShader(pixHolder->ps_map[idx], nullptr, 0);
 	return true;
+}
+
+void UnsetPixelShader()
+{
+	d3d11Data->deviceContext->PSSetShader(pixShader_NULL, nullptr, 0);
 }
 
 // Does this string reference create more memory used on the stack?
@@ -95,12 +107,14 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	};
 	Layout screenLayout = { UIInputDesc, ARRAYSIZE(UIInputDesc) };
 
-	D3D11_INPUT_ELEMENT_DESC ParticleInputDesc[3] =
+	D3D11_INPUT_ELEMENT_DESC ParticleInputDesc[6] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TIME", 0, DXGI_FORMAT_R32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"VELOCITY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"RBG", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-
+		{"ROTATIONZ", 0, DXGI_FORMAT_R32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"RGB", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"SIZE", 0, DXGI_FORMAT_R32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 	Layout particleLayout = { ParticleInputDesc, ARRAYSIZE(ParticleInputDesc) };
 
@@ -147,33 +161,39 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 	reader.read(shaderData, size);
 	reader.close();
 
-	HRESULT hr = d3d11Data->device->CreateVertexShader(shaderData, size, NULL, &vrtHolder->vs_arr[vrtHolder->currentCount]); // Does not increment here
+	ID3D11VertexShader* tempVS = 0;
+	HRESULT hr = d3d11Data->device->CreateVertexShader(shaderData, size, NULL, &tempVS); // Does not increment here
 	if (FAILED(hr))
 	{
 		MemLib::spop(); // Pop if failiure
 		std::cerr << "Failed to create Vertex Shader!" << std::endl;
 		return -1;
 	}
+	VS_IDX idx = vrtHolder->NextIdx();
+	vrtHolder->vs_map.emplace(idx, tempVS);
 
+	ID3D11InputLayout* tempIL = 0;
 	// Try to create accompanying input layout
-	if (false == CreateInputLayout(shaderData, size, vrtHolder->il_arr[vrtHolder->currentCount], layout))
+	if (false == CreateInputLayout(shaderData, size, tempIL, layout))
 	{
 		MemLib::spop(); // Pop if failiure
-		vrtHolder->vs_arr[vrtHolder->currentCount]->Release(); // Release the newly created shader if the input layout failed
+		vrtHolder->vs_map[idx]->Release(); // Release the newly created shader if the input layout failed
 		std::cerr << "Failed to create Input Layout for Vertex Shader!" << std::endl;
 		return -1;
 	}
+	vrtHolder->il_map.emplace(idx, tempIL);
+
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return vrtHolder->currentCount++;
+	return idx;
 }
 
 bool SetVertexShader(const VS_IDX idx)
 {
-	if (vrtHolder->currentCount < idx)
+	if (false == vrtHolder->vs_map.contains(idx))
 	{
 		std::cerr << "Failed to set vertex shader/input layout pair: Index out of range!" << std::endl;
 		return false;
@@ -184,9 +204,15 @@ bool SetVertexShader(const VS_IDX idx)
 		return false;
 	}
 
-	d3d11Data->deviceContext->VSSetShader(vrtHolder->vs_arr[idx], nullptr, 0);
-	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_arr[idx]);
+	d3d11Data->deviceContext->VSSetShader(vrtHolder->vs_map[idx], nullptr, 0);
+	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_map[idx]);
 	return true;
+}
+
+void UnsetVertexShader()
+{
+	d3d11Data->deviceContext->VSSetShader(vrtShader_NULL, nullptr, 0);
+
 }
 
 CS_IDX LoadComputeShader(const char* name)
@@ -210,24 +236,27 @@ CS_IDX LoadComputeShader(const char* name)
 	reader.read(shaderData, size);
 	reader.close();
 
-	HRESULT hr = d3d11Data->device->CreateComputeShader(shaderData, size, NULL, &comHolder->cs_arr[comHolder->currentCount]); // Does not increment here
+	ID3D11ComputeShader* tempCS = 0;
+	HRESULT hr = d3d11Data->device->CreateComputeShader(shaderData, size, NULL, &tempCS); // Does not increment here
 	if (FAILED(hr))
 	{
 		MemLib::spop(); // Pop if failiure
 		std::cerr << "Failed to create Compute Shader!" << std::endl;
 		return -1;
 	}
+	CS_IDX idx = comHolder->NextIdx();
+	comHolder->cs_map.emplace(idx, tempCS);
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return comHolder->currentCount++;
+	return idx;
 }
 
 bool SetComputeShader(const CS_IDX idx)
 {
-	if (comHolder->currentCount < idx)
+	if (false == comHolder->cs_map.contains(idx))
 	{
 		std::cerr << "Failed to set compute shader: Index out of range!" << std::endl;
 		return false;
@@ -238,14 +267,13 @@ bool SetComputeShader(const CS_IDX idx)
 		return false;
 	}
 
-	d3d11Data->deviceContext->CSSetShader(comHolder->cs_arr[idx], nullptr, 0);
+	d3d11Data->deviceContext->CSSetShader(comHolder->cs_map[idx], nullptr, 0);
 	return true;
 }
 
-bool ResetComputeShader()
+void UnsetComputeShader()
 {
 	d3d11Data->deviceContext->CSSetShader(comShader_NULL, nullptr, 0);
-	return true;
 }
 
 GS_IDX LoadGeometryShader(const char* name)
@@ -269,24 +297,27 @@ GS_IDX LoadGeometryShader(const char* name)
 	reader.read(shaderData, size);
 	reader.close();
 
-	HRESULT hr = d3d11Data->device->CreateGeometryShader(shaderData, size, NULL, &geoHolder->gs_arr[geoHolder->currentCount]); // Does not increment here
+	ID3D11GeometryShader* tempGS = 0;
+	HRESULT hr = d3d11Data->device->CreateGeometryShader(shaderData, size, NULL, &tempGS); // Does not increment here
 	if (FAILED(hr))
 	{
 		MemLib::spop(); // Pop if failure
 		std::cerr << "Failed to create Geometry Shader!" << std::endl;
 		return -1;
 	}
+	GS_IDX idx = geoHolder->NextIdx();
+	geoHolder->gs_map.emplace(idx, tempGS);
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return geoHolder->currentCount++;
+	return idx;
 }
 
 bool SetGeometryShader(const GS_IDX idx)
 {
-	if (geoHolder->currentCount < idx)
+	if (false == geoHolder->gs_map.contains(idx))
 	{
 		std::cerr << "Failed to set geometry shader: Index out of range!" << std::endl;
 		return false;
@@ -297,14 +328,13 @@ bool SetGeometryShader(const GS_IDX idx)
 		return false;
 	}
 
-	d3d11Data->deviceContext->GSSetShader(geoHolder->gs_arr[idx], nullptr, 0);
+	d3d11Data->deviceContext->GSSetShader(geoHolder->gs_map[idx], nullptr, 0);
 	return true;
 }
 
-bool ResetGeometryShader()
+void UnsetGeometryShader()
 {
 	d3d11Data->deviceContext->GSSetShader(geoShader_NULL, nullptr, 0);
-	return true;
 }
 
 void SetTopology(TOPOLOGY topology)
@@ -320,4 +350,24 @@ void SetTopology(TOPOLOGY topology)
 	default:
 		break;
 	}
+}
+
+bool DeleteD3D11PixelShader(const PS_IDX idx)
+{
+	assert(pixHolder->ps_map.contains(idx));
+	pixHolder->ps_map[idx]->Release();
+	pixHolder->ps_map.erase(idx);
+
+
+	return true;
+}
+
+bool DeleteD3D11VertexShader(const VS_IDX idx)
+{
+	assert(vrtHolder->vs_map.contains(idx));
+	vrtHolder->vs_map[idx]->Release();
+	vrtHolder->vs_map.erase(idx);
+	vrtHolder->il_map[idx]->Release();
+	vrtHolder->il_map.erase(idx);
+	return true;
 }

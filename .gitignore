@@ -27,7 +27,13 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-[Bb]in/
+[Bb]in/*.cso
+[Bb]in/*.exe
+[Bb]in/*.pdb
+[Bb]in/*.config
+[Bb]in/*.metagen
+*.mdl
+*.ani
 [Oo]bj/
 [Oo]ut/
 [Ll]og/

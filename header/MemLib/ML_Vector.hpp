@@ -13,7 +13,7 @@ private:
 	// Pool pointer to internal data
 	PoolPointer<_T> m_data;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_size = 4;
+	uint32_t m_size;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
 	uint32_t m_capacity;
 	// size of the internal type
@@ -73,6 +73,37 @@ public:
 		for (uint32_t i = 0; i < m_size; ++i)
 			m_data[i].~_T();
 		m_size = 0;
+	}
+
+	uint32_t emplace(const uint32_t position, const _T& item)
+	{
+		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
+		if (m_capacity <= m_size + 1)
+		{
+			// Branchlessly add 4 to the capacity if it is zero
+			reserve(m_capacity * 2 + (m_capacity == 0));
+		}
+
+		// The data size to copy
+		uint32_t copySize = (m_size - position) * m_tSize;
+
+		//Create a temp variable with all elements before the selected position
+		void* temp = MemLib::spush(copySize);
+
+		std::memcpy(temp, &(m_data[position]), copySize);
+
+		// Copy onto the position
+		new (&m_data[position]) _T(item);
+		// Increment size
+		++m_size;
+
+		// Copy the "tail" back onto the vector
+		std::memcpy(&(m_data[position+1]), temp, copySize);
+		// Pop the temp
+		MemLib::spop();
+
+		// Return the new size of the vector
+		return m_size;
 	}
 
 	// Push an item into the back of the vector, returns the index of that item

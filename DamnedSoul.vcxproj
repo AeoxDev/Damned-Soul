@@ -172,14 +172,14 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)header\UI;$(SolutionDir)lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>fmod_vc.lib;MemLib.lib;d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;MemLib.lib;d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);d2d1.lib;Dwrite.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;$(SolutionDir)lib\MemLib\$(Configuration);$(SolutionDir)lib\FmodLib</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
@@ -192,22 +192,51 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Animation.cpp" />
+    <ClCompile Include="source\D3D11Helper\HolderFunctions.cpp" />
+    <ClCompile Include="source\EntityFramework.cpp" />
+    <ClCompile Include="header\Components\RenderableComponent.h" />
+    <ClCompile Include="source\EventFunctions\EnemyEvents.cpp" />
+    <ClCompile Include="source\EventFunctions\PlayerEvents.cpp" />
+    <ClCompile Include="source\EventFunctions\PortalEvents.cpp" />
+    <ClCompile Include="source\Hashing.cpp" />
+    <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
+    <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp" />
+    <ClCompile Include="source\Level\Level.cpp" />
+    <ClCompile Include="source\Level\Level1.cpp" />
+    <ClCompile Include="source\Level\Level2.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
-    <ClCompile Include="source\CompCount.cpp" />
+    <ClCompile Include="source\ProximityHitboxEditor.cpp" />
+    <ClCompile Include="source\Registry.cpp" />
+    <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
+    <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
+    <ClCompile Include="source\Skynet\SkeletonBehaviourSystem.cpp" />
+    <ClCompile Include="source\States\CleanupMacros.cpp" />
+    <ClCompile Include="source\States\Game.cpp" />
+    <ClCompile Include="source\States\Menu.cpp" />
+    <ClCompile Include="source\States\Pause.cpp" />
+    <ClCompile Include="source\States\Settings.cpp" />
+    <ClCompile Include="source\States\StateManager.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
+    <ClCompile Include="source\Systems\ButtonSystem.cpp" />
+    <ClCompile Include="source\Systems\CameraSystem.cpp" />
+    <ClCompile Include="source\Systems\CollisionSystems.cpp" />
+    <ClCompile Include="source\Systems\ControllerSystem.cpp" />
+    <ClCompile Include="source\Systems\EventSystem.cpp" />
+    <ClCompile Include="source\Systems\ParticleSystemCPU.cpp" />
+    <ClCompile Include="source\Systems\ParticleSystemGPU.cpp" />
+    <ClCompile Include="source\Systems\RenderSystem.cpp" />
+    <ClCompile Include="source\Systems\StateSwitcherSystem.cpp" />
+    <ClCompile Include="source\Systems\TransformSystem.cpp" />
+    <ClCompile Include="source\Systems\UISystems.cpp" />
+    <ClCompile Include="source\UI\UIButtonFunctions.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
-    <ClCompile Include="source\Menus.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
     <ClCompile Include="source\D3D11Helper\D3D11TextureHelper.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Game.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Menu.cpp" />
     <ClCompile Include="source\ButtonManager.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Settings.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\StateManager.cpp" />
     <ClCompile Include="source\CollisionFunctions\CommonCollisions.cpp" />
     <ClCompile Include="source\GeometryIndependent.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -228,56 +257,15 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI\UI.cpp" />
     <ClCompile Include="source\UI\UIButton.cpp" />
-    <ClCompile Include="source\UI\UICanvas.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\UI\UIImage.cpp" />
     <ClCompile Include="source\UI\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resource\shader\ParticleFlamethrowerCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="resource\shader\ParticleImplosionCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="resource\shader\ParticleExplosionCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="resource\shader\ParticleArchCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="resource\shader\ParticleGS.hlsl">
+    <FxCompile Include="resource\shader\Particles\ParticleGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
@@ -285,15 +273,15 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="resource\shader\ParticlePS.hlsl">
+    <FxCompile Include="resource\shader\Particles\ParticlePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="resource\shader\ParticleRainCS.hlsl">
+    <FxCompile Include="resource\shader\Particles\ParticleCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
@@ -301,17 +289,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="resource\shader\ParticleVS.hlsl">
+    <FxCompile Include="resource\shader\Particles\ParticleVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
@@ -331,16 +309,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="resource\shader\ParticleSinusCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="resource\shader\TestPS.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
@@ -384,6 +352,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\TestSkelVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\TestVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -408,25 +380,50 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\Components\AllComponents.h" />
-    <ClInclude Include="header\Components\ButtonComponent.h" />
+    <ClInclude Include="header\Animation.hpp" />
+    <ClInclude Include="header\Components\AnimationComponent.h" />
+    <ClInclude Include="header\Components\Components.h" />
+    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
+    <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PlayerComponent.h" />
+    <ClInclude Include="header\Components\PointOfInterestComponent.h" />
+    <ClInclude Include="header\Components\TimedEventComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h" />
     <ClInclude Include="header\Components\TextComponent.h" />
+    <ClInclude Include="header\Components\TransformComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
+    <ClInclude Include="header\EventFunctions.h" />
     <ClInclude Include="header\Format.h" />
+    <ClInclude Include="header\Components\ParticleComponent.h" />
+    <ClInclude Include="header\Hashing.h" />
+    <ClInclude Include="header\IDX_Types.h" />
     <ClInclude Include="header\Input.h" />
+    <ClInclude Include="header\Level.h" />
+    <ClInclude Include="header\Levels\LevelLoader.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
+    <ClInclude Include="header\MemLib\ML_ComponentMap.hpp" />
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
     <ClInclude Include="header\Light.h" />
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h" />
+    <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
-    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
+    <ClInclude Include="header\Registry.h" />
+    <ClInclude Include="header\Skynet\BehaviourHelper.h" />
+    <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
+    <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />
+    <ClInclude Include="header\States\CleanupMacros.h" />
+    <ClInclude Include="header\States\Pause.h" />
     <ClInclude Include="header\Relics.h" />
+    <ClInclude Include="header\Systems\Systems.h" />
+    <ClInclude Include="header\UI\UIButtonFunctions.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
-    <ClInclude Include="header\Menus.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
     <ClInclude Include="header\ConfigInterpreter.h" />
@@ -452,18 +449,16 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
     <ClInclude Include="header\UI\UIButton.h" />
-    <ClInclude Include="header\UI\UICanvas.h" />
     <ClInclude Include="header\UI\UIComponent.h" />
     <ClInclude Include="header\UI\UIImage.h" />
     <ClInclude Include="header\UI\UIText.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\StateManager.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Game.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Menu.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\StateEnums.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
+    <ClInclude Include="header\States\StateManager.h" />
+    <ClInclude Include="header\States\Game.h" />
+    <ClInclude Include="header\States\Menu.h" />
+    <ClInclude Include="header\States\StateEnums.h" />
+    <ClInclude Include="header\States\Settings.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="source\States.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />

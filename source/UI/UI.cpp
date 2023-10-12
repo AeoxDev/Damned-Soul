@@ -1,8 +1,7 @@
-#include "UI.h"
+#include "UI/UI.h"
 #include <iostream>
 #include "SDLhandler.h"
-#include "UIRenderer.h"
-#include "UICanvas.h"
+#include "UI/UIRenderer.h"
 
 UI ui;
 
@@ -86,15 +85,6 @@ void UI::Release()
 	m_Brush->Release();
 	m_YellowBrush->Release();
 	m_Factory->Release();
-}
-
-void UI::Render(UICanvas& canvas)
-{
-	BeginFrame();
-	
-	canvas.Render(ui);
-
-	EndFrame();
 }
 
 void UI::BeginFrame()

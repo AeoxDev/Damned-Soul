@@ -2,20 +2,20 @@
 
 #include "Model.h"
 
-struct PlayerComponent
-{
-	//Should be moved to a TransformComponent
-	//Position
-	float posX = 0.f, posY = 0.f, posZ = 0.f;
-	float movementSpeed = 5.0f;
-	//Rotation
-	float dirX = 0.0f, dirZ = 1.0f;//Facing direction
-	float goalX = 0.0f, goalZ = -1.0f;//Goal direction
-
-	//Scale
-
-	//Model (Should be moved)
-	Model* model;
-
-	//Controller component
-};
+//struct PlayerComponent
+//{
+//	//Should be moved to a TransformComponent
+//	//Position
+//	float movementSpeed = 20.0f;
+//	//Rotation
+//	
+//	float health = 10.0f;
+//	int souls = 4;
+//	//Scale
+//
+//	//Controller component
+//	float moveTime = .0f;//This is the time the player has been moving, used for camera feel.
+//	float moveFactor = 2.5f;
+//	float moveResetFactor = 1.25f;
+//	float moveMaxLimit = 3.0f;
+//};

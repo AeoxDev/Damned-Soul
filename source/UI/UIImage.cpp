@@ -1,11 +1,14 @@
-#include "UIImage.h"
+#include "UI/UIImage.h"
 #include <iostream>
 
 using namespace DirectX;
 
-UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
-	:UIComponent(position, scale, rotation, visibility), m_Bitmap(nullptr), m_Opacity(opacity)
+void UIImage::Setup(const std::string& file, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
+	m_UiComponent.Setup(scale, rotation, visibility);
+	m_Bitmap = nullptr;
+	m_Opacity = opacity;
+
 	HRESULT hr;
 	IWICBitmapDecoder* decoder = nullptr;
 	IWICBitmapFrameDecode* source = nullptr;
@@ -41,7 +44,7 @@ UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 sc
 		return;
 	}
 
-	
+
 	hr = ui.GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
 	if (FAILED(hr))
 	{
@@ -49,8 +52,9 @@ UIImage::UIImage(UI& ui, const std::string& file, XMFLOAT2 position, XMFLOAT2 sc
 		return;
 	}
 
-	m_Bounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height};
-	SetTransform(position, scale, rotation);
+	m_UiComponent.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
+
+	m_UiComponent.SetTransform(position, scale, rotation);
 
 	converter->Release();
 	source->Release();
@@ -66,12 +70,13 @@ void UIImage::Release()
 	}
 }
 
-void UIImage::Draw(ID2D1RenderTarget* renderTarget)
+void UIImage::Draw()
 {
-	if (true == m_Visibility)
+	if (m_UiComponent.m_Visibility == true)
 	{
-		renderTarget->SetTransform(m_Transform);
-		renderTarget->DrawBitmap(m_Bitmap, m_Bounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_Bounds);
+		ID2D1RenderTarget* rt = ui.GetRenderTarget();
+		rt->SetTransform(m_UiComponent.m_Transform);
+		rt->DrawBitmap(m_Bitmap, m_UiComponent.m_CurrentBounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_UiComponent.m_CurrentBounds);
 	}
 }
 

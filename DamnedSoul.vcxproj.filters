@@ -5,20 +5,15 @@
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resource\shader\ParticleGS.hlsl" />
-    <FxCompile Include="resource\shader\ParticlePS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleVS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleGS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticlePS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleVS.hlsl" />
     <FxCompile Include="resource\shader\PixelVertex.hlsl" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
-    <FxCompile Include="resource\shader\ParticleFlamethrowerCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleImplosionCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleExplosionCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleArchCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleRainCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSmokeCS.hlsl" />
-    <FxCompile Include="resource\shader\ParticleSinusCS.hlsl" />
     <FxCompile Include="resource\shader\TestVS.hlsl" />
+    <FxCompile Include="resource\shader\TestSkelVS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleCS.hlsl" />
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
     <FxCompile Include="resource\shader\PixelShader.hlsl" />
   </ItemGroup>
@@ -82,22 +77,112 @@
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI\UI.cpp" />
     <ClCompile Include="source\UI\UIButton.cpp" />
-    <ClCompile Include="source\UI\UICanvas.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\UI\UIImage.cpp" />
     <ClCompile Include="source\UI\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
-    <ClCompile Include="source\CompCount.cpp" />
     <ClCompile Include="source\Input.cpp" />
-    <ClCompile Include="source\States_&amp;_Scenes\Pause.cpp" />
-    <ClCompile Include="source\Menus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="header\Components\RenderableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\ProximityCollision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Registry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EntityFramework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\RenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ButtonSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\CollisionSystems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ControllerSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Pause.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\StateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\UISystems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\CollisionSystems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ControllerSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\CameraSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\TransformSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ParticleSystemCPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ParticleSystemGPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\EventSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\PlayerEvents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Hashing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\RandomPosition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ProximityHitboxEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\BehaviourHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\SkeletonBehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\States\CleanupMacros.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\UIButtonFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\D3D11Helper\HolderFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\States_&amp;_Scenes\StateManager.cpp">
@@ -134,7 +219,6 @@
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
     <ClInclude Include="header\UI\UIButton.h" />
-    <ClInclude Include="header\UI\UICanvas.h" />
     <ClInclude Include="header\UI\UIComponent.h" />
     <ClInclude Include="header\UI\UIImage.h" />
     <ClInclude Include="header\UI\UIText.h" />
@@ -145,17 +229,12 @@
     <ClInclude Include="header\States_&amp;_Scenes\Settings.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="source\States.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
     <ClInclude Include="header\Input.h" />
-    <ClInclude Include="header\States_&amp;_Scenes\Pause.h" />
-    <ClInclude Include="header\Menus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\AllComponents.h">
+    <ClInclude Include="header\Components\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Physics\Backend\ProximityCollision.h">
@@ -171,6 +250,108 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ImageComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\PlayerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TextComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Systems\Systems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Pause.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\StateManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\StateEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\Settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\PointOfInterestComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Animation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ParticleComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TimedEventComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\AnimationComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\HitboxComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\EventFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Hashing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\IDX_Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\MemLib\ML_ComponentMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Physics\ProximityHitboxEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\BehaviourHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\HellhoundBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\SkeletonBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\States\CleanupMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\UI\UIButtonFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\ButtonComponent.h">

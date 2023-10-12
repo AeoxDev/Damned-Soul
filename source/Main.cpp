@@ -3,15 +3,10 @@
 
 #include "SDLhandler.h"
 #include "MemLib/MemLib.hpp"
-#include "EntityFramework.h"
 #include "DeltaTime.h"
-#include "States_&_Scenes\StateManager.h"
-#include "GameRenderer.h"
-#include "Model.h"
-#include "ComponentHelper.h"
-#include "UIRenderer.h"
-#include "States_&_Scenes\StateManager.h"
+#include "States\StateManager.h"
 #include "ConfigManager.h"
+//#include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -22,29 +17,28 @@ int main(int argc, char* args[])
 
 	SetupWindow();
 	std::string title = "Damned Soul";
-
 	stateManager.Setup();
 	
+	//Reload stress-test
+	/*for (unsigned int i = 0; i < 3000; ++i)
+	{
+		UIFunc::MainMenu_Start(nullptr);
+
+		SetInMainMenu(true);
+		SetInPlay(false);
+		stateManager.levelScenes[0].Unload();
+		stateManager.menu.Setup();
+	}*/
+
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
-		
-		Clear(backBufferRenderSlot);//Clear the render targets!
-		
-		stateManager.ComputeShaders();//First do compute shader work
-		
-		stateManager.Render();//Then render all registries that are active
 		
 		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		
 		stateManager.Update();//Lastly do the cpu work
 
-		Present();//Present what was drawn during the update!
-	
-		//MemLib::pdefrag();
 		stateManager.EndFrame();
-
-		stateManager.Input();//Do all systems that are based on input
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();
@@ -55,7 +49,11 @@ int main(int argc, char* args[])
 void UpdateDebugWindowTitle(std::string& title)
 {
 #ifdef _DEBUG
-	if (sdl.windowFlags == 0 && NewSecond())
+	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+	{
+		return;
+	}
+	if (NewSecond())
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
 		//title+="";//Add more debugging information here, updates every second.

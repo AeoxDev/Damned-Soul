@@ -3,14 +3,14 @@
 #define SAME_TYPE_HITBOX_LIMIT 4 //Limit for same type of hitboxes
 #define CONVEX_CORNER_LIMIT 8 //Maximum amount of corners allowed per Convex shape
 #define MAP_DIM 512*512
-#define MOVEABLE_COLLISIONS_PER_FRAME 1
+#define MOVEABLE_COLLISIONS_PER_FRAME 2
 #include "EntityFramework.h"
 #include "MemLib/ML_Vector.hpp"
 
 
+
 struct OnCollisionParameters
-{
-	Registry registry; 
+{ 
 	EntityID entity1; 
 	EntityID entity2; 
 	int hitboxID1;
@@ -113,14 +113,16 @@ int FindAvailableSlot(unsigned& bits);
 /// Loops through all entities with a hitboxComponent and calculates collision.
 /// </summary>
 /// <param name="registry"></param>
-void ResetCollisionVariables(Registry& registry);
-void HandleMoveableCollision(Registry& registry);//No clipping
-void HandleProximityCollision(Registry& registry); //No proximity clipping
-void HandleDamageCollision(Registry& registry);//Hitboxes for attacks and dynamic hazards
-void HandleStaticCollision(Registry& registry);//Stage and static Collisions
+void ResetCollisionVariables( );
+void HandleMoveableCollision( );//No clipping
+void HandleProximityCollision( ); //No proximity clipping
+void HandleDamageCollision( );//Hitboxes for attacks and dynamic hazards
+void HandleStaticCollision( );//Stage and static Collisions
+void UpdatePhysics();
 
 //struct onCollision
 //{
 //	void(*CollisionFunction)(Entity& entity, Entity& entity2, float angleOfAttack1X, float angleOfAttack1Y, float angleOfAttack2X, float angleOfAttack2Y);
 //};
 //void CollisionEvent(Entity& entity, Entity& entity2); //calculates angle of attack and sends it to onCollision
+
