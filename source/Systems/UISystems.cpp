@@ -122,10 +122,13 @@ bool UIPlayerRelicsSystem::Update()
         if (uiElement->relics.size() == 0)
             return true;
 
-        DirectX::XMFLOAT2 baseImagePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 18) ,
-                                       abs(uiElement->baseImage.m_UiComponent.GetPosition().y + uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 2) };
-        DirectX::XMFLOAT2 baseImagePixelCoords = { (baseImagePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-                                        -1 * ((baseImagePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+        DirectX::XMFLOAT2 spritePositionOffset = { uiElement->baseImage.m_UiComponent.m_CurrentBounds.right/ (uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 40.0f) ,
+                                                uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom /(uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 40.0f)};
+
+        DirectX::XMFLOAT2 startingSpritePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+                                       abs(uiElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
+        DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+                                        -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
         if (uiElement->relicIndex == uiElement->relics.size() - 1)
         {
@@ -137,18 +140,18 @@ bool UIPlayerRelicsSystem::Update()
                 uiElement->gridPosition.x = 0;
             }*/
 
-            uiElement->relics[uiElement->relicIndex].flavorImage.m_UiComponent.SetPosition({ baseImagePixelCoords.x + (0.1f * uiElement->gridPosition.x), baseImagePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
-            uiElement->relics[uiElement->relicIndex].flavorTitle.m_UiComponent.SetPosition({ baseImagePixelCoords.x + (0.1f * uiElement->gridPosition.x), baseImagePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
-            uiElement->relics[uiElement->relicIndex].flavorText.m_UiComponent.SetPosition({ baseImagePixelCoords.x + (0.1f * uiElement->gridPosition.x), baseImagePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
+            uiElement->relics[uiElement->relicIndex].flavorImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
+            uiElement->relics[uiElement->relicIndex].flavorTitle.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
+            uiElement->relics[uiElement->relicIndex].flavorText.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
 
-            uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetPosition({ baseImagePixelCoords.x + (0.1f * uiElement->gridPosition.x), baseImagePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
+            uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
             uiElement->relicIndex++;
             uiElement->gridPosition.x++;
 
             RedrawUI();
         } 
 
-        for (size_t i = 0; i < uiElement->relics.size(); i++)
+        for (uint32_t i = 0; i < uiElement->relics.size(); i++)
         {
             if (uiElement->relics[i].sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
             {

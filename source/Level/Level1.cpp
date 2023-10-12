@@ -93,7 +93,8 @@ void LoadLevel1()
 	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
 	pcUiSC->text.Setup(L"");
 
-	//Thing in the top right corner showing what level we're on (Christian why is the valueAsString thing here?)
+	//Thing in the top right corner showing what level we're on (Christian why is the valueAsString thing here?) 
+	//															(Because it was using the scene int parameter at the time)
 	//std::string valueAsString = "1";
 	//std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
 	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
@@ -104,16 +105,11 @@ void LoadLevel1()
 	registry.AddComponent<SkeletonBehaviour>(skeleton);
 	registry.AddComponent<SkeletonBehaviour>(skeleton2);
 	registry.AddComponent<EyeBehaviour>(eye);
+
 	RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
 
 	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");
-
-
-	/*HellhoundBehaviour* hellhoundBehevCo = */registry.AddComponent<HellhoundBehaviour>(dog);
-	/*SkeletonBehaviour* skeletonBehevCo = */registry.AddComponent<SkeletonBehaviour>(skeleton);
-	/*SkeletonBehaviour* skeletonBehevCo2 = */registry.AddComponent<SkeletonBehaviour>(skeleton2);
-
 
 	RenderGeometryIndependentCollision(stage);
 	

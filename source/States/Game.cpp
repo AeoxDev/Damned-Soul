@@ -196,7 +196,7 @@ void GameScene::Unload()
 		UIPlayerRelicsComponent* r = registry.GetComponent<UIPlayerRelicsComponent>(entity);
 		r->baseImage.Release();
 
-		for (int i = 0; i < r->relics.size(); i++)
+		for (uint32_t i = 0; i < r->relics.size(); i++)
 		{
 			r->relics[i].sprite.Release();
 			r->relics[i].flavorImage.Release();
