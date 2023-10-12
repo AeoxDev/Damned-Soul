@@ -39,6 +39,10 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 	// get a hold of hitbox components from entity
 	HitboxComponent* circle = registry.GetComponent<HitboxComponent>(entity1);
 	HitboxComponent* convex = registry.GetComponent<HitboxComponent>(entity2);
+	if (convex == nullptr  || circle == nullptr)
+	{
+		return false; 
+	}
 	float center2X = convex->convexHitbox[convexID].centerX * scaling2X;
 	float center2Z = convex->convexHitbox[convexID].centerZ * scaling2Z;
 	// get a hold of both the circles' bit flags to check if they can collide or not
