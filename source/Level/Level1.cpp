@@ -57,16 +57,13 @@ void LoadLevel1()
 
 	/*ControllerComponent* cc = */registry.AddComponent<ControllerComponent>(player);
 
-	ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
+	/*ParticleComponent* particComp = */registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	/*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
 	/*PointOfInterestComponent* dogPoi = */registry.AddComponent<PointOfInterestComponent>(dog);
 	/*PointOfInterestComponent* skelPoi = */registry.AddComponent<PointOfInterestComponent>(skeleton);
 	/*PointOfInterestComponent* skelPoi2 = */registry.AddComponent<PointOfInterestComponent>(skeleton2);
-
-	//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
-	////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiHpC->image.Setup("ExMenu/FullHealth.png");

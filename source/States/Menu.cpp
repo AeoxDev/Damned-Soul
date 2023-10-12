@@ -23,11 +23,13 @@ void Menu::Setup()//Load
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
+	// Stage Model
 	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
-	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
-	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
-
 	stageM->model = LoadModel("PlaceholderScene.mdl");
+	// Stage Transform
+	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
+	// Stage POI
+	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
 	stageP->mode = POI_FORCE;
 	stageP->height = CAMERA_OFFSET_Y * -0.85f;
 	stageP->rotationY = 0.0f;

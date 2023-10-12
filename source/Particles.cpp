@@ -44,10 +44,11 @@ void Particles::InitializeParticles()
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
-	// THEESE ARE THE BOOVAR OF MEMORY LEAKS
+	// THEESE ARE THE BOOVAR OF MEMORY LEAKS, Mvh Arian (tror jag)
 	m_readBuffer->SRVIndex =  CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 
+	// These are 48 * 65536 = 3145728 large, one of the numbers of the error
 	m_readBuffer->UAVIndex =  CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_readBuffer->SRVIndex);
 	m_writeBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_writeBuffer->SRVIndex);
 
@@ -142,7 +143,7 @@ ParticleComponent::ParticleComponent(RenderSetupComponent constantBuffer[8], int
 {
 	metadataSlot = FindSlot();
 
-	data->metadata[metadataSlot].life = seconds;
+	//data->metadata[metadataSlot].life = seconds;
 	data->metadata[metadataSlot].maxRange = radius;
 	data->metadata[metadataSlot].size = size;
 	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
