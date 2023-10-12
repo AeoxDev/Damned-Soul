@@ -26,7 +26,8 @@ void LoadLevel1()
 
 	// Dog
 	TransformComponent dogTransformComponent;
-	dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 20.0f; dogTransformComponent.facingX = 1.0f;
+	dogTransformComponent.positionZ = 0; dogTransformComponent.positionY = 1.f;
+	dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 0.0f; dogTransformComponent.facingX = 1.0f;
 	/*TransformComponent* dtc = */registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
 	// Stage (Default)
 	/*TransformComponent* stc = */registry.AddComponent<TransformComponent>(stage);
@@ -82,6 +83,7 @@ void LoadLevel1()
 	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup(L"");
+
 
 	/*HellhoundBehaviour* hellhoundBehevCo = */registry.AddComponent<HellhoundBehaviour>(dog);
 	/*SkeletonBehaviour* skeletonBehevCo = */registry.AddComponent<SkeletonBehaviour>(skeleton);
