@@ -100,9 +100,10 @@ void GameScene::Setup(int scene)//Load
 		PointOfInterestComponent poic;
 		poic.weight = 10.0f;
 		registry.AddComponent<PointOfInterestComponent>(player, poic);
-		registry.AddComponent<PointOfInterestComponent>(dog);
-		registry.AddComponent<PointOfInterestComponent>(skeleton);
-		registry.AddComponent<PointOfInterestComponent>(skeleton2);
+		//registry.AddComponent<PointOfInterestComponent>(dog);
+		//registry.AddComponent<PointOfInterestComponent>(skeleton);
+		//registry.AddComponent<PointOfInterestComponent>(skeleton2);
+		registry.AddComponent<PointOfInterestComponent>(eye);
 
 		//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 		////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);

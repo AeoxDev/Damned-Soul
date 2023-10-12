@@ -167,8 +167,8 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		dirX /= magnitude;
 		dirZ /= magnitude;
 
-		eyeComponent->targetX = playerTransformCompenent->positionX + dirX * 5.0f;
-		eyeComponent->targetZ = playerTransformCompenent->positionZ + dirZ * 5.0f;
+		eyeComponent->targetX = playerTransformCompenent->positionX + dirX * 10.0f;
+		eyeComponent->targetZ = playerTransformCompenent->positionZ + dirZ * 10.0f;
 
 		eyeComponent->goalDirectionX = dirX;
 		eyeComponent->goalDirectionZ = dirZ;
@@ -208,8 +208,8 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		{
 			SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 
-			eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed * 4.f * GetDeltaTime();
-			eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 4.f * GetDeltaTime();
 		}
 	}
 }
@@ -268,7 +268,7 @@ bool EyeBehaviourSystem::Update()
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
 				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats);
 				REMOVEMEPLEASE++;
-				if (REMOVEMEPLEASE % 20 == 0)
+				if (REMOVEMEPLEASE % 50 == 0)
 				{
 					eyeComponent->specialCounter++;
 				}
@@ -277,16 +277,7 @@ bool EyeBehaviourSystem::Update()
 			else // idle
 			{
 				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
-				REMOVEMEPLEASE++;
-				if (REMOVEMEPLEASE % 20 == 0)
-				{
-					eyeComponent->specialCounter++;
-				}
 			}
-		}
-		else
-		{
-			//COMMIT DIE
 		}
 	}
 	return true;
