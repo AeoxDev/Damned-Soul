@@ -59,7 +59,7 @@ void SettingsState::SetupButtons()
 	//Back Button
 	auto backButton = registry.CreateEntity();
 	auto backComp = registry.AddComponent<UIButton>(backButton);
-	backComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Back", UIFunc::Settings_Back, { -0.6f, 0.0f }, { 0.8f, 0.8f });	
+	backComp->Setup("ExMenu/ButtonBackground.png", "ExMenu/ButtonBackgroundHover.png", L"Back", UIFunc::Settings_Back, { -0.8f, -0.8f }, { 0.8f, 0.8f });	
 }
 
 void SettingsState::SetupImages()
