@@ -5,33 +5,34 @@
 #include "Components.h"
 #include "Input.h"
 #include "UI/UIRenderer.h"
+#include "SDLHandler.h"
 
 bool ButtonSystem::Update()
 {
-	for (auto entity : View<UIButtonComponent>(registry))
+	for (auto entity : View<UIButton>(registry))
 	{
-		auto comp = registry.GetComponent<UIButtonComponent>(entity);
-		if (comp->button.m_uiComponent.Intersect({ mouseX, mouseY }))
+		auto comp = registry.GetComponent<UIButton>(entity);
+		if (comp->m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
 		{
-			if (comp->button.m_CurrentImage == 1 && comp->doRedraw)
+			if (comp->m_CurrentImage == 1 && comp->doRedraw)
 			{
 				RedrawUI();
 				comp->doRedraw = false;
 			}
 
-			comp->button.Hover();
+			comp->Hover();
 			if (mouseButtonPressed[MouseButton::left] == released)
 			{
-				comp->button.Interact();
+				comp->Interact();
 				return true;
 			}
 		}
 		else
 		{
-			if (comp->button.m_CurrentImage == 1)
+			if (comp->m_CurrentImage == 1)
 			{
 				RedrawUI();
-				comp->button.m_CurrentImage = 0;
+				comp->m_CurrentImage = 0;
 				comp->doRedraw = true;
 			}
 			

@@ -1,3 +1,9 @@
+cbuffer WorldMatrix : register(b0)
+{
+    matrix world;
+}
+
+
 cbuffer CameraBuffer : register(b1)
 {
     float4 cameraPosition;
@@ -23,12 +29,12 @@ VS_OUT main(VS_INPUTS pos)
 {
 	VS_OUT retval;
 
-	retval.position = pos.position;
+    retval.position = mul(pos.position, world);
 	
-	retval.position = pos.position;
+    retval.position = mul(pos.position, world);
     retval.position = mul(retval.position, view);
 	
-    retval.svPosition = pos.position;
+    retval.svPosition = mul(pos.position, world);
     retval.svPosition = mul(retval.svPosition, view);
     retval.svPosition = mul(retval.svPosition, projection);
 

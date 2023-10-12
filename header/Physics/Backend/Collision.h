@@ -3,7 +3,7 @@
 #define SAME_TYPE_HITBOX_LIMIT 4 //Limit for same type of hitboxes
 #define CONVEX_CORNER_LIMIT 8 //Maximum amount of corners allowed per Convex shape
 #define MAP_DIM 512*512
-#define MOVEABLE_COLLISIONS_PER_FRAME 1
+#define MOVEABLE_COLLISIONS_PER_FRAME 2
 #include "EntityFramework.h"
 #include "MemLib/ML_Vector.hpp"
 

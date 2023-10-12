@@ -28,6 +28,7 @@ bool GeometryIndependentSystem::Update()
 				int r = PixelValueOnPosition(geoCo, p->positionX, p->positionZ);
 				if (r == 0)
 				{
+					int rr = PixelValueOnPosition(geoCo, p->positionX, p->positionZ);
 					p->positionX = 0.f;
 					p->positionZ = 0.f;
 				}
