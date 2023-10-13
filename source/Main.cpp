@@ -27,6 +27,7 @@ int main(int argc, char* args[])
 		SetInMainMenu(true);
 		SetInPlay(false);
 		stateManager.levelScenes[0].Unload();
+		stateManager.levelScenes[1].Unload();
 		stateManager.menu.Setup();
 	}*/
 
