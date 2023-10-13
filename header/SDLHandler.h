@@ -10,8 +10,12 @@ struct SDL
 	SDL_Renderer* sdlRenderer = nullptr;
 	bool quit = false;
 	SDL_Event sdlEvent;
-	Uint32 WIDTH = 1280;
-	Uint32 HEIGHT = 720;
+	Uint32 WIDTH = 1600;
+	Uint32 WINDOWED_WIDTH = 1600;
+	Uint32 BASE_WIDTH = 1600;
+	Uint32 HEIGHT = 900;
+	Uint32 WINDOWED_HEIGHT = 900;
+	Uint32 BASE_HEIGHT = 900;
 	Uint32 windowFlags = 0;
 };
 extern SDL sdl;

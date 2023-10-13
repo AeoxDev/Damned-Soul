@@ -6,7 +6,7 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 {
 	m_UiComponent.Setup(scale, rotation, visibility);
 	m_Images[0].Setup(imageFile, position, scale, rotation, visibility, opacity);
-	m_UiComponent.m_OriginalBounds = m_Images[0].m_UiComponent.m_CurrentBounds;
+	m_UiComponent.m_OriginalBounds = m_Images[0].m_UiComponent.m_OriginalBounds;
 
 	m_onClick = onClick;
 

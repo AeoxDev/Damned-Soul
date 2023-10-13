@@ -50,7 +50,11 @@ int main(int argc, char* args[])
 void UpdateDebugWindowTitle(std::string& title)
 {
 #ifdef _DEBUG
-	if (sdl.windowFlags == 0 && NewSecond())
+	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+	{
+		return;
+	}
+	if (NewSecond())
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
 		//title+="";//Add more debugging information here, updates every second.

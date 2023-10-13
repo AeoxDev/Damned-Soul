@@ -8,6 +8,7 @@
 #include "GameRenderer.h"
 #include "UI/UIRenderer.h"
 #include "Particles.h"
+
 State currentStates;
 StateManager stateManager;
 
@@ -105,9 +106,13 @@ void StateManager::Setup()
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
-	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
+
+	//AI Systems
+	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
+	systems.push_back(new EyeBehaviourSystem());
+
 	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());
 	systems.push_back(new EventSystem());
@@ -151,12 +156,14 @@ void StateManager::Input()
 	}
 }
 
+
 void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
 		systems[i]->Update();
 	}
+
 	Input();
 }
 

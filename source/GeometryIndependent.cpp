@@ -164,10 +164,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(stagingResource, 0, D3D11_MAP_READ, 0, &mappedResource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map staging resource!" << std::endl;
-	}
+	assert(!FAILED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappingTexture, mappedResource.pData, mappedResource.DepthPitch);

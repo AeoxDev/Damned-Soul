@@ -1,8 +1,8 @@
 #include "SDLHandler.h"
-#include <iostream>
 #include <d3d11.h>
 #include "SDL.h"
 #include "SDL_syswm.h"
+#include <assert.h>
 
 
 SDL sdl;
@@ -10,11 +10,7 @@ bool SetupWindow()
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	sdl.sdlWindow = SDL_CreateWindow("Damned Soul", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, sdl.WIDTH, sdl.HEIGHT, SDL_WINDOW_SHOWN);
-	if (sdl.sdlWindow == nullptr)
-	{
-		std::cerr << "SDL: Window unsuccessfully created! SDL_GetError() Yields: " << SDL_GetError() << std::endl;
-		return false;
-	}
+	assert(sdl.sdlWindow != nullptr);
 	for (int i = 0; i < SDL_GetNumRenderDrivers(); ++i)
 	{
 		SDL_RendererInfo rendererInfo = {};
@@ -26,18 +22,10 @@ bool SetupWindow()
 			break;
 		}
 	}
-	if (sdl.sdlRenderer == nullptr)
-	{
-		std::cerr << "SDL: Renderer unsuccessfully created! SDL_GetError() Yields: " << SDL_GetError() << std::endl;
-		return false;
-	}
+	assert(sdl.sdlRenderer != nullptr);
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version);
-	if (SDL_GetWindowWMInfo(sdl.sdlWindow, &wmInfo) == -1)
-	{
-		std::cerr << "SDL: Unable to retrieve HWND! SDL_GetError() Yields: " << SDL_GetError() << std::endl;
-		return false;
-	}
+	assert(SDL_GetWindowWMInfo(sdl.sdlWindow, &wmInfo) > -1);
 	sdl.window = wmInfo.info.win.window;
 	//Set windowed mode
 	SDL_SetWindowFullscreen(sdl.sdlWindow, sdl.windowFlags);

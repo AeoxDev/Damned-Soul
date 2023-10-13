@@ -1,5 +1,4 @@
 #include "UI/UIImage.h"
-#include <iostream>
 
 using namespace DirectX;
 
@@ -17,40 +16,20 @@ void UIImage::Setup(const std::string& file, DirectX::XMFLOAT2 position, DirectX
 	const std::wstring path = L"../resource/GUI/" + std::wstring(file.begin(), file.end());
 
 	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to create image decoder" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	hr = decoder->GetFrame(0, &source);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to get image source" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	hr = factory->CreateFormatConverter(&converter);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to create image converter" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	hr = converter->Initialize(source, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeMedianCut);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to inizialize image source" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 
 	hr = ui.GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to create image bitmap" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	m_UiComponent.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
 
