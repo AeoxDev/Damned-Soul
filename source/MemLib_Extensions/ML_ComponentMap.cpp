@@ -200,7 +200,8 @@ uint32_t ML_ComponentMap::erase(const size_t& key)
 		if (key == GET_KEY(i))
 		{
 			// Overwrite
-			std::memcpy(GET_KEY_POINTER(i), GET_KEY_POINTER(i+1), (m_size - i) * PAIR_SIZE);
+			if (i < (m_size - 1))
+				std::memcpy(GET_KEY_POINTER(i), GET_KEY_POINTER(i+1), (m_size - i) * PAIR_SIZE);
 			return --m_size;
 			// No need to sort, as it should already be sorted before this and it simply shifts one chunk a step over an element that is to be deleted
 		}

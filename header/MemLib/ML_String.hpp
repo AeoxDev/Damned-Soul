@@ -150,7 +150,7 @@ public:
 		uint32_t otherLen = (uint32_t)(std::strlen(other) + 1);
 		uint32_t newLen = m_len + otherLen - 1;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
-		while (m_capacity < newLen)
+		while (m_capacity <= newLen)
 			reserve(m_capacity * 2 + ((newLen == 0) * 32));
 
 		// Set data at location

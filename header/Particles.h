@@ -12,8 +12,8 @@
 //Slot [0] will always be read and slot [1] will always be write
 struct ParticleInputOutput
 {
-	int8_t SRVIndex;
-	int8_t UAVIndex;
+	SRV_IDX SRVIndex;
+	UAV_IDX UAVIndex;
 };
 
 struct Particle

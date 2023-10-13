@@ -15,11 +15,20 @@ int Particles::RenderSlot;
 
 void Particles::SwitchInputOutput()
 {
-	//Store read
-	ParticleInputOutput tempHolder = *m_readBuffer;
+	////Store read
+	//ParticleInputOutput tempHolder = *m_readBuffer;
 
-	*m_readBuffer = *m_writeBuffer;
-	*m_writeBuffer = tempHolder;
+	//std::memcpy(m_readBuffer, m_writeBuffer, sizeof(ParticleInputOutput));
+	//*m_writeBuffer = tempHolder;
+
+	SRV_IDX tempSrv = m_readBuffer->SRVIndex;
+	UAV_IDX tempUav = m_readBuffer->UAVIndex;
+
+	m_readBuffer->SRVIndex = m_writeBuffer->SRVIndex;
+	m_readBuffer->UAVIndex = m_writeBuffer->UAVIndex;
+
+	m_writeBuffer->SRVIndex = tempSrv;
+	m_writeBuffer->UAVIndex = tempUav;
 }
 
 void Particles::InitializeParticles()

@@ -156,7 +156,8 @@ public:
 		}
 
 		// Overwrite
-		std::memcpy(&(m_data[idx]), &(m_data[idx + 1]), (m_size - idx) * m_tSize);
+		if (idx < (m_size - 1))
+			std::memcpy(&(m_data[idx]), &(m_data[idx + 1]), (m_size - idx) * m_tSize);
 
 		return --m_size;
 	};
