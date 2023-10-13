@@ -25,7 +25,7 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	size_t s = sizeof(uint16_t) + sizeof(ID3D11Buffer*);
 
@@ -49,7 +49,7 @@ CB_IDX CreateConstantBuffer(const size_t size)
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
@@ -125,7 +125,7 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
@@ -150,7 +150,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, 
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
@@ -230,12 +230,12 @@ SB_IDX CreateStructuredBuffer(const void* data, const size_t& size, const size_t
 
 	ID3D11Buffer* tempBuff;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &sbData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Structured Buffer!" << std::endl;
-		srvIdx = -1;
-		return -1;
-	}
+	assert(SUCCEEDED(hr));
+	//{
+	//	std::cerr << "Failed to create Structured Buffer!" << std::endl;
+	//	srvIdx = -1;
+	//	return -1;
+	//}
 
 	D3D11_BUFFER_SRV buffSrv;
 	buffSrv.FirstElement = 0;
@@ -247,13 +247,13 @@ SB_IDX CreateStructuredBuffer(const void* data, const size_t& size, const size_t
 	SRV_IDX currentSrvIdx = srvHolder->NextIdx();
 	ID3D11ShaderResourceView* tempSrv;
 	hr = d3d11Data->device->CreateShaderResourceView(tempBuff, &srvDesc, &tempSrv);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create SRV for Structured Buffer!" << std::endl;
-		tempBuff->Release();
-		srvIdx = -1;
-		return -1;
-	}
+	assert(SUCCEEDED(hr));
+	//{
+	//	std::cerr << "Failed to create SRV for Structured Buffer!" << std::endl;
+	//	tempBuff->Release();
+	//	srvIdx = -1;
+	//	return -1;
+	//}
 
 	// Emplace buffer
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
@@ -271,20 +271,20 @@ SB_IDX CreateStructuredBuffer(const void* data, const size_t& size, const size_t
 
 bool UpdateStructuredBuffer(const SB_IDX idx, const void* data)
 {
-	if (false == bfrHolder->buff_map.contains(idx))
-	{
-		std::cerr << "Index for update Structured Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(bfrHolder->buff_map.contains(idx));
+	//{
+	//	std::cerr << "Index for update Structured Buffer out of range!" << std::endl;
+	//	return false;
+	//}
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
 	ID3D11Buffer*& temp = bfrHolder->buff_map[idx];
 	HRESULT hr = d3d11Data->deviceContext->Map(temp, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map Structured Buffer!" << std::endl;
-		return false;
-	}
+	assert(SUCCEEDED(hr));
+	//{
+	//	//std::cerr << "Failed to map Structured Buffer!" << std::endl;
+	//	return false;
+	//}
 	std::memcpy(mappedSubresource.pData, data, bfrHolder->size[idx] * bfrHolder->count[idx]);
 	d3d11Data->deviceContext->Unmap(temp, 0);
 	return true;
@@ -305,7 +305,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[constantBufferIdx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[constantBufferIdx]);
@@ -332,7 +332,7 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
@@ -354,7 +354,7 @@ VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_F
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
@@ -396,7 +396,7 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
