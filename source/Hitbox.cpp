@@ -10,6 +10,7 @@
 #include "Components.h"
 #include "GameRenderer.h"
 #include "Registry.h"
+#include "EntityFramework.h"
 
 HitboxVisualizeVariables hvv;
 

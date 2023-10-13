@@ -7,7 +7,6 @@
 #include "Particles.h"
 
 
-
 RenderSetupComponent renderStates[8];
 int currentSize = 0;
 int backBufferRenderSlot;
@@ -199,7 +198,7 @@ void Present()
 	d3d11Data->swapChain->Present(0, 0);
 }
 
-void Dispatch(UINT threadX, UINT threadY, UINT threadZ)
+void Dispatch(unsigned int threadX, unsigned int threadY, unsigned int threadZ)
 {
 	d3d11Data->deviceContext->Dispatch(threadX, threadY, threadZ);
 }

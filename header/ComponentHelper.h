@@ -1,9 +1,5 @@
 #pragma once
-
-#include "D3D11Graphics.h"
-#include <DirectXMath.h>
 #include <bitset>
-
 #include "Relics.h"
 
 //Stats that every character in the game levels will have (player and enemies), modifyable by weapons and relics

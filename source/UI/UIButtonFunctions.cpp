@@ -1,11 +1,9 @@
 #include "UIButtonFunctions.h"
 #include "States\StateManager.h"
 #include "SDLHandler.h"
-#include "EntityFramework.h"
-#include "Registry.h"
-#include "Components.h"
 #include "Level.h"
-#include "CollisionFunctions.h"
+#include "D3D11Helper.h"
+#include "GameRenderer.h"
 
 void UIFunc::MainMenu_Start(void* args)
 {

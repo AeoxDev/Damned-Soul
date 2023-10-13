@@ -1,5 +1,5 @@
 #include "UI/UIText.h"
-
+#include <dwrite.h>
 using namespace DirectX;
 
 void UIText::Setup(const std::wstring& string, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility)

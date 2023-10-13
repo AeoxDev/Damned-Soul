@@ -1,7 +1,6 @@
 #pragma once
-#include <string>
+//#include <string>
 #include <DirectXMath.h>
-
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 

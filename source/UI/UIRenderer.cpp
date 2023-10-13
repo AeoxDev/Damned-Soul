@@ -6,6 +6,8 @@
 #include "MemLib/PoolPointer.hpp"
 #include "EntityFramework.h"
 #include "GameRenderer.h"
+#include <assert.h>
+#include <d2d1.h>
 
 IDXGISurface* UISurface;
 

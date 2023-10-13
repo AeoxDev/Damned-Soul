@@ -1,5 +1,6 @@
 #include "UI/UIComponent.h"
 #include "SDLHandler.h"
+#include <d2d1.h>
 
 using namespace DirectX;
 

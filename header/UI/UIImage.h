@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include "UIComponent.h"
-#include "MemLib/PoolPointer.hpp"
+
+struct ID2D1Bitmap;
 
 struct UIImage
 {
