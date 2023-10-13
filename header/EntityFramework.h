@@ -5,7 +5,6 @@
 #include "MemLib/MemLib.hpp"
 #include "MemLib/ML_Vector.hpp"
 #include "MemLib/ML_ComponentMap.hpp"
-#include "ComponentHelper.h"
 
 
 /*
