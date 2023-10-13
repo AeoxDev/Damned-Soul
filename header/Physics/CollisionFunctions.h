@@ -13,3 +13,5 @@ void SoftCollision(OnCollisionParameters& params);
 void HardCollision(OnCollisionParameters& params);
 
 void AttackCollision(OnCollisionParameters& params);
+
+void LoadNextLevel(OnCollisionParameters& params);

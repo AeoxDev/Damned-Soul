@@ -2,7 +2,6 @@
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "GameRenderer.h"
-#include <iostream>
 #include <fstream>
 #include <assert.h>
 
@@ -16,11 +15,8 @@ PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
 	std::ifstream reader;
 	reader.open(name, std::ios::binary | std::ios::ate);
-	if (false == reader.is_open())
-	{
-		std::cerr << "Could not open PS test file!" << std::endl;
-		return -1;
-	}
+	assert(true == reader.is_open());
+	
 
 	// Allocate the byte data on the stack
 	reader.seekg(0, std::ios::end);
@@ -34,30 +30,19 @@ PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 
 	ID3D11PixelShader* tempPS = 0;
 	HRESULT hr = d3d11Data->device->CreatePixelShader(shaderData, size, NULL, &tempPS);
-	if (FAILED(hr))
-	{
-		MemLib::spop(); // Free if failiure
-		std::cerr << "Failed to create PS test shader!" << std::endl;
-		return -1;
-	}
-	pixHolder->ps_map.emplace(pixHolder->_nextIdx, tempPS);
+	assert(!FAILED(hr));
+	PS_IDX idx = pixHolder->NextIdx();
+
+	pixHolder->ps_map.emplace(idx, tempPS);
 
 	MemLib::spop(); // Free if it succeeded because it is destined to die
-	return pixHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetPixelShader(const PS_IDX idx)
 {
-	if (pixHolder->_nextIdx < idx)
-	{
-		std::cerr << "Failed to set pixel shader: Index out of range!" << std::endl;
-		return false;
-	}
-	else if (idx < 0)
-	{
-		std::cerr << "Failed to set pixel shader: Index must be 0 or greater!" << std::endl;
-		return false;
-	}
+	assert(true == pixHolder->ps_map.contains(idx));
+	assert(idx >= 0);
 
 	d3d11Data->deviceContext->PSSetShader(pixHolder->ps_map[idx], nullptr, 0);
 	return true;
@@ -127,11 +112,7 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	Layout chosen = layouts[layout];
 	HRESULT hr = d3d11Data->device->CreateInputLayout(chosen.desc, chosen.size, vShaderByteCode, size, &il);
 
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Input Layout!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 
 	return true;
 }
@@ -141,12 +122,7 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 	std::ifstream reader;
 
 	reader.open(name, std::ios::binary | std::ios::ate);
-	if (false == reader.is_open())
-	{ 
-
-		std::cerr << "Could not open VS test file!" << std::endl;
-		return -1;
-	}
+	assert(true == reader.is_open());
 
 	// Allocate the byte data on the stack
 	reader.seekg(0, std::ios::end);
@@ -160,45 +136,29 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 
 	ID3D11VertexShader* tempVS = 0;
 	HRESULT hr = d3d11Data->device->CreateVertexShader(shaderData, size, NULL, &tempVS); // Does not increment here
-	if (FAILED(hr))
-	{
-		MemLib::spop(); // Pop if failiure
-		std::cerr << "Failed to create Vertex Shader!" << std::endl;
-		return -1;
-	}
-	vrtHolder->vs_map.emplace(vrtHolder->_nextIdx, tempVS);
+	assert(!FAILED(hr));
+	
+	VS_IDX idx = vrtHolder->NextIdx();
+	vrtHolder->vs_map.emplace(idx, tempVS);
 
 	ID3D11InputLayout* tempIL = 0;
 	// Try to create accompanying input layout
-	if (false == CreateInputLayout(shaderData, size, tempIL, layout))
-	{
-		MemLib::spop(); // Pop if failiure
-		vrtHolder->vs_map[vrtHolder->_nextIdx]->Release(); // Release the newly created shader if the input layout failed
-		std::cerr << "Failed to create Input Layout for Vertex Shader!" << std::endl;
-		return -1;
-	}
-	vrtHolder->il_map.emplace(vrtHolder->_nextIdx, tempIL);
+	assert(true == CreateInputLayout(shaderData, size, tempIL, layout));
+	vrtHolder->il_map.emplace(idx, tempIL);
 
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return vrtHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetVertexShader(const VS_IDX idx)
 {
-	if (vrtHolder->_nextIdx < idx)
-	{
-		std::cerr << "Failed to set vertex shader/input layout pair: Index out of range!" << std::endl;
-		return false;
-	}
-	else if (idx < 0)
-	{
-		std::cerr << "Failed to set vertex shader/input layout pair: Index must be 0 or greater!" << std::endl;
-		return false;
-	}
+	assert(true == vrtHolder->vs_map.contains(idx));
+	
+	assert(idx >= 0);
 
 	d3d11Data->deviceContext->VSSetShader(vrtHolder->vs_map[idx], nullptr, 0);
 	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_map[idx]);
@@ -216,11 +176,7 @@ CS_IDX LoadComputeShader(const char* name)
 	std::ifstream reader;
 
 	reader.open(name, std::ios::binary | std::ios::ate);
-	if (false == reader.is_open())
-	{
-		std::cerr << "Could not open CS test file!" << std::endl;
-		return -1;
-	}
+	assert(true == reader.is_open());
 
 	// Allocate the byte data on the stack
 	reader.seekg(0, std::ios::end);
@@ -234,33 +190,21 @@ CS_IDX LoadComputeShader(const char* name)
 
 	ID3D11ComputeShader* tempCS = 0;
 	HRESULT hr = d3d11Data->device->CreateComputeShader(shaderData, size, NULL, &tempCS); // Does not increment here
-	if (FAILED(hr))
-	{
-		MemLib::spop(); // Pop if failiure
-		std::cerr << "Failed to create Compute Shader!" << std::endl;
-		return -1;
-	}
-	comHolder->cs_map.emplace(comHolder->_nextIdx, tempCS);
+	assert(!FAILED(hr));
+	CS_IDX idx = comHolder->NextIdx();
+	comHolder->cs_map.emplace(idx, tempCS);
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return comHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetComputeShader(const CS_IDX idx)
 {
-	if (comHolder->_nextIdx < idx)
-	{
-		std::cerr << "Failed to set compute shader: Index out of range!" << std::endl;
-		return false;
-	}
-	else if (idx < 0)
-	{
-		std::cerr << "Failed to set compute shader: Index must be 0 or greater!" << std::endl;
-		return false;
-	}
+	assert(true == comHolder->cs_map.contains(idx));
+	assert(idx >= 0);
 
 	d3d11Data->deviceContext->CSSetShader(comHolder->cs_map[idx], nullptr, 0);
 	return true;
@@ -276,11 +220,7 @@ GS_IDX LoadGeometryShader(const char* name)
 	std::ifstream reader;
 
 	reader.open(name, std::ios::binary | std::ios::ate);
-	if (false == reader.is_open())
-	{
-		std::cerr << "Could not open GS test file!" << std::endl;
-		return -1;
-	}
+	assert(true == reader.is_open());
 
 	// Allocate the byte data on the stack
 	reader.seekg(0, std::ios::end);
@@ -294,33 +234,21 @@ GS_IDX LoadGeometryShader(const char* name)
 
 	ID3D11GeometryShader* tempGS = 0;
 	HRESULT hr = d3d11Data->device->CreateGeometryShader(shaderData, size, NULL, &tempGS); // Does not increment here
-	if (FAILED(hr))
-	{
-		MemLib::spop(); // Pop if failure
-		std::cerr << "Failed to create Geometry Shader!" << std::endl;
-		return -1;
-	}
-	geoHolder->gs_map.emplace(geoHolder->_nextIdx, tempGS);
+	assert(!FAILED(hr));
+	GS_IDX idx = geoHolder->NextIdx();
+	geoHolder->gs_map.emplace(idx, tempGS);
 
 	// Free the temp memory
 	MemLib::spop();
 
 	// Return and increment (in that order)
-	return geoHolder->_nextIdx++;
+	return idx;
 }
 
 bool SetGeometryShader(const GS_IDX idx)
 {
-	if (geoHolder->_nextIdx < idx)
-	{
-		std::cerr << "Failed to set geometry shader: Index out of range!" << std::endl;
-		return false;
-	}
-	else if (idx < 0)
-	{
-		std::cerr << "Failed to set geometry shader: Index must be 0 or greater!" << std::endl;
-		return false;
-	}
+	assert(true == geoHolder->gs_map.contains(idx));
+	assert(idx >= 0);
 
 	d3d11Data->deviceContext->GSSetShader(geoHolder->gs_map[idx], nullptr, 0);
 	return true;

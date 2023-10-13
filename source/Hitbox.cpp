@@ -2,7 +2,6 @@
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
 #include <string>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include "Backend/Collision.h"
@@ -412,10 +411,8 @@ void CreateShadersLayoutAndRasterState()
 	std::string shaderData;
 	std::ifstream reader;
 	reader.open("../bin/DebugHitboxVertexShader.cso", std::ios::binary | std::ios::ate);
-	if (!reader.is_open())
-	{
-		std::cerr << "Could not open VS file!" << std::endl;
-	}
+	assert(reader.is_open());
+
 
 	reader.seekg(0, std::ios::end);
 	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
@@ -424,20 +421,14 @@ void CreateShadersLayoutAndRasterState()
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
 
-	if (FAILED(d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader)))
-	{
-		std::cerr << "Failed to create vertex shader!" << std::endl;
-	}
+	assert(!FAILED(d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader)));
 	std::string vShaderByteCode = shaderData;
 
 	//Geometry Shader
 	shaderData.clear();
 	reader.close();
 	reader.open("../bin/DebugHitboxGeometryShader.cso", std::ios::binary | std::ios::ate);
-	if (!reader.is_open())
-	{
-		std::cerr << "Could not open GS file!" << std::endl;
-	}
+	assert(reader.is_open());
 
 	reader.seekg(0, std::ios::end);
 	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
@@ -446,19 +437,13 @@ void CreateShadersLayoutAndRasterState()
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
 
-	if (FAILED(d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader)))
-	{
-		std::cerr << "Failed to create geometry shader!" << std::endl;
-	}
+	assert(!FAILED(d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader)));
 
 	//Pixel Shader
 	shaderData.clear();
 	reader.close();
 	reader.open("../bin/DebugHitboxPixelShader.cso", std::ios::binary | std::ios::ate);
-	if (!reader.is_open())
-	{
-		std::cerr << "Could not open PS file!" << std::endl;
-	}
+	assert(reader.is_open());
 
 	reader.seekg(0, std::ios::end);
 	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
@@ -467,10 +452,7 @@ void CreateShadersLayoutAndRasterState()
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
 
-	if (FAILED(d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader)))
-	{
-		std::cerr << "Failed to create pixel shader!" << std::endl;
-	}
+	assert(!FAILED(d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader)));
 
 	//Input Layout
 	D3D11_INPUT_ELEMENT_DESC inputDesc[1] =
@@ -479,10 +461,7 @@ void CreateShadersLayoutAndRasterState()
 	};
 
 	//Array of input descriptions, number of elements, pointer to compiled shader, size of compiled shader, pointer to input-layout.
-	if (FAILED(d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout)))
-	{
-		std::cerr << "Failed to create hitbox input layout!" << std::endl;
-	}
+	assert(!FAILED(d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout)));
 
 	//Raster State
 	D3D11_RASTERIZER_DESC rasterDesc{};
@@ -490,10 +469,7 @@ void CreateShadersLayoutAndRasterState()
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = false;
 
-	if (FAILED(d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster)))
-	{
-		std::cerr << "Failed to create hitbox raster state!" << std::endl;
-	}
+	assert(!FAILED(d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster)));
 }
 
 void DestroyHitboxVisualizeVariables()
@@ -694,6 +670,15 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetupEnemyCollisionBox(EntityID& entity, float radius)
 {
 	AddHitboxComponent(entity);
+	
+	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsEnemy(entity, hID);
+	SetHitboxHitPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
+
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, SoftCollision);
 	SetHitboxIsEnemy(entity, sID);
@@ -702,36 +687,40 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
 
-	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
-	SetCollisionEvent(entity, hID, HardCollision);
-	SetHitboxIsEnemy(entity, hID);
-	SetHitboxHitPlayer(entity, hID);
-	SetHitboxHitEnemy(entity, hID);
-	SetHitboxActive(entity, hID);
-	SetHitboxIsMoveable(entity, hID);
 }
 
 void SetupPlayerCollisionBox(EntityID& entity, float radius)
 {
 	AddHitboxComponent(entity);
-	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
+
+	int hID = CreateHitbox(entity, radius * 0.5f, 0.f, -0.f);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxHitStage(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
+
+	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
+	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
+	int hID = CreateHitbox(entity, 4, cornersX, cornersZ);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxIsPlayer(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
+	SetHitboxHitStage(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);*/
+
+	int sID = CreateHitbox(entity, radius, .0f, -0.0f);
 	SetCollisionEvent(entity, sID, SoftCollision);
 	SetHitboxIsPlayer(entity, sID);
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
 
-	int hID = CreateHitbox(entity, radius * 0.35f, 0.f, 0.f);
-	SetCollisionEvent(entity, hID, HardCollision);
-	SetHitboxIsPlayer(entity, hID);
-	SetHitboxHitEnemy(entity, hID);
-	SetHitboxActive(entity, hID);
-	SetHitboxIsMoveable(entity, hID);
-
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
-	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.1f, 0.f, 0.f);
+	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, -0.5f);
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
-	SetHitboxIsPlayer(entity, playerComp->attackHitboxID);
 	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
 	SetHitboxActive(entity, playerComp->attackHitboxID, false);
 }
@@ -820,6 +809,7 @@ EntityID CreateAndRenderGeometryIndependentCollision(EntityID& m)
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stage);
 
 	RenderGeometryIndependentCollisionToTexture(stage);
+	ReleaseGI(stage);
 	return stage;
 }
 
@@ -827,8 +817,12 @@ void RenderGeometryIndependentCollision(EntityID& m)
 {
 	AddGeometryIndependentComponent(m);
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(m);
-
+	/*while (true)
+	{
+		RenderGeometryIndependentCollisionToTexture(m);
+		Present();
+	}*/
 	RenderGeometryIndependentCollisionToTexture(m);
-	ReleaseGI();
+	ReleaseGI(m);
 	return;
 }

@@ -3,7 +3,6 @@
 #include "MemLib/MemLib.hpp"
 #include "UI/UIRenderer.h"
 #include "SDLHandler.h"
-#include <iostream>
 #include <assert.h>
 
 
@@ -25,19 +24,27 @@ VP_IDX CreateViewport(const size_t& width, const size_t& height)
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 
-	vpHolder->vp_map.emplace(vpHolder->_nextIdx, vp);
+	VP_IDX idx = vpHolder->NextIdx();
+	vpHolder->vp_map.emplace(idx, vp);
 
-	return (vpHolder->_nextIdx)++;
+	return idx;
+}
+
+void EditViewport(const VP_IDX idx, const size_t& width, const size_t& height)
+{
+	D3D11_VIEWPORT vp = vpHolder->vp_map[idx];
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	vp.Width = static_cast<float>(width);
+	vp.Height = static_cast<float>(height);
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
 }
 
 bool SetViewport(const VP_IDX idx)
 {
-	if (vpHolder->_nextIdx < idx || idx < 0)
-	{
-		std::cerr << "Viewport index out of range!" << std::endl;
-		return false;
-	}
-
+	assert(true == vpHolder->vp_map.contains(idx));
+	
 	d3d11Data->deviceContext->RSSetViewports(1, &(vpHolder->vp_map[idx]));
 	return true;
 }
@@ -45,15 +52,11 @@ bool SetViewport(const VP_IDX idx)
 
 RTV_IDX CreateBackBuffer()
 {
-	uint8_t currentIdx = rtvHolder->_nextIdx;
+	uint8_t currentIdx = rtvHolder->NextIdx();
 
 	// get the address of the back buffer
 	ID3D11Texture2D* backBuffer = nullptr;
-	if (FAILED(d3d11Data->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
-	{
-		std::cerr << "Failed to get back buffer!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(d3d11Data->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))));
 
 
 	// use the back buffer address to create the render target
@@ -61,20 +64,16 @@ RTV_IDX CreateBackBuffer()
 	ID3D11RenderTargetView* tempBB = 0;
 	HRESULT hr = d3d11Data->device->CreateRenderTargetView(backBuffer, NULL, &tempBB);
 
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Render Target View!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 	rtvHolder->rtv_map.emplace(currentIdx, tempBB);
 	backBuffer->Release();
 
-	return (rtvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, FORMAT format)
 {
-	uint8_t currentIdx = rtvHolder->_nextIdx;
+	uint8_t currentIdx = rtvHolder->NextIdx();
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
@@ -93,31 +92,22 @@ RTV_IDX CreateRenderTargetView(USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, C
 	ID3D11Texture2D* tempTex = 0;
 	// Attempt to create a texture in the device
 	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, NULL, &tempTex);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create ID3D11Texture2D for RenderTargetView" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 	rtvHolder->tx_map.emplace(currentIdx, tempTex);
 
 	ID3D11RenderTargetView* tempRTV = 0;
 	hr = d3d11Data->device->CreateRenderTargetView(rtvHolder->tx_map[currentIdx], NULL, &tempRTV);
-	if (FAILED(hr))
-	{
-		// If the RTV failed to create, release the texture
-		rtvHolder->tx_map[currentIdx]->Release();
-		std::cerr << "Failed to create ID3D11RenderTargetView" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 	rtvHolder->rtv_map.emplace(currentIdx, tempRTV);
 
 	// Set the hash last thing you do
-	return (rtvHolder->_nextIdx)++;
+	return currentIdx;
+
 }
 
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 {
-	uint8_t currentIdx = dsvHolder->_nextIdx;
+	uint8_t currentIdx = dsvHolder->NextIdx();
 
 
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -135,33 +125,21 @@ DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 
 	ID3D11Texture2D* tempTex = 0;
 	HRESULT hr = d3d11Data->device->CreateTexture2D(&textureDesc, nullptr, &tempTex);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Depth Stencil Texture!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
+	
 	dsvHolder->ds_map.emplace(currentIdx, tempTex);
 
 	ID3D11DepthStencilView* tempDSV = 0;
 	hr = d3d11Data->device->CreateDepthStencilView(dsvHolder->ds_map[currentIdx], 0, &tempDSV);
-	if (FAILED(hr))
-	{
-		dsvHolder->ds_map[currentIdx]->Release(); // Release if failed
-		std::cerr << "Failed to create Depth Stencil View!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 	dsvHolder->dsv_map.emplace(currentIdx, tempDSV);
 
-	return (dsvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_dsv)
 {
-	if (rtvHolder->_nextIdx < idx_rtv || idx_rtv < 0 || dsvHolder->_nextIdx < idx_dsv || idx_dsv < 0)
-	{
-		std::cerr << "Failed to set render target view and depth stencil view, out of range!" << std::endl;
-		return false;
-	}
+	assert(true == rtvHolder->rtv_map.contains(idx_rtv) && true == dsvHolder->dsv_map.contains(idx_dsv));
 
 	d3d11Data->deviceContext->OMSetRenderTargets(1, &(rtvHolder->rtv_map[idx_rtv]), dsvHolder->dsv_map[idx_dsv]);
 	return true;
@@ -174,7 +152,7 @@ void UnsetRenderTargetViewAndDepthStencil()
 
 SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
 {
-	uint8_t currentIdx = srvHolder->_nextIdx;
+	uint8_t currentIdx = srvHolder->NextIdx();
 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -191,20 +169,12 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&bufferDesc, &buffData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Buffer to be used for Shader Resource View!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 
 	ID3D11Resource* tempResource = 0;
 	//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
 	hr = tempBuff->QueryInterface(__uuidof(ID3D11Buffer), (void**)&tempResource);
-	if (FAILED(hr)) {
-		std::cerr << "Failed to QueryInterface into buffer" << std::endl;
-		tempBuff->Release();
-		return false;
-	}
+	assert(!FAILED(hr));
 	srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
 
 
@@ -220,25 +190,21 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 
 	ID3D11ShaderResourceView* tempSRV = 0;
 	hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], &SRVDesc, &tempSRV);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Shader Resource View!" << std::endl;
-		srvHolder->srv_resource_map[currentIdx]->Release();
-		return false;
-	}
+	assert(!FAILED(hr));
+
 	srvHolder->srv_map.emplace(currentIdx, tempSRV);
 	srvHolder->size.emplace(currentIdx, (uint32_t)size);
 
 	// Release tempBuff as the queryInterface is the resource appended
 	tempBuff->Release();
 
-	return (srvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height)
 {
 	HRESULT hr;
-	uint8_t currentIdx = srvHolder->_nextIdx;
+	uint8_t currentIdx = srvHolder->NextIdx();
 	ID3D11Texture2D* tempTex = 0;
 	ID3D11Resource* tempResource = 0;
 
@@ -270,20 +236,12 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 
 
 			hr = d3d11Data->device->CreateTexture2D(&textureDesc, nullptr, &tempTex);
-			if (FAILED(hr))
-			{
-				std::cerr << "Failed to create Depth Stencil Texture!" << std::endl;
-				return false;
-			}
+			assert(!FAILED(hr));
 
 
 			//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
 			hr = tempTex->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
-			if (FAILED(hr)) {
-				std::cerr << "Failed to QueryInterface into buffer" << std::endl;
-				tempTex->Release();
-				return false;
-			}
+			assert(!FAILED(hr));
 			srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
 
 			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -302,25 +260,16 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 			//Define if needed
 			break;
 		default:
-			std::cerr << "Did not create requested Shader Resource View, requested case is not defined" << std::endl;
+			assert("Did not create requested Shader Resource View, requested case is not defined"[0] == "ERROR"[0]);
 			return false;
 			break;
 	}
 
-	if (tempResource == nullptr)
-	{
-		std::cerr << "tempResource was null after creation, something went wrong. SRV not created" << std::endl;
-		return false;
-	}
+	assert(tempResource != nullptr);
 
 	ID3D11ShaderResourceView* tempSRV = 0;
 	hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], &SRVDesc, &tempSRV);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Shader Resource View!" << std::endl;
-		srvHolder->srv_resource_map[currentIdx]->Release();
-		return false;
-	}
+	assert(!FAILED(hr));
 	srvHolder->srv_map.emplace(currentIdx, tempSRV);
 
 	//Get the size of the texture by mapping and saving the DepthPitch
@@ -332,12 +281,12 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 	//d3d11Data->deviceContext->Unmap(srvHolder->srv_resource_map[currentIdx], 0);
 
 
-	return (srvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS sourceResource)
 {
-	uint8_t currentIdx = srvHolder->_nextIdx;
+	uint8_t currentIdx = srvHolder->NextIdx();
 	HRESULT hr = NULL;
 	ID3D11ShaderResourceView* tempSRV = 0;
 	ID3D11Texture2D* tempTex = 0;
@@ -358,12 +307,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 		srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
 
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], NULL, &tempSRV);
-		if (FAILED(hr))
-		{
-			std::cerr << "Failed to create Shader Resource View from a Render Target View!" << std::endl;
-			srvHolder->srv_resource_map[currentIdx]->Release();
-			return false;
-		}
+		assert(!FAILED(hr));
 		srvHolder->srv_map.emplace(currentIdx, tempSRV);
 
 		//Get the size of the texture by mapping and saving the DepthPitch
@@ -373,7 +317,6 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 		//d3d11Data->deviceContext->Map(srvHolder->srv_resource_map[currentIdx], 0, D3D11_MAP_WRITE, 0, &mappedResource);
 		//srvHolder->size.emplace(currentIdx, mappedResource.DepthPitch);
 		//d3d11Data->deviceContext->Unmap(srvHolder->srv_resource_map[currentIdx], 0);
-
 		break;
 	case BIND_SHADER_RESOURCE:
 		tempResource = srvHolder->srv_resource_map[sourceIdx];
@@ -382,23 +325,17 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 
 
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], NULL, &tempSRV);
-		if (FAILED(hr))
-		{
-			std::cerr << "Failed to create Shader Resource View from another Shader Resource View!" << std::endl;
-			srvHolder->srv_resource_map[currentIdx]->Release();
-			return false;
-		}
+		assert(FAILED(hr));
 		srvHolder->srv_map.emplace(currentIdx, tempSRV);
 		srvHolder->size.emplace(currentIdx, srvHolder->size[sourceIdx]);
-
 		break;
 	default:
-		std::cerr << "Did not create requested Shader Resource View (overload), requested case is not defined" << std::endl;
+		assert("Did not create requested Shader Resource View (overload), requested case is not defined"[0] == "ERROR"[0]);
 		return false;
 		break;
 	}
 
-	return (srvHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
@@ -424,7 +361,7 @@ bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bin
 		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
 		break;
 	default:
-		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
 		return false;
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
@@ -455,7 +392,7 @@ void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot
 		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srv_NULL);
 		break;
 	default:
-		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
 		break;
 	}
 
@@ -468,7 +405,7 @@ void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
 {
-	uint8_t currentIdx = uavHolder->_nextIdx;
+	uint8_t currentIdx = uavHolder->NextIdx();
 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -487,18 +424,14 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, co
 	HRESULT hr = d3d11Data->device->CreateBuffer(&bufferDesc, &buffData, &tempBuff);
 	if (FAILED(hr))
 	{
-		std::cerr << "Failed to create Buffer to be used for Unordered Access View!" << std::endl;
+		assert("ERRPR"[0] == "Failed to create Buffer to be used for Unordered Access View!"[0]);
 		return false;
 	}
 
 	ID3D11Resource* tempResource = 0;
 	//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
 	hr = tempBuff->QueryInterface(__uuidof(ID3D11Buffer), (void**)&tempResource);
-	if (FAILED(hr)) {
-		std::cerr << "Failed to QueryInterface into buffer" << std::endl;
-		tempBuff->Release();
-		return false;
-	}
+	assert(!FAILED(hr));
 	uavHolder->uav_resource_map.emplace(currentIdx, tempResource);
 
 
@@ -511,21 +444,18 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, co
 
 	ID3D11UnorderedAccessView* tempUAV = 0;
 	hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_map[currentIdx], &UAVDesc, &tempUAV);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Unordered Access View!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
+
 	uavHolder->uav_map.emplace(currentIdx, tempUAV);
 	uavHolder->size.emplace(currentIdx, (uint32_t)size);
 
 	tempBuff->Release();
-	return (uavHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx)
 {
-	uint8_t currentIdx = uavHolder->_nextIdx;
+	uint8_t currentIdx = uavHolder->NextIdx();
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
 	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -541,17 +471,13 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 
 	ID3D11UnorderedAccessView* tempUAV = 0;
 	HRESULT hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_map[currentIdx], &UAVDesc, &tempUAV);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Unordered Access View from another resource!" << std::endl;
-		uavHolder->uav_resource_map[currentIdx]->Release();
-		return false;
-	}
+	assert(!FAILED(hr));
+	
 	uavHolder->uav_map.emplace(currentIdx, tempUAV);
 	uavHolder->size.emplace(currentIdx, (uint32_t)size);
 
 
-	return (uavHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetUnorderedAcessView(const UAV_IDX idx, uint8_t slot)
@@ -580,7 +506,7 @@ void ClearDepthStencilView(const DSV_IDX idx)
 
 RS_IDX CreateRasterizerState(const bool cull, const bool solid)
 {
-	uint8_t currentIdx = rsHolder->_nextIdx;
+	uint8_t currentIdx = rsHolder->NextIdx();
 
 	D3D11_RASTERIZER_DESC desc;
 	desc.FillMode = solid ? D3D11_FILL_SOLID : D3D11_FILL_WIREFRAME;
@@ -596,24 +522,15 @@ RS_IDX CreateRasterizerState(const bool cull, const bool solid)
 
 	ID3D11RasterizerState* tempRaster = 0;
 	HRESULT hr = d3d11Data->device->CreateRasterizerState(&desc, &tempRaster);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create rasterizer state!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	rsHolder->rs_map.emplace(currentIdx, tempRaster);
 
-	return (rsHolder->_nextIdx)++;
+	return currentIdx;
 }
 
 bool SetRasterizerState(const RS_IDX idx)
 {
-	if (idx < 0 || rsHolder->_nextIdx < idx)
-	{
-		std::cerr << "Rasterizer state out of range!" << std::endl;
-		return false;
-	}
-
+	assert(true == rsHolder->rs_map.contains(idx));
 	d3d11Data->deviceContext->RSSetState(rsHolder->rs_map[idx]);
 	return true;
 }
@@ -623,6 +540,14 @@ void UnsetRasterizerState()
 	d3d11Data->deviceContext->RSSetState(rs_NULL);
 }
 
+bool DeleteD3D11Viewport(const VP_IDX idx)
+{
+	assert(vpHolder->vp_map.contains(idx));
+
+	vpHolder->vp_map.erase(idx);
+
+	return true;
+}
 
 bool DeleteD3D11RenderTargetView(const RTV_IDX idx)
 {

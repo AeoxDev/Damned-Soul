@@ -1,7 +1,6 @@
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
-#include <iostream>
 #include <DirectXMath.h>
 #include <assert.h>
 
@@ -9,7 +8,7 @@ ID3D11Buffer* bfr_NULL = nullptr;
 
 CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -26,23 +25,19 @@ CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Constant Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 
 	size_t s = sizeof(uint16_t) + sizeof(ID3D11Buffer*);
 
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 CB_IDX CreateConstantBuffer(const size_t size)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DYNAMIC; // Needs to be updated
@@ -54,15 +49,11 @@ CB_IDX CreateConstantBuffer(const size_t size)
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Constant Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 
@@ -89,7 +80,7 @@ bool SetConstantBuffer(const CB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, 
 		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfrHolder->buff_map[idx]);
 		break;
 	default:
-		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
 		return false;
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
@@ -120,29 +111,21 @@ void UnsetConstantBuffer(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 		d3d11Data->deviceContext->CSSetConstantBuffers(slot, 1, &bfr_NULL);
 		break;
 	default:
-		std::cerr << "Corrupt or incorrent Shader Type to bind!" << std::endl;
+		assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
 }
 
 bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 {
-	if (bfrHolder->_nextIdx < idx || idx < 0)
-	{
-		std::cerr << "Index for update Constant Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(true == bfrHolder->buff_map.contains(idx));
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map Constant Buffer!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
@@ -167,11 +150,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, 
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map World Constant Buffer!" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
@@ -222,7 +201,7 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 	//DirectX::XMVECTOR s = DirectX::XMVECTOR{ scaleX, scaleY, ScaleZ};
 	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
 	world = DirectX::XMMatrixScaling(scaleX, scaleY, ScaleZ);
-	world = DirectX::XMMatrixLookAtLH(v, f, up);
+	world = world * DirectX::XMMatrixLookAtLH(v, f, up);
 	world = world * DirectX::XMMatrixTranslation(x, y, z);
 	world = DirectX::XMMatrixTranspose(world);
 	DirectX::XMFLOAT4X4 in;
@@ -245,11 +224,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 
 	// Map the buffer
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[constantBufferIdx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to map World Constant Buffer!" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	// Copy the new data to the buffer
 	memcpy(mappedResource.pData, data, bfrHolder->size[constantBufferIdx]);
@@ -259,7 +234,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto)
 }
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = (D3D11_USAGE)useFlags; 
@@ -276,20 +251,16 @@ VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& co
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Vertex Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = (D3D11_USAGE)useFlags;
@@ -302,25 +273,17 @@ VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_F
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, NULL, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Vertex Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 // Set an mode constant buffer by index (shader and slot data contained in buffer)
 bool SetVertexBuffer(const VB_IDX idx)
 {
-	if (bfrHolder->_nextIdx < idx || idx < 0)
-	{
-		std::cerr << "Index for Vertex Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(true == bfrHolder->buff_map.contains(idx));
 	UINT offset = 0;
 	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &(bfrHolder->buff_map[idx]), &(bfrHolder->size[idx]), &offset);
 	return true;
@@ -335,7 +298,7 @@ void UnsetVertexBuffer()
 // Create an Index Buffer with provided data and return a unique index to it
 IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t& count)
 {
-	uint16_t currentIdx = bfrHolder->_nextIdx;
+	uint16_t currentIdx = bfrHolder->NextIdx();
 
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -352,26 +315,18 @@ IB_IDX CreateIndexBuffer(const uint32_t* data, const size_t& size, const size_t&
 
 	ID3D11Buffer* tempBuff = 0;
 	HRESULT hr = d3d11Data->device->CreateBuffer(&desc, &buffData, &tempBuff);
-	if (FAILED(hr))
-	{
-		std::cerr << "Failed to create Index Buffer!" << std::endl;
-		return -1;
-	}
+	assert(!FAILED(hr));
 	bfrHolder->buff_map.emplace(currentIdx, tempBuff);
 
 	bfrHolder->size.emplace(currentIdx, (uint32_t)size);
 
-	return bfrHolder->_nextIdx++;
+	return currentIdx;
 }
 
 // Set an mode Index Buffer buffer by index
 bool SetIndexBuffer(const IB_IDX idx)
 {
-	if (bfrHolder->_nextIdx < idx || idx < 0)
-	{
-		std::cerr << "Index for Index Buffer out of range!" << std::endl;
-		return false;
-	}
+	assert(true == bfrHolder->buff_map.contains(idx));
 
 	UINT offset = 0;
 	d3d11Data->deviceContext->IASetIndexBuffer(bfrHolder->buff_map[idx], DXGI_FORMAT_R32_UINT, offset);
