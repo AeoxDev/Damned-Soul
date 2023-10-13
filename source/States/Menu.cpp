@@ -15,8 +15,8 @@ void Menu::Setup()//Load
 	m_active = true;
 
 	RedrawUI();
-	SetupButtons();
 	SetupImages();
+	SetupButtons();
 	SetupText();
 	stateManager.activeLevelScene = 0;
 	Camera::ResetCamera();
@@ -37,6 +37,7 @@ void Menu::Setup()//Load
 
 void Menu::Input()
 {
+	
 	//Particles::PrepareParticleCompute();
 	//Dispatch(1, 2, 0);
 	//Particles::FinishParticleCompute();

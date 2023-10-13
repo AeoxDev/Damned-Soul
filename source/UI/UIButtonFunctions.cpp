@@ -116,7 +116,7 @@ void UIFunc::Settings_Fullscreen(void* args)
 		SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
 	}
 	else
 	{
