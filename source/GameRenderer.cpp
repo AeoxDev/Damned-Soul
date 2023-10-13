@@ -50,7 +50,7 @@ int SetupUIRenderState()
 	//SHADER RESOURCE VIEW
 	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
 
-	texture->Release();
+	//texture->Release();
 
 	//-----------------------------------------------------------------//
 
