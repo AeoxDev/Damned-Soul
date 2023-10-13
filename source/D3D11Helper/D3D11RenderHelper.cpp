@@ -298,9 +298,9 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 	case BIND_RENDER_TARGET:
 		tempTex = rtvHolder->tx_map[sourceIdx];
 		hr = tempTex->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
-		if (FAILED(hr)) {
-			std::cerr << "Failed to QueryInterface into buffer" << std::endl;
-			tempTex->Release();
+		if (FAILED(hr))
+		{
+			assert("ERRPR"[0] == "Failed to create Buffer to be used for Unordered Access View!"[0]);
 			return false;
 		}
 
