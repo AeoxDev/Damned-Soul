@@ -1,8 +1,12 @@
 #pragma once
-#include <d2d1.h>
-#include <wincodec.h>
-#include <dwrite.h>
-#include "MemLib/PoolPointer.hpp"
+
+
+struct ID2D1Factory;
+struct ID2D1RenderTarget;
+struct IDWriteFactory;
+struct IWICImagingFactory;
+struct IDWriteTextFormat;
+struct ID2D1SolidColorBrush;
 
 struct UI;
 

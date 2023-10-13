@@ -2,6 +2,7 @@
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "D3D11Helper.h"
+#include <assert.h>
 
 //struct LightingStruct
 //{
@@ -47,6 +48,7 @@ SpotLightStruct SpotLight;
 
 void Light::SetColor(int type, const float x, const float y, const float z)
 {
+    assert(type > 0 && type <= 3);
     if (type == 1)
     {
         DirLight.m_dirLightColor.x = x;
@@ -70,23 +72,12 @@ void Light::SetColor(int type, const float x, const float y, const float z)
         UpdateConstantBuffer(Light::GetLightBufferIndex(3), &SpotLight);
 
     }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light" << std::endl;
-        std::cout << "2 = Point light" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
-
-    }
 }
 
 void Light::SetPosition(int type, const float x, const float y, const float z)
 {
-    if (type == 1)
-    {
-        std::cout << "Directional lights don´t hold a position" << std::endl;
-    }
-    else if(type == 2)
+    assert(type > 1 && type <= 3);
+    if(type == 2)
     {
         PointLight.m_pointLightPosition.x = x;
         PointLight.m_pointLightPosition.y = y;
@@ -100,17 +91,11 @@ void Light::SetPosition(int type, const float x, const float y, const float z)
         SpotLight.m_spotLightPosition.z = z;
         UpdateConstantBuffer(Light::GetLightBufferIndex(3), &SpotLight);
     }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light(Do not have a position)" << std::endl;
-        std::cout << "2 = Point light" << std::endl;
-        std::cout << "3 = Spot light" << std::endl; 
-    }
 }
 
 void Light::SetDirection(int type, const float x, const float y, const float z)
 {
+    assert(type > 0 && type <= 3 && type != 2);
     if (type == 1)
     {
         float length = sqrtf(x * x + y * y + z * z);
@@ -118,11 +103,6 @@ void Light::SetDirection(int type, const float x, const float y, const float z)
         DirLight.m_dirLightDirection.y = y/ length;
         DirLight.m_dirLightDirection.z = z/ length;
         UpdateConstantBuffer(Light::GetLightBufferIndex(1), &DirLight);
-    }
-    else if (type == 2)
-    {
-        std::cout << "Point lights don´t hold directions" << std::endl;
-
     }
     else if (type == 3)
     {
@@ -132,22 +112,12 @@ void Light::SetDirection(int type, const float x, const float y, const float z)
         SpotLight.m_spotLightDirection.z = z/ length;
         UpdateConstantBuffer(Light::GetLightBufferIndex(3), &SpotLight);
     }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light" << std::endl;
-        std::cout << "2 = Point light(Do not have a direction)" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
-    }
 }
 
 void Light::SetRange(int type, const float range)
 {
-    if (type == 1)
-    {
-        std::cout << "Directional lights don´t hold range" << std::endl;
-    }
-    else if (type == 2)
+    assert(type > 1 && type <= 3);
+    if (type == 2)
     {
         PointLight.m_pointLightRange.x = range;
         UpdateConstantBuffer(Light::GetLightBufferIndex(2), &PointLight);
@@ -156,13 +126,6 @@ void Light::SetRange(int type, const float range)
     {
         SpotLight.m_spotLightRange.x = range;
         UpdateConstantBuffer(Light::GetLightBufferIndex(3), &SpotLight);
-    }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light(Do not have range)" << std::endl;
-        std::cout << "2 = Point light" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
     }
 }
 
@@ -174,6 +137,7 @@ void Light::SetSpotLightCone(const float angle)
 
 DirectX::XMVECTOR Light::GetColor(int type)
 {
+    assert(type > 0 && type <= 3);
     if (type == 1)
     {
         return DirectX::XMLoadFloat4(&DirLight.m_dirLightColor); 
@@ -186,22 +150,12 @@ DirectX::XMVECTOR Light::GetColor(int type)
     {
         return DirectX::XMLoadFloat4(&SpotLight.m_spotLightColor);
     }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light" << std::endl;
-        std::cout << "2 = Point light" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
-    }
 }
 
 DirectX::XMVECTOR Light::GetPosition(int type)
 {
-    if (type == 1)
-    {
-        std::cout << "Directional lights don´t hold a position" << std::endl;
-    }
-    else if (type == 2)
+    assert(type > 1 && type <= 3);
+    if (type == 2)
     {
         return DirectX::XMLoadFloat4(&PointLight.m_pointLightPosition);
 
@@ -210,42 +164,25 @@ DirectX::XMVECTOR Light::GetPosition(int type)
     {
         return DirectX::XMLoadFloat4(&SpotLight.m_spotLightPosition);
     }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light" << std::endl;
-        std::cout << "2 = Point light(Do not have a direction)" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
-    }
 }
 
 DirectX::XMVECTOR Light::GetDirection(int type)
 {
+    assert(type > 0 && type <= 3 && type != 2);
     if (type == 1)
     {
         return DirectX::XMLoadFloat4(&DirLight.m_dirLightDirection);
         
     }
-    else if (type == 2)
-    {
-        std::cout << "Point lights don´t hold a direction" << std::endl;
-
-    }
     else if (type == 3)
     {
         return DirectX::XMLoadFloat4(&SpotLight.m_spotLightDirection);
-    }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light" << std::endl;
-        std::cout << "2 = Point light(Do not have a direction)" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
     }
 }
 
 int16_t Light::GetLightBufferIndex(int type)
 {
+    assert(type > 0 && type <= 3);
     if (type == 1)
     {
         return m_directionLightBufferIndex;
@@ -260,18 +197,12 @@ int16_t Light::GetLightBufferIndex(int type)
     {
         return m_spotLightBufferIndex;
     }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light" << std::endl;
-        std::cout << "2 = Point light" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
-    }
 
 }
 
 void Light::CreateLight(int type) //inte klar --constantbuffer
 {
+    assert(type > 0 && type <= 3);
     if (type == 1)
     {
         m_directionLightBufferIndex = CreateConstantBuffer(&(DirLight.m_dirLightColor), sizeof(DirectionLightStruct));
@@ -326,13 +257,6 @@ void Light::CreateLight(int type) //inte klar --constantbuffer
 
 
         UpdateConstantBuffer(m_spotLightBufferIndex, &(SpotLight.m_spotLightColor));
-    }
-    else
-    {
-        std::cout << "Did you use a correct type int?" << std::endl;
-        std::cout << "1 = Directional light" << std::endl;
-        std::cout << "2 = Point light" << std::endl;
-        std::cout << "3 = Spot light" << std::endl;
     }
 }
 

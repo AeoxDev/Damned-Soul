@@ -1,6 +1,5 @@
 #pragma once
 #include "StateEnums.h"
-#include "EntityFramework.h"
 
 struct SettingsState
 {

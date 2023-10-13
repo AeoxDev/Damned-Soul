@@ -1,7 +1,4 @@
 #pragma once
-#include "StateEnums.h"
-#include "Settings.h"
-#include "EntityFramework.h"
 
 struct GameScene
 {

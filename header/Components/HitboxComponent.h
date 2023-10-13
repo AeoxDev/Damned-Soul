@@ -1,5 +1,5 @@
 #pragma once
-#include "EntityFramework.h"
+struct EntityID;
 
 struct HitboxComponent;
 /// <summary>

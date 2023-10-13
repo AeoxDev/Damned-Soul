@@ -4,7 +4,7 @@
 #include "MemLib\ML_Vector.hpp"
 #include "MemLib\ML_Map.hpp"
 #include "Animation.hpp"
-#include <DirectXMath.h>
+
 
 enum MODEL_TYPE
 {

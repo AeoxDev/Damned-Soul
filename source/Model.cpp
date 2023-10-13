@@ -7,6 +7,7 @@
 #include "D3D11Helper.h"
 #include "MemLib\ML_String.hpp"
 #include "Hashing.h"
+#include "D3D11Graphics.h"
 
 #include "DeltaTime.h"
 

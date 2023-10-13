@@ -1,9 +1,7 @@
 #pragma once
-#include <dxgi.h>
-#include "D3D11Helper.h"
-#include "EntityFramework.h"
 #include "UI.h"
 
+struct IDXGISurface;
 extern IDXGISurface* UISurface;
 
 //bool SetupUIRenderer(UIRenderComponents*& inOut);

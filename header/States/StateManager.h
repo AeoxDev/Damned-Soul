@@ -1,13 +1,12 @@
 #pragma once
-#include "SDLHandler.h"
-#include "StateEnums.h"
-#include "ButtonManager.h"
+//#include "ButtonManager.h"
 #include "States\Menu.h"
 #include "States\Game.h"
 #include "States\Pause.h"
 #include "Systems\Systems.h"
+#include <vector>
 
-#include "MemLib\ML_Vector.hpp"
+//#include "MemLib\ML_Vector.hpp"
 
 
 struct StateManager;
