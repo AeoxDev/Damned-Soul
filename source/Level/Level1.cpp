@@ -117,6 +117,6 @@ void LoadLevel1()
 	SetupEnemyCollisionBox(skeleton2, 0.9f);
 	SetupEnemyCollisionBox(dog, 1.0f);
 	SetupEnemyCollisionBox(eye, 1.0f);
-	AddTimedEventComponentStartContinousEnd(player, player, 3.0f, RandomPosition, dog, RandomPosition, skeleton, 6.0f, RandomPosition);
-	AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
+	//AddTimedEventComponentStartContinousEnd(player, player, 3.0f, RandomPosition, dog, RandomPosition, skeleton, 6.0f, RandomPosition);
+	//AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
 }
