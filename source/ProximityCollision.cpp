@@ -2,15 +2,6 @@
 #include "Physics\Backend\Collision.h"
 #include "Registry.h"
 
-int GetOrientation(float& Ax, float& Az, float& Bx, float& Bz, float& Cx, float& Cz)
-{
-	//Add a length checker to see if the line intersects only within the points bounds and not infinity.
-	float val = (Bz - Az) * (Cx - Bx) - (Bx - Ax) * (Cz - Bz);
-
-	if (val == 0) return 0; //Collinear
-	return (val > 0) ? 1 : 2; //Clockwise or counterclockwise
-}
-
 void FindIntersection(float& x, float& z, ProximityPoint& p1, ProximityPoint& p2, float& otherX, float& otherZ)
 {
 	//Calculates where two lines intersect, should only be used when division = 0 for the other cases.
@@ -26,6 +17,53 @@ void FindIntersection(float& x, float& z, ProximityPoint& p1, ProximityPoint& p2
 
 	x = (b2 * c1 - b1 * c2) / determinant;
 	z = (a1 * c2 - a2 * c1) / determinant;
+}
+
+bool IntersectionOnLine(float& line1x1, float& line1x2, float& line1z1, float& line1z2, float& line2x1, float& line2x2, float& line2z1, float& line2z2)
+{
+	//Calculates where an intersection occured
+	float a1 = line1z1 - line1z2;
+	float b1 = line1x2 - line1x1;
+	float c1 = a1 * line1x2 + b1 * line1z2;
+
+	float a2 = line2z2 - line2z1;
+	float b2 = line2x1 - line2x2;
+	float c2 = a2 * line2x1 + b2 * line2z1;
+
+	float determinant = a1 * b2 - a2 * b1;
+
+	if (determinant == 0)
+	{
+		return false;
+	}
+	else
+	{
+		float x = (b2 * c1 - b1 * c2) / determinant;
+		if (x < line1x1 && x < line1x2)
+		{
+			x += 0.0001f;
+		}
+		else if (x > line1x1 && x > line1x2)
+		{
+			x -= 0.0001f;
+		}
+
+		float z = (a1 * c2 - a2 * c1) / determinant;
+		if (z < line1z1 && z < line1z2)
+		{
+			z += 0.0001f;
+		}
+		else if (z > line1z1 && z > line1z2)
+		{
+			z -= 0.0001f;
+		}
+
+		if (x <= max(line1x1, line1x2) && x >= min(line1x1, line1x2) && z <= max(line1z1, line1z2) && z >= min(line1z1, line1z2))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& previousX, float& previousZ)
@@ -84,12 +122,9 @@ void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& 
 		else
 		{
 			//Check if C -> (x,z) intersects with A -> B. If it does, then the "second" result is wrong and "first" is correct. If it does not intersect then it's vice versa.
-			int o1 = GetOrientation(A.x, A.z, B.x, B.z, C.x, C.z);
-			int o2 = GetOrientation(A.x, A.z, B.x, B.z, x, z);
-			int o3 = GetOrientation(C.x, C.z, x, z, A.x, A.z);
-			int o4 = GetOrientation(C.x, C.z, x, z, B.x, B.z);
+			bool intersect = IntersectionOnLine(C.x, x, C.z, z, A.x, B.x, A.z, B.z);
 
-			if ((o1 != o2) && (o3 != o4)) //Intersection did not occur
+			if (intersect)
 			{
 				if (!first)
 				{
@@ -159,12 +194,9 @@ void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& 
 		else
 		{
 			//Check if C -> (x,z) intersects with A -> B. If it does, then the "second" result is wrong and "first" is correct. If it does not intersect then it's vice versa.
-			int o1 = GetOrientation(A.x, A.z, B.x, B.z, C.x, C.z);
-			int o2 = GetOrientation(A.x, A.z, B.x, B.z, x, z);
-			int o3 = GetOrientation(C.x, C.z, x, z, A.x, A.z);
-			int o4 = GetOrientation(C.x, C.z, x, z, B.x, B.z);
+			bool intersect = IntersectionOnLine(C.x, x, C.z, z, A.x, B.x, A.z, B.z);
 
-			if ((o1 != o2) && (o3 != o4)) //Intersection did not occur
+			if (intersect)
 			{
 				if (!first)
 				{
@@ -212,8 +244,8 @@ void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 		float X = abs(((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)));
 
 		//Move the position to be on the line.
-		x = x + dz * X;
-		z = z + dx * X;
+		x = x + dz * X * 1.1f;
+		z = z + dx * X * 1.1f;
 	}
 	else if (magnitude < 0)
 	{
@@ -232,45 +264,18 @@ void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 		float X = abs(((p1.x * p2.z) - (p1.x * z) - (x * p2.z) + (x * p1.z) + (z * p2.x) - (p1.z * p2.x)) / ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)));
 
 		//Move the position to be on the line.
-		x = x + dz * X;
-		z = z + dx * X;
+		x = x + dz * X * 1.1f;
+		z = z + dx * X * 1.1f;
 	}
 }
 
 void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C, float& x, float& z, float& px, float& pz)
 {
-	int o1, o2, o3, o4;
 	//Step 1: Check if A -> Previous position intersects with B -> C
-	bool step1;
-	o1 = GetOrientation(B.x, B.z, C.x, C.z, A.x, A.z);
-	o2 = GetOrientation(B.x, B.z, C.x, C.z, px, pz);
-	o3 = GetOrientation(A.x, A.z, px, pz, B.x, B.z);
-	o4 = GetOrientation(A.x, A.z, px, pz, C.x, C.z);
-
-	if ((o1 != o2) && (o3 != o4))
-	{
-		step1 = false; //No intersection
-	}
-	else
-	{
-		step1 = true; //Intersection
-	}
+	bool step1 = IntersectionOnLine(A.x, px, A.z, pz, B.x, C.x, B.z, C.z);
 
 	//Step 2: Check if C -> Previous position intersects with A -> B
-	bool step2;
-	o1 = GetOrientation(A.x, A.z, B.x, B.z, C.x, C.z);
-	o2 = GetOrientation(A.x, A.z, B.x, B.z, px, pz);
-	o3 = GetOrientation(C.x, C.z, px, pz, A.x, A.z);
-	o4 = GetOrientation(C.x, C.z, px, pz, B.x, B.z);
-
-	if ((o1 != o2) && (o3 != o4))
-	{
-		step2 = false; //No intersection
-	}
-	else
-	{
-		step2 = true; //Intersection
-	}
+	bool step2 = IntersectionOnLine(C.x, px, C.z, pz, A.x, B.x, A.z, B.z);
 
 	//Step 3: Split into cases based on which line intersected
 	if (step1 && step2)
