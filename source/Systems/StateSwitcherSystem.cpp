@@ -27,18 +27,42 @@ bool StateSwitcherSystem::Update()
 
 	for (auto entity : View<EnemyComponent, StatComponent>(registry))
 	{
+		
 		// Get enemy entity stat component
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 		if (statComp->health <= 0 && statComp->performingDeathAnimation == false)
 		{
-			statComp->performingDeathAnimation = true;
-			if (playersComp != nullptr)
+			TempBossBehaviour* tempBossComp = registry.GetComponent<TempBossBehaviour>(entity);
+			if (tempBossComp == nullptr)
 			{
-				playersComp->killingSpree += 1;
+				statComp->performingDeathAnimation = true;
+				if (playersComp != nullptr)
+				{
+					playersComp->killingSpree += 1;
+				}
+				// start timed event for MURDER
+				AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 			}
-			// start timed event
-			AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
+			else // boss died lmao
+			{
+				statComp->performingDeathAnimation = true;
+				if (playersComp != nullptr)
+				{
+					playersComp->killingSpree += 1;
+				}
+				if (tempBossComp->deathCounter < 2) //spawn new mini russian doll skeleton
+				{
+					// start timed event for new little bossies
+					AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);
+				}
+				else // le snap
+				{
+					// start timed event for MURDER
+					AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
+				}
+			}
 		}
+		
 	}
 
 	

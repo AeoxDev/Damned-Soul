@@ -212,6 +212,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\SkeletonBehaviourSystem.cpp" />
+    <ClCompile Include="source\Skynet\TempBossBehaviourSystem.cpp" />
     <ClCompile Include="source\States\CleanupMacros.cpp" />
     <ClCompile Include="source\States\Game.cpp" />
     <ClCompile Include="source\States\Menu.cpp" />
@@ -418,6 +419,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
+    <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />

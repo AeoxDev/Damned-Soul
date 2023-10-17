@@ -54,3 +54,5 @@ void SetCollisionEvent(EntityID& entity, int hitboxID, void* function);
 int CreateHitbox(EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[]);
 
 void AddHitboxComponent(EntityID& entity);
+
+float GetHitboxRadius(EntityID& entity, int hitBoxID);
