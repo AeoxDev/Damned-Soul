@@ -208,6 +208,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\ModelComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
+    <ClCompile Include="source\RelicFunctions.cpp" />
+    <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
     <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
@@ -417,6 +419,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
+    <ClInclude Include="header\RelicFunctions.h" />
+    <ClInclude Include="header\Relics\DemonBonemarrow.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
