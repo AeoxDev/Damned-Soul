@@ -96,18 +96,23 @@ bool ControllerSystem::Update()
 			controller->goalX += 1.0f;
 		}
 
-		if (moving)
+		//clamp moveTime to upper limit if moving
+		if (moving) 
 		{
+			
 			controller->moveTime += GetDeltaTime() * controller->moveFactor;
-			if (controller->moveMaxLimit < controller->moveTime) //clamp moveTime to upper limit
+			if (controller->moveMaxLimit < controller->moveTime)
 			{
 				controller->moveTime = controller->moveMaxLimit;
 			}
 		}
-		else
+
+		//clamp moveTime to lower limit if not moving
+		else 
 		{
+			
 			controller->moveTime -= GetDeltaTime() * controller->moveFactor * controller->moveResetFactor;
-			if (controller->moveTime < 0.0f) //clamp moveTime to lower limit
+			if (controller->moveTime < 0.0f) 
 			{
 				controller->moveTime = 0.0f;
 			}
@@ -126,6 +131,9 @@ bool ControllerSystem::Update()
 			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 2.5f);
 			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl);
 		}
+
+		//We doing attacks on mouse click?
+
 	}
 	return true;
 }
