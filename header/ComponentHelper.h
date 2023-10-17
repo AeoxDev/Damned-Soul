@@ -36,9 +36,9 @@ struct ControllerComponent
 	float goalX = 0.0f, goalZ = -1.0f;//Goal direction
 
 	float moveTime = .0f;//This is the time the player has been moving, used for camera feel.
-	float moveFactor = 2.5f;
-	float moveResetFactor = 1.25f;
-	float moveMaxLimit = 3.0f;
+	float moveFactor = 0.0f;
+	float moveResetFactor = 0.0f;
+	float moveMaxLimit = 0.0f;
 };
 
 //I hate
