@@ -120,7 +120,7 @@ void LoadLevel1()
 	SetupEnemyCollisionBox(eye, 1.0f);
 
 	MouseComponentAddComponent(player);
-	MouseComponentAddComponent(mouse);
+	//MouseComponentAddComponent(mouse);
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;

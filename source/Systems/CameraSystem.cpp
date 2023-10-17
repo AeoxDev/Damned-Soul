@@ -10,6 +10,7 @@
 #define CAMERA_MOVESPEED 0.5f
 #define CAMERA_ZOOMSPEED 1.75f
 #define CAMERA_PREDICT_FACTOR 1.15f//Predict x seconds ahead
+#define CAMERA_MOUSE_FACTOR 0.5f//Predict x seconds ahead
 
 bool PointOfInterestSystem::Update()
 {
@@ -55,7 +56,11 @@ bool PointOfInterestSystem::Update()
 		}
 		else if (poiCo->mode == POI_MOUSE)
 		{
-			newPosX += ((mouseX / sdl.WIDTH) -0.5f) * 2.0f * ;
+			float xOffset = (float)mouseX - (float)sdl.WIDTH  * 0.5f;
+			float zOffset = (float)mouseY - (float)sdl.HEIGHT * 0.5f;
+			newPosX += xOffset * CAMERA_MOUSE_FACTOR;
+			newPosZ += -zOffset *  CAMERA_MOUSE_FACTOR;
+			points += 1.0f;
 		}
 		else if (poiCo->mode == POI_ACTIVE_FOR_X_TIME)
 		{
