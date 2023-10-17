@@ -10,6 +10,10 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 
 	m_onClick = onClick;
 
+	m_doRedraw = true;
+
+	m_CurrentImage = 0;
+
 	//Don't we do this already in constructor etc?
 	m_UiComponent.SetScale(scale);
 	m_UiComponent.SetPosition(position);
@@ -20,7 +24,7 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 	//Hover image is not necessarily needed
 	if (hoverImageFile != "")
 		m_Images[1].Setup(hoverImageFile, position, scale, rotation, visibility, opacity);
-	
+
 	//Button text is not necessarily needed
 	if (buttonText != L"")
 		m_Text.Setup(buttonText, position, scale, rotation, visibility);

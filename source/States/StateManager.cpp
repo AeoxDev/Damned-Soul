@@ -124,6 +124,7 @@ void StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIPlayerRelicsSystem());
 	systems.push_back(new UIGameLevelSystem());
+	systems.push_back(new UIShopSystem());
 
 }
 

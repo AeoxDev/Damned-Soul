@@ -25,4 +25,13 @@ namespace UIFunc
 
 	// Change to fullscreen from settings
 	void Settings_Fullscreen(void* args);
+
+	// Buy a relic in shop
+	void Shop_BuyRelic(void* args);
+
+	// Lock a relic in shop
+	void Shop_LockRelic(void* args);
+	
+	// Re-roll a relic in shop
+	void Shop_ReRollRelic(void* args);
 }

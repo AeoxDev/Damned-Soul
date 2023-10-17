@@ -75,7 +75,7 @@ void GameScene::Input()
 			flavorTitle.m_UiComponent.SetVisibility(false);
 			flavorText.m_UiComponent.SetVisibility(false);
 
-			UIRelicComponent relic({ 0.0f, 0.0f }, { 0.0f, 0.0f }, relicImage, relicFlavorImage, flavorTitle, flavorText);
+			UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
 
 			uiElement->relics.push_back(relic);
 
@@ -115,7 +115,7 @@ void GameScene::Input()
 			flavorTitle.m_UiComponent.SetVisibility(false);
 			flavorText.m_UiComponent.SetVisibility(false);
 
-			UIRelicComponent relic({ 0.0f, 0.0f }, { 0.0f, 0.0f }, relicImage, relicFlavorImage, flavorTitle, flavorText);
+			UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
 
 			uiElement->relics.push_back(relic);
 
@@ -180,6 +180,23 @@ void GameScene::Unload()
 		}
 
 		r->relics.~ML_Vector();
+	}
+
+	for (auto entity : View<UIShopComponent>(registry))
+	{
+		UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
+		sh->baseImage.Release();
+		sh->rerollButton.Release();
+
+		for (uint32_t i = 0; i < sh->relicWindows.size(); i++)
+		{
+			for (uint32_t J = 0; J < sh->relicWindows[i].m_buttons.size(); J++)
+				sh->relicWindows[i].m_buttons[J].Release();
+			
+			sh->relicWindows[i].m_buttons.~ML_Vector();
+
+		}
+		sh->relicWindows.~ML_Vector();
 	}
 
 	for (auto entity : View<UIHealthComponent>(registry))

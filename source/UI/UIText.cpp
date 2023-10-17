@@ -30,4 +30,5 @@ void UIText::UpdateText(std::wstring text)
 	float fontSize = ui.GetTextFormat()->GetFontSize();
 
 	m_UiComponent.m_OriginalBounds = { 0, 0, fontSize * m_Text.length(), fontSize + 5 };
+	m_UiComponent.SetScale(m_UiComponent.m_Scale);
 }

@@ -125,3 +125,18 @@ void UIFunc::Settings_Fullscreen(void* args)
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
 }
+
+void UIFunc::Shop_BuyRelic(void* args)
+{
+
+}
+
+void UIFunc::Shop_LockRelic(void* args)
+{
+
+}
+
+void UIFunc::Shop_ReRollRelic(void* args)
+{
+
+}

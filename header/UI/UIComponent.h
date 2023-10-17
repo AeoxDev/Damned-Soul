@@ -25,10 +25,10 @@ struct UIComponent
 	//Instead of constructor
 	void Setup(DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true);
 
-	virtual void SetPosition(DirectX::XMFLOAT2 position);
-	virtual void SetScale(DirectX::XMFLOAT2 scale);
-	virtual void SetScale(float scale);
-	virtual void SetRotation(float rotation);
+	void SetPosition(DirectX::XMFLOAT2 position);
+	void SetScale(DirectX::XMFLOAT2 scale);
+	void SetScale(float scale);
+	void SetRotation(float rotation);
 	
 	void SetVisibility(bool value);
 	void ToggleVisibility();

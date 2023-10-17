@@ -18,6 +18,7 @@
 #include "UIComponents/UIPlayerSoulsComponent.h"
 #include "UIComponents/UIPlayerRelicsComponent.h"
 #include "UIComponents/UIGameLevelComponent.h"
+#include "UIComponents/UIShopComponent.h"
 
 //GUI To Be Decapritated
 #include "TextComponent.h"

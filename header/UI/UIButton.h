@@ -10,7 +10,7 @@ struct UIButton
 {
 	UIComponent m_UiComponent;
 	void* m_onClick;
-	bool doRedraw = true;
+	bool m_doRedraw = true;
 	
 	unsigned int m_CurrentImage = 0;
 	UIImage m_Images[2];					//2 Images, button image and hover button image (can be null)
@@ -19,7 +19,7 @@ struct UIButton
 	UIButton() = default;
 
 	void Setup(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, void* onClick,
-		DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
+		DirectX::XMFLOAT2 position = { 0.0f, 0.0f }, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f,
 		bool visibility = true, float opacity = 1.0f);
 
 	void Draw();

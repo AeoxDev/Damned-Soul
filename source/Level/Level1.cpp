@@ -5,10 +5,12 @@
 #include "Particles.h"
 #include "EventFunctions.h"
 
+#include "UI/UIButton.h"
+#include "UIButtonFunctions.h"
+
 void LoadLevel1()
 {
 	//Doggo
-	EntityID gameLevel = registry.CreateEntity();
 	EntityID dog = registry.CreateEntity();
 	EntityID stage = registry.CreateEntity();
 	EntityID player = registry.CreateEntity();
@@ -56,7 +58,7 @@ void LoadLevel1()
 	eyeTransformComponent.positionZ = 15.0f;
 	registry.AddComponent<TransformComponent>(eye, eyeTransformComponent);
 
-	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<StatComponent>(player, 125000.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
 	registry.AddComponent<StatComponent>(dog, 50.f, 20.f, 25.f, 5.f);
@@ -94,7 +96,7 @@ void LoadLevel1()
 	//															(Because it was using the scene int parameter at the time)
 	//std::string valueAsString = "1";
 	//std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
-	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
+	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup(L"");
 
@@ -107,6 +109,37 @@ void LoadLevel1()
 
 	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");
+
+	ML_Vector<UIButton> shopButtons;
+	ML_Vector<UIShopRelicWindowComponent> relicWindows;
+
+	shopButtons.push_back();
+	shopButtons[0].Setup("TempBuy.png", "TempBuy.png", L"", UIFunc::Shop_BuyRelic);
+	shopButtons.push_back();
+	shopButtons[1].Setup("TempLock.png", "TempLock.png", L"", UIFunc::Shop_LockRelic);
+
+	UIImage relicWindowBaseImage;
+	relicWindowBaseImage.Setup("TempShopRelicWindow.png");
+	UIImage relicImage;
+	relicImage.Setup("icons/frostfire revision.png");
+	UIText relicName;
+	relicName.Setup(L"");
+
+	relicWindows.push_back();
+	relicWindows[0].Setup(shopButtons, relicName, relicWindowBaseImage, relicImage);
+	relicWindows.push_back();
+	relicWindows[1].Setup(shopButtons, relicName, relicWindowBaseImage, relicImage);
+	relicWindows.push_back();
+	relicWindows[2].Setup(shopButtons, relicName, relicWindowBaseImage, relicImage);
+
+	UIImage shopBaseImage;
+	shopBaseImage.Setup("TempShopWindow3.png");
+	UIButton shopRerollButton;
+	shopRerollButton.Setup("TempReroll.png", "TempReroll.png", L"", UIFunc::Shop_ReRollRelic);
+	UIText shopPlayerInfo;
+	shopPlayerInfo.Setup(L"");
+
+	UIShopComponent* shcUIc = registry.AddComponent<UIShopComponent>(player, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f), shopBaseImage, shopPlayerInfo, shopRerollButton, relicWindows);
 
 	RenderGeometryIndependentCollision(stage);
 	
