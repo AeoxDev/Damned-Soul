@@ -199,6 +199,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EventFunctions\EnemyEvents.cpp" />
     <ClCompile Include="source\EventFunctions\PlayerEvents.cpp" />
     <ClCompile Include="source\EventFunctions\PortalEvents.cpp" />
+    <ClCompile Include="source\GlobalShaderBuffer.cpp" />
     <ClCompile Include="source\Hashing.cpp" />
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
     <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp" />
@@ -405,6 +406,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\EventFunctions.h" />
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Components\ParticleComponent.h" />
+    <ClInclude Include="header\GlobalShaderBuffer.h" />
     <ClInclude Include="header\Hashing.h" />
     <ClInclude Include="header\IDX_Types.h" />
     <ClInclude Include="header\Input.h" />

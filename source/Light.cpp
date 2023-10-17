@@ -3,6 +3,7 @@
 #include "MemLib/MemLib.hpp"
 #include "D3D11Helper.h"
 #include <assert.h>
+#include "GlobalShaderBuffer.h"
 
 //struct LightingStruct
 //{
@@ -13,11 +14,6 @@
 //};
 
 
-struct DirectionLightStruct //1 // also buffer?
-{
-    DirectX::XMFLOAT4 m_dirLightColor;
-    DirectX::XMFLOAT4 m_dirLightDirection;
-};
 
 struct PointLightStruct //2 // also buffer?
 {
@@ -36,7 +32,6 @@ struct SpotLightStruct //3 // also buffer?
 };
 
 int16_t m_directionLightBufferIndex;
-DirectionLightStruct DirLight;
 
 int16_t m_pointLightBufferIndex;
 
@@ -51,10 +46,7 @@ void Light::SetColor(int type, const float x, const float y, const float z)
     assert(type > 0 && type <= 3);
     if (type == 1)
     {
-        DirLight.m_dirLightColor.x = x;
-        DirLight.m_dirLightColor.y = y;
-        DirLight.m_dirLightColor.z = z;
-        UpdateConstantBuffer(Light::GetLightBufferIndex(1), &DirLight);
+        GSBSetDirectionalLightColor(x, y, z);
     }
     else if (type == 2)
     {
@@ -99,10 +91,10 @@ void Light::SetDirection(int type, const float x, const float y, const float z)
     if (type == 1)
     {
         float length = sqrtf(x * x + y * y + z * z);
-        DirLight.m_dirLightDirection.x = x/ length;
-        DirLight.m_dirLightDirection.y = y/ length;
-        DirLight.m_dirLightDirection.z = z/ length;
-        UpdateConstantBuffer(Light::GetLightBufferIndex(1), &DirLight);
+        float dx = x/ length;
+        float dy = y/ length;
+        float dz = z/ length;
+        GSBSetDirectionalLightDirection(dx, dy, dz);
     }
     else if (type == 3)
     {
@@ -137,10 +129,11 @@ void Light::SetSpotLightCone(const float angle)
 
 DirectX::XMVECTOR Light::GetColor(int type)
 {
-    assert(type > 0 && type <= 3);
+    assert(type > 1 && type <= 3);
     if (type == 1)
     {
-        return DirectX::XMLoadFloat4(&DirLight.m_dirLightColor); 
+        //return DirectX::XMLoadFloat4(&DirLight.m_dirLightColor); 
+        //Get color from global shader buffer
     }
     else if (type == 2)
     {
@@ -168,10 +161,11 @@ DirectX::XMVECTOR Light::GetPosition(int type)
 
 DirectX::XMVECTOR Light::GetDirection(int type)
 {
-    assert(type > 0 && type <= 3 && type != 2);
+    assert(type > 1 && type <= 3 && type != 2);
     if (type == 1)
     {
-        return DirectX::XMLoadFloat4(&DirLight.m_dirLightDirection);
+        //return DirectX::XMLoadFloat4(&DirLight.m_dirLightDirection);
+        //Get direction from global shader buffer
         
     }
     else if (type == 3)
@@ -182,11 +176,11 @@ DirectX::XMVECTOR Light::GetDirection(int type)
 
 int16_t Light::GetLightBufferIndex(int type)
 {
-    assert(type > 0 && type <= 3);
+    assert(type > 1 && type <= 3);
     if (type == 1)
     {
-        return m_directionLightBufferIndex;
-
+        //return m_directionLightBufferIndex;
+        //Use global shader buffer instead
     }
     else if (type == 2)
     {
@@ -205,18 +199,18 @@ void Light::CreateLight(int type) //inte klar --constantbuffer
     assert(type > 0 && type <= 3);
     if (type == 1)
     {
-        m_directionLightBufferIndex = CreateConstantBuffer(&(DirLight.m_dirLightColor), sizeof(DirectionLightStruct));
+        //m_directionLightBufferIndex = CreateConstantBuffer(&(DirLight.m_dirLightColor), sizeof(DirectionLightStruct));
         SetColor(type, 1.0f, 1.0f, 1.0f);
         SetDirection(type, -1.0f, -1.0f, 1.0f);
 
-        //DirLight = MemLib::palloc(sizeof(DirectionLightStruct))
+        //DirLight = MemLib::palloc(sizeof(GlobalShaderBuffer))
       
         //Default done, update now
 
         //Prepare the buffer to creation
  
         
-        UpdateConstantBuffer(m_directionLightBufferIndex, &(DirLight.m_dirLightColor));
+        //UpdateConstantBuffer(m_directionLightBufferIndex, &(DirLight.m_dirLightColor));
     
 
     }

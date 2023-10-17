@@ -7,6 +7,7 @@
 #include "GameRenderer.h"
 #include "UIRenderer.h"
 #include "Camera.h"
+#include "GlobalShaderBuffer.h"
 
 bool RenderSystem::Update()
 {
@@ -46,5 +47,6 @@ bool RenderSystem::Update()
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->aAnimTime);
 	}
+	UpdateGlobalShaderBuffer();
 	return true;
 }

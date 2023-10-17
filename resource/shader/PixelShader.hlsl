@@ -4,10 +4,12 @@ Texture2D emissionTex : register(t2);
 
 SamplerState WrapSampler : register(s0);
 
-cbuffer PS_DIRECTIONAL_LIGHT : register(b2)
+cbuffer GlobalVars : register(b2)
 {
     float4 dirLightColor;
     float4 dirLightDirection; //normalize
+    float4 colorMultiplicative;
+    float4 colorAdditive;
 };
 
 cbuffer PS_POINT_LIGHT : register(b3)
