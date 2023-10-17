@@ -7,6 +7,8 @@
 #include "UIRenderer.h"
 #include <assert.h>
 #include "UIRenderer.h"
+#include "RelicFunctions.h"
+#include "Relics\RelicFuncInputTypes.h"
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -125,7 +127,22 @@ void AttackCollision(OnCollisionParameters& params)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	
+	// Regular hit
+	// Expand to a "damage dealt" value that can be pushed into on hit relic functions to, for example, create life steal?
 	stat2->health -= stat1->damage;
+
+	// On Hit Relics
+	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
+	RelicInput::OnHitInput funcInput
+	{
+		params.entity1,
+		params.entity2
+	};
+	for (size_t i = 0; i < funcVector.size(); ++i)
+	{
+		funcVector[i](&funcInput);
+	}
+
 	RedrawUI();
 }
 

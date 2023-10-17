@@ -63,6 +63,11 @@ class ParticleSystemCPU : public System
 	bool Update();
 };
 
+class DamageOverTimeSystem : public System
+{
+	bool Update();
+};
+
 class SkeletonBehaviourSystem : public System
 {
 	bool Update();

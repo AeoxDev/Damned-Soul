@@ -210,6 +210,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\RelicFunctions.cpp" />
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
+    <ClCompile Include="source\Relics\DemonHeart.cpp" />
     <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
@@ -227,6 +228,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
+    <ClCompile Include="source\Systems\DamageOverTimeSystem.cpp" />
     <ClCompile Include="source\Systems\EventSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemCPU.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemGPU.cpp" />
@@ -386,6 +388,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Animation.hpp" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
+    <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />
@@ -421,6 +424,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Registry.h" />
     <ClInclude Include="header\RelicFunctions.h" />
     <ClInclude Include="header\Relics\DemonBonemarrow.h" />
+    <ClInclude Include="header\Relics\DemonHeart.h" />
+    <ClInclude Include="header\Relics\FlameWeapon.h" />
+    <ClInclude Include="header\Relics\RelicFuncInputTypes.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
@@ -466,6 +472,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\States\Settings.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
+    <ClCompile Include="source\Relics\FlameWeapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />

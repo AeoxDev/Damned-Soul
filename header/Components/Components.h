@@ -31,3 +31,6 @@
 #include "Skynet\SkeletonBehaviour.h"
 #include "Skynet\HellhoundBehaviour.h"
 #include "Skynet/EyeBehaviour.h"
+
+//Misc Combat Components
+#include "DamageOverTimeComponent.h"

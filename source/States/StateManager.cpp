@@ -109,6 +109,9 @@ void StateManager::Setup()
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new PointOfInterestSystem());
 
+	//Damage Over Time (Misc Combat Systems?)
+	systems.push_back(new DamageOverTimeSystem());
+
 	//AI Systems
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());

@@ -6,8 +6,6 @@
 // Used to contain the functions of each type
 #include "MemLib\ML_Vector.hpp"
 
-// All functions are to be void functions with void* arguments.
-#define VECTOR_FUNCTION_TYPE void(*)(void*)
 // A map using relic types as keys
 ML_Map<Relics::RELIC_FUNCTION_TYPE, ML_Vector<VECTOR_FUNCTION_TYPE>>* _RelicFunctions = nullptr;
 
@@ -28,9 +26,10 @@ void _validateRelicFunctions()
 	}
 };
 
-void* Relics::GetFunctionsOfType(const size_t& count, const RELIC_FUNCTION_TYPE& type)
+ML_Vector<VECTOR_FUNCTION_TYPE> Relics::GetFunctionsOfType(const RELIC_FUNCTION_TYPE& type)
 {
-	return (*_RelicFunctions)[type].begin();
+	_validateRelicFunctions();
+	return (*_RelicFunctions)[type];
 }
 
 void Relics::ClearRelicFunctions()
@@ -42,15 +41,62 @@ void Relics::ClearRelicFunctions()
 	}
 }
 
-// Fix Demon Bonemarrow
 #include "Relics\DemonBonemarrow.h"
 Relics::RelicMetaData Relics::DemonBonemarrow(const bool AddRelicFunctions)
 {
 	RelicMetaData retVal =
 	{
 		/*Name*/		"Demon Bonemarrow",
-		/*Filepath*/	"TempRelic1.png",
-		/*Description*/	"Raises your maximum hit points by 25 when obtained."
+		/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
+		/*Description*/	"Increases your Strength by 15 when obtained."
+	};
+
+	// If the relic is to be added, and not just "read", run the functionality
+	if (AddRelicFunctions)
+	{
+		// Make sure the relic function map exists
+		_validateRelicFunctions();
+		// Call the increase strength function
+		DEMON_BONEMARROW::IncreasePlayerStrength(nullptr);
+		// Add it to the list of On Obtain functions
+		(*_RelicFunctions)[FUNC_ON_OBTAIN].push_back(DEMON_BONEMARROW::IncreasePlayerStrength);
+	}
+
+	// Return the metadata
+	return retVal;
+}
+
+#include "Relics\FlameWeapon.h"
+Relics::RelicMetaData Relics::FlameWeapon(const bool AddRelicFunctions)
+{
+	RelicMetaData retVal =
+	{
+		/*Name*/		"Flame Weapon",
+		/*Filepath*/	"RelicIcons\\Flame_Weapon.png",
+		/*Description*/	"Whenever you hit an enemy with a weapon attack, they take an additional 50% Damage Over Time (2 Seconds)."
+	};
+
+	// If the relic is to be added, and not just "read", run the functionality
+	if (AddRelicFunctions)
+	{
+		// Make sure the relic function map exists
+		_validateRelicFunctions();
+		// Add the DoT to the weapon
+		(*_RelicFunctions)[FUNC_ON_WEAPON_HIT].push_back(FLAME_WEAPON::PlaceDamageOverTime);
+	}
+
+	// Return the metadata
+	return retVal;
+}
+
+#include "Relics\DemonHeart.h"
+Relics::RelicMetaData Relics::DemonHeart(const bool AddRelicFunctions)
+{
+	RelicMetaData retVal =
+	{
+		/*Name*/		"Demon Heart",
+		/*Filepath*/	"RelicIcons\\Demon_Heart.png",
+		/*Description*/	"Increases your Maximum Health by 25 when obtained."
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
@@ -59,9 +105,9 @@ Relics::RelicMetaData Relics::DemonBonemarrow(const bool AddRelicFunctions)
 		// Make sure the relic function map exists
 		_validateRelicFunctions();
 		// Call the increase health function
-		DEMON_BONEMARROW::IncreasePlayerHealth(nullptr);
+		DEMON_HEART::IncreasePlayerHealth(nullptr);
 		// Add it to the list of On Obtain functions
-		(*_RelicFunctions)[FUNC_ON_OBTAIN].push_back(DEMON_BONEMARROW::IncreasePlayerHealth);
+		(*_RelicFunctions)[FUNC_ON_OBTAIN].push_back(DEMON_HEART::IncreasePlayerHealth);
 	}
 
 	// Return the metadata

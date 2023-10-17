@@ -16,6 +16,8 @@
 #include "States\CleanupMacros.h"
 #include "Camera.h"
 
+#include "RelicFunctions.h"
+
 #include "MemLib\ML_String.hpp"
 
 // Relic Stuff
@@ -57,7 +59,7 @@ void GameScene::Input()
 				break;
 
 			//relicHolder->AddRelic<DamageRelic>();
-			Relics::RelicMetaData md = Relics::DemonBonemarrow(true);
+			Relics::RelicMetaData md = Relics::FlameWeapon(true);
 
 			UIImage relicImage, relicFlavorImage;
 			relicImage.Setup(md.filePath);//("TempRelic1.png");
@@ -218,5 +220,6 @@ void GameScene::GameOver()
 	SetInMainMenu(true);
 	SetInPlay(false);
 	Unload();
+	Relics::ClearRelicFunctions();
 	stateManager.menu.Setup();
 }

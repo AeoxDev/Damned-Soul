@@ -209,6 +209,15 @@
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Relics\DemonHeart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\DamageOverTimeSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\FlameWeapon.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -395,6 +404,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Relics\DemonBonemarrow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\DemonHeart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\FlameWeapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\RelicFuncInputTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\DamageOverTimeComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

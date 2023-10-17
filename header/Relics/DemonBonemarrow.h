@@ -2,6 +2,6 @@
 
 namespace DEMON_BONEMARROW
 {
-	// The Increase Health function for Demon Bonemarrow
-	void IncreasePlayerHealth(void* data);
+	// The Increase Strength function for Demon Bonemarrow
+	void IncreasePlayerStrength(void* data);
 }
