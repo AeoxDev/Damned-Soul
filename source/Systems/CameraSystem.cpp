@@ -7,10 +7,10 @@
 #include "SDLHandler.h"
 #include "Input.h"
 
-#define CAMERA_MOVESPEED 0.5f
+#define CAMERA_MOVESPEED 1.5f
 #define CAMERA_ZOOMSPEED 1.75f
-#define CAMERA_PREDICT_FACTOR 1.15f//Predict x seconds ahead
-#define CAMERA_MOUSE_FACTOR 0.5f//Predict x seconds ahead
+#define CAMERA_PREDICT_FACTOR 0.0f//Predict x seconds ahead
+#define CAMERA_MOUSE_FACTOR 0.15f
 
 bool PointOfInterestSystem::Update()
 {

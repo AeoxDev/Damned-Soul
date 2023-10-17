@@ -73,11 +73,12 @@ bool ControllerSystem::Update()
 			controller->goalX /= len;
 			transform->positionZ += controller->goalZ * stat->moveSpeed * GetDeltaTime();
 			transform->positionX += controller->goalX * stat->moveSpeed * GetDeltaTime();
-			SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);
+			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
 		}
 		else
 		{
-			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), -MouseComponentGetDirectionZ(mouseComponent), 8.0f);
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
 			
 		}
 
@@ -100,7 +101,7 @@ bool ControllerSystem::Update()
 			else
 			{
 				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
-				transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
 
 			}
 			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);

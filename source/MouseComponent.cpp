@@ -46,7 +46,7 @@ void MouseComponentUpdateDirection(EntityID entityID,const bool& isPerspective)
 	mouseComponent->directionZ = mousePosY - toFloat.y / toFloat.z;
 	float len = sqrtf(mouseComponent->directionX * mouseComponent->directionX + mouseComponent->directionZ * mouseComponent->directionZ);
 	mouseComponent->directionX /= len;
-	mouseComponent->directionZ /= len;
+	mouseComponent->directionZ /= -len;
 }
 
 float MouseComponentGetDirectionX(MouseComponent*& mouseComponent)
