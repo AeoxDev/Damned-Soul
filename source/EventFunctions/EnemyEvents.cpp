@@ -31,12 +31,19 @@ void SplitBoss(EntityID& entity)
 	auto bossStats = registry.GetComponent<StatComponent>(entity);
 	auto bossBehev = registry.GetComponent<TempBossBehaviour>(entity);
 
-	float newScale = 0.75f; // change as see fit
+	float newScaleSize = 0.7f; // change as see fit
+	float newScaleHitBox = 0.85f;
+	bossBehev->deathCounter = bossBehev->deathCounter + 1;
+	float deathC = bossBehev->deathCounter;
 
 	EntityID tempBoss = registry.CreateEntity();
 	EntityID tempBoss2 = registry.CreateEntity();
-	registry.AddComponent<ModelBonelessComponent>(tempBoss, LoadModel("PHBoss.mdl"));
-	registry.AddComponent<ModelBonelessComponent>(tempBoss2, LoadModel("PHBoss.mdl"));
+
+
+	float bossHP = bossStats->maxHealth / 2.f;
+	float bossSpeed = bossStats->moveSpeed;
+	float bossDamage = bossStats->damage / 2.f;
+	float bossAttackSpeed = bossStats->attackSpeed;
 
 	float offsetX = transform->facingX;
 	float offsetZ = -transform->facingZ;
@@ -47,42 +54,81 @@ void SplitBoss(EntityID& entity)
 		offsetX /= magnitude;
 		offsetZ /= magnitude;
 	}
-
 	// First tempBoss
 	TransformComponent fsTransformComponent;
 	fsTransformComponent.positionX = transform->positionX + offsetX * offsetValue;
 	fsTransformComponent.positionZ = transform->positionZ + offsetZ * offsetValue;
-	fsTransformComponent.scaleX = transform->scaleX * newScale;
-	fsTransformComponent.scaleY = transform->scaleY * newScale;
-	fsTransformComponent.scaleZ = transform->scaleZ * newScale;
-	registry.AddComponent<TransformComponent>(tempBoss, fsTransformComponent);
+	fsTransformComponent.scaleX = transform->scaleX * newScaleSize;
+	fsTransformComponent.scaleY = transform->scaleY * newScaleSize;
+	fsTransformComponent.scaleZ = transform->scaleZ * newScaleSize;
+	
 
 	// Second tempBoss2
 	TransformComponent ssTransformComponent;
 	ssTransformComponent.positionX = transform->positionX - offsetX * offsetValue;
 	ssTransformComponent.positionZ = transform->positionZ - offsetZ * offsetValue;
-	ssTransformComponent.scaleX = transform->scaleX * newScale;
-	ssTransformComponent.scaleY = transform->scaleY * newScale;
-	ssTransformComponent.scaleZ = transform->scaleZ * newScale;
+	ssTransformComponent.scaleX = transform->scaleX * newScaleSize;
+	ssTransformComponent.scaleY = transform->scaleY * newScaleSize;
+	ssTransformComponent.scaleZ = transform->scaleZ * newScaleSize;
+
+
+	AddHitboxComponent(tempBoss);
+
+	int hID = CreateHitbox(tempBoss, GetHitboxRadius(entity, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	SetCollisionEvent(tempBoss, hID, HardCollision);
+	SetHitboxIsEnemy(tempBoss, hID);
+	SetHitboxHitPlayer(tempBoss, hID);
+	SetHitboxHitEnemy(tempBoss, hID);
+	SetHitboxActive(tempBoss, hID);
+	SetHitboxIsMoveable(tempBoss, hID);
+
+	int sID = CreateHitbox(tempBoss, GetHitboxRadius(entity, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	SetCollisionEvent(tempBoss, sID, SoftCollision);
+	SetHitboxIsEnemy(tempBoss, sID);
+	SetHitboxHitPlayer(tempBoss, sID);
+	SetHitboxHitEnemy(tempBoss, sID);
+	SetHitboxActive(tempBoss, sID);
+	SetHitboxIsMoveable(tempBoss, sID);
+
+
+
+	AddHitboxComponent(tempBoss2);
+
+	int hID2 = CreateHitbox(tempBoss2, GetHitboxRadius(entity, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	SetCollisionEvent(tempBoss2, hID2, HardCollision);
+	SetHitboxIsEnemy(tempBoss2, hID2);
+	SetHitboxHitPlayer(tempBoss2, hID2);
+	SetHitboxHitEnemy(tempBoss2, hID2);
+	SetHitboxActive(tempBoss2, hID2);
+	SetHitboxIsMoveable(tempBoss2, hID2);
+
+	int sID2 = CreateHitbox(tempBoss2, GetHitboxRadius(entity, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	SetCollisionEvent(tempBoss2, sID2, SoftCollision);
+	SetHitboxIsEnemy(tempBoss2, sID2);
+	SetHitboxHitPlayer(tempBoss2, sID2);
+	SetHitboxHitEnemy(tempBoss2, sID2);
+	SetHitboxActive(tempBoss2, sID2);
+	SetHitboxIsMoveable(tempBoss2, sID2);
+
+
+
+
+	registry.AddComponent<TransformComponent>(tempBoss, fsTransformComponent);
 	registry.AddComponent<TransformComponent>(tempBoss2, ssTransformComponent);
 
-	registry.AddComponent<StatComponent>(tempBoss, bossStats->maxHealth, bossStats->moveSpeed, bossStats->damage, bossStats->attackSpeed);
+	registry.AddComponent<StatComponent>(tempBoss, bossHP, bossSpeed, bossDamage, bossAttackSpeed);
 	registry.AddComponent<EnemyComponent>(tempBoss, 2);
 
-	registry.AddComponent<StatComponent>(tempBoss2, bossStats->maxHealth, bossStats->moveSpeed, bossStats->damage, bossStats->attackSpeed);
+	registry.AddComponent<StatComponent>(tempBoss2, bossHP, bossSpeed, bossDamage, bossAttackSpeed);
 	registry.AddComponent<EnemyComponent>(tempBoss2, 2);
 
-	bossBehev->deathCounter++;
-
-	registry.AddComponent<TempBossBehaviour>(tempBoss, bossBehev->deathCounter, bossBehev->hitBoxID);
-	registry.AddComponent<TempBossBehaviour>(tempBoss2, bossBehev->deathCounter, bossBehev->hitBoxID);
-
+	registry.AddComponent<ModelBonelessComponent>(tempBoss, LoadModel("PHBoss.mdl"));
+	registry.AddComponent<ModelBonelessComponent>(tempBoss2, LoadModel("PHBoss.mdl"));
 	
 
-	(bossBehev->deathCounter == 1) ? newScale : newScale * newScale;
 
-	SetupEnemyCollisionBox(tempBoss, GetHitboxRadius(entity, bossBehev->hitBoxID) * newScale);
-	SetupEnemyCollisionBox(tempBoss2, GetHitboxRadius(entity, bossBehev->hitBoxID) * newScale);
+	registry.AddComponent<TempBossBehaviour>(tempBoss, deathC, hID);
+	registry.AddComponent<TempBossBehaviour>(tempBoss2, deathC, hID2);
 
 	RemoveEnemy(entity);
 }

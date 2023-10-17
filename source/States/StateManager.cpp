@@ -113,6 +113,8 @@ void StateManager::Setup()
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
+	systems.push_back(new TempBossBehaviourSystem());
+
 
 	systems.push_back(new TransformSystem());
 	systems.push_back(new CollisionSystem());

@@ -50,7 +50,7 @@ bool StateSwitcherSystem::Update()
 				{
 					playersComp->killingSpree += 1;
 				}
-				if (tempBossComp->deathCounter < 2) //spawn new mini russian doll skeleton
+				if (tempBossComp->deathCounter < 3) //spawn new mini russian doll skeleton
 				{
 					// start timed event for new little bossies
 					AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);

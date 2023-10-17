@@ -27,12 +27,12 @@ void LoadLevel1()
 	bossTransformComponent.mass = 9.0f;
 	bossTransformComponent.scaleX = 3.f; bossTransformComponent.scaleY = 3.f; bossTransformComponent.scaleZ = 3.f;
 	registry.AddComponent<TransformComponent>(tempBoss, bossTransformComponent);
-	registry.AddComponent<StatComponent>(tempBoss, 100.f, 10.f, 25.f, 5.f);
+	registry.AddComponent<StatComponent>(tempBoss, 400.f, 10.f, 40.f, 3.5f);
 	registry.AddComponent<EnemyComponent>(tempBoss, 2);
 	
 	AddHitboxComponent(tempBoss);
 
-	int hID = CreateHitbox(tempBoss, 3.f * 0.5f, 0.f, 0.f);
+	int hID = CreateHitbox(tempBoss, 3.f * 0.7f, 0.f, 0.f);
 	SetCollisionEvent(tempBoss, hID, HardCollision);
 	SetHitboxIsEnemy(tempBoss, hID);
 	SetHitboxHitPlayer(tempBoss, hID);
