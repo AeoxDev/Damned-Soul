@@ -39,8 +39,6 @@ struct PS_IN
     float4 position : SV_POSITION; //world, view, projection - multiplyed //Position on screen
     float4 normal : WNORMAL; // world - multiplyed
     float2 uv : UV;
-    uint4 index : INDEX;
-    float4 weight : WEIGHT;
     float4 camToWorldObject : CAM; // normalized 
     float4 world : WORLD;
 };

@@ -73,6 +73,21 @@ struct modelGenericData
 
 struct Model
 {
+private:
+	// Used internally only
+	struct MaterialBufferStruct
+	{
+		float roughness = 0.5f;
+		float exponent = 1.0f;
+
+		MaterialBufferStruct(const float r, const float e)
+		{
+			this->roughness = r;
+			this->exponent = e;
+		}
+	};
+
+public:
 	//PoolPointer<ModelBoneless> m_modelData;
 	PoolPointer<modelGenericData> m_data;
 	ML_Map<char, ML_Vector<Animation>> m_animations;
@@ -80,6 +95,7 @@ struct Model
 
 	VB_IDX m_vertexBuffer = -1;
 	IB_IDX m_indexBuffer = -1;
+	CB_IDX m_materialBuffer = -1;
 	SB_IDX m_animationBuffer = -1;
 	SRV_IDX m_animationBufferSRV = -1;
 	uint16_t m_refCount = 0;
