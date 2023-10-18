@@ -97,7 +97,7 @@ bool TempBossBehaviourSystem::Update()
 			{
 				// do nothing, stand like a bad doggo and be ashamed
 			}
-			else if (distance < 2.5f)
+			else if (distance < 4.5f)
 			{
 				CombatBehaviour(tempBossComponent, enemyStats, playerStats);
 			}
