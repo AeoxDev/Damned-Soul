@@ -122,11 +122,9 @@ bool ControllerSystem::Update()
 		//Test code for now but we fuckin about
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
-			//speed *= 3.0f;
-
 			//Make a 3-step timed event:
 			//Step 1: Take away control from the player
-			//Step 2: Dash in a direction based off of goalX and goalZ
+			//Step 2: Dash in a direction based off of goalX and goalZ (and pass in some speed modifier to make the dash fast)
 			//Step 3: Return control to the player
 			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 2.5f);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
@@ -135,9 +133,7 @@ bool ControllerSystem::Update()
 		//We doing attacks on mouse click? Temp some button
 		if (keyState[SCANCODE_F] == pressed)
 		{
-			//Should be continuous by the way
-			AttackArgumentComponent* aac = registry.AddComponent<AttackArgumentComponent>(entity);
-			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerAttack, 0.5f, PlayerRegainControl, CONDITION_ATTACK);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, SetPlayerAttackHitboxActive, PlayerAttack, 1.0f, SetPlayerAttackHitboxInactive);
 		}
 
 	}

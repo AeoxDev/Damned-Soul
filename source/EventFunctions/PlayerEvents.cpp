@@ -24,12 +24,12 @@ void PlayerLoseControl(EntityID& entity)
 	{
 		SetHitboxIsPlayer(entity, playerComp->hardHitboxID, false);
 	}
+}
 
-	//If we're attacking, we set players' attack hitbox to active
-	else if (condition == CONDITION_ATTACK)
-	{
-		SetHitboxActive(entity, playerComp->attackHitboxID, true);
-	}
+void SetPlayerAttackHitboxActive(EntityID& entity)
+{
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	SetHitboxActive(entity, playerComp->attackHitboxID, true);
 }
 
 void PlayerRegainControl(EntityID& entity)
@@ -49,50 +49,41 @@ void PlayerRegainControl(EntityID& entity)
 	{
 		SetHitboxIsPlayer(entity, playerComp->hardHitboxID, true);
 	}
-
-	//If we've just attacked, we set players' attack hitbox to inactive again
-	else if (condition == CONDITION_ATTACK)
-	{
-		SetHitboxActive(entity, playerComp->attackHitboxID, false);
-	}
 }
 
-
+void SetPlayerAttackHitboxInactive(EntityID& entity)
+{
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	SetHitboxActive(entity, playerComp->attackHitboxID, false);
+}
 
 void PlayerAttack(EntityID& entity)
 {
-	//Get access to players relevant components
-	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
-	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
+	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
-	if (!stat || !transform || !aac || !anim) //Invalid entity doesn't have the required components
+	//Can't perform animation without the AnimationComponent, durr
+	if (!anim)
 		return;
 
+	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	anim->aAnimTime += GetDeltaTime() * 2.0f;
+	anim->aAnimTime += GetDeltaTime();
+	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 }
 
 void PlayerDash(EntityID& entity)
 {
-	
 	//Get access to players relevant components
-	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
-	if (!stat || !transform || !dac || !anim) //Invalid entity doesn't have the required components
+	//Invalid entity doesn't have the required components
+	if (!transform || !stat || !dac)
 		return;
-
-	// Loop using DT
-	/*anim->aAnim = ANIMATION_ATTACK;
-	anim->aAnimIdx = 0;
-	anim->aAnimTime += GetDeltaTime() * 5.0f;
-	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;*/
 
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();

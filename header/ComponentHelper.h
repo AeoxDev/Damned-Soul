@@ -53,12 +53,6 @@ struct DashArgumentComponent
 	DashArgumentComponent(float x, float z, float dashModifier, float arc = 0.0f) : x(x), z(z), dashModifier(dashModifier) {}
 };
 
-struct AttackArgumentComponent
-{
-	//Maybe I don't even need this lmao
-	AttackArgumentComponent() {}
-};
-
 //
 struct EnemyComponent
 {

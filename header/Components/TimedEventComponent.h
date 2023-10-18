@@ -1,8 +1,7 @@
 #pragma once
 
 //Condition 0 = no special condition for timed event functions
-#define CONDITION_ATTACK ((uint32_t)1)
-#define CONDITION_DASH ((uint32_t)2)
+#define CONDITION_DASH ((uint32_t)1)
 
 struct EntityID;
 struct TimedEventComponent;
