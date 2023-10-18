@@ -66,7 +66,7 @@ void AudioEngineComponent::Destroy()
 			this->channels[i] = nullptr;
 		}
 	}
-	for (int i = 0; i < this->sounds.size(); i++)
+	for (int i = 0; i < (int)this->sounds.size(); i++)
 	{
 		this->sounds[i]->release();
 	}
@@ -86,7 +86,7 @@ void SoundComponent::Load(const int EntityType)
 		//Check if there is a free channel that already exists
 		for (int i = 0; i < CHANNEL_LIMIT; i++)
 		{
-			if (audioEngine->freeChannels.size() > 0)
+			if ((int)audioEngine->freeChannels.size() > 0)
 			{
 				this->channelIndex[i] = audioEngine->freeChannels[(audioEngine->freeChannels.size() - 1)];
 				audioEngine->freeChannels.pop_back();
