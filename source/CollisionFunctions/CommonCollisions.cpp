@@ -124,9 +124,62 @@ void AttackCollision(OnCollisionParameters& params)
 	//Get the components of the attackee (entity 2)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
+	{
+		//Check if possible to deal damage
+		if (!hitbox1->circularFlags[params.hitboxID1].canDealDamage)
+		{
+			return;
+		}
+	}
+	else //For convex hitboxes
+	{
+		if (!hitbox1->convexFlags[params.hitboxID1 - SAME_TYPE_HITBOX_LIMIT].canDealDamage)
+		{
+			return;
+		}
+	}
+	//Check if hitbox2 can take damage
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (params.hitboxID2 < SAME_TYPE_HITBOX_LIMIT)//For circular
+	{
+		//Check if possible to deal damage
+		if (!hitbox2->circularFlags[params.hitboxID2].canTakeDamage)
+		{
+			return;
+		}
+	}
+	else //For convex hitboxes
+	{
+		if (!hitbox2->convexFlags[params.hitboxID2 - SAME_TYPE_HITBOX_LIMIT].canTakeDamage)
+		{
+			return;
+		}
+	}
+	//Check if hitbox already dealt damage
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{	
+		//If already in hit tracker: no proc
+		if (hitbox1->hitTracker[i].active && hitbox1->hitTracker[i].entity.index == params.entity2.index)
+		{
+			return;
+		}
+	}
+	//Not found, deal damage here
 	stat2->health -= stat1->damage;
 	RedrawUI();
+	//Lastly set for hitboxTracker[]
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (!hitbox1->hitTracker[i].active)
+		{
+			hitbox1->hitTracker[i].active = true;
+			hitbox1->hitTracker[i].entity = params.entity2;
+			return;
+		}
+	}
 }
 
 void LoadNextLevel(OnCollisionParameters& params)

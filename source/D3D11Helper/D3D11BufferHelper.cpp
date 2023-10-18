@@ -197,7 +197,7 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 {
 	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
 	DirectX::XMVECTOR v = DirectX::XMVECTOR{ 0.0f, 0.0f,0.0f };
-	DirectX::XMVECTOR f = DirectX::XMVECTOR{ dirX, dirY, dirZ };
+	DirectX::XMVECTOR f = DirectX::XMVECTOR{ dirX, dirY, dirZ + 0.00001f };
 	//DirectX::XMVECTOR s = DirectX::XMVECTOR{ scaleX, scaleY, ScaleZ};
 	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
 	world = DirectX::XMMatrixScaling(scaleX, scaleY, ScaleZ);
