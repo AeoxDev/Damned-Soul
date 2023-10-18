@@ -707,7 +707,6 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
-	SetHitboxCanTakeDamage(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, SoftCollision);
@@ -716,6 +715,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
+	SetHitboxCanTakeDamage(entity, sID);
 
 }
 
@@ -734,6 +734,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
 	SetHitboxCanTakeDamage(entity, hID);
+	playerComp->hardHitboxID = hID;
 
 	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
 	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
@@ -751,11 +752,13 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
+	SetHitboxCanTakeDamage(entity, sID, false);
 
-	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, -0.5f);
+	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, -1.5f);
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
 	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
-	SetHitboxActive(entity, playerComp->attackHitboxID, false);
+	SetHitboxActive(entity, playerComp->attackHitboxID);
+	SetHitboxCanTakeDamage(entity, playerComp->attackHitboxID, false);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID);
 }
 

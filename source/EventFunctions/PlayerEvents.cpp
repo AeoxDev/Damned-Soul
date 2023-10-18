@@ -22,14 +22,14 @@ void PlayerLoseControl(EntityID& entity)
 	//If we're dashing, we make player invincible
 	if (condition == CONDITION_DASH)
 	{
-		SetHitboxIsPlayer(entity, playerComp->hardHitboxID, false);
+		SetHitboxCanTakeDamage(entity, playerComp->hardHitboxID, false);
 	}
 }
 
 void SetPlayerAttackHitboxActive(EntityID& entity)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
-	SetHitboxActive(entity, playerComp->attackHitboxID, true);
+	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, true);
 }
 
 void PlayerRegainControl(EntityID& entity)
@@ -47,14 +47,14 @@ void PlayerRegainControl(EntityID& entity)
 	//If we've just dashed, we make player capable of taking damage again
 	if (condition == CONDITION_DASH)
 	{
-		SetHitboxIsPlayer(entity, playerComp->hardHitboxID, true);
+		SetHitboxCanTakeDamage(entity, playerComp->hardHitboxID, true);
 	}
 }
 
 void SetPlayerAttackHitboxInactive(EntityID& entity)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
-	SetHitboxActive(entity, playerComp->attackHitboxID, false);
+	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 }
 
 void PlayerAttack(EntityID& entity)
