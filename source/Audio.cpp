@@ -1,33 +1,64 @@
 #include "Audio.h"
 #include <assert.h>
-Audio SetupAudio()
+
+void AudioEngine::Setup()
 {
-	Audio audio;
-	
-	audio.result = FMOD::System_Create(&audio.system);      // Create the main system object.
-	assert(audio.result == FMOD_OK);
+	this->result = FMOD::System_Create(&this->system);      // Create the main system object.
+	assert(this->result == FMOD_OK);
 
-	audio.result = audio.system->init(32, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
-	assert(audio.result == FMOD_OK);
-
-	audio.system->createDSPByType(FMOD_DSP_TYPE_PITCHSHIFT, &audio.pitchDSP);
-
-	audio.system->createSound("../sunflower.mp3", FMOD_DEFAULT, 0, &audio.sound);
-	audio.system->playSound(audio.sound, 0, false, &audio.channel);
-
-	float pitchShift = 0.5f;
-	audio.pitchDSP->setParameterFloat(FMOD_DSP_PITCHSHIFT_PITCH, pitchShift);
-
-	audio.channel->addDSP(0, audio.pitchDSP);
-	audio.channel->setPitch(0.1f);
-
-	return audio;
+	this->result = this->system->init(10, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
+	assert(this->result == FMOD_OK);
 }
 
-void DestroyAudio(Audio& a)
+void AudioEngine::Destroy()
 {
-	a.channel->stop();
-	a.system->close();
-	a.system->release();
-	a.pitchDSP->release();
+	for (int i = 0; i < 10; i++)
+	{
+		this->channel[i]->stop();
+	}
+	this->system->close();
+	this->system->release();
+}
+
+void SoundComponent::Load(int EntityType)
+{
+	this->channelIndex = EntityType;
+
+	switch (EntityType)
+	{
+	default:
+		break;
+	case MENU:
+		//Load all menu sounds
+		break;
+	case BACKGROUND:
+		//Load all background OSTs
+		break;
+	case AMBIENCE:
+		//Load all ambience sounds
+		break;
+	case PLAYER:
+		//Load all player sounds
+		break;
+	case IMP:
+		//Load all imp sounds
+		break;
+	case SKELETON:
+		//Load all skeleton sounds
+		break;
+	case EYE:
+		//Load all eye sounds
+		break;
+	case HELLHOUND:
+		//Load all hellhound sounds
+		break;
+	case BOSS:
+		//Load all boss sounds
+		break;
+	}
+}
+
+void SoundComponent::Unload()
+{
+	
 }
