@@ -58,7 +58,7 @@ bool IntersectionOnLine(float& line1x1, float& line1x2, float& line1z1, float& l
 			z -= 0.0001f;
 		}
 
-		if (x <= max(line1x1, line1x2) && x >= min(line1x1, line1x2) && z <= max(line1z1, line1z2) && z >= min(line1z1, line1z2))
+		if (x <= std::max(line1x1, line1x2) && x >= std::min(line1x1, line1x2) && z <= std::max(line1z1, line1z2) && z >= std::min(line1z1, line1z2))
 		{
 			return true;
 		}

@@ -52,24 +52,6 @@ void GameScene::Input()
 
 			if (uiElement->relics.size() > 8)
 				break;
-		// Dog
-		TransformComponent dogTransformComponent;
-		dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 20.0f; dogTransformComponent.facingX = 1.0f;
-		/*TransformComponent* dtc = */registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
-		// Stage (Default)
-		/*TransformComponent* stc = */registry.AddComponent<TransformComponent>(stage);
-		ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-		phc->Load("default");
-		// Player (Default)
-		/*TransformComponent* ptc = */registry.AddComponent<TransformComponent>(player);
-		// First skeleton
-		TransformComponent fsTransformComponent;
-		fsTransformComponent.positionZ = 20.0f;
-		/*TransformComponent* skeltc = */registry.AddComponent<TransformComponent>(skeleton, fsTransformComponent);
-		// Second skeleton
-		TransformComponent ssTransformComponent;
-		ssTransformComponent.positionZ = 15.0f;
-		/*TransformComponent* skeltc2 = */registry.AddComponent<TransformComponent>(skeleton2, ssTransformComponent);
 
 			relicHolder->AddRelic<DamageRelic>();
 

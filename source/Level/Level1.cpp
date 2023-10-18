@@ -4,6 +4,7 @@
 #include "Components.h"
 #include "Particles.h"
 #include "EventFunctions.h"
+#include "CollisionFunctions.h"
 
 void LoadLevel1()
 {
@@ -35,6 +36,8 @@ void LoadLevel1()
 	
 	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("default");
 	
 	// Player (Default)
 	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
