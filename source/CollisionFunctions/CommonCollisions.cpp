@@ -131,6 +131,6 @@ void AttackCollision(OnCollisionParameters& params)
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
-	LoadLevel(stateManager.activeLevelScene + 1);
+	LoadLevel(++stateManager.activeLevel);
 }
 

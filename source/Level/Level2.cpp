@@ -21,6 +21,7 @@ void LoadLevel2()
 	//**************************************************
 	EntityID tempBoss = registry.CreateEntity();
 	registry.AddComponent<ModelBonelessComponent>(tempBoss, LoadModel("PHBoss.mdl"));
+
 	TransformComponent bossTransformComponent;
 	bossTransformComponent.facingX = 1.0f; bossTransformComponent.positionX = 20.0f; bossTransformComponent.facingX = 1.0f;
 	bossTransformComponent.mass = 9.0f;
@@ -64,8 +65,8 @@ void LoadLevel2()
 	///*TransformComponent* dtc = */registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
 	// Stage (Default)
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
-	stc->scaleX = 20.0f;
-	stc->scaleZ = 10.0f;
+	stc->scaleX = 60.0f;
+	stc->scaleZ = 30.0f;
 	// Player (Default)
 	/*TransformComponent* ptc = */registry.AddComponent<TransformComponent>(player);
 	// First skeleton
