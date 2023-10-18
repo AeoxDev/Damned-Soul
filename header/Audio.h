@@ -34,7 +34,7 @@ struct SoundComponent
 	int soundIndex[CHANNEL_LIMIT] = { 0, 0 };
 	int channelIndex[CHANNEL_LIMIT] = { 0, 0 };
 	//ML_Vector<FMOD::Sound*> sounds; If loading all sounds once doesn't work
-	ML_Vector<int> soundIndices[CHANNEL_LIMIT];
+	ML_Vector<int> (soundIndices)[CHANNEL_LIMIT];
 	void Load(const int EntityType = 0);
 	void Play(const int SoundIndex = 0, const int SelectedChannel = 0);
 	void Stop(const int SelectedChannel = 0);

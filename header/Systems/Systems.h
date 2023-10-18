@@ -23,6 +23,10 @@ class GeometryIndependentSystem : public System
 {
 	bool Update();
 };
+class AudioSystem : public System
+{
+	bool Update();
+};
 
 class UIRenderSystem : public System
 {

@@ -16,6 +16,8 @@ bool ButtonSystem::Update()
 		{
 			if (comp->m_CurrentImage == 1 && comp->doRedraw)
 			{
+				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+				if (sound != nullptr) sound->Play(0, 0);
 				RedrawUI();
 				comp->doRedraw = false;
 			}

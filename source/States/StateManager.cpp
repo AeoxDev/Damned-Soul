@@ -106,6 +106,7 @@ void StateManager::Setup()
 	// CPU
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new ParticleSystemCPU());
+	systems.push_back(new AudioSystem());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new PointOfInterestSystem());
 

@@ -14,6 +14,11 @@ void Menu::Setup()//Load
 {
 	m_active = true;
 
+	// Audio Engine
+	EntityID audioJungle = registry.CreateEntity();
+	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
+	audioEngine->Setup();
+
 	RedrawUI();
 	SetupButtons();
 	SetupImages();
@@ -61,6 +66,8 @@ void Menu::SetupButtons()
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
 		comp->Setup("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", UIFunc::MainMenu_Start, { 0.0f, -0.4f });
+		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+		buttonSound->Load(MENU);
 	}
 
 	//Settings Button
@@ -68,6 +75,8 @@ void Menu::SetupButtons()
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
 		comp->Setup("Exmenu/OptionsButton.png", "Exmenu/OptionsButtonHover.png", L"", UIFunc::MainMenu_Settings, { 0.0f,  -0.6f });
+		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+		buttonSound->Load(MENU);
 	}
 
 	//Exit Button
@@ -75,6 +84,8 @@ void Menu::SetupButtons()
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
 		comp->Setup("Exmenu/ExitButton.png", "Exmenu/ExitButtonHover.png", L"", UIFunc::MainMenu_Quit, { 0.0f, -0.8f });
+		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+		buttonSound->Load(MENU);
 	}
 }
 
@@ -132,6 +143,18 @@ void Menu::Unload()
 	{
 		ModelSkeletonComponent* m = registry.GetComponent<ModelSkeletonComponent>(entity);
 		ReleaseModel(m->model);
+	}
+
+	for (auto entity : View<SoundComponent>(registry))
+	{
+		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+		sound->Unload();
+	}
+
+	for (auto entity : View<AudioEngineComponent>(registry))
+	{
+		AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
+		audioEngine->Destroy();
 	}
 
 	//Destroy entity resets component bitmasks

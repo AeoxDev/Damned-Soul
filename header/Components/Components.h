@@ -1,6 +1,7 @@
 #pragma once
 #include "ComponentHelper.h"
 #include "PointOfInterestComponent.h"
+#include "Audio.h"
 
 // Renderable Components
 #include "ModelComponent.h"

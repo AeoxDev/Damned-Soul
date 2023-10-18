@@ -11,7 +11,12 @@ void AudioEngineComponent::Setup()
 	assert(this->result == FMOD_OK);
 
 	//Load all sounds to use in the game
-
+	FMOD::Sound* toAdd;
+	for (int i = 0; i < 1; i++) //Change 1 to however many sounds you want to have in the game.
+	{
+		this->sounds.push_back(toAdd);
+	}
+	this->system->createSound("../MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
 }
 
 void AudioEngineComponent::HandleSound()
@@ -32,7 +37,7 @@ void AudioEngineComponent::HandleSound()
 				this->system->playSound(this->sounds[audio->soundIndices[i][audio->soundIndex[i]]], 0, false, &this->channels[audio->channelIndex[i]]); //Play the new sound
 				audio->playSound[i] = false;
 			}
-			else if (audio->stopSound)
+			else if (audio->stopSound[i])
 			{
 				//Stop the sound
 				this->channels[audio->channelIndex[i]]->stop(); //Stop the previous sound
@@ -53,8 +58,7 @@ void AudioEngineComponent::AddChannel()
 void AudioEngineComponent::Destroy()
 {
 	//Stop all sounds and release everything
-	this->sounds.~ML_Vector();
-	for (int i = 0; i < this->channels.size(); i++)
+	for (int i = 0; i < (int)this->channels.size(); i++)
 	{
 		if (this->channels[i] != nullptr)
 		{
@@ -62,6 +66,11 @@ void AudioEngineComponent::Destroy()
 			this->channels[i] = nullptr;
 		}
 	}
+	for (int i = 0; i < this->sounds.size(); i++)
+	{
+		this->sounds[i]->release();
+	}
+	this->sounds.~ML_Vector();
 	this->channels.~ML_Vector();
 	this->freeChannels.~ML_Vector();
 	this->system->close();
@@ -96,6 +105,7 @@ void SoundComponent::Load(const int EntityType)
 		break;
 	case MENU:
 		//Push back all indices for the menu sounds into soundIndices
+		this->soundIndices[0].push_back(0);
 		break;
 	case MUSIC:
 		//Push back all indices for the music sounds into soundIndices
@@ -128,7 +138,7 @@ void SoundComponent::Play(const int SoundIndex, const int SelectedChannel)
 {
 	//Set playSound to true and the selected sound index, make sure the index is within the valid range as well
 	this->playSound[SelectedChannel] = true;
-	if (this->soundIndices[SelectedChannel].size() > SoundIndex)
+	if ((int)this->soundIndices[SelectedChannel].size() > SoundIndex)
 	{
 		this->soundIndex[SelectedChannel] = SoundIndex;
 	}
@@ -155,6 +165,9 @@ void SoundComponent::Unload()
 		AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
 
 		//Set the index for the channel as free.
-		audioEngine->freeChannels.push_back(this->channelIndex);
+		for (int i = 0; i < CHANNEL_LIMIT; i++)
+		{
+			audioEngine->freeChannels.push_back(this->channelIndex[i]);
+		}
 	}
 }
