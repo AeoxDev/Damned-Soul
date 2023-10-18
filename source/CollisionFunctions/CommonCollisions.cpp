@@ -129,7 +129,7 @@ void AttackCollision(OnCollisionParameters& params)
 	
 	// Regular hit
 	// Expand to a "damage dealt" value that can be pushed into on hit relic functions to, for example, create life steal?
-	stat2->health -= stat1->damage;
+	stat2->UpdateHealth(-stat1->damage);
 
 	// On Hit Relics
 	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
@@ -138,7 +138,7 @@ void AttackCollision(OnCollisionParameters& params)
 		params.entity1,
 		params.entity2
 	};
-	for (size_t i = 0; i < funcVector.size(); ++i)
+	for (uint32_t i = 0; i < funcVector.size(); ++i)
 	{
 		funcVector[i](&funcInput);
 	}

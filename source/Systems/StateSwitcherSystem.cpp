@@ -18,7 +18,7 @@ bool StateSwitcherSystem::Update()
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 		if (statComp != nullptr)
 		{
-			if (statComp->health <= 0)
+			if (statComp->GetHealth() <= 0)
 			{
 				stateManager.GetCurrentLevel().GameOver();
 			}
@@ -29,7 +29,7 @@ bool StateSwitcherSystem::Update()
 	{
 		// Get enemy entity stat component
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
-		if (statComp->health <= 0 && statComp->performingDeathAnimation == false)
+		if (statComp->GetHealth() <= 0 && statComp->performingDeathAnimation == false)
 		{
 			statComp->performingDeathAnimation = true;
 			if (playersComp != nullptr)

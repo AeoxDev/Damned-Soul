@@ -218,6 +218,18 @@
     <ClCompile Include="source\Relics\FlameWeapon.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Relics\SoulPower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ComponentHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\SoulHealth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\FrostFire.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -416,6 +428,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\DamageOverTimeComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\SoulPower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\SoulHealth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\FrostFire.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

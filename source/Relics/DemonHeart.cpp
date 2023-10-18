@@ -7,9 +7,9 @@
 void DEMON_HEART::IncreasePlayerHealth(void* data)
 {
 	// Should return only the player entity
-	for (auto entity : View<ControllerComponent, StatComponent>(registry))
+	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 	{
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-		stats->health += DEMON_HEART_HEALTH_INCREASE;
+		stats->UpdateMaxHealth(DEMON_HEART_HEALTH_INCREASE);
 	}
 }

@@ -85,7 +85,7 @@ bool UIHealthSystem::Update()
     {
         auto uiElement = registry.GetComponent<UIHealthComponent>(entity);
         auto stats = registry.GetComponent<StatComponent>(entity);
-        uiElement->value = stats->health;
+        uiElement->value = stats->GetHealth();
 
         ML_String valueAsString = ("Health: " + std::to_string((int)uiElement->value)).c_str();
         SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
@@ -100,7 +100,7 @@ bool UIPlayerSoulsSystem::Update()
     {
         auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(entity);
         auto player = registry.GetComponent<PlayerComponent>(entity);
-        uiElement->value = player->souls;
+        uiElement->value = player->GetSouls();
 
         ML_String valueAsString = ("Souls: " + std::to_string(uiElement->value)).c_str();
         SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);

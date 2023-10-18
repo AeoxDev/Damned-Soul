@@ -59,7 +59,7 @@ void GameScene::Input()
 				break;
 
 			//relicHolder->AddRelic<DamageRelic>();
-			Relics::RelicMetaData md = Relics::FlameWeapon(true);
+			Relics::RelicMetaData md = Relics::SoulHealth(true);
 
 			UIImage relicImage, relicFlavorImage;
 			relicImage.Setup(md.filePath);//("TempRelic1.png");

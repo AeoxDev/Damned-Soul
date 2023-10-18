@@ -34,7 +34,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 	{
 		hc->attackTimer = 0;
 		hc->attackStunDurationCounter = 0;
-		playerStats->health -= enemyStats->damage;
+		playerStats->UpdateHealth(-enemyStats->damage);
 		RedrawUI();
 	}
 }
@@ -266,7 +266,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		if (distance <= hc->currentShootingAttackRange)
 		{
 			//yes, player should get hit. Take damage
-			playerStats->health -= enemyStats->damage; // DEFINITELY MODIFY THIS LATER, very likely too much damage
+			playerStats->UpdateHealth(-enemyStats->damage); // DEFINITELY MODIFY THIS LATER, very likely too much damage
 			RedrawUI();
 		}
 	}
@@ -367,7 +367,7 @@ bool HellhoundBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		
 
-		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enemyStats->health > 0)// check if enemy is alive, change later
+		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			hellhoundComponent->attackTimer += GetDeltaTime();

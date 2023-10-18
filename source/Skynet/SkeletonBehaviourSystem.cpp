@@ -59,7 +59,7 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	{
 		sc->attackTimer = 0;
 		sc->attackStunDurationCounter = 0;
-		playerStats->health -= enemyStats->damage;
+		playerStats->UpdateHealth(-enemyStats->damage);
 		RedrawUI();
 	}
 }
@@ -87,7 +87,7 @@ bool SkeletonBehaviourSystem::Update()
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 
-		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->health > 0 )// check if enemy is alive, change later
+		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			skeletonComponent->attackTimer += GetDeltaTime();

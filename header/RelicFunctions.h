@@ -14,9 +14,24 @@ namespace Relics
 
 	enum RELIC_FUNCTION_TYPE
 	{
-		FUNC_ON_OBTAIN, // Called when the relic is purchased or otherwise obtained, and never again
-		FUNC_ON_WEAPON_HIT, // Called when an enemy is hit by a weapon attack
-		FUNC_END_OF_TYPES // Used to iterate, not give functionality to relics
+		// Called when the relic is purchased or otherwise obtained
+		// arguments: foo(void)
+		FUNC_ON_OBTAIN,
+
+		// Called when an enemy is hit by a weapon attack
+		// arguments: foo(PlayerEntity, EnemyEntity)
+		FUNC_ON_WEAPON_HIT,
+
+		// Called when the player's health is modified, such as when struck by an attack or healed
+		// arguments: foo(hpDelta)
+		FUNC_ON_HEALTH_MODIFIED,
+
+		// Called when the player's number of souls is updated
+		// arguments: foo(soulDelta)
+		FUNC_ON_SOUL_UPDATE,
+
+		// Used to iterate, not to give functionality to relics
+		FUNC_END_OF_TYPES
 	};
 
 	// Get all active relic functions of a given type
@@ -45,7 +60,19 @@ namespace Relics
 	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
 	RelicMetaData FlameWeapon(const bool AddRelicFunctions = false);
 
+	// Get the metadata of the relic "Soul Power".
+	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
+	RelicMetaData SoulPower(const bool AddRelicFunctions = false);
+
 	// Get the metadata of the relic "Demon Heart".
 	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
 	RelicMetaData DemonHeart(const bool AddRelicFunctions = false);
+
+	// Get the metadata of the relic "Frost Fire".
+	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
+	RelicMetaData FrostFire(const bool AddRelicFunctions = false);
+
+	// Get the metadata of the relic "Soul Health".
+	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
+	RelicMetaData SoulHealth(const bool AddRelicFunctions = false);
 }

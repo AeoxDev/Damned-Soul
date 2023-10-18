@@ -6,6 +6,7 @@
 
 #define FLAME_WEAPON_DOT_DURATION (2.f)
 #define FLAME_WEAPON_DOT_FRACTION (0.5f)
+#define FLAME_WEAPON_BASE_DAMAGE (0.f)
 
 void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 {
@@ -15,7 +16,7 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 	DamageOverTimeComponent newDoT
 	{
 		/*Duration*/	FLAME_WEAPON_DOT_DURATION,
-		/*DPS*/			(FLAME_WEAPON_DOT_FRACTION * playerStats->damage) / FLAME_WEAPON_DOT_DURATION
+		/*DPS*/			(FLAME_WEAPON_BASE_DAMAGE + (FLAME_WEAPON_DOT_FRACTION * playerStats->damage)) / FLAME_WEAPON_DOT_DURATION
 	};
 	DamageOverTimeComponent* EnemyDoT = registry.GetComponent<DamageOverTimeComponent>(input->enemy);
 	if (nullptr == EnemyDoT || EnemyDoT->LessThan(newDoT))

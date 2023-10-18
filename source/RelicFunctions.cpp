@@ -89,6 +89,34 @@ Relics::RelicMetaData Relics::FlameWeapon(const bool AddRelicFunctions)
 	return retVal;
 }
 
+#include "Relics\SoulPower.h"
+Relics::RelicMetaData Relics::SoulPower(const bool AddRelicFunctions)
+{
+	RelicMetaData retVal =
+	{
+		/*Name*/		"Soul Power",
+		/*Filepath*/	"RelicIcons\\Soul_Power.png",
+		/*Description*/	"You gain a dynamic bonus to your Strength equal to the number of Souls you currently possess"
+	};
+
+	// If the relic is to be added, and not just "read", run the functionality
+	if (AddRelicFunctions)
+	{
+		// Make sure the relic function map exists
+		_validateRelicFunctions();
+
+		// Modify player strength by current souls
+		// This effect is NOT added to the "On Obtain" list, since this isn't meant to be a one and done, but rather a setup for a constantly updating bonus
+		SOUL_POWER::ModifyPlayerStrengthInitial(nullptr);
+
+		// Add the "On Soul Update" function that takes the delta of souls and modifies Strength by it and adds it to the list
+		(*_RelicFunctions)[FUNC_ON_SOUL_UPDATE].push_back(SOUL_POWER::ModifyPlayerStrengthUpdate);
+	}
+
+	// Return the metadata
+	return retVal;
+}
+
 #include "Relics\DemonHeart.h"
 Relics::RelicMetaData Relics::DemonHeart(const bool AddRelicFunctions)
 {
@@ -108,6 +136,60 @@ Relics::RelicMetaData Relics::DemonHeart(const bool AddRelicFunctions)
 		DEMON_HEART::IncreasePlayerHealth(nullptr);
 		// Add it to the list of On Obtain functions
 		(*_RelicFunctions)[FUNC_ON_OBTAIN].push_back(DEMON_HEART::IncreasePlayerHealth);
+	}
+
+	// Return the metadata
+	return retVal;
+}
+
+#include "Relics\FrostFire.h"
+Relics::RelicMetaData Relics::FrostFire(const bool AddRelicFunctions)
+{
+	RelicMetaData retVal =
+	{
+		/*Name*/		"Frost Fire",
+		/*Filepath*/	"RelicIcons\\Frost_Fire.png",
+		/*Description*/	"When you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and stun them (20s cooldown)"
+	};
+
+	// If the relic is to be added, and not just "read", run the functionality
+	if (AddRelicFunctions)
+	{
+		// Make sure the relic function map exists
+		_validateRelicFunctions();
+
+		//// Call the increase health function
+		//DEMON_HEART::IncreasePlayerHealth(nullptr);
+		//// Add it to the list of On Obtain functions
+		//(*_RelicFunctions)[FUNC_ON_OBTAIN].push_back(DEMON_HEART::IncreasePlayerHealth);
+	}
+
+	// Return the metadata
+	return retVal;
+}
+
+#include "Relics/SoulHealth.h"
+Relics::RelicMetaData Relics::SoulHealth(const bool AddRelicFunctions)
+{
+	RelicMetaData retVal =
+	{
+		/*Name*/		"Soul Health",
+		/*Filepath*/	"RelicIcons\\Soul_Health.png",
+		/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess."
+	};
+
+	// If the relic is to be added, and not just "read", run the functionality
+	if (AddRelicFunctions)
+	{
+		// Make sure the relic function map exists
+		_validateRelicFunctions();
+
+		// Modify player Health by current souls
+		// This effect is NOT added to the "On Obtain" list, since this isn't meant to be a one and done, but rather a setup for a constantly updating bonus
+		SOUL_HEALTH::ModifyPlayerHealthInitial(nullptr);
+
+		// Add the "On Soul Update" function that takes the delta of souls and modifies Health by it and adds it to the list
+		(*_RelicFunctions)[FUNC_ON_SOUL_UPDATE].push_back(SOUL_HEALTH::ModifyPlayerHealthUpdate);
 	}
 
 	// Return the metadata

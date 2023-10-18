@@ -28,6 +28,13 @@ void PlayDeathAnimation(EntityID& entity)
 
 void RemoveEnemy(EntityID& entity)
 {
+	// Eat them souls
+	for (auto entity : View<PlayerComponent>(registry))
+	{
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(entity);
+		pc->UpdateSouls(+1);
+	}
+
 	// I am inevitable 
 	// *le snap*
 	CREATE_ENTITY_MAP_entities;
