@@ -108,7 +108,7 @@ void StateManager::Setup()
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new PointOfInterestSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
-	systems.push_back(new CollisionSystem());
+	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
 	systems.push_back(new TransformSystem());
 	systems.push_back(new EventSystem());
 	systems.push_back(new StateSwitcherSystem());
