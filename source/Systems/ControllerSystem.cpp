@@ -109,7 +109,7 @@ bool ControllerSystem::Update()
 		}
 
 		//We doing attacks on mouse click? Temp some button
-		if (keyState[SCANCODE_F] == pressed)
+		if (mouseButtonPressed[0] == pressed)
 		{
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, SetPlayerAttackHitboxActive, PlayerAttack, 1.0f, SetPlayerAttackHitboxInactive);
 		}
