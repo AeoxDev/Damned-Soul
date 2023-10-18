@@ -60,3 +60,5 @@ void ResetAttackTrackerFlags(EntityID& entity);
 int CreateHitbox(EntityID& entity, int corners, float cornerPosX[], float cornerPosZ[]);
 
 void AddHitboxComponent(EntityID& entity);
+
+float GetHitboxRadius(const EntityID& entity, int hitBoxID);

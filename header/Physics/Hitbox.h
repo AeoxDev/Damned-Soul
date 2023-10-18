@@ -100,3 +100,4 @@ void DestroyHitboxVisualizeVariables();
 void SetupTestHitbox();
 
 void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity);
+
