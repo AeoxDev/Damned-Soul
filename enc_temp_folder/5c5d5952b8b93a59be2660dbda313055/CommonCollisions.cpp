@@ -124,7 +124,7 @@ void AttackCollision(OnCollisionParameters& params)
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
 	//Get the components of the attackee (entity 2)
-aa	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
+	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);

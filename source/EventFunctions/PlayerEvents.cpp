@@ -23,6 +23,7 @@ void PlayerLoseControl(EntityID& entity)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->hardHitboxID, false);
+		SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
 	}
 }
 
