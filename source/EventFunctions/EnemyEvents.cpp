@@ -73,6 +73,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID);
 
+
 	int sID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
 	SetHitboxIsEnemy(newMini, sID);
@@ -80,6 +81,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	SetHitboxHitEnemy(newMini, sID);
 	SetHitboxActive(newMini, sID);
 	SetHitboxIsMoveable(newMini, sID);
+	SetHitboxCanTakeDamage(newMini, sID);
 
 	//Set behavior
 	float deathC = bossBehev->deathCounter + 1;
