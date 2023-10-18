@@ -239,7 +239,6 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 void AddHitboxComponent(EntityID& entity)
 {
 	registry.AddComponent<HitboxComponent>(entity);
-	
 }
 
 void CreateProximityHitbox(EntityID& entity, std::string fileName)
@@ -697,6 +696,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	int hID = CreateHitbox(entity, radius * 0.5f, 0.f, -0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsPlayer(entity, hID);
+	SetHitboxHitWall(entity, hID);
 	SetHitboxHitEnemy(entity, hID);
 	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);

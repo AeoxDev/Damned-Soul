@@ -207,6 +207,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Level\Level1.cpp" />
     <ClCompile Include="source\Level\Level2.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
+    <ClCompile Include="source\MouseComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\RelicFunctions.cpp" />
@@ -219,6 +220,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\SkeletonBehaviourSystem.cpp" />
+    <ClCompile Include="source\Skynet\TempBossBehaviourSystem.cpp" />
     <ClCompile Include="source\States\CleanupMacros.cpp" />
     <ClCompile Include="source\States\Game.cpp" />
     <ClCompile Include="source\States\Menu.cpp" />
@@ -393,6 +395,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
+    <ClInclude Include="header\Components\MouseComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />
@@ -435,6 +438,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\SoulHealth.h" />
     <ClInclude Include="header\Relics\SoulPower.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
+    <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />

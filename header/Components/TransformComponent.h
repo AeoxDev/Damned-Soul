@@ -14,3 +14,5 @@ struct TransformComponent
 	//Mass
 	float mass = 1.0f;//Used for moveable collision (clipping collision)
 };
+
+void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 5.1f);

@@ -9,6 +9,7 @@
 void CreatePortal(EntityID& entity)
 {
 	//Create a model and a transform for portal:
+	registry.AddComponent<PointOfInterestComponent>(entity);
 	TransformComponent* portalTransform = registry.AddComponent<TransformComponent>(entity);
 	portalTransform->positionX = -78.0f;
 	portalTransform->positionZ = -32.0f;

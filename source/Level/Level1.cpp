@@ -4,6 +4,7 @@
 #include "Components.h"
 #include "Particles.h"
 #include "EventFunctions.h"
+#include "CollisionFunctions.h"
 
 void LoadLevel1()
 {
@@ -17,6 +18,11 @@ void LoadLevel1()
 	EntityID eye = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
+	EntityID mouse = registry.CreateEntity();
+
+	
+
+
 
 	registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
@@ -34,6 +40,8 @@ void LoadLevel1()
 	
 	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("default");
 	
 	// Player (Default)
 	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
@@ -117,6 +125,13 @@ void LoadLevel1()
 	SetupEnemyCollisionBox(skeleton2, 0.9f);
 	SetupEnemyCollisionBox(dog, 1.0f);
 	SetupEnemyCollisionBox(eye, 1.0f);
+
+	MouseComponentAddComponent(player);
+	//MouseComponentAddComponent(mouse);
+	registry.AddComponent<TransformComponent>(mouse);
+	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
+	mousePointOfInterset->mode = POI_MOUSE;
 	//AddTimedEventComponentStartContinousEnd(player, player, 3.0f, RandomPosition, dog, RandomPosition, skeleton, 6.0f, RandomPosition);
 	//AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
+
 }

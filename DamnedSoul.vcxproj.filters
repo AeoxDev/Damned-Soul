@@ -230,6 +230,9 @@
     <ClCompile Include="source\Relics\FrostFire.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\MouseComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -437,6 +440,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Relics\FrostFire.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\EyeBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\MouseComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
