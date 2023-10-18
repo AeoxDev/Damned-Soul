@@ -31,7 +31,7 @@ namespace UIFunc
 
 	// Lock a relic in shop
 	void Shop_LockRelic(void* args);
-	
+
 	// Re-roll a relic in shop
 	void Shop_ReRollRelic(void* args);
 }

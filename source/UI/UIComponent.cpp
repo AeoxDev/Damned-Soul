@@ -30,17 +30,17 @@ void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation
 //	UpdateTransform();
 //}
 
-XMFLOAT2 UIComponent::GetPosition()
+XMFLOAT2 UIComponent::GetPosition() const
 {
 	return m_Position;
 }
 
-XMFLOAT2 UIComponent::GetScale()
+XMFLOAT2 UIComponent::GetScale() const
 {
 	return m_Scale;
 }
 
-float UIComponent::GetRotation()
+float UIComponent::GetRotation() const
 {
 	return m_Rotation;
 }

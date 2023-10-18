@@ -20,6 +20,9 @@ void LoadLevel1()
 	EntityID particle = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
 
+	//shop with ecs is pain
+	EntityID shop = registry.CreateEntity();
+
 	registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -105,41 +108,13 @@ void LoadLevel1()
 	registry.AddComponent<SkeletonBehaviour>(skeleton2);
 	registry.AddComponent<EyeBehaviour>(eye);
 
-	RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
+	/*RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
 
 	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");
+	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
 
-	ML_Vector<UIButton> shopButtons;
-	ML_Vector<UIShopRelicWindowComponent> relicWindows;
-
-	shopButtons.push_back();
-	shopButtons[0].Setup("TempBuy.png", "TempBuy.png", L"", UIFunc::Shop_BuyRelic);
-	shopButtons.push_back();
-	shopButtons[1].Setup("TempLock.png", "TempLock.png", L"", UIFunc::Shop_LockRelic);
-
-	UIImage relicWindowBaseImage;
-	relicWindowBaseImage.Setup("TempShopRelicWindow.png");
-	UIImage relicImage;
-	relicImage.Setup("icons/frostfire revision.png");
-	UIText relicName;
-	relicName.Setup(L"");
-
-	relicWindows.push_back();
-	relicWindows[0].Setup(shopButtons, relicName, relicWindowBaseImage, relicImage);
-	relicWindows.push_back();
-	relicWindows[1].Setup(shopButtons, relicName, relicWindowBaseImage, relicImage);
-	relicWindows.push_back();
-	relicWindows[2].Setup(shopButtons, relicName, relicWindowBaseImage, relicImage);
-
-	UIImage shopBaseImage;
-	shopBaseImage.Setup("TempShopWindow3.png");
-	UIButton shopRerollButton;
-	shopRerollButton.Setup("TempReroll.png", "TempReroll.png", L"", UIFunc::Shop_ReRollRelic);
-	UIText shopPlayerInfo;
-	shopPlayerInfo.Setup(L"");
-
-	UIShopComponent* shcUIc = registry.AddComponent<UIShopComponent>(player, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f), shopBaseImage, shopPlayerInfo, shopRerollButton, relicWindows);
+	UIShopComponent* shopComp = registry.AddComponent<UIShopComponent>(shop);
+	shopComp->Setup(shop);
 
 	RenderGeometryIndependentCollision(stage);
 	

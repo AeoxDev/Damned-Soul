@@ -4,15 +4,18 @@
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 #include "UI\UIButton.h"
+#include "UIButtonFunctions.h"
 
 #include "MemLib/ML_Vector.hpp"
+
+#include "Registry.h"
+
+struct EntityID;
 
 struct UIShopRelicWindowComponent
 {
 	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
-	DirectX::XMFLOAT2 scale = { 0.0f, 0.0f };
-
-	ML_Vector<UIButton> m_buttons; //TODO remove and place in registry
+	DirectX::XMFLOAT2 scale = { 1.0f, 1.0f };
 
 	bool doRedraw = true;
 
@@ -20,9 +23,8 @@ struct UIShopRelicWindowComponent
 	UIImage m_baseImage;
 	UIImage m_relicImage;
 
-	void Setup(ML_Vector<UIButton> buttons, UIText relicName, UIImage baseImage, UIImage relicImage)
+	void Setup(UIText relicName, UIImage baseImage, UIImage relicImage)
 	{
-		m_buttons = buttons;
 		m_relicName = relicName;
 		m_baseImage = baseImage;
 		m_relicImage = relicImage;
@@ -32,15 +34,13 @@ struct UIShopRelicWindowComponent
 struct UIShopComponent
 {
 	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
-	DirectX::XMFLOAT2 scale = { 0.0f, 0.0f };
+	DirectX::XMFLOAT2 scale = { 1.0f, 1.0f };
 
 	UIImage baseImage;
 	UIText playerInfo;
 
-	UIButton rerollButton;
+	UIShopComponent();
 
-	ML_Vector<UIShopRelicWindowComponent> relicWindows; //TODO remove and place in registry
-
-	UIShopComponent(DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, UIImage baseImage, UIText playerInfo, UIButton rerollButton, ML_Vector<UIShopRelicWindowComponent> relicWindows)
-		: position(position), scale(scale), baseImage(baseImage), playerInfo(playerInfo), rerollButton(rerollButton), relicWindows(relicWindows) {};
+	void Setup(EntityID& shop);
 };
+

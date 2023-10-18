@@ -12,6 +12,9 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 
 	m_doRedraw = true;
 
+	shopPosition = 0;
+	relicWindowButton = false;
+
 	m_CurrentImage = 0;
 
 	//Don't we do this already in constructor etc?
@@ -61,6 +64,11 @@ void UIButton::Release()
 		m_Images[0].Release();
 	if(m_Images[1].GetBitmap() != nullptr)
 		m_Images[1].Release();
+}
+
+void UIButton::SetRelicButton(bool value)
+{
+	relicWindowButton = value;
 }
 
 void UIButton::SetPosition(XMFLOAT2 position)

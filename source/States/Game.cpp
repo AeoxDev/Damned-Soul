@@ -186,17 +186,19 @@ void GameScene::Unload()
 	{
 		UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
 		sh->baseImage.Release();
-		sh->rerollButton.Release();
+	}
 
-		for (uint32_t i = 0; i < sh->relicWindows.size(); i++)
-		{
-			for (uint32_t J = 0; J < sh->relicWindows[i].m_buttons.size(); J++)
-				sh->relicWindows[i].m_buttons[J].Release();
-			
-			sh->relicWindows[i].m_buttons.~ML_Vector();
+	for (auto entity : View<UIShopRelicWindowComponent>(registry))
+	{
+		UIShopRelicWindowComponent* sh = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		sh->m_baseImage.Release();
+		sh->m_relicImage.Release();
+	}
 
-		}
-		sh->relicWindows.~ML_Vector();
+	for (auto entity : View<UIButton>(registry))
+	{
+		UIButton* b = registry.GetComponent<UIButton>(entity);
+		b->Release();
 	}
 
 	for (auto entity : View<UIHealthComponent>(registry))

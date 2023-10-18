@@ -11,6 +11,8 @@ struct UIButton
 	UIComponent m_UiComponent;
 	void* m_onClick;
 	bool m_doRedraw = true;
+	int shopPosition = 0;
+	bool relicWindowButton = false;
 	
 	unsigned int m_CurrentImage = 0;
 	UIImage m_Images[2];					//2 Images, button image and hover button image (can be null)
@@ -30,6 +32,7 @@ struct UIButton
 
 	//void SetHover(int);
 
+	void SetRelicButton(bool value);
 	void SetPosition(DirectX::XMFLOAT2 position);
 	void SetScale(DirectX::XMFLOAT2 scale);
 	void SetScale(float scale);

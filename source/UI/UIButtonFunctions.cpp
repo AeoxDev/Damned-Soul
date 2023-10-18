@@ -128,15 +128,17 @@ void UIFunc::Settings_Fullscreen(void* args)
 
 void UIFunc::Shop_BuyRelic(void* args)
 {
-
+	int a = 0;
 }
 
 void UIFunc::Shop_LockRelic(void* args)
 {
 
+	int a = 0;
 }
 
 void UIFunc::Shop_ReRollRelic(void* args)
 {
+	int a = 0;
 
 }

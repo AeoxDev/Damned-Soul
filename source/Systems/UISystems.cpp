@@ -28,9 +28,6 @@ bool UIRenderSystem::Update()
         UpdateUI();
         Begin2dFrame(ui);
 
-        for (auto entity : View<UIButton>(registry))
-            registry.GetComponent<UIButton>(entity)->Draw();
-
         for (auto entity : View<UIImage>(registry))
             registry.GetComponent<UIImage>(entity)->Draw();
 
@@ -73,24 +70,24 @@ bool UIRenderSystem::Update()
             uiElement->text.Draw();
         }
 
+      
+
+        for (auto entity : View<UIShopRelicWindowComponent>(registry))
+        {
+            auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+            uiElement->m_baseImage.Draw();
+            uiElement->m_relicImage.Draw();
+        }
+
         for (auto entity : View<UIShopComponent>(registry))
         {
             auto uiElement = registry.GetComponent<UIShopComponent>(entity);
             uiElement->baseImage.Draw();
             uiElement->playerInfo.Draw();
-            uiElement->rerollButton.Draw();
-            
-            for (uint32_t i = 0; i < uiElement->relicWindows.size(); i++)
-            {
-                uiElement->relicWindows[i].m_baseImage.Draw();
-                uiElement->relicWindows[i].m_relicImage.Draw();
-                uiElement->relicWindows[i].m_relicName.Draw();
-
-                for (uint32_t j = 0; j < uiElement->relicWindows[i].m_buttons.size(); j++)
-                    uiElement->relicWindows[i].m_buttons[j].Draw();
-
-            }
         }
+
+        for (auto entity : View<UIButton>(registry))
+            registry.GetComponent<UIButton>(entity)->Draw();
 
         End2dFrame(ui);
     }
@@ -230,46 +227,26 @@ bool UIShopSystem::Update()
 
     for (auto entity : View<UIShopComponent>(registry))
     {
-        auto uiElement = registry.GetComponent<UIShopComponent>(entity);
-
-        uiElement->baseImage.m_UiComponent.SetPosition(uiElement->position);
-        uiElement->baseImage.m_UiComponent.SetScale(uiElement->scale);
+        auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
 
         ML_String playerInfo = ("Souls: " + std::to_string((int)player->souls) +
             "\n\nPlayer Stats:\nHealth: " + std::to_string((int)stats->health) +
             "\nDamage: " + std::to_string((int)stats->damage) + 
             "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
-            "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str();
+            "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
 
-        DirectX::XMFLOAT2 spritePositionOffset = { uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 40.0f) ,
-                                               uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 40.0f) };
 
-        DirectX::XMFLOAT2 startingSpritePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
-                                       abs(uiElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
+        DirectX::XMFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
+                                               uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
+
+        DirectX::XMFLOAT2 startingSpritePosition = { abs(uiShopElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+                                       abs(uiShopElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
         DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
                                         -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
-
-
+        
         std::wstring valueAsWString(playerInfo.begin(), playerInfo.end());
-        uiElement->playerInfo.UpdateText(valueAsWString);
-        uiElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 3) });
-
-        uiElement->rerollButton.SetPosition({ spritePixelCoords.x + (0.1f * 7), spritePixelCoords.y - (0.1f * 11) });
-
-        for (uint32_t i = 0; i < uiElement->relicWindows.size(); i++)
-        {
-            uiElement->relicWindows[i].m_baseImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 7), spritePixelCoords.y - (0.1f * 3 * (i + 1)) });
-            uiElement->relicWindows[i].m_relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 7.5f), spritePixelCoords.y - (0.1f * 3 * (i + 1)) });
-
-            DirectX::XMFLOAT2 startingSpritePosition2 = { abs(uiElement->relicWindows[i].m_baseImage.m_UiComponent.GetPosition().x + (spritePositionOffset.x / 2.0f)) ,
-                                           abs(uiElement->relicWindows[i].m_baseImage.m_UiComponent.GetPosition().y + (spritePositionOffset.y / 2.0f)) };
-            DirectX::XMFLOAT2 spritePixelCoords2 = { (startingSpritePosition2.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-                                            -1 * ((startingSpritePosition2.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
-
-            for (uint32_t j = 0; j < uiElement->relicWindows[i].m_buttons.size(); j++)
-                uiElement->relicWindows[i].m_buttons[j].SetPosition({ spritePixelCoords2.x + 0.01f, spritePixelCoords2.y - (0.1f * j) });
-
-        }
+        uiShopElement->playerInfo.UpdateText(valueAsWString);
+        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 3) });
 
     }
     return true;
