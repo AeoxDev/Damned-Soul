@@ -200,6 +200,11 @@ void GameScene::Unload()
 		i->Release();
 	}
 
+	for (auto entity : View<ProximityHitboxComponent>(registry))
+	{
+		ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(entity);
+		p->pointList.~ML_Vector();
+	}
 	
 
 	//Destroy entity resets component bitmasks
