@@ -391,7 +391,7 @@ bool CollisionSystem::Update()
 }
 
 
-float GetHitboxRadius(EntityID& entity, int hitBoxID)
+float GetHitboxRadius(const EntityID& entity, int hitBoxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitBoxID < SAME_TYPE_HITBOX_LIMIT)

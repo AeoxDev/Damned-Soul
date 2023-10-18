@@ -16,7 +16,7 @@ EntityID Registry::CreateEntity()
 		int newIndex = availableEntitySlots.back();
 		availableEntitySlots.pop_back();
 
-		EntityID newId = CreateEntityId(newIndex, GetEntityState(entities[newIndex].id));
+		EntityID newId = CreateEntityId(newIndex, false); //GetEntityState(entities[newIndex].id)
 		entities[newIndex].id = newId;
 		return newId;
 	}

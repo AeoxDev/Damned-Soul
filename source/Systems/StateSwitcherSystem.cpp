@@ -70,7 +70,7 @@ bool StateSwitcherSystem::Update()
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
-		if (playersComp->killingSpree >= 4 && !playersComp->portalCreated)
+		if (playersComp->killingSpree >= 4 && !playersComp->portalCreated && stateManager.activeLevel == 1)
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();

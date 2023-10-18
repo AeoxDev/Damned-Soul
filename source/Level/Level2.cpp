@@ -68,15 +68,7 @@ void LoadLevel2()
 	stc->scaleX = 60.0f;
 	stc->scaleZ = 30.0f;
 	// Player (Default)
-	/*TransformComponent* ptc = */registry.AddComponent<TransformComponent>(player);
-	// First skeleton
-	TransformComponent fsTransformComponent;
-	fsTransformComponent.positionZ = 20.0f;
-	///*TransformComponent* skeltc = */registry.AddComponent<TransformComponent>(skeleton, fsTransformComponent);
-	// Second skeleton
-	TransformComponent ssTransformComponent;
-	ssTransformComponent.positionZ = 15.0f;
-	///*TransformComponent* skeltc2 = */registry.AddComponent<TransformComponent>(skeleton2, ssTransformComponent);
+	registry.AddComponent<TransformComponent>(player);
 
 
 

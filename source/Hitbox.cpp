@@ -239,7 +239,6 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 void AddHitboxComponent(EntityID& entity)
 {
 	registry.AddComponent<HitboxComponent>(entity);
-	
 }
 
 void CreateProximityHitbox(EntityID& entity, std::string fileName)

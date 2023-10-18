@@ -55,4 +55,4 @@ int CreateHitbox(EntityID& entity, int corners, float cornerPosX[], float corner
 
 void AddHitboxComponent(EntityID& entity);
 
-float GetHitboxRadius(EntityID& entity, int hitBoxID);
+float GetHitboxRadius(const EntityID& entity, int hitBoxID);
