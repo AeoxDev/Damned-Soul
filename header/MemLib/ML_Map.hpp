@@ -169,7 +169,8 @@ public:
 				m_data[i].~pair();
 
 				// Overwrite
-				std::memcpy(&(m_data[i]), &(m_data[i + 1]), (m_size - i) * m_tSize);
+				if (i < (m_size - 1))
+					std::memcpy(&(m_data[i]), &(m_data[i + 1]), (m_size - i) * m_tSize);
 				return --m_size;
 			}
 		}

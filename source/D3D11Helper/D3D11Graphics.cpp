@@ -1,9 +1,9 @@
 #include "D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "MemLib/MemLib.hpp"
-#include <iostream>
 #include <fstream>
 #include <string>
+#include <assert.h>
 
 //#ifdef _DEBUG
 //#include <dxgidebug.h>
@@ -54,11 +54,7 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	swapChainDesc.Flags = 0;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &d3d11Data->swapChain, &d3d11Data->device, NULL, &d3d11Data->deviceContext);
-	if (FAILED(hr))
-	{
-		std::cout << "Failed to create device and swap chain!" << std::endl;
-		return false;
-	}
+	assert(!FAILED(hr));
 
 	return true;
 }
@@ -98,8 +94,7 @@ int SetupDirectX(HWND& w)
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 	PUSH_AND_INITIALIZE(geoHolder, GeometryShaderHolder);
 
-	if (false == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT))
-		FAIL_MSG
+	assert(true == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT));
 
 	return 0;
 }
@@ -188,14 +183,13 @@ void EndDirectX()
 	}
 	rtvHolder->rtv_map.clear();
 
-	// TODO THIS IS PROBABLY THE CAUSE FOR THE UNRELEASED TEXTURE BUT UNCOMMENTING THIS
-	// CRASHES SRV'S RELEASE EVEN THOUGH IT SHOULD NOT AS REFERENCE IS PROPERLY ADDED IN RENDERHELPER
-	//for (auto& [key, val] : rtvHolder->tx_map)
-	//{
-	//	if (val != nullptr)
-	//		val->Release();
-	//}
-	//rtvHolder->tx_map.clear();
+	// Release all RTV textures
+	for (auto& [key, val] : rtvHolder->tx_map)
+	{
+		if (val != nullptr)
+			val->Release();
+	}
+	rtvHolder->tx_map.clear();
 	
 	// Release all depth stencil views
 	for (auto& [key, val] : dsvHolder->dsv_map)

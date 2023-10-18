@@ -1,7 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
 #include "MemLib/PoolPointer.hpp"
-#include "GameRenderer.h"
 #include "ParticleComponent.h"
 
 #define PARTICLE_METADATA_LIMIT 256
@@ -12,8 +11,8 @@
 //Slot [0] will always be read and slot [1] will always be write
 struct ParticleInputOutput
 {
-	int8_t SRVIndex;
-	int8_t UAVIndex;
+	SRV_IDX SRVIndex;
+	UAV_IDX UAVIndex;
 };
 
 struct Particle

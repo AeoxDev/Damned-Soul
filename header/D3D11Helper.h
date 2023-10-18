@@ -167,6 +167,11 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 // Release for a single constant buffer
 void ReleaseCB(const CS_IDX idx);
 
+// Create a structured buffer. MUST take an SRV index as an argument, this index should be uninitialized, and will be filled by this function
+SB_IDX CreateStructuredBuffer(const void* data, const size_t& size, const size_t& count, SRV_IDX& srv);
+//bool SetStructuredBuffer(const SB_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+bool UpdateStructuredBuffer(const SB_IDX idx, const void* data);
+
 
 // Create a Vertex Buffer with provided data and return a unique index to it
 VB_IDX CreateVertexBuffer(const void* data, const size_t& size, const size_t& count, const USAGE_FLAGS& useFlags);
@@ -197,6 +202,10 @@ VP_IDX CreateViewport(const size_t& width, const size_t& height);
 bool SetViewport(const VP_IDX idx);
 // Erase a viewport
 bool DeleteD3D11Viewport(const VP_IDX idx);
+// Release for a single constant buffer
+void ReleaseVP(const VP_IDX idx);
+//Set new values for viewport
+void EditViewport(const VP_IDX idx, const size_t& width, const size_t& height);
 
 // Creates the backbuffer from swapchain
 RTV_IDX CreateBackBuffer();
@@ -226,8 +235,10 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Sets shader resource view of parameter slot to NULL in the shader of parameter bindto
 void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+//// Release for a shader resource view
+//void ReleaseSRV(const SRV_IDX idx);
 // Release for a shader resource view
-void ReleaseSRV(const SRV_IDX idx);
+bool DeleteD3D11SRV(const SRV_IDX idx);
 
 // Copies the data in a SRV to a vertex buffer, for particles
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source);

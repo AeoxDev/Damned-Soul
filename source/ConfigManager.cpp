@@ -2,7 +2,6 @@
 #include "ConfigInterpreter.h"
 #include <fstream>
 #include <filesystem>
-#include <iostream>
 
 void DefaultConfig()
 {
@@ -12,7 +11,7 @@ void DefaultConfig()
 	if (!newFile.is_open())
 	{
 		//Failed
-		std::cout << "WARNING! Failed to open Settings.config" << std::endl;
+		//std::cout << "WARNING! Failed to open Settings.config" << std::endl;
 	}
 	else
 	{
@@ -38,7 +37,7 @@ void ReadConfig()
 	if (!configFile.is_open())
 	{
 		//Failed
-		std::cout << "WARNING! Failed to open Settings.config" << std::endl;
+		//std::cout << "WARNING! Failed to open Settings.config" << std::endl;
 	}
 	else
 	{

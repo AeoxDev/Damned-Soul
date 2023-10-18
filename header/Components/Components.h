@@ -7,6 +7,7 @@
 #include "AnimationComponent.h"
 // Special child belongs to both groups
 #include "TransformComponent.h"
+#include "MouseComponent.h"
 // Physics Components
 #include "GeometryIndependentComponent.h"
 #include "PlayerComponent.h"
@@ -27,5 +28,7 @@
 //Collision
 #include "HitboxComponent.h"
 
+//AI Behaviours
 #include "Skynet\SkeletonBehaviour.h"
 #include "Skynet\HellhoundBehaviour.h"
+#include "Skynet/EyeBehaviour.h"

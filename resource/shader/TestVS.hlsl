@@ -23,8 +23,6 @@ struct VS_OUT
 	float4 position : SV_POSITION;
 	float4 normal : NORMAL;
 	float2 uv : UV;
-	uint4 index : INDEX;
-	float4 weight : WEIGHT;
 };
 
 VS_OUT main(VS_INPUTS pos)

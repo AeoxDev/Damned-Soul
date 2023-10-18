@@ -3,10 +3,11 @@
 #include "SDLHandler.h"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
-#include <iostream>
 #include "MemLib/PoolPointer.hpp"
 #include "EntityFramework.h"
 #include "GameRenderer.h"
+#include <assert.h>
+#include <d2d1.h>
 
 IDXGISurface* UISurface;
 
@@ -45,36 +46,12 @@ void ClearUI()
 void RenderUI()//Render what is drawn to rendertarget.
 {
 
-	if (!SetVertexShader(renderStates[ui.RenderSlot].vertexShaders[0]))
-	{
-		std::cout << "Failed to set UI Vertex Shader!" << std::endl;
-		return;
-	}
-	if (!SetPixelShader(renderStates[ui.RenderSlot].pixelShaders[0]))
-	{
-		std::cout << "Failed to set UI Pixel Shader!" << std::endl;
-		return;
-	}
-	if (!SetVertexBuffer(renderStates[ui.RenderSlot].vertexBuffer))
-	{
-		std::cout << "Failed to set UI Vertex Buffer!" << std::endl;
-		return;
-	}
-	if (!SetIndexBuffer(renderStates[ui.RenderSlot].indexBuffer))
-	{
-		std::cout << "Failed to set UI Index Buffer!" << std::endl;
-		return;
-	}
-	if (!SetRenderTargetViewAndDepthStencil(renderStates[1].renderTargetView, renderStates[1].depthStencilView))
-	{
-		std::cout << "Failed to set rtv or dsv!" << std::endl;
-		return;
-	}
-	if (!SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_PIXEL, 0))
-	{
-		std::cout << "Failed to set srv!" << std::endl;
-		return;
-	}
-
+	assert(SetVertexShader(renderStates[ui.RenderSlot].vertexShaders[0]));
+	assert(SetPixelShader(renderStates[ui.RenderSlot].pixelShaders[0]));
+	
+	assert(SetVertexBuffer(renderStates[ui.RenderSlot].vertexBuffer));
+	assert(SetIndexBuffer(renderStates[ui.RenderSlot].indexBuffer));
+	assert(SetRenderTargetViewAndDepthStencil(renderStates[1].renderTargetView, renderStates[1].depthStencilView));
+	assert(SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_PIXEL, 0));
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
 }

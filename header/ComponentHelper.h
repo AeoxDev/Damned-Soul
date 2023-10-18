@@ -1,9 +1,5 @@
 #pragma once
-
-#include "D3D11Graphics.h"
-#include <DirectXMath.h>
 #include <bitset>
-
 #include "Relics.h"
 
 //Stats that every character in the game levels will have (player and enemies), modifyable by weapons and relics
@@ -32,6 +28,7 @@ struct PlayerComponent
 	int souls = 0;
 	int attackHitboxID = -1;
 	int killingSpree = 0;
+	bool portalCreated = false;
 };
 
 struct ControllerComponent
@@ -39,9 +36,9 @@ struct ControllerComponent
 	float goalX = 0.0f, goalZ = -1.0f;//Goal direction
 
 	float moveTime = .0f;//This is the time the player has been moving, used for camera feel.
-	float moveFactor = 2.5f;
-	float moveResetFactor = 1.25f;
-	float moveMaxLimit = 3.0f;
+	float moveFactor = 0.0f;
+	float moveResetFactor = 0.0f;
+	float moveMaxLimit = 0.0f;
 };
 
 //I hate

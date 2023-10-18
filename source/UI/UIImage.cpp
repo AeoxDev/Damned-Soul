@@ -1,11 +1,16 @@
 #include "UI/UIImage.h"
-#include <iostream>
+#include <d2d1.h>
+#include <wincodec.h>
+
 
 using namespace DirectX;
 
-UIImage::UIImage(const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
-	:UIComponent(position, scale, rotation, visibility), m_Bitmap(nullptr), m_Opacity(opacity)
+void UIImage::Setup(const std::string& file, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
+	m_UiComponent.Setup(scale, rotation, visibility);
+	m_Bitmap = nullptr;
+	m_Opacity = opacity;
+
 	HRESULT hr;
 	IWICBitmapDecoder* decoder = nullptr;
 	IWICBitmapFrameDecode* source = nullptr;
@@ -14,44 +19,24 @@ UIImage::UIImage(const std::string& file, XMFLOAT2 position, XMFLOAT2 scale, flo
 	const std::wstring path = L"../resource/GUI/" + std::wstring(file.begin(), file.end());
 
 	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to create image decoder" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	hr = decoder->GetFrame(0, &source);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to get image source" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	hr = factory->CreateFormatConverter(&converter);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to create image converter" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
 	hr = converter->Initialize(source, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeMedianCut);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to inizialize image source" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
-	
+
 	hr = ui.GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
-	if (FAILED(hr))
-	{
-		std::cout << "FAILED to create image bitmap" << std::endl;
-		return;
-	}
+	assert(!FAILED(hr));
 
-	m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
-	
-	SetTransform(position, scale, rotation);
+	m_UiComponent.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
+
+	m_UiComponent.SetTransform(position, scale, rotation);
 
 	converter->Release();
 	source->Release();
@@ -69,11 +54,11 @@ void UIImage::Release()
 
 void UIImage::Draw()
 {
-	if (true == m_Visibility)
+	if (m_UiComponent.m_Visibility == true)
 	{
 		ID2D1RenderTarget* rt = ui.GetRenderTarget();
-		rt->SetTransform(m_Transform);
-		rt->DrawBitmap(m_Bitmap, m_CurrentBounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_CurrentBounds);
+		rt->SetTransform(m_UiComponent.m_Transform);
+		rt->DrawBitmap(m_Bitmap, m_UiComponent.m_CurrentBounds, m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, m_UiComponent.m_CurrentBounds);
 	}
 }
 

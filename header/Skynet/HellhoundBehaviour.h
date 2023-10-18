@@ -1,4 +1,5 @@
 #pragma once
+
 struct HellhoundBehaviour
 {
 	// MOVEMENT VARIABLES

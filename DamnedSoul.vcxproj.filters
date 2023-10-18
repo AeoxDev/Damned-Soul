@@ -14,6 +14,8 @@
     <FxCompile Include="resource\shader\TestVS.hlsl" />
     <FxCompile Include="resource\shader\TestSkelVS.hlsl" />
     <FxCompile Include="resource\shader\Particles\ParticleCS.hlsl" />
+    <FxCompile Include="resource\shader\VertexShader.hlsl" />
+    <FxCompile Include="resource\shader\PixelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -44,10 +46,9 @@
     <FxCompile Include="resource\shader\DebugHitboxVertexShader.hlsl" />
     <FxCompile Include="resource\shader\UIPS.hlsl" />
     <FxCompile Include="resource\shader\UIVS.hlsl" />
-    <FxCompile Include="resource\shader\VertexShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Lighting.cpp" />
+    <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
     <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\Particles.cpp" />
@@ -181,11 +182,35 @@
     <ClCompile Include="source\D3D11Helper\HolderFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\EventFunctions\EnemyEvents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\PortalEvents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Level\Level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Level\Level1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Level\Level2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\StateSwitcherSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MouseComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
     <ClInclude Include="header\MemLib\ML_String.hpp" />
-    <ClInclude Include="header\Lighting.h" />
+    <ClInclude Include="header\Light.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
@@ -340,6 +365,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\UI\UIButtonFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Levels\LevelLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ImageComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\PlayerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\TextComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Skynet\EyeBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\MouseComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

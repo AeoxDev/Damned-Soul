@@ -6,6 +6,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
+//#include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -17,7 +18,18 @@ int main(int argc, char* args[])
 	SetupWindow();
 	std::string title = "Damned Soul";
 	stateManager.Setup();
+	
+	//Reload stress-test
+	/*for (unsigned int i = 0; i < 3000; ++i)
+	{
+		UIFunc::MainMenu_Start(nullptr);
 
+		SetInMainMenu(true);
+		SetInPlay(false);
+		stateManager.levelScenes[0].Unload();
+		stateManager.levelScenes[1].Unload();
+		stateManager.menu.Setup();
+	}*/
 
 	while (!sdl.quit)
 	{
@@ -38,7 +50,11 @@ int main(int argc, char* args[])
 void UpdateDebugWindowTitle(std::string& title)
 {
 #ifdef _DEBUG
-	if (sdl.windowFlags == 0 && NewSecond())
+	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+	{
+		return;
+	}
+	if (NewSecond())
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
 		//title+="";//Add more debugging information here, updates every second.

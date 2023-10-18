@@ -1,6 +1,6 @@
 #pragma once
-#include "EntityFramework.h"
 
+struct EntityID;
 struct TimedEventComponent;
 /// <summary>Creates a timed event on entityID that runs functions with the chosen entity in its function arguments.
 /// This component will destroy itself once all give functoin have ran and end has been reached</summary>

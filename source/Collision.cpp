@@ -7,6 +7,7 @@
 #include <cmath>
 #include <string>
 #include "Systems\Systems.h"
+#include "Components.h"
 #include <fstream>
 #include <sstream>
 #include "Components.h"
@@ -127,6 +128,24 @@ void ResetCollisionVariables()
 		}
 		hitboxes->nrMoveableCollisions = MOVEABLE_COLLISIONS_PER_FRAME;
 	}
+	for (auto entity : View<HitboxComponent, TransformComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ColliderComponent
+	{
+		HitboxComponent* hitboxes = registry.GetComponent<HitboxComponent>(entity);
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		if (hitboxes == nullptr || transform == nullptr)
+		{
+			continue;
+		}
+		float radians = acosf(transform->facingX);
+		if (transform->facingZ < 0.0f)
+		{
+			radians *= -1.0f;
+		}
+		hitboxes->offsetXx = -sinf(radians);
+		hitboxes->offsetZz = -sinf(radians);
+		hitboxes->offsetXz = -cosf(radians);
+		hitboxes->offsetZx = cosf(radians);
+	}
 }
 
 void HandleDamageCollision()
@@ -197,12 +216,12 @@ void HandleMoveableCollision( )//Reggie Strie
 						//Both are convex, do convex to convex.
 						bool hit = IsConvexCollision(entity, entity2, i, j);
 					}
-					if (firstHitbox->circularFlags[i].active && firstHitbox->convexFlags[j].active)
+					if (firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
 					{
 						//One is convex, other one is circular.
 						bool hit = IsCircularConvexCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
 					}
-					if (firstHitbox->convexFlags[i].active && firstHitbox->circularFlags[j].active)
+					if (firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active)
 					{
 						//One is convex, other one is circular.
 						bool hit = IsConvexCircularCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
@@ -358,6 +377,11 @@ void UpdatePhysics()
 	HandleMoveableCollision();
 	HandleDamageCollision();
 	HandleStaticCollision();
+}
+
+float RotateOffset(float offsetX, float offsetZ, float xFactor, float zFactor)
+{
+	return offsetX * xFactor + offsetZ * zFactor;
 }
 
 bool CollisionSystem::Update()
