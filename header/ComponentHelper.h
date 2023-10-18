@@ -5,9 +5,12 @@
 //Stats that every character in the game levels will have (player and enemies), modifyable by weapons and relics
 struct StatComponent
 {
+private:
 	//Base stats
-	float health = 100.0f;
+	float maximumHealth = 100.f;
+	float currentHealth = 100.f;
 	//defense? percentage-based or flat?
+public:
 	float moveSpeed = 1.0f;
 
 
@@ -19,16 +22,35 @@ struct StatComponent
 	// for death animation
 	bool performingDeathAnimation = false;
 
-	StatComponent(float hp, float ms, float dmg, float as) : health(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
+	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
+
+	// Get the current health of the player
+	float GetHealth() const;
+	// Get the max health of the player
+	float GetMaxHealth() const;
+	// Get a value from 0 to 1 representing the current health of the entity
+	float GetHealthFraction() const;
+	// Update the current health of the player
+	float UpdateHealth(const float delta);
+	// Update the max health of the player
+	float UpdateMaxHealth(const float delta);
 };
 
 //Stats specific to the player
 struct PlayerComponent
 {
+private:
+	// Set to private since it is important that any update is carried on through UpdateSouls
 	int souls = 0;
+public:
 	int attackHitboxID = -1;
 	int killingSpree = 0;
 	bool portalCreated = false;
+
+	// Update the number of souls in the player's possession
+	int UpdateSouls(const int delta);
+	// Get the current number of souls the player possesses
+	int GetSouls() const;
 };
 
 struct ControllerComponent

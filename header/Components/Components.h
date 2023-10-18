@@ -32,4 +32,8 @@
 //AI Behaviours
 #include "Skynet\SkeletonBehaviour.h"
 #include "Skynet\HellhoundBehaviour.h"
-#include "Skynet/EyeBehaviour.h"
+#include "Skynet\EyeBehaviour.h"
+#include "Skynet\TempBossBehaviour.h"
+
+//Misc Combat Components
+#include "DamageOverTimeComponent.h"

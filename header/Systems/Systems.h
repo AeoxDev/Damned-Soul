@@ -67,6 +67,11 @@ class ParticleSystemCPU : public System
 	bool Update();
 };
 
+class DamageOverTimeSystem : public System
+{
+	bool Update();
+};
+
 class SkeletonBehaviourSystem : public System
 {
 	bool Update();
@@ -78,6 +83,11 @@ class HellhoundBehaviourSystem : public System
 };
 
 class EyeBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class TempBossBehaviourSystem : public System
 {
 	bool Update();
 };

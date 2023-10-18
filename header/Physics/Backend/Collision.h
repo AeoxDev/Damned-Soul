@@ -136,3 +136,4 @@ void UpdatePhysics();
 //void CollisionEvent(Entity& entity, Entity& entity2); //calculates angle of attack and sends it to onCollision
 
 float RotateOffset(float offsetX, float offsetZ, float xFactor, float zFactor);
+

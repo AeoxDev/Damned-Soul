@@ -13,3 +13,4 @@ void CreatePortal(EntityID& entity);
 //void EnemyExclusion(EntityID& entity); not needed?
 void PlayDeathAnimation(EntityID& entity);
 void RemoveEnemy(EntityID& entity);
+void SplitBoss(EntityID& entity);

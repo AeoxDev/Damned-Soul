@@ -20,6 +20,10 @@ void LoadLevel1()
 	EntityID portal = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
+	
+
+
+
 	registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
