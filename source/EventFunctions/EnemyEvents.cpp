@@ -58,13 +58,14 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	transComp.scaleX = transform->scaleX * newScaleSize;
 	transComp.scaleY = transform->scaleY * newScaleSize;
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
+	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp);
 
 	//Set hitbox
 	float newScaleHitBox = 0.85f;
 	AddHitboxComponent(newMini);
 
-	int hID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	int hID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox * 0.7f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
