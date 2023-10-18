@@ -12,11 +12,13 @@ void AudioEngineComponent::Setup()
 
 	//Load all sounds to use in the game
 	FMOD::Sound* toAdd;
-	for (int i = 0; i < 1; i++) //Change 1 to however many sounds you want to have in the game.
+	for (int i = 0; i < 3; i++) //Change 1 to however many sounds you want to have in the game.
 	{
 		this->sounds.push_back(toAdd);
 	}
 	this->system->createSound("../MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
+	this->system->createSound("../MenuButtonPress.mp3", FMOD_DEFAULT, 0, &this->sounds[1]);
+	this->system->createSound("../StartGameClick.mp3", FMOD_DEFAULT, 0, &this->sounds[2]);
 }
 
 void AudioEngineComponent::HandleSound()
@@ -77,6 +79,28 @@ void AudioEngineComponent::Destroy()
 	this->system->release();
 }
 
+void AudioEngineComponent::HandleSpecificSound(bool& playSound, bool& stopSound, int& channelIndex, ML_Vector<int>& soundIndices, int& soundIndex)
+{
+	if (playSound) //Check if the entity wants to play a sound
+	{
+		//Play the sound
+		if (this->channels[channelIndex] != nullptr)
+		{
+			this->channels[channelIndex]->stop(); //Stop the previous sound
+			this->channels[channelIndex] = nullptr; //Set the channel to nullptr (this is to prevent sound cutting off)
+		}
+		this->system->playSound(this->sounds[soundIndices[soundIndex]], 0, false, &this->channels[channelIndex]); //Play the new sound
+		playSound = false;
+	}
+	else if (stopSound)
+	{
+		//Stop the sound
+		this->channels[channelIndex]->stop(); //Stop the previous sound
+		this->channels[channelIndex] = nullptr; //Set the channel to nullptr (this is to prevent sound cutting off)
+		stopSound = false;
+	}
+}
+
 void SoundComponent::Load(const int EntityType)
 {
 	for (auto entity : View<AudioEngineComponent>(registry)) //Access an entity
@@ -106,6 +130,8 @@ void SoundComponent::Load(const int EntityType)
 	case MENU:
 		//Push back all indices for the menu sounds into soundIndices
 		this->soundIndices[0].push_back(0);
+		this->soundIndices[0].push_back(1);
+		this->soundIndices[0].push_back(2);
 		break;
 	case MUSIC:
 		//Push back all indices for the music sounds into soundIndices
@@ -156,18 +182,19 @@ void SoundComponent::Stop(const int SelectedChannel)
 
 void SoundComponent::Unload()
 {
-	for (int i = 0; i < CHANNEL_LIMIT; i++)
-	{
-		this->soundIndices[i].~ML_Vector();
-	}
 	for (auto entity : View<AudioEngineComponent>(registry)) //Access an entity
 	{
 		AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
 
-		//Set the index for the channel as free.
+		//Play the audio before removing it and set the index for the channel as free.
 		for (int i = 0; i < CHANNEL_LIMIT; i++)
 		{
+			audioEngine->HandleSpecificSound(this->playSound[i], this->stopSound[i], this->channelIndex[i], this->soundIndices[i], this->soundIndex[i]);
 			audioEngine->freeChannels.push_back(this->channelIndex[i]);
 		}
+	}
+	for (int i = 0; i < CHANNEL_LIMIT; i++)
+	{
+		this->soundIndices[i].~ML_Vector();
 	}
 }
