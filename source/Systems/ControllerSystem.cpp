@@ -105,8 +105,6 @@ bool ControllerSystem::Update()
 
 			}
 			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
-			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl);
-			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 2.5f);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 		}
 
