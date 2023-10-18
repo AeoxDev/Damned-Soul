@@ -5,41 +5,85 @@
 #include "DeltaTime.h"
 
 #include "CollisionFunctions.h" //AttackCollision
+#include "Backend/Collision.h" //Off the deep end
 
 void PlayerLoseControl(EntityID& entity)
+{	
+	//Start by removing the players' ControllerComponent
+	registry.RemoveComponent<ControllerComponent>(entity);
+	
+	//Get relevant components
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
+
+	//Store any specific condition in the timed event
+	uint32_t condition = GetTimedEventCondition(teComp);
+
+	//If we're dashing, we make player invincible
+	if (condition == CONDITION_DASH)
+	{
+		SetHitboxCanTakeDamage(entity, playerComp->hardHitboxID, false);
+	}
+}
+
+void SetPlayerAttackHitboxActive(EntityID& entity)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
-	registry.RemoveComponent<ControllerComponent>(entity); //Danger
-	
-	//Temp: Aggressive dash, make the player trigger AttackCollision until the end of the dash
-	SetHitboxActive(entity, playerComp->attackHitboxID, true);
+	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, true);
 }
 
 void PlayerRegainControl(EntityID& entity)
 {
-	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
-	registry.AddComponent<ControllerComponent>(entity); //Lord have mercy
+	//Start by giving back the players' ControllerComponent
+	registry.AddComponent<ControllerComponent>(entity);
 
-	//Guh..?
-	SetHitboxActive(entity, playerComp->attackHitboxID, false);
+	//Get relevant components
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
+
+	//Store any specific condition in the timed event
+	uint32_t condition = GetTimedEventCondition(teComp);
+	
+	//If we've just dashed, we make player capable of taking damage again
+	if (condition == CONDITION_DASH)
+	{
+		SetHitboxCanTakeDamage(entity, playerComp->hardHitboxID, true);
+	}
+}
+
+void SetPlayerAttackHitboxInactive(EntityID& entity)
+{
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
+}
+
+void PlayerAttack(EntityID& entity)
+{
+	//All we do right now is perform the attack animation
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+
+	//Can't perform animation without the AnimationComponent, durr
+	if (!anim)
+		return;
+
+	//Perform attack animation, woo, loop using DT
+	anim->aAnim = ANIMATION_ATTACK;
+	anim->aAnimIdx = 0;
+	anim->aAnimTime += GetDeltaTime();
+	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
+	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 }
 
 void PlayerDash(EntityID& entity)
 {
 	//Get access to players relevant components
-	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
-	if (!stat || !transform || !dac || !anim) //Invalid entity doesn't have the required components
+	//Invalid entity doesn't have the required components
+	if (!transform || !stat || !dac)
 		return;
-
-	// Loop using DT
-	anim->aAnim = ANIMATION_ATTACK;
-	anim->aAnimIdx = 0;
-	anim->aAnimTime += GetDeltaTime() * 5.0f;
-	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();

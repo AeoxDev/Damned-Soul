@@ -26,6 +26,9 @@ void SetHitboxIsStaticHazard(EntityID& entity, int hitboxID, bool setFlag = true
 void SetHitboxIsDynamicHazard(EntityID& entity, int hitboxID, bool setFlag = true);
 void SetHitboxIsMoveable(EntityID& entity, int hitboxID, bool setFlag = true);
 
+void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag = true);
+void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag = true);
+
 void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag = true);
 void SetHitboxHitWall(EntityID& entity, int hitboxID, bool setFlag = true);
 void SetHitboxHitPlayer(EntityID& entity, int hitboxID, bool setFlag = true);
@@ -40,6 +43,9 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius);
 bool HitboxCanHitGI(EntityID& entity);
 
 void SetCollisionEvent(EntityID& entity, int hitboxID, void* function);
+
+//Reset the attack hitboxes tracker flags to allow rehit.
+void ResetAttackTrackerFlags(EntityID& entity);
 
 /// <summary>
 /// Create a convex shape with corners relative to the position of the entity, then offset.

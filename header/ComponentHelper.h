@@ -44,6 +44,7 @@ private:
 	int souls = 0;
 public:
 	int attackHitboxID = -1;
+	int hardHitboxID = -1;
 	int killingSpree = 0;
 	bool portalCreated = false;
 
@@ -63,7 +64,7 @@ struct ControllerComponent
 	float moveMaxLimit = 0.0f;
 };
 
-//I hate
+//Ayaya
 struct DashArgumentComponent
 {
 	//Exists to be able to be passed into functions without making the function arguments templated
