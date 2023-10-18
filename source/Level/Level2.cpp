@@ -3,6 +3,7 @@
 #include "EntityFramework.h"
 #include "Components.h"
 #include "Particles.h"
+#include "CollisionFunctions.h"
 
 void LoadLevel2()
 {
@@ -15,6 +16,40 @@ void LoadLevel2()
 	//EntityID skeleton2 = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
+
+
+	//**************************************************
+	EntityID tempBoss = registry.CreateEntity();
+	registry.AddComponent<ModelBonelessComponent>(tempBoss, LoadModel("PHBoss.mdl"));
+	TransformComponent bossTransformComponent;
+	bossTransformComponent.facingX = 1.0f; bossTransformComponent.positionX = 20.0f; bossTransformComponent.facingX = 1.0f;
+	bossTransformComponent.mass = 9.0f;
+	bossTransformComponent.scaleX = 3.f; bossTransformComponent.scaleY = 3.f; bossTransformComponent.scaleZ = 3.f;
+	registry.AddComponent<TransformComponent>(tempBoss, bossTransformComponent);
+	registry.AddComponent<StatComponent>(tempBoss, 400.f, 10.f, 40.f, 3.5f);
+	registry.AddComponent<EnemyComponent>(tempBoss, 2);
+
+	AddHitboxComponent(tempBoss);
+
+	int hID = CreateHitbox(tempBoss, 3.f * 0.7f, 0.f, 0.f);
+	SetCollisionEvent(tempBoss, hID, HardCollision);
+	SetHitboxIsEnemy(tempBoss, hID);
+	SetHitboxHitPlayer(tempBoss, hID);
+	SetHitboxHitEnemy(tempBoss, hID);
+	SetHitboxActive(tempBoss, hID);
+	SetHitboxIsMoveable(tempBoss, hID);
+
+	int sID = CreateHitbox(tempBoss, 3.f, 0.f, 0.f);
+	SetCollisionEvent(tempBoss, sID, SoftCollision);
+	SetHitboxIsEnemy(tempBoss, sID);
+	SetHitboxHitPlayer(tempBoss, sID);
+	SetHitboxHitEnemy(tempBoss, sID);
+	SetHitboxActive(tempBoss, sID);
+	SetHitboxIsMoveable(tempBoss, sID);
+
+
+	registry.AddComponent<TempBossBehaviour>(tempBoss, 0, hID);
+	//***********************************************
 
 	///*ModelBonelessComponent* dogCo = */registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
 	/*ModelBonelessComponent* stageCo = */registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("HellhoundDummy_PH.mdl"));
