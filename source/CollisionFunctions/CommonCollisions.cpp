@@ -126,22 +126,6 @@ void AttackCollision(OnCollisionParameters& params)
 	//Get the components of the attackee (entity 2)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	
-	// Regular hit
-	// Expand to a "damage dealt" value that can be pushed into on hit relic functions to, for example, create life steal?
-	stat2->UpdateHealth(-stat1->damage);
-
-	// On Hit Relics
-	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
-	RelicInput::OnHitInput funcInput
-	{
-		params.entity1,
-		params.entity2
-	};
-	for (uint32_t i = 0; i < funcVector.size(); ++i)
-	{
-		funcVector[i](&funcInput);
-	}
 
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
 	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
@@ -185,9 +169,25 @@ void AttackCollision(OnCollisionParameters& params)
 			return;
 		}
 	}
-	//Not found, deal damage here
-	stat2->health -= stat1->damage;
+
+	// Regular hit
+	// Expand to a "damage dealt" value that can be pushed into on hit relic functions to, for example, create life steal?
+	stat2->UpdateHealth(-stat1->damage);
+
+	// On Hit Relics
+	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
+	RelicInput::OnHitInput funcInput
+	{
+		params.entity1,
+		params.entity2
+	};
+	for (uint32_t i = 0; i < funcVector.size(); ++i)
+	{
+		funcVector[i](&funcInput);
+	}
+	
 	RedrawUI();
+
 	//Lastly set for hitboxTracker[]
 	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
 	{
