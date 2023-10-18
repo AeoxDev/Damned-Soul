@@ -17,6 +17,6 @@ namespace RelicInput
 
 	struct OnSoulUpdate
 	{
-		size_t soulDelta;
+		int32_t soulDelta;
 	};
 }
