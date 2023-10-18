@@ -78,6 +78,11 @@ class EyeBehaviourSystem : public System
 	bool Update();
 };
 
+class TempBossBehaviourSystem : public System
+{
+	bool Update();
+};
+
 class CollisionSystem : public System
 {
 	bool Update();

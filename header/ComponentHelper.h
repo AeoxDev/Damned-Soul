@@ -6,7 +6,8 @@
 struct StatComponent
 {
 	//Base stats
-	float health = 100.0f;
+	float maxHealth = 100.f;
+	float health = 100.0f; //current health
 	//defense? percentage-based or flat?
 	float moveSpeed = 1.0f;
 
@@ -19,7 +20,7 @@ struct StatComponent
 	// for death animation
 	bool performingDeathAnimation = false;
 
-	StatComponent(float hp, float ms, float dmg, float as) : health(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
+	StatComponent(float hp, float ms, float dmg, float as) : maxHealth(hp), health(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
 };
 
 //Stats specific to the player

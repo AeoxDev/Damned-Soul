@@ -211,7 +211,9 @@ void GameScene::Unload()
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.DestroyEntity({ i, false });
+		EntityID check = registry.entities.at(i).id;
+		if(check.state == false)
+			registry.DestroyEntity(check);
 	}
 }
 
