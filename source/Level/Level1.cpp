@@ -73,7 +73,7 @@ void LoadLevel1()
 
 	registry.AddComponent<ControllerComponent>(player);
 
-	/*ParticleComponent* particComp = */registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
+	/*ParticleComponent* particComp = */registry.AddComponent<ParticleComponent>(particle, 10.f, 100.f, 0.5f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	registry.AddComponent<PointOfInterestComponent>(player, poic);

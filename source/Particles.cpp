@@ -44,16 +44,15 @@ void Particles::InitializeParticles()
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particles[i].position = DirectX::XMFLOAT3((float)i, 0.f, 0.f);
+		particles[i].position = DirectX::XMFLOAT3((float)i, 0.f, 1.f);
 		particles[i].time = 0.f;
-		particles[i].rgb = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
-		particles[i].rotationZ = 0.f;
 		particles[i].velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+		particles[i].rotationZ = 0.f;
+		particles[i].rgb = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 		particles[i].size = 0.f;
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
-	// THEESE ARE THE BOOVAR OF MEMORY LEAKS, Mvh Arian (tror jag)
 	m_readBuffer->SRVIndex =  CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 
@@ -71,7 +70,7 @@ void Particles::InitializeParticles()
 		data->metadata[i].maxRange = -1.f;
 		data->metadata[i].pattern = -1;
 		data->metadata[i].size = -1.f;
-		data->metadata[i].spawnPos = DirectX::XMFLOAT3(-999.f, -999.f, -999.f);
+		data->metadata[i].spawnPos = DirectX::XMFLOAT3(-99999.f, -99999.f, -99999.f);
 
 		data->metadata[i].deltaTime = 0;
 	}
@@ -113,7 +112,6 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 		data->metadata[i].deltaTime = GetDeltaTime();
 
 	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
-
  	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_writeBuffer->SRVIndex);
 }
 
@@ -148,22 +146,29 @@ void Particles::FinishParticlePass()
 }
 
 // -- ECS FUNCTION DEFINTIONS -- //
-ParticleComponent::ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
 {
 	metadataSlot = FindSlot();
 
-	//data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].life = seconds;
 	data->metadata[metadataSlot].maxRange = radius;
 	data->metadata[metadataSlot].size = size;
 	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
 	data->metadata[metadataSlot].pattern = pattern;
 
-	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, data->metadata);
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 }
 
 ParticleComponent::~ParticleComponent()
 {
 	data->metadata[metadataSlot].life = -1.f;
+	data->metadata[metadataSlot].maxRange = -1.f;
+	data->metadata[metadataSlot].size = -1.f;
+	data->metadata[metadataSlot].spawnPos.x = -1.f;	data->metadata[metadataSlot].spawnPos.y = -1.f;	data->metadata[metadataSlot].spawnPos.z = -1.f;
+	data->metadata[metadataSlot].pattern = -1.f;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
 	metadataSlot = -1;
 }
 
@@ -180,7 +185,7 @@ int ParticleComponent::FindSlot()
 	return metadataSlot;
 }
 
-void ParticleComponent::Setup(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
+void ParticleComponent::Setup(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
 {
 	metadataSlot = FindSlot();
 
@@ -190,5 +195,18 @@ void ParticleComponent::Setup(RenderSetupComponent constantBuffer[8], int Render
 	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
 	data->metadata[metadataSlot].pattern = pattern;
 
-	UpdateConstantBuffer(constantBuffer[RenderSlot].constantBuffer, data->metadata);
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+}
+
+void ParticleComponent::Release()
+{
+	data->metadata[metadataSlot].life = -1.f;
+	data->metadata[metadataSlot].maxRange = -1.f;
+	data->metadata[metadataSlot].size = -1.f;
+	data->metadata[metadataSlot].spawnPos.x = -1.f;	data->metadata[metadataSlot].spawnPos.y = -1.f;	data->metadata[metadataSlot].spawnPos.z = -1.f;
+	data->metadata[metadataSlot].pattern = -1.f;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+	metadataSlot = -1;
 }

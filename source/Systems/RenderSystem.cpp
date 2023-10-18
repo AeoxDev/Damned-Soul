@@ -46,5 +46,6 @@ bool RenderSystem::Update()
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->aAnimTime);
 	}
+
 	return true;
 }

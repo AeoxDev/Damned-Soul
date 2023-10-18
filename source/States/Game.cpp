@@ -200,7 +200,12 @@ void GameScene::Unload()
 		i->Release();
 	}
 
-	
+	for (auto entity : View<ParticleComponent>(registry))
+	{
+		ParticleComponent* i = registry.GetComponent<ParticleComponent>(entity);
+		i->Release();
+	}
+
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)

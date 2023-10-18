@@ -4,7 +4,7 @@
 #include <string>
 struct SDL
 {
-	HWND window;
+	HWND window = {0};
 	SDL_Window* sdlWindow = nullptr;
 	SDL_Surface* sdlSurface = nullptr;
 	SDL_Renderer* sdlRenderer = nullptr;

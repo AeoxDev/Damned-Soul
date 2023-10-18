@@ -23,7 +23,7 @@ bool SetupWindow()
 		}
 	}
 	assert(sdl.sdlRenderer != nullptr);
-	SDL_SysWMinfo wmInfo;
+	SDL_SysWMinfo wmInfo = {0};
 	SDL_VERSION(&wmInfo.version);
 	assert(SDL_GetWindowWMInfo(sdl.sdlWindow, &wmInfo) > -1);
 	sdl.window = wmInfo.info.win.window;

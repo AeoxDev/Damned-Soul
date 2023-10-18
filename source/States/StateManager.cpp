@@ -9,6 +9,7 @@
 #include "UI/UIRenderer.h"
 #include "Particles.h"
 #include "D3D11Graphics.h"
+#include "DeltaTime.h"
 
 State currentStates;
 StateManager stateManager;
@@ -87,7 +88,7 @@ void StateManager::Setup()
 	Camera::InitializeCamera();
 	menu.Setup();
 
-	Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
+	Particles::InitializeParticles();
 	//SetupTestHitbox();
 	RedrawUI();
 
@@ -99,6 +100,11 @@ void StateManager::Setup()
 	// Render/GPU
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new RenderSystem());
+	//systems[2]->timeCap = 1.f / 60.f;
+	systems.push_back(new ParticleSystem());
+	//systems[6]->timeCap = 1.f / 30.f;
+
+
 	
 	//Input based CPU
 	systems.push_back(new ButtonSystem());
@@ -162,7 +168,13 @@ void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
-		systems[i]->Update();
+		systems[i]->timeElapsed += GetDeltaTime();
+
+		if (systems[i]->timeElapsed >= systems[i]->timeCap)
+		{
+			systems[i]->Update();
+			systems[i]->timeElapsed -= systems[i]->timeCap;
+		}
 	}
 
 	Input();
