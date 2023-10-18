@@ -7,6 +7,7 @@
 #include "AnimationComponent.h"
 // Special child belongs to both groups
 #include "TransformComponent.h"
+#include "MouseComponent.h"
 // Physics Components
 #include "GeometryIndependentComponent.h"
 #include "PlayerComponent.h"

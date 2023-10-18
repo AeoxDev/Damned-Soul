@@ -206,6 +206,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Level\Level1.cpp" />
     <ClCompile Include="source\Level\Level2.cpp" />
     <ClCompile Include="source\ModelComponent.cpp" />
+    <ClCompile Include="source\MouseComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
@@ -385,6 +386,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Animation.hpp" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
+    <ClInclude Include="header\Components\MouseComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />

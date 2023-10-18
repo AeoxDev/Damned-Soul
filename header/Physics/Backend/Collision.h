@@ -103,16 +103,17 @@ struct HitboxComponent
 
 struct ProximityPoint
 {
-	int index;
-	float x;
-	float z;
+	int index = 0;
+	float x = 0;
+	float z = 0;
 };
 
 struct ProximityHitboxComponent
 {
 	int clockwise = 1; //Clockwise or counter-clockwise
-	ML_Vector<ProximityPoint> pointList;
+	ML_Vector<ProximityPoint> pointList{};
 	ProximityHitboxComponent();
+	void Load(const char* fileName);
 };
 
 int FindAvailableSlot(unsigned& bits);

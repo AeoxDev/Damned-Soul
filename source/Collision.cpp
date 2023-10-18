@@ -8,6 +8,9 @@
 #include <string>
 #include "Systems\Systems.h"
 #include "Components.h"
+#include <fstream>
+#include <sstream>
+#include "Components.h"
 
 /// <summary>
 /// Calculates the closest distance of two circles.
@@ -238,11 +241,11 @@ void HandleProximityCollision()
 	for (auto entity : View<HitboxComponent>(registry)) //Access an entity
 	{
 		float distance = 1000.0f;
-		float x, z;
 		int index = 0;
 		EntityID closestWall = { 0 };
 		closestWall.index = -1;
 		HitboxComponent* entityHitbox = registry.GetComponent<HitboxComponent>(entity);
+		TransformComponent* transformComponent = registry.GetComponent<TransformComponent>(entity);
 
 		if (entityHitbox->circularFlags[0].hitWall && entityHitbox->circularFlags[0].active) //Check if the entity can hit the wall and is circular
 		{
@@ -255,15 +258,13 @@ void HandleProximityCollision()
 				}
 				for (int i = 0; i < (int)(wallHitbox->pointList.size()); i++) //Loop through all points in the wallHitbox
 				{
-					float currentDistance = sqrt(float((pow(entityHitbox->circleHitbox[0].offsetX - wallHitbox->pointList[i].x, 2)) + (pow(entityHitbox->circleHitbox[0].offsetZ - wallHitbox->pointList[i].z, 2))));
+					float currentDistance = sqrt(float((pow(transformComponent->positionX - wallHitbox->pointList[i].x, 2)) + (pow(transformComponent->positionZ - wallHitbox->pointList[i].z, 2))));
 					
 					if (distance > currentDistance) //Check if closer to the new point checked
 					{
 						distance = currentDistance;
 						index = i;
 						closestWall = entity2;
-						x = entityHitbox->circleHitbox[0].offsetX;
-						z = entityHitbox->circleHitbox[0].offsetZ;
 					}
 				}
 			}
@@ -276,15 +277,13 @@ void HandleProximityCollision()
 
 				for (int i = 0; i < (int)(wallHitbox->pointList.size()); i++) //Loop through all points in the wallHitbox
 				{
-					float currentDistance = sqrt(float((pow(entityHitbox->convexHitbox[0].centerX - wallHitbox->pointList[i].x, 2)) + (pow(entityHitbox->convexHitbox[0].centerZ - wallHitbox->pointList[i].z, 2))));
+					float currentDistance = sqrt(float((pow(transformComponent->positionX - wallHitbox->pointList[i].x, 2)) + (pow(transformComponent->positionZ - wallHitbox->pointList[i].z, 2))));
 					
 					if (distance > currentDistance) //Check if closer to the new point checked
 					{
 						distance = currentDistance;
 						index = i;
 						closestWall = entity2;
-						x = entityHitbox->convexHitbox[0].centerX;
-						z = entityHitbox->convexHitbox[0].centerZ;
 					}
 				}
 			}
@@ -292,7 +291,7 @@ void HandleProximityCollision()
 
 		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
 		{
-			ProximityCorrection(closestWall, index, x, z);
+			ProximityCorrection(closestWall, index, transformComponent->positionX, transformComponent->positionZ, transformComponent->lastPositionX, transformComponent->lastPositionZ);
 		}
 	}
 }
@@ -320,6 +319,56 @@ void CollisionFlags::ResetToActive()
 ProximityHitboxComponent::ProximityHitboxComponent()
 {
 	this->clockwise = 1;
+}
+
+void ProximityHitboxComponent::Load(const char* fileName)
+{
+	//Read hitbox file if it exists
+	std::string hitboxFileName = fileName;
+	hitboxFileName = "HitboxFiles/" + hitboxFileName + ".box";
+	std::ifstream file(hitboxFileName);
+	if (file.is_open())
+	{
+		//Read file contents and add to CHV
+		std::string line = "";
+		std::string value = "";
+		ProximityPoint currentPoint;
+		currentPoint.index = 0;
+		currentPoint.x = 0;
+		currentPoint.z = 0;
+
+		while (std::getline(file, line))
+		{
+			std::stringstream ss(line);
+
+			//Get prefix
+			std::string prefix;
+			ss >> prefix;
+
+			if (prefix == "Point")
+			{
+				ss >> value;
+				currentPoint.index = (int)std::stoi(value);
+			}
+			if (prefix == "X")
+			{
+				ss >> value;
+				currentPoint.x = (float)std::stoi(value);
+			}
+			else if (prefix == "Z")
+			{
+				ss >> value;
+				currentPoint.z = (float)std::stoi(value);
+				this->pointList.push_back(currentPoint);
+			}
+			else if (prefix == "Clockwise")
+			{
+				ss >> value;
+				this->clockwise = std::stoi(value);
+			}
+		}
+		file.close();
+	}
 }
 
 void UpdatePhysics()

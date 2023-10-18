@@ -132,4 +132,6 @@ void LoadLevel2()
 	SetupEnemyCollisionBox(skeleton2, 0.9f);
 	SetupEnemyCollisionBox(dog, 1.0f);*/
 
+	MouseComponentAddComponent(player);
+
 }
