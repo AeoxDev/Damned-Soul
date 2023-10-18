@@ -36,7 +36,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	auto bossBehev = registry.GetComponent<TempBossBehaviour>(original);
 
 	//Set stats of new boss based on original
-	float bossHP = 0; //bossStats->maxHealth / 2.f;
+	float bossHP = bossStats->maxHealth / 2.f;
 	float bossSpeed = bossStats->moveSpeed;
 	float bossDamage = bossStats->damage / 2.f;
 	float bossAttackSpeed = bossStats->attackSpeed;
