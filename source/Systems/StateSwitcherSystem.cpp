@@ -37,7 +37,7 @@ bool StateSwitcherSystem::Update()
 				playersComp->killingSpree += 1;
 			}
 			// start timed event
-			AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 		}
 	}
 

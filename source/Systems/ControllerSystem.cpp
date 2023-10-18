@@ -129,10 +129,16 @@ bool ControllerSystem::Update()
 			//Step 2: Dash in a direction based off of goalX and goalZ
 			//Step 3: Return control to the player
 			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 2.5f);
-			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 		}
 
-		//We doing attacks on mouse click?
+		//We doing attacks on mouse click? Temp some button
+		if (keyState[SCANCODE_F] == pressed)
+		{
+			//Should be continuous by the way
+			AttackArgumentComponent* aac = registry.AddComponent<AttackArgumentComponent>(entity);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerAttack, 0.5f, PlayerRegainControl, CONDITION_ATTACK);
+		}
 
 	}
 	return true;

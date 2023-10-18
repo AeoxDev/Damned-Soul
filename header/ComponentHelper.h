@@ -27,6 +27,7 @@ struct PlayerComponent
 {
 	int souls = 0;
 	int attackHitboxID = -1;
+	int hardHitboxID = -1;
 	int killingSpree = 0;
 	bool portalCreated = false;
 };
@@ -41,7 +42,7 @@ struct ControllerComponent
 	float moveMaxLimit = 3.0f;
 };
 
-//I hate
+//Ayaya
 struct DashArgumentComponent
 {
 	//Exists to be able to be passed into functions without making the function arguments templated
@@ -50,6 +51,12 @@ struct DashArgumentComponent
 	float arc = 0.0f; //Feliiiix
 
 	DashArgumentComponent(float x, float z, float dashModifier, float arc = 0.0f) : x(x), z(z), dashModifier(dashModifier) {}
+};
+
+struct AttackArgumentComponent
+{
+	//Maybe I don't even need this lmao
+	AttackArgumentComponent() {}
 };
 
 //
