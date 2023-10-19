@@ -47,7 +47,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	float newScaleSize = 0.7f; // change as see fit
 	float offsetX = transform->facingX;
 	float offsetZ = -transform->facingZ;
-	float magnitude = sqrt(offsetX * offsetX + offsetZ * offsetZ);
+	float magnitude = sqrtf(offsetX * offsetX + offsetZ * offsetZ);
 	if (magnitude > 0.001f)
 	{
 		offsetX /= magnitude;
@@ -84,8 +84,8 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	SetHitboxCanTakeDamage(newMini, sID);
 
 	//Set behavior
-	float deathC = bossBehev->deathCounter + 1;
-	registry.AddComponent<TempBossBehaviour>(newMini, deathC, hID);
+	float deathC = (float)(bossBehev->deathCounter + 1);
+	registry.AddComponent<TempBossBehaviour>(newMini, (int)deathC, hID);
 
 	
 	registry.AddComponent<EnemyComponent>(newMini, 2);

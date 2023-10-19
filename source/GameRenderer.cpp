@@ -5,7 +5,6 @@
 #include "UI/UIRenderer.h"
 #include "Light.h"
 #include "Particles.h"
-#include "GlobalShaderBuffer.h"
 
 RenderSetupComponent renderStates[8];
 int currentSize = 0;
@@ -83,7 +82,6 @@ int SetupGameRenderer()
 	
 	//int hr = SetupDirectX(sdl.window);
 	renderStates[currentSize].rasterizerState = CreateRasterizerState(true, true);
-	CreateGlobalShaderBuffer();
 	//bool s = SetRasterizerState(renderStates[currentSize].rasterizerState);
 
 	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("PixelShader.cso");
@@ -91,16 +89,16 @@ int SetupGameRenderer()
 	SetPixelShader(renderStates[currentSize].pixelShaders[0]);////////
 	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("VertexShader.cso", LAYOUT_DESC::DEFAULT);
 	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("TestSkelVS.cso", LAYOUT_DESC::SKELETAL);
+	Light::SetupLight();
 	SetVertexShader(renderStates[currentSize].vertexShaders[0]);////////
-	Light::CreateLight(1);
-	Light::CreateLight(2);
-	Light::CreateLight(3);
-	Light::SetColor(3, 3.0f, 0.0f, 0.0f);
-	//SetConstantBuffer(Light::GetLightBufferIndex(1), BIND_PIXEL, 2);
-	SetConstantBuffer(GetGlobalShaderBufferIndex(), BIND_PIXEL, 2);
+	//Light::CreateLight(1);
+	//Light::CreateLight(2);
+	//Light::CreateLight(3);
+	//Light::SetColor(3, 3.0f, 0.0f, 0.0f);
+	/*SetConstantBuffer(Light::GetLightBufferIndex(1), BIND_PIXEL, 2);
 	SetConstantBuffer(Light::GetLightBufferIndex(2), BIND_PIXEL, 3);
-	SetConstantBuffer(Light::GetLightBufferIndex(3), BIND_PIXEL, 4);
-	UpdateGlobalShaderBuffer();
+	SetConstantBuffer(Light::GetLightBufferIndex(3), BIND_PIXEL, 4);*/
+
 	Vertex triangle[3] = {
 		0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
 		-0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
