@@ -2,6 +2,7 @@
 
 //Condition 0 = no special condition for timed event functions
 #define CONDITION_DASH ((uint32_t)1)
+#define CONDITION_DAMAGE ((uint32_t)2)
 
 struct EntityID;
 struct TimedEventComponent;
@@ -23,3 +24,6 @@ void AddTimedEventComponentStartContinuousEnd(EntityID& entityID, EntityID& star
 void AddTimedEventComponentStartContinuousEnd(EntityID& entityID, float startTime, void* startFunction, void* continousFunction, float endTime, void* endFunction, uint32_t condition = 0);
 
 uint32_t GetTimedEventCondition(TimedEventComponent*& comp);
+
+//Returns -1.0f if no component.
+float GetEventTimedElapsed(EntityID& entityID);

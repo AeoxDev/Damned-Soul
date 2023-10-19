@@ -3,6 +3,11 @@
 
 void RandomPosition(EntityID& entity);
 
+//Events for any entity capable of being attacked
+void BeginHit(EntityID& entity);
+void MiddleHit(EntityID& entity);
+void EndHit(EntityID& entity);
+
 /*PLAYER EVENTS*/
 //START
 void PlayerLoseControl(EntityID& entity);

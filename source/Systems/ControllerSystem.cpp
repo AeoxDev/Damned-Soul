@@ -104,7 +104,7 @@ bool ControllerSystem::Update()
 				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
 
 			}
-			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
+			registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 		}
 

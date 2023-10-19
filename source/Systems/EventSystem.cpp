@@ -95,6 +95,16 @@ uint32_t GetTimedEventCondition(TimedEventComponent*& comp)
 	return comp->condition;
 }
 
+float GetEventTimedElapsed(EntityID& entityID)
+{
+	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entityID);
+	if (comp)
+	{
+		return comp->timer;
+	}
+	return -1.0f;
+}
+
 void AddTimedEventComponentStartContinuousEnd(EntityID& entityID, EntityID& startEntity, float startTime, void* startFunction,
 	EntityID& continousEntity, void* continousFunction,
 	EntityID& endEntity, float endTime, void* endFunction, uint32_t condition)
