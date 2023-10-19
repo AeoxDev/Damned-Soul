@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 
-struct ProximityPoint
+struct ProximityPointEdit
 {
 	float x;
 	float z;
@@ -12,7 +12,7 @@ struct ProximityPoint
 struct CurrentHitboxVariables
 {
 	int clockwise = 1; //Clockwise or counter-clockwise
-	ML_Vector<ProximityPoint> list;
+	ML_Vector<ProximityPointEdit> list;
 };
 
 void HitboxEditorLoop(std::string fileName, bool clockwise = true);

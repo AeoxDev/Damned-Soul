@@ -4,6 +4,7 @@
 #define CONVEX_CORNER_LIMIT 8 //Maximum amount of corners allowed per Convex shape
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 2
+#define HIT_TRACKER_LIMIT 8
 #include "EntityFramework.h"
 #include "MemLib/ML_Vector.hpp"
 
@@ -79,10 +80,19 @@ struct GeometryIndependentColliderComponent
 	float offsetX, offsetZ;
 };
 
+struct EntityTracker
+{
+	bool active = {0};
+	EntityID entity = {0};
+};
+
 struct HitboxComponent
 {
 	int nrMoveableCollisions;
 	
+	//Keep track of other entities that have already been affected
+	EntityTracker hitTracker[HIT_TRACKER_LIMIT];
+
 	unsigned usedCirclesHitboxes;//This is a collection of bits that indicate which are used or not
 	CollisionFlags circularFlags[SAME_TYPE_HITBOX_LIMIT] = {0};
 	OnCollision onCircleCollision[SAME_TYPE_HITBOX_LIMIT] = { 0 };//What happens when this hitbox collides with something
@@ -103,16 +113,17 @@ struct HitboxComponent
 
 struct ProximityPoint
 {
-	int index;
-	float x;
-	float z;
+	int index = 0;
+	float x = 0;
+	float z = 0;
 };
 
 struct ProximityHitboxComponent
 {
 	int clockwise = 1; //Clockwise or counter-clockwise
-	ML_Vector<ProximityPoint> pointList;
+	ML_Vector<ProximityPoint> pointList{};
 	ProximityHitboxComponent();
+	void Load(const char* fileName);
 };
 
 int FindAvailableSlot(unsigned& bits);
@@ -135,3 +146,4 @@ void UpdatePhysics();
 //void CollisionEvent(Entity& entity, Entity& entity2); //calculates angle of attack and sends it to onCollision
 
 float RotateOffset(float offsetX, float offsetZ, float xFactor, float zFactor);
+

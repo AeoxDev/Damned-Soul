@@ -76,7 +76,9 @@ bool ControllerSystem::Update()
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
 		}
-		else
+
+		//clamp moveTime to lower limit if not moving
+		else 
 		{
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
 			
@@ -86,11 +88,9 @@ bool ControllerSystem::Update()
 		//Test code for now but we fuckin about
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
-			//speed *= 3.0f;
-
 			//Make a 3-step timed event:
 			//Step 1: Take away control from the player
-			//Step 2: Dash in a direction based off of goalX and goalZ
+			//Step 2: Dash in a direction based off of goalX and goalZ (and pass in some speed modifier to make the dash fast)
 			//Step 3: Return control to the player
 			if (moving)
 			{
@@ -105,8 +105,15 @@ bool ControllerSystem::Update()
 
 			}
 			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
-			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 		}
+
+		//We doing attacks on mouse click? Temp some button
+		if (mouseButtonPressed[0] == pressed)
+		{
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, SetPlayerAttackHitboxActive, PlayerAttack, 1.0f, SetPlayerAttackHitboxInactive);
+		}
+
 	}
 	return true;
 }

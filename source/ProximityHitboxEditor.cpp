@@ -16,7 +16,7 @@ void HitboxEditorLoop(std::string fileName, bool clockwise)
 		//Read file contents and add to CHV
 		std::string line = "";
 		std::string value = "";
-		ProximityPoint currentPoint;
+		ProximityPointEdit currentPoint;
 		while (std::getline(file, line))
 		{
 			std::stringstream ss(line);
@@ -141,7 +141,7 @@ void HitboxEditorLoop(std::string fileName, bool clockwise)
 			{
 				std::cout << "Added new point" << std::endl;
 				//Create point
-				ProximityPoint toAdd;
+				ProximityPointEdit toAdd;
 				toAdd.x = (float)mouseX;
 				toAdd.z = (float)mouseY;
 
@@ -272,7 +272,7 @@ void EdgeCaseFixer(CurrentHitboxVariables& CHV, bool lastIncluded)
 	for (int i = 0; i < currentSize; i++)
 	{
 		//Create point that's in the middle of the line.
-		ProximityPoint test;
+		ProximityPointEdit test;
 		int secondIndex = i + 1;
 		if (secondIndex == (int)CHV.list.size())
 		{

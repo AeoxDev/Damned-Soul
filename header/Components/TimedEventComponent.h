@@ -1,5 +1,8 @@
 #pragma once
 
+//Condition 0 = no special condition for timed event functions
+#define CONDITION_DASH ((uint32_t)1)
+
 struct EntityID;
 struct TimedEventComponent;
 /// <summary>Creates a timed event on entityID that runs functions with the chosen entity in its function arguments.
@@ -14,7 +17,9 @@ void AddTimedEventComponentStartEnd(EntityID& entityID, EntityID& startEntity, f
 	EntityID& endEntity, float endTime, void* endFunction);
 void AddTimedEventComponentStartContinous(EntityID& entityID, EntityID& startEntity, float startTime, void* startFunction,
 	EntityID& continousEntity, float continousTime, void* continousFunction);
-void AddTimedEventComponentStartContinousEnd(EntityID& entityID, EntityID& startEntity, float startTime, void* startFunction,
+void AddTimedEventComponentStartContinuousEnd(EntityID& entityID, EntityID& startEntity, float startTime, void* startFunction,
 	EntityID& continousEntity, void* continousFunction,
-	EntityID& endEntity, float endTime, void* endFunction);
-void AddTimedEventComponentStartContinousEnd(EntityID& entityID, float startTime, void* startFunction, void* continousFunction, float endTime, void* endFunction);
+	EntityID& endEntity, float endTime, void* endFunction, uint32_t condition = 0);
+void AddTimedEventComponentStartContinuousEnd(EntityID& entityID, float startTime, void* startFunction, void* continousFunction, float endTime, void* endFunction, uint32_t condition = 0);
+
+uint32_t GetTimedEventCondition(TimedEventComponent*& comp);
