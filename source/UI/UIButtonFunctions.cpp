@@ -11,7 +11,8 @@ void UIFunc::MainMenu_Start(void* args)
 	SetInMainMenu(false);
 	stateManager.menu.Unload();
 	//LoadLevel(1);
-	LoadLevel(stateManager.activeLevelScene + 1);
+	stateManager.activeLevel = 1;
+	LoadLevel(stateManager.activeLevel);
 }
 
 void UIFunc::MainMenu_Settings(void* args)

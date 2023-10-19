@@ -201,7 +201,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			//check if eye has collided with player
 			if (eyeComponent->dealtDamage == false && Collision(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ, 0.2f))
 			{
-				playerStats->health -= enemyStats->damage;
+				playerStats->UpdateHealth(-enemyStats->damage);
 				eyeComponent->dealtDamage = true;
 				RedrawUI();
 			}
@@ -249,7 +249,7 @@ bool EyeBehaviourSystem::Update()
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 
 
-		if (enemyStats->health > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr)// check if enemy is alive
+		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr)// check if enemy is alive
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			eyeComponent->attackTimer += GetDeltaTime();

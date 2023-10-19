@@ -52,15 +52,15 @@ public:
 		}
 
 		// Provide a temporary copy of the data
-		_T* temp = (_T*)MemLib::spush(m_capacity * m_tSize);
-		std::memcpy(temp, &(*m_data), m_capacity * m_tSize);
+		_T* temp = (_T*)MemLib::spush((size_t)(m_capacity * m_tSize));
+		std::memcpy(temp, &(*m_data), (size_t)(m_capacity * m_tSize));
 
 		// Free the old pool pointer and allocate a new one
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(capacity * m_tSize));
 
 		// Copy the data over to the new location and pop the temp from the stack
-		std::memcpy(&(*m_data), temp, m_capacity * m_tSize);
+		std::memcpy(&(*m_data), temp, (size_t)(m_capacity * m_tSize));
 		MemLib::spop();
 
 		// Inform the new capacity
@@ -224,7 +224,7 @@ public:
 
 		// Allocate to memory pool
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 	};
 
 	void Initialize()
@@ -237,7 +237,7 @@ public:
 
 		// Allocate to memory pool
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 	};
 
 	ML_Vector(const ML_Vector& to_copy)
@@ -250,7 +250,7 @@ public:
 
 		// Free the old memory
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 		// Set items
 
 		for (uint32_t i = 0; i < m_size; ++i)
@@ -270,7 +270,7 @@ public:
 
 		// Allocate to memory pool
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 
 		// Set items
 		for (auto item : { args... } )
