@@ -24,3 +24,6 @@ void AddTimedEventComponentStartContinuousEnd(EntityID& entityID, EntityID& star
 void AddTimedEventComponentStartContinuousEnd(EntityID& entityID, float startTime, void* startFunction, void* continousFunction, float endTime, void* endFunction, uint32_t condition = 0);
 
 uint32_t GetTimedEventCondition(TimedEventComponent*& comp);
+
+//Returns -1.0f if no component.
+float GetEventTimedElapsed(EntityID& entityID);

@@ -73,6 +73,8 @@ void PlayerAttack(EntityID& entity)
 	anim->aAnimTime += GetDeltaTime();
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
+
+	//Todo: Use GetElapsedTime to make player active hitbox only be towards the end of the animation
 }
 
 void PlayerDash(EntityID& entity)

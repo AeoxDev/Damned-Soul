@@ -30,8 +30,10 @@ bool RenderSystem::Update()
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
+
 		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
 			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+
 		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX,0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
@@ -44,6 +46,9 @@ bool RenderSystem::Update()
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
 		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
+
+		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
+			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
 
 		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
