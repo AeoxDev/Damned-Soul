@@ -7,7 +7,7 @@
 struct UIGameLevelComponent
 {
 	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
-	DirectX::XMFLOAT2 scale = { 0.0f, 0.0f };
+	DirectX::XMFLOAT2 scale = { 1.0f, 1.0f };
 
 	int value = -1; //Defaulted so we don't have to init to redundant value since it gets set at runtime
 

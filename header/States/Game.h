@@ -5,9 +5,7 @@ struct GameScene
 	// Wether or not the scene is active
 	bool m_active = false;
 
-	void Setup(int scene);
-
-	void Input();
+	void Input(bool isShop = false);
 	void Update();
 	void ComputeShaders();
 

@@ -5,14 +5,18 @@
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
 
-void UIFunc::MainMenu_Start(void* args)
+#include "Registry.h"
+#include "Components.h"
+#include "RelicFunctions.h"
+#include "UIRenderer.h"
+
+
+void UIFunc::LoadNextLevel(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
 	stateManager.menu.Unload();
-	//LoadLevel(1);
-	stateManager.activeLevel = 1;
-	LoadLevel(stateManager.activeLevel);
+	LoadLevel(++stateManager.activeLevel);
 }
 
 void UIFunc::MainMenu_Settings(void* args)
@@ -137,9 +141,45 @@ void UIFunc::Shop_LockRelic(void* args)
 
 	int a = 0;
 }
-
+//Creates memory leaks, cant fix without mattias help with UIimage
 void UIFunc::Shop_ReRollRelic(void* args)
 {
-	int a = 0;
 
+	ML_Vector<Relics::RelicMetaData> relics;
+
+	for (int i = 0; i < 6; i++)
+	{
+		switch (i)
+		{
+		case 0: relics.push_back(Relics::DemonBonemarrow(false)); break;
+		case 1: relics.push_back(Relics::FlameWeapon(false)); break;
+		case 2: relics.push_back(Relics::SoulPower(false)); break;
+		case 3: relics.push_back(Relics::DemonHeart(false)); break;
+		case 4: relics.push_back(Relics::FrostFire(false)); break;
+		case 5: relics.push_back(Relics::SoulHealth(false)); break;
+		default:
+			break;
+		}
+
+	}
+
+	for (auto entity : View<UIShopRelicWindowComponent>(registry))
+	{
+		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+
+		DirectX::XMFLOAT2 spritePositionOffset = { uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.right / (uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
+											  uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
+
+		DirectX::XMFLOAT2 startingSpritePosition = { abs(uiElement->m_baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+									   abs(uiElement->m_baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
+		DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+										-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+
+		int rnd = rand() % 6;
+		uiElement->m_relicImage.Setup(relics[rnd].filePath);
+		uiElement->m_relicImage.m_UiComponent.SetScale({ 1.5f, 1.5f });
+		uiElement->m_relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y - (0.05f * 1) });
+
+	}
+	RedrawUI();
 }

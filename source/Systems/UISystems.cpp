@@ -97,9 +97,13 @@ bool UIRenderSystem::Update()
 
 bool UIHealthSystem::Update()
 {
-    for (auto entity : View<UIHealthComponent, StatComponent>(registry))
+    EntityID playerUI;
+    for (auto entity : View<UIHealthComponent, UIPlayerSoulsComponent>(registry))
+        playerUI = entity;
+
+    for (auto entity : View<StatComponent, PlayerComponent>(registry))
     {
-        auto uiElement = registry.GetComponent<UIHealthComponent>(entity);
+        auto uiElement = registry.GetComponent<UIHealthComponent>(playerUI);
         auto stats = registry.GetComponent<StatComponent>(entity);
         uiElement->value = stats->GetHealth();
 
@@ -112,9 +116,13 @@ bool UIHealthSystem::Update()
 
 bool UIPlayerSoulsSystem::Update()
 {
-    for (auto entity : View<UIPlayerSoulsComponent, PlayerComponent>(registry))
+    EntityID playerUI;
+    for (auto entity : View<UIHealthComponent, UIPlayerSoulsComponent>(registry))
+        playerUI = entity;
+
+    for (auto entity : View<PlayerComponent>(registry))
     {
-        auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(entity);
+        auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(playerUI);
         auto player = registry.GetComponent<PlayerComponent>(entity);
         uiElement->value = player->GetSouls();
 
@@ -229,8 +237,8 @@ bool UIShopSystem::Update()
     {
         auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
 
-        ML_String playerInfo = ("Souls: " + std::to_string((int)player->souls) +
-            "\n\nPlayer Stats:\nHealth: " + std::to_string((int)stats->health) +
+        ML_String playerInfo = ("Souls: " + std::to_string((int)player->GetSouls()) +
+            "\n\nPlayer Stats:\nHealth: " + std::to_string((int)stats->GetHealth()) +
             "\nDamage: " + std::to_string((int)stats->damage) + 
             "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
             "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
@@ -249,6 +257,9 @@ bool UIShopSystem::Update()
         uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 3) });
 
     }
+    
+
+
     return true;
 }
 

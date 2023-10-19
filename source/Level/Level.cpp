@@ -11,17 +11,18 @@ void LoadLevel(int level)
 	RedrawUI();
 	Camera::ResetCamera();
 
-	stateManager.levelScenes[0].Unload();
-	stateManager.levelScenes[1].Unload();
+	stateManager.scenes[0].Unload();
+	stateManager.scenes[1].Unload();
+	stateManager.scenes[2].Unload();
 	
-	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 2;
-	stateManager.levelScenes[stateManager.activeLevelScene].Setup(1);
-	stateManager.levelScenes[stateManager.activeLevelScene].m_active = true;
-	RedrawUI();
+	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
+	stateManager.scenes[stateManager.activeLevelScene].m_active = true;
+	
 	switch (level)
 	{
 	case 1:	LoadLevel1(); break;
-	case 2: LoadLevel2(); break;
+	case 2: LoadShop(); break;
+	case 3: LoadLevel2(); break;
 	default: stateManager.menu.Setup();
 	}
 }

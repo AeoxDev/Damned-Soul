@@ -10,6 +10,10 @@
 #include "Particles.h"
 #include "D3D11Graphics.h"
 
+//Cursed
+#include "SDLHandler.h"
+#include "Level.h"
+
 State currentStates;
 StateManager stateManager;
 
@@ -144,6 +148,27 @@ void StateManager::Input()
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
+
+		// :)
+		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
+		//{
+		//	//öhö
+		//	SetInMainMenu(false);
+		//	SetInPlay(true);
+		//	SetInShop(false);
+
+		//	menu.Unload();
+
+		//	LoadLevel(++stateManager.activeLevel);
+
+		//	//Ungodly amounts of cursed energy, update UI systems after the level has been loaded
+		//	for (size_t i = 17; i < systems.size(); i++)
+		//	{
+		//		systems[i]->Update();
+		//	}
+		//}
+
+		
 	}
 	if (currentStates & State::InPause)
 	{
@@ -155,11 +180,11 @@ void StateManager::Input()
 	}
 	if (currentStates & State::InPlay)
 	{
-		levelScenes[activeLevelScene].Input();
+		scenes[activeLevelScene].Input();
 	}
 	if (currentStates & State::InShop)
 	{
-		shop.Input();
+		scenes[activeLevelScene % 2 == 1].Input(true);
 	}
 }
 
@@ -168,7 +193,8 @@ void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
-		systems[i]->Update();
+		if (!systems[i]->Update())
+			break;
 	}
 
 	Input();
@@ -202,9 +228,9 @@ void StateManager::UnloadAll()
 {
 	menu.Unload();
 	settings.Unload();
-	shop.Unload();
-	levelScenes[0].Unload();
-	levelScenes[1].Unload();
+	scenes[0].Unload();
+	scenes[1].Unload();
+	scenes[2].Unload();
 
 	Particles::ReleaseParticles();
 	DestroyHitboxVisualizeVariables();
@@ -223,5 +249,5 @@ void StateManager::EndFrame()
 
 GameScene StateManager::GetCurrentLevel()
 {
-	return levelScenes[activeLevelScene];
+	return scenes[activeLevelScene];
 }

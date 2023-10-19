@@ -6,8 +6,8 @@
 
 struct UIRelicComponent
 {
-	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
-	DirectX::XMFLOAT2 scale = { 0.0f, 0.0f };
+	DirectX::XMFLOAT2 position;
+	DirectX::XMFLOAT2 scale;
 
 	bool doRedraw = true;
 
@@ -16,6 +16,6 @@ struct UIRelicComponent
 	UIText flavorTitle;
 	UIText flavorText;
 
-	UIRelicComponent(UIImage sprite, UIImage flavorImage, UIText flavorTitle, UIText flavorText)
+	UIRelicComponent(UIImage sprite, UIImage flavorImage, UIText flavorTitle, UIText flavorText, DirectX::XMFLOAT2 position = { 0.0f, 0.0f }, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f })
 		:position(position), scale(scale), sprite(sprite), flavorImage(flavorImage), flavorTitle(flavorTitle), flavorText(flavorText) {}
 };

@@ -9,7 +9,7 @@
 struct UIPlayerRelicsComponent
 {
 	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
-	DirectX::XMFLOAT2 scale = { 0.0f, 0.0f };
+	DirectX::XMFLOAT2 scale = { 1.0f, 1.0f };
 	
 	int relicIndex = -1;
 	

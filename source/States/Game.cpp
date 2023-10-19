@@ -16,119 +16,127 @@
 #include "States\CleanupMacros.h"
 #include "Camera.h"
 
-#include "RelicFunctions.h"
-
 #include "MemLib\ML_String.hpp"
+
+#include "Level.h"
 
 // Relic Stuff
 #include "RelicFunctions.h"
 
-void GameScene::Setup(int scene)//Load
+void GameScene::Input(bool isShop)
 {
-	RedrawUI();	
-	if (scene == 0)
+	if (isShop)
 	{
-		// Set active
-		m_active = true;
-		
-		//Setup Game HUD
-
-		
-		Camera::ResetCamera();
-	}
-}
-
-void GameScene::Input()
-{
-	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
-	{
-		SetInMainMenu(true);
-		SetInPlay(false);
-		Unload();
-		stateManager.menu.Setup();
-	}
-
-	if (keyState[SDL_SCANCODE_1] == pressed)
-	{
-		for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
-			//auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
-			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+			SetInMainMenu(true);
+			SetInPlay(false);
+			SetInShop(false);
+			Unload();
+			stateManager.menu.Setup();
+		}
 
-			if (uiElement->relics.size() > 8)
-				break;
-
-			//relicHolder->AddRelic<DamageRelic>();
-			Relics::RelicMetaData md = Relics::SoulHealth(true);
-
-			UIImage relicImage, relicFlavorImage;
-			relicImage.Setup(md.filePath);//("TempRelic1.png");
-			relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
-
-			relicFlavorImage.m_UiComponent.SetVisibility(false);
-			relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
-
-			UIText flavorTitle, flavorText;
-			ML_String name = md.relicName;//relicHolder->GetRelic<DamageRelic>()->name;
-			ML_String text = md.description;// relicHolder->GetRelic<DamageRelic>()->flavorText;
-
-			std::wstring nameAsWString(name.begin(), name.end());
-			std::wstring textAsWString(text.begin(), text.end());
-
-			flavorTitle.Setup(nameAsWString);
-			flavorText.Setup(textAsWString);
-
-			flavorTitle.m_UiComponent.SetVisibility(false);
-			flavorText.m_UiComponent.SetVisibility(false);
-
-			UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
-
-			uiElement->relics.push_back(relic);
-
-			RedrawUI();
+		if (keyState[SDL_SCANCODE_RETURN] == pressed)
+		{
+			SetInMainMenu(false);
+			SetInPlay(true);
+			SetInShop(false);
+			Unload();
+			LoadLevel(++stateManager.activeLevel);
 		}
 	}
-	
-	if (keyState[SDL_SCANCODE_2] == pressed)
+	else
 	{
-		for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
-			auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
-			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-			
-			if (uiElement->relics.size() > 8)
-				break;
-
-			relicHolder->AddRelic<SpeedRelic>();
-
-			UIImage relicImage, relicFlavorImage;
-			relicImage.Setup("TempRelic2.png");
-			relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
-
-			relicFlavorImage.m_UiComponent.SetVisibility(false);
-			relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
-
-			UIText flavorTitle, flavorText;
-			ML_String name = relicHolder->GetRelic<SpeedRelic>()->name;
-			ML_String text = relicHolder->GetRelic<SpeedRelic>()->flavorText;
-
-			std::wstring nameAsWString(name.begin(), name.end());
-			std::wstring textAsWString(text.begin(), text.end());
-
-			flavorTitle.Setup(nameAsWString);
-			flavorText.Setup(textAsWString);
-
-			flavorTitle.m_UiComponent.SetVisibility(false);
-			flavorText.m_UiComponent.SetVisibility(false);
-
-			UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
-
-			uiElement->relics.push_back(relic);
-
-			RedrawUI();
+			SetInMainMenu(true);
+			SetInPlay(false);
+			SetInShop(false);
+			Unload();
+			stateManager.menu.Setup();
 		}
-	}
 
+		if (keyState[SDL_SCANCODE_1] == pressed)
+		{
+			for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+			{
+				//auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
+				auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+
+				if (uiElement->relics.size() > 8)
+					break;
+
+				//relicHolder->AddRelic<DamageRelic>();
+				Relics::RelicMetaData md = Relics::SoulHealth(true);
+
+				UIImage relicImage, relicFlavorImage;
+				relicImage.Setup(md.filePath);//("TempRelic1.png");
+				relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
+
+				relicFlavorImage.m_UiComponent.SetVisibility(false);
+				relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
+
+				UIText flavorTitle, flavorText;
+				ML_String name = md.relicName;//relicHolder->GetRelic<DamageRelic>()->name;
+				ML_String text = md.description;// relicHolder->GetRelic<DamageRelic>()->flavorText;
+
+				std::wstring nameAsWString(name.begin(), name.end());
+				std::wstring textAsWString(text.begin(), text.end());
+
+				flavorTitle.Setup(nameAsWString);
+				flavorText.Setup(textAsWString);
+
+				flavorTitle.m_UiComponent.SetVisibility(false);
+				flavorText.m_UiComponent.SetVisibility(false);
+
+				UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
+
+				uiElement->relics.push_back(relic);
+
+				RedrawUI();
+			}
+		}
+
+		/*if (keyState[SDL_SCANCODE_2] == pressed)
+		{
+			for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
+			{
+				auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
+				auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+
+				if (uiElement->relics.size() > 8)
+					break;
+
+				relicHolder->AddRelic<SpeedRelic>();
+
+				UIImage relicImage, relicFlavorImage;
+				relicImage.Setup("TempRelic2.png");
+				relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
+
+				relicFlavorImage.m_UiComponent.SetVisibility(false);
+				relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
+
+				UIText flavorTitle, flavorText;
+				ML_String name = relicHolder->GetRelic<SpeedRelic>()->name;
+				ML_String text = relicHolder->GetRelic<SpeedRelic>()->flavorText;
+
+				std::wstring nameAsWString(name.begin(), name.end());
+				std::wstring textAsWString(text.begin(), text.end());
+
+				flavorTitle.Setup(nameAsWString);
+				flavorText.Setup(textAsWString);
+
+				flavorTitle.m_UiComponent.SetVisibility(false);
+				flavorText.m_UiComponent.SetVisibility(false);
+
+				UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
+
+				uiElement->relics.push_back(relic);
+
+				RedrawUI();
+			}
+		}*/
+	}
 }
 
 void GameScene::Update()
@@ -152,14 +160,17 @@ void GameScene::Unload()
 
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
-		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
-		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		ModelBonelessComponent* modBonelessC = registry.GetComponent<ModelBonelessComponent>(entity);
+		ReleaseModel(modBonelessC->model); // Decrement and potentially release via refcount
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry))
 	{
-		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
-		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		ModelSkeletonComponent* modSkelC = registry.GetComponent<ModelSkeletonComponent>(entity);
+		//Persistent Player Baby
+		PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+		if (!p)
+			ReleaseModel(modSkelC->model); // Decrement and potentially release via refcount
 	}
 
 	for (auto entity : View<UIPlayerSoulsComponent>(registry))
@@ -201,12 +212,6 @@ void GameScene::Unload()
 		sh->m_relicImage.Release();
 	}
 
-	for (auto entity : View<UIButton>(registry))
-	{
-		UIButton* b = registry.GetComponent<UIButton>(entity);
-		b->Release();
-	}
-
 	for (auto entity : View<UIHealthComponent>(registry))
 	{
 		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
@@ -237,8 +242,23 @@ void GameScene::Unload()
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
 		EntityID check = registry.entities.at(i).id;
-		if(check.state == false)
-			registry.DestroyEntity(check);
+		if (check.state == false)
+		{
+			//Persistent Player Baby
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(check);
+			if (!p)
+			{
+				//Remove everything that isn't player
+				registry.DestroyEntity(check);
+			}
+			else
+			{
+				//Reset necessary player variables
+				p->portalCreated = false;
+				p->killingSpree = 0;
+			}
+				
+		}
 	}
 }
 

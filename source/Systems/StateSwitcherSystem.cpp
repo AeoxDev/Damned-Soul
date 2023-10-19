@@ -76,7 +76,7 @@ bool StateSwitcherSystem::Update()
 			EntityID portal = registry.CreateEntity();
 			AddTimedEventComponentStart(portal, portal, 1.0f, CreatePortal);
 		}
-		else if (playersComp->killingSpree >= 15 && !playersComp->portalCreated && stateManager.activeLevel == 2)
+		else if (playersComp->killingSpree >= 15 && !playersComp->portalCreated && stateManager.activeLevel == 3)
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();

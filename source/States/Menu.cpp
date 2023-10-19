@@ -10,6 +10,8 @@
 #include "UI/UIButtonFunctions.h"
 #include "Level.h"
 
+#include "SDLHandler.h"
+
 void Menu::Setup()//Load
 {
 	m_active = true;
@@ -18,8 +20,13 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupImages();
 	SetupText();
-	stateManager.activeLevelScene = 0;
 	Camera::ResetCamera();
+
+
+	//Temp stuff for ui to not crash because saving between levels is not fully implemented
+	EntityID playerUi = registry.CreateEntity();
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
@@ -35,6 +42,8 @@ void Menu::Setup()//Load
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.12f;
+
+	stateManager.activeLevel = 0;
 }
 
 void Menu::Input()
@@ -60,7 +69,7 @@ void Menu::SetupButtons()
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", UIFunc::MainMenu_Start, { 0.0f, -0.4f });
+		comp->Setup("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", UIFunc::LoadNextLevel, { 0.0f, -0.4f });
 	}
 
 	//Settings Button
@@ -98,9 +107,7 @@ void Menu::SetupImages()
 
 void Menu::SetupText()
 {
-	auto t1 = registry.CreateEntity();
-	auto tc1 = registry.AddComponent<UIText>(t1);
-	tc1->Setup(L"This is the main menu!", { 0.0f, 0.0f });
+
 }
 
 void Menu::Unload()

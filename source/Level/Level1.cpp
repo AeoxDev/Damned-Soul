@@ -12,9 +12,10 @@
 
 void LoadLevel1()
 {
-	//Doggo
+
 	EntityID stage = registry.CreateEntity();
 	EntityID player = registry.CreateEntity();
+	EntityID playerUi = registry.CreateEntity();
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID eye = registry.CreateEntity();
@@ -23,23 +24,16 @@ void LoadLevel1()
 	EntityID portal = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
-	//shop with ecs is pain
-	EntityID shop = registry.CreateEntity();
-
 	registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
 	
-
 	SetupEnemy(skeleton, enemyType::skeleton, 5.f, 0.f, 7.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(skeleton2, enemyType::skeleton, 10.f, 0.f, 5.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(dog, enemyType::hellhound, -5.f, 0.f, -5.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(eye, enemyType::eye, 15.f, 0.f, 15.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
 
-
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());
-	
-
 	
 	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);
@@ -50,13 +44,9 @@ void LoadLevel1()
 	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
 	playerTransform->facingZ = 1.0f;
 	playerTransform->mass = 3.0f;
-	
-	
 
 	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
-
-	
 
 	registry.AddComponent<ControllerComponent>(player);
 
@@ -66,31 +56,22 @@ void LoadLevel1()
 	registry.AddComponent<PointOfInterestComponent>(player, poic);
 
 
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiHpC->image.Setup("ExMenu/FullHealth.png");
 	pcUiHpC->text.Setup(L"");
 
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
 	pcUiSC->text.Setup(L"");
 
-	//Thing in the top right corner showing what level we're on (Christian why is the valueAsString thing here?) 
-	//															(Because it was using the scene int parameter at the time)
-	//std::string valueAsString = "1";
-	//std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
 	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup(L"");
-
-
 
 	/*RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
 
 	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-	UIShopComponent* shopComp = registry.AddComponent<UIShopComponent>(shop);
-	shopComp->Setup(shop);
 
 	RenderGeometryIndependentCollision(stage);
 	

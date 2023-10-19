@@ -2,8 +2,8 @@
 
 namespace UIFunc
 {
-	// Go from start menu to game
-	void MainMenu_Start(void* args);
+	// Start the next level
+	void LoadNextLevel(void* args);
 
 	// Go from start menu to settings
 	void MainMenu_Settings(void* args);
