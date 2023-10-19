@@ -733,7 +733,8 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
-	//SetHitboxCanTakeDamage(entity, hID);
+	SetHitboxCanDealDamage(entity, hID, false);
+	SetHitboxCanTakeDamage(entity, hID, false);
 
 	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
 	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
@@ -751,6 +752,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
+	SetHitboxCanDealDamage(entity, hID, false);
 	SetHitboxCanTakeDamage(entity, sID, true);
 	playerComp->softHitboxID = sID;
 
