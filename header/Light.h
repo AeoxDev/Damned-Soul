@@ -24,6 +24,7 @@ namespace Light
 	DirectX::XMVECTOR GetDirection(int type);
 	
 	int16_t GetLightBufferIndex(int type);
+	int16_t GetLightBufferIndex();
 
 	/// <summary>
 	/// Initializes the light with default values
@@ -34,5 +35,7 @@ namespace Light
 	/// ConeAngle(90)    Only held by SpotLights
 	/// </summary>
 	void CreateLight(int type);
+	void SetupLight();
+	void UpdateLight();
 	void FreeLight();
 }

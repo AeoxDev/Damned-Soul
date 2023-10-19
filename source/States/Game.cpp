@@ -15,6 +15,7 @@
 #include "EventFunctions.h"
 #include "States\CleanupMacros.h"
 #include "Camera.h"
+#include "Light.h"
 
 #include "RelicFunctions.h"
 
@@ -212,7 +213,7 @@ void GameScene::Unload()
 		p->pointList.~ML_Vector();
 	}
 
-	
+	Light::FreeLight();
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)

@@ -7,6 +7,7 @@
 #include "GameRenderer.h"
 #include "UIRenderer.h"
 #include "Camera.h"
+#include "Light.h"
 
 bool RenderSystem::Update()
 {
@@ -19,7 +20,11 @@ bool RenderSystem::Update()
 
 	//Set shaders here.
 	PrepareBackBuffer();
-	
+	//If light needs to update, update it.
+	SetConstantBuffer(Light::GetLightBufferIndex(), BIND_PIXEL, 2);
+	Light::UpdateLight();
+
+
 
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
