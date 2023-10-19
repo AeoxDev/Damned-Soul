@@ -26,4 +26,5 @@ void CreatePortal(EntityID& entity)
 	SetCollisionEvent(entity, hitbox, LoadNextLevel);
 	ModelBonelessComponent* portalModel = registry.AddComponent<ModelBonelessComponent>(entity);
 	portalModel->model = LoadModel("Boss.mdl");
+	CreatePointLight(entity, 8.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 64.0f, 10.0f);
 }
