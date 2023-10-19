@@ -41,7 +41,7 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	{
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
-		SetupEnemyCollisionBox(entity, 2.f * scaleX);
+		SetupEnemyCollisionBox(entity, 1.4f * scaleX);
 	}
 }
 

@@ -52,8 +52,12 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 }
 
-void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc)
 {
+	sc->goalDirectionX = ptc->positionX - btc->positionX;
+	sc->goalDirectionZ = ptc->positionZ - btc->positionZ;
+
+	SmoothRotation(btc, sc->goalDirectionX, sc->goalDirectionZ);
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
@@ -97,9 +101,9 @@ bool TempBossBehaviourSystem::Update()
 			{
 				// do nothing, stand like a bad doggo and be ashamed
 			}
-			else if (distance < 4.5f)
+			else if (distance < 7.f - tempBossComponent->deathCounter * 2.f)
 			{
-				CombatBehaviour(tempBossComponent, enemyStats, playerStats);
+				CombatBehaviour(tempBossComponent, enemyStats, playerStats, playerTransformCompenent, tempBossTransformComponent);
 			}
 			else if (distance < 50) //hunting distance
 			{

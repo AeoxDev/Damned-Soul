@@ -37,7 +37,7 @@ void LoadLevel2()
 
 
 
-	/*StatComponent* ps = */registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	/*StatComponent* ps = */registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	/*PlayerComponent* pc = */registry.AddComponent<PlayerComponent>(player);
 
 
