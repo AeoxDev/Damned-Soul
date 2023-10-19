@@ -9,6 +9,7 @@
 #include "UIRenderer.h"
 #include "RelicFunctions.h"
 #include "Relics\RelicFuncInputTypes.h"
+#include "EventFunctions.h"
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -120,13 +121,14 @@ void HardCollision(OnCollisionParameters& params)
 
 void AttackCollision(OnCollisionParameters& params)
 {
-	//Get the components of the attacker (entity 1)
+	//Get the components of the attacker (only stats for dealing damage)
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
-	//Get the components of the attackee (entity 2)
-aa	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
+	//Get the components of the attackee (stats for taking damage and transform for knockback)
+	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 
+	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
 	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
 	{
@@ -143,7 +145,8 @@ aa	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 			return;
 		}
 	}
-	//Check if hitbox2 can take damage
+
+	//Do the same as the above but for the attackee, but returning out of here if the hitbox doesn't have the "canTakeDamage" flag set
 	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
 	if (params.hitboxID2 < SAME_TYPE_HITBOX_LIMIT)//For circular
 	{
@@ -160,6 +163,7 @@ aa	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 			return;
 		}
 	}
+
 	//Check if hitbox already dealt damage
 	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
 	{	
@@ -170,22 +174,18 @@ aa	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 		}
 	}
 
-	// Regular hit
-	// Expand to a "damage dealt" value that can be pushed into on hit relic functions to, for example, create life steal?
-	stat2->UpdateHealth(-stat1->damage);
-
-	// On Hit Relics
-	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
-	RelicInput::OnHitInput funcInput
-	{
-		params.entity1,
-		params.entity2
-	};
-	for (uint32_t i = 0; i < funcVector.size(); ++i)
-	{
-		funcVector[i](&funcInput);
-	}
+	/*
+	Get hit, 3-step process
+	1. Start: Lose health, then disable being able to take damage
+	2. Continuous: Flash color using hue-shift, knockback depending on where we got attacked from
+	3. End: Enable being able to take damage again, and maybe for safety reasons make sure our hue-shift is back to normal
+	*/
+	registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, BeginHit, MiddleHit, 0.5f, EndHit); //No special condition for now
+	//stat2->UpdateHealth(-stat1->damage);
 	
+	//Redraw UI (player healthbar) since someone will have taken damage at this point. 
+	//If RedrawUI() is bad to call it's probably good to try and make sure this only happens if player is the one who got attacked
 	RedrawUI();
 
 	//Lastly set for hitboxTracker[]

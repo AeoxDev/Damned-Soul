@@ -22,7 +22,7 @@ void PlayerLoseControl(EntityID& entity)
 	//If we're dashing, we make player invincible
 	if (condition == CONDITION_DASH)
 	{
-		SetHitboxCanTakeDamage(entity, playerComp->hardHitboxID, false);
+		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, false);
 		SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
 	}
 }
@@ -48,7 +48,7 @@ void PlayerRegainControl(EntityID& entity)
 	//If we've just dashed, we make player capable of taking damage again
 	if (condition == CONDITION_DASH)
 	{
-		SetHitboxCanTakeDamage(entity, playerComp->hardHitboxID, true);
+		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
 	}
 }
 

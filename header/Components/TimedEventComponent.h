@@ -2,6 +2,7 @@
 
 //Condition 0 = no special condition for timed event functions
 #define CONDITION_DASH ((uint32_t)1)
+#define CONDITION_DAMAGE ((uint32_t)2)
 
 struct EntityID;
 struct TimedEventComponent;
