@@ -717,6 +717,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetHitboxIsMoveable(entity, sID);
 	SetHitboxCanTakeDamage(entity, sID);
 
+	SetHitboxCanDealDamage(entity, sID, false);
 }
 
 void SetupPlayerCollisionBox(EntityID& entity, float radius)
