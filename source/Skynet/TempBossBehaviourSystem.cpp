@@ -56,14 +56,17 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 void TemporaryPretendAnimation()
 {
 	// lmao funny code do many many things
+	int i = 0;
 }
 void BeginHitting(EntityID& entity)
 {
-	SetHitboxCanDealDamage(entity, 1, true);
+	auto comp = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
 }
 void WeShallOverCome(EntityID& entity)
 {
-	SetHitboxCanDealDamage(entity, 1, false);
+	auto comp = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
 }
 
 void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EntityID& entity)
@@ -80,12 +83,17 @@ void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatCompo
 	//	sc->attackTimer = 0;
 	//	sc->attackStunDurationCounter = 0;
 	//	playerStats->UpdateHealth(-enemyStats->damage);
-	//	RedrawUI();
+	//	RedrawUI();§
 	//}
-
+	
 
 	//SetHitboxCanDealDamage(entity, 1, true);
-	AddTimedEventComponentStartContinuousEnd(entity, 0.f, BeginHitting, TemporaryPretendAnimation, 0.2f, WeShallOverCome);
+	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	{
+		sc->attackTimer = 0;
+		sc->attackStunDurationCounter = 0;
+		AddTimedEventComponentStartContinuousEnd(entity, 0.f, BeginHitting, TemporaryPretendAnimation, 0.2f, WeShallOverCome);
+	}
 }
 
 bool TempBossBehaviourSystem::Update()

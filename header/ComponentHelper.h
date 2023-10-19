@@ -79,7 +79,6 @@ struct DashArgumentComponent
 struct CollisionParamsComponent
 {
 	OnCollisionParameters params;
-
 	CollisionParamsComponent(OnCollisionParameters params) : params(params) {}
 };
 
@@ -87,7 +86,7 @@ struct CollisionParamsComponent
 struct EnemyComponent
 {
 	int soulCount = 0;
-
+	int attackHitBoxID = -1;
 	EnemyComponent(int sc) : soulCount(sc) {}
 };
 

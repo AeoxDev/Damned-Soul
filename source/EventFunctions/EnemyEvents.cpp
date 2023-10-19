@@ -12,7 +12,7 @@
 //	stat->performingDeathAnimation = true; //so we don't trigger death animation twice
 //} not needed
 
-void PlayDeathAnimation(EntityID& entity)
+void PlayDeathAnimation(EntityID& entity, const int& index)
 {
 	//implement later, goddamn TA
 
@@ -92,7 +92,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
 }
 
-void SplitBoss(EntityID& entity)
+void SplitBoss(EntityID& entity, const int& index)
 {
 	CreateMini(entity, 3.f);
 	CreateMini(entity, -3.f);
@@ -202,11 +202,11 @@ void SplitBoss(EntityID& entity)
 	//registry.AddComponent<TempBossBehaviour>(tempBoss, deathC, hID);
 	//registry.AddComponent<TempBossBehaviour>(tempBoss2, deathC, hID2);
 
-	RemoveEnemy(entity);
+	RemoveEnemy(entity, index);
 }
 
 
-void RemoveEnemy(EntityID& entity)
+void RemoveEnemy(EntityID& entity, const int& index)
 {
 	// Eat them souls
 	for (auto entity : View<PlayerComponent>(registry))

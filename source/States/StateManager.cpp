@@ -221,7 +221,7 @@ void StateManager::EndFrame()
 	//MemLib::pdefrag();
 }
 
-GameScene StateManager::GetCurrentLevel()
+GameScene& StateManager::GetCurrentLevel()
 {
 	return levelScenes[activeLevelScene];
 }

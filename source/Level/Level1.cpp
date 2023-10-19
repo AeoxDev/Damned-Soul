@@ -49,7 +49,7 @@ void LoadLevel1()
 	
 	
 
-	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 400.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
 	

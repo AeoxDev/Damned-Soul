@@ -7,7 +7,7 @@
 #include "CollisionFunctions.h" //AttackCollision
 #include "Backend/Collision.h" //Off the deep end
 
-void PlayerLoseControl(EntityID& entity)
+void PlayerLoseControl(EntityID& entity, const int& index)
 {	
 	//Start by removing the players' ControllerComponent
 	registry.RemoveComponent<ControllerComponent>(entity);
@@ -17,7 +17,7 @@ void PlayerLoseControl(EntityID& entity)
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 
 	//Store any specific condition in the timed event
-	uint32_t condition = GetTimedEventCondition(teComp);
+	uint32_t condition = GetTimedEventCondition(teComp, index);
 
 	//If we're dashing, we make player invincible
 	if (condition == CONDITION_DASH)
@@ -27,13 +27,13 @@ void PlayerLoseControl(EntityID& entity)
 	}
 }
 
-void SetPlayerAttackHitboxActive(EntityID& entity)
+void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, true);
 }
 
-void PlayerRegainControl(EntityID& entity)
+void PlayerRegainControl(EntityID& entity, const int& index)
 {
 	//Start by giving back the players' ControllerComponent
 	registry.AddComponent<ControllerComponent>(entity);
@@ -43,7 +43,7 @@ void PlayerRegainControl(EntityID& entity)
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 
 	//Store any specific condition in the timed event
-	uint32_t condition = GetTimedEventCondition(teComp);
+	uint32_t condition = GetTimedEventCondition(teComp, index);
 	
 	//If we've just dashed, we make player capable of taking damage again
 	if (condition == CONDITION_DASH)
@@ -52,13 +52,13 @@ void PlayerRegainControl(EntityID& entity)
 	}
 }
 
-void SetPlayerAttackHitboxInactive(EntityID& entity)
+void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 }
 
-void PlayerAttack(EntityID& entity)
+void PlayerAttack(EntityID& entity, const int& index)
 {
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -77,7 +77,7 @@ void PlayerAttack(EntityID& entity)
 	//Todo: Use GetElapsedTime to make player active hitbox only be towards the end of the animation
 }
 
-void PlayerDash(EntityID& entity)
+void PlayerDash(EntityID& entity, const int& index)
 {
 	//Get access to players relevant components
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);

@@ -61,7 +61,7 @@ int PlayerComponent::UpdateSouls(const int delta)
 		/*Soul Delta*/	delta
 	};
 
-	for (size_t i = 0; i < onSoulUpdateFunctions.size(); ++i)
+	for (unsigned i = 0; i < onSoulUpdateFunctions.size(); ++i)
 	{
 		onSoulUpdateFunctions[i](&input);
 	}
