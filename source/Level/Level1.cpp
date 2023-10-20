@@ -99,9 +99,12 @@ void LoadLevel1()
 	//AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
-	CreatePointLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f);
+	//CreatePointLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f);
 	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
 	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
 	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
-	RemoveLight(dog);
+	//CreateSpotLight(player, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.3f, 32.0f, 0.1f, 0.0f, -1.0f, -1.0f, 30.0f);
+	//SetLightColor(dog, 0.0f, 100.0f, 0.0f);
+	//float3 color = GetLightColor(eye);
+	//RemoveLight(player);
 }
