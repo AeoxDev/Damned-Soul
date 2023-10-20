@@ -2,7 +2,7 @@
 #include "Registry.h"
 #include <assert.h>
 
-void AudioEngineComponent::Setup()
+void AudioEngineComponent::Setup(int& ID)
 {
 	this->result = FMOD::System_Create(&this->system);      // Create the main system object.
 	assert(this->result == FMOD_OK);
@@ -13,18 +13,22 @@ void AudioEngineComponent::Setup()
 	//Load all sounds to use in the game
 	FMOD::Sound* toAdd;
 	this->sounds.clear();
-	for (int i = 0; i < 4; i++) //Change 1 to however many sounds you want to have in the game.
+	for (int i = 0; i < 6; i++) //Change 1 to however many sounds you want to have in the game.
 	{
 		this->sounds.push_back(toAdd);
 	}
-	this->system->createSound("../MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
+	this->system->createSound("SFX/Menu/MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
 	this->volumes.push_back(1.0f);
-	this->system->createSound("../MenuButtonPress.mp3", FMOD_DEFAULT, 0, &this->sounds[1]);
+	this->system->createSound("SFX/Menu/MenuButtonPress.mp3", FMOD_DEFAULT, 0, &this->sounds[1]);
 	this->volumes.push_back(1.0f);
-	this->system->createSound("../StartGameClick.mp3", FMOD_DEFAULT, 0, &this->sounds[2]);
+	this->system->createSound("SFX/Menu/StartGameClick.mp3", FMOD_DEFAULT, 0, &this->sounds[2]);
 	this->volumes.push_back(1.0f);
-	this->system->createSound("../TitleTheme.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[3]);
+	this->system->createSound("SFX/Music/TitleTheme.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[3]);
 	this->volumes.push_back(0.5f);
+	this->system->createSound("SFX/Music/StageCalm.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[4]);
+	this->volumes.push_back(0.5f);
+	this->system->createSound("SFX/Music/StageCombat.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[5]);
+	this->volumes.push_back(0.0f);
 }
 
 void AudioEngineComponent::HandleSound()
@@ -145,6 +149,11 @@ void SoundComponent::Load(const int EntityType)
 	case MUSIC:
 		//Push back all indices for the music sounds into soundIndices
 		this->soundIndices[0].push_back(3);
+		this->soundIndices[0].push_back(4);
+		this->soundIndices[0].push_back(5);
+		this->soundIndices[1].push_back(3);
+		this->soundIndices[1].push_back(4);
+		this->soundIndices[1].push_back(5);
 		break;
 	case AMBIENCE:
 		//Push back all indices for the ambience sounds into soundIndices

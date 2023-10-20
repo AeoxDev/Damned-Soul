@@ -4,7 +4,7 @@
 
 #define CHANNEL_LIMIT 2
 
-enum Channel {Channel_Base, Channel_Voice};
+enum Channel {Channel_Base, Channel_Extra};
 enum UISFX {Button_Hover, Button_Press, Button_Start};
 enum Music {Music_Title, Music_StageCalm, Music_StageCombat, Music_Shop, Music_Boss};
 enum Ambience {Ambience_Lava};
@@ -40,7 +40,7 @@ struct AudioEngineComponent
 	ML_Vector<FMOD::Channel*> channels;
 	ML_Vector<int> freeChannels;
 	ML_Vector<float> volumes;
-	void Setup();
+	void Setup(int& ID);
 	void AddChannel();
 	void HandleSound();
 	void HandleSpecificSound(bool& playSound, bool& stopSound, int& channelIndex, ML_Vector<int>& soundIndices, int& soundIndex);

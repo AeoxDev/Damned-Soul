@@ -23,10 +23,6 @@ void Menu::Setup()//Load
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
-	// Stage Music
-	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(stage);
-	titleTheme->Load(MUSIC);
-	titleTheme->Play(Music_Title, Channel_Base);
 	// Stage Model
 	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
 	stageM->model = LoadModel("PlaceholderScene.mdl");
@@ -137,8 +133,6 @@ void Menu::Unload(bool last)
 	{
 		ModelBonelessComponent* m = registry.GetComponent<ModelBonelessComponent>(entity);
 		ReleaseModel(m->model);
-		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-		if(sound != nullptr) sound->Stop(Channel_Base);
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry))
@@ -150,7 +144,10 @@ void Menu::Unload(bool last)
 	for (auto entity : View<SoundComponent>(registry))
 	{
 		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-		sound->Unload();
+		if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+		{
+			sound->Unload();
+		}
 	}
 
 	if (last)

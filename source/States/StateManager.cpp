@@ -18,10 +18,22 @@ StateManager stateManager;
 
 void SetInMainMenu(bool value)
 {
-	
 	if (value)
 	{
 		currentStates = (State)(currentStates | State::InMainMenu);
+
+		if (currentStates != (State)(currentStates | State::InSettings))
+		{
+			for (auto entity : View<AudioEngineComponent>(registry))
+			{
+				SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+				backgroundMusic->Stop(Channel_Base);
+				backgroundMusic->Stop(Channel_Extra);
+				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+				audioJungle->HandleSound();
+				backgroundMusic->Play(Music_Title, Channel_Base);
+			}
+		}
 	}
 	else
 	{
@@ -87,7 +99,12 @@ void StateManager::Setup()
 	// Audio Engine
 	EntityID audioJungle = registry.CreateEntity();
 	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
-	audioEngine->Setup();
+	audioEngine->Setup(audioJungle.index);
+
+	// Background OST
+	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
+	titleTheme->Load(MUSIC);
+	titleTheme->Play(Music_Title, Channel_Base);
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;

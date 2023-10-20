@@ -4,12 +4,24 @@
 #include "Level.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
+#include "Registry.h"
+#include "Components.h"
 
 void UIFunc::MainMenu_Start(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
 	stateManager.menu.Unload(false);
+	for (auto entity : View<AudioEngineComponent>(registry))
+	{
+		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+		backgroundMusic->Stop();
+		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+		audioJungle->HandleSound();
+		backgroundMusic->Play(Music_StageCalm, Channel_Base);
+		audioJungle->HandleSound();
+		backgroundMusic->Play(Music_StageCombat, Channel_Extra);
+	}
 	//LoadLevel(1);
 	stateManager.activeLevel = 1;
 	LoadLevel(stateManager.activeLevel);
