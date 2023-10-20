@@ -231,9 +231,7 @@ void Light::SetColorHue(const float& multiplicativeRed, const float& multiplicat
         lightShaderBuffer.colorAdditive.z = additiveBlue;
         updateBuffer = true;
         UpdateLight();
-    }
-   
-    
+    }   
 }
 
 void Light::CreateLight(int type) //inte klar --constantbuffer
@@ -339,7 +337,6 @@ void Light::FreeLight()
     updateBuffer = true;
 }
 
-
 void SetDirectionLight(float colorRed, float colorGreen, float colorBlue, float directionX, float directionY, float directionZ)
 {
     Light::SetColor(1, colorRed, colorGreen, colorBlue);
@@ -413,11 +410,14 @@ void RemoveLight(EntityID& entity)
     //Set type to inactive
     if (light == nullptr || light->slot < 0)
     {
+        //light->slot = -1;
         return;
     }
     lightShaderBuffer.lights[light->slot].type = 0;
     //Push back slot to stack
     PushSlotStack(light->slot);
+    //Make sure to set the slot to -1 so that new lights wont be removed by an old one.
+    light->slot = -1;
     registry.RemoveComponent<LightComponent>(entity);
     updateBuffer = true;
 }
