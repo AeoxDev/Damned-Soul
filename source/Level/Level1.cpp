@@ -102,8 +102,8 @@ void LoadLevel1()
 	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
 	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
 	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
-	CreateSpotLight(player, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.3f, 32.0f, 0.1f, 0.0f, -1.0f, -1.0f, 30.0f);
+	//CreateSpotLight(player, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.3f, 32.0f, 0.1f, 0.0f, -1.0f, -1.0f, 30.0f);
 	//SetLightColor(dog, 0.0f, 100.0f, 0.0f);
 	//float3 color = GetLightColor(eye);
-	RemoveLight(player);
+	//RemoveLight(player);
 }
