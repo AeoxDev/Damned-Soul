@@ -43,7 +43,7 @@ void MiddleHit(EntityID& entity, const int& index)
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
 	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetEventTimedElapsed(entity) * frequency) * std::cosf(GetEventTimedElapsed(entity) * frequency);
+	float cosineWave = std::cosf(GetEventTimedElapsed(entity, index) * frequency) * std::cosf(GetEventTimedElapsed(entity, index) * frequency);
 	if (skelel)
 		skelel->colorAdditiveRed = cosineWave;
 	if (bonel)
@@ -66,9 +66,6 @@ void MiddleHit(EntityID& entity, const int& index)
 		transform->positionX += cpc->params.normal1X * GetDeltaTime() * knockbackFactor;
 		transform->positionZ += cpc->params.normal1Z * GetDeltaTime() * knockbackFactor;
 	}
-
-	//GetElapsedTime to make the color flash instead
-	GetEventTimedElapsed(entity);
 }
 
 void EndHit(EntityID& entity, const int& index)

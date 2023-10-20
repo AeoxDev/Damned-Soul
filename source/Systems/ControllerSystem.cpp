@@ -107,14 +107,11 @@ bool ControllerSystem::Update()
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 		}
 
-		//Switches animation to attack and deals damage throughout the animation in front of yourself (offset attack hitbox) (todo: make only second half deal damage)
+		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		if (mouseButtonPressed[0] == pressed)
 		{
-			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, SetPlayerAttackHitboxActive, PlayerAttack, 1.0f, SetPlayerAttackHitboxInactive);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, PlayerAttack, 1.0f, SetPlayerAttackHitboxInactive);
 		}
-
-		//
-
 	}
 	return true;
 }
