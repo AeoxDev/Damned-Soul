@@ -699,12 +699,12 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetupEnemyCollisionBox(EntityID& entity, float radius)
 {
 	AddHitboxComponent(entity);
-	
+	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
 	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsEnemy(entity, hID);
 	SetHitboxHitPlayer(entity, hID);
-	SetHitboxHitEnemy(entity, hID);
+	//SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
 
@@ -712,11 +712,21 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetCollisionEvent(entity, sID, SoftCollision);
 	SetHitboxIsEnemy(entity, sID);
 	SetHitboxHitPlayer(entity, sID);
-	SetHitboxHitEnemy(entity, sID);
+	//SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
 	SetHitboxCanTakeDamage(entity, sID);
 
+	SetHitboxCanDealDamage(entity, sID, false);
+
+	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.2f, 0.f, -1.5f);
+	SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+	SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+	SetHitboxActive(entity, enemyComp->attackHitBoxID);
+	SetHitboxIsMoveable(entity, enemyComp->attackHitBoxID);
+	SetHitboxCanTakeDamage(entity, enemyComp->attackHitBoxID, false);
+	SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 }
 
 void SetupPlayerCollisionBox(EntityID& entity, float radius)
@@ -734,7 +744,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
 	SetHitboxCanDealDamage(entity, hID, false);
-	SetHitboxCanTakeDamage(entity, hID, false);
+	SetHitboxCanTakeDamage(entity, hID, true);
 
 	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
 	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
@@ -752,7 +762,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
-	SetHitboxCanDealDamage(entity, hID, false);
+	SetHitboxCanDealDamage(entity, sID, false);
 	SetHitboxCanTakeDamage(entity, sID, true);
 	playerComp->softHitboxID = sID;
 

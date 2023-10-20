@@ -8,7 +8,7 @@
 
 #define KNOCKBACK_FACTOR 0.3f
 
-void BeginHit(EntityID& entity)
+void BeginHit(EntityID& entity, const int& index)
 {
 	//Get relevant components
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
@@ -36,7 +36,7 @@ void BeginHit(EntityID& entity)
 	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
 }
 
-void MiddleHit(EntityID& entity)
+void MiddleHit(EntityID& entity, const int& index)
 {
 	//Flash color red repeatedly
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
@@ -52,10 +52,16 @@ void MiddleHit(EntityID& entity)
 	//Take knockback
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+
+	if ((!skelel && !bonel) || !cpc || !transform)
+	{
+		CancelTimedEvent(entity, index);
+	}
+
 	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 	if (cpc && transform)
 	{
-		float knockbackFactor = KNOCKBACK_FACTOR * sqrtf(attackerStats->damage) / (0.1f + transform->mass * GetEventTimedElapsed(entity));
+		float knockbackFactor = KNOCKBACK_FACTOR / (0.1f + transform->mass * GetEventTimedElapsed(entity, index));
 		knockbackFactor *= knockbackFactor;
 		transform->positionX += cpc->params.normal1X * GetDeltaTime() * knockbackFactor;
 		transform->positionZ += cpc->params.normal1Z * GetDeltaTime() * knockbackFactor;
@@ -65,7 +71,7 @@ void MiddleHit(EntityID& entity)
 	GetEventTimedElapsed(entity);
 }
 
-void EndHit(EntityID& entity)
+void EndHit(EntityID& entity, const int& index)
 {
 	//Enable damage taken again
 	SetHitboxCanTakeDamage(entity, 1, true);

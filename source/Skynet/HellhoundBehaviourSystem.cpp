@@ -164,7 +164,16 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc)
-{
+{	
+	//Temp: Create SMALL spotlight when dog prepares to flame
+	for (auto dog : View<HellhoundBehaviour>(registry))
+	{
+		CreateSpotLight(dog, 1.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, -0.25f,
+			10.0f, 1.0f,
+			0.0f, 0.0f, -1.0f, 30.0f);
+	}
+
 	hc->isShooting = true;
 
 	//from hound  to player
@@ -231,8 +240,20 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	//once max range has been reached, this function will reset all stats and let the doggo go on with a different behavior. 
 	// each check until then will create a slightly longer (not wider) triangle hit box to simulate a flamethrower. Each check, the player will take damage if it
 	// make sure to balance the damage so it's not a fast one-shot thing
-	
+
 	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox; //updates the range of the "flamethrower"
+
+	//Temp: Create BIG spotlight when dog flame
+	for (auto dog : View<HellhoundBehaviour>(registry))
+	{
+		//Temp: Create point light to indicate that we're going to do flamethrower
+		CreateSpotLight(dog, 10.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, -0.25f,
+			hc->currentShootingAttackRange, 1.0f,
+			0.0f, 0.0f, -1.0f, 30.0f);
+	}
+	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
+	
 
 	//TESTING CODE______________________________________________________________________________________
 	//float test1 = (hc->shootingSideTarget1X - hc->shootingStartX);
@@ -266,7 +287,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		if (distance <= hc->currentShootingAttackRange)
 		{
 			//yes, player should get hit. Take damage
-			playerStats->UpdateHealth(-enemyStats->damage); // DEFINITELY MODIFY THIS LATER, very likely too much damage
+			playerStats->UpdateHealth(-hc->flameDamage); // DEFINITELY MODIFY THIS LATER, very likely too much damage
 			RedrawUI();
 		}
 	}
@@ -279,6 +300,13 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		hc->shootingCounter = 0.0f;
 		hc->shootingCooldownCounter = 0.0f;
 		hc->currentShootingAttackRange = 0.f;
+
+		//TEEEEEMP
+		for (auto dog : View<HellhoundBehaviour>(registry))
+		{
+			RemoveLight(dog);
+		}
+		
 	}
 }
 

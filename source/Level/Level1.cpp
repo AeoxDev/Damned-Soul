@@ -27,7 +27,7 @@ void LoadLevel1()
 
 	SetupEnemy(skeleton, enemyType::skeleton, 5.f, 0.f, 7.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(skeleton2, enemyType::skeleton, 10.f, 0.f, 5.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(dog, enemyType::hellhound, -5.f, 0.f, -5.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(dog, enemyType::hellhound, -5.f, 0.f, -5.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
 	SetupEnemy(eye, enemyType::eye, 15.f, 0.f, 15.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
 
 
@@ -49,7 +49,7 @@ void LoadLevel1()
 	
 	
 
-	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
 	
@@ -99,8 +99,8 @@ void LoadLevel1()
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
 	//CreatePointLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f);
-	//CreateSpotLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f, 1.0f, -1.0f, 1.0f, 30.0f);
 	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
 	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
 	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
+	//RemoveLight(dog);
 }
