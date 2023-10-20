@@ -148,6 +148,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)header\UI;$(SolutionDir)lib</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
