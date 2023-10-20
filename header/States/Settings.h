@@ -15,5 +15,5 @@ struct SettingsState
 	void SetupImages();
 	void SetupText();
 
-	void Unload();
+	void Unload(bool last);
 };

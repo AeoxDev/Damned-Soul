@@ -34,7 +34,7 @@ struct StateManager
 	void Update();//All cpu systems here
 	void ComputeShaders();//All compute shaders here
 
-	void UnloadAll();
+	void UnloadAll(bool last);
 	void EndFrame();//Clears all framebased variables.
 
 	GameScene& GetCurrentLevel();

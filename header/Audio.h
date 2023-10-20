@@ -39,6 +39,7 @@ struct AudioEngineComponent
 	ML_Vector<FMOD::Sound*> sounds;
 	ML_Vector<FMOD::Channel*> channels;
 	ML_Vector<int> freeChannels;
+	ML_Vector<float> volumes;
 	void Setup();
 	void AddChannel();
 	void HandleSound();

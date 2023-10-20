@@ -14,11 +14,6 @@ void Menu::Setup()//Load
 {
 	m_active = true;
 
-	// Audio Engine
-	EntityID audioJungle = registry.CreateEntity();
-	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
-	audioEngine->Setup();
-
 	RedrawUI();
 	SetupButtons();
 	SetupImages();
@@ -28,6 +23,10 @@ void Menu::Setup()//Load
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
+	// Stage Music
+	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(stage);
+	titleTheme->Load(MUSIC);
+	titleTheme->Play(Music_Title, Channel_Base);
 	// Stage Model
 	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
 	stageM->model = LoadModel("PlaceholderScene.mdl");
@@ -115,7 +114,7 @@ void Menu::SetupText()
 	tc1->Setup(L"This is the main menu!", { 0.0f, 0.0f });
 }
 
-void Menu::Unload()
+void Menu::Unload(bool last)
 {
 	// If this state is not active, simply skip the unload
 	if (false == m_active)
@@ -138,6 +137,8 @@ void Menu::Unload()
 	{
 		ModelBonelessComponent* m = registry.GetComponent<ModelBonelessComponent>(entity);
 		ReleaseModel(m->model);
+		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+		if(sound != nullptr) sound->Stop(Channel_Base);
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry))
@@ -152,18 +153,29 @@ void Menu::Unload()
 		sound->Unload();
 	}
 
-	for (auto entity : View<AudioEngineComponent>(registry))
+	if (last)
 	{
-		AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
-		audioEngine->Destroy();
+		for (auto entity : View<AudioEngineComponent>(registry))
+		{
+			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
+			audioEngine->Destroy();
+		}
 	}
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
 		EntityID check = registry.entities.at(i).id;
-		if (check.state == false)
-			registry.DestroyEntity(check);
+		if (check.index != -1)
+		{
+			if (auto comp = registry.GetComponent<AudioEngineComponent>(check) != nullptr)
+			{
+				if ((check.state == false && !comp) || last)
+					registry.DestroyEntity(check);
+			}
+			else if (check.state == false || last)
+				registry.DestroyEntity(check);
+		}
 	}
 
 	ClearUI();

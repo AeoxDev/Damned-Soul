@@ -53,7 +53,7 @@ struct EntityID
 extern int compCount;
 namespace EntityGlobals
 {
-	static constexpr int MAX_COMPONENTS = 32;
+	static constexpr int MAX_COMPONENTS = 64;
 	typedef std::bitset<MAX_COMPONENTS> componentBitset; //cppreference bitset: "N -> the number of bits to allocate storage for"
 
 

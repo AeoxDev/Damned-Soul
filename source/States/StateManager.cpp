@@ -10,6 +10,8 @@
 #include "Particles.h"
 #include "D3D11Graphics.h"
 #include "Light.h"
+#include "Registry.h"
+#include "Components.h"
 
 State currentStates;
 StateManager stateManager;
@@ -81,6 +83,11 @@ void StateManager::Setup()
 	ui.RenderSlot = SetupUIRenderState();
 
 	ui.Setup();
+
+	// Audio Engine
+	EntityID audioJungle = registry.CreateEntity();
+	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
+	audioEngine->Setup();
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
@@ -199,13 +206,13 @@ void StateManager::ComputeShaders()
 	}*/
 }
 
-void StateManager::UnloadAll()
+void StateManager::UnloadAll(bool last)
 {
-	menu.Unload();
-	settings.Unload();
-	shop.Unload();
-	levelScenes[0].Unload();
-	levelScenes[1].Unload();
+	menu.Unload(last);
+	settings.Unload(last);
+	shop.Unload(last);
+	levelScenes[0].Unload(last);
+	levelScenes[1].Unload(last);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();

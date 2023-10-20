@@ -41,7 +41,7 @@ int main(int argc, char* args[])
 
 		stateManager.EndFrame();
 	}
-	stateManager.UnloadAll();
+	stateManager.UnloadAll(true);
 	SDL_Quit();
 	MemLib::destroyMemoryManager();
 	return 0;

@@ -78,7 +78,7 @@ void SettingsState::SetupText()
 	//headerComp->Setup(L"Settings", { 0.0f, 0.4f }, {1.5f, 1.5f});
 }
 
-void SettingsState::Unload()
+void SettingsState::Unload(bool last)
 {
 	// If this state is not active, simply skip the unload
 	if (false == m_active)
@@ -97,12 +97,29 @@ void SettingsState::Unload()
 		i->Release();
 	}
 
+	if (last)
+	{
+		for (auto entity : View<AudioEngineComponent>(registry))
+		{
+			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
+			audioEngine->Destroy();
+		}
+	}
+
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
 		EntityID check = registry.entities.at(i).id;
-		if (check.state == false)
-			registry.DestroyEntity(check);
+		if (check.index != -1)
+		{
+			if (auto comp = registry.GetComponent<AudioEngineComponent>(check) != nullptr)
+			{
+				if ((check.state == false && !comp) || last)
+					registry.DestroyEntity(check);
+			}
+			else if (check.state == false || last)
+				registry.DestroyEntity(check);
+		}
 	}
 	
 }

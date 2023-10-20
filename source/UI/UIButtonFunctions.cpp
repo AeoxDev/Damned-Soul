@@ -9,7 +9,7 @@ void UIFunc::MainMenu_Start(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
-	stateManager.menu.Unload();
+	stateManager.menu.Unload(false);
 	//LoadLevel(1);
 	stateManager.activeLevel = 1;
 	LoadLevel(stateManager.activeLevel);
@@ -19,7 +19,7 @@ void UIFunc::MainMenu_Settings(void* args)
 {
 	SetInSettings(true);
 	SetInMainMenu(false);
-	stateManager.menu.Unload();
+	stateManager.menu.Unload(false);
 	stateManager.settings.Setup();
 }
 
@@ -33,7 +33,7 @@ void UIFunc::Settings_Back(void* args)
 {
 	SetInMainMenu(true);
 	SetInSettings(false);
-	stateManager.settings.Unload();
+	stateManager.settings.Unload(false);
 	stateManager.menu.Setup();
 }
 

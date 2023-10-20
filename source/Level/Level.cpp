@@ -11,8 +11,8 @@ void LoadLevel(int level)
 	RedrawUI();
 	Camera::ResetCamera();
 
-	stateManager.levelScenes[0].Unload();
-	stateManager.levelScenes[1].Unload();
+	stateManager.levelScenes[0].Unload(false);
+	stateManager.levelScenes[1].Unload(false);
 	
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 2;
 	stateManager.levelScenes[stateManager.activeLevelScene].Setup(1);

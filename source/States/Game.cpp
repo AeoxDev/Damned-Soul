@@ -45,7 +45,7 @@ void GameScene::Input()
 	{
 		SetInMainMenu(true);
 		SetInPlay(false);
-		Unload();
+		Unload(false);
 		stateManager.menu.Setup();
 	}
 
@@ -144,7 +144,7 @@ void GameScene::ComputeShaders()
 	Particles::FinishParticleCompute();*/
 }
 
-void GameScene::Unload()
+void GameScene::Unload(bool last)
 {
 	// If this state is not active, simply skip the unload
 	if (false == m_active)
@@ -213,14 +213,31 @@ void GameScene::Unload()
 		p->pointList.~ML_Vector();
 	}
 
+	if (last)
+	{
+		for (auto entity : View<AudioEngineComponent>(registry))
+		{
+			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
+			audioEngine->Destroy();
+		}
+	}
+
 	Light::FreeLight();
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
 		EntityID check = registry.entities.at(i).id;
-		if(check.state == false)
-			registry.DestroyEntity(check);
+		if (check.index != -1)
+		{
+			if (auto comp = registry.GetComponent<AudioEngineComponent>(check) != nullptr)
+			{
+				if ((check.state == false && !comp) || last)
+					registry.DestroyEntity(check);
+			}
+			else if (check.state == false || last)
+				registry.DestroyEntity(check);
+		}
 	}
 }
 
@@ -228,7 +245,7 @@ void GameScene::GameOver()
 {
 	SetInMainMenu(true);
 	SetInPlay(false);
-	Unload();
+	Unload(false);
 	Relics::ClearRelicFunctions();
 	stateManager.menu.Setup();
 }
