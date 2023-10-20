@@ -49,7 +49,7 @@ void LoadLevel1()
 	
 	
 
-	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 400.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
 	
@@ -63,7 +63,8 @@ void LoadLevel1()
 
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
-	pcUiHpC->image.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
 	pcUiHpC->text.Setup(L"");
 
 	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
@@ -98,9 +99,9 @@ void LoadLevel1()
 	//AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
-	CreatePointLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f);
+	//CreatePointLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f);
 	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
 	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
 	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
-	RemoveLight(dog);
+	//RemoveLight(dog);
 }
