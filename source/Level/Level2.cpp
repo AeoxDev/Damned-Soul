@@ -53,7 +53,8 @@ void LoadLevel2()
 	////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
-	pcUiHpC->image.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->backgroundImage.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
 	pcUiHpC->text.Setup(L"");
 
 	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
