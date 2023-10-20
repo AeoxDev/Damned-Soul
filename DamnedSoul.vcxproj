@@ -141,12 +141,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)header\UI;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -396,11 +397,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Animation.hpp" />
+    <ClInclude Include="header\AnimationType.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\UIComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />
@@ -418,6 +421,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h" />
     <ClInclude Include="header\EntityCreation.h" />
+    <ClInclude Include="header\EntityID.h" />
     <ClInclude Include="header\EventFunctions.h" />
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Components\ParticleComponent.h" />

@@ -4,6 +4,7 @@
 #include "EventFunctions.h"
 #include "EntityCreation.h"
 #include "CollisionFunctions.h"
+#include "Model.h"
 EntityID CreateRoundStaticHazard(const char* file, const float& posX, const float& posY, const float& posZ, const float& scaleX, const float& scaleY, const float& scaleZ, const float& colorRed, const float& colorGreen, const float& colorBlue, const float& radius, const float& damage)
 {
 	EntityID hazard = registry.CreateEntity();

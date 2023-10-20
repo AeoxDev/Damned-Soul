@@ -16,6 +16,7 @@
 #include "States\CleanupMacros.h"
 #include "Camera.h"
 #include "Light.h"
+#include "UIComponents.h"
 
 #include "RelicFunctions.h"
 

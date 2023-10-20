@@ -5,6 +5,7 @@
 #include "DeltaTime.h"
 #include "UIRenderer.h"
 #include "CollisionFunctions.h" //AttackCollision
+#include "Model.h"
 
 //void EnemyExclusion(EntityID& entity)
 //{

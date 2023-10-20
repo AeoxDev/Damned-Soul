@@ -1,6 +1,7 @@
 #pragma once
-#include "Animation.hpp"
-
+//#include "Animation.hpp"
+#include "AnimationType.h"
+#include <stdint.h>
 struct AnimationComponent
 {
 	ANIMATION_TYPE aAnim = ANIMATION_IDLE;

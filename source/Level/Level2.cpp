@@ -5,6 +5,8 @@
 #include "Particles.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
+#include "Model.h"
+#include "UIComponents.h"
 
 void LoadLevel2()
 {

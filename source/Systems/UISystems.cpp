@@ -8,7 +8,7 @@
 #include "Input.h"
 
 #include "MemLib\ML_String.hpp"
-
+#include "UIComponents.h"
 #include <iomanip>
 
 bool uiUpdated = true;

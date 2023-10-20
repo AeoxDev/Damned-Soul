@@ -9,6 +9,7 @@
 #include "UI/UIButtonFunctions.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
+#include "UIComponents.h"
 
 void SettingsState::Setup()
 {

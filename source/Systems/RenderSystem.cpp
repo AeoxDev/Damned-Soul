@@ -8,6 +8,7 @@
 #include "UIRenderer.h"
 #include "Camera.h"
 #include "Light.h"
+#include "Model.h"
 
 bool RenderSystem::Update()
 {

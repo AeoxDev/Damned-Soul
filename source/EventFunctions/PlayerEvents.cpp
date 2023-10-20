@@ -87,7 +87,7 @@ void PlayerDash(EntityID& entity, const int& index)
 	//Invalid entity doesn't have the required components
 	if (!transform || !stat || !dac)
 		return;
-
+	
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();
 	transform->positionZ += dac->z * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();

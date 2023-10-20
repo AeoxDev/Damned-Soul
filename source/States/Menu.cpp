@@ -9,6 +9,8 @@
 #include "States\CleanupMacros.h"
 #include "UI/UIButtonFunctions.h"
 #include "Level.h"
+#include "Model.h"
+#include "UIComponents.h"
 
 void Menu::Setup()//Load
 {

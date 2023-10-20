@@ -5,15 +5,16 @@
 #define MAP_DIM 512*512
 #define MOVEABLE_COLLISIONS_PER_FRAME 2
 #define HIT_TRACKER_LIMIT 8
-#include "EntityFramework.h"
+//#include "EntityFramework.h"
+#include "EntityID.h"
 #include "MemLib/ML_Vector.hpp"
 
-
+//Def to avoid compilation time
 
 struct OnCollisionParameters
 { 
-	EntityID entity1; 
-	EntityID entity2; 
+	EntityID entity1;
+	EntityID entity2;
 	int hitboxID1;
 	int hitboxID2;
 	float normal1X;

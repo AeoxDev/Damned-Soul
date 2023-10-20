@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "CollisionFunctions.h" //NextLevel
 #include "States\StateManager.h"
+#include "Model.h"
 
 void CreatePortal(EntityID& entity, const int& index)
 {

@@ -6,6 +6,7 @@
 #include "GameRenderer.h"
 #include "Registry.h"
 #include "Hitbox.h"
+#include "Model.h"
 
 #define TEXTURE_DIMENSIONS 128
 struct GIConstantBufferData

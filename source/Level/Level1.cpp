@@ -8,6 +8,8 @@
 #include "Levels\LevelHelper.h"
 #include "EntityCreation.h"
 #include "DeltaTime.h"
+#include "Model.h"
+#include "UIComponents.h"
 
 void LoadLevel1()
 {
@@ -98,7 +100,7 @@ void LoadLevel1()
 
 	//EntityID hazard1 = CreateRoundStaticHazard("PlaceholderScene.mdl",20.0f, 0.1f, -0.0f, 0.04f, 0.1f, 0.04f, 0.8f, 0.4f, 0.1f, 1.5f, 2.0f);
 	//EntityID hazard2 = CreateRoundStaticHazard("PlaceholderScene.mdl",18.5f, 0.1f, -20.0f, 0.08f, 0.1f, 0.08f, 0.8f, 0.4f, 0.1f, 3.0f, 2.0f);
-	srand(GetDeltaTime() * 100000.0f);
+	srand((unsigned)(GetDeltaTime() * 100000.0f));
 
 	//Add static hazards on the where player does not spawn
 	const int nrHazards = 8;
@@ -118,15 +120,4 @@ void LoadLevel1()
 			}
 		}
 	}
-	
-	/*
-	EntityID hazard2 = CreateSquareStaticHazard("PlaceholderScene.mdl",(float)(rand()%120) - 60.0f, 0.1f, (float)(rand() % 120) - 60.0f, 0.1f, 0.1f, 0.1f,
-		-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-		0.8f, 0.5f, 0.1f, 3.0f);
-	EntityID hazard3 = CreateSquareStaticHazard("PlaceholderScene.mdl",(float)(rand()%120) - 60.0f, 0.1f, (float)(rand() % 120) - 60.0f, 0.1f, 0.1f, 0.1f,
-		-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-		0.8f, 0.5f, 0.1f, 3.0f);
-	EntityID hazard4 = CreateSquareStaticHazard("PlaceholderScene.mdl",(float)(rand()%120) - 60.0f, 0.1f, (float)(rand() % 120) - 60.0f, 0.1f, 0.1f, 0.1f,
-		-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-		0.8f, 0.5f, 0.1f, 3.0f);*/
 }
