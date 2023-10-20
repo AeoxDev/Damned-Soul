@@ -13,3 +13,5 @@ void RandomPosition(EntityID& entity)
 	tc->positionX = (float)(rand() % 128) - 64.0f;
 	tc->positionZ = (float)(rand() % 128) - 64.0f;
 }
+
+

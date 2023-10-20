@@ -4,6 +4,7 @@
 #include "Components.h"
 #include "Particles.h"
 #include "CollisionFunctions.h"
+#include "Levels\LevelHelper.h"
 
 void LoadLevel2()
 {
@@ -20,50 +21,14 @@ void LoadLevel2()
 
 	//**************************************************
 	EntityID tempBoss = registry.CreateEntity();
-	registry.AddComponent<ModelBonelessComponent>(tempBoss, LoadModel("PHBoss.mdl"));
+	SetupEnemy(tempBoss, enemyType::tempBoss, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 3.f, 4, 1.f, 0.f, 1.f, 4.f, 4.f, 4.f);
 
-	TransformComponent bossTransformComponent;
-	bossTransformComponent.facingX = 1.0f; bossTransformComponent.positionX = 20.0f; bossTransformComponent.facingX = 1.0f;
-	bossTransformComponent.mass = 9.0f;
-	bossTransformComponent.scaleX = 3.f; bossTransformComponent.scaleY = 3.f; bossTransformComponent.scaleZ = 3.f;
-	registry.AddComponent<TransformComponent>(tempBoss, bossTransformComponent);
-	registry.AddComponent<StatComponent>(tempBoss, 400.f, 10.f, 40.f, 3.5f);
-	registry.AddComponent<EnemyComponent>(tempBoss, 2);
-
-	AddHitboxComponent(tempBoss);
-
-	int hID = CreateHitbox(tempBoss, 3.f * 0.7f, 0.f, 0.f);
-	SetCollisionEvent(tempBoss, hID, HardCollision);
-	SetHitboxIsEnemy(tempBoss, hID);
-	SetHitboxHitPlayer(tempBoss, hID);
-	SetHitboxHitEnemy(tempBoss, hID);
-	SetHitboxActive(tempBoss, hID);
-	SetHitboxIsMoveable(tempBoss, hID);
-
-	int sID = CreateHitbox(tempBoss, 3.f, 0.f, 0.f);
-	SetCollisionEvent(tempBoss, sID, SoftCollision);
-	SetHitboxIsEnemy(tempBoss, sID);
-	SetHitboxHitPlayer(tempBoss, sID);
-	SetHitboxHitEnemy(tempBoss, sID);
-	SetHitboxActive(tempBoss, sID);
-	SetHitboxIsMoveable(tempBoss, sID);
-
-
-	registry.AddComponent<TempBossBehaviour>(tempBoss, 0, hID);
-	//***********************************************
-
-	///*ModelBonelessComponent* dogCo = */registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
 	/*ModelBonelessComponent* stageCo = */registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("HellhoundDummy_PH.mdl"));
 	/*ModelSkeletonComponent* pmc = */registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	/*AnimationComponent* pac = */registry.AddComponent<AnimationComponent>(player, AnimationComponent());
-	///*ModelBonelessComponent* skelCo = */registry.AddComponent<ModelBonelessComponent>(skeleton, LoadModel("SkeletonOneDymmy.mdl"));
-	///*ModelBonelessComponent* skelCo2 = */registry.AddComponent<ModelBonelessComponent>(skeleton2, LoadModel("SkeletonOneDymmy.mdl"));
 
-	// Dog
-	TransformComponent dogTransformComponent;
-	dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 20.0f; dogTransformComponent.facingX = 1.0f;
-	///*TransformComponent* dtc = */registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
-	// Stage (Default)
+
+	
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 	stc->scaleX = 60.0f;
 	stc->scaleZ = 30.0f;
@@ -75,14 +40,7 @@ void LoadLevel2()
 	/*StatComponent* ps = */registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	/*PlayerComponent* pc = */registry.AddComponent<PlayerComponent>(player);
 
-	///*StatComponent* ds = */registry.AddComponent<StatComponent>(dog, 50.f, 20.f, 25.f, 5.f);
-	///*EnemyComponent* ec1 = */registry.AddComponent<EnemyComponent>(dog, 1);
 
-	///*StatComponent* ss = */registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
-	///*EnemyComponent* ec2 = */registry.AddComponent<EnemyComponent>(skeleton, 2);
-
-	///*StatComponent* ss2 = */registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
-	///*EnemyComponent* ec3 = */registry.AddComponent<EnemyComponent>(skeleton2, 2);
 
 	/*ControllerComponent* cc = */registry.AddComponent<ControllerComponent>(player);
 
@@ -90,9 +48,6 @@ void LoadLevel2()
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	/*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
-	///*PointOfInterestComponent* dogPoi = */registry.AddComponent<PointOfInterestComponent>(dog);
-	///*PointOfInterestComponent* skelPoi = */registry.AddComponent<PointOfInterestComponent>(skeleton);
-	///*PointOfInterestComponent* skelPoi2 = */registry.AddComponent<PointOfInterestComponent>(skeleton2);
 
 	//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 	////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
@@ -112,18 +67,12 @@ void LoadLevel2()
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup(L"");
 
-	///*HellhoundBehaviour* hellhoundBehevCo = */registry.AddComponent<HellhoundBehaviour>(dog);
-	///*SkeletonBehaviour* skeletonBehevCo = */registry.AddComponent<SkeletonBehaviour>(skeleton);
-	///*SkeletonBehaviour* skeletonBehevCo2 = */registry.AddComponent<SkeletonBehaviour>(skeleton2);
 
 
 	RenderGeometryIndependentCollision(stage);
 	//Finally set the collision boxes
 	SetupPlayerCollisionBox(player, 1.0f);
 
-	/*SetupEnemyCollisionBox(skeleton, 0.9f);
-	SetupEnemyCollisionBox(skeleton2, 0.9f);
-	SetupEnemyCollisionBox(dog, 1.0f);*/
 
 	MouseComponentAddComponent(player);
 

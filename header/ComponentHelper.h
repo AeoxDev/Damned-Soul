@@ -1,6 +1,7 @@
 #pragma once
 #include <bitset>
 #include "Relics.h"
+#include "Backend/Collision.h"
 
 //Stats that every character in the game levels will have (player and enemies), modifyable by weapons and relics
 struct StatComponent
@@ -44,7 +45,7 @@ private:
 	int souls = 0;
 public:
 	int attackHitboxID = -1;
-	int hardHitboxID = -1;
+	int softHitboxID = -1;
 	int killingSpree = 0;
 	bool portalCreated = false;
 
@@ -73,6 +74,13 @@ struct DashArgumentComponent
 	float arc = 0.0f; //Feliiiix
 
 	DashArgumentComponent(float x, float z, float dashModifier, float arc = 0.0f) : x(x), z(z), dashModifier(dashModifier) {}
+};
+
+struct CollisionParamsComponent
+{
+	OnCollisionParameters params;
+
+	CollisionParamsComponent(OnCollisionParameters params) : params(params) {}
 };
 
 //

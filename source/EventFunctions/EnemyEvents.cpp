@@ -47,7 +47,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	float newScaleSize = 0.7f; // change as see fit
 	float offsetX = transform->facingX;
 	float offsetZ = -transform->facingZ;
-	float magnitude = sqrt(offsetX * offsetX + offsetZ * offsetZ);
+	float magnitude = sqrtf(offsetX * offsetX + offsetZ * offsetZ);
 	if (magnitude > 0.001f)
 	{
 		offsetX /= magnitude;
@@ -58,19 +58,21 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	transComp.scaleX = transform->scaleX * newScaleSize;
 	transComp.scaleY = transform->scaleY * newScaleSize;
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
+	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp);
 
 	//Set hitbox
 	float newScaleHitBox = 0.85f;
 	AddHitboxComponent(newMini);
 
-	int hID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	int hID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox * 0.7f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
 	SetHitboxHitEnemy(newMini, hID);
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID);
+
 
 	int sID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
@@ -79,10 +81,11 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	SetHitboxHitEnemy(newMini, sID);
 	SetHitboxActive(newMini, sID);
 	SetHitboxIsMoveable(newMini, sID);
+	SetHitboxCanTakeDamage(newMini, sID);
 
 	//Set behavior
-	float deathC = bossBehev->deathCounter + 1;
-	registry.AddComponent<TempBossBehaviour>(newMini, deathC, hID);
+	float deathC = (float)(bossBehev->deathCounter + 1);
+	registry.AddComponent<TempBossBehaviour>(newMini, (int)deathC, hID);
 
 	
 	registry.AddComponent<EnemyComponent>(newMini, 2);
