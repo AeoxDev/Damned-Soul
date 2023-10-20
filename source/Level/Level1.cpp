@@ -105,5 +105,5 @@ void LoadLevel1()
 	CreateSpotLight(player, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.3f, 32.0f, 0.1f, 0.0f, -1.0f, -1.0f, 30.0f);
 	//SetLightColor(dog, 0.0f, 100.0f, 0.0f);
 	//float3 color = GetLightColor(eye);
-	//RemoveLight(player);
+	RemoveLight(player);
 }

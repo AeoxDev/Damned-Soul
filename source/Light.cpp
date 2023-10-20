@@ -409,7 +409,7 @@ int CreateSpotLight(EntityID& entity, float colorRed, float colorGreen, float co
 void RemoveLight(EntityID& entity)
 {
     //Get the light component
-    LightComponent* light = registry.AddComponent<LightComponent>(entity);
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
     //Set type to inactive
     if (light == nullptr || light->slot < 0 || lightShaderBuffer.lights[light->slot].type == 0)
     {
