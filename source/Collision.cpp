@@ -158,6 +158,11 @@ void HandleDamageCollision()
 
 		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
 		{
+			//If none of the hitboxes can deal damage, check the next ones.
+			if (!firstHitbox->circularFlags[i].canDealDamage && !firstHitbox->convexFlags[i].canDealDamage)
+			{
+				continue;
+			}
 			//Add CanDealDamageCheck
 			for (auto entity2 : View<HitboxComponent>(registry)) //Access the second entity
 			{
@@ -170,7 +175,34 @@ void HandleDamageCollision()
 
 				for (int j = 0; j < SAME_TYPE_HITBOX_LIMIT; j++)
 				{
-					//Add CanTakeDamageCheck
+					//If the circular hitbox can take damage, check collision with active hitboses
+					if (secondHitbox->circularFlags[j].canTakeDamage)
+					{
+						if (firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
+						{
+							//Both are circular, do circle to circle.
+							bool hit = IsCircularCollision(entity, entity2, i, j);
+						}
+						if (firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active)
+						{
+							//One is convex, other one is circular.
+							bool hit = IsConvexCircularCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
+						}
+					}
+					//If the convex hitbox can take damage, check collision with active hitboses
+					if (secondHitbox->convexFlags[j].canTakeDamage)
+					{ 
+						if (firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
+						{
+							//Both are convex, do convex to convex.
+							bool hit = IsConvexCollision(entity, entity2, i, j);
+						}
+						if (firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
+						{
+							//One is convex, other one is circular.
+							bool hit = IsCircularConvexCollision(entity, entity2, i, j);//Could add a check for which is convex/circular if the parameter order matters.
+						}
+					}
 				}
 			}
 		}
@@ -206,22 +238,22 @@ void HandleMoveableCollision( )//Reggie Strie
 
 				for (int j = 0; j < SAME_TYPE_HITBOX_LIMIT; j++)
 				{
-					if (firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
+					if (firstHitbox->circularFlags[i].isMoveable && secondHitbox->circularFlags[j].isMoveable && firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
 					{
 						//Both are circular, do circle to circle.
 						bool hit = IsCircularCollision(entity, entity2, i, j);
 					}
-					if (firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
+					if (firstHitbox->convexFlags[i].isMoveable && secondHitbox->convexFlags[j].isMoveable && firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
 					{
 						//Both are convex, do convex to convex.
 						bool hit = IsConvexCollision(entity, entity2, i, j);
 					}
-					if (firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
+					if (firstHitbox->circularFlags[i].isMoveable && secondHitbox->convexFlags[j].isMoveable && firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
 					{
 						//One is convex, other one is circular.
 						bool hit = IsCircularConvexCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
 					}
-					if (firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active)
+					if (firstHitbox->convexFlags[i].isMoveable && secondHitbox->circularFlags[j].isMoveable && firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active)
 					{
 						//One is convex, other one is circular.
 						bool hit = IsConvexCircularCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.

@@ -6,7 +6,7 @@
 #include "CollisionFunctions.h" //NextLevel
 #include "States\StateManager.h"
 
-void CreatePortal(EntityID& entity)
+void CreatePortal(EntityID& entity, const int& index)
 {
 	//Create a model and a transform for portal:
 	registry.AddComponent<PointOfInterestComponent>(entity);

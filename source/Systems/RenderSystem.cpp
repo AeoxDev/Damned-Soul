@@ -7,6 +7,7 @@
 #include "GameRenderer.h"
 #include "UIRenderer.h"
 #include "Camera.h"
+#include "Light.h"
 
 bool RenderSystem::Update()
 {
@@ -19,12 +20,19 @@ bool RenderSystem::Update()
 
 	//Set shaders here.
 	PrepareBackBuffer();
-	
+	//If light needs to update, update it.
+	SetConstantBuffer(Light::GetLightBufferIndex(), BIND_PIXEL, 2);
+	Light::UpdateLight();
+
+
 
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
+
+		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
+			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
 
 		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX,0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
@@ -39,6 +47,9 @@ bool RenderSystem::Update()
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
 		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
 
+		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
+			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+
 		SetWorldMatrix(tc->positionX, tc->positionY, tc->positionZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
@@ -46,5 +57,6 @@ bool RenderSystem::Update()
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->aAnimTime);
 	}
+	//UpdateGlobalShaderBuffer();
 	return true;
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <bitset>
 #include "Relics.h"
+#include "Backend/Collision.h"
 
 //Stats that every character in the game levels will have (player and enemies), modifyable by weapons and relics
 struct StatComponent
@@ -44,6 +45,7 @@ private:
 	int souls = 0;
 public:
 	int attackHitboxID = -1;
+	int softHitboxID = -1;
 	int killingSpree = 0;
 	bool portalCreated = false;
 
@@ -63,7 +65,7 @@ struct ControllerComponent
 	float moveMaxLimit = 0.0f;
 };
 
-//I hate
+//Ayaya
 struct DashArgumentComponent
 {
 	//Exists to be able to be passed into functions without making the function arguments templated
@@ -74,11 +76,17 @@ struct DashArgumentComponent
 	DashArgumentComponent(float x, float z, float dashModifier, float arc = 0.0f) : x(x), z(z), dashModifier(dashModifier) {}
 };
 
+struct CollisionParamsComponent
+{
+	OnCollisionParameters params;
+	CollisionParamsComponent(OnCollisionParameters params) : params(params) {}
+};
+
 //
 struct EnemyComponent
 {
 	int soulCount = 0;
-
+	int attackHitBoxID = -1;
 	EnemyComponent(int sc) : soulCount(sc) {}
 };
 

@@ -41,7 +41,7 @@ bool StateSwitcherSystem::Update()
 					playersComp->killingSpree += 1;
 				}
 				// start timed event for MURDER
-				AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 			}
 			else // boss died lmao
 			{
@@ -53,12 +53,12 @@ bool StateSwitcherSystem::Update()
 				if (tempBossComp->deathCounter < 3) //spawn new mini russian doll skeleton
 				{
 					// start timed event for new little bossies
-					AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);
+					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);
 				}
 				else // le snap
 				{
 					// start timed event for MURDER
-					AddTimedEventComponentStartContinousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
+					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 				}
 			}
 		}
@@ -74,13 +74,13 @@ bool StateSwitcherSystem::Update()
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, portal, 1.0f, CreatePortal);
+			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 		}
 		else if (playersComp->killingSpree >= 15 && !playersComp->portalCreated && stateManager.activeLevel == 2)
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, portal, 1.0f, CreatePortal);
+			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 		}
 	}
 	

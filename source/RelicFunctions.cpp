@@ -37,7 +37,11 @@ void Relics::ClearRelicFunctions()
 	// Clear all functions
 	for (size_t i = 0; i < Relics::FUNC_END_OF_TYPES; ++i)
 	{
-		(*_RelicFunctions)[(Relics::RELIC_FUNCTION_TYPE)i].clear();
+		if (_RelicFunctions)
+		{
+			(*_RelicFunctions)[(Relics::RELIC_FUNCTION_TYPE)i].clear();
+		}
+		
 	}
 }
 

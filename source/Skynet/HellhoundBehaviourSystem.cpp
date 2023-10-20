@@ -266,7 +266,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		if (distance <= hc->currentShootingAttackRange)
 		{
 			//yes, player should get hit. Take damage
-			playerStats->UpdateHealth(-enemyStats->damage); // DEFINITELY MODIFY THIS LATER, very likely too much damage
+			playerStats->UpdateHealth(-hc->flameDamage); // DEFINITELY MODIFY THIS LATER, very likely too much damage
 			RedrawUI();
 		}
 	}

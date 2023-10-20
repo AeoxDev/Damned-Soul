@@ -6,6 +6,7 @@
 // Renderable Components
 #include "ModelComponent.h"
 #include "AnimationComponent.h"
+#include "LightComponent.h"
 // Special child belongs to both groups
 #include "TransformComponent.h"
 #include "MouseComponent.h"
