@@ -8,6 +8,7 @@
 
 struct TimedEvent
 {
+	unsigned long long id;
 	uint32_t condition = 0; //In case we want to define some extra condition as to how functions should be called. 0 means nothing
 	float timer = 0.0f;
 	float startTime = 0.0f;
@@ -25,19 +26,15 @@ struct TimedEventComponent
 	ML_Vector<TimedEvent> timedEvents;
 };
 
-int CheckDuplicates(TimedEventComponent*& comp, void* start, void* cont, void* end)
+int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
 {
 	int amount = 0;
 	//Loop through and check for same function pointer
-	for (int i = 0; i < comp->timedEvents.size(); i++)
+	for (unsigned i = 0; i < comp->timedEvents.size(); i++)
 	{
-		if (comp->timedEvents[i].timer > comp->timedEvents[i].endTime)
+		if (comp->timedEvents[i].id == id)
 		{
-			bool exists = true;
-			exists *= comp->timedEvents[i].startFunction == start;
-			exists *= comp->timedEvents[i].continousFunction == cont;
-			exists *= comp->timedEvents[i].endFunction == end;
-			amount += exists;
+			++amount;
 		}
 	}
 	return amount;
@@ -47,8 +44,9 @@ bool EventSystem::Update()
 {
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
+		
 		auto comp = registry.GetComponent<TimedEventComponent>(entity);
-		for (int i = 0; i < comp->timedEvents.size(); i++)
+		for (unsigned i = 0; i < comp->timedEvents.size(); i++)
 		{
 			comp->timedEvents[i].timer += GetDeltaTime();
 			if (comp->timedEvents[i].startFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer)
@@ -75,7 +73,7 @@ bool EventSystem::Update()
 	return true;
 }
 //Check stacks for events here
-int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* startFunction, int maxStacks = 1)
+int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* startFunction, int maxStacks)
 {
 	TimedEventComponent* tc = registry.GetComponent<TimedEventComponent>(entityID);
 	if (!tc)
@@ -84,6 +82,11 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 		tc->timedEvents.Initialize();
 	}
 	TimedEvent timedEvent;
+	timedEvent.id = (unsigned long long)startFunction;
+	if (CheckDuplicates(tc, (unsigned long long)startFunction) > maxStacks)
+	{
+		return -1;
+	}
 	timedEvent.eventity = entityID;
 	timedEvent.startTime = startTime;
 	timedEvent.endTime = startTime;
@@ -92,8 +95,7 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 	return tc->timedEvents.size() - 1;
 }
 //Adds a start and an end event. Use functions from the EventFunctions folder.
-int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* startFunction,
-	EntityID& endEntity, float endTime, void* endFunction, int maxStacks = 1)
+int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* startFunction, float endTime, void* endFunction, int maxStacks)
 {
 	TimedEventComponent* tc = registry.GetComponent<TimedEventComponent>(eventity);
 	if (!tc)
@@ -102,6 +104,11 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 		tc->timedEvents.Initialize();
 	}
 	TimedEvent timedEvent;
+	timedEvent.id = (unsigned long long)startFunction + (unsigned long long)endFunction;
+	if (CheckDuplicates(tc, (unsigned long long)startFunction + (unsigned long long)endFunction) >= maxStacks)
+	{
+		return -1;
+	}
 	timedEvent.eventity = eventity;
 	timedEvent.startTime = startTime;
 	timedEvent.startFunction = (void(*)(EntityID&, const int&))startFunction;
@@ -111,7 +118,7 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 	return tc->timedEvents.size() - 1;
 }
 int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, void* startFunction,
-	EntityID& continousEntity, float continousTime, void* continousFunction, int maxStacks = 1)
+	float continousTime, void* continousFunction, int maxStacks)
 {
 	TimedEventComponent* tc = registry.GetComponent<TimedEventComponent>(eventity);
 	if (!tc)
@@ -120,6 +127,11 @@ int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, vo
 		tc->timedEvents.Initialize();
 	}
 	TimedEvent timedEvent;
+	timedEvent.id = (unsigned long long)startFunction + (unsigned long long)continousFunction;
+	if (CheckDuplicates(tc, (unsigned long long)startFunction + (unsigned long long)continousFunction) >= maxStacks)
+	{
+		return -1;
+	}
 	timedEvent.eventity = eventity;
 	timedEvent.startTime = startTime;
 	timedEvent.startFunction = (void(*)(EntityID&, const int&))startFunction;
@@ -131,7 +143,7 @@ int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, vo
 }
 
 int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime, void* startFunction, 
-	void* continousFunction, float endTime, void* endFunction, uint32_t condition, int maxStacks = 1)
+	void* continousFunction, float endTime, void* endFunction, uint32_t condition, int maxStacks)
 {
 	TimedEventComponent* tc = registry.GetComponent<TimedEventComponent>(eventity);
 	if (!tc)
@@ -139,7 +151,13 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
 		tc->timedEvents.Initialize();
 	}
+	
 	TimedEvent timedEvent;
+	timedEvent.id = (unsigned long long)startFunction + (unsigned long long)continousFunction + (unsigned long long)endFunction;
+	if (CheckDuplicates(tc, timedEvent.id)  >= maxStacks)
+	{
+		return -1;
+	}
 	timedEvent.eventity = eventity;
 	timedEvent.startTime = startTime;
 	timedEvent.startFunction = (void(*)(EntityID&, const int&))startFunction;

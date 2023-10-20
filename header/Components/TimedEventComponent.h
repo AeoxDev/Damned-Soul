@@ -15,9 +15,9 @@ struct TimedEventComponent;
 int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* startFunction, int maxStacks = 1);
 //Adds a start and an end event. Use functions from the EventFunctions folder.
 int AddTimedEventComponentStartEnd(EntityID& entityID, float startTime, void* startFunction,
-	EntityID& endEntity, float endTime, void* endFunction, int maxStacks = 1);
+	float endTime, void* endFunction, int maxStacks = 1);
 int AddTimedEventComponentStartContinous(EntityID& entityID, float startTime, void* startFunction,
-	EntityID& continousEntity, float continousTime, void* continousFunction, int maxStacks = 1);
+	float continousTime, void* continousFunction, int maxStacks = 1);
 int AddTimedEventComponentStartContinuousEnd(EntityID& entityID, float startTime, void* startFunction,
 	void* continousFunction, float endTime, void* endFunction, uint32_t condition = 0, int maxStacks = 1);
 
