@@ -74,7 +74,11 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 
-	//Todo: Use GetElapsedTime to make player active hitbox only be towards the end of the animation
+	//Make the players' attack hitbox active during the second half of the attack animation
+	if (GetEventTimedElapsed(entity, index) >= 0.8f)
+		SetPlayerAttackHitboxInactive(entity, index);
+	else if (GetEventTimedElapsed(entity, index) >= 0.5f)
+		SetPlayerAttackHitboxActive(entity, index);
 }
 
 void PlayerDash(EntityID& entity, const int& index)
