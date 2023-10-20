@@ -4,6 +4,8 @@
 #include "RelicFunctions.h"
 #include "Relics/RelicFuncInputTypes.h" //Why isn't this included by RelicFunctions? Hermaaaaaaaaan
 #include "DeltaTime.h"
+#include <cmath> //sin
+
 #define KNOCKBACK_FACTOR 0.3f
 
 void BeginHit(EntityID& entity)
@@ -32,24 +34,20 @@ void BeginHit(EntityID& entity)
 
 	//Disable damage taken until EndHit
 	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
-
-	//Become red
-	if (skelel)
-		skelel->colorAdditiveRed = 1.0f;
-	if (bonel)
-		bonel->colorAdditiveRed = 1.0f;
 }
 
 void MiddleHit(EntityID& entity)
 {
-	//Reduce the hue shift gradually over time
+	//Flash color red repeatedly
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	if(skelel)
-		skelel->colorAdditiveRed -= GetDeltaTime();
+	float frequency = 10.0f; //Higher frequency = faster flashing lights
+	float cosineWave = std::cosf(GetEventTimedElapsed(entity) * frequency) * std::cosf(GetEventTimedElapsed(entity) * frequency);
+	if (skelel)
+		skelel->colorAdditiveRed = cosineWave;
 	if (bonel)
-		bonel->colorAdditiveRed -= GetDeltaTime();
+		bonel->colorAdditiveRed = cosineWave;
 
 	//Take knockback
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
@@ -64,6 +62,7 @@ void MiddleHit(EntityID& entity)
 	}
 
 	//GetElapsedTime to make the color flash instead
+	GetEventTimedElapsed(entity);
 }
 
 void EndHit(EntityID& entity)

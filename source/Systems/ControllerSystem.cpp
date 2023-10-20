@@ -23,12 +23,12 @@ bool ControllerSystem::Update()
 		controller->goalZ = 0.0f;
 		//End of: Camera System thing
 
-		// Get animation component
+		//Default the animation to idle, subject to be changed based off of user input
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-		// Idle as default
 		anim->aAnim = ANIMATION_IDLE;
 		anim->aAnimIdx = 0;
 
+		/*MOVEMENT INPUT*/
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
@@ -58,6 +58,8 @@ bool ControllerSystem::Update()
 		MouseComponentUpdateDirection(entity);
 		if (moving)
 		{
+			anim->aAnim = ANIMATION_WALK;
+			anim->aAnimIdx = 0;
 
 			float len = controller->goalX * controller->goalX + controller->goalZ * controller->goalZ;
 			if (len <= 0.0f)
@@ -85,21 +87,18 @@ bool ControllerSystem::Update()
 		}
 
 		/*COMBAT INPUT*/
-		//Test code for now but we fuckin about
+		//Dash in the direction you're moving, defaults to dashing backwards if you're not moving. Gives i-frames for the duration
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
-			//Make a 3-step timed event:
-			//Step 1: Take away control from the player
-			//Step 2: Dash in a direction based off of goalX and goalZ (and pass in some speed modifier to make the dash fast)
-			//Step 3: Return control to the player
 			if (moving)
 			{
-				//Set facing direction to dash direction when moving.
+				//Set facing direction to dash direction when moving
 				transform->facingX = controller->goalX;
 				transform->facingZ = controller->goalZ;
 			}
 			else
 			{
+				//Default dash goes backwards
 				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
 				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
 
@@ -108,11 +107,13 @@ bool ControllerSystem::Update()
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 		}
 
-		//We doing attacks on mouse click? Temp some button
+		//Switches animation to attack and deals damage throughout the animation in front of yourself (offset attack hitbox) (todo: make only second half deal damage)
 		if (mouseButtonPressed[0] == pressed)
 		{
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, SetPlayerAttackHitboxActive, PlayerAttack, 1.0f, SetPlayerAttackHitboxInactive);
 		}
+
+		//
 
 	}
 	return true;
