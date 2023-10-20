@@ -4,12 +4,16 @@
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 
+#include "RelicFunctions.h"
+
 struct UIRelicComponent
 {
 	DirectX::XMFLOAT2 position;
 	DirectX::XMFLOAT2 scale;
 
 	bool doRedraw = true;
+	int locked = -1;
+	int relicIndex = -1;
 
 	UIImage sprite;
 	UIImage flavorImage;

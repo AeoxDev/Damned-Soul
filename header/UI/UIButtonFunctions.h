@@ -1,5 +1,18 @@
 #pragma once
 
+#include "RelicFunctions.h"
+#include "MemLib/ML_Vector.hpp"
+
+enum temprelicslist
+{
+	DemonBonemarrow,
+	FlameWeapon,
+	SoulPower,
+	DemonHeart,
+	FrostFire,
+	SoulHealth
+};
+
 namespace UIFunc
 {
 	// Start the next level

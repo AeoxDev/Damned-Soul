@@ -36,14 +36,14 @@ bool UIRenderSystem::Update()
             auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
             uiElement->baseImage.Draw();
 
-            for (uint32_t i = 0; i < uiElement->relics.size(); i++)
+            /*for (uint32_t i = 0; i < uiElement->relics.size(); i++)
                 uiElement->relics[i].sprite.Draw();
 
             for (uint32_t i = 0; i < uiElement->relics.size(); i++)
                 uiElement->relics[i].flavorImage.Draw();
 
             for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-                uiElement->relics[i].flavorTitle.Draw();
+                uiElement->relics[i].flavorTitle.Draw();*/
         }
 
         for (auto entity : View<UIText>(registry))
@@ -70,13 +70,19 @@ bool UIRenderSystem::Update()
             uiElement->text.Draw();
         }
 
-      
-
         for (auto entity : View<UIShopRelicWindowComponent>(registry))
         {
             auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
             uiElement->m_baseImage.Draw();
-            uiElement->m_relicImage.Draw();
+        }
+
+        for (auto entity : View<UIRelicComponent>(registry))
+        {
+            auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
+            uiElement->sprite.Draw();
+            uiElement->flavorImage.Draw();
+            uiElement->flavorTitle.Draw();
+            uiElement->flavorText.Draw();
         }
 
         for (auto entity : View<UIShopComponent>(registry))
@@ -133,11 +139,10 @@ bool UIPlayerSoulsSystem::Update()
     return true;
 }
 
-bool UIPlayerRelicsSystem::Update()
+bool UIRelicsSystem::Update()
 {
-    for (auto entity : View<UIPlayerRelicsComponent, RelicHolderComponent>(registry))
+    for (auto entity : View<UIPlayerRelicsComponent>(registry))
     {
-        auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
         auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
 
         uiElement->baseImage.m_UiComponent.SetScale(uiElement->scale);
@@ -207,6 +212,36 @@ bool UIPlayerRelicsSystem::Update()
         }
     }
 
+    for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+    {
+        auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+        auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+
+        if (uiRelic->sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
+        {
+            uiRelic->flavorImage.m_UiComponent.SetVisibility(true);
+            uiRelic->flavorTitle.m_UiComponent.SetVisibility(true);
+
+            if (uiRelic->flavorImage.m_UiComponent.IsVisible() && uiRelic->doRedraw)
+            {
+                RedrawUI();
+                uiRelic->doRedraw = false;
+            }
+        }
+        else
+        {
+            if (uiRelic->flavorImage.m_UiComponent.IsVisible())
+            {
+                RedrawUI();
+                uiRelic->flavorImage.m_UiComponent.SetVisibility(false);
+                uiRelic->flavorTitle.m_UiComponent.SetVisibility(false);
+                //uiRelic->flavorText.m_UiComponent.SetVisibility(false);
+                uiRelic->doRedraw = true;
+            }
+
+
+        }
+    }
     return true;
 }
 
@@ -252,23 +287,18 @@ bool UIShopSystem::Update()
         DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
                                         -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
         
-        std::wstring valueAsWString(playerInfo.begin(), playerInfo.end());
-        uiShopElement->playerInfo.UpdateText(valueAsWString);
+        uiShopElement->playerInfo.UpdateText(playerInfo);
         uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 3) });
 
     }
-    
-
 
     return true;
 }
 
 void SetTextAndImageProperties(ML_String text, UIText& uiText, UIImage& uiImage, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 position)
 {
-   
-    std::wstring valueAsWString(text.begin(), text.end());
 
-    uiText.UpdateText(valueAsWString);
+    uiText.UpdateText(text);
 
     uiText.m_UiComponent.SetScale(scale);
     uiText.m_UiComponent.SetPosition(position);

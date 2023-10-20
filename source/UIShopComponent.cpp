@@ -1,6 +1,8 @@
 #include "Components/UIComponents/UIShopComponent.h"
+#include "Components/UIComponents/UIRelicComponent.h"
 #include "SDLHandler.h"
 #include "UI/UIRenderer.h"
+
 
 
 void ChangeOffset(DirectX::XMFLOAT2& spritePositionOffset, DirectX::XMFLOAT2& startingSpritePosition, DirectX::XMFLOAT2& spritePixelCoords, UIShopRelicWindowComponent& relicWindowC)
@@ -14,7 +16,7 @@ void ChangeOffset(DirectX::XMFLOAT2& spritePositionOffset, DirectX::XMFLOAT2& st
 									-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 }
 
-void CreateShopEntity(const UIShopComponent& shop, char* relicFilepath, int positionMultiplier)
+void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 {
 	auto relicWindow = registry.CreateEntity();
 	auto relicButtonBuy = registry.CreateEntity();
@@ -28,29 +30,48 @@ void CreateShopEntity(const UIShopComponent& shop, char* relicFilepath, int posi
 	DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 									-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-	UIImage relicWindowBaseImage;
+	UIImage relicWindowBaseImage, relicImage, relicFlavorImage;
 	relicWindowBaseImage.Setup("TempRelicFlavorHolder.png");
-	UIImage relicImage;
-	relicImage.Setup(relicFilepath);
-	relicImage.m_UiComponent.SetScale({1.5f, 1.5f});
-	UIText relicName;
-	relicName.Setup(L"");
+
+	relicImage.Setup("RelicIcons/Empty_Relic.png");
+	relicImage.m_UiComponent.SetScale({1.25f, 1.25f });
+	
+	relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
+	relicFlavorImage.m_UiComponent.SetVisibility(false);
+	relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
+
+	UIText relicName, relicDesc;
+	ML_String name = "No Relic";
+	ML_String desc = "Emptiness all around us";
+
+	relicName.Setup(name);
+	relicDesc.Setup(desc);
+
+	relicName.m_UiComponent.SetVisibility(false);
+	relicDesc.m_UiComponent.SetVisibility(false);
 
 	UIShopRelicWindowComponent* relicWindowC = registry.AddComponent<UIShopRelicWindowComponent>(relicWindow);
-	relicWindowC->Setup(relicName, relicWindowBaseImage, relicImage);
+	relicWindowC->Setup(relicWindowBaseImage);
 	relicWindowC->m_baseImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 7), spritePixelCoords.y - (0.1f * 3 * positionMultiplier) });
 	ChangeOffset(spritePositionOffset, startingSpritePosition, spritePixelCoords, *relicWindowC);
 
-	relicWindowC->m_relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y - (0.05f * 1) });
+	relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y - 0.05f });
+	
+	relicFlavorImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
+	relicName.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
+
+	relicDesc.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
+
+	UIRelicComponent* relicComp = registry.AddComponent<UIRelicComponent>(relicWindow, relicImage, relicFlavorImage, relicName, relicDesc);
 
 	UIButton* buyRelic = registry.AddComponent<UIButton>(relicButtonBuy);
-	buyRelic->Setup("TempBuy.png", "TempBuy.png", L"", UIFunc::Shop_BuyRelic);
-	buyRelic->SetRelicButton(true);
+	buyRelic->Setup("TempBuy.png", "TempBuy.png", "", UIFunc::Shop_BuyRelic);
+	buyRelic->shopPosition = positionMultiplier;
 	buyRelic->SetPosition({ spritePixelCoords.x + 0.01f, spritePixelCoords.y - (0.1f * 0) });
 
 	UIButton* lockRelic = registry.AddComponent<UIButton>(relicButtonLock);
-	lockRelic->Setup("TempLock.png", "TempLock.png", L"", UIFunc::Shop_LockRelic);
-	lockRelic->SetRelicButton(true);
+	lockRelic->Setup("TempLock.png", "TempLock.png", "", UIFunc::Shop_LockRelic);
+	lockRelic->shopPosition = positionMultiplier;
 	lockRelic->SetPosition({ spritePixelCoords.x + 0.01f, spritePixelCoords.y - (0.1f * 1) });
 
 }
@@ -59,7 +80,7 @@ void CreateShopEntity(const UIShopComponent& shop, char* relicFilepath, int posi
 UIShopComponent::UIShopComponent()
 {
 	baseImage.Setup("TempShopWindow3.png", this->position, this->scale);
-	playerInfo.Setup(L"");
+	playerInfo.Setup("");
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -93,16 +114,16 @@ void UIShopComponent::Setup()
 
 	auto rerollEntity = registry.CreateEntity();
 	UIButton* rerollButton = registry.AddComponent<UIButton>(rerollEntity);
-	rerollButton->Setup("TempReRoll.png", "TempReRoll.png", L"", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 7), spritePixelCoords.y - (0.1f * 11) });
+	rerollButton->Setup("TempReRoll.png", "TempReRoll.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 7), spritePixelCoords.y - (0.1f * 11) });
 
 	auto nextLevelEntity = registry.CreateEntity();
 	UIButton* nextLevelButton = registry.AddComponent<UIButton>(nextLevelEntity);
-	nextLevelButton->Setup("TempNextLevel.png", "TempNextLevel.png", L"", UIFunc::LoadNextLevel, { spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 11) });
+	nextLevelButton->Setup("TempNextLevel.png", "TempNextLevel.png", "", UIFunc::LoadNextLevel, { spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 11) });
 	
 	for (int i = 0; i < 3; i++)
 	{
-		int rnd = rand() % 6;
-		CreateShopEntity(*this, relics[rnd].filePath, i + 1);
+		CreateShopEntity(*this, i + 1);
 	};
 
+	UIFunc::Shop_ReRollRelic(nullptr);
 }

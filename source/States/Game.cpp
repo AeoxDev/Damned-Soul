@@ -80,11 +80,8 @@ void GameScene::Input(bool isShop)
 				ML_String name = md.relicName;//relicHolder->GetRelic<DamageRelic>()->name;
 				ML_String text = md.description;// relicHolder->GetRelic<DamageRelic>()->flavorText;
 
-				std::wstring nameAsWString(name.begin(), name.end());
-				std::wstring textAsWString(text.begin(), text.end());
-
-				flavorTitle.Setup(nameAsWString);
-				flavorText.Setup(textAsWString);
+				flavorTitle.Setup(name);
+				flavorText.Setup(text);
 
 				flavorTitle.m_UiComponent.SetVisibility(false);
 				flavorText.m_UiComponent.SetVisibility(false);
@@ -209,7 +206,6 @@ void GameScene::Unload()
 	{
 		UIShopRelicWindowComponent* sh = registry.GetComponent<UIShopRelicWindowComponent>(entity);
 		sh->m_baseImage.Release();
-		sh->m_relicImage.Release();
 	}
 
 	for (auto entity : View<UIHealthComponent>(registry))
@@ -236,7 +232,12 @@ void GameScene::Unload()
 		p->pointList.~ML_Vector();
 	}
 
-	
+	for (auto entity : View<UIRelicComponent>(registry))
+	{
+		UIRelicComponent* r = registry.GetComponent<UIRelicComponent>(entity);
+		r->sprite.Release();
+		r->flavorImage.Release();
+	}
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)

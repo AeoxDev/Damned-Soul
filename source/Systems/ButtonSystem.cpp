@@ -23,7 +23,7 @@ bool ButtonSystem::Update()
 			comp->Hover();
 			if (mouseButtonPressed[MouseButton::left] == released)
 			{
-				comp->Interact();
+				comp->Interact(comp);
 				return true;
 			}
 		}

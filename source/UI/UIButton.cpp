@@ -2,7 +2,7 @@
 
 using namespace DirectX;
 
-void UIButton::Setup(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, void* onClick, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIButton::Setup(const ML_String& imageFile, const ML_String& hoverImageFile, ML_String buttonText, void* onClick, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_UiComponent.Setup(scale, rotation, visibility);
 	m_Images[0].Setup(imageFile, position, scale, rotation, visibility, opacity);
@@ -13,7 +13,6 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 	m_doRedraw = true;
 
 	shopPosition = 0;
-	relicWindowButton = false;
 
 	m_CurrentImage = 0;
 
@@ -29,7 +28,7 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 		m_Images[1].Setup(hoverImageFile, position, scale, rotation, visibility, opacity);
 
 	//Button text is not necessarily needed
-	if (buttonText != L"")
+	if (buttonText != "")
 		m_Text.Setup(buttonText, position, scale, rotation, visibility);
 }
 
@@ -46,7 +45,7 @@ void UIButton::Draw()
 void UIButton::Interact(void* args)
 {
 	if (m_onClick && m_UiComponent.m_Visibility)
-		((void(*)(void* args))m_onClick)(args);
+		((void(*)(void*))m_onClick)(args);
 }
 
 void UIButton::Hover()
@@ -64,11 +63,6 @@ void UIButton::Release()
 		m_Images[0].Release();
 	if(m_Images[1].GetBitmap() != nullptr)
 		m_Images[1].Release();
-}
-
-void UIButton::SetRelicButton(bool value)
-{
-	relicWindowButton = value;
 }
 
 void UIButton::SetPosition(XMFLOAT2 position)

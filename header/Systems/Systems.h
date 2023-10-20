@@ -36,7 +36,7 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIPlayerRelicsSystem : public System
+class UIRelicsSystem : public System
 {
 	bool Update();
 };

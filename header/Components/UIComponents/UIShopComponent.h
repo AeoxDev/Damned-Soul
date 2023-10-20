@@ -23,19 +23,12 @@ struct UIShopRelicWindowComponent
 	bool doRedraw = true;
 
 	bool locked = false;
-
 	UIImage m_baseImage;
 
-	//TODO change to using UIRelicComponent in the ecs instead
-	UIText m_relicName;
-	UIImage m_relicImage;
 
-	void Setup(UIImage baseImage, UIText relicName, UIImage relicImage)
+	void Setup(UIImage baseImage)
 	{
 		m_baseImage = baseImage;
-
-		m_relicName = relicName;
-		m_relicImage = relicImage;
 	};
 };
 

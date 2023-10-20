@@ -69,21 +69,21 @@ void Menu::SetupButtons()
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", L"", UIFunc::LoadNextLevel, { 0.0f, -0.4f });
+		comp->Setup("Exmenu/StartButton.png", "Exmenu/StartButtonHover.png", "", UIFunc::LoadNextLevel, { 0.0f, -0.4f });
 	}
 
 	//Settings Button
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/OptionsButton.png", "Exmenu/OptionsButtonHover.png", L"", UIFunc::MainMenu_Settings, { 0.0f,  -0.6f });
+		comp->Setup("Exmenu/OptionsButton.png", "Exmenu/OptionsButtonHover.png", "", UIFunc::MainMenu_Settings, { 0.0f,  -0.6f });
 	}
 
 	//Exit Button
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ExitButton.png", "Exmenu/ExitButtonHover.png", L"", UIFunc::MainMenu_Quit, { 0.0f, -0.8f });
+		comp->Setup("Exmenu/ExitButton.png", "Exmenu/ExitButtonHover.png", "", UIFunc::MainMenu_Quit, { 0.0f, -0.8f });
 	}
 }
 
@@ -139,6 +139,13 @@ void Menu::Unload()
 	{
 		ModelSkeletonComponent* m = registry.GetComponent<ModelSkeletonComponent>(entity);
 		ReleaseModel(m->model);
+	}
+
+	for (auto entity : View<UIRelicComponent>(registry))
+	{
+		UIRelicComponent* r = registry.GetComponent<UIRelicComponent>(entity);
+		r->sprite.Release();
+		r->flavorImage.Release();
 	}
 
 	//Destroy entity resets component bitmasks

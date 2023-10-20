@@ -7,16 +7,17 @@
 
 #include "Registry.h"
 #include "Components.h"
-#include "RelicFunctions.h"
 #include "UIRenderer.h"
 
+#include <random>
 
 void UIFunc::LoadNextLevel(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
 	stateManager.menu.Unload();
-	LoadLevel(++stateManager.activeLevel);
+	//LoadLevel(++stateManager.activeLevel);
+	LoadLevel(2);
 }
 
 void UIFunc::MainMenu_Settings(void* args)
@@ -31,7 +32,6 @@ void UIFunc::MainMenu_Quit(void* args)
 {
 	sdl.quit = true;
 }
-
 
 void UIFunc::Settings_Back(void* args)
 {
@@ -133,39 +133,91 @@ void UIFunc::Settings_Fullscreen(void* args)
 
 void UIFunc::Shop_BuyRelic(void* args)
 {
-	int a = 0;
-}
+	UIButton* button = (UIButton*)args;
 
-void UIFunc::Shop_LockRelic(void* args)
-{
-
-	int a = 0;
-}
-//Creates memory leaks, cant fix without mattias help with UIimage
-void UIFunc::Shop_ReRollRelic(void* args)
-{
-
-	ML_Vector<Relics::RelicMetaData> relics;
-
-	for (int i = 0; i < 6; i++)
+	int counter = 1;
+	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
 	{
-		switch (i)
+		if (counter != button->shopPosition)
 		{
-		case 0: relics.push_back(Relics::DemonBonemarrow(false)); break;
-		case 1: relics.push_back(Relics::FlameWeapon(false)); break;
-		case 2: relics.push_back(Relics::SoulPower(false)); break;
-		case 3: relics.push_back(Relics::DemonHeart(false)); break;
-		case 4: relics.push_back(Relics::FrostFire(false)); break;
-		case 5: relics.push_back(Relics::SoulHealth(false)); break;
+			counter++;
+			continue;
+		}
+
+		switch (registry.GetComponent<UIRelicComponent>(entity)->relicIndex)
+		{
+		case DemonBonemarrow:
+			Relics::DemonBonemarrow(true);
+			break;
+		case FlameWeapon:
+			Relics::FlameWeapon(true);
+			break;
+		case SoulPower:
+			Relics::SoulPower(true);
+			break;
+		case DemonHeart:
+			Relics::DemonHeart(true);
+			break;
+		case FrostFire:
+			Relics::FrostFire(true);
+			break;
+		case SoulHealth:
+			Relics::SoulHealth(true);
+			break;
 		default:
 			break;
 		}
 
+		RedrawUI();
+		break;
+	}
+}
+
+
+void UIFunc::Shop_LockRelic(void* args)
+{
+	UIButton* button = (UIButton*)args;
+
+	int counter = 1;
+	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+	{
+		if (counter != button->shopPosition)
+		{
+			counter++;
+			continue;
+		}
+		auto ui = registry.GetComponent<UIRelicComponent>(entity);
+		ui->locked *= -1;
+
+		RedrawUI();
+		break;
+	}
+}
+
+void UIFunc::Shop_ReRollRelic(void* args)
+{
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> randomNumber(0, 512);
+	int rnd = -1;
+	ML_Array<int, 3> includedRelics;
+	ML_Vector<int> allRelics;
+
+	for (int i = 0; i < 6; i++)
+		allRelics.push_back(i);
+
+	for (int i = 0; i < 3; i++)
+	{
+		rnd = randomNumber(rng) % allRelics.size();
+		includedRelics[i] = allRelics[rnd];
+		allRelics.erase(rnd);
 	}
 
-	for (auto entity : View<UIShopRelicWindowComponent>(registry))
+	int counter = 0;
+	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
 	{
 		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
 		DirectX::XMFLOAT2 spritePositionOffset = { uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.right / (uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
 											  uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
@@ -174,12 +226,52 @@ void UIFunc::Shop_ReRollRelic(void* args)
 									   abs(uiElement->m_baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
 		DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 										-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+		
+		if (uiRelic->locked == 1)
+		{
+			counter++;
+			continue;
+		}
 
-		int rnd = rand() % 6;
-		uiElement->m_relicImage.Setup(relics[rnd].filePath);
-		uiElement->m_relicImage.m_UiComponent.SetScale({ 1.5f, 1.5f });
-		uiElement->m_relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y - (0.05f * 1) });
+		uiRelic->relicIndex = includedRelics[counter];
+		switch (includedRelics[counter])
+		{
+		case DemonBonemarrow:
+			uiRelic->sprite.SetImage(Relics::DemonBonemarrow(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::DemonBonemarrow(false).relicName, true);
+			uiRelic->flavorText.UpdateText(Relics::DemonBonemarrow(false).description, true);
+			break;
+		case FlameWeapon:
+			uiRelic->sprite.SetImage(Relics::FlameWeapon(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::FlameWeapon(false).relicName, true);
+			uiRelic->flavorText.UpdateText(Relics::FlameWeapon(false).description, true);
+			break;
+		case SoulPower:
+			uiRelic->sprite.SetImage(Relics::SoulPower(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::SoulPower(false).relicName, true);
+			uiRelic->flavorText.UpdateText(Relics::SoulPower(false).description, true);
+			break;
+		case DemonHeart:
+			uiRelic->sprite.SetImage(Relics::DemonHeart(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::DemonHeart(false).relicName, true);
+			uiRelic->flavorText.UpdateText(Relics::DemonHeart(false).description, true);
+			break;
+		case FrostFire:
+			uiRelic->sprite.SetImage(Relics::FrostFire(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::FrostFire(false).relicName, true);
+			uiRelic->flavorText.UpdateText(Relics::FrostFire(false).description, true);
+			break;
+		case SoulHealth:
+			uiRelic->sprite.SetImage(Relics::SoulHealth(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::SoulHealth(false).relicName, true);
+			uiRelic->flavorText.UpdateText(Relics::SoulHealth(false).description, true);
+			break;
+		default:
+			break;
+		}
 
+		counter++;
 	}
+
 	RedrawUI();
 }

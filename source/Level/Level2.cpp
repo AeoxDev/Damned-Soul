@@ -41,15 +41,15 @@ void LoadLevel2()
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiHpC->image.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->text.Setup(L"");
+	pcUiHpC->text.Setup("");
 
 	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup(L"");
+	pcUiSC->text.Setup("");
 
 	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 2);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup(L"");
+	gameLevelUIc->text.Setup("");
 
 	RenderGeometryIndependentCollision(stage);
 
