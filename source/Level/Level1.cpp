@@ -20,9 +20,13 @@ void LoadLevel1()
 	EntityID eye = registry.CreateEntity();
 	EntityID dog = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
-	EntityID portal = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
 	
 
 	SetupEnemy(skeleton, enemyType::skeleton, 5.f, 0.f, 7.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
@@ -79,7 +83,7 @@ void LoadLevel1()
 	gameLevelUIc->text.Setup(L"");
 
 
-
+	  
 	RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
 
 	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
@@ -99,9 +103,21 @@ void LoadLevel1()
 	//AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
-	//CreatePointLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f);
+	
+	CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
 	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
 	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
 	//RemoveLight(dog);
+	//RemoveLight(stage);
+	//RemoveLight(lightholder);
+	//RemoveLight(lightholderTwo);
+	//RemoveLight(lightholderThree);
+	//RemoveLight(lightholderForth);
+
 }
