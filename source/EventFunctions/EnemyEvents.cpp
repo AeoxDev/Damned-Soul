@@ -23,6 +23,9 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	offset = float(rand() % 2);
 	offset -= 0.5f;
 	transform->positionZ += offset * 0.02f;
+
+	//Temp: Remove the light if dog dies during its flamethrower attack
+	RemoveLight(entity);
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
