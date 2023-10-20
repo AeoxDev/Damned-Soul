@@ -5,6 +5,7 @@
 
 bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleID, int convexID)
 {
+	//convexID += SAME_TYPE_HITBOX_LIMIT;
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(entity2);
 	float pos1x = 0.0f;
@@ -102,7 +103,7 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 		params.entity1 = entity1;
 		params.entity2 = entity2;
 		params.hitboxID1 = circleID;
-		params.hitboxID2 = convexID;
+		params.hitboxID2 = convexID + SAME_TYPE_HITBOX_LIMIT;
 		params.normal1X = -convexToCircleX;
 		params.normal1Z = -convexToCircleZ;
 		params.normal2X = convexToCircleX;
@@ -115,7 +116,7 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 	{
 		params.entity1 = entity2;
 		params.entity2 = entity1;
-		params.hitboxID1 = convexID;
+		params.hitboxID1 = convexID + SAME_TYPE_HITBOX_LIMIT;
 		params.hitboxID2 = circleID;
 		params.normal1X = convexToCircleX;
 		params.normal1Z = convexToCircleZ;
@@ -323,8 +324,8 @@ bool IsConvexCollision(EntityID& entity1, EntityID& entity2, int convexID1, int 
 	{
 		params.entity1 = entity1;
 		params.entity2 = entity2;
-		params.hitboxID1 = convexID1;
-		params.hitboxID2 = convexID2;
+		params.hitboxID1 = convexID1 + SAME_TYPE_HITBOX_LIMIT;
+		params.hitboxID2 = convexID2 + SAME_TYPE_HITBOX_LIMIT;
 		params.normal1X = -convex2->convexHitbox[convexID2].normalX[whichLine];
 		params.normal1Z = -convex2->convexHitbox[convexID2].normalZ[whichLine];
 		params.normal2X = convex2->convexHitbox[convexID2].normalX[whichLine];
@@ -335,8 +336,8 @@ bool IsConvexCollision(EntityID& entity1, EntityID& entity2, int convexID1, int 
 	{
 		params.entity1 = entity2;
 		params.entity2 = entity1;
-		params.hitboxID1 = convexID1;
-		params.hitboxID2 = convexID2;
+		params.hitboxID1 = convexID1 + SAME_TYPE_HITBOX_LIMIT;
+		params.hitboxID2 = convexID2 + SAME_TYPE_HITBOX_LIMIT;
 		params.normal1X = convex2->convexHitbox[convexID2].normalX[whichLine];
 		params.normal1Z = convex2->convexHitbox[convexID2].normalZ[whichLine];
 		params.normal2X = -convex2->convexHitbox[convexID2].normalX[whichLine];

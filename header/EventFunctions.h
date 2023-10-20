@@ -28,3 +28,6 @@ void CreatePortal(EntityID& entity, const int& index);
 void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
+
+//Loop static hazard hitbox
+void LoopHitbox(EntityID& entity, const int& index);

@@ -411,14 +411,14 @@ void RemoveLight(EntityID& entity)
     //Get the light component
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
     //Set type to inactive
-    if (light == nullptr || light->slot < 0 || lightShaderBuffer.lights[light->slot].type == 0)
+    if (light == nullptr || light->slot < 0)
     {
         return;
     }
     lightShaderBuffer.lights[light->slot].type = 0;
     //Push back slot to stack
     PushSlotStack(light->slot);
-
+    registry.RemoveComponent<LightComponent>(entity);
     updateBuffer = true;
 }
 

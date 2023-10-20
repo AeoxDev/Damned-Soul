@@ -6,6 +6,8 @@
 #include "EventFunctions.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
+#include "EntityCreation.h"
+#include "DeltaTime.h"
 
 void LoadLevel1()
 {
@@ -90,20 +92,41 @@ void LoadLevel1()
 
 	SetupPlayerCollisionBox(player, 1.0f);
 	MouseComponentAddComponent(player);
-	//MouseComponentAddComponent(mouse);
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
-	//AddTimedEventComponentStartContinousEnd(player, player, 3.0f, RandomPosition, dog, RandomPosition, skeleton, 6.0f, RandomPosition);
-	//AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
 
-	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
-	//CreatePointLight(dog, 1.0f, 2.1f, 0.1f, 10.0f, 1.0f, 10.0f, 100.0f, 1.0f);
-	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
-	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
-	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
-	CreateSpotLight(player, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.3f, 32.0f, 0.1f, 0.0f, -1.0f, -1.0f, 30.0f);
-	//SetLightColor(dog, 0.0f, 100.0f, 0.0f);
-	//float3 color = GetLightColor(eye);
-	RemoveLight(player);
+	//EntityID hazard1 = CreateRoundStaticHazard("PlaceholderScene.mdl",20.0f, 0.1f, -0.0f, 0.04f, 0.1f, 0.04f, 0.8f, 0.4f, 0.1f, 1.5f, 2.0f);
+	//EntityID hazard2 = CreateRoundStaticHazard("PlaceholderScene.mdl",18.5f, 0.1f, -20.0f, 0.08f, 0.1f, 0.08f, 0.8f, 0.4f, 0.1f, 3.0f, 2.0f);
+	srand(GetDeltaTime() * 100000.0f);
+
+	//Add static hazards on the where player does not spawn
+	const int nrHazards = 8;
+	for (size_t i = 0; i < nrHazards; i++)
+	{
+		bool succeded = false;
+		while (!succeded)
+		{
+			float randX = (float)(rand() % 120) - 60.0f;
+			float randZ = (float)(rand() % 120) - 60.0f;
+			if (randX * randX + randZ * randZ > 100)
+			{
+				EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
+					-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
+					0.8f, 0.5f, 0.1f, 3.0f);
+				succeded = true;
+			}
+		}
+	}
+	
+	/*
+	EntityID hazard2 = CreateSquareStaticHazard("PlaceholderScene.mdl",(float)(rand()%120) - 60.0f, 0.1f, (float)(rand() % 120) - 60.0f, 0.1f, 0.1f, 0.1f,
+		-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
+		0.8f, 0.5f, 0.1f, 3.0f);
+	EntityID hazard3 = CreateSquareStaticHazard("PlaceholderScene.mdl",(float)(rand()%120) - 60.0f, 0.1f, (float)(rand() % 120) - 60.0f, 0.1f, 0.1f, 0.1f,
+		-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
+		0.8f, 0.5f, 0.1f, 3.0f);
+	EntityID hazard4 = CreateSquareStaticHazard("PlaceholderScene.mdl",(float)(rand()%120) - 60.0f, 0.1f, (float)(rand() % 120) - 60.0f, 0.1f, 0.1f, 0.1f,
+		-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
+		0.8f, 0.5f, 0.1f, 3.0f);*/
 }

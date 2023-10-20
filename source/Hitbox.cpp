@@ -729,6 +729,18 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 }
 
+void SetupLavaCollisionBox(EntityID& entity, float radius)
+{
+	AddHitboxComponent(entity);
+	int staticID = CreateHitbox(entity, radius, 0.f, 0.0f);
+	SetCollisionEvent(entity, staticID, AttackCollision);
+	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+	SetHitboxHitPlayer(entity, staticID);
+	SetHitboxActive(entity, staticID);
+	SetHitboxCanTakeDamage(entity, staticID, false);
+	SetHitboxCanDealDamage(entity, staticID, true);
+}
+
 void SetupPlayerCollisionBox(EntityID& entity, float radius)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
