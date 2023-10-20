@@ -11,8 +11,8 @@
 //Slot [0] will always be read and slot [1] will always be write
 struct ParticleInputOutput
 {
-	SRV_IDX SRVIndex;
-	UAV_IDX UAVIndex;
+	UAV_IDX inputUAV;
+	UAV_IDX outputUAV;
 };
 
 struct Particle
@@ -46,8 +46,7 @@ namespace Particles
 {
 	extern int RenderSlot;
 
-	extern PoolPointer<ParticleInputOutput> m_readBuffer;
-	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
+	extern PoolPointer<ParticleInputOutput> m_readWriteBuffer;
 
 
 	void SwitchInputOutput();

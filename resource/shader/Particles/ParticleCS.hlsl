@@ -26,110 +26,164 @@ cbuffer metadataBuffer : register(b0)
     metadata meta[256];
 };
 
-void SmokeMovement(in uint3 DTid, in uint3 blockID);
-void ArchMovement(in uint3 DTid, in uint3 blockID);
-void ExplosionMovement(in uint3 DTid, in uint3 blockID);
-void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
-void ImplosionMovement(in uint3 DTid, in uint3 blockID);
-void RainMovement(in uint3 DTid, in uint3 blockID);
-void SinusMovement(in uint3 DTid, in uint3 blockID);
+inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
+inline void ArchMovement(in uint3 DTid, in uint3 blockID);
+inline void ExplosionMovement(in uint3 DTid, in uint3 blockID);
+inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
+inline void ImplosionMovement(in uint3 DTid, in uint3 blockID);
+inline void RainMovement(in uint3 DTid, in uint3 blockID);
+inline void SinusMovement(in uint3 DTid, in uint3 blockID);
 
-StructuredBuffer<Input> inputParticleData : register(t0);
-RWStructuredBuffer<Input> outputParticleData : register(u0);
+RWStructuredBuffer<Input> inputParticleData : register(u0);
+RWStructuredBuffer<Input> outputParticleData : register(u1);
 
 [numthreads(NUM_THREADS, 1, 1)]
-void main(uint3 DTid : SV_DispatchThreadID, uint3 blockID : SV_GroupID)
+void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 {
-    int index = (DTid.x + blockID.y * NUM_THREADS) - 1; // -1 because we start on 0
+    //int index = (DTid.x + blockID.y * NUM_THREADS);
     
-    outputParticleData[index].position.y = inputParticleData[index].position.y + 1.0f;
-    outputParticleData[index].time = inputParticleData[index].time + meta[blockID.y].deltaTime;
-    outputParticleData[index].size = meta[blockID.y].size;
+    //Input particle = inputParticleData[index];
     
-    float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
-    float distance = dot(outputParticleData[index].position, meta[blockID.y].startPosition);
-    float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
+    //particle.position.y = particle.position.y + 1.0f;
+    //particle.time = particle.time + meta[blockID.y].deltaTime;
+    //particle.size = meta[blockID.y].size;
     
-    if (distance >= meta[blockID.y].maxRange)
-    {
-        outputParticleData[index].position = startPosition;
-        outputParticleData[index].time = 0.f;
-    }
-    if (outputParticleData[index].time >= meta[blockID.y].life)
-    {
-        outputParticleData[index].position = startPosition;
-        outputParticleData[index].time = 0.f;
-    }
+    //float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
+    //float distance = dot(particle.position, meta[blockID.y].startPosition);
+    //float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
+    
+    //if (distance >= meta[blockID.y].maxRange)
+    //{
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
+    //if (particle.time >= meta[blockID.y].life)
+    //{
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
+
+    //outputParticleData[index] = particle;
+    
 
     
-   
-    //if (particle.position.y >= 10.f)
-    //{
-    //    particle.position.y = 0.f;
-    //    particle.time = 0.f;
-    //}
-    //else if (particle.time >= meta[blockID.y].life)
-    //{
-    //    particle.position.y = 0.f;
-    //    particle.time = 0.f;
-    //}
+    if (meta[blockID.y].life > 0)
+    {
+        // 0 = SMOKE
+        if (meta[blockID.y].pattern == 0)
+        {
+            int index = (DTid.x + blockID.y * NUM_THREADS);
     
-    //if (meta[blockID.y].life > 0)
-    //{
-    //    // 0 = SMOKE
-    //    if (meta[blockID.y].pattern == 0)
-    //        SmokeMovement(DTid, blockID);
-    //    // 1 = ARCH
-    //    else if (meta[blockID.y].pattern == 1)
-    //        ArchMovement(DTid, blockID);
-    //    // 2 = EXPLOSION
-    //    else if (meta[blockID.y].pattern == 2)
-    //        ExplosionMovement(DTid, blockID);
-    //    // 3 = FLAMETHROWER
-    //    else if (meta[blockID.y].pattern == 3)
-    //        FlamethrowerMovement(DTid, blockID);
-    //    // 4 = IMPLOSION
-    //    else if (meta[blockID.y].pattern == 4)
-    //        ImplosionMovement(DTid, blockID);
-    //    // 5 = RAIN
-    //    else if (meta[blockID.y].pattern == 5)
-    //        RainMovement(DTid, blockID);
-    //    // 6 = SINUS
-    //    else if (meta[blockID.y].pattern == 6)
-    //        SinusMovement(DTid, blockID);
-    //}
+            Input particle = inputParticleData[index];
+    
+            particle.position.y = particle.position.y + 1.0f;
+            particle.time = particle.time + meta[blockID.y].deltaTime;
+            particle.size = meta[blockID.y].size;
+    
+            float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
+            float distance = dot(particle.position, meta[blockID.y].startPosition);
+            float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
+    
+            if (distance >= meta[blockID.y].maxRange)
+            {
+                particle.position = startPosition;
+                particle.time = 0.f;
+            }
+            if (particle.time >= meta[blockID.y].life)
+            {
+                particle.position = startPosition;
+                particle.time = 0.f;
+            }
+
+            outputParticleData[index] = particle;
+        }
+        // 1 = ARCH
+        if (meta[blockID.y].pattern == 1)
+        {
+            //ArchMovement(DTid, blockID);
+        }
+        // 2 = EXPLOSION
+        if (meta[blockID.y].pattern == 2)
+        {
+            //ExplosionMovement(DTid, blockID);
+        }
+        // 3 = FLAMETHROWER
+        if (meta[blockID.y].pattern == 3)
+        {
+            //FlamethrowerMovement(DTid, blockID);
+        }
+        // 4 = IMPLOSION
+        if (meta[blockID.y].pattern == 4)
+        {
+            //ImplosionMovement(DTid, blockID);
+        }
+        // 5 = RAIN
+        if (meta[blockID.y].pattern == 5)
+        {
+            //RainMovement(DTid, blockID);
+        }
+        // 6 = SINUS
+        if (meta[blockID.y].pattern == 6)
+        {
+            //SinusMovement(DTid, blockID);
+        }
+    }
 
 }
 
-void SmokeMovement(in uint3 DTid, in uint3 blockID)
+inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
 {
-    int index = DTid.x + blockID.y * NUM_THREADS;
+    //int index = DTid.x + blockID.y * NUM_THREADS;
+    
+    //Input particle = inputParticleData[index];
+
+
+    //particle.time = particle.time + meta[blockID.y].deltaTime;
+    //particle.size = meta[blockID.y].size;
+    //particle.position.x = particle.position.x + sin(particle.time) * meta[blockID.y].deltaTime;
+    //particle.position.y = particle.position.y + particle.velocity * meta[blockID.y].deltaTime;
+    
+    
+    //float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
+    //float distance = dot(particle.position, meta[blockID.y].startPosition);
+    //float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
+    
+    //if (distance >= meta[blockID.y].maxRange)
+    //{
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
+    //if (particle.time >= meta[blockID.y].life)
+    //{
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
+
+    //outputParticleData[index] = particle;
+    
+    //int index = DTid.x + blockID.y * NUM_THREADS;
    
     
-    Input particle = inputParticleData[index];
+    //Input particle = inputParticleData[index];
     
-    particle.time += meta[blockID.y].deltaTime;
-    //____________________________________________________________________
-    float noiseAmp = 0.1f; //just noise amplitude, adjust value as needed
-    float3 noise = noiseAmp * normalize(float3(sin(DTid.x), cos(DTid.x), sin(DTid.x + cos(DTid.x))));
-    particle.position += noise;
-    //____________________________________________________________________
-    //test.position = test.position;
+    //particle.time = particle.time + meta[blockID.y].deltaTime;
+    ////____________________________________________________________________
+    //particle.position.x = particle.position.x + sin(particle.time) * meta[blockID.y].deltaTime;
+    //particle.position.y = particle.position.y + particle.velocity * meta[blockID.y].deltaTime;
+    ////____________________________________________________________________
     
-    float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
+    //float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
     
-    float distance = dot(particle.position, meta[blockID.y].startPosition);
+    //float distance = dot(particle.position, meta[blockID.y].startPosition);
     
-    float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
+    //float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
     
-    if (distance >= meta[blockID.y].maxRange)
-        particle.position = startPosition;
-    if (particle.time >= meta[blockID.y].life)
-        particle.position = startPosition;
-    
-    
-    
-    outputParticleData[index] = particle;
+    //if (distance >= meta[blockID.y].maxRange)
+    //    particle.position = startPosition;
+    //if (particle.time >= meta[blockID.y].life)
+    //    particle.position = startPosition;
+        
+    //outputParticleData[index] = particle;
 }
 
 void ArchMovement(in uint3 DTid, in uint3 blockID)

@@ -7,35 +7,24 @@
 #include "Camera.h"
 #include "DeltaTime.h"
 
-PoolPointer<ParticleInputOutput> Particles::m_readBuffer;
-PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
+PoolPointer<ParticleInputOutput> Particles::m_readWriteBuffer;
 PoolPointer<ParticleMetadataBuffer> data;
 
 int Particles::RenderSlot;
 
 void Particles::SwitchInputOutput()
 {
-	////Store read
-	//ParticleInputOutput tempHolder = *m_readBuffer;
+	UAV_IDX tempInput = m_readWriteBuffer->inputUAV;
+	UAV_IDX tempOutput = m_readWriteBuffer->outputUAV;
 
-	//std::memcpy(m_readBuffer, m_writeBuffer, sizeof(ParticleInputOutput));
-	//*m_writeBuffer = tempHolder;
-
-	SRV_IDX tempSrv = m_readBuffer->SRVIndex;
-	UAV_IDX tempUav = m_readBuffer->UAVIndex;
-
-	m_readBuffer->SRVIndex = m_writeBuffer->SRVIndex;
-	m_readBuffer->UAVIndex = m_writeBuffer->UAVIndex;
-
-	m_writeBuffer->SRVIndex = tempSrv;
-	m_writeBuffer->UAVIndex = tempUav;
+	m_readWriteBuffer->outputUAV = tempInput;
+	m_readWriteBuffer->inputUAV = tempOutput;
 }
 
 void Particles::InitializeParticles()
 {
 	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));
-	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
-	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_readWriteBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
 
 	Particle* particles;
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
@@ -52,14 +41,9 @@ void Particles::InitializeParticles()
 		particles[i].size = 0.f;
 	}
 
-	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
-	m_readBuffer->SRVIndex =  CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
-	m_writeBuffer->SRVIndex = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, (CPU_FLAGS)0);
 
-	// These are 48 * 65536 = 3145728 large, one of the numbers of the error
-	m_readBuffer->UAVIndex =  CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_readBuffer->SRVIndex);
-	m_writeBuffer->UAVIndex = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_writeBuffer->SRVIndex);
-
+	m_readWriteBuffer->inputUAV = CreateUnorderedAccessViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, BIND_UNORDERED_ACCESS, NONE);
+	m_readWriteBuffer->outputUAV = CreateUnorderedAccessViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, BIND_UNORDERED_ACCESS, NONE);
 	MemLib::spop(); // for particles
 
 
@@ -81,8 +65,7 @@ void Particles::InitializeParticles()
 void Particles::ReleaseParticles()
 {
 	MemLib::pfree(data);
-	MemLib::pfree(m_readBuffer);
-	MemLib::pfree(m_writeBuffer);
+	MemLib::pfree(m_readWriteBuffer);
 }
 
 ParticleMetadataBuffer* Particles::GetData()
@@ -96,14 +79,14 @@ void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 
 	SetComputeShader(renderStates[RenderSlot].computeShader);
 	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_COMPUTE, 0);
-	SetShaderResourceView(m_readBuffer->SRVIndex, BIND_COMPUTE, 0);
-	SetUnorderedAcessView(m_writeBuffer->UAVIndex, 0);
+	SetUnorderedAcessView(m_readWriteBuffer->inputUAV, 0);
+	SetUnorderedAcessView(m_readWriteBuffer->outputUAV, 1);
 }
 
 void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 {
-	UnsetShaderResourceView(BIND_COMPUTE, 0);
 	UnsetUnorderedAcessView(0);
+	UnsetUnorderedAcessView(1);
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
 
@@ -112,7 +95,7 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 		data->metadata[i].deltaTime = GetDeltaTime();
 
 	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
- 	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_writeBuffer->SRVIndex);
+ 	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_readWriteBuffer->outputUAV);
 }
 
 void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
@@ -145,7 +128,7 @@ void Particles::FinishParticlePass()
 	UnsetRasterizerState();
 }
 
-// -- ECS FUNCTION DEFINTIONS -- //
+// -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
 {
 	metadataSlot = FindSlot();
