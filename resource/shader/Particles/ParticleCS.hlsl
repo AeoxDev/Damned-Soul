@@ -19,12 +19,17 @@ struct metadata
     
     float3 startPosition;
     float deltaTime;
+    // 0 is reserved for delta time
+    // 1 - 255 is a random number between 0.0 and 10.0
 };
 
 cbuffer metadataBuffer : register(b0)
 {
     metadata meta[256];
 };
+
+static const float PI = 3.14159265f;
+
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
 inline void ArchMovement(in uint3 DTid, in uint3 blockID);
@@ -40,60 +45,40 @@ RWStructuredBuffer<Input> outputParticleData : register(u1);
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 {
-    //int index = (DTid.x + blockID.y * NUM_THREADS);
+    float metaIndex = DTid.x + 1;
+    if (metaIndex >= 256)
+        metaIndex = DTid.x - 1;
     
-    //Input particle = inputParticleData[index];
+    int index = DTid.x + blockID.y * NUM_THREADS;
+    Input particle = inputParticleData[index];
     
-    //particle.position.y = particle.position.y + 1.0f;
-    //particle.time = particle.time + meta[blockID.y].deltaTime;
-    //particle.size = meta[blockID.y].size;
-    
-    //float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
-    //float distance = dot(particle.position, meta[blockID.y].startPosition);
-    //float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
-    
-    //if (distance >= meta[blockID.y].maxRange)
-    //{
-    //    particle.position = startPosition;
-    //    particle.time = 0.f;
-    //}
-    //if (particle.time >= meta[blockID.y].life)
-    //{
-    //    particle.position = startPosition;
-    //    particle.time = 0.f;
-    //}
-
-    //outputParticleData[index] = particle;
-    
-
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
     
     if (meta[blockID.y].life > 0)
     {
         // 0 = SMOKE
         if (meta[blockID.y].pattern == 0)
-        {
-            int index = (DTid.x + blockID.y * NUM_THREADS);
+        {               
+            float amp = 1.f;
+            float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
+            float3 startPosition = float3(meta[metaIndex].deltaTime * amp, meta[metaIndex].deltaTime * amp, 1.0f);
     
-            Input particle = inputParticleData[index];
-    
-            particle.position.y = particle.position.y + 1.0f;
-            particle.time = particle.time + meta[blockID.y].deltaTime;
-            particle.size = meta[blockID.y].size;
-    
-            float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
-            float distance = dot(particle.position, meta[blockID.y].startPosition);
-            float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
-    
-            if (distance >= meta[blockID.y].maxRange)
+            if (travelledDistance >= (meta[blockID.y].maxRange + meta[metaIndex].deltaTime * 1000.f))
             {
                 particle.position = startPosition;
                 particle.time = 0.f;
             }
-            if (particle.time >= meta[blockID.y].life)
+            else if (particle.time >= (meta[blockID.y].life + meta[metaIndex].deltaTime * 1000.f))
             {
                 particle.position = startPosition;
                 particle.time = 0.f;
             }
+            
+            particle.position.x = particle.position.x + (cos((particle.time * PI) * meta[metaIndex].deltaTime) * 100.f) * dt;
+            particle.position.y = particle.position.y + meta[metaIndex].deltaTime * dt;
+
 
             outputParticleData[index] = particle;
         }
