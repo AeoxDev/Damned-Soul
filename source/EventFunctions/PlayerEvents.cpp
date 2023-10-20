@@ -75,7 +75,9 @@ void PlayerAttack(EntityID& entity, const int& index)
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 
 	//Make the players' attack hitbox active during the second half of the attack animation
-	if (GetEventTimedElapsed(entity, index) >= 0.5f)
+	if (GetEventTimedElapsed(entity, index) >= 0.8f)
+		SetPlayerAttackHitboxInactive(entity, index);
+	else if (GetEventTimedElapsed(entity, index) >= 0.5f)
 		SetPlayerAttackHitboxActive(entity, index);
 }
 
