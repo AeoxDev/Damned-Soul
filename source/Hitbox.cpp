@@ -704,7 +704,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStati
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsEnemy(entity, hID);
 	SetHitboxHitPlayer(entity, hID);
-	//SetHitboxHitEnemy(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
 
