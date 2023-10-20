@@ -115,7 +115,7 @@ void LoadLevel1()
 			{
 				EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
 					-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-					0.8f, 0.5f, 0.1f, 3.0f);
+					0.8f, 0.5f, 0.1f, 3.0f, (float)rand());
 				succeded = true;
 			}
 		}

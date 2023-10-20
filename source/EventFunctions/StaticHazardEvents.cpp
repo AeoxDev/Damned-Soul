@@ -10,5 +10,5 @@
 void LoopHitbox(EntityID& entity, const int& index)
 {
 	SetHitboxActive(entity, 0);
-	AddTimedEventComponentStart(entity, 0.1f, LoopHitbox, 2);
+	AddTimedEventComponentStart(entity, 0.2f, LoopHitbox, 2);
 }

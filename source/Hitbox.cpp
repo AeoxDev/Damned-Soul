@@ -696,7 +696,7 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 	}
 }
 
-void SetupEnemyCollisionBox(EntityID& entity, float radius)
+void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStaticHazards)
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
@@ -715,6 +715,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	//SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
+	SetHitboxHitStaticHazard(entity, sID, affectedByStaticHazards);
 	SetHitboxCanTakeDamage(entity, sID);
 
 	SetHitboxCanDealDamage(entity, sID, false);
@@ -733,11 +734,12 @@ void SetupLavaCollisionBox(EntityID& entity, float radius)
 {
 	AddHitboxComponent(entity);
 	int staticID = CreateHitbox(entity, radius, 0.f, 0.0f);
-	SetCollisionEvent(entity, staticID, AttackCollision);
+	SetCollisionEvent(entity, staticID, StaticHazardAttackCollision);
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(entity, staticID);
 	SetHitboxActive(entity, staticID);
-	SetHitboxCanTakeDamage(entity, staticID, false);
+	//SetHitboxIsStaticHazard(entity, staticID);
+	//SetHitboxCanTakeDamage(entity, staticID, false);
 	SetHitboxCanDealDamage(entity, staticID, true);
 }
 
@@ -755,6 +757,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
+	SetHitboxHitStaticHazard(entity, hID, true);
 	SetHitboxCanDealDamage(entity, hID, false);
 	SetHitboxCanTakeDamage(entity, hID, true);
 
@@ -776,6 +779,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxIsMoveable(entity, sID);
 	SetHitboxCanDealDamage(entity, sID, false);
 	SetHitboxCanTakeDamage(entity, sID, true);
+	SetHitboxHitStaticHazard(entity, sID, true);
 	playerComp->softHitboxID = sID;
 
 	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, -1.5f);

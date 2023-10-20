@@ -37,7 +37,7 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	{
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FlyingEyeDymmy.mdl"));
 		registry.AddComponent<EyeBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.f);
+		SetupEnemyCollisionBox(entity, 1.f, false);
 	}
 	else if (eType == enemyType::tempBoss)
 	{
