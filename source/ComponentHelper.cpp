@@ -29,6 +29,24 @@ float StatComponent::UpdateHealth(const float delta)
 		this->currentHealth += delta;
 		this->currentHealth = this->currentHealth < this->maximumHealth ? this->currentHealth : this->maximumHealth;
 	}
+	// Else, do nothing, only return
+	else
+	{
+		return this->currentHealth;
+	}
+
+	// Some sort of health mod happened, do the health mod relics
+	auto hpUpdate = Relics::GetFunctionsOfType(Relics::FUNC_ON_HEALTH_MODIFIED);
+	RelicInput::OnHealthUpdate hpUpdateData =
+	{
+		/*Delta Health*/		delta,
+		/*Adress Of StatComp*/	this
+	};
+	for (uint32_t i = 0; i < hpUpdate.size(); ++i)
+	{
+		hpUpdate[i](&hpUpdateData);
+	}
+
 	// Return the new current health
 	return this->currentHealth;
 }

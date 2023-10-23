@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "UIRenderer.h"
 #include "States\StateManager.h"
+#include "RelicFunctions.h"
 #include "Registry.h"
 #include "Components.h"
 
@@ -10,6 +11,12 @@
 void LoadLevel(int level)
 {
 	//Reset UI and camera in case camera was in weird position before.
+
+	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
+	for (uint32_t i = 0; i < relics.size(); ++i)
+	{
+		relics[i](nullptr);
+	}
 
 	RedrawUI();
 	Camera::ResetCamera();
@@ -29,6 +36,8 @@ void LoadLevel(int level)
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;
+	case 4: LoadShop(); break;
+	case 5: LoadLevel3(); break;
 	default: 
 		//UnloadEntities(true);//Reset game
 		UnloadEntities(true);//Reset game
