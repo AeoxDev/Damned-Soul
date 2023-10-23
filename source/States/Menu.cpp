@@ -11,10 +11,13 @@
 #include "Level.h"
 #include "Model.h"
 #include "UIComponents.h"
+#include "RelicFunctions.h"
 
 void Menu::Setup()//Load
 {
 	m_active = true;
+	// Clear relics when entering the main menu
+	Relics::ClearRelicFunctions();
 
 	RedrawUI();
 	SetupButtons();
@@ -113,37 +116,7 @@ void Menu::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	for (auto entity : View<UIButton>(registry))
-	{
-		UIButton* b = registry.GetComponent<UIButton>(entity);
-		b->Release();
-	}
-
-	for (auto entity : View<UIImage>(registry))
-	{
-		UIImage* i = registry.GetComponent<UIImage>(entity);
-		i->Release();
-	}
-
-	for (auto entity : View<ModelBonelessComponent>(registry))
-	{
-		ModelBonelessComponent* m = registry.GetComponent<ModelBonelessComponent>(entity);
-		ReleaseModel(m->model);
-	}
-
-	for (auto entity : View<ModelSkeletonComponent>(registry))
-	{
-		ModelSkeletonComponent* m = registry.GetComponent<ModelSkeletonComponent>(entity);
-		ReleaseModel(m->model);
-	}
-
-	//Destroy entity resets component bitmasks
-	for (int i = 0; i < registry.entities.size(); i++)
-	{
-		EntityID check = registry.entities.at(i).id;
-		if (check.state == false)
-			registry.DestroyEntity(check);
-	}
+	UnloadEntities(false);
 
 	ClearUI();
 }

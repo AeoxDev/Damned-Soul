@@ -196,3 +196,13 @@ void CancelTimedEvent(EntityID& entity, const int& timedEventSlot)
 		comp->timedEvents.erase(timedEventSlot);
 	}
 }
+
+void ReleaseTimedEvents(EntityID& entity)
+{
+	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
+	if (comp)
+	{
+		//registry.RemoveComponent<TimedEventComponent>(entity);
+		comp->timedEvents.~ML_Vector();
+	}
+}

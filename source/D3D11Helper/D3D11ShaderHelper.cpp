@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
@@ -143,7 +146,8 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 
 	ID3D11InputLayout* tempIL = 0;
 	// Try to create accompanying input layout
-	assert(true == CreateInputLayout(shaderData, size, tempIL, layout));
+	bool inputLayoutCreated = CreateInputLayout(shaderData, size, tempIL, layout);
+	assert(true == inputLayoutCreated);
 	vrtHolder->il_map.emplace(idx, tempIL);
 
 

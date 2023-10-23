@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "MemLib/MemLib.hpp"
@@ -27,7 +30,7 @@ RasterizerHolder* rsHolder;
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
-	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG;
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
@@ -54,9 +57,9 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	swapChainDesc.Flags = 0;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &d3d11Data->swapChain, &d3d11Data->device, NULL, &d3d11Data->deviceContext);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
-	return true;
+	return SUCCEEDED(hr);
 }
 
 #define FAIL_MSG { std::cerr << "Failed to set up D3D11!" << std::endl; return -1; }
@@ -93,9 +96,12 @@ int SetupDirectX(HWND& w)
 	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 	PUSH_AND_INITIALIZE(geoHolder, GeometryShaderHolder);
-
-	assert(true == CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT));
-
+	bool succeded = CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT);
+	assert(true == succeded);
+	if (!succeded)
+	{
+		return -1;
+	}
 	return 0;
 }
 
