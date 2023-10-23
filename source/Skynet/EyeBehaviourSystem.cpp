@@ -269,7 +269,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity);
 
 			}
-			else if (distance <= 40.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (distance <= 15.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
