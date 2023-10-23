@@ -17,20 +17,12 @@ void AudioEngineComponent::Setup(int& ID)
 	{
 		this->sounds.push_back(toAdd);
 	}
-	//this->system->createSound("SFX/Menu/MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
-	//this->volumes.push_back(1.0f);
-	//this->system->createSound("SFX/Menu/MenuButtonPress.mp3", FMOD_DEFAULT, 0, &this->sounds[1]);
-	//this->volumes.push_back(1.0f);
-	//this->system->createSound("SFX/Menu/StartGameClick.mp3", FMOD_DEFAULT, 0, &this->sounds[2]);
-	//this->volumes.push_back(1.0f);
-	this->system->createSound("SFX/Enemy/Hellhound/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
+	this->system->createSound("SFX/Menu/MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
 	this->volumes.push_back(1.0f);
-	this->system->createSound("SFX/Enemy/Hellhound/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[1]);
+	this->system->createSound("SFX/Menu/MenuButtonPress.mp3", FMOD_DEFAULT, 0, &this->sounds[1]);
 	this->volumes.push_back(1.0f);
-	this->system->createSound("SFX/Enemy/Hellhound/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[2]);
+	this->system->createSound("SFX/Menu/StartGameClick.mp3", FMOD_DEFAULT, 0, &this->sounds[2]);
 	this->volumes.push_back(1.0f);
-
-
 	this->system->createSound("SFX/Music/TitleTheme.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[3]);
 	this->volumes.push_back(0.25f);
 	this->system->createSound("SFX/Music/StageCalm.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[4]);
