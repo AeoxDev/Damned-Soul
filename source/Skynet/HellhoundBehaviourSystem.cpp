@@ -169,16 +169,14 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 
 
-void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc)
+void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
 {	
 	//Temp: Create SMALL spotlight when dog prepares to flame
-	for (auto dog : View<HellhoundBehaviour>(registry))
-	{
-		CreateSpotLight(dog, 1.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, -0.25f,
-			10.0f, 1.0f,
-			0.0f, 0.0f, -1.0f, 30.0f);
-	}
+	CreateSpotLight(dog, 1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, -0.25f,
+		10.0f, 1.0f,
+		0.0f, 0.0f, -1.0f, 30.0f);
+	
 
 	hc->isShooting = true;
 
@@ -240,7 +238,7 @@ bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float
 	return alpha >= 0 && beta >= 0 && gamma >= 0 && alpha + beta + gamma == 1.0;
 }
 
-void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats/*, TransformComponent* testing, TransformComponent* testing2*/)
+void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, EntityID& dog/*, TransformComponent* testing, TransformComponent* testing2*/)
 {
 	// create a hitbox from doggo position, as a triangle, with 2 corners expanding outwards with the help of variables in behavior. 
 	//once max range has been reached, this function will reset all stats and let the doggo go on with a different behavior. 
@@ -250,39 +248,14 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox; //updates the range of the "flamethrower"
 
 	//Temp: Create BIG spotlight when dog flame
-	for (auto dog : View<HellhoundBehaviour>(registry))
-	{
 		//Temp: Create point light to indicate that we're going to do flamethrower
-		CreateSpotLight(dog, 10.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, -0.25f,
-			hc->currentShootingAttackRange, 1.0f,
-			0.0f, 0.0f, -1.0f, 30.0f);
-	}
+	CreateSpotLight(dog, 10.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, -0.25f,
+		hc->currentShootingAttackRange, 1.0f,
+		0.0f, 0.0f, -1.0f, 30.0f);
+	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
 	
-
-	//TESTING CODE______________________________________________________________________________________
-	//float test1 = (hc->shootingSideTarget1X - hc->shootingStartX);
-	//float test2 = (hc->shootingSideTarget1Z - hc->shootingStartZ);
-
-	//float test3 = (hc->shootingSideTarget2X - hc->shootingStartX);
-	//float test4 = (hc->shootingSideTarget2Z - hc->shootingStartZ);
-
-	//float mag = sqrt(test1 * test1 + test2 * test2);
-	//if (mag < 0.001f)
-	//{
-	//	mag = 0.001f;
-	//}
-	//test1 /= mag;
-	//test2 /= mag;
-	//test3 /= mag;
-	//test4 /= mag;
-	//
-	//testing->positionX = hc->shootingStartX + test1  * hc->currentShootingAttackRange;
-	//testing->positionZ = hc->shootingStartZ + test2  * hc->currentShootingAttackRange;
-	//testing2->positionX = hc->shootingStartX + test3 * hc->currentShootingAttackRange;
-	//testing2->positionZ = hc->shootingStartZ + test4 * hc->currentShootingAttackRange;
-	//__________________________________________________________________________________________________________________________
 
 	if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
 	{
@@ -415,12 +388,11 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
-				SmoothRotation(hellhoundTransformComponent, hellhoundComponent->facingX, hellhoundComponent->facingZ);
 				hellhoundComponent->shootingCounter += GetDeltaTime();
 				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingDuration) // have we charged long enough?
 				{
 					//it seems we have. Time to start shooting behaviour
-					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats/*, stc, stcTwo*/); //this is damage thing
+					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats/*, stc, stcTwo*/, enemyEntity); //this is damage thing
 				}
 				//else we do nothing, we're just charging the flames.
 			}
@@ -456,7 +428,7 @@ bool HellhoundBehaviourSystem::Update()
 			{
 				hellhoundComponent->lastPositionX = hellhoundTransformComponent->positionX;
 				hellhoundComponent->lastPositionZ = hellhoundTransformComponent->positionZ;
-				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent); //set a target for the ranged attack
+				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent, enemyEntity); //set a target for the ranged attack
 			}
 			else if (distance < 50) //hunting distance, go chase
 			{

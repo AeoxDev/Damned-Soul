@@ -12,6 +12,7 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	TransformComponent transform;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
+	assert(mass > 0.0f);
 	transform.mass = mass;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);

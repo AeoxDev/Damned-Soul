@@ -21,8 +21,9 @@ void LoadLevel1()
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID skeleton3 = registry.CreateEntity();
+	EntityID skeleton4 = registry.CreateEntity();
 	EntityID eye = registry.CreateEntity();
-	EntityID eye2 = registry.CreateEntity();
+	//EntityID eye2 = registry.CreateEntity();
 	//EntityID dog = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
@@ -37,8 +38,9 @@ void LoadLevel1()
 	SetupEnemy(skeleton, enemyType::skeleton, -45.f, 0.f, -20.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
 	SetupEnemy(skeleton2, enemyType::skeleton, 40.f, 0.f, -35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
 	SetupEnemy(skeleton3, enemyType::skeleton, -30.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(eye, enemyType::eye, -25.f, 1.f, 15.f, 0.f, 60.f, 8.f, 10.f, 5.f, 5);
-	SetupEnemy(eye2, enemyType::eye, 35.f, 1.f, -15.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
+	SetupEnemy(skeleton4, enemyType::skeleton, -20.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
+	SetupEnemy(eye,				enemyType::eye, -25.f, 1.f, 15.f, 1.0f, 60.f, 15.f, 10.f, 5.f, 5);
+	//SetupEnemy(eye2, enemyType::eye, 35.f, 1.f, -15.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
 	//16 souls total
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
