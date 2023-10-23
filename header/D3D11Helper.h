@@ -258,7 +258,7 @@ void ReleaseUAV(const UAV_IDX idx);
 
 
 // Clear the render target
-void ClearRenderTargetView(const RTV_IDX idx, float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 0.0f);
+void ClearRenderTargetView(const RTV_IDX idx, float r = 0.258f, float g = 0.258f, float b = 0.258f, float a = 0.0f);
 // Clear the depth stencil
 void ClearDepthStencilView(const DSV_IDX idx);
 
