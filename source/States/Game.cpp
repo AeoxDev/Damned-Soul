@@ -61,7 +61,7 @@ void GameScene::Input()
 				break;
 
 			//relicHolder->AddRelic<DamageRelic>();
-			Relics::RelicMetaData md = Relics::SpeedyLittleDevil(true);
+			Relics::RelicMetaData md = Relics::FrostFire(true);
 
 			UIImage relicImage, relicFlavorImage;
 			relicImage.Setup(md.filePath);//("TempRelic1.png");

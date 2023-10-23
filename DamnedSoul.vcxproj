@@ -196,6 +196,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\ComponentHelper.cpp" />
+    <ClCompile Include="source\Components\KnockBackComponent.cpp" />
     <ClCompile Include="source\D3D11Helper\HolderFunctions.cpp" />
     <ClCompile Include="source\EntityCreation\CreateStaticHazard.cpp" />
     <ClCompile Include="source\EntityFramework.cpp" />
@@ -244,6 +245,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
     <ClCompile Include="source\Systems\DamageOverTimeSystem.cpp" />
     <ClCompile Include="source\Systems\EventSystem.cpp" />
+    <ClCompile Include="source\Systems\KnockBackSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemCPU.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemGPU.cpp" />
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
@@ -406,6 +408,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
+    <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
     <ClInclude Include="header\Components\UIComponents.h" />

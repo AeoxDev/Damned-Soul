@@ -34,6 +34,10 @@ namespace Relics
 		// arguments: foo(timeDelta)
 		FUNC_ON_FRAME_UPDATE,
 
+		// Call when a new level is loaded
+		// arguments: foo(void)
+		FUNC_ON_LEVEL_SWITCH,
+
 		// Used to iterate, not to give functionality to relics
 		FUNC_END_OF_TYPES
 	};

@@ -105,6 +105,7 @@ void StateManager::Setup()
 	systems.push_back(new ButtonSystem());
 
 	// CPU
+	systems.push_back(new KnockBackSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
