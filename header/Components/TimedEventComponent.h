@@ -26,3 +26,4 @@ uint32_t GetTimedEventCondition(TimedEventComponent*& comp, const int& timedEven
 //Returns -1.0f if no component.
 float GetEventTimedElapsed(EntityID& entityID, const int& timedEventSlot);
 void CancelTimedEvent(EntityID& entityID, const int& timedEventSlot);
+void ReleaseTimedEvents(EntityID& entity);

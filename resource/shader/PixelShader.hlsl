@@ -183,7 +183,7 @@ float4 main(PS_IN input) : SV_TARGET
     addOnColor = saturate(addOnColor + pointSpecular + spotSpecular + dirSpecular); //not multiply to put on top and not affect color of image
     addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
     #define GAMMA_CORRECTION 1.1f
-    return pow(float4(addOnColor, 1), GAMMA_CORRECTION);
+    return pow(float4(abs(addOnColor), 1), GAMMA_CORRECTION);
     //return float4(addOnColor, 1);
     
 	//return diffuseTex.Sample(WrapSampler, input.uv)/*.xyzw*/;

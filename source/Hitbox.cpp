@@ -420,8 +420,8 @@ void CreateShadersLayoutAndRasterState()
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
-
-	assert(!FAILED(d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader)));
+	HRESULT hr = (d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader));
+	assert(SUCCEEDED(hr));
 	std::string vShaderByteCode = shaderData;
 
 	//Geometry Shader
@@ -436,8 +436,8 @@ void CreateShadersLayoutAndRasterState()
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
-
-	assert(!FAILED(d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader)));
+	hr = d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader);
+	assert(SUCCEEDED(hr));
 
 	//Pixel Shader
 	shaderData.clear();
@@ -451,25 +451,25 @@ void CreateShadersLayoutAndRasterState()
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
-
-	assert(!FAILED(d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader)));
+	hr = d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader);
+	assert(SUCCEEDED(hr));
 
 	//Input Layout
 	D3D11_INPUT_ELEMENT_DESC inputDesc[1] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
-
+	hr = d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout);
 	//Array of input descriptions, number of elements, pointer to compiled shader, size of compiled shader, pointer to input-layout.
-	assert(!FAILED(d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout)));
+	assert(SUCCEEDED(hr));
 
 	//Raster State
 	D3D11_RASTERIZER_DESC rasterDesc{};
 	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = false;
-
-	assert(!FAILED(d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster)));
+	d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster);
+	assert(SUCCEEDED(hr));
 }
 
 void DestroyHitboxVisualizeVariables()
@@ -707,6 +707,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStati
 	SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
+	SetHitboxHitWall(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, SoftCollision);

@@ -107,24 +107,6 @@ void SettingsState::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	for (auto entity : View<UIButton>(registry))
-	{
-		UIButton* b = registry.GetComponent<UIButton>(entity);
-		b->Release();
-	}
-
-	for (auto entity : View<UIImage>(registry))
-	{
-		UIImage* i = registry.GetComponent<UIImage>(entity);
-		i->Release();
-	}
-
-	//Destroy entity resets component bitmasks
-	for (int i = 0; i < registry.entities.size(); i++)
-	{
-		EntityID check = registry.entities.at(i).id;
-		if (check.state == false)
-			registry.DestroyEntity(check);
-	}
+	UnloadEntities(false);
 	
 }
