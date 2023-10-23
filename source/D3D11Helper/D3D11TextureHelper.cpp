@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "STB_Helper.h"
@@ -23,7 +26,8 @@ TX_IDX LoadTexture(const char* name)
 	}
 	txHolder->img_map.emplace(currentIdx, Image());
 	Image& img = txHolder->img_map[currentIdx];
-	assert(img.load(name) == true);
+	bool l = img.load(name);
+	assert(l == true);
 
 	D3D11_TEXTURE2D_DESC desc;
 	// Take the height and width of the loaded image and set it as the dimensions for the texture
@@ -97,7 +101,8 @@ TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFla
 
 bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot)
 {
-	assert(true == txHolder->tx_map.contains(idx));
+	bool contains = txHolder->tx_map.contains(idx);
+	assert(true == contains);
 
 	switch (shader)
 	{
@@ -201,7 +206,8 @@ void ReleaseSMP(const SMP_IDX idx)
 
 bool DeleteD3D11Texture(const TX_IDX idx)
 {
-	assert(txHolder->tx_map.contains(idx));
+	bool contains = txHolder->tx_map.contains(idx);
+	assert(contains == true);
 	if (txHolder->srv_map.contains(idx))
 	{
 		txHolder->srv_map[idx]->Release();

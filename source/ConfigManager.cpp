@@ -59,7 +59,6 @@ void ReadConfig()
 				configFile.close();
 				//Something has changed (corruption), we should default.
 				DefaultConfig();
-
 				return;
 			}
 			//Handle each case by name.

@@ -28,7 +28,7 @@ struct StateManager
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>
-	void Setup();
+	int Setup();
 
 	void Input();//All input based cpu systems here
 	void Update();//All cpu systems here

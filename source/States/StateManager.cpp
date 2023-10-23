@@ -75,9 +75,13 @@ void SetInShop(bool value)
 	}
 }
 
-void StateManager::Setup()
+int StateManager::Setup()
 {
-	Setup3dGraphics();
+	bool loaded = Setup3dGraphics();
+	if (!loaded)
+	{
+		return -1;
+	}
 	ui.RenderSlot = SetupUIRenderState();
 
 	ui.Setup();
@@ -131,6 +135,8 @@ void StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIPlayerRelicsSystem());
 	systems.push_back(new UIGameLevelSystem());
+
+	return 0;
 
 }
 
