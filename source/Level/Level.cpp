@@ -30,6 +30,7 @@ void LoadLevel(int level)
 	{
 	case 1:	LoadLevel1(); break;
 	case 2: LoadLevel2(); break;
+	case 3: LoadLevel3(); break;
 	default:
 		//UnloadEntities(true);//Reset game
 		UnloadEntities(false);//Reset game

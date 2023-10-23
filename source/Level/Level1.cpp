@@ -14,15 +14,16 @@
 void LoadLevel1()
 {
 	//SetDirectionLight(0.8f, 0.7f, 0.6f, -1.0f, -1.0f, 1.0f);
-	//Doggo
 	EntityID gameLevel = registry.CreateEntity();
 
 	EntityID stage = registry.CreateEntity();
 	EntityID player = registry.CreateEntity();
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
+	EntityID skeleton3 = registry.CreateEntity();
 	EntityID eye = registry.CreateEntity();
-	EntityID dog = registry.CreateEntity();
+	EntityID eye2 = registry.CreateEntity();
+	//EntityID dog = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
@@ -33,11 +34,12 @@ void LoadLevel1()
 	EntityID lightholderForth = registry.CreateEntity();
 	
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(skeleton, enemyType::skeleton, 5.f, 0.f, 7.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton2, enemyType::skeleton, 10.f, 0.f, 5.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(dog, enemyType::hellhound, -5.f, 0.f, -5.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
-	SetupEnemy(eye, enemyType::eye, 15.f, 0.f, 15.f, 1.f, 100.f, 10.f, 5.f, 5.f, 1);
-
+	SetupEnemy(skeleton, enemyType::skeleton, -45.f, 0.f, -20.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
+	SetupEnemy(skeleton2, enemyType::skeleton, 40.f, 0.f, -35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
+	SetupEnemy(skeleton3, enemyType::skeleton, -30.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
+	SetupEnemy(eye, enemyType::eye, -25.f, 1.f, 15.f, 0.f, 60.f, 8.f, 10.f, 5.f, 5);
+	SetupEnemy(eye2, enemyType::eye, 35.f, 1.f, -15.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
+	//16 souls total
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -57,14 +59,14 @@ void LoadLevel1()
 	
 	
 
-	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 50.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
 	
 
 	registry.AddComponent<ControllerComponent>(player);
 
-	/*ParticleComponent* particComp = */registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
+	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	registry.AddComponent<PointOfInterestComponent>(player, poic);

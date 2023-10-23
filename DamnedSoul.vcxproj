@@ -210,6 +210,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EventFunctions\StaticHazardEvents.cpp" />
     <ClCompile Include="source\Hashing.cpp" />
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
+    <ClCompile Include="source\Level\Level3.cpp" />
     <ClCompile Include="source\Level\LevelHelper.cpp" />
     <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp" />
     <ClCompile Include="source\Level\Level.cpp" />
