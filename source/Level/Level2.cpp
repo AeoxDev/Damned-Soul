@@ -5,6 +5,8 @@
 #include "Particles.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
+#include "Model.h"
+#include "UIComponents.h"
 
 #include "UIRenderer.h"
 
@@ -40,8 +42,9 @@ void LoadLevel2()
 	////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
-	pcUiHpC->image.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->text.Setup("");
+	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
+	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->text.Setup(L"");
 
 	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");

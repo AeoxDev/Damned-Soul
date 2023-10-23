@@ -9,6 +9,7 @@
 #include "UI/UIRenderer.h"
 #include "Particles.h"
 #include "D3D11Graphics.h"
+#include "Light.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -78,9 +79,13 @@ void SetInShop(bool value)
 	}
 }
 
-void StateManager::Setup()
+int StateManager::Setup()
 {
-	Setup3dGraphics();
+	bool loaded = Setup3dGraphics();
+	if (!loaded)
+	{
+		return -1;
+	}
 	ui.RenderSlot = SetupUIRenderState();
 
 	ui.Setup();
@@ -134,6 +139,8 @@ void StateManager::Setup()
 	systems.push_back(new UIRelicsSystem());
 	systems.push_back(new UIGameLevelSystem());
 	systems.push_back(new UIShopSystem());
+
+	return 0;
 
 }
 
@@ -233,6 +240,7 @@ void StateManager::UnloadAll()
 	scenes[2].Unload();
 
 	Particles::ReleaseParticles();
+	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
@@ -247,7 +255,7 @@ void StateManager::EndFrame()
 	//MemLib::pdefrag();
 }
 
-GameScene StateManager::GetCurrentLevel()
+GameScene& StateManager::GetCurrentLevel()
 {
 	return scenes[activeLevelScene];
 }

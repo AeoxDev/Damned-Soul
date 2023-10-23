@@ -5,6 +5,7 @@
 #include "DeltaTime.h"
 #include "UI/UIRenderer.h"
 #include <random>
+#include "Hitbox.h"
 
 
 
@@ -52,15 +53,46 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 }
 
-void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats)
+void TemporaryPretendAnimation()
 {
-	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
+	// lmao funny code do many many things
+	int i = 0;
+}
+void BeginHitting(EntityID& entity)
+{
+	auto comp = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
+}
+void WeShallOverCome(EntityID& entity)
+{
+	auto comp = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
+}
+
+void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EntityID& entity)
+{
+	sc->goalDirectionX = ptc->positionX - btc->positionX;
+	sc->goalDirectionZ = ptc->positionZ - btc->positionZ;
+	SmoothRotation(btc, sc->goalDirectionX, sc->goalDirectionZ);
+	//rotation
+
+
+	////impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
+	//if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	//{
+	//	sc->attackTimer = 0;
+	//	sc->attackStunDurationCounter = 0;
+	//	playerStats->UpdateHealth(-enemyStats->damage);
+	//	RedrawUI();§
+	//}
+	
+
+	//SetHitboxCanDealDamage(entity, 1, true);
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
 		sc->attackTimer = 0;
 		sc->attackStunDurationCounter = 0;
-		playerStats->UpdateHealth(-enemyStats->damage);
-		RedrawUI();
+		AddTimedEventComponentStartContinuousEnd(entity, 0.f, BeginHitting, TemporaryPretendAnimation, 0.2f, WeShallOverCome);
 	}
 }
 
@@ -97,9 +129,9 @@ bool TempBossBehaviourSystem::Update()
 			{
 				// do nothing, stand like a bad doggo and be ashamed
 			}
-			else if (distance < 4.5f)
+			else if (distance < 7.f - tempBossComponent->deathCounter * 1.15f)
 			{
-				CombatBehaviour(tempBossComponent, enemyStats, playerStats);
+				CombatBehaviour(tempBossComponent, enemyStats, playerStats, playerTransformCompenent, tempBossTransformComponent, enemyEntity);
 			}
 			else if (distance < 50) //hunting distance
 			{

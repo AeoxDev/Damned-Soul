@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "UI/UIRenderer.h"
 #include "SDLHandler.h"
+#include "UIComponents.h"
 
 bool ButtonSystem::Update()
 {

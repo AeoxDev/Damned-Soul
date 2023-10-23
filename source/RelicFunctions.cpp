@@ -37,7 +37,11 @@ void Relics::ClearRelicFunctions()
 	// Clear all functions
 	for (size_t i = 0; i < Relics::FUNC_END_OF_TYPES; ++i)
 	{
-		(*_RelicFunctions)[(Relics::RELIC_FUNCTION_TYPE)i].clear();
+		if (_RelicFunctions)
+		{
+			(*_RelicFunctions)[(Relics::RELIC_FUNCTION_TYPE)i].clear();
+		}
+		
 	}
 }
 
@@ -190,6 +194,55 @@ Relics::RelicMetaData Relics::SoulHealth(const bool AddRelicFunctions)
 
 		// Add the "On Soul Update" function that takes the delta of souls and modifies Health by it and adds it to the list
 		(*_RelicFunctions)[FUNC_ON_SOUL_UPDATE].push_back(SOUL_HEALTH::ModifyPlayerHealthUpdate);
+	}
+
+	// Return the metadata
+	return retVal;
+}
+
+#include "Relics/SpeedyLittleDevil.h"
+Relics::RelicMetaData Relics::SpeedyLittleDevil(const bool AddRelicFunctions)
+{
+	RelicMetaData retVal =
+	{
+		/*Name*/		"Speedy Little Devil",
+		/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
+		/*Description*/	"Increases your speed by 4 when obtained"
+	};
+
+	// If the relic is to be added, and not just "read", run the functionality
+	if (AddRelicFunctions)
+	{
+		// Make sure the relic function map exists
+		_validateRelicFunctions();
+		// Call the increase speed function
+		SPEEDY_LITTLE_DEVIL::IncreasePlayerSpeed(nullptr);
+		// Add it to the list of On Obtain functions
+		(*_RelicFunctions)[FUNC_ON_OBTAIN].push_back(SPEEDY_LITTLE_DEVIL::IncreasePlayerSpeed);
+	}
+
+	// Return the metadata
+	return retVal;
+}
+
+#include "Relics/LightningGod.h"
+Relics::RelicMetaData Relics::LightningGod(const bool AddRelicFunctions)
+{
+	RelicMetaData retVal =
+	{
+		/*Name*/		"Lightning God",
+		/*Filepath*/	"RelicIcons\\Lightning_God.png",
+		/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive damage"
+	};
+
+	// If the relic is to be added, and not just "read", run the functionality
+	if (AddRelicFunctions)
+	{
+		// Make sure the relic function map exists
+		_validateRelicFunctions();
+
+		// Add the lightning bolt with cooldown to the Frame Update vector
+		(*_RelicFunctions)[FUNC_ON_FRAME_UPDATE].push_back(LIGHTNING_GOD::OnUpdate);
 	}
 
 	// Return the metadata

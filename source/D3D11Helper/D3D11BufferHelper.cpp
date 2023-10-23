@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
@@ -221,7 +224,7 @@ SB_IDX CreateStructuredBuffer(const void* data, const size_t& size, const size_t
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	desc.StructureByteStride = size;
+	desc.StructureByteStride = (UINT)size;
 
 	D3D11_SUBRESOURCE_DATA sbData;
 	sbData.pSysMem = data;

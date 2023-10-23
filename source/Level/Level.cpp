@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "UIRenderer.h"
 #include "States\StateManager.h"
+#include "Registry.h"
 
 void LoadLevel(int level)
 {
@@ -23,6 +24,10 @@ void LoadLevel(int level)
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;
-	default: stateManager.menu.Setup();
+	default: 
+		//UnloadEntities(true);//Reset game
+		UnloadEntities(false);//Reset game
+		stateManager.menu.Setup();
+		stateManager.activeLevelScene = 0;
 	}
 }

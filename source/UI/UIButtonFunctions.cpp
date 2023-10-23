@@ -4,6 +4,7 @@
 #include "Level.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
+#include "Registry.h"
 
 #include "Registry.h"
 #include "Components.h"
@@ -15,9 +16,10 @@ void UIFunc::LoadNextLevel(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
-	stateManager.menu.Unload();
-	LoadLevel(++stateManager.activeLevel);
-	//LoadLevel(2);
+	UnloadEntities(false);
+	//LoadLevel(1);
+	stateManager.activeLevel = 1;
+	LoadLevel(stateManager.activeLevel);
 }
 
 void UIFunc::MainMenu_Settings(void* args)
@@ -30,6 +32,7 @@ void UIFunc::MainMenu_Settings(void* args)
 
 void UIFunc::MainMenu_Quit(void* args)
 {
+	UnloadEntities(true);
 	sdl.quit = true;
 }
 

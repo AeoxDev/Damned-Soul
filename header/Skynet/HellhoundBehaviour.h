@@ -47,6 +47,7 @@ struct HellhoundBehaviour
 	float facingZ = 0.f;
 	const float shootingAttackSpeedForHitbox = 20.f; //change as you see fit
 	float currentShootingAttackRange = 0.0f; // used as a counter 
+	float flameDamage = 0.08f; // flame damage per frame
 	
 
 
