@@ -23,11 +23,11 @@ int main(int argc, char* args[])
 	//for (unsigned int i = 0; i < 3000; ++i)
 	//{
 	//	UIFunc::MainMenu_Start(nullptr);
-
+	//
 	//	SetInMainMenu(true);
 	//	SetInPlay(false);
-	//	stateManager.levelScenes[0].Unload();
-	//	stateManager.levelScenes[1].Unload();
+	//	stateManager.levelScenes[0].Unload(false);
+	//	stateManager.levelScenes[1].Unload(false);
 	//	stateManager.menu.Setup();
 	//}
 
