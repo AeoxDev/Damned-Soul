@@ -20,7 +20,7 @@ struct metadata
     float3 startPosition;
     float deltaTime;
     // 0 is reserved for delta time
-    // 1 - 255 is a random number between 0.0 and 10.0
+    // 1 - 255 is a random number between 1.0 and 10.0
 };
 
 cbuffer metadataBuffer : register(b0)
@@ -37,7 +37,9 @@ inline void ExplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
 inline void ImplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void RainMovement(in uint3 DTid, in uint3 blockID);
-inline void SinusMovement(in uint3 DTid, in uint3 blockID);
+
+bool IsPointInTriangle(float2 spot, float2 v0, float2 v1, float2 v2);
+
 
 RWStructuredBuffer<Input> inputParticleData : register(u0);
 RWStructuredBuffer<Input> outputParticleData : register(u1);
@@ -45,42 +47,16 @@ RWStructuredBuffer<Input> outputParticleData : register(u1);
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 {
-    float metaIndex = DTid.x + 1;
-    if (metaIndex >= 256)
-        metaIndex = DTid.x - 1;
+
     
-    int index = DTid.x + blockID.y * NUM_THREADS;
-    Input particle = inputParticleData[index];
-    
-    float dt = meta[0].deltaTime;
-    particle.time = particle.time + dt;
-    particle.size = meta[blockID.y].size;
+
     
     if (meta[blockID.y].life > 0)
     {
         // 0 = SMOKE
         if (meta[blockID.y].pattern == 0)
-        {               
-            float amp = 1.f;
-            float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
-            float3 startPosition = float3(meta[metaIndex].deltaTime * amp, meta[metaIndex].deltaTime * amp, 1.0f);
-    
-            if (travelledDistance >= (meta[blockID.y].maxRange + meta[metaIndex].deltaTime * 1000.f))
-            {
-                particle.position = startPosition;
-                particle.time = 0.f;
-            }
-            else if (particle.time >= (meta[blockID.y].life + meta[metaIndex].deltaTime * 1000.f))
-            {
-                particle.position = startPosition;
-                particle.time = 0.f;
-            }
-            
-            particle.position.x = particle.position.x + (cos((particle.time * PI) * meta[metaIndex].deltaTime) * 100.f) * dt;
-            particle.position.y = particle.position.y + meta[metaIndex].deltaTime * dt;
-
-
-            outputParticleData[index] = particle;
+        {                
+            SmokeMovement(DTid, blockID);
         }
         // 1 = ARCH
         if (meta[blockID.y].pattern == 1)
@@ -95,7 +71,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         // 3 = FLAMETHROWER
         if (meta[blockID.y].pattern == 3)
         {
-            //FlamethrowerMovement(DTid, blockID);
+            FlamethrowerMovement(DTid, blockID);
         }
         // 4 = IMPLOSION
         if (meta[blockID.y].pattern == 4)
@@ -118,57 +94,53 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
 {
-    //int index = DTid.x + blockID.y * NUM_THREADS;
+    // -- SAME FOR ALL FUNCTIONS -- //
+    int index = DTid.x + blockID.y * NUM_THREADS;
+    Input particle = inputParticleData[index];
     
-    //Input particle = inputParticleData[index];
-
-
-    //particle.time = particle.time + meta[blockID.y].deltaTime;
-    //particle.size = meta[blockID.y].size;
-    //particle.position.x = particle.position.x + sin(particle.time) * meta[blockID.y].deltaTime;
-    //particle.position.y = particle.position.y + particle.velocity * meta[blockID.y].deltaTime;
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
     
+    float psuedoRand = sin(DTid.x * 71.01) * sin(DTid.x * 71.01);
     
-    //float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
-    //float distance = dot(particle.position, meta[blockID.y].startPosition);
-    //float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
-    
-    //if (distance >= meta[blockID.y].maxRange)
-    //{
-    //    particle.position = startPosition;
-    //    particle.time = 0.f;
-    //}
-    //if (particle.time >= meta[blockID.y].life)
-    //{
-    //    particle.position = startPosition;
-    //    particle.time = 0.f;
-    //}
-
-    //outputParticleData[index] = particle;
-    
-    //int index = DTid.x + blockID.y * NUM_THREADS;
    
+    float holder = frac(sin(dot(DTid.x, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
     
-    //Input particle = inputParticleData[index];
+    int One_OneHundo = holder;
+    if (One_OneHundo == 0)
+        One_OneHundo = 1;
     
-    //particle.time = particle.time + meta[blockID.y].deltaTime;
-    ////____________________________________________________________________
-    //particle.position.x = particle.position.x + sin(particle.time) * meta[blockID.y].deltaTime;
-    //particle.position.y = particle.position.y + particle.velocity * meta[blockID.y].deltaTime;
-    ////____________________________________________________________________
+    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    // -------------------------- //
     
-    //float psudeoRand = sin((meta[blockID.y].deltaTime * 34579.41337f) * (cos(DTid.x * 35317.9870f)));
     
-    //float distance = dot(particle.position, meta[blockID.y].startPosition);
+    float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
     
-    //float3 startPosition = float3(psudeoRand, psudeoRand, psudeoRand);
-    
-    //if (distance >= meta[blockID.y].maxRange)
-    //    particle.position = startPosition;
-    //if (particle.time >= meta[blockID.y].life)
-    //    particle.position = startPosition;
-        
-    //outputParticleData[index] = particle;
+    if (travelledDistance >= (meta[blockID.y].maxRange + meta[One_OneHundo].deltaTime))
+    {
+        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), 1.0f);
+
+        particle.position = startPosition;
+        particle.time = 0.f;
+    }
+    if (particle.time >= (meta[blockID.y].life + meta[One_OneHundo].deltaTime))
+    {
+        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), 1.0f);
+
+        particle.position = startPosition;
+        particle.time = 0.f;
+    }
+            
+    if (DTid.x < 126)
+        particle.position.x = particle.position.x + (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
+    else
+        particle.position.x = particle.position.x + ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
+
+    particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + psuedoRand) * dt;
+
+
+    outputParticleData[index] = particle;
 }
 
 void ArchMovement(in uint3 DTid, in uint3 blockID)
@@ -201,30 +173,82 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
     outputParticleData[DTid.x] = particle;
 }
 
+const static float e = 2.7182818f;
+
+float sigmoid(float x)
+{
+    return pow(e, x) / (1 + pow(e, x));
+}
+
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
+    // -- SAME FOR ALL FUNCTIONS -- //
     int index = DTid.x + blockID.y * NUM_THREADS;
+    Input particle = inputParticleData[index];
     
-    Input particle = inputParticleData[DTid.x];
-    //____________________________________________________________________
-    float speedOfProjectile = 8.0f; // adjust as you see fit 
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
     
-    //this is in radians, basically the spread of the cone
-    float angleOfCone = 45.0f * (3.14159f / 180.0f); // Convert degrees to radians. Feel free to change angle (first number) as you see fit
+    float psuedoRand = sin(DTid.x * 71.01) * sin(DTid.x * 71.01);
     
-    float radianAngle = 0; // FIX THIS FELIX PLEASE, ((float) DTid.x / float(end) - 0.5f) * angleOfCone;
-    float3 direction = normalize(float3(cos(radianAngle), -1.0f, sin(radianAngle)));
+   
+    float holder = frac(sin(dot(DTid.x, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
     
-    particle.position += direction * speedOfProjectile;
-
-    // Reset particles that have moved out of range to the starting position
-    if (particle.position.y < 0.0f)
+    int One_OneHundo = holder;
+    if (One_OneHundo == 0)
+        One_OneHundo = 1;
+    
+    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    // -------------------------- //
+    
+    
+    float2 v0 = float2(0.0, 0.0);
+    float2 v1 = float2(10.0, 10.0);
+    float2 v2 = float2(10.0, -10.0);
+    
+    if (IsPointInTriangle(particle.position.xy, v0, v1, v2))
     {
-        particle.position = meta[index].startPosition;
+        particle.position.x = particle.position.x + particle.velocity.x * meta[OneHundo_TwoFiveFive].deltaTime * dt;
+        particle.position.y = particle.position.y + ((float)DTid.x - 127) / 128 * dt;
+
     }
-    //____________________________________________________________________
-    //test.position = test.position;
-    outputParticleData[DTid.x] = particle;
+    else
+    {
+        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, 1.0f);
+
+        particle.position = startPosition;
+        particle.time = 0.f;
+    }
+    
+    
+    
+    //if (IsPointInTriangle(particle.position.xy, v0, v1, v2))
+    //{
+    //    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, 1.0f);
+
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
+    //else if (particle.time >= (meta[blockID.y].life + meta[One_OneHundo].deltaTime))
+    //{
+    //    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, 1.0f);
+
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
+    
+    //particle.position.x = particle.position.x + (particle.time * particle.velocity.x * meta[OneHundo_TwoFiveFive].deltaTime) * dt;
+    //if (DTid.x < 85)
+    //    particle.position.y = particle.position.y + (particle.time * particle.velocity.y) * dt;
+    //else if (DTid.x < 170)
+    //    particle.position.y = particle.position.y + particle.velocity.y * dt;
+    //else
+    //    particle.position.y = particle.position.y + ((particle.time * particle.velocity.y) * dt) * -1.f;
+    
+   
+
+    outputParticleData[index] = particle;
 }
 
 void ImplosionMovement(in uint3 DTid, in uint3 blockID)
@@ -266,18 +290,13 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
     outputParticleData[DTid.x] = particle;
 }
 
-void SinusMovement(in uint3 DTid, in uint3 blockID)
+// Function to check if a point is inside a triangle
+bool IsPointInTriangle(float2 spot, float2 v0, float2 v1, float2 v2)
 {
-    int index = DTid.x + blockID.y * NUM_THREADS;
+    // Calculate barycentric coordinates
+    float detT = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
+    float alpha = ((v1.y - v2.y) * (spot.x - v2.x) + (v2.x - v1.x) * (spot.y - v2.y)) / detT;
+    float beta = ((v2.y - v0.y) * (spot.x - v2.x) + (v0.x - v2.x) * (spot.y - v2.y)) / detT;
     
-    Input particle = inputParticleData[DTid.x];
-    //____________________________________________________________________
-    float time = DTid.x; //* (end - start) / float(end); FIX THIS FELIX PLEASE,
-    float amplitude = 5.f; // Change value as you see fit
-    float frequency = 1.f; // Change value as you see fit
-    particle.position.y = meta[index].startPosition.y + sin(frequency * time) * amplitude;
-    //____________________________________________________________________
-    //test.position = test.position;
-    outputParticleData[DTid.x] = particle;
+    return alpha >= 0.0 && beta >= 0.0 && (alpha + beta) <= 1.0;
 }
-

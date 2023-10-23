@@ -33,9 +33,12 @@ void Particles::InitializeParticles()
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particles[i].position = DirectX::XMFLOAT3(0.f, 0.f, 1.f);
+		particles[i].position = DirectX::XMFLOAT3(
+		0.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (1.f - 0.f))), 
+		0.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (1.f - 0.f))),
+		1.f);
 		particles[i].time = 0.f;
-		particles[i].velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+		particles[i].velocity = DirectX::XMFLOAT3(1.f, 1.f, 0.f);
 		particles[i].rotationZ = 0.f;
 		particles[i].rgb = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 		particles[i].size = 0.f;
@@ -56,7 +59,11 @@ void Particles::InitializeParticles()
 		data->metadata[i].size = -1.f;
 		data->metadata[i].spawnPos = DirectX::XMFLOAT3(-99999.f, -99999.f, -99999.f);
 
-		data->metadata[i].deltaTime = 0;
+		if (i < 100)
+			data->metadata[i].deltaTime = 0.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (1.f - 0.f))); // random between 0.0 to 1.0
+		else
+			data->metadata[i].deltaTime = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (5.f - 1.f))); // random between 1.0 to 3.0
+
 	}
 
 	RenderSlot = SetupParticles();
@@ -78,20 +85,11 @@ void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 	SwitchInputOutput();
 
 	data->metadata[0].deltaTime = GetDeltaTime();
-	for (int i = 1; i < PARTICLE_METADATA_LIMIT; i++)
-	{
-		data->metadata[i].deltaTime = 0.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (10.f - 0.f))); // random between 0.0 to 10.0
-
-
-		//if (i < 100)
-		// 		data->metadata[i].deltaTime = static_cast <float> (rand()) / static_cast <float> (RAND_MAX); // random between 0.0 to 1.0
-		//else if (i < 150)
-		//	data->metadata[i].deltaTime = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (1.f - 10.f)));
-		//else if (i < 200)
-		//	data->metadata[i].deltaTime = (0.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (0.f - 100.f))) * -1.f);
-		//else
-		//	data->metadata[i].deltaTime = 25.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (25.f - 50.f)));
-	}
+	//if (data->metadata[pc->metadataSlot].pattern == FLAMETHROWER)
+	//{
+	//	data->metadata[pc->metadataSlot].life = ;
+	//		data->metadata[pc->metadataSlot].spawnPos = ;
+	//}
 
 
 	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
