@@ -1,4 +1,5 @@
 #include "DeltaTime.h"
+#include "RelicFunctions.h"
 #include <chrono>
 
 #define DELTACAP 1.f / 30.f
@@ -33,6 +34,13 @@ void CountDeltaTime()
 	secondTime += deltaTime;
 	deltaTime /= gameSpeed;
 	fps+=1.0f;
+
+	// For now only, should be moved to a better place later
+	auto timeUpdateRelics = Relics::GetFunctionsOfType(Relics::FUNC_ON_FRAME_UPDATE);
+	for (uint32_t i = 0; i < timeUpdateRelics.size(); ++i)
+	{
+		timeUpdateRelics[i](&deltaTime);
+	}
 }
 
 bool NewSecond()
