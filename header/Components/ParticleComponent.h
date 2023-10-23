@@ -1,6 +1,8 @@
 #pragma once
 #include "GameRenderer.h"
 #include "Particles.h"
+#include "EntityFramework.h"
+#include "Registry.h"
 
 enum ComputeShaders
 {
@@ -22,9 +24,13 @@ struct ParticleComponent
 	int FindSlot();
 
 	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float posX, float posY, float posZ, ComputeShaders pattern);
 	~ParticleComponent();
 
 
-	void Setup(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+	//void SetupFlamethrower(float seconds, float radius, float size, float x, float y, float z);
 	void Release();
+	void RemoveParticles(EntityID& entity);
+
 };
+

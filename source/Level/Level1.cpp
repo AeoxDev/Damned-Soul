@@ -23,7 +23,7 @@ void LoadLevel1()
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID eye = registry.CreateEntity();
 	EntityID dog = registry.CreateEntity();
-	EntityID particle = registry.CreateEntity();
+	//EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -64,7 +64,7 @@ void LoadLevel1()
 
 	registry.AddComponent<ControllerComponent>(player);
 
-	/*ParticleComponent* particComp = */registry.AddComponent<ParticleComponent>(particle, 4.f, 30.f, 0.5f, 1.f, 1.f, 1.f, FLAMETHROWER);
+	///*ParticleComponent* particComp = */registry.AddComponent<ParticleComponent>(particle, 4.f, 30.f, 0.5f, 1.f, 1.f, 1.f, FLAMETHROWER);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	registry.AddComponent<PointOfInterestComponent>(player, poic);

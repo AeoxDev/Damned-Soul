@@ -5,6 +5,7 @@
 #include "UI/UIRenderer.h"
 #include <random>
 #include "Skynet\BehaviourHelper.h"
+#include "ParticleComponent.h"
 
 // input true on stuff you want to reset
 void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
@@ -257,7 +258,11 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 			0.0f, 1.0f, -0.25f,
 			hc->currentShootingAttackRange, 1.0f,
 			0.0f, 0.0f, -1.0f, 30.0f);
+		
+		registry.AddComponent<ParticleComponent>(dog, hc->shootingSideTarget1X, hc->shootingSideTarget2X, 0.5f, 0.0f, 0.0f,
+			0.0f, -1.f, -1.f, hc->shootingSideTarget1Z, hc->shootingSideTarget2Z, FLAMETHROWER);
 	}
+
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
 	
 
@@ -376,6 +381,7 @@ bool HellhoundBehaviourSystem::Update()
 		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
+
 
 	// FOR TESTING
 	/*int i = 0; 

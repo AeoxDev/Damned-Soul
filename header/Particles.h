@@ -35,6 +35,9 @@ struct ParticleMetadata
 	DirectX::XMFLOAT3 spawnPos{ 0.f, 0.f, 0.f };
 
 	float deltaTime = 0;
+	float rotationY = 0;
+	DirectX::XMFLOAT3 miscInfo{ 0.f, 0.f, 0.f };
+
 };
 
 struct ParticleMetadataBuffer
@@ -53,6 +56,7 @@ namespace Particles
 	void InitializeParticles();
 	void ReleaseParticles();
 
+	void UpdateMetadata(int metadataSlot, float x, float y, float z);
 	ParticleMetadataBuffer* GetData();
 
 	//Calls for D3D11Helper to set the compute shader and the resources it requires

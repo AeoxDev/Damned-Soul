@@ -19,8 +19,12 @@ struct metadata
     
     float3 startPosition;
     float deltaTime;
-    // 0 is reserved for delta time
-    // 1 - 255 is a random number between 1.0 and 10.0
+    // Slot 0 is reserved for delta time
+    // Slot 1-99 is a random number between 0.0 and 1.0
+    // Slot 100-255 is a random number between 1.0 and 5.0
+    
+    float rotationY;
+    float3 miscInfo;
 };
 
 cbuffer metadataBuffer : register(b0)
@@ -133,9 +137,9 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     }
             
     if (DTid.x < 126)
-        particle.position.x = particle.position.x + (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
+        particle.position.x = particle.position.z - (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
     else
-        particle.position.x = particle.position.x + ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
+        particle.position.x = particle.position.z - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
 
     particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + psuedoRand) * dt;
 
@@ -173,13 +177,6 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
     outputParticleData[DTid.x] = particle;
 }
 
-const static float e = 2.7182818f;
-
-float sigmoid(float x)
-{
-    return pow(e, x) / (1 + pow(e, x));
-}
-
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
     // -- SAME FOR ALL FUNCTIONS -- //
@@ -203,13 +200,16 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     // -------------------------- //
     
     
-    float2 v0 = float2(0.0, 0.0);
-    float2 v1 = float2(10.0, 10.0);
-    float2 v2 = float2(10.0, -10.0);
+    // EXLUSIVE FOR FLAME THROWER //
+    // LIFE and RANGE are now variables that hold the YZ coords for dogs triangle
+    
+    float2 v0 = float2(meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    float2 v1 = float2(meta[blockID.y].miscInfo.y, meta[blockID.y].miscInfo.z);
+    float2 v2 = float2(meta[blockID.y].life, meta[blockID.y].maxRange);
     
     if (IsPointInTriangle(particle.position.xy, v0, v1, v2))
     {
-        particle.position.x = particle.position.x + particle.velocity.x * meta[OneHundo_TwoFiveFive].deltaTime * dt;
+        particle.position.z = particle.position.z - particle.velocity.z * meta[OneHundo_TwoFiveFive].deltaTime * dt;
         particle.position.y = particle.position.y + ((float)DTid.x - 127) / 128 * dt;
 
     }

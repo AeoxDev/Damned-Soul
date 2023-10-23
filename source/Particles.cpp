@@ -33,10 +33,7 @@ void Particles::InitializeParticles()
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particles[i].position = DirectX::XMFLOAT3(
-		0.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (1.f - 0.f))), 
-		0.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (1.f - 0.f))),
-		1.f);
+		particles[i].position = DirectX::XMFLOAT3(99999.f, 9999999.f, 9999999.f);
 		particles[i].time = 0.f;
 		particles[i].velocity = DirectX::XMFLOAT3(1.f, 1.f, 0.f);
 		particles[i].rotationZ = 0.f;
@@ -75,10 +72,24 @@ void Particles::ReleaseParticles()
 	MemLib::pfree(m_readWriteBuffer);
 }
 
+void Particles::UpdateMetadata(int metadataSlot, float x, float y, float z)
+{
+	data->metadata[metadataSlot].spawnPos.x = x;
+	data->metadata[metadataSlot].spawnPos.y = y;
+	data->metadata[metadataSlot].spawnPos.z = z;
+}
+
 ParticleMetadataBuffer* Particles::GetData()
 {
 	return data;
 }
+
+//Create an array with base positions
+//Array with base rotations
+
+//Transform update: Loop to update metatdata with transform and base pos/rotations.
+
+
 
 void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 {
@@ -154,6 +165,21 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 }
 
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float posX, float posY, float posZ, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
+	data->metadata[metadataSlot].pattern = pattern;
+	data->metadata[metadataSlot].rotationY = rotationY;
+	data->metadata[metadataSlot].miscInfo.x = posX; data->metadata[metadataSlot].miscInfo.y = posY; data->metadata[metadataSlot].miscInfo.z = posZ;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+}
+
 ParticleComponent::~ParticleComponent()
 {
 	data->metadata[metadataSlot].life = -1.f;
@@ -180,28 +206,31 @@ int ParticleComponent::FindSlot()
 	return metadataSlot;
 }
 
-void ParticleComponent::Setup(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
-{
-	metadataSlot = FindSlot();
-
-	data->metadata[metadataSlot].life = seconds;
-	data->metadata[metadataSlot].maxRange = radius;
-	data->metadata[metadataSlot].size = size;
-	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
-	data->metadata[metadataSlot].pattern = pattern;
-
-	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
-}
-
 void ParticleComponent::Release()
 {
 	data->metadata[metadataSlot].life = -1.f;
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
-	data->metadata[metadataSlot].spawnPos.x = -1.f;	data->metadata[metadataSlot].spawnPos.y = -1.f;	data->metadata[metadataSlot].spawnPos.z = -1.f;
+	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
 	data->metadata[metadataSlot].pattern = -1.f;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
 	metadataSlot = -1;
+}
+
+void ParticleComponent::RemoveParticles(EntityID& entity)
+{
+	data->metadata[metadataSlot].life = -1.f;
+	data->metadata[metadataSlot].maxRange = -1.f;
+	data->metadata[metadataSlot].size = -1.f;
+	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
+	data->metadata[metadataSlot].pattern = -1.f;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+	metadataSlot = -1;
+
+	registry.RemoveComponent<ParticleComponent>(entity);
+
 }
