@@ -19,4 +19,9 @@ namespace RelicInput
 	{
 		int32_t soulDelta;
 	};
+
+	struct OnTimeUpdate
+	{
+		float timeDelta;
+	};
 }

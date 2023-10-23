@@ -222,8 +222,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
     <ClCompile Include="source\Relics\DemonHeart.cpp" />
     <ClCompile Include="source\Relics\FrostFire.cpp" />
+    <ClCompile Include="source\Relics\LightningGod.cpp" />
     <ClCompile Include="source\Relics\SoulHealth.cpp" />
     <ClCompile Include="source\Relics\SoulPower.cpp" />
+    <ClCompile Include="source\Relics\SpeedyLittleDevil.cpp" />
     <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
@@ -450,9 +452,11 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\DemonHeart.h" />
     <ClInclude Include="header\Relics\FlameWeapon.h" />
     <ClInclude Include="header\Relics\FrostFire.h" />
+    <ClInclude Include="header\Relics\LightningGod.h" />
     <ClInclude Include="header\Relics\RelicFuncInputTypes.h" />
     <ClInclude Include="header\Relics\SoulHealth.h" />
     <ClInclude Include="header\Relics\SoulPower.h" />
+    <ClInclude Include="header\Relics\SpeedyLittleDevil.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
