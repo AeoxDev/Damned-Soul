@@ -47,8 +47,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 
 
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->moveSpeed / 2.f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->moveSpeed / 2.f * GetDeltaTime();
+	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
+	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
 
 }
 

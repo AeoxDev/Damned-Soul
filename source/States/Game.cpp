@@ -42,12 +42,13 @@ void GameScene::Setup(int scene)//Load
 
 void GameScene::Input()
 {
-	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
+	
+	if (keyState[SCANCODE_ESCAPE] == pressed)
 	{
-		SetInMainMenu(true);
+		SetInPause(true);
 		SetInPlay(false);
-		Unload();
-		stateManager.menu.Setup();
+		gameSpeed = 0.0f;
+		ResetInput();
 	}
 
 	if (keyState[SDL_SCANCODE_1] == pressed)

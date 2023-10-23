@@ -3,6 +3,7 @@
 #include "States\StateManager.h"
 #include "UI/UIRenderer.h"
 #include "Camera.h"
+#include "DeltaTime.h"
 
 void PauseState::Setup()
 {
@@ -19,8 +20,9 @@ void PauseState::Input()
 	{
 		SetInPause(false);
 		SetInPlay(true);
-		stateManager.levelScenes[0].Setup(0);
-		Unload();
+		RedrawUI();
+		gameSpeed = 1.0f;
+		ResetInput();
 	}
 }
 

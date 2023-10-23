@@ -32,7 +32,7 @@ void CountDeltaTime()
 		deltaTime = DELTACAP;
 	}
 	secondTime += deltaTime;
-	deltaTime /= gameSpeed;
+	deltaTime *= gameSpeed;
 	fps+=1.0f;
 
 	// For now only, should be moved to a better place later

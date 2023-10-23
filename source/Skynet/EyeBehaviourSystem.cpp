@@ -124,8 +124,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
+	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
+	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
 }
 
 bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = enemy pos, B = player pos, tolerance = 
