@@ -195,8 +195,8 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		{
 			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 10.0f);
 
-			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 4.f * GetDeltaTime();
-			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 6.f * GetDeltaTime();
 
 			//check if eye has collided with player
 			if (eyeComponent->dealtDamage == false && Collision(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ, 0.2f))
@@ -269,7 +269,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity);
 
 			}
-			else if (distance <= 30.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (distance <= 40.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))

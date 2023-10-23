@@ -32,11 +32,11 @@ void LoadLevel1()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 	
-
+	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	SetupEnemy(skeleton, enemyType::skeleton, 5.f, 0.f, 7.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(skeleton2, enemyType::skeleton, 10.f, 0.f, 5.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(dog, enemyType::hellhound, -5.f, 0.f, -5.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
-	SetupEnemy(eye, enemyType::eye, 15.f, 0.f, 15.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
+	SetupEnemy(eye, enemyType::eye, 15.f, 0.f, 15.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
