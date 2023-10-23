@@ -221,7 +221,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 }
 
-static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
+//static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
 
 bool EyeBehaviourSystem::Update()
 {
@@ -262,7 +262,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
-			else if (eyeComponent->charging || eyeComponent->specialCounter > eyeComponent->specialBreakpoint) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || eyeComponent->attackTimer > enemyStats->attackSpeed/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				
@@ -275,11 +275,11 @@ bool EyeBehaviourSystem::Update()
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
 				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats);
 				
-				TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
-				if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
-				{
-					eyeComponent->specialCounter++;
-				}
+				//TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
+				//if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
+				//{
+				//	eyeComponent->specialCounter++;
+				//}
 			}
 			else // idle
 			{
