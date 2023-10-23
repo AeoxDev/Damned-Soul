@@ -59,8 +59,6 @@ void LoadLevel1()
 	playerTransform->facingZ = 1.0f;
 	playerTransform->mass = 3.0f;
 	
-	
-
 	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 50.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
@@ -81,6 +79,7 @@ void LoadLevel1()
 	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
 	pcUiSC->text.Setup("");
 
+	//Thing in the top right corner showing what level we're on
 	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup("");

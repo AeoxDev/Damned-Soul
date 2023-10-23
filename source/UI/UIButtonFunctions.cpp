@@ -18,7 +18,6 @@ void UIFunc::LoadNextLevel(void* args)
 	SetInPlay(true);
 	SetInMainMenu(false);
 	UnloadEntities(false);
-	//LoadLevel(1);
 	LoadLevel(++stateManager.activeLevel);
 }
 
@@ -143,22 +142,11 @@ void UIFunc::Shop_BuyRelic(void* args)
 	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 		player = registry.GetComponent<PlayerComponent>(entity);
 
-	//int counter = 1;
 	for (auto entity : View<UIButton>(registry))
 	{
-		//if (counter != button->shopPosition)
-		//{
-		//	counter++;
-		//	continue;
-		//}
-
 		const UIButton* other = registry.GetComponent<UIButton>(entity);
 		if (button != other)
-		{
-			//counter++;
 			continue;
-
-		}
 		
 		for (auto uiEntity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
 		{
@@ -166,10 +154,7 @@ void UIFunc::Shop_BuyRelic(void* args)
 			auto uiRelic = registry.GetComponent<UIRelicComponent>(uiEntity);
 
 			if (uiElement->shopPosition != button->shopPosition)
-			{
 				continue;
-			}
-
 
 			if (player->GetSouls() < uiElement->price)
 				break;
@@ -210,16 +195,15 @@ void UIFunc::Shop_LockRelic(void* args)
 {
 	UIButton* button = (UIButton*)args;
 
-	int counter = 1;
 	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
 	{
-		if (counter != button->shopPosition)
-		{
-			counter++;
+		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+		
+		if (uiElement->shopPosition != button->shopPosition)
 			continue;
-		}
-		auto ui = registry.GetComponent<UIRelicComponent>(entity);
-		ui->locked *= -1;
+		
+		uiRelic->locked *= -1;
 
 		RedrawUI();
 		break;

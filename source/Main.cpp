@@ -36,16 +36,8 @@ int main(int argc, char* args[])
 #ifdef TEST3000
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
-		//UIFunc::LoadNextLevel(nullptr);
-
 		UIFunc::LoadNextLevel(nullptr);
 
-		SetInMainMenu(true);
-		SetInPlay(false);
-		stateManager.scenes[0].Unload(true);
-		stateManager.scenes[1].Unload(true);
-		stateManager.scenes[2].Unload(true);
-		stateManager.menu.Setup();
 	}
 #endif // TEST3000
 

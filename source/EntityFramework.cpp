@@ -109,6 +109,7 @@ void UnloadEntities(bool unloadPersistents)
 	{
 		UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
 		sh->baseImage.Release();
+		sh->relics.~ML_Vector();
 	}
 
 	for (auto entity : View<UIShopRelicWindowComponent>(registry))
