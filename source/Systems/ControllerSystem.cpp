@@ -104,13 +104,14 @@ bool ControllerSystem::Update()
 
 			}
 			registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
+			AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 		}
 
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		if (mouseButtonPressed[0] == pressed)
 		{
-			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, PlayerAttack, 1.0f, nullptr);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
 		}
 	}
 	return true;

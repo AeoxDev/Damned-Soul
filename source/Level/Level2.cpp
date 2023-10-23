@@ -35,7 +35,9 @@ void LoadLevel2()
 	// Player (Default)
 	registry.AddComponent<TransformComponent>(player);
 
-
+	//Player Sounds
+	SoundComponent* scp = registry.AddComponent<SoundComponent>(player);
+	scp->Load(PLAYER);
 
 	/*StatComponent* ps = */registry.AddComponent<StatComponent>(player, 125.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	/*PlayerComponent* pc = */registry.AddComponent<PlayerComponent>(player);

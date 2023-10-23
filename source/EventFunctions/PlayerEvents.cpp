@@ -58,6 +58,12 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 }
 
+void PlayerAttackSound(EntityID& entity, const int& index)
+{
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	sfx->Play(Player_Attack, Channel_Base);
+}
+
 void PlayerAttack(EntityID& entity, const int& index)
 {
 	//All we do right now is perform the attack animation
@@ -79,6 +85,12 @@ void PlayerAttack(EntityID& entity, const int& index)
 		SetPlayerAttackHitboxInactive(entity, index);
 	else if (GetEventTimedElapsed(entity, index) >= 0.5f)
 		SetPlayerAttackHitboxActive(entity, index);
+}
+
+void PlayerDashSound(EntityID& entity, const int& index)
+{
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	sfx->Play(Player_Dash, Channel_Base);
 }
 
 void PlayerDash(EntityID& entity, const int& index)

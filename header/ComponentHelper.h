@@ -32,7 +32,7 @@ public:
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
 	// Update the current health of the player
-	float UpdateHealth(const float delta);
+	float UpdateHealth(const float delta, const bool hitByEnemy = false);
 	// Update the max health of the player
 	float UpdateMaxHealth(const float delta);
 };
@@ -87,7 +87,8 @@ struct EnemyComponent
 {
 	int soulCount = 0;
 	int attackHitBoxID = -1;
-	EnemyComponent(int sc) : soulCount(sc) {}
+	int type = -1;
+	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
 
 //

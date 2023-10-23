@@ -28,7 +28,7 @@ struct HellhoundBehaviour
 	// SHOOTING VARIABLES
 
 	float shootingCounter = 0.f;
-	const float shootingDuration = 2.5f; //how long it takes to shoot
+	const float shootingDuration = 1.1f; //how long it takes to shoot
 	bool isShooting = false;
 	const float shootingCooldown = 10.0f; //seconds. ability cooldown
 	float shootingCooldownCounter = shootingCooldown; // so it can start shooting from start, it gets changed to 0 in code
@@ -48,6 +48,8 @@ struct HellhoundBehaviour
 	const float shootingAttackSpeedForHitbox = 20.f; //change as you see fit
 	float currentShootingAttackRange = 0.0f; // used as a counter 
 	float flameDamage = 0.08f; // flame damage per frame
+	//------------
+	bool flameSoundsStartedPlaying = false;
 	
 
 

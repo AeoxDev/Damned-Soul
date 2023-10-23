@@ -27,14 +27,16 @@ void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool c
 	
 }
 
-void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, EntityID& ent)
 {
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (hc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
 		hc->attackTimer = 0;
 		hc->attackStunDurationCounter = 0;
-		playerStats->UpdateHealth(-enemyStats->damage);
+		playerStats->UpdateHealth(-enemyStats->damage, true);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		sfx->Play(Hellhound_Attack, Channel_Base);
 		RedrawUI();
 	}
 }
@@ -163,18 +165,20 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 
 
-void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc)
+void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& ent)
 {	
-	//Temp: Create SMALL spotlight when dog prepares to flame
-	for (auto dog : View<HellhoundBehaviour>(registry))
-	{
-		CreateSpotLight(dog, 1.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, -0.25f,
-			10.0f, 1.0f,
-			0.0f, 0.0f, -1.0f, 30.0f);
-	}
-
 	hc->isShooting = true;
+	//Temp: Create SMALL spotlight when dog prepares to flame
+	
+	CreateSpotLight(ent, 1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, -0.25f,
+		10.0f, 1.0f,
+		0.0f, 0.0f, -1.0f, 30.0f);
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+	sfx->Play(Hellhound_Inhale, Channel_Base);
+	
+
+	
 
 	//from hound  to player
  	float dx = ptc->positionX - htc->positionX;
@@ -234,7 +238,7 @@ bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float
 	return alpha >= 0 && beta >= 0 && gamma >= 0 && alpha + beta + gamma == 1.0;
 }
 
-void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats/*, TransformComponent* testing, TransformComponent* testing2*/)
+void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, EntityID& ent/*, TransformComponent* testing, TransformComponent* testing2*/)
 {
 	// create a hitbox from doggo position, as a triangle, with 2 corners expanding outwards with the help of variables in behavior. 
 	//once max range has been reached, this function will reset all stats and let the doggo go on with a different behavior. 
@@ -287,7 +291,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		if (distance <= hc->currentShootingAttackRange)
 		{
 			//yes, player should get hit. Take damage
-			playerStats->UpdateHealth(-hc->flameDamage); // DEFINITELY MODIFY THIS LATER, very likely too much damage
+			playerStats->UpdateHealth(-hc->flameDamage, true); // DEFINITELY MODIFY THIS LATER, very likely too much damage
 			RedrawUI();
 		}
 	}
@@ -297,6 +301,9 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	if (hc->currentShootingAttackRange >= hc->offsetForward)
 	{
 		hc->isShooting = false;
+		hc->flameSoundsStartedPlaying = false;
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		sfx->Stop(Channel_Base);
 		hc->shootingCounter = 0.0f;
 		hc->shootingCooldownCounter = 0.0f;
 		hc->currentShootingAttackRange = 0.f;
@@ -393,7 +400,7 @@ bool HellhoundBehaviourSystem::Update()
 		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
 		hellhoundTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
-		
+
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
@@ -414,7 +421,14 @@ bool HellhoundBehaviourSystem::Update()
 				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingDuration) // have we charged long enough?
 				{
 					//it seems we have. Time to start shooting behaviour
-					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats/*, stc, stcTwo*/); //this is damage thing
+					if (!hellhoundComponent->flameSoundsStartedPlaying)
+					{
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+						sfx->Play(Hellhound_Flame, Channel_Base);
+						hellhoundComponent->flameSoundsStartedPlaying = true;
+					}
+					
+					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats, enemyEntity/*, stc, stcTwo*/); //this is damage thing
 				}
 				//else we do nothing, we're just charging the flames.
 			}
@@ -432,7 +446,7 @@ bool HellhoundBehaviourSystem::Update()
 			else if (distance < 2.5f) // fight club and not currently shooting
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
-				CombatBehaviour(hellhoundComponent, enemyStats, playerStats);
+				CombatBehaviour(hellhoundComponent, enemyStats, playerStats, enemyEntity);
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
@@ -450,7 +464,7 @@ bool HellhoundBehaviourSystem::Update()
 			{
 				hellhoundComponent->lastPositionX = hellhoundTransformComponent->positionX;
 				hellhoundComponent->lastPositionZ = hellhoundTransformComponent->positionZ;
-				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent); //set a target for the ranged attack
+				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent, enemyEntity); //set a target for the ranged attack
 			}
 			else if (distance < 50) //hunting distance, go chase
 			{

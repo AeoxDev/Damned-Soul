@@ -16,7 +16,7 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	registry.AddComponent<TransformComponent>(entity, transform);
 
 	registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
-	registry.AddComponent<EnemyComponent>(entity, soulWorth);
+	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
 
 	
 
@@ -25,18 +25,27 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("HellhoundDummy_PH.mdl"));
 		registry.AddComponent<HellhoundBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.3f);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(HELLHOUND);
 	}
 	else if (eType == enemyType::skeleton)
 	{
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("SkeletonOneDymmy.mdl"));
 		registry.AddComponent<SkeletonBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 0.9f);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(SKELETON);
 	}
 	else if (eType == enemyType::eye)
 	{
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FlyingEyeDymmy.mdl"));
 		registry.AddComponent<EyeBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(EYE);
 	}
 	else if (eType == enemyType::tempBoss)
 	{

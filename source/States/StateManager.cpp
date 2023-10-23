@@ -131,7 +131,6 @@ void StateManager::Setup()
 	// CPU
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new ParticleSystemCPU());
-	systems.push_back(new AudioSystem());
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new PointOfInterestSystem());
 
@@ -149,6 +148,9 @@ void StateManager::Setup()
 	systems.push_back(new TransformSystem());
 	systems.push_back(new EventSystem());
 	systems.push_back(new StateSwitcherSystem());
+
+	//Audio (Needs to be close to last)
+	systems.push_back(new AudioSystem());
 
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());

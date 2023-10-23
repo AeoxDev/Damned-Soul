@@ -19,8 +19,8 @@ void UIFunc::MainMenu_Start(void* args)
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
 		backgroundMusic->Play(Music_StageCalm, Channel_Base);
-		audioJungle->HandleSound();
-		backgroundMusic->Play(Music_StageCombat, Channel_Extra);
+		//audioJungle->HandleSound();
+		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
 	}
 	//LoadLevel(1);
 	stateManager.activeLevel = 1;

@@ -34,8 +34,10 @@ void LoadLevel1()
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());
-	
 
+	//Player Sounds
+	SoundComponent* scp = registry.AddComponent<SoundComponent>(player);
+	scp->Load(PLAYER);
 	
 	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);

@@ -91,7 +91,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	registry.AddComponent<TempBossBehaviour>(newMini, (int)deathC, hID);
 
 	
-	registry.AddComponent<EnemyComponent>(newMini, 2);
+	registry.AddComponent<EnemyComponent>(newMini, 2, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
 }
 

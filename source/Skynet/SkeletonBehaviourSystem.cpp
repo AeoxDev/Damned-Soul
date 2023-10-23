@@ -52,14 +52,16 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 }
 
-void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, EntityID& ent)
 {
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
 		sc->attackTimer = 0;
 		sc->attackStunDurationCounter = 0;
-		playerStats->UpdateHealth(-enemyStats->damage);
+		playerStats->UpdateHealth(-enemyStats->damage, true);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		sfx->Play(Skeleton_Attack, Channel_Base);
 		RedrawUI();
 	}
 }
@@ -99,7 +101,7 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 2.5f)
 			{
-				CombatBehaviour(skeletonComponent, enemyStats, playerStats);
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats, enemyEntity);
 			}
 			else if (distance < 50) //hunting distance
 			{

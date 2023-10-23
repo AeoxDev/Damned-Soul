@@ -8,15 +8,17 @@ enum Channel {Channel_Base, Channel_Extra};
 enum UISFX {Button_Hover, Button_Press, Button_Start};
 enum Music {Music_Title, Music_StageCalm, Music_StageCombat, Music_Shop, Music_Boss};
 enum Ambience {Ambience_Lava};
-enum Player {Player_Attack_Light, Player_Attack_Medium, Player_Attack_Heavy, Player_Attack_Charge, Player_Hurt, Player_Hurt2, Player_Hurt3, Player_Death, Player_Death2, Player_Dash};
+enum Player { Player_Attack, Player_Dash, Player_Hurt, Player_Death };//{Player_Attack_Light, Player_Attack_Medium, Player_Attack_Heavy, Player_Attack_Charge, Player_Hurt, Player_Hurt2, Player_Hurt3, Player_Death, Player_Death2, Player_Dash};
 enum PlayerVoice {Player_Footstep}; //Add all text later
-enum Enemy {Enemy_Attack, Enemy_Hurt, Enemy_Death, Enemy_Special};
+enum Eye {Eye_Attack, Eye_Hurt, Eye_Death};
+enum Hellhound {Hellhound_Attack, Hellhound_Hurt, Hellhound_Inhale, Hellhound_Flame, Hellhound_Death};
+enum Skeleton {Skeleton_Attack, Skeleton_Hurt, Skeleton_Death};
 enum EnemyVoice {Enemy_Footstep, Enemy_Noise};
 enum Boss {Boss_Attack_Hammer, Boss_Attack_Jump, Boss_Attack_Charge, Boss_Attack_Slam, Boss_Hurt};
 enum BossVoice {Boss_Footstep}; //Add all text later
 enum ImpVoice {}; //Add all text later
 
-enum Type {MENU, MUSIC, AMBIENCE, PLAYER, IMP, SKELETON, EYE, HELLHOUND, BOSS};
+enum Type {MENU, MUSIC, AMBIENCE, PLAYER, EYE, HELLHOUND, SKELETON, IMP, BOSS};
 
 struct SoundComponent
 {

@@ -214,6 +214,15 @@ void GameScene::Unload(bool last)
 		p->pointList.~ML_Vector();
 	}
 
+	for (auto entity : View<SoundComponent>(registry))
+	{
+		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+		if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+		{
+			sound->Unload();
+		}
+	}
+
 	if (last)
 	{
 		for (auto entity : View<AudioEngineComponent>(registry))
