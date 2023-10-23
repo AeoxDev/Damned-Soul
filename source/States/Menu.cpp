@@ -67,20 +67,20 @@ void Menu::SetupButtons()
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Start", UIFunc::MainMenu_Start, { -0.8f, -0.2f }, {0.7f, 0.6f} );
+		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Start", UIFunc::MainMenu_Start, { -0.81f, -0.28f }, {0.7f, 0.6f} );
 	}
 
 	//Settings Button
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Settings", UIFunc::MainMenu_Settings, { -0.8f,  -0.5f }, {0.7f, 0.6f} );	}
+		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Settings", UIFunc::MainMenu_Settings, { -0.81f,  -0.54f }, {0.7f, 0.6f} );	}
 
 	//Exit Button
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Quit", UIFunc::MainMenu_Quit, { -0.8f, -0.8f }, {0.7f, 0.6f} );
+		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Quit", UIFunc::MainMenu_Quit, { -0.81f, -0.8f }, {0.7f, 0.6f} );
 	}
 }
 
@@ -89,7 +89,16 @@ void Menu::SetupImages()
 	//Title
 	auto title = registry.CreateEntity();
 	auto tc = registry.AddComponent<UIImage>(title);
-	tc->Setup("ExMenu/ExTitle.png", { 0.0f, 0.6f }, { 2.5f, 2.5f });
+	tc->Setup("ExMenu/DamnedTitle3.png", { 0.0f, 0.20f }, { 1.0f, 1.0f});
+	/*
+	auto title2 = registry.CreateEntity();
+	auto tc2 = registry.AddComponent<UIImage>(title2);
+	tc2->Setup("ExMenu/DamnedTitle2.png", { 0.0f, 0.0f }, { 1.0f, 1.0f });
+
+	auto title3 = registry.CreateEntity();
+	auto tc3 = registry.AddComponent<UIImage>(title3);
+	tc3->Setup("ExMenu/DamnedTitle3.png", { 0.0f, -0.25f }, { 1.0f, 1.0f });
+	*/
 /*
 	//Eye 1
 	auto eye1 = registry.CreateEntity();
