@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "GameRenderer.h"
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
@@ -5,7 +8,6 @@
 #include "UI/UIRenderer.h"
 #include "Light.h"
 #include "Particles.h"
-
 
 RenderSetupComponent renderStates[8];
 int currentSize = 0;
@@ -23,11 +25,10 @@ struct ScreenVertex {
 
 bool Setup3dGraphics()
 {
-	if (SetupDirectX(sdl.window) < 0)
-	{
-		return false;
-	};
-	return true;
+	int loaded = SetupDirectX(sdl.window);
+	
+	assert(loaded == 0);
+	return loaded == 0;
 }
 
 int SetupUIRenderState()
@@ -90,14 +91,15 @@ int SetupGameRenderer()
 	SetPixelShader(renderStates[currentSize].pixelShaders[0]);////////
 	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("VertexShader.cso", LAYOUT_DESC::DEFAULT);
 	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("TestSkelVS.cso", LAYOUT_DESC::SKELETAL);
+	Light::SetupLight();
 	SetVertexShader(renderStates[currentSize].vertexShaders[0]);////////
-	Light::CreateLight(1);
-	Light::CreateLight(2);
-	Light::CreateLight(3);
-	Light::SetColor(3, 3.0f, 0.0f, 0.0f);
-	SetConstantBuffer(Light::GetLightBufferIndex(1), BIND_PIXEL, 2);
+	//Light::CreateLight(1);
+	//Light::CreateLight(2);
+	//Light::CreateLight(3);
+	//Light::SetColor(3, 3.0f, 0.0f, 0.0f);
+	/*SetConstantBuffer(Light::GetLightBufferIndex(1), BIND_PIXEL, 2);
 	SetConstantBuffer(Light::GetLightBufferIndex(2), BIND_PIXEL, 3);
-	SetConstantBuffer(Light::GetLightBufferIndex(3), BIND_PIXEL, 4);
+	SetConstantBuffer(Light::GetLightBufferIndex(3), BIND_PIXEL, 4);*/
 
 	Vertex triangle[3] = {
 		-1.f, -1.f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,

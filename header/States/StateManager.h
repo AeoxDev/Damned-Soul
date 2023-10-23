@@ -17,7 +17,8 @@ extern StateManager stateManager;
 struct StateManager
 {
 	std::vector<System*> systems;
-	int activeLevelScene = 0;//Current level
+	int activeLevel = 0;
+	int activeLevelScene = 0;//Current loaded level scene in array
 	GameScene levelScenes[2];
 	GameScene shop;
 	Menu menu;
@@ -27,7 +28,7 @@ struct StateManager
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>
-	void Setup();
+	int Setup();
 
 	void Input();//All input based cpu systems here
 	void Update();//All cpu systems here
@@ -36,5 +37,5 @@ struct StateManager
 	void UnloadAll();
 	void EndFrame();//Clears all framebased variables.
 
-	GameScene GetCurrentLevel();
+	GameScene& GetCurrentLevel();
 };

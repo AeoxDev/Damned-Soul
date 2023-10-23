@@ -8,123 +8,109 @@
 
 bool ControllerSystem::Update()
 {
-	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent>(registry))
+	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
 		//Get the relevant components from the entity
 		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		MouseComponent* mouseComponent = registry.GetComponent<MouseComponent>(entity);
 
 		//Store variables for checking to see how far the entity has moved, these are relevant to the camera
-		transform->lastPositionZ = transform->positionZ;
-		transform->lastPositionX = transform->positionX;
-		DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ controller->goalX,controller->goalZ, 0.0f };
-		DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
-		DirectX::XMFLOAT3 l;
-		DirectX::XMStoreFloat3(&l, length);
-		float angle = acosf(transform->facingX);
-
-		//Calculations for the system of camera following points of interest etc
-		if (transform->facingZ < 0.0f)
-		{
-			angle *= -1.0f;
-		}
-		if (l.x > 0.001f)
-		{
-			goalV = DirectX::XMVector2Normalize(goalV);
-
-			DirectX::XMFLOAT3 goalFloats;
-			DirectX::XMStoreFloat3(&goalFloats, goalV);
-			controller->goalX = goalFloats.x;
-			controller->goalZ = goalFloats.y;
-			float goalAngle = acosf(controller->goalX);
-			if (controller->goalZ < 0.0f)
-			{
-				goalAngle *= -1.0f;
-			}
-			//Check if shortest distance is right or left
-			float orthogonalX = -transform->facingZ;
-			float orthogonalZ = transform->facingX;
-			//float dot = playerInputs[i].aimDirection.Dot(players[i].forward);
-			float dot = controller->goalX * transform->facingX + controller->goalZ * transform->facingZ;
-			float orthDot = controller->goalX * orthogonalX + controller->goalZ * orthogonalZ;
-			if (orthDot > 0.0f)
-			{//Om till vänster
-				angle += GetDeltaTime() * (10.1f - dot);
-			}
-			else
-			{
-				angle -= GetDeltaTime() * (10.1f - dot);
-			}
-			transform->facingX = cosf(angle);
-			transform->facingZ = sinf(angle);
-			controller->goalX = 0.0f;
-			controller->goalZ = 0.0f;
-		}
+		//transform->lastPositionZ = transform->positionZ;
+		//transform->lastPositionX = transform->positionX;
+		controller->goalX = 0.0f;
+		controller->goalZ = 0.0f;
 		//End of: Camera System thing
 
-		// Get animation component
+		//Default the animation to idle, subject to be changed based off of user input
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-		// Idle as default
 		anim->aAnim = ANIMATION_IDLE;
 		anim->aAnimIdx = 0;
 
+		/*MOVEMENT INPUT*/
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
 			moving = true;
 			
-			transform->positionZ += stat->moveSpeed * GetDeltaTime();
+			//transform->positionZ += stat->moveSpeed * GetDeltaTime();
 			controller->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
 			moving = true;
-			transform->positionZ -= stat->moveSpeed * GetDeltaTime();
+			//transform->positionZ -= stat->moveSpeed * GetDeltaTime();
 			controller->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
 			moving = true;
-			transform->positionX -= stat->moveSpeed * GetDeltaTime();
+			//transform->positionX -= stat->moveSpeed * GetDeltaTime();
 			controller->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
 			moving = true;
-			transform->positionX += stat->moveSpeed * GetDeltaTime();
+			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
-
+		MouseComponentUpdateDirection(entity);
 		if (moving)
 		{
-			controller->moveTime += GetDeltaTime() * controller->moveFactor;
-			if (controller->moveMaxLimit < controller->moveTime) //clamp moveTime to upper limit
+			anim->aAnim = ANIMATION_WALK;
+			anim->aAnimIdx = 0;
+
+			float len = controller->goalX * controller->goalX + controller->goalZ * controller->goalZ;
+			if (len <= 0.0f)
 			{
-				controller->moveTime = controller->moveMaxLimit;
+				len = 1.0f;
 			}
+			else
+			{
+				len = sqrtf(controller->goalX * controller->goalX + controller->goalZ * controller->goalZ);
+				
+			}
+			controller->goalZ /= len;
+			controller->goalX /= len;
+			transform->positionZ += controller->goalZ * stat->moveSpeed * GetDeltaTime();
+			transform->positionX += controller->goalX * stat->moveSpeed * GetDeltaTime();
+			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
 		}
-		else
+
+		//clamp moveTime to lower limit if not moving
+		else 
 		{
-			controller->moveTime -= GetDeltaTime() * controller->moveFactor * controller->moveResetFactor;
-			if (controller->moveTime < 0.0f) //clamp moveTime to lower limit
-			{
-				controller->moveTime = 0.0f;
-			}
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
+			
 		}
 
 		/*COMBAT INPUT*/
-		//Test code for now but we fuckin about
+		//Dash in the direction you're moving, defaults to dashing backwards if you're not moving. Gives i-frames for the duration
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
-			//speed *= 3.0f;
+			if (moving)
+			{
+				//Set facing direction to dash direction when moving
+				transform->facingX = controller->goalX;
+				transform->facingZ = controller->goalZ;
+			}
+			else
+			{
+				//Default dash goes backwards
+				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
+				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
 
-			//Make a 3-step timed event:
-			//Step 1: Take away control from the player
-			//Step 2: Dash in a direction based off of goalX and goalZ
-			//Step 3: Return control to the player
-			DashArgumentComponent* dac = registry.AddComponent<DashArgumentComponent>(entity, controller->goalX, controller->goalZ, 2.5f);
-			AddTimedEventComponentStartContinousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl);
+			}
+			registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
+		}
+
+		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
+		if (mouseButtonPressed[0] == pressed)
+		{
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, PlayerAttack, 1.0f, nullptr);
 		}
 	}
 	return true;

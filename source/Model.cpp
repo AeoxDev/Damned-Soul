@@ -155,6 +155,8 @@ const MODEL_TYPE Model::Load(const char* filename)
 		mat.glowIdx = LoadTexture(mat.glow);
 	}
 
+	m_materialBuffer = CreateConstantBuffer(sizeof(MaterialBufferStruct));
+
 	return result;
 }
 
@@ -167,6 +169,7 @@ void Model::Free()
 	}
 	DeleteD3D11Buffer(m_vertexBuffer);
 	DeleteD3D11Buffer(m_indexBuffer);
+	DeleteD3D11Buffer(m_materialBuffer);
 	m_animations.~ML_Map();
 	MemLib::pfree(m_data);
 }
@@ -205,14 +208,23 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 		SetShaderResourceView(m_animationBufferSRV, BIND_VERTEX, 0);
 	}
 
+	// Set as slot 0, for the time being
+	SetConstantBuffer(m_materialBuffer, BIND_PIXEL, 0);
 
 	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
 	{
 		const SubMesh& currentMesh = m_data->GetSubMesh(i);
 		const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
 
+		// Create a buffer and give it values
+		MaterialBufferStruct buffStruct(currentMaterial.roughness, currentMaterial.exponent);
+		// Update the material buffer
+		UpdateConstantBuffer(m_materialBuffer, &buffStruct);
+
 		// Set material and draw
 		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
+		//SetTexture(currentMaterial.normalIdx, BIND_PIXEL, 1); // Commented away for the time being, until we have default textures or the actual textures
+		//SetTexture(currentMaterial.glowIdx, BIND_PIXEL, 2); // Commented away for the time being, until we have default textures or the actual textures
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
 }

@@ -12,7 +12,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 {
 	skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
 	skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
-	
+
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 	float dirX = skeletonTransformComponent->facingX, dirZ = skeletonTransformComponent->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
@@ -43,23 +43,27 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
 		skeletonComponent->updateInterval = randomInterval(gen);
 	}
-	
+
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 
-	
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->moveSpeed/ 2.f * GetDeltaTime();
+
+	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->moveSpeed / 2.f * GetDeltaTime();
 	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->moveSpeed / 2.f * GetDeltaTime();
-	
+
 }
 
-void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc)
 {
+	sc->goalDirectionX = ptc->positionX - stc->positionX;
+	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
+	SmoothRotation(stc, sc->goalDirectionX, sc->goalDirectionZ);
+
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
 		sc->attackTimer = 0;
 		sc->attackStunDurationCounter = 0;
-		playerStats->health -= enemyStats->damage;
+		playerStats->UpdateHealth(-enemyStats->damage);
 		RedrawUI();
 	}
 }
@@ -73,7 +77,7 @@ bool SkeletonBehaviourSystem::Update()
 	TransformComponent* skeletonTransformComponent = nullptr;
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
-	
+
 	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
 	{
 		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
@@ -87,7 +91,7 @@ bool SkeletonBehaviourSystem::Update()
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 
-		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->health > 0 )// check if enemy is alive, change later
+		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			skeletonComponent->attackTimer += GetDeltaTime();
@@ -99,7 +103,7 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 2.5f)
 			{
-				CombatBehaviour(skeletonComponent, enemyStats, playerStats);
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent);
 			}
 			else if (distance < 50) //hunting distance
 			{

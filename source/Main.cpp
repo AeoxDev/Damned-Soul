@@ -6,7 +6,13 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
-//#include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
+//Uncomment this line for tests:
+//#define TEST3000
+
+#ifdef TEST3000
+#include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
+#endif // TEST
+
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -15,12 +21,20 @@ int main(int argc, char* args[])
 	InitiateConfig();
 	MemLib::createMemoryManager();
 
-	SetupWindow();
+	bool sdlLoaded = SetupWindow();
+	if (sdlLoaded == false)
+	{
+		return -1;
+	}
 	std::string title = "Damned Soul";
-	stateManager.Setup();
+	if (stateManager.Setup() < 0)
+	{
+		return -1;
+	}
 	
 	//Reload stress-test
-	/*for (unsigned int i = 0; i < 3000; ++i)
+#ifdef TEST3000
+	for (unsigned int i = 0; i < 3000; ++i)
 	{
 		UIFunc::MainMenu_Start(nullptr);
 
@@ -29,7 +43,10 @@ int main(int argc, char* args[])
 		stateManager.levelScenes[0].Unload();
 		stateManager.levelScenes[1].Unload();
 		stateManager.menu.Setup();
-	}*/
+	}
+#endif // TEST3000
+
+
 
 	while (!sdl.quit)
 	{

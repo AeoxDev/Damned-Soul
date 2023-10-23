@@ -7,6 +7,9 @@
 #include "UIRenderer.h"
 #include <assert.h>
 #include "UIRenderer.h"
+#include "RelicFunctions.h"
+#include "Relics\RelicFuncInputTypes.h"
+#include "EventFunctions.h"
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -116,21 +119,166 @@ void HardCollision(OnCollisionParameters& params)
 	//transform2->positionZ += dirZ;//Push of by
 }
 
-void AttackCollision(OnCollisionParameters& params)
+//Check if attacker is static hazard and defender can hit static hazard.
+void StaticHazardAttackCollision(OnCollisionParameters& params)
 {
-	//Get the components of the attacker (entity 1)
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
-	//Get the components of the attackee (entity 2)
+	//Get the components of the attackee (stats for taking damage and transform for knockback)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	
-	stat2->health -= stat1->damage;
+
+	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	//Do the same as the above but for the attackee, but returning out of here if the hitbox doesn't have the "canTakeDamage" flag set
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (params.hitboxID2 < SAME_TYPE_HITBOX_LIMIT)//For circular
+	{
+		//Check if possible to deal damage
+		if (!hitbox2->circularFlags[params.hitboxID2].hitStaticHazard)
+		{
+			return;
+		}
+	}
+	else //For convex hitboxes
+	{
+		if (!hitbox2->convexFlags[params.hitboxID2 - SAME_TYPE_HITBOX_LIMIT].hitStaticHazard)
+		{
+			return;
+		}
+	}
+	//Check if hitbox already dealt damage
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (hitbox1->hitTracker[i].active && hitbox1->hitTracker[i].entity.index == params.entity2.index)
+		{
+			return;
+		}
+	}
+
+	/*
+	Get hit, 3-step process
+	1. Start: Lose health, then disable being able to take damage
+	2. Continuous: Flash color using hue-shift, knockback depending on where we got attacked from
+	3. End: Enable being able to take damage again, and maybe for safety reasons make sure our hue-shift is back to normal
+	*/
+	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
+	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
+	//stat2->UpdateHealth(-stat1->damage);
+
+	//Redraw UI (player healthbar) since someone will have taken damage at this point. 
+	//If RedrawUI() is bad to call it's probably good to try and make sure this only happens if player is the one who got attacked
 	RedrawUI();
+
+	//Lastly set for hitboxTracker[]
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (!hitbox1->hitTracker[i].active)
+		{
+			hitbox1->hitTracker[i].active = true;
+			hitbox1->hitTracker[i].entity = params.entity2;
+			return;
+		}
+	}
+}
+
+void AttackCollision(OnCollisionParameters& params)
+{
+	//Get the components of the attacker (only stats for dealing damage)
+	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+
+	//Get the components of the attackee (stats for taking damage and transform for knockback)
+	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+
+	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+
+	int counter = 0;
+	int counter2 = 0;
+	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
+	{
+		//Check if possible to deal damage
+		if (hitbox1->circularFlags[params.hitboxID1].canDealDamage)
+		{
+			counter++;
+		}
+	}
+	else //For convex hitboxes
+	{
+		if (hitbox1->convexFlags[params.hitboxID1 - SAME_TYPE_HITBOX_LIMIT].canDealDamage)
+		{
+			counter++;
+		}
+	}
+
+	//Do the same as the above but for the attackee, but returning out of here if the hitbox doesn't have the "canTakeDamage" flag set
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (params.hitboxID2 < SAME_TYPE_HITBOX_LIMIT)//For circular
+	{
+		//Check if possible to deal damage
+		if (hitbox2->circularFlags[params.hitboxID2].canTakeDamage)
+		{
+			counter2++;
+		}
+	}
+	else //For convex hitboxes
+	{
+		if (hitbox2->convexFlags[params.hitboxID2 - SAME_TYPE_HITBOX_LIMIT].canTakeDamage)
+		{
+			counter2++;
+		}
+	}
+
+	//if nothing is hit, get out!
+	if (counter == 0 || counter2 == 0)
+	{
+		return;
+	}
+
+	//Check if hitbox already dealt damage
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{	
+		//If already in hit tracker: no proc
+		if (hitbox1->hitTracker[i].active && hitbox1->hitTracker[i].entity.index == params.entity2.index)
+		{
+			return;
+		}
+	}
+
+	/*
+	Get hit, 3-step process
+	1. Start: Lose health, then disable being able to take damage
+	2. Continuous: Flash color using hue-shift, knockback depending on where we got attacked from
+	3. End: Enable being able to take damage again, and maybe for safety reasons make sure our hue-shift is back to normal
+	*/
+	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
+	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, BeginHit, MiddleHit, 0.2f, EndHit); //No special condition for now
+	//stat2->UpdateHealth(-stat1->damage);
+	
+	//Redraw UI (player healthbar) since someone will have taken damage at this point. 
+	//If RedrawUI() is bad to call it's probably good to try and make sure this only happens if player is the one who got attacked
+	RedrawUI();
+
+	//Lastly set for hitboxTracker[]
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (!hitbox1->hitTracker[i].active)
+		{
+			hitbox1->hitTracker[i].active = true;
+			hitbox1->hitTracker[i].entity = params.entity2;
+			return;
+		}
+	}
 }
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
-	LoadLevel(stateManager.activeLevelScene + 1);
+	LoadLevel(++stateManager.activeLevel);
 }
 

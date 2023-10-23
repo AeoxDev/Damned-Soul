@@ -23,9 +23,14 @@ bool SetupWindow()
 		}
 	}
 	assert(sdl.sdlRenderer != nullptr);
-	SDL_SysWMinfo wmInfo = {0};
+	SDL_SysWMinfo wmInfo{0};
 	SDL_VERSION(&wmInfo.version);
-	assert(SDL_GetWindowWMInfo(sdl.sdlWindow, &wmInfo) > -1);
+	SDL_bool succeded = SDL_GetWindowWMInfo(sdl.sdlWindow, &wmInfo);
+	assert(succeded == SDL_bool::SDL_TRUE);
+	if (succeded == SDL_FALSE)
+	{
+		return false;
+	}
 	sdl.window = wmInfo.info.win.window;
 	//Set windowed mode
 	SDL_SetWindowFullscreen(sdl.sdlWindow, sdl.windowFlags);

@@ -46,15 +46,13 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ, float rota
 		float orthDot = goalX * orthogonalX + goalZ * orthogonalZ;
 		if (orthDot > 0.0f)
 		{//if left
-			angle += GetDeltaTime() * (rotationFactor - dot);
+			angle += GetDeltaTime() * (2.1f - dot) * rotationFactor;
 		}
 		else
 		{
-			angle -= GetDeltaTime() * (rotationFactor - dot);
+			angle -= GetDeltaTime() * (2.1f - dot) * rotationFactor;
 		}
 		tc->facingX = cosf(angle);
 		tc->facingZ = sinf(angle);
-		goalX = 0.0f;
-		goalZ = 0.0f;
 	}
 }

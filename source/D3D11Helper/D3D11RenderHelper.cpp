@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
@@ -56,15 +59,23 @@ RTV_IDX CreateBackBuffer()
 
 	// get the address of the back buffer
 	ID3D11Texture2D* backBuffer = nullptr;
-	assert(!FAILED(d3d11Data->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))));
-
+	HRESULT hr = d3d11Data->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+	assert(SUCCEEDED(hr));
+	if (FAILED(hr))
+	{
+		return -1;
+	}
 
 	// use the back buffer address to create the render target
 	// null as description to base it on the backbuffers values
 	ID3D11RenderTargetView* tempBB = 0;
-	HRESULT hr = d3d11Data->device->CreateRenderTargetView(backBuffer, NULL, &tempBB);
+	hr = d3d11Data->device->CreateRenderTargetView(backBuffer, NULL, &tempBB);
 
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr) == true);
+	if (FAILED(hr))
+	{
+		return -2;
+	}
 	rtvHolder->rtv_map.emplace(currentIdx, tempBB);
 	backBuffer->Release();
 

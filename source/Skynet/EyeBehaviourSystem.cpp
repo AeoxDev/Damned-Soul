@@ -195,13 +195,13 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		{
 			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 10.0f);
 
-			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 4.f * GetDeltaTime();
-			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 4.f * GetDeltaTime();
+			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 6.f * GetDeltaTime();
 
 			//check if eye has collided with player
 			if (eyeComponent->dealtDamage == false && Collision(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ, 0.2f))
 			{
-				playerStats->health -= enemyStats->damage;
+				playerStats->UpdateHealth(-enemyStats->damage);
 				eyeComponent->dealtDamage = true;
 				RedrawUI();
 			}
@@ -221,7 +221,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 }
 
-static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
+//static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
 
 bool EyeBehaviourSystem::Update()
 {
@@ -249,7 +249,7 @@ bool EyeBehaviourSystem::Update()
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 
 
-		if (enemyStats->health > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr)// check if enemy is alive
+		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr)// check if enemy is alive
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			eyeComponent->attackTimer += GetDeltaTime();
@@ -262,24 +262,24 @@ bool EyeBehaviourSystem::Update()
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
-			else if (eyeComponent->charging || eyeComponent->specialCounter > eyeComponent->specialBreakpoint) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || eyeComponent->attackTimer > enemyStats->attackSpeed/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity);
 
 			}
-			else if (distance <= 30.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (distance <= 40.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
 				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats);
 				
-				TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
-				if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
-				{
-					eyeComponent->specialCounter++;
-				}
+				//TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
+				//if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
+				//{
+				//	eyeComponent->specialCounter++;
+				//}
 			}
 			else // idle
 			{

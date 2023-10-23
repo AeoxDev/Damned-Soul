@@ -5,6 +5,8 @@
 #include "Components.h"
 #include "GameRenderer.h"
 #include "Registry.h"
+#include "Hitbox.h"
+#include "Model.h"
 
 #define TEXTURE_DIMENSIONS 128
 struct GIConstantBufferData
@@ -199,6 +201,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	//stagingResource->Release();
 	//Return.
 }
+
+
 
 bool AddGeometryIndependentComponent(EntityID& stageEntity)
 {
