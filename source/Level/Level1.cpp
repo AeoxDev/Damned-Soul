@@ -5,38 +5,45 @@
 #include "Particles.h"
 #include "EventFunctions.h"
 #include "CollisionFunctions.h"
+#include "Levels\LevelHelper.h"
+#include "EntityCreation.h"
+#include "DeltaTime.h"
+#include "Model.h"
+#include "UIComponents.h"
 
 void LoadLevel1()
 {
+	//SetDirectionLight(0.8f, 0.7f, 0.6f, -1.0f, -1.0f, 1.0f);
 	//Doggo
 	EntityID gameLevel = registry.CreateEntity();
-	EntityID dog = registry.CreateEntity();
+
 	EntityID stage = registry.CreateEntity();
 	EntityID player = registry.CreateEntity();
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID eye = registry.CreateEntity();
+	EntityID dog = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
-	EntityID portal = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
 	
 
+	SetupEnemy(skeleton, enemyType::skeleton, 5.f, 0.f, 7.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton2, enemyType::skeleton, 10.f, 0.f, 5.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(dog, enemyType::hellhound, -5.f, 0.f, -5.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
+	SetupEnemy(eye, enemyType::eye, 15.f, 0.f, 15.f, 1.f, 100.f, 15.f, 5.f, 2.f, 1);
 
 
-	registry.AddComponent<ModelBonelessComponent>(dog, LoadModel("HellhoundDummy_PH.mdl"));
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());
-	registry.AddComponent<ModelBonelessComponent>(skeleton, LoadModel("SkeletonOneDymmy.mdl"));
-	registry.AddComponent<ModelBonelessComponent>(skeleton2, LoadModel("SkeletonOneDymmy.mdl"));
-	registry.AddComponent<ModelBonelessComponent>(eye, LoadModel("FlyingEyeDymmy.mdl"));
+	
 
-	// Dog
-	TransformComponent dogTransformComponent;
-	dogTransformComponent.facingX = 1.0f; dogTransformComponent.positionX = 20.0f; dogTransformComponent.facingX = 1.0f;
-	dogTransformComponent.mass = 9.0f;
-	registry.AddComponent<TransformComponent>(dog, dogTransformComponent);
 	
 	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);
@@ -48,36 +55,12 @@ void LoadLevel1()
 	playerTransform->facingZ = 1.0f;
 	playerTransform->mass = 3.0f;
 	
-	// First skeleton
-	TransformComponent fsTransformComponent;
-	fsTransformComponent.positionZ = 20.0f;
-	registry.AddComponent<TransformComponent>(skeleton, fsTransformComponent);
 	
-	// Second skeleton
-	TransformComponent ssTransformComponent;
-	ssTransformComponent.positionZ = 15.0f;
-	registry.AddComponent<TransformComponent>(skeleton2, ssTransformComponent);
 
-	// Eye 
-	TransformComponent eyeTransformComponent;
-	eyeTransformComponent.positionX = 15.0f;
-	eyeTransformComponent.positionZ = 15.0f;
-	registry.AddComponent<TransformComponent>(eye, eyeTransformComponent);
-
-	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 10.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);
 
-	registry.AddComponent<StatComponent>(dog, 50.f, 20.f, 25.f, 5.f);
-	registry.AddComponent<EnemyComponent>(dog, 1);
-
-	registry.AddComponent<StatComponent>(skeleton, 100.f, 10.f, 25.f, 5.f);
-	registry.AddComponent<EnemyComponent>(skeleton, 2);
-
-	registry.AddComponent<StatComponent>(skeleton2, 100.f, 10.f, 25.f, 5.f);
-	registry.AddComponent<EnemyComponent>(skeleton2, 2);
-
-	registry.AddComponent<StatComponent>(eye, 50.f, 15.f, 37.f, 5.f);
-	registry.AddComponent<EnemyComponent>(eye, 1);
+	
 
 	registry.AddComponent<ControllerComponent>(player);
 
@@ -85,13 +68,11 @@ void LoadLevel1()
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	registry.AddComponent<PointOfInterestComponent>(player, poic);
-	//registry.AddComponent<PointOfInterestComponent>(dog);
-	//registry.AddComponent<PointOfInterestComponent>(skeleton);
-	//registry.AddComponent<PointOfInterestComponent>(skeleton2);
-	//registry.AddComponent<PointOfInterestComponent>(eye);
+
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
-	pcUiHpC->image.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
 	pcUiHpC->text.Setup(L"");
 
 	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
@@ -100,17 +81,13 @@ void LoadLevel1()
 
 	//Thing in the top right corner showing what level we're on (Christian why is the valueAsString thing here?) 
 	//															(Because it was using the scene int parameter at the time)
-	//std::string valueAsString = "1";
-	//std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
+
 	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup(L"");
 
-	registry.AddComponent<HellhoundBehaviour>(dog);
-	registry.AddComponent<SkeletonBehaviour>(skeleton);
-	registry.AddComponent<SkeletonBehaviour>(skeleton2);
-	registry.AddComponent<EyeBehaviour>(eye);
 
+	  
 	RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
 
 	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
@@ -121,17 +98,49 @@ void LoadLevel1()
 	//Finally set the collision boxes
 
 	SetupPlayerCollisionBox(player, 1.0f);
-	SetupEnemyCollisionBox(skeleton, 0.9f);
-	SetupEnemyCollisionBox(skeleton2, 0.9f);
-	SetupEnemyCollisionBox(dog, 1.0f);
-	SetupEnemyCollisionBox(eye, 1.0f);
-
 	MouseComponentAddComponent(player);
-	//MouseComponentAddComponent(mouse);
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
-	//AddTimedEventComponentStartContinousEnd(player, player, 3.0f, RandomPosition, dog, RandomPosition, skeleton, 6.0f, RandomPosition);
-	//AddTimedEventComponentStartContinousEnd(skeleton, skeleton, 7.0f, RandomPosition, skeleton2, RandomPosition, dog, 15.0f, RandomPosition);
 
+	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
+	
+	CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
+	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
+	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
+	//RemoveLight(dog);
+	//RemoveLight(stage);
+	//RemoveLight(lightholder);
+	//RemoveLight(lightholderTwo);
+	//RemoveLight(lightholderThree);
+	//RemoveLight(lightholderForth);
+
+	//EntityID hazard1 = CreateRoundStaticHazard("PlaceholderScene.mdl",20.0f, 0.1f, -0.0f, 0.04f, 0.1f, 0.04f, 0.8f, 0.4f, 0.1f, 1.5f, 2.0f);
+	//EntityID hazard2 = CreateRoundStaticHazard("PlaceholderScene.mdl",18.5f, 0.1f, -20.0f, 0.08f, 0.1f, 0.08f, 0.8f, 0.4f, 0.1f, 3.0f, 2.0f);
+	srand((unsigned)(GetDeltaTime() * 100000.0f));
+
+	//Add static hazards on the where player does not spawn
+	const int nrHazards = 8;
+	for (size_t i = 0; i < nrHazards; i++)
+	{
+		bool succeded = false;
+		while (!succeded)
+		{
+			float randX = (float)(rand() % 120) - 60.0f;
+			float randZ = (float)(rand() % 120) - 60.0f;
+			if (randX * randX + randZ * randZ > 100)
+			{
+				EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
+					-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
+					0.8f, 0.5f, 0.1f, 3.0f, (float)rand());
+				succeded = true;
+			}
+		}
+	}
 }

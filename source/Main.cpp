@@ -20,6 +20,7 @@ int main(int argc, char* args[])
 	stateManager.Setup();
 	
 	//Reload stress-test
+
 	/*for (unsigned int i = 0; i < 3000; ++i)
 	{
 		UIFunc::MainMenu_Start(nullptr);

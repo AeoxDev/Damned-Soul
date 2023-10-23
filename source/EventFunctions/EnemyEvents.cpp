@@ -5,6 +5,7 @@
 #include "DeltaTime.h"
 #include "UIRenderer.h"
 #include "CollisionFunctions.h" //AttackCollision
+#include "Model.h"
 
 //void EnemyExclusion(EntityID& entity)
 //{
@@ -12,7 +13,7 @@
 //	stat->performingDeathAnimation = true; //so we don't trigger death animation twice
 //} not needed
 
-void PlayDeathAnimation(EntityID& entity)
+void PlayDeathAnimation(EntityID& entity, const int& index)
 {
 	//implement later, goddamn TA
 
@@ -23,6 +24,9 @@ void PlayDeathAnimation(EntityID& entity)
 	offset = float(rand() % 2);
 	offset -= 0.5f;
 	transform->positionZ += offset * 0.02f;
+
+	//Temp: Remove the light if dog dies during its flamethrower attack
+	RemoveLight(entity);
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
@@ -47,7 +51,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	float newScaleSize = 0.7f; // change as see fit
 	float offsetX = transform->facingX;
 	float offsetZ = -transform->facingZ;
-	float magnitude = sqrt(offsetX * offsetX + offsetZ * offsetZ);
+	float magnitude = sqrtf(offsetX * offsetX + offsetZ * offsetZ);
 	if (magnitude > 0.001f)
 	{
 		offsetX /= magnitude;
@@ -58,19 +62,21 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	transComp.scaleX = transform->scaleX * newScaleSize;
 	transComp.scaleY = transform->scaleY * newScaleSize;
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
+	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp);
 
 	//Set hitbox
 	float newScaleHitBox = 0.85f;
 	AddHitboxComponent(newMini);
 
-	int hID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	int hID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox * 0.7f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
 	SetHitboxHitEnemy(newMini, hID);
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID);
+
 
 	int sID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
@@ -79,17 +85,18 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	SetHitboxHitEnemy(newMini, sID);
 	SetHitboxActive(newMini, sID);
 	SetHitboxIsMoveable(newMini, sID);
+	SetHitboxCanTakeDamage(newMini, sID);
 
 	//Set behavior
-	float deathC = bossBehev->deathCounter + 1;
-	registry.AddComponent<TempBossBehaviour>(newMini, deathC, hID);
+	float deathC = (float)(bossBehev->deathCounter + 1);
+	registry.AddComponent<TempBossBehaviour>(newMini, (int)deathC, hID);
 
 	
 	registry.AddComponent<EnemyComponent>(newMini, 2);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
 }
 
-void SplitBoss(EntityID& entity)
+void SplitBoss(EntityID& entity, const int& index)
 {
 	CreateMini(entity, 3.f);
 	CreateMini(entity, -3.f);
@@ -199,11 +206,11 @@ void SplitBoss(EntityID& entity)
 	//registry.AddComponent<TempBossBehaviour>(tempBoss, deathC, hID);
 	//registry.AddComponent<TempBossBehaviour>(tempBoss2, deathC, hID2);
 
-	RemoveEnemy(entity);
+	RemoveEnemy(entity, index);
 }
 
 
-void RemoveEnemy(EntityID& entity)
+void RemoveEnemy(EntityID& entity, const int& index)
 {
 	// Eat them souls
 	for (auto entity : View<PlayerComponent>(registry))

@@ -9,6 +9,7 @@
 #include "UI/UIRenderer.h"
 #include "Particles.h"
 #include "D3D11Graphics.h"
+#include "Light.h"
 
 State currentStates;
 StateManager stateManager;
@@ -204,8 +205,8 @@ void StateManager::UnloadAll()
 	shop.Unload();
 	levelScenes[0].Unload();
 	levelScenes[1].Unload();
-
 	Particles::ReleaseParticles();
+	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
@@ -220,7 +221,7 @@ void StateManager::EndFrame()
 	//MemLib::pdefrag();
 }
 
-GameScene StateManager::GetCurrentLevel()
+GameScene& StateManager::GetCurrentLevel()
 {
 	return levelScenes[activeLevelScene];
 }

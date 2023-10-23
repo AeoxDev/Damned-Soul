@@ -197,7 +197,7 @@ void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dir
 {
 	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
 	DirectX::XMVECTOR v = DirectX::XMVECTOR{ 0.0f, 0.0f,0.0f };
-	DirectX::XMVECTOR f = DirectX::XMVECTOR{ dirX, dirY, dirZ };
+	DirectX::XMVECTOR f = DirectX::XMVECTOR{ dirX, dirY, dirZ + 0.00001f };
 	//DirectX::XMVECTOR s = DirectX::XMVECTOR{ scaleX, scaleY, ScaleZ};
 	DirectX::XMVECTOR up = DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f };
 	world = DirectX::XMMatrixScaling(scaleX, scaleY, ScaleZ);
@@ -221,7 +221,7 @@ SB_IDX CreateStructuredBuffer(const void* data, const size_t& size, const size_t
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	desc.StructureByteStride = size;
+	desc.StructureByteStride = (UINT)size;
 
 	D3D11_SUBRESOURCE_DATA sbData;
 	sbData.pSysMem = data;

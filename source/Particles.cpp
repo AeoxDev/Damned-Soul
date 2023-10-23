@@ -44,7 +44,7 @@ void Particles::InitializeParticles()
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particles[i].position = DirectX::XMFLOAT3((float)i, 0.f, 0.f);
+		particles[i].position = DirectX::XMFLOAT3((float)i, 0.f, 1.f);
 		particles[i].time = 0.f;
 		particles[i].rgb = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 		particles[i].rotationZ = 0.f;

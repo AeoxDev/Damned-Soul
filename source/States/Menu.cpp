@@ -9,6 +9,8 @@
 #include "States\CleanupMacros.h"
 #include "UI/UIButtonFunctions.h"
 #include "Level.h"
+#include "Model.h"
+#include "UIComponents.h"
 
 void Menu::Setup()//Load
 {
@@ -35,6 +37,7 @@ void Menu::Setup()//Load
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.12f;
+	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 }
 
 void Menu::Input()

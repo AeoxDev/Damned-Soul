@@ -1,6 +1,9 @@
 #include "Physics\Backend\ProximityCollision.h"
 #include "Physics\Backend\Collision.h"
 #include "Registry.h"
+//include <algorithm>
+#define maxVar(a,b)            (((a) > (b)) ? (a) : (b))
+#define minVar(a,b)            (((a) < (b)) ? (a) : (b))
 
 void FindIntersection(float& x, float& z, ProximityPoint& p1, ProximityPoint& p2, float& otherX, float& otherZ)
 {
@@ -58,7 +61,7 @@ bool IntersectionOnLine(float& line1x1, float& line1x2, float& line1z1, float& l
 			z -= 0.0001f;
 		}
 
-		if (x <= std::max(line1x1, line1x2) && x >= std::min(line1x1, line1x2) && z <= std::max(line1z1, line1z2) && z >= std::min(line1z1, line1z2))
+		if (x <= maxVar(line1x1, line1x2) && x >= minVar(line1x1, line1x2) && z <= maxVar(line1z1, line1z2) && z >= minVar(line1z1, line1z2))
 		{
 			return true;
 		}

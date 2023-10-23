@@ -15,6 +15,8 @@
 #include "EventFunctions.h"
 #include "States\CleanupMacros.h"
 #include "Camera.h"
+#include "Light.h"
+#include "UIComponents.h"
 
 #include "RelicFunctions.h"
 
@@ -191,7 +193,8 @@ void GameScene::Unload()
 	for (auto entity : View<UIHealthComponent>(registry))
 	{
 		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
-		ph->image.Release();
+		ph->backgroundImage.Release();
+		ph->healthImage.Release();
 	}
 
 	for (auto entity : View<UIButton>(registry))
@@ -212,7 +215,7 @@ void GameScene::Unload()
 		p->pointList.~ML_Vector();
 	}
 
-	
+	Light::FreeLight();
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
