@@ -16,8 +16,8 @@ void UIFunc::LoadNextLevel(void* args)
 	SetInPlay(true);
 	SetInMainMenu(false);
 	stateManager.menu.Unload();
-	//LoadLevel(++stateManager.activeLevel);
-	LoadLevel(2);
+	LoadLevel(++stateManager.activeLevel);
+	//LoadLevel(2);
 }
 
 void UIFunc::MainMenu_Settings(void* args)
@@ -134,6 +134,10 @@ void UIFunc::Settings_Fullscreen(void* args)
 void UIFunc::Shop_BuyRelic(void* args)
 {
 	UIButton* button = (UIButton*)args;
+	PlayerComponent* player = nullptr;
+
+	for (auto entity : View<PlayerComponent, StatComponent>(registry))
+		player = registry.GetComponent<PlayerComponent>(entity);
 
 	int counter = 1;
 	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
@@ -143,8 +147,15 @@ void UIFunc::Shop_BuyRelic(void* args)
 			counter++;
 			continue;
 		}
+		
+		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+		
+		if (player->GetSouls() < uiElement->price)
+			break;
 
-		switch (registry.GetComponent<UIRelicComponent>(entity)->relicIndex)
+		player->UpdateSouls(-uiElement->price);
+		switch (uiRelic->relicIndex)
 		{
 		case DemonBonemarrow:
 			Relics::DemonBonemarrow(true);
@@ -213,20 +224,20 @@ void UIFunc::Shop_ReRollRelic(void* args)
 		allRelics.erase(rnd);
 	}
 
+	PlayerComponent* player = nullptr;
+
+	for (auto entity : View<PlayerComponent, StatComponent>(registry))
+		player = registry.GetComponent<PlayerComponent>(entity);
+
 	int counter = 0;
 	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
 	{
 		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
 		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-		DirectX::XMFLOAT2 spritePositionOffset = { uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.right / (uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
-											  uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiElement->m_baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
+		if (player->GetSouls() < uiElement->price)
+			break;
 
-		DirectX::XMFLOAT2 startingSpritePosition = { abs(uiElement->m_baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
-									   abs(uiElement->m_baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-		DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-										-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
-		
 		if (uiRelic->locked == 1)
 		{
 			counter++;
@@ -239,32 +250,32 @@ void UIFunc::Shop_ReRollRelic(void* args)
 		case DemonBonemarrow:
 			uiRelic->sprite.SetImage(Relics::DemonBonemarrow(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::DemonBonemarrow(false).relicName, true);
-			uiRelic->flavorText.UpdateText(Relics::DemonBonemarrow(false).description, true);
+			uiRelic->flavorDesc.UpdateText(Relics::DemonBonemarrow(false).description, true);
 			break;
 		case FlameWeapon:
 			uiRelic->sprite.SetImage(Relics::FlameWeapon(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::FlameWeapon(false).relicName, true);
-			uiRelic->flavorText.UpdateText(Relics::FlameWeapon(false).description, true);
+			uiRelic->flavorDesc.UpdateText(Relics::FlameWeapon(false).description, true);
 			break;
 		case SoulPower:
 			uiRelic->sprite.SetImage(Relics::SoulPower(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::SoulPower(false).relicName, true);
-			uiRelic->flavorText.UpdateText(Relics::SoulPower(false).description, true);
+			uiRelic->flavorDesc.UpdateText(Relics::SoulPower(false).description, true);
 			break;
 		case DemonHeart:
 			uiRelic->sprite.SetImage(Relics::DemonHeart(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::DemonHeart(false).relicName, true);
-			uiRelic->flavorText.UpdateText(Relics::DemonHeart(false).description, true);
+			uiRelic->flavorDesc.UpdateText(Relics::DemonHeart(false).description, true);
 			break;
 		case FrostFire:
 			uiRelic->sprite.SetImage(Relics::FrostFire(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::FrostFire(false).relicName, true);
-			uiRelic->flavorText.UpdateText(Relics::FrostFire(false).description, true);
+			uiRelic->flavorDesc.UpdateText(Relics::FrostFire(false).description, true);
 			break;
 		case SoulHealth:
 			uiRelic->sprite.SetImage(Relics::SoulHealth(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::SoulHealth(false).relicName, true);
-			uiRelic->flavorText.UpdateText(Relics::SoulHealth(false).description, true);
+			uiRelic->flavorDesc.UpdateText(Relics::SoulHealth(false).description, true);
 			break;
 		default:
 			break;
@@ -272,6 +283,9 @@ void UIFunc::Shop_ReRollRelic(void* args)
 
 		counter++;
 	}
+
+	if (args && player->GetSouls() >= 2)
+		player->UpdateSouls(-2);
 
 	RedrawUI();
 }

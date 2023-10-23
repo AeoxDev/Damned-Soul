@@ -30,8 +30,9 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 									-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-	UIImage relicWindowBaseImage, relicImage, relicFlavorImage;
+	UIImage relicWindowBaseImage, relicImage, relicFlavorImage, relicDescImage;
 	relicWindowBaseImage.Setup("TempRelicFlavorHolder.png");
+	relicDescImage.Setup("TempRelicDesc.png");
 
 	relicImage.Setup("RelicIcons/Empty_Relic.png");
 	relicImage.m_UiComponent.SetScale({1.25f, 1.25f });
@@ -40,29 +41,37 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	relicFlavorImage.m_UiComponent.SetVisibility(false);
 	relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
 
-	UIText relicName, relicDesc;
+	UIText relicName, relicDesc, shopPrice;
 	ML_String name = "No Relic";
 	ML_String desc = "Emptiness all around us";
 
 	relicName.Setup(name);
 	relicDesc.Setup(desc);
+	shopPrice.Setup("");
 
 	relicName.m_UiComponent.SetVisibility(false);
 	relicDesc.m_UiComponent.SetVisibility(false);
+	relicDescImage.m_UiComponent.SetVisibility(false);
 
 	UIShopRelicWindowComponent* relicWindowC = registry.AddComponent<UIShopRelicWindowComponent>(relicWindow);
-	relicWindowC->Setup(relicWindowBaseImage);
-	relicWindowC->m_baseImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 7), spritePixelCoords.y - (0.1f * 3 * positionMultiplier) });
+	relicWindowC->Setup(relicWindowBaseImage, shopPrice);
+	relicWindowC->m_baseImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 4.5f), spritePixelCoords.y - (0.1f * 3 * positionMultiplier) + 0.1f });
+	relicWindowC->price = 2;
+	relicWindowC->m_priceText.UpdateText(("Price: " + std::to_string(relicWindowC->price)).c_str());
+
+	relicDesc.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 3), spritePixelCoords.y + 0.35f });
+	relicDescImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 3), spritePixelCoords.y + 0.25f });
+	
 	ChangeOffset(spritePositionOffset, startingSpritePosition, spritePixelCoords, *relicWindowC);
 
-	relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y - 0.05f });
+	relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y });
+
+	relicWindowC->m_priceText.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y - 0.1f });
 	
 	relicFlavorImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
 	relicName.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
 
-	relicDesc.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
-
-	UIRelicComponent* relicComp = registry.AddComponent<UIRelicComponent>(relicWindow, relicImage, relicFlavorImage, relicName, relicDesc);
+	UIRelicComponent* relicComp = registry.AddComponent<UIRelicComponent>(relicWindow, relicImage, relicFlavorImage, relicName, relicDescImage, relicDesc);
 
 	UIButton* buyRelic = registry.AddComponent<UIButton>(relicButtonBuy);
 	buyRelic->Setup("TempBuy.png", "TempBuy.png", "", UIFunc::Shop_BuyRelic);
@@ -79,7 +88,7 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 
 UIShopComponent::UIShopComponent()
 {
-	baseImage.Setup("TempShopWindow3.png", this->position, this->scale);
+	baseImage.Setup("TempShopWindow.png", this->position, this->scale);
 	playerInfo.Setup("");
 
 	for (int i = 0; i < 6; i++)
@@ -114,7 +123,10 @@ void UIShopComponent::Setup()
 
 	auto rerollEntity = registry.CreateEntity();
 	UIButton* rerollButton = registry.AddComponent<UIButton>(rerollEntity);
-	rerollButton->Setup("TempReRoll.png", "TempReRoll.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 7), spritePixelCoords.y - (0.1f * 11) });
+	rerollButton->Setup("TempReRoll.png", "TempReRoll.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 4.5f), spritePixelCoords.y - (0.1f * 10) });
+
+	UIText* rerollPrice = registry.AddComponent<UIText>(rerollEntity);
+	rerollPrice->Setup("Price: 2", { spritePixelCoords.x + (0.1f * 4.5f), spritePixelCoords.y - (0.1f * 11) });
 
 	auto nextLevelEntity = registry.CreateEntity();
 	UIButton* nextLevelButton = registry.AddComponent<UIButton>(nextLevelEntity);
@@ -125,5 +137,7 @@ void UIShopComponent::Setup()
 		CreateShopEntity(*this, i + 1);
 	};
 
-	UIFunc::Shop_ReRollRelic(nullptr);
+	bool* ignore = {};
+
+	UIFunc::Shop_ReRollRelic(ignore);
 }

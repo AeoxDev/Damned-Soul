@@ -16,10 +16,11 @@ struct UIRelicComponent
 	int relicIndex = -1;
 
 	UIImage sprite;
-	UIImage flavorImage;
+	UIImage flavorTitleImage;
 	UIText flavorTitle;
-	UIText flavorText;
+	UIImage flavorDescImage;
+	UIText flavorDesc;
 
-	UIRelicComponent(UIImage sprite, UIImage flavorImage, UIText flavorTitle, UIText flavorText, DirectX::XMFLOAT2 position = { 0.0f, 0.0f }, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f })
-		:position(position), scale(scale), sprite(sprite), flavorImage(flavorImage), flavorTitle(flavorTitle), flavorText(flavorText) {}
+	UIRelicComponent(UIImage sprite, UIImage flavorTitleImage, UIText flavorTitle, UIImage flavorDescImage, UIText flavorDesc, DirectX::XMFLOAT2 position = { 0.0f, 0.0f }, DirectX::XMFLOAT2 scale = { 1.0f, 1.0f })
+		:position(position), scale(scale), sprite(sprite), flavorTitleImage(flavorTitleImage), flavorTitle(flavorTitle), flavorDescImage(flavorDescImage), flavorDesc(flavorDesc) {}
 };

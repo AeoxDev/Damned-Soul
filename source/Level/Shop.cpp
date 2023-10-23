@@ -14,9 +14,9 @@ void LoadShop()
 	EntityID shop = registry.CreateEntity();
 	
 	//faster loading to shop
-	EntityID player = registry.CreateEntity();
-	registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-	registry.AddComponent<PlayerComponent>(player);
+	//EntityID player = registry.CreateEntity();
+	//registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	//registry.AddComponent<PlayerComponent>(player);
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();

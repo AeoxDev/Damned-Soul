@@ -55,84 +55,6 @@ void GameScene::Input(bool isShop)
 			Unload();
 			stateManager.menu.Setup();
 		}
-
-		if (keyState[SDL_SCANCODE_1] == pressed)
-		{
-			for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
-			{
-				//auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
-				auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-
-				if (uiElement->relics.size() > 8)
-					break;
-
-				//relicHolder->AddRelic<DamageRelic>();
-				Relics::RelicMetaData md = Relics::SoulHealth(true);
-
-				UIImage relicImage, relicFlavorImage;
-				relicImage.Setup(md.filePath);//("TempRelic1.png");
-				relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
-
-				relicFlavorImage.m_UiComponent.SetVisibility(false);
-				relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
-
-				UIText flavorTitle, flavorText;
-				ML_String name = md.relicName;//relicHolder->GetRelic<DamageRelic>()->name;
-				ML_String text = md.description;// relicHolder->GetRelic<DamageRelic>()->flavorText;
-
-				flavorTitle.Setup(name);
-				flavorText.Setup(text);
-
-				flavorTitle.m_UiComponent.SetVisibility(false);
-				flavorText.m_UiComponent.SetVisibility(false);
-
-				UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
-
-				uiElement->relics.push_back(relic);
-
-				RedrawUI();
-			}
-		}
-
-		/*if (keyState[SDL_SCANCODE_2] == pressed)
-		{
-			for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
-			{
-				auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
-				auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-
-				if (uiElement->relics.size() > 8)
-					break;
-
-				relicHolder->AddRelic<SpeedRelic>();
-
-				UIImage relicImage, relicFlavorImage;
-				relicImage.Setup("TempRelic2.png");
-				relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
-
-				relicFlavorImage.m_UiComponent.SetVisibility(false);
-				relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
-
-				UIText flavorTitle, flavorText;
-				ML_String name = relicHolder->GetRelic<SpeedRelic>()->name;
-				ML_String text = relicHolder->GetRelic<SpeedRelic>()->flavorText;
-
-				std::wstring nameAsWString(name.begin(), name.end());
-				std::wstring textAsWString(text.begin(), text.end());
-
-				flavorTitle.Setup(nameAsWString);
-				flavorText.Setup(textAsWString);
-
-				flavorTitle.m_UiComponent.SetVisibility(false);
-				flavorText.m_UiComponent.SetVisibility(false);
-
-				UIRelicComponent relic(relicImage, relicFlavorImage, flavorTitle, flavorText);
-
-				uiElement->relics.push_back(relic);
-
-				RedrawUI();
-			}
-		}*/
 	}
 }
 
@@ -190,7 +112,7 @@ void GameScene::Unload()
 		for (uint32_t i = 0; i < r->relics.size(); i++)
 		{
 			r->relics[i].sprite.Release();
-			r->relics[i].flavorImage.Release();
+			r->relics[i].flavorTitleImage.Release();
 		}
 
 		r->relics.~ML_Vector();
@@ -236,7 +158,8 @@ void GameScene::Unload()
 	{
 		UIRelicComponent* r = registry.GetComponent<UIRelicComponent>(entity);
 		r->sprite.Release();
-		r->flavorImage.Release();
+		r->flavorTitleImage.Release();
+		r->flavorDescImage.Release();
 	}
 
 	//Destroy entity resets component bitmasks

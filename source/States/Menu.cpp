@@ -145,7 +145,7 @@ void Menu::Unload()
 	{
 		UIRelicComponent* r = registry.GetComponent<UIRelicComponent>(entity);
 		r->sprite.Release();
-		r->flavorImage.Release();
+		r->flavorTitleImage.Release();
 	}
 
 	//Destroy entity resets component bitmasks

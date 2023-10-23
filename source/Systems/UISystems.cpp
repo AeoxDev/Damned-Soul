@@ -40,7 +40,7 @@ bool UIRenderSystem::Update()
                 uiElement->relics[i].sprite.Draw();
 
             for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-                uiElement->relics[i].flavorImage.Draw();
+                uiElement->relics[i].flavorTitleImage.Draw();
 
             for (uint32_t i = 0; i < uiElement->relics.size(); i++)
                 uiElement->relics[i].flavorTitle.Draw();*/
@@ -74,15 +74,17 @@ bool UIRenderSystem::Update()
         {
             auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
             uiElement->m_baseImage.Draw();
+            uiElement->m_priceText.Draw();
         }
 
         for (auto entity : View<UIRelicComponent>(registry))
         {
             auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
             uiElement->sprite.Draw();
-            uiElement->flavorImage.Draw();
+            uiElement->flavorTitleImage.Draw();
             uiElement->flavorTitle.Draw();
-            uiElement->flavorText.Draw();
+            uiElement->flavorDescImage.Draw();
+            uiElement->flavorDesc.Draw();
         }
 
         for (auto entity : View<UIShopComponent>(registry))
@@ -169,9 +171,9 @@ bool UIRelicsSystem::Update()
                 uiElement->gridPosition.x = 0;
             }*/
 
-            uiElement->relics[uiElement->relicIndex].flavorImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
+            uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
             uiElement->relics[uiElement->relicIndex].flavorTitle.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
-            uiElement->relics[uiElement->relicIndex].flavorText.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y) + 1.25f) });
+            uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y) + 1.25f) });
 
             uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
             uiElement->relicIndex++;
@@ -185,11 +187,11 @@ bool UIRelicsSystem::Update()
             if (uiElement->relics[i].sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
             {
 
-                uiElement->relics[i].flavorImage.m_UiComponent.SetVisibility(true);
+                uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(true);
                 uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(true);
-                //uiElement->relics[i].flavorText.m_UiComponent.SetVisibility(true);
+                //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(true);
 
-                if (uiElement->relics[i].flavorImage.m_UiComponent.IsVisible() && uiElement->relics[i].doRedraw)
+                if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible() && uiElement->relics[i].doRedraw)
                 {
                     RedrawUI();
                     uiElement->relics[i].doRedraw = false;
@@ -198,12 +200,12 @@ bool UIRelicsSystem::Update()
             }
             else
             {
-                if (uiElement->relics[i].flavorImage.m_UiComponent.IsVisible())
+                if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible())
                 {
                     RedrawUI();
-                    uiElement->relics[i].flavorImage.m_UiComponent.SetVisibility(false);
+                    uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(false);
                     uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(false);
-                    //uiElement->relics[i].flavorText.m_UiComponent.SetVisibility(false);
+                    //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(false);
                     uiElement->relics[i].doRedraw = true;
                 }
 
@@ -219,10 +221,12 @@ bool UIRelicsSystem::Update()
 
         if (uiRelic->sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
         {
-            uiRelic->flavorImage.m_UiComponent.SetVisibility(true);
+            uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(true);
             uiRelic->flavorTitle.m_UiComponent.SetVisibility(true);
+            uiRelic->flavorDescImage.m_UiComponent.SetVisibility(true);
+            uiRelic->flavorDesc.m_UiComponent.SetVisibility(true);
 
-            if (uiRelic->flavorImage.m_UiComponent.IsVisible() && uiRelic->doRedraw)
+            if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible() && uiRelic->doRedraw)
             {
                 RedrawUI();
                 uiRelic->doRedraw = false;
@@ -230,12 +234,13 @@ bool UIRelicsSystem::Update()
         }
         else
         {
-            if (uiRelic->flavorImage.m_UiComponent.IsVisible())
+            if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible())
             {
                 RedrawUI();
-                uiRelic->flavorImage.m_UiComponent.SetVisibility(false);
+                uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(false);
                 uiRelic->flavorTitle.m_UiComponent.SetVisibility(false);
-                //uiRelic->flavorText.m_UiComponent.SetVisibility(false);
+                uiRelic->flavorDescImage.m_UiComponent.SetVisibility(false);
+                uiRelic->flavorDesc.m_UiComponent.SetVisibility(false);
                 uiRelic->doRedraw = true;
             }
 
@@ -288,7 +293,7 @@ bool UIShopSystem::Update()
                                         -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
         
         uiShopElement->playerInfo.UpdateText(playerInfo);
-        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 3) });
+        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 2) });
 
     }
 

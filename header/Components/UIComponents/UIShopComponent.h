@@ -22,13 +22,16 @@ struct UIShopRelicWindowComponent
 
 	bool doRedraw = true;
 
+	int price = -1;
 	bool locked = false;
+
 	UIImage m_baseImage;
+	UIText m_priceText;
 
-
-	void Setup(UIImage baseImage)
+	void Setup(UIImage baseImage, UIText priceText)
 	{
 		m_baseImage = baseImage;
+		m_priceText = priceText;
 	};
 };
 
@@ -39,6 +42,8 @@ struct UIShopComponent
 
 	UIImage baseImage;
 	UIText playerInfo;
+
+	bool ignore = true;
 
 	ML_Vector<Relics::RelicMetaData> relics;
 
