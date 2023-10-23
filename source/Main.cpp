@@ -6,6 +6,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
+//Uncomment this line for tests:
 //#define TEST3000
 
 #ifdef TEST3000
