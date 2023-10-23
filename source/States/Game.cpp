@@ -16,6 +16,7 @@
 #include "States\CleanupMacros.h"
 #include "Camera.h"
 #include "Light.h"
+#include "UIComponents.h"
 
 #include "RelicFunctions.h"
 
@@ -192,7 +193,8 @@ void GameScene::Unload()
 	for (auto entity : View<UIHealthComponent>(registry))
 	{
 		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
-		ph->image.Release();
+		ph->backgroundImage.Release();
+		ph->healthImage.Release();
 	}
 
 	for (auto entity : View<UIButton>(registry))

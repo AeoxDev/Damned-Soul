@@ -2,6 +2,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "Hitbox.h"
+#include "Model.h"
 
 void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float positionY , float positionZ , float mass , 
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth , float facingX ,
@@ -36,7 +37,7 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	{
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FlyingEyeDymmy.mdl"));
 		registry.AddComponent<EyeBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.f);
+		SetupEnemyCollisionBox(entity, 1.f, false);
 	}
 	else if (eType == enemyType::tempBoss)
 	{

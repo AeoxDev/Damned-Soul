@@ -2,16 +2,7 @@
 #include "IDX_Types.h"
 #include "MemLib\PoolPointer.hpp"
 #include <DirectXMath.h>
-
-enum ANIMATION_TYPE
-{
-	ANIMATION_IDLE = 'I',
-	ANIMATION_WALK = 'W',
-	ANIMATION_ATTACK = 'A',
-	ANIMATION_TAKE_DAMAGE = 'D',
-	ANIMATION_DEATH = 'X'
-};
-
+#include "AnimationType.h"
 struct Animation
 {
 private:

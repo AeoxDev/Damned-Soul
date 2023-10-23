@@ -9,6 +9,7 @@
 
 #include "EntityFramework.h"
 #include "Registry.h"
+#include <DirectXMath.h>
 #define LIGHT_COMPONENT_ARRAY_LIMIT 32
 
 //struct LightingStruct
@@ -21,7 +22,14 @@
 
 struct LightComponent
 {
-    int slot;
+    int slot = -1;
+};
+
+struct LightOffset
+{
+    DirectX::XMFLOAT4 lightDirectionOffset;
+    DirectX::XMFLOAT4 lightPositionOffset;
+    float angleY = 0.0f;
 };
 
 struct LightShaderData
@@ -31,8 +39,9 @@ struct LightShaderData
     float lightRange = 1.0f;
     float lightCone;
     DirectX::XMFLOAT4 lightColor;
-    DirectX::XMFLOAT4 lightDirection;
-    DirectX::XMFLOAT4 lightPosition;
+    DirectX::XMFLOAT4 lightDirection;//Post transform direction
+    DirectX::XMFLOAT4 lightPosition;//Post transform position
+   
 };
 
 struct LightComponentShaderBuffer
@@ -72,6 +81,7 @@ int16_t m_spotLightBufferIndex;
 
 SpotLightStruct SpotLight;
 LightComponentShaderBuffer lightShaderBuffer;
+LightOffset lightOffsets[LIGHT_COMPONENT_ARRAY_LIMIT];
 int16_t lightBufferIndex;
 bool updateBuffer = false;
 //ML_Vector<int> *freeSlot;//Stack of all free slots in the light component array
@@ -80,7 +90,8 @@ int freeSlotStack[LIGHT_COMPONENT_ARRAY_LIMIT];
 
 int PopSlotStack()
 {
-    return freeSlotStack[--lastSlot];
+    lastSlot -= 1;
+    return freeSlotStack[lastSlot];
 }
 void PushSlotStack(int& value)
 {
@@ -181,54 +192,6 @@ void Light::SetSpotLightCone(const float angle)
     UpdateConstantBuffer(Light::GetLightBufferIndex(3), &SpotLight);
 }
 
-DirectX::XMVECTOR Light::GetColor(int type)
-{
-    assert(type > 1 && type <= 3);
-    if (type == 1)
-    {
-        return DirectX::XMLoadFloat4(&lightShaderBuffer.dirLightColor); 
-    }
-    else if (type == 2)
-    {
-        return DirectX::XMLoadFloat4(&PointLight.m_pointLightColor);
-    }
-    else if (type == 3)
-    {
-        return DirectX::XMLoadFloat4(&SpotLight.m_spotLightColor);
-    }
-    return DirectX::XMVECTOR{ 0.0f, 0.0f, 0.0f, 0.0f };
-}
-
-DirectX::XMVECTOR Light::GetPosition(int type)
-{
-    assert(type > 1 && type <= 3);
-    if (type == 2)
-    {
-        return DirectX::XMLoadFloat4(&PointLight.m_pointLightPosition);
-
-    }
-    else if (type == 3)
-    {
-        return DirectX::XMLoadFloat4(&SpotLight.m_spotLightPosition);
-    }
-    return DirectX::XMVECTOR{0.0f, 0.0f, 0.0f, 0.0f};
-}
-
-DirectX::XMVECTOR Light::GetDirection(int type)
-{
-    assert(type > 1 && type <= 3 && type != 2);
-    if (type == 1)
-    {
-        return DirectX::XMLoadFloat4(&lightShaderBuffer.dirLightDirection);
-        
-    }
-    else if (type == 3)
-    {
-        return DirectX::XMLoadFloat4(&SpotLight.m_spotLightDirection);
-    }
-    return DirectX::XMVECTOR{ 0.0f, 0.0f, 0.0f, 0.0f };
-}
-
 int16_t Light::GetLightBufferIndex(int type)
 {
     assert(type > 1 && type <= 3);
@@ -268,9 +231,7 @@ void Light::SetColorHue(const float& multiplicativeRed, const float& multiplicat
         lightShaderBuffer.colorAdditive.z = additiveBlue;
         updateBuffer = true;
         UpdateLight();
-    }
-   
-    
+    }   
 }
 
 void Light::CreateLight(int type) //inte klar --constantbuffer
@@ -376,7 +337,6 @@ void Light::FreeLight()
     updateBuffer = true;
 }
 
-
 void SetDirectionLight(float colorRed, float colorGreen, float colorBlue, float directionX, float directionY, float directionZ)
 {
     Light::SetColor(1, colorRed, colorGreen, colorBlue);
@@ -396,6 +356,13 @@ int CreatePointLight(EntityID& entity, float colorRed, float colorGreen, float c
     lightShaderBuffer.lights[slot].lightPosition.z = positionZ;
     lightShaderBuffer.lights[slot].lightRange = range;
     lightShaderBuffer.lights[slot].fallofFactor = fallofFactor;
+    //Set the offsets
+     //Set the offsets
+    lightOffsets[slot].lightDirectionOffset.z = -1.0f;
+
+    lightOffsets[slot].lightPositionOffset.x = positionX;
+    lightOffsets[slot].lightPositionOffset.y = positionY;
+    lightOffsets[slot].lightPositionOffset.z = positionZ;
     updateBuffer = true;
     //Add light component to entity
     LightComponent* lightComponent = registry.AddComponent<LightComponent>(entity);
@@ -420,7 +387,14 @@ int CreateSpotLight(EntityID& entity, float colorRed, float colorGreen, float co
     lightShaderBuffer.lights[slot].lightDirection.x = directionX;
     lightShaderBuffer.lights[slot].lightDirection.y = directionY;
     lightShaderBuffer.lights[slot].lightDirection.z = directionZ;
-    lightShaderBuffer.lights[slot].lightCone = 3.1415f * angle / 180.0f;;
+    //Set the offsets
+    lightOffsets[slot].lightDirectionOffset.x = directionX;
+    lightOffsets[slot].lightDirectionOffset.y = directionY;
+    lightOffsets[slot].lightDirectionOffset.z = directionZ;
+    lightOffsets[slot].lightPositionOffset.x = positionX;
+    lightOffsets[slot].lightPositionOffset.y = positionY;
+    lightOffsets[slot].lightPositionOffset.z = positionZ;
+    lightShaderBuffer.lights[slot].lightCone = 3.1415f * angle / 180.0f;
   
     updateBuffer = true;
     //Add light component to entity
@@ -432,15 +406,162 @@ int CreateSpotLight(EntityID& entity, float colorRed, float colorGreen, float co
 void RemoveLight(EntityID& entity)
 {
     //Get the light component
-    LightComponent* light = registry.AddComponent<LightComponent>(entity);
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
     //Set type to inactive
-    if (light == nullptr || lightShaderBuffer.lights[light->slot].type == 0)
+    if (light == nullptr || light->slot < 0)
     {
+        //light->slot = -1;
         return;
     }
     lightShaderBuffer.lights[light->slot].type = 0;
     //Push back slot to stack
     PushSlotStack(light->slot);
+    //Make sure to set the slot to -1 so that new lights wont be removed by an old one.
+    light->slot = -1;
+    registry.RemoveComponent<LightComponent>(entity);
+    updateBuffer = true;
+}
 
+void OffsetPosition(EntityID& entity, const float& x, const float& y, const float& z)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    
+    //If there is actual movement, then do a gpu call
+    if (lightShaderBuffer.lights[light->slot].lightPosition.x != lightOffsets[light->slot].lightPositionOffset.x + x ||
+        lightShaderBuffer.lights[light->slot].lightPosition.y != lightOffsets[light->slot].lightPositionOffset.y + y ||
+        lightShaderBuffer.lights[light->slot].lightPosition.z != lightOffsets[light->slot].lightPositionOffset.z + z)
+    {
+        //Offset position by x, y, z respectively.
+        lightShaderBuffer.lights[light->slot].lightPosition.x = lightOffsets[light->slot].lightPositionOffset.x + x;
+        lightShaderBuffer.lights[light->slot].lightPosition.y = lightOffsets[light->slot].lightPositionOffset.y + y;
+        lightShaderBuffer.lights[light->slot].lightPosition.z = lightOffsets[light->slot].lightPositionOffset.z + z;
+        updateBuffer = true;
+    }
+   
+}
+void OffsetFacing(EntityID& entity, const float& x, const float& y, const float& z)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+
+    float angleY = acosf(x);
+
+    if (z < 0.0f)
+    {
+        angleY *= -1.0f;
+    }
+    //Check if angle is changed or not
+    if (angleY != lightOffsets[light->slot].angleY)
+    {
+        float offsetXx = -sinf(angleY);
+        float offsetZz = -sinf(angleY);
+        float offsetXz = -cosf(angleY);
+        float offsetZx = cosf(angleY);
+        lightShaderBuffer.lights[light->slot].lightDirection.x = lightOffsets[light->slot].lightDirectionOffset.x * offsetXx + lightOffsets[light->slot].lightDirectionOffset.z * offsetXz;
+        lightShaderBuffer.lights[light->slot].lightDirection.z = lightOffsets[light->slot].lightDirectionOffset.z * offsetZz + lightOffsets[light->slot].lightDirectionOffset.x * offsetZx;
+        float length = sqrtf((lightShaderBuffer.lights[light->slot].lightDirection.x * lightShaderBuffer.lights[light->slot].lightDirection.x)
+            + (lightShaderBuffer.lights[light->slot].lightDirection.y * lightShaderBuffer.lights[light->slot].lightDirection.y)
+            + (lightShaderBuffer.lights[light->slot].lightDirection.z * lightShaderBuffer.lights[light->slot].lightDirection.z));
+        lightShaderBuffer.lights[light->slot].lightDirection.x /= length;
+        lightShaderBuffer.lights[light->slot].lightDirection.y /= length;
+        lightShaderBuffer.lights[light->slot].lightDirection.z /= length;
+        updateBuffer = true;
+    }
+    lightOffsets[light->slot].angleY = angleY;
+}
+
+//Getters
+float3 GetLightPosition(const EntityID& entity)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    float3 toReturn = { lightOffsets[light->slot].lightPositionOffset.x,
+    lightOffsets[light->slot].lightPositionOffset.y,
+    lightOffsets[light->slot].lightPositionOffset.z };
+    return toReturn;
+}
+float3 GetLightColor(const EntityID& entity)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    float3 toReturn = { lightShaderBuffer.lights[light->slot].lightColor.x,
+    lightShaderBuffer.lights[light->slot].lightColor.y,
+    lightShaderBuffer.lights[light->slot].lightColor.z };
+    return toReturn;
+}
+float3 GetLightDirection(const EntityID& entity)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    float3 toReturn = { lightOffsets[light->slot].lightDirectionOffset.x,
+    lightOffsets[light->slot].lightDirectionOffset.y,
+    lightOffsets[light->slot].lightDirectionOffset.z };
+    return toReturn;
+}
+float GetLightRange(const EntityID& entity)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    return lightShaderBuffer.lights[light->slot].lightRange;
+}
+float GetLightFallofFactor(const EntityID& entity)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    return lightShaderBuffer.lights[light->slot].fallofFactor;
+}
+float GetLightAngle(const EntityID& entity)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    return lightShaderBuffer.lights[light->slot].lightCone;
+}
+
+//Setters
+void SetLightPosition(const EntityID& entity, const float& x, const float& y, const float& z)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    lightOffsets[light->slot].lightPositionOffset.x = x;
+    lightOffsets[light->slot].lightPositionOffset.y = y;
+    lightOffsets[light->slot].lightPositionOffset.z = z;
+    updateBuffer = true;
+}
+void SetLightColor(const EntityID& entity, const float& x, const float& y, const float& z)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    lightShaderBuffer.lights[light->slot].lightColor.x = x;
+    lightShaderBuffer.lights[light->slot].lightColor.y = y;
+    lightShaderBuffer.lights[light->slot].lightColor.z = z;
+    updateBuffer = true;
+}
+void SetLightDirection(const EntityID& entity, const float& x, const float& y, const float& z)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    lightOffsets[light->slot].lightDirectionOffset.x = x;
+    lightOffsets[light->slot].lightDirectionOffset.y = y;
+    lightOffsets[light->slot].lightDirectionOffset.z = z;
+    updateBuffer = true;
+}
+void SetLightRange(const EntityID& entity, const float& range)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    lightShaderBuffer.lights[light->slot].lightRange = range;
+    updateBuffer = true;
+}
+void SetLightFallofFactor(const EntityID& entity, const float& fallof)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    lightShaderBuffer.lights[light->slot].lightRange = fallof;
+    updateBuffer = true;
+}
+void SetLightAngle(const EntityID& entity, const float& angle)
+{
+    LightComponent* light = registry.GetComponent<LightComponent>(entity);
+    assert(light != nullptr);
+    lightShaderBuffer.lights[light->slot].lightCone = 3.1415f * angle / 180.0f;
     updateBuffer = true;
 }
