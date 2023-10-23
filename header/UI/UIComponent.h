@@ -1,6 +1,7 @@
 #pragma once
 #include "UI.h"
 #include <DirectXMath.h>
+#include <d2d1helper.h>
 
 struct UIComponent
 {

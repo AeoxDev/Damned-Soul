@@ -9,6 +9,8 @@
 #include "States\CleanupMacros.h"
 #include "UI/UIButtonFunctions.h"
 #include "Level.h"
+#include "Model.h"
+#include "UIComponents.h"
 
 void Menu::Setup()//Load
 {
@@ -23,16 +25,19 @@ void Menu::Setup()//Load
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
+	// Stage Model
 	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
-	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
-	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
-
 	stageM->model = LoadModel("PlaceholderScene.mdl");
+	// Stage Transform
+	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
+	// Stage POI
+	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
 	stageP->mode = POI_FORCE;
 	stageP->height = CAMERA_OFFSET_Y * -0.85f;
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.12f;
+	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 }
 
 void Menu::Input()
@@ -136,7 +141,9 @@ void Menu::Unload()
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.DestroyEntity({ i, false });
+		EntityID check = registry.entities.at(i).id;
+		if (check.state == false)
+			registry.DestroyEntity(check);
 	}
 
 	ClearUI();

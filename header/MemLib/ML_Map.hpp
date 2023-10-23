@@ -94,15 +94,15 @@ public:
 		}
 
 		// Provide a temporary copy of the data
-		std::pair<_tKey, _tVal>* temp = (std::pair<_tKey, _tVal>*)MemLib::spush(m_capacity * m_tSize);
-		std::memcpy(temp, &(*m_data), m_capacity * m_tSize);
+		std::pair<_tKey, _tVal>* temp = (std::pair<_tKey, _tVal>*)MemLib::spush((size_t)(m_capacity * m_tSize));
+		std::memcpy(temp, &(*m_data), (size_t)(m_capacity * m_tSize));
 
 		// Free the old pool pointer and allocate a new one
 		MemLib::pfree(m_data);
 		m_data = MemLib::palloc(capacity * m_tSize);
 
 		// Copy the data over to the new location and pop the temp from the stack
-		std::memcpy(&(*m_data), temp, m_capacity * m_tSize);
+		std::memcpy(&(*m_data), temp, (size_t)(m_capacity * m_tSize));
 		MemLib::spop();
 
 		// Inform the new capacity
@@ -169,7 +169,8 @@ public:
 				m_data[i].~pair();
 
 				// Overwrite
-				std::memcpy(&(m_data[i]), &(m_data[i + 1]), (m_size - i) * m_tSize);
+				if (i < (m_size - 1))
+					std::memcpy(&(m_data[i]), &(m_data[i + 1]), (m_size - i) * m_tSize);
 				return --m_size;
 			}
 		}
@@ -209,7 +210,7 @@ public:
 		m_tSize = other.m_tSize;
 
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 
 		for (uint32_t i = 0; i < m_size; ++i)
 			new(&m_data[i]) std::pair<_tKey,_tVal>(other.m_data[i].first, other.m_data[i].second);
@@ -229,7 +230,7 @@ public:
 
 		// Allocate new to memory pool
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 	};
 
 	const ML_Map& Initialize()
@@ -242,7 +243,7 @@ public:
 
 		// Allocate new to memory pool
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 
 		return *this;
 	}
@@ -257,7 +258,7 @@ public:
 
 		// Free the old memory
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 		// Set items
 
 		for (uint32_t i = 0; i < m_size; ++i)
@@ -277,7 +278,7 @@ public:
 
 		// Free the old memory
 		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(m_capacity * m_tSize);
+		m_data = MemLib::palloc((size_t)(m_capacity * m_tSize));
 
 		// Set items
 		for (const std::pair<_tKey, _tVal>& pair : { pairs... })

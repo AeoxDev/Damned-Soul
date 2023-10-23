@@ -8,6 +8,8 @@
 #include "GameRenderer.h"
 #include "UI/UIRenderer.h"
 #include "Particles.h"
+#include "D3D11Graphics.h"
+#include "Light.h"
 
 State currentStates;
 StateManager stateManager;
@@ -108,13 +110,18 @@ void StateManager::Setup()
 	systems.push_back(new GeometryIndependentSystem());
 	systems.push_back(new PointOfInterestSystem());
 
+	//Damage Over Time (Misc Combat Systems?)
+	systems.push_back(new DamageOverTimeSystem());
+
 	//AI Systems
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
+	systems.push_back(new TempBossBehaviourSystem());
 
+
+	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
 	systems.push_back(new TransformSystem());
-	systems.push_back(new CollisionSystem());
 	systems.push_back(new EventSystem());
 	systems.push_back(new StateSwitcherSystem());
 
@@ -198,8 +205,8 @@ void StateManager::UnloadAll()
 	shop.Unload();
 	levelScenes[0].Unload();
 	levelScenes[1].Unload();
-
 	Particles::ReleaseParticles();
+	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
@@ -214,7 +221,7 @@ void StateManager::EndFrame()
 	//MemLib::pdefrag();
 }
 
-GameScene StateManager::GetCurrentLevel()
+GameScene& StateManager::GetCurrentLevel()
 {
 	return levelScenes[activeLevelScene];
 }

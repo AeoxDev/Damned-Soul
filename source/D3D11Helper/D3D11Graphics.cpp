@@ -183,8 +183,7 @@ void EndDirectX()
 	}
 	rtvHolder->rtv_map.clear();
 
-	// TODO THIS IS PROBABLY THE CAUSE FOR THE UNRELEASED TEXTURE BUT UNCOMMENTING THIS
-	// CRASHES SRV'S RELEASE EVEN THOUGH IT SHOULD NOT AS REFERENCE IS PROPERLY ADDED IN RENDERHELPER
+	// Release all RTV textures
 	for (auto& [key, val] : rtvHolder->tx_map)
 	{
 		if (val != nullptr)

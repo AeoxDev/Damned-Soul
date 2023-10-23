@@ -1,5 +1,6 @@
 #include "UI/UIComponent.h"
 #include "SDLHandler.h"
+#include <d2d1.h>
 
 using namespace DirectX;
 
@@ -49,7 +50,6 @@ void UIComponent::Setup(DirectX::XMFLOAT2 scale, float rotation, bool visibility
 	m_Scale = scale;
 	m_Rotation = rotation;
 	m_Visibility = visibility;
-
 	m_CurrentBounds = { 0, 0, 0, 0 };
 	m_OriginalBounds = { 0, 0, 0, 0 };
 

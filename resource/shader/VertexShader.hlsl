@@ -22,8 +22,6 @@ struct VS_OUT
     float4 position : SV_POSITION; //world, view, projection - multiplyed
     float4 normal : WNORMAL; //world - multiplyed
     float2 uv : UV;
-    uint4 index : INDEX;
-    float4 weight : WEIGHT;
     float4 camToWorldObject : CAM; // normalized 
     float4 world : WORLD;
 };
@@ -44,9 +42,6 @@ VS_OUT main(VS_INPUTS pos)
 	
     output.position = mul(output.position, view);
     output.position = mul(output.position, projection);
-    
-    output.index = 0;
-    output.weight = 0;
 	
     return output;
 }

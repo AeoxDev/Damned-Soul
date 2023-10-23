@@ -1,5 +1,10 @@
 #include "SDLhandler.h"
 #include "UI/UIRenderer.h"
+#include <assert.h>
+#include <d2d1.h>
+
+#include <wincodec.h>
+#include <dwrite.h>
 
 UI ui;
 

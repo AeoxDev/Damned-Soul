@@ -15,7 +15,7 @@ void PauseState::Setup()
 
 void PauseState::Input()
 {
-	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
+	if (keyState[SCANCODE_ESCAPE] == pressed)
 	{
 		SetInPause(false);
 		SetInPlay(true);

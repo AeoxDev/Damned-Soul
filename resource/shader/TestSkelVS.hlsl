@@ -10,10 +10,8 @@ cbuffer CameraBuffer : register(b1)
     matrix projection;
 }
 
-cbuffer Skeleton : register(b2)
-{
-	matrix skeleMath[21];
-}
+// Structured buffer of bones
+StructuredBuffer<matrix> skeleMath : register(t0);
 
 struct VS_INPUTS
 {
@@ -39,8 +37,6 @@ struct VS_OUT //VS_OUT needs to be exaxtly the same in all vertexshaders
     float4 position : SV_POSITION; //world, view, projection - multiplyed
     float4 normal : WNORMAL; //world - multiplyed
     float2 uv : UV;
-    uint4 index : INDEX;
-    float4 weight : WEIGHT;
     float4 camToWorldObject : CAM; // normalized 
     float4 world : WORLD;
 };
@@ -67,9 +63,6 @@ VS_OUT main(VS_INPUTS pos)
     retval.camToWorldObject = normalize(cameraPosition - retval.position); //använder världs position innan camera perspective
     retval.position = mul(retval.position, view);
     retval.position = mul(retval.position, projection);
-
-	retval.index = pos.bIdx;
-	retval.weight = pos.bWeight;
 
 	return retval;
 }

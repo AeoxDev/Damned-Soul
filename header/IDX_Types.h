@@ -19,6 +19,9 @@ typedef int8_t	CS_IDX;
 // Constant Buffer index type definition
 typedef int16_t CB_IDX;
 
+// Structured Buffer index type definition
+typedef int16_t SB_IDX;
+
 // Vertex Buffer index type definition
 typedef int16_t VB_IDX;
 

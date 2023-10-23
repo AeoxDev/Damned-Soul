@@ -1,7 +1,7 @@
 #pragma once
-#include "UI/UI.h"
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+
+#include "IDX_Types.h"
+
 
 struct RenderSetupComponent
 {
@@ -38,4 +38,4 @@ void RenderIndexed(const size_t& count);
 void RenderOffset(const size_t& count, const size_t& offset);
 void ClearParticles();
 void Present();
-void Dispatch(UINT threadX, UINT threadY, UINT threadZ);
+void Dispatch(unsigned int threadX, unsigned int threadY, unsigned int threadZ);

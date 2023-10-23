@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "UIComponent.h"
-#include "MemLib/PoolPointer.hpp"
 
 struct UIText
 {

@@ -1,11 +1,9 @@
 #include "UIButtonFunctions.h"
 #include "States\StateManager.h"
 #include "SDLHandler.h"
-#include "EntityFramework.h"
-#include "Registry.h"
-#include "Components.h"
 #include "Level.h"
-#include "CollisionFunctions.h"
+#include "D3D11Helper.h"
+#include "GameRenderer.h"
 
 void UIFunc::MainMenu_Start(void* args)
 {
@@ -13,7 +11,8 @@ void UIFunc::MainMenu_Start(void* args)
 	SetInMainMenu(false);
 	stateManager.menu.Unload();
 	//LoadLevel(1);
-	LoadLevel(stateManager.activeLevelScene + 1);
+	stateManager.activeLevel = 1;
+	LoadLevel(stateManager.activeLevel);
 }
 
 void UIFunc::MainMenu_Settings(void* args)

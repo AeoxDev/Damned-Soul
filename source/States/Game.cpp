@@ -15,8 +15,15 @@
 #include "EventFunctions.h"
 #include "States\CleanupMacros.h"
 #include "Camera.h"
+#include "Light.h"
+#include "UIComponents.h"
+
+#include "RelicFunctions.h"
 
 #include "MemLib\ML_String.hpp"
+
+// Relic Stuff
+#include "RelicFunctions.h"
 
 void GameScene::Setup(int scene)//Load
 {
@@ -47,24 +54,25 @@ void GameScene::Input()
 	{
 		for (auto entity : View<RelicHolderComponent, UIPlayerRelicsComponent>(registry))
 		{
-			auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
+			//auto relicHolder = registry.GetComponent<RelicHolderComponent>(entity);
 			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
 
 			if (uiElement->relics.size() > 8)
 				break;
 
-			relicHolder->AddRelic<DamageRelic>();
+			//relicHolder->AddRelic<DamageRelic>();
+			Relics::RelicMetaData md = Relics::SoulHealth(true);
 
 			UIImage relicImage, relicFlavorImage;
-			relicImage.Setup("TempRelic1.png");
+			relicImage.Setup(md.filePath);//("TempRelic1.png");
 			relicFlavorImage.Setup("TempRelicFlavorHolder2.png");
 
 			relicFlavorImage.m_UiComponent.SetVisibility(false);
 			relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
 
 			UIText flavorTitle, flavorText;
-			ML_String name = relicHolder->GetRelic<DamageRelic>()->name;
-			ML_String text = relicHolder->GetRelic<DamageRelic>()->flavorText;
+			ML_String name = md.relicName;//relicHolder->GetRelic<DamageRelic>()->name;
+			ML_String text = md.description;// relicHolder->GetRelic<DamageRelic>()->flavorText;
 
 			std::wstring nameAsWString(name.begin(), name.end());
 			std::wstring textAsWString(text.begin(), text.end());
@@ -185,7 +193,8 @@ void GameScene::Unload()
 	for (auto entity : View<UIHealthComponent>(registry))
 	{
 		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
-		ph->image.Release();
+		ph->backgroundImage.Release();
+		ph->healthImage.Release();
 	}
 
 	for (auto entity : View<UIButton>(registry))
@@ -200,12 +209,20 @@ void GameScene::Unload()
 		i->Release();
 	}
 
-	
+	for (auto entity : View<ProximityHitboxComponent>(registry))
+	{
+		ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(entity);
+		p->pointList.~ML_Vector();
+	}
+
+	Light::FreeLight();
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.DestroyEntity({ i, false });
+		EntityID check = registry.entities.at(i).id;
+		if(check.state == false)
+			registry.DestroyEntity(check);
 	}
 }
 
@@ -214,5 +231,6 @@ void GameScene::GameOver()
 	SetInMainMenu(true);
 	SetInPlay(false);
 	Unload();
+	Relics::ClearRelicFunctions();
 	stateManager.menu.Setup();
 }

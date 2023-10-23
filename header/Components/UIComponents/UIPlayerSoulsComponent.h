@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <DirectXMath.h>
 
 #include "UI\UIImage.h"

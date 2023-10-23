@@ -9,6 +9,7 @@
 #include "UI/UIButtonFunctions.h"
 #include "D3D11Helper.h"
 #include "GameRenderer.h"
+#include "UIComponents.h"
 
 
 void SettingsState::Setup()
@@ -101,7 +102,9 @@ void SettingsState::Unload()
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
-		registry.DestroyEntity({ i, false });
+		EntityID check = registry.entities.at(i).id;
+		if (check.state == false)
+			registry.DestroyEntity(check);
 	}
 	
 }

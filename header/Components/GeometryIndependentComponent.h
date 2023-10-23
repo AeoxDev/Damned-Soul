@@ -1,5 +1,6 @@
 #pragma once
-#include "EntityFramework.h"
+
+struct EntityID;
 
 struct GeometryIndependentComponent;
 
