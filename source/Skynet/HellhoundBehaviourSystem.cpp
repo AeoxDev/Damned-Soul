@@ -27,8 +27,14 @@ void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool c
 	
 }
 
-void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats)
+void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* htc)
 {
+
+	hc->goalDirectionX = ptc->positionX - htc->positionX;
+	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
+	SmoothRotation(htc, hc->goalDirectionX, hc->goalDirectionZ);
+
+
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (hc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
@@ -293,7 +299,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	}
 
 
-	//end �f function. check if current range >= max, that would end the attacks
+	//end of function. check if current range >= max, that would end the attacks
 	if (hc->currentShootingAttackRange >= hc->offsetForward)
 	{
 		hc->isShooting = false;
@@ -432,7 +438,7 @@ bool HellhoundBehaviourSystem::Update()
 			else if (distance < 2.5f) // fight club and not currently shooting
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
-				CombatBehaviour(hellhoundComponent, enemyStats, playerStats);
+				CombatBehaviour(hellhoundComponent, enemyStats, playerStats, playerTransformCompenent, hellhoundTransformComponent);
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
