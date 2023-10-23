@@ -99,6 +99,7 @@ void UIFunc::Settings_HighRes(void* args)
 		sdl.HEIGHT = 1080;
 		sdl.WINDOWED_WIDTH = sdl.WIDTH;
 		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
