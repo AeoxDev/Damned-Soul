@@ -19,6 +19,10 @@ class ControllerSystem : public System
 {
 	bool Update();
 };
+class KnockBackSystem : public System
+{
+	bool Update();
+};
 class GeometryIndependentSystem : public System
 {
 	bool Update();

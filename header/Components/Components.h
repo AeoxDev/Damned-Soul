@@ -29,6 +29,7 @@
 
 //Collision
 #include "HitboxComponent.h"
+#include "KnockBackComponent.h"
 
 //AI Behaviours
 #include "Skynet\SkeletonBehaviour.h"
