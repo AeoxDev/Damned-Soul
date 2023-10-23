@@ -8,7 +8,7 @@
 #include "Input.h"
 
 #include "MemLib\ML_String.hpp"
-
+#include "UIComponents.h"
 #include <iomanip>
 
 bool uiUpdated = true;
@@ -28,11 +28,11 @@ bool UIRenderSystem::Update()
 		UpdateUI();
 		Begin2dFrame(ui);
 
-		for (auto entity : View<UIButton>(registry))
-			registry.GetComponent<UIButton>(entity)->Draw();
-
 		for (auto entity : View<UIImage>(registry))
 			registry.GetComponent<UIImage>(entity)->Draw();
+
+		for (auto entity : View<UIButton>(registry))
+			registry.GetComponent<UIButton>(entity)->Draw();
 
 		for (auto entity : View<UIPlayerRelicsComponent>(registry))
 		{

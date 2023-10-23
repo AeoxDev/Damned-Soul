@@ -1,5 +1,4 @@
 #pragma once
-#include <cinttypes>
 #include "Format.h"
 #include "IDX_Types.h"
 //This contains helper functions for setting up renderable objects
@@ -259,7 +258,7 @@ void ReleaseUAV(const UAV_IDX idx);
 
 
 // Clear the render target
-void ClearRenderTargetView(const RTV_IDX idx, float r = 1.0f, float g = 0.f, float b = 0.84f, float a = 0.0f);
+void ClearRenderTargetView(const RTV_IDX idx, float r = 0.258f, float g = 0.258f, float b = 0.258f, float a = 0.0f);
 // Clear the depth stencil
 void ClearDepthStencilView(const DSV_IDX idx);
 

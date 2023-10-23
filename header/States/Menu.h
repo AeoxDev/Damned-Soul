@@ -16,5 +16,5 @@ struct Menu
 	void SetupImages();
 	void SetupText();
 
-	void Unload(bool last);
+	void Unload();
 };

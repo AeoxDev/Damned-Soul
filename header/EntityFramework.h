@@ -5,7 +5,7 @@
 #include "MemLib/MemLib.hpp"
 #include "MemLib/ML_Vector.hpp"
 #include "MemLib/ML_ComponentMap.hpp"
-
+#include "EntityID.h"
 
 /*
 	//HOW TO USE (Basic version):
@@ -44,11 +44,11 @@
 */
 
 //Just for better readability
-struct EntityID
-{
-	int index;
-	bool state; //Boolean to check if the entity has been destroyed or not
-};
+//struct EntityID
+//{
+//	int index;
+//	bool state; //Boolean to check if the entity has been destroyed or not
+//};
 
 extern int compCount;
 namespace EntityGlobals

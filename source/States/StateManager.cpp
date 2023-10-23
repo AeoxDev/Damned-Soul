@@ -89,9 +89,13 @@ void SetInShop(bool value)
 	}
 }
 
-void StateManager::Setup()
+int StateManager::Setup()
 {
-	Setup3dGraphics();
+	bool loaded = Setup3dGraphics();
+	if (!loaded)
+	{
+		return -1;
+	}
 	ui.RenderSlot = SetupUIRenderState();
 
 	ui.Setup();
@@ -129,6 +133,7 @@ void StateManager::Setup()
 	systems.push_back(new ButtonSystem());
 
 	// CPU
+	systems.push_back(new KnockBackSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
@@ -157,6 +162,8 @@ void StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIPlayerRelicsSystem());
 	systems.push_back(new UIGameLevelSystem());
+
+	return 0;
 
 }
 
@@ -225,13 +232,13 @@ void StateManager::ComputeShaders()
 	}*/
 }
 
-void StateManager::UnloadAll(bool last)
+void StateManager::UnloadAll()
 {
-	menu.Unload(last);
-	settings.Unload(last);
-	shop.Unload(last);
-	levelScenes[0].Unload(last);
-	levelScenes[1].Unload(last);
+	menu.Unload();
+	settings.Unload();
+	shop.Unload();
+	levelScenes[0].Unload();
+	levelScenes[1].Unload();
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();

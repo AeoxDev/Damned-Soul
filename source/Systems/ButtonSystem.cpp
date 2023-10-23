@@ -7,8 +7,7 @@
 #include "UI/UIRenderer.h"
 #include "SDLHandler.h"
 #include "UIButtonFunctions.h"
-
-#include <iostream>
+#include "UIComponents.h"
 
 bool ButtonSystem::Update()
 {

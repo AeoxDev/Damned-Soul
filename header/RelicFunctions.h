@@ -30,6 +30,14 @@ namespace Relics
 		// arguments: foo(soulDelta)
 		FUNC_ON_SOUL_UPDATE,
 
+		// Called when a frame is being calculared
+		// arguments: foo(timeDelta)
+		FUNC_ON_FRAME_UPDATE,
+
+		// Call when a new level is loaded
+		// arguments: foo(void)
+		FUNC_ON_LEVEL_SWITCH,
+
 		// Used to iterate, not to give functionality to relics
 		FUNC_END_OF_TYPES
 	};
@@ -75,4 +83,12 @@ namespace Relics
 	// Get the metadata of the relic "Soul Health".
 	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
 	RelicMetaData SoulHealth(const bool AddRelicFunctions = false);
+
+	// Get the metadata of the relic "Speedy Little Devil".
+	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
+	RelicMetaData SpeedyLittleDevil(const bool AddRelicFunctions = false);
+
+	// Get the metadata of the relic "Soul Health".
+	// Setting 'AddRelicFunctions = true' calls and/or adds the relic's functions
+	RelicMetaData LightningGod(const bool AddRelicFunctions = false);
 }

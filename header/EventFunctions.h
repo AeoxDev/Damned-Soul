@@ -8,6 +8,10 @@ void BeginHit(EntityID& entity, const int& index);
 void MiddleHit(EntityID& entity, const int& index);
 void EndHit(EntityID& entity, const int& index);
 
+//
+void HazardBeginHit(EntityID& entity, const int& index);
+void HazardEndHit(EntityID& entity, const int& index);
+
 /*PLAYER EVENTS*/
 //START
 void PlayerLoseControl(EntityID& entity, const int& index);
@@ -30,3 +34,6 @@ void CreatePortal(EntityID& entity, const int& index);
 void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
+
+//Loop static hazard hitbox
+void LoopHitbox(EntityID& entity, const int& index);

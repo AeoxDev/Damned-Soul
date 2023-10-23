@@ -11,6 +11,6 @@ struct GameScene
 	void Update();
 	void ComputeShaders();
 
-	void Unload(bool last);
+	void Unload();
 	void GameOver();
 };

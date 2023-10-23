@@ -16,11 +16,12 @@
 #include "TimedEventComponent.h"
 
 //GUI
-#include "UIComponents/UIButtonComponent.h"
-#include "UIComponents/UIHealthComponent.h"
-#include "UIComponents/UIPlayerSoulsComponent.h"
-#include "UIComponents/UIPlayerRelicsComponent.h"
-#include "UIComponents/UIGameLevelComponent.h"
+//This is a compiler slug. Please remove directxmath from includes for these before adding them to components.h
+//#include "UIComponents/UIButtonComponent.h"
+//#include "UIComponents/UIHealthComponent.h"
+//#include "UIComponents/UIPlayerSoulsComponent.h"
+//#include "UIComponents/UIPlayerRelicsComponent.h"
+//#include "UIComponents/UIGameLevelComponent.h"
 
 //GUI To Be Decapritated
 #include "TextComponent.h"
@@ -29,6 +30,7 @@
 
 //Collision
 #include "HitboxComponent.h"
+#include "KnockBackComponent.h"
 
 //AI Behaviours
 #include "Skynet\SkeletonBehaviour.h"

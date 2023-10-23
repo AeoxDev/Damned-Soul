@@ -420,8 +420,8 @@ void CreateShadersLayoutAndRasterState()
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
-
-	assert(!FAILED(d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader)));
+	HRESULT hr = (d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader));
+	assert(SUCCEEDED(hr));
 	std::string vShaderByteCode = shaderData;
 
 	//Geometry Shader
@@ -436,8 +436,8 @@ void CreateShadersLayoutAndRasterState()
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
-
-	assert(!FAILED(d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader)));
+	hr = d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader);
+	assert(SUCCEEDED(hr));
 
 	//Pixel Shader
 	shaderData.clear();
@@ -451,25 +451,25 @@ void CreateShadersLayoutAndRasterState()
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)),
 		std::istreambuf_iterator<char>());
-
-	assert(!FAILED(d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader)));
+	hr = d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader);
+	assert(SUCCEEDED(hr));
 
 	//Input Layout
 	D3D11_INPUT_ELEMENT_DESC inputDesc[1] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
-
+	hr = d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout);
 	//Array of input descriptions, number of elements, pointer to compiled shader, size of compiled shader, pointer to input-layout.
-	assert(!FAILED(d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout)));
+	assert(SUCCEEDED(hr));
 
 	//Raster State
 	D3D11_RASTERIZER_DESC rasterDesc{};
 	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = false;
-
-	assert(!FAILED(d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster)));
+	d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster);
+	assert(SUCCEEDED(hr));
 }
 
 void DestroyHitboxVisualizeVariables()
@@ -696,7 +696,7 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 	}
 }
 
-void SetupEnemyCollisionBox(EntityID& entity, float radius)
+void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStaticHazards)
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
@@ -704,9 +704,10 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsEnemy(entity, hID);
 	SetHitboxHitPlayer(entity, hID);
-	//SetHitboxHitEnemy(entity, hID);
+	SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
+	SetHitboxHitWall(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, SoftCollision);
@@ -715,6 +716,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	//SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
+	SetHitboxHitStaticHazard(entity, sID, affectedByStaticHazards);
 	SetHitboxCanTakeDamage(entity, sID);
 
 	SetHitboxCanDealDamage(entity, sID, false);
@@ -727,6 +729,19 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius)
 	SetHitboxIsMoveable(entity, enemyComp->attackHitBoxID);
 	SetHitboxCanTakeDamage(entity, enemyComp->attackHitBoxID, false);
 	SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+}
+
+void SetupLavaCollisionBox(EntityID& entity, float radius)
+{
+	AddHitboxComponent(entity);
+	int staticID = CreateHitbox(entity, radius, 0.f, 0.0f);
+	SetCollisionEvent(entity, staticID, StaticHazardAttackCollision);
+	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+	SetHitboxHitPlayer(entity, staticID);
+	SetHitboxActive(entity, staticID);
+	//SetHitboxIsStaticHazard(entity, staticID);
+	//SetHitboxCanTakeDamage(entity, staticID, false);
+	SetHitboxCanDealDamage(entity, staticID, true);
 }
 
 void SetupPlayerCollisionBox(EntityID& entity, float radius)
@@ -743,6 +758,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
+	SetHitboxHitStaticHazard(entity, hID, true);
 	SetHitboxCanDealDamage(entity, hID, false);
 	SetHitboxCanTakeDamage(entity, hID, true);
 
@@ -764,6 +780,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxIsMoveable(entity, sID);
 	SetHitboxCanDealDamage(entity, sID, false);
 	SetHitboxCanTakeDamage(entity, sID, true);
+	SetHitboxHitStaticHazard(entity, sID, true);
 	playerComp->softHitboxID = sID;
 
 	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, -1.5f);

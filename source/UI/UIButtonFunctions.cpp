@@ -11,7 +11,7 @@ void UIFunc::MainMenu_Start(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
-	stateManager.menu.Unload(false);
+	UnloadEntities(false);
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
@@ -31,12 +31,13 @@ void UIFunc::MainMenu_Settings(void* args)
 {
 	SetInSettings(true);
 	SetInMainMenu(false);
-	stateManager.menu.Unload(false);
+	stateManager.menu.Unload();
 	stateManager.settings.Setup();
 }
 
 void UIFunc::MainMenu_Quit(void* args)
 {
+	UnloadEntities(true);
 	sdl.quit = true;
 }
 
@@ -45,7 +46,7 @@ void UIFunc::Settings_Back(void* args)
 {
 	SetInMainMenu(true);
 	SetInSettings(false);
-	stateManager.settings.Unload(false);
+	stateManager.settings.Unload();
 	stateManager.menu.Setup();
 }
 
@@ -110,6 +111,7 @@ void UIFunc::Settings_HighRes(void* args)
 		sdl.HEIGHT = 1080;
 		sdl.WINDOWED_WIDTH = sdl.WIDTH;
 		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
@@ -127,7 +129,7 @@ void UIFunc::Settings_Fullscreen(void* args)
 		SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
 	}
 	else
 	{

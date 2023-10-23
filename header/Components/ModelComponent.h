@@ -1,7 +1,7 @@
 #pragma once
-#include "Model.h"
-#include "MemLib\ML_Vector.hpp"
-
+//#include "Model.h"
+//#include "MemLib\ML_Vector.hpp"
+#include <stdint.h>
 struct ModelBonelessComponent
 {
 	uint64_t model;

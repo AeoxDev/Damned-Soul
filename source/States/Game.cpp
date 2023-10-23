@@ -16,6 +16,7 @@
 #include "States\CleanupMacros.h"
 #include "Camera.h"
 #include "Light.h"
+#include "UIComponents.h"
 
 #include "RelicFunctions.h"
 
@@ -45,7 +46,7 @@ void GameScene::Input()
 	{
 		SetInMainMenu(true);
 		SetInPlay(false);
-		Unload(false);
+		Unload();
 		stateManager.menu.Setup();
 	}
 
@@ -60,7 +61,7 @@ void GameScene::Input()
 				break;
 
 			//relicHolder->AddRelic<DamageRelic>();
-			Relics::RelicMetaData md = Relics::SoulHealth(true);
+			Relics::RelicMetaData md = Relics::FrostFire(true);
 
 			UIImage relicImage, relicFlavorImage;
 			relicImage.Setup(md.filePath);//("TempRelic1.png");
@@ -144,118 +145,21 @@ void GameScene::ComputeShaders()
 	Particles::FinishParticleCompute();*/
 }
 
-void GameScene::Unload(bool last)
+void GameScene::Unload()
 {
 	// If this state is not active, simply skip the unload
 	if (false == m_active)
 		return;
 	m_active = false; // Set active to false
 
-	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
-	{
-		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
-		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-	}
-
-	for (auto entity : View<ModelSkeletonComponent>(registry))
-	{
-		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
-		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-	}
-
-	for (auto entity : View<UIPlayerSoulsComponent>(registry))
-	{
-		UIPlayerSoulsComponent* ps = registry.GetComponent<UIPlayerSoulsComponent>(entity);
-		ps->image.Release();
-	}
-
-	for (auto entity : View<UIGameLevelComponent>(registry))
-	{
-		UIGameLevelComponent* ps = registry.GetComponent<UIGameLevelComponent>(entity);
-		ps->image.Release();
-	}
-
-	for (auto entity : View<UIPlayerRelicsComponent>(registry))
-	{
-		UIPlayerRelicsComponent* r = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-		r->baseImage.Release();
-
-		for (uint32_t i = 0; i < r->relics.size(); i++)
-		{
-			r->relics[i].sprite.Release();
-			r->relics[i].flavorImage.Release();
-		}
-
-		r->relics.~ML_Vector();
-	}
-
-	for (auto entity : View<UIHealthComponent>(registry))
-	{
-		UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
-		ph->backgroundImage.Release();
-		ph->healthImage.Release();
-	}
-
-	for (auto entity : View<UIButton>(registry))
-	{
-		UIButton* b = registry.GetComponent<UIButton>(entity);
-		b->Release();
-	}
-
-	for (auto entity : View<UIImage>(registry))
-	{
-		UIImage* i = registry.GetComponent<UIImage>(entity);
-		i->Release();
-	}
-
-	for (auto entity : View<ProximityHitboxComponent>(registry))
-	{
-		ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(entity);
-		p->pointList.~ML_Vector();
-	}
-
-	for (auto entity : View<SoundComponent>(registry))
-	{
-		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-		if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
-		{
-			sound->Unload();
-		}
-	}
-
-	if (last)
-	{
-		for (auto entity : View<AudioEngineComponent>(registry))
-		{
-			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
-			audioEngine->Destroy();
-		}
-	}
-
-	Light::FreeLight();
-
-	//Destroy entity resets component bitmasks
-	for (int i = 0; i < registry.entities.size(); i++)
-	{
-		EntityID check = registry.entities.at(i).id;
-		if (check.index != -1)
-		{
-			if (auto comp = registry.GetComponent<AudioEngineComponent>(check) != nullptr)
-			{
-				if ((check.state == false && !comp) || last)
-					registry.DestroyEntity(check);
-			}
-			else if (check.state == false || last)
-				registry.DestroyEntity(check);
-		}
-	}
+	UnloadEntities();
 }
 
 void GameScene::GameOver()
 {
 	SetInMainMenu(true);
 	SetInPlay(false);
-	Unload(false);
-	Relics::ClearRelicFunctions();
+	Unload();
+	//Relics::ClearRelicFunctions();
 	stateManager.menu.Setup();
 }

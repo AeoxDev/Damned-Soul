@@ -6,14 +6,13 @@ using namespace DirectX;
 
 void UIComponent::UpdateTransform()
 {
-	m_Transform = D2D1::Matrix3x2F::Scale(m_Scale.x, m_Scale.y)
+	m_Transform = D2D1::Matrix3x2F::Scale(1.0f, 1.0f)
 		* D2D1::Matrix3x2F::Translation(m_Position.x, m_Position.y)
 		* D2D1::Matrix3x2F::Rotation(m_Rotation, { sdl.WIDTH / 2.0f, sdl.HEIGHT / 2.0f });
 }
 
 void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation)
 {
-
 	SetScale(scale);
 	SetPosition(position);
 	SetRotation(rotation);
@@ -67,20 +66,14 @@ void UIComponent::SetPosition(XMFLOAT2 position)
 	//SDL_GetWindowSize(sdl.sdlWindow, &currentWindowWidth, &currentWindowHeight);
 	XMFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.BASE_WIDTH, (1.0f - position.y) * 0.5f * sdl.BASE_HEIGHT };
 
-	m_Position = { pixelCoords.x - (m_CurrentBounds.right / 2.0f) * m_Scale.x , pixelCoords.y - (m_CurrentBounds.bottom / 2.0f) * m_Scale.y };
+	m_Position = { pixelCoords.x - (m_CurrentBounds.right / 2.0f) , pixelCoords.y - (m_CurrentBounds.bottom / 2.0f)};
 	UpdateTransform();
 }
 
 void UIComponent::SetScale(XMFLOAT2 scale)
-{
-
-	int currentWindowWidth, currentWindowHeight;
-	SDL_GetWindowSize(sdl.sdlWindow, &currentWindowWidth, &currentWindowHeight);
-	//XMFLOAT2 scaleCoords = { (float)currentWindowWidth / sdl.BASE_WIDTH, (float)currentWindowHeight / sdl.BASE_HEIGHT };
-	XMFLOAT2 scaleCoords = { 1.0f, 1.0f };
-	
-	m_Scale.x = scale.x * scaleCoords.x;
-	m_Scale.y = scale.y * scaleCoords.y;
+{	
+	m_Scale.x = scale.x;
+	m_Scale.y = scale.y;
 	m_CurrentBounds.right = m_OriginalBounds.right * m_Scale.x;
 	m_CurrentBounds.bottom = m_OriginalBounds.bottom * m_Scale.y;
 

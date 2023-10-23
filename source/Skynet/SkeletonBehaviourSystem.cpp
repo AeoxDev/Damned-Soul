@@ -52,8 +52,12 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 }
 
-void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, EntityID& ent)
+void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent)
 {
+	sc->goalDirectionX = ptc->positionX - stc->positionX;
+	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
+	SmoothRotation(stc, sc->goalDirectionX, sc->goalDirectionZ);
+
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
@@ -101,7 +105,7 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 2.5f)
 			{
-				CombatBehaviour(skeletonComponent, enemyStats, playerStats, enemyEntity);
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity);
 			}
 			else if (distance < 50) //hunting distance
 			{

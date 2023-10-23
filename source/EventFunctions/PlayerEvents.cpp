@@ -76,14 +76,16 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
+	anim->aAnimTime = powf(anim->aAnimTime, 2.f);
 	anim->aAnimTime += GetDeltaTime();
+	anim->aAnimTime = powf(anim->aAnimTime, .5f);
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 
 	//Make the players' attack hitbox active during the second half of the attack animation
-	if (GetEventTimedElapsed(entity, index) >= 0.8f)
+	if (/*GetEventTimedElapsed(entity, index)*/anim->aAnimTime >= 0.8f)
 		SetPlayerAttackHitboxInactive(entity, index);
-	else if (GetEventTimedElapsed(entity, index) >= 0.5f)
+	else if (/*GetEventTimedElapsed(entity, index)*/anim->aAnimTime >= 0.5f)
 		SetPlayerAttackHitboxActive(entity, index);
 }
 
@@ -103,7 +105,7 @@ void PlayerDash(EntityID& entity, const int& index)
 	//Invalid entity doesn't have the required components
 	if (!transform || !stat || !dac)
 		return;
-
+	
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();
 	transform->positionZ += dac->z * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();

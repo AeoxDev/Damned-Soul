@@ -141,12 +141,14 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)header\UI;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,11 +170,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)header\UI;$(SolutionDir)lib</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -194,15 +198,19 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\ComponentHelper.cpp" />
+    <ClCompile Include="source\Components\KnockBackComponent.cpp" />
     <ClCompile Include="source\D3D11Helper\HolderFunctions.cpp" />
+    <ClCompile Include="source\EntityCreation\CreateStaticHazard.cpp" />
     <ClCompile Include="source\EntityFramework.cpp" />
     <ClCompile Include="header\Components\RenderableComponent.h" />
     <ClCompile Include="source\EventFunctions\EnemyEvents.cpp" />
     <ClCompile Include="source\EventFunctions\EnemyPlayerEvents.cpp" />
     <ClCompile Include="source\EventFunctions\PlayerEvents.cpp" />
     <ClCompile Include="source\EventFunctions\PortalEvents.cpp" />
+    <ClCompile Include="source\EventFunctions\StaticHazardEvents.cpp" />
     <ClCompile Include="source\Hashing.cpp" />
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
+    <ClCompile Include="source\Level\Level3.cpp" />
     <ClCompile Include="source\Level\LevelHelper.cpp" />
     <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp" />
     <ClCompile Include="source\Level\Level.cpp" />
@@ -216,8 +224,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
     <ClCompile Include="source\Relics\DemonHeart.cpp" />
     <ClCompile Include="source\Relics\FrostFire.cpp" />
+    <ClCompile Include="source\Relics\LightningGod.cpp" />
     <ClCompile Include="source\Relics\SoulHealth.cpp" />
     <ClCompile Include="source\Relics\SoulPower.cpp" />
+    <ClCompile Include="source\Relics\SpeedyLittleDevil.cpp" />
     <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
@@ -239,6 +249,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
     <ClCompile Include="source\Systems\DamageOverTimeSystem.cpp" />
     <ClCompile Include="source\Systems\EventSystem.cpp" />
+    <ClCompile Include="source\Systems\KnockBackSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemCPU.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemGPU.cpp" />
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
@@ -311,6 +322,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </FxCompile>
     <FxCompile Include="resource\shader\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="resource\shader\PixelVertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -391,15 +403,19 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <FxCompile Include="resource\shader\VertexShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Animation.hpp" />
+    <ClInclude Include="header\AnimationType.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
+    <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\UIComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\ImageComponent.h" />
@@ -416,6 +432,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h" />
+    <ClInclude Include="header\EntityCreation.h" />
+    <ClInclude Include="header\EntityID.h" />
     <ClInclude Include="header\EventFunctions.h" />
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Components\ParticleComponent.h" />
@@ -439,9 +457,11 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\DemonHeart.h" />
     <ClInclude Include="header\Relics\FlameWeapon.h" />
     <ClInclude Include="header\Relics\FrostFire.h" />
+    <ClInclude Include="header\Relics\LightningGod.h" />
     <ClInclude Include="header\Relics\RelicFuncInputTypes.h" />
     <ClInclude Include="header\Relics\SoulHealth.h" />
     <ClInclude Include="header\Relics\SoulPower.h" />
+    <ClInclude Include="header\Relics\SpeedyLittleDevil.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
