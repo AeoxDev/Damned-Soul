@@ -215,6 +215,12 @@ void GameScene::Unload()
 		p->pointList.~ML_Vector();
 	}
 
+	for (auto entity : View<TimedEventComponent>(registry))
+	{
+		TimedEventComponent* tec = registry.GetComponent<TimedEventComponent>(entity);
+		tec->timedEvents~.~ML_Vector();
+	}
+
 	Light::FreeLight();
 
 	//Destroy entity resets component bitmasks
@@ -231,6 +237,6 @@ void GameScene::GameOver()
 	SetInMainMenu(true);
 	SetInPlay(false);
 	Unload();
-	Relics::ClearRelicFunctions();
+	//Relics::ClearRelicFunctions();
 	stateManager.menu.Setup();
 }

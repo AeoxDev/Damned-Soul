@@ -11,10 +11,13 @@
 #include "Level.h"
 #include "Model.h"
 #include "UIComponents.h"
+#include "RelicFunctions.h"
 
 void Menu::Setup()//Load
 {
 	m_active = true;
+	// Clear relics when entering the main menu
+	Relics::ClearRelicFunctions();
 
 	RedrawUI();
 	SetupButtons();
