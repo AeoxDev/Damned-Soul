@@ -54,7 +54,7 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	relicDescImage.m_UiComponent.SetVisibility(false);
 
 	UIShopRelicWindowComponent* relicWindowC = registry.AddComponent<UIShopRelicWindowComponent>(relicWindow);
-	relicWindowC->Setup(relicWindowBaseImage, shopPrice);
+	relicWindowC->Setup(positionMultiplier, relicWindowBaseImage, shopPrice);
 	relicWindowC->m_baseImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 4.5f), spritePixelCoords.y - (0.1f * 3 * positionMultiplier) + 0.1f });
 	relicWindowC->price = 2;
 	relicWindowC->m_priceText.UpdateText(("Price: " + std::to_string(relicWindowC->price)).c_str());

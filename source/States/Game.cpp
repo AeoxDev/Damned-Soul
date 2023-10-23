@@ -34,7 +34,7 @@ void GameScene::Input(bool isShop)
 			SetInMainMenu(true);
 			SetInPlay(false);
 			SetInShop(false);
-			Unload();
+			Unload(true);
 			stateManager.menu.Setup();
 		}
 
@@ -54,9 +54,10 @@ void GameScene::Input(bool isShop)
 			SetInMainMenu(true);
 			SetInPlay(false);
 			SetInShop(false);
-			Unload();
+			Unload(true);
 			stateManager.menu.Setup();
 		}
+
 	}
 }
 
@@ -72,21 +73,21 @@ void GameScene::ComputeShaders()
 	Particles::FinishParticleCompute();*/
 }
 
-void GameScene::Unload()
+void GameScene::Unload(bool unloadPersistent)
 {
 	// If this state is not active, simply skip the unload
 	if (false == m_active)
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities();
+	UnloadEntities(unloadPersistent);
 }
 
 void GameScene::GameOver()
 {
 	SetInMainMenu(true);
 	SetInPlay(false);
-	Unload();
+	Unload(true);
 	//Relics::ClearRelicFunctions();
 	stateManager.menu.Setup();
 }

@@ -9,6 +9,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "UIRenderer.h"
+#include "UIComponents.h"
 
 #include <random>
 
@@ -141,48 +142,65 @@ void UIFunc::Shop_BuyRelic(void* args)
 	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 		player = registry.GetComponent<PlayerComponent>(entity);
 
-	int counter = 1;
-	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+	//int counter = 1;
+	for (auto entity : View<UIButton>(registry))
 	{
-		if (counter != button->shopPosition)
+		//if (counter != button->shopPosition)
+		//{
+		//	counter++;
+		//	continue;
+		//}
+
+		const UIButton* other = registry.GetComponent<UIButton>(entity);
+		if (button != other)
 		{
-			counter++;
+			//counter++;
 			continue;
+
 		}
 		
-		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
-		
-		if (player->GetSouls() < uiElement->price)
-			break;
-
-		player->UpdateSouls(-uiElement->price);
-		switch (uiRelic->relicIndex)
+		for (auto uiEntity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
 		{
-		case DemonBonemarrow:
-			Relics::DemonBonemarrow(true);
-			break;
-		case FlameWeapon:
-			Relics::FlameWeapon(true);
-			break;
-		case SoulPower:
-			Relics::SoulPower(true);
-			break;
-		case DemonHeart:
-			Relics::DemonHeart(true);
-			break;
-		case FrostFire:
-			Relics::FrostFire(true);
-			break;
-		case SoulHealth:
-			Relics::SoulHealth(true);
-			break;
-		default:
-			break;
-		}
+			auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(uiEntity);
+			auto uiRelic = registry.GetComponent<UIRelicComponent>(uiEntity);
 
-		RedrawUI();
-		break;
+			if (uiElement->shopPosition != button->shopPosition)
+			{
+				continue;
+			}
+
+
+			if (player->GetSouls() < uiElement->price)
+				break;
+
+			player->UpdateSouls(-uiElement->price);
+			switch (uiRelic->relicIndex)
+			{
+			case DemonBonemarrow:
+				Relics::DemonBonemarrow(true);
+				break;
+			case FlameWeapon:
+				Relics::FlameWeapon(true);
+				break;
+			case SoulPower:
+				Relics::SoulPower(true);
+				break;
+			case DemonHeart:
+				Relics::DemonHeart(true);
+				break;
+			case FrostFire:
+				Relics::FrostFire(true);
+				break;
+			case SoulHealth:
+				Relics::SoulHealth(true);
+				break;
+			default:
+				break;
+			}
+
+			RedrawUI();
+			break;
+		}		
 	}
 }
 

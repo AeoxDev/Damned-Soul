@@ -14,14 +14,6 @@
 #include "PlayerComponent.h"
 #include "TimedEventComponent.h"
 
-//GUI
-#include "UIComponents/UIButtonComponent.h"
-#include "UIComponents/UIHealthComponent.h"
-#include "UIComponents/UIPlayerSoulsComponent.h"
-#include "UIComponents/UIPlayerRelicsComponent.h"
-#include "UIComponents/UIGameLevelComponent.h"
-#include "UIComponents/UIShopComponent.h"
-
 //GUI To Be Decapritated
 #include "TextComponent.h"
 #include "ImageComponent.h"

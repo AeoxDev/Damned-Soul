@@ -22,14 +22,16 @@ struct UIShopRelicWindowComponent
 
 	bool doRedraw = true;
 
+	int shopPosition = -1;
 	int price = -1;
 	bool locked = false;
 
 	UIImage m_baseImage;
 	UIText m_priceText;
 
-	void Setup(UIImage baseImage, UIText priceText)
+	void Setup(int position, UIImage baseImage, UIText priceText)
 	{
+		shopPosition = position;
 		m_baseImage = baseImage;
 		m_priceText = priceText;
 	};

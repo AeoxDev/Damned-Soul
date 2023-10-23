@@ -294,7 +294,8 @@ bool UIShopSystem::Update()
         auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
 
         ML_String playerInfo = ("Souls: " + std::to_string((int)player->GetSouls()) +
-            "\n\nPlayer Stats:\nHealth: " + std::to_string((int)stats->GetHealth()) +
+            "\n\nPlayer Stats:\nMax Health: " + std::to_string((int)stats->GetMaxHealth()) +
+            "\nCurrent Health: " + std::to_string((int)stats->GetHealth()) +
             "\nDamage: " + std::to_string((int)stats->damage) + 
             "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
             "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now

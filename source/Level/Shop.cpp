@@ -8,6 +8,8 @@
 #include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
 
+#include "UIComponents.h"
+
 void LoadShop()
 {
 
@@ -16,7 +18,7 @@ void LoadShop()
 	//faster loading to shop
 	//EntityID player = registry.CreateEntity();
 	//registry.AddComponent<StatComponent>(player, 1250.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-	//registry.AddComponent<PlayerComponent>(player);
+	//registry.AddComponent<PlayerComponent>(player)->UpdateSouls(20);
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();

@@ -63,6 +63,8 @@ struct ControllerComponent
 	float moveFactor = 0.0f;
 	float moveResetFactor = 0.0f;
 	float moveMaxLimit = 0.0f;
+	
+	int enabled = 1;
 };
 
 //Ayaya

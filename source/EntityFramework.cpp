@@ -53,6 +53,15 @@ void UnloadEntities(bool unloadPersistents)
 	for (auto entity : View<ModelSkeletonComponent>(registry))
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
+		if (!unloadPersistents && entity.index != -1 && registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+
+			p->killingSpree = 0;
+			p->portalCreated = false;
+
+			continue;
+		}
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
 	}
 
@@ -96,6 +105,26 @@ void UnloadEntities(bool unloadPersistents)
 		b->Release();
 	}
 
+	for (auto entity : View<UIShopComponent>(registry))
+	{
+		UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
+		sh->baseImage.Release();
+	}
+
+	for (auto entity : View<UIShopRelicWindowComponent>(registry))
+	{
+		UIShopRelicWindowComponent* sh = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		sh->m_baseImage.Release();
+	}
+
+	for (auto entity : View<UIRelicComponent>(registry))
+	{
+		UIRelicComponent* sh = registry.GetComponent<UIRelicComponent>(entity);
+		sh->sprite.Release();
+		sh->flavorTitleImage.Release();
+		sh->flavorDescImage.Release();
+	}
+
 	for (auto entity : View<UIImage>(registry))
 	{
 		UIImage* i = registry.GetComponent<UIImage>(entity);
@@ -105,6 +134,15 @@ void UnloadEntities(bool unloadPersistents)
 	for (auto entity : View<ProximityHitboxComponent>(registry))
 	{
 		ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(entity);
+		if (!unloadPersistents && entity.index != -1 && registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+
+			p->killingSpree = 0;
+			p->portalCreated = false;
+
+			continue;
+		}
 		p->pointList.~ML_Vector();
 	}
 
@@ -151,8 +189,13 @@ void UnloadEntities(bool unloadPersistents)
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
 		EntityID check = registry.entities.at(i).id;
-		if (!unloadPersistents && registry.GetComponent<PlayerComponent>(check) != nullptr)
+		if (!unloadPersistents && check.index != -1 && registry.GetComponent<PlayerComponent>(check) != nullptr)
 		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(check);
+
+			p->killingSpree = 0;
+			p->portalCreated = false;
+
 			continue;
 		}
 		if (check.state == false)
