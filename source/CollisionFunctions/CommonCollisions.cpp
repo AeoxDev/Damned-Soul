@@ -62,7 +62,7 @@ void SoftCollision(OnCollisionParameters& params)
 
 	//transform2->positionX += dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
 	//transform2->positionZ += dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
-
+	
 }
 
 void HardCollision(OnCollisionParameters& params)
