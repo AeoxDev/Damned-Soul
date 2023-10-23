@@ -70,9 +70,9 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	anim->aAnimTime = pow(anim->aAnimTime, 2);
+	anim->aAnimTime = powf(anim->aAnimTime, 2.f);
 	anim->aAnimTime += GetDeltaTime();
-	anim->aAnimTime = pow(anim->aAnimTime, 0.5);
+	anim->aAnimTime = powf(anim->aAnimTime, .5f);
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 

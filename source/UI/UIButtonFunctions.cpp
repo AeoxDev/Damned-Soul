@@ -100,6 +100,7 @@ void UIFunc::Settings_HighRes(void* args)
 		sdl.HEIGHT = 1080;
 		sdl.WINDOWED_WIDTH = sdl.WIDTH;
 		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
@@ -117,7 +118,7 @@ void UIFunc::Settings_Fullscreen(void* args)
 		SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
 	}
 	else
 	{

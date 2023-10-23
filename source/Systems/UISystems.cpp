@@ -28,11 +28,11 @@ bool UIRenderSystem::Update()
 		UpdateUI();
 		Begin2dFrame(ui);
 
-		for (auto entity : View<UIButton>(registry))
-			registry.GetComponent<UIButton>(entity)->Draw();
-
 		for (auto entity : View<UIImage>(registry))
 			registry.GetComponent<UIImage>(entity)->Draw();
+
+		for (auto entity : View<UIButton>(registry))
+			registry.GetComponent<UIButton>(entity)->Draw();
 
 		for (auto entity : View<UIPlayerRelicsComponent>(registry))
 		{

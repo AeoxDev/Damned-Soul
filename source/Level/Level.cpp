@@ -3,11 +3,18 @@
 #include "Camera.h"
 #include "UIRenderer.h"
 #include "States\StateManager.h"
+#include "RelicFunctions.h"
 #include "Registry.h"
 
 void LoadLevel(int level)
 {
 	//Reset UI and camera in case camera was in weird position before.
+
+	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
+	for (uint32_t i = 0; i < relics.size(); ++i)
+	{
+		relics[i](nullptr);
+	}
 
 	RedrawUI();
 	Camera::ResetCamera();

@@ -76,13 +76,13 @@ bool ControllerSystem::Update()
 			transform->positionZ += controller->goalZ * stat->moveSpeed * GetDeltaTime();
 			transform->positionX += controller->goalX * stat->moveSpeed * GetDeltaTime();
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
-			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 		}
 
 		//clamp moveTime to lower limit if not moving
 		else 
 		{
-			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			
 		}
 
@@ -95,16 +95,18 @@ bool ControllerSystem::Update()
 				//Set facing direction to dash direction when moving
 				transform->facingX = controller->goalX;
 				transform->facingZ = controller->goalZ;
+				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 			}
 			else
 			{
 				//Default dash goes backwards
 				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
 				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
+				break;
 
 			}
-			registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
-			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
+			
 		}
 
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
