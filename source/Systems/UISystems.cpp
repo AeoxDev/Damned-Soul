@@ -130,8 +130,7 @@ bool UIHealthSystem::Update()
 		uiElement->healthImage.m_UiComponent.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
 
 		ML_String valueAsString = ("Health: " + std::to_string((int)uiElement->value)).c_str();
-		std::wstring valueAsWString(valueAsString.begin(), valueAsString.end());
-		uiElement->text.UpdateText(valueAsWString);
+		uiElement->text.UpdateText(valueAsString);
 		uiElement->text.m_UiComponent.SetScale(uiElement->scale);
 		uiElement->text.m_UiComponent.SetPosition(uiElement->position);
 	}

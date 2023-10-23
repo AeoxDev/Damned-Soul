@@ -76,7 +76,8 @@ void UnloadEntities(bool unloadPersistents)
 		for (uint32_t i = 0; i < r->relics.size(); i++)
 		{
 			r->relics[i].sprite.Release();
-			r->relics[i].flavorImage.Release();
+			r->relics[i].flavorTitleImage.Release();
+			r->relics[i].flavorDescImage.Release();
 		}
 
 		r->relics.~ML_Vector();
@@ -150,10 +151,10 @@ void UnloadEntities(bool unloadPersistents)
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
 		EntityID check = registry.entities.at(i).id;
-		/*if (!unloadPersistents && registry.GetComponent<PlayerComponent>(check) != nullptr)
+		if (!unloadPersistents && registry.GetComponent<PlayerComponent>(check) != nullptr)
 		{
 			continue;
-		}*/
+		}
 		if (check.state == false)
 			registry.DestroyEntity(check);
 	}

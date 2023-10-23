@@ -51,8 +51,6 @@ void LoadLevel1()
 	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
 	playerTransform->facingZ = 1.0f;
 	playerTransform->mass = 3.0f;
-	
-	
 
 	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 100.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(player);

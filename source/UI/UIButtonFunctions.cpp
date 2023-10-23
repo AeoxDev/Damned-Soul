@@ -18,8 +18,7 @@ void UIFunc::LoadNextLevel(void* args)
 	SetInMainMenu(false);
 	UnloadEntities(false);
 	//LoadLevel(1);
-	stateManager.activeLevel = 1;
-	LoadLevel(stateManager.activeLevel);
+	LoadLevel(++stateManager.activeLevel);
 }
 
 void UIFunc::MainMenu_Settings(void* args)
