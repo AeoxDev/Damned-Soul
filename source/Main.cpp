@@ -15,9 +15,16 @@ int main(int argc, char* args[])
 	InitiateConfig();
 	MemLib::createMemoryManager();
 
-	SetupWindow();
+	bool sdlLoaded = SetupWindow();
+	if (sdlLoaded == false)
+	{
+		return -1;
+	}
 	std::string title = "Damned Soul";
-	stateManager.Setup();
+	if (stateManager.Setup() < 0)
+	{
+		return -1;
+	}
 	
 	//Reload stress-test
 

@@ -1,5 +1,4 @@
 #pragma once
-#include <cinttypes>
 #include "Format.h"
 #include "IDX_Types.h"
 //This contains helper functions for setting up renderable objects

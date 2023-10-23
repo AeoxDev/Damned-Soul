@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"

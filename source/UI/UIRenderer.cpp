@@ -45,13 +45,18 @@ void ClearUI()
 
 void RenderUI()//Render what is drawn to rendertarget.
 {
+	bool set = SetVertexShader(renderStates[ui.RenderSlot].vertexShaders[0]);
+	assert(set == true);
 
-	assert(SetVertexShader(renderStates[ui.RenderSlot].vertexShaders[0]));
-	assert(SetPixelShader(renderStates[ui.RenderSlot].pixelShaders[0]));
-	
-	assert(SetVertexBuffer(renderStates[ui.RenderSlot].vertexBuffer));
-	assert(SetIndexBuffer(renderStates[ui.RenderSlot].indexBuffer));
-	assert(SetRenderTargetViewAndDepthStencil(renderStates[1].renderTargetView, renderStates[1].depthStencilView));
-	assert(SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_PIXEL, 0));
+	set = SetPixelShader(renderStates[ui.RenderSlot].pixelShaders[0]);
+	assert(set == true);
+	set = SetVertexBuffer(renderStates[ui.RenderSlot].vertexBuffer);
+	assert(set == true);
+	set = SetIndexBuffer(renderStates[ui.RenderSlot].indexBuffer);
+	assert(set == true);
+	set = SetRenderTargetViewAndDepthStencil(renderStates[1].renderTargetView, renderStates[1].depthStencilView);
+	assert(set == true);
+	set = SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_PIXEL, 0);
+	assert(set == true);
 	d3d11Data->deviceContext->DrawIndexed(6, 0, 0);
 }

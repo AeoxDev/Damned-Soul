@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <d3d11.h>
+#include <dxgi.h>
 #include "GameRenderer.h"
 #include "D3D11Helper.h"
 #include "D3D11Graphics.h"
@@ -22,11 +25,10 @@ struct ScreenVertex {
 
 bool Setup3dGraphics()
 {
-	if (SetupDirectX(sdl.window) < 0)
-	{
-		return false;
-	};
-	return true;
+	int loaded = SetupDirectX(sdl.window);
+	
+	assert(loaded == 0);
+	return loaded == 0;
 }
 
 int SetupUIRenderState()
