@@ -60,36 +60,54 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
 	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp);
+	registry.AddComponent<EnemyComponent>(newMini, 2);
+	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
+	//Set behavior
+	float deathC = (float)(bossBehev->deathCounter + 1);
+	
 
 	//Set hitbox
 	float newScaleHitBox = 0.85f;
-	AddHitboxComponent(newMini);
+	//SetupEnemyCollisionBox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox);
 
-	int hID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox * 0.7f, 0.f, 0.f);
+	float radius = GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox;
+
+	AddHitboxComponent(newMini);
+	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(newMini);
+	int hID = CreateHitbox(newMini, radius*0.5f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
-	SetHitboxHitEnemy(newMini, hID);
+	//SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID);
 
-
-	int sID = CreateHitbox(newMini, GetHitboxRadius(original, bossBehev->hitBoxID) * newScaleHitBox, 0.f, 0.f);
+	int sID = CreateHitbox(newMini, radius, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
 	SetHitboxIsEnemy(newMini, sID);
 	SetHitboxHitPlayer(newMini, sID);
-	SetHitboxHitEnemy(newMini, sID);
+	//SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(newMini, sID);
 	SetHitboxIsMoveable(newMini, sID);
 	SetHitboxCanTakeDamage(newMini, sID);
 
-	//Set behavior
-	float deathC = (float)(bossBehev->deathCounter + 1);
-	registry.AddComponent<TempBossBehaviour>(newMini, (int)deathC, hID);
+	SetHitboxCanDealDamage(newMini, sID, false);
 
+	enemyComp->attackHitBoxID = CreateHitbox(newMini, radius * 1.2f, 0.f, -1.5f);
+	SetCollisionEvent(newMini, enemyComp->attackHitBoxID, AttackCollision);
+	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+	SetHitboxHitPlayer(newMini, enemyComp->attackHitBoxID);
+	SetHitboxActive(newMini, enemyComp->attackHitBoxID);
+	SetHitboxIsMoveable(newMini, enemyComp->attackHitBoxID);
+	SetHitboxCanTakeDamage(newMini, enemyComp->attackHitBoxID, false);
+	SetHitboxCanDealDamage(newMini, enemyComp->attackHitBoxID, false);
+
+
+	registry.AddComponent<TempBossBehaviour>(newMini, (int)deathC, hID);
 	
-	registry.AddComponent<EnemyComponent>(newMini, 2);
-	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
+	
+	
+	
 }
 
 void SplitBoss(EntityID& entity, const int& index)
