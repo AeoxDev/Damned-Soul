@@ -113,11 +113,47 @@ void UnloadEntities(bool unloadPersistents)
 	}
 
 	Light::FreeLight();
+	//for (auto entity : View<SoundComponent>(registry))
+	//{
+	//	SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+	//	if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+	//	{
+	//		sound->Unload();
+	//	}
+	//}
 
+	//if (unloadPersistents)
+	//{
+	//	for (auto entity : View<AudioEngineComponent>(registry))
+	//	{
+	//		AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
+	//		audioEngine->Destroy();
+	//	}
+	//}
+
+	////Destroy entity resets component bitmasks
+	//for (int i = 0; i < registry.entities.size(); i++)
+	//{
+	//	EntityID check = registry.entities.at(i).id;
+	//	if (check.index != -1)
+	//	{
+	//		if (auto comp = registry.GetComponent<AudioEngineComponent>(check) != nullptr)
+	//		{
+	//			if ((check.state == false && !comp) || unloadPersistents)
+	//				registry.DestroyEntity(check);
+	//		}
+	//		else if (check.state == false || unloadPersistents)
+	//			registry.DestroyEntity(check);
+	//	}
+	//}
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
 		EntityID check = registry.entities.at(i).id;
+		/*if (!unloadPersistents && registry.GetComponent<PlayerComponent>(check) != nullptr)
+		{
+			continue;
+		}*/
 		if (check.state == false)
 			registry.DestroyEntity(check);
 	}

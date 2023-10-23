@@ -6,7 +6,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
-#include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
+//#include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 
 void UpdateDebugWindowTitle(std::string& title);
 
@@ -28,16 +28,16 @@ int main(int argc, char* args[])
 	
 	//Reload stress-test
 
-	for (unsigned int i = 0; i < 3000; ++i)
-	{
-		UIFunc::MainMenu_Start(nullptr);
+	//for (unsigned int i = 0; i < 3000; ++i)
+	//{
+	//	UIFunc::MainMenu_Start(nullptr);
 
-		SetInMainMenu(true);
-		SetInPlay(false);
-		stateManager.levelScenes[0].Unload();
-		stateManager.levelScenes[1].Unload();
-		stateManager.menu.Setup();
-	}
+	//	SetInMainMenu(true);
+	//	SetInPlay(false);
+	//	stateManager.levelScenes[0].Unload();
+	//	stateManager.levelScenes[1].Unload();
+	//	stateManager.menu.Setup();
+	//}
 
 	while (!sdl.quit)
 	{
