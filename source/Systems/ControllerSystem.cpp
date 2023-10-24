@@ -105,6 +105,7 @@ bool ControllerSystem::Update()
 			else
 			{
 				//Default dash goes backwards
+				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
 				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
 				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
 				break;
