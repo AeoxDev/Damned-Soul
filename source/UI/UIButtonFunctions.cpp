@@ -253,7 +253,7 @@ void UIFunc::Shop_ReRollRelic(void* args)
 	ML_Array<int, 3> includedRelics;
 	ML_Vector<int> allRelics;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 8; i++)
 		allRelics.push_back(i);
 
 	for (int i = 0; i < 3; i++)

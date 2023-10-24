@@ -139,9 +139,7 @@ void UIShopComponent::Setup()
 	nextLevelButton->Setup("TempNextLevel.png", "TempNextLevel.png", "", UIFunc::LoadNextLevel, { spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 14.5f) }, {2.0f, 2.0f});
 	
 	for (int i = 0; i < 3; i++)
-	{
 		CreateShopEntity(*this, i + 1);
-	};
 
 	bool* ignore = {};
 

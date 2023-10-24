@@ -128,7 +128,7 @@ Relics::RelicMetaData Relics::DemonHeart(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Demon Heart",
 		/*Filepath*/	"RelicIcons\\Demon_Heart.png",
-		/*Description*/	"Increases your Maximum Health by 25 when obtained."
+		/*Description*/	"Increases your Maximum Health by 75 when obtained."
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
