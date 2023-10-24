@@ -4,10 +4,10 @@
 #include "States\Game.h"
 #include "States\Pause.h"
 #include "Systems\Systems.h"
+#include "EntityID.h"
 #include <vector>
 
 //#include "MemLib\ML_Vector.hpp"
-
 
 struct StateManager;
 
@@ -23,7 +23,7 @@ struct StateManager
 	Menu menu;
 	SettingsState settings;
 	PauseState pause;
-
+	EntityID player;
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>

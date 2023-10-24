@@ -80,7 +80,7 @@ void GameScene::Unload(bool unloadPersistent)
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities(unloadPersistent);
+	UnloadEntities((int)unloadPersistent);
 }
 
 void GameScene::GameOver()

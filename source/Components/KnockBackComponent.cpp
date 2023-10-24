@@ -47,7 +47,7 @@ void CalculateKnockBackDirection(const EntityID& source, const EntityID& victim,
 	float delta_z = tc1->positionZ - tc2->positionZ;
 
 	// Calutlate normalize length
-	float len = pow(delta_x * delta_x + delta_z * delta_z, 0.5);
+	float len = powf(delta_x * delta_x + delta_z * delta_z, 0.5f);
 
 	// Set "return" values
 	x = delta_x / len;
@@ -73,7 +73,7 @@ void CalculateKnockBack(const EntityID& source, const EntityID& victim, float& x
 	float delta_z = tc2->positionZ - tc1->positionZ;
 
 	// Calutlate normalize length
-	float len = pow(delta_x * delta_x + delta_z * delta_z, 0.5);
+	float len = powf(delta_x * delta_x + delta_z * delta_z, 0.5f);
 
 	float multiplier = tc1->mass / tc2->mass;
 

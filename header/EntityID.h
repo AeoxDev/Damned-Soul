@@ -2,6 +2,6 @@
 
 struct EntityID
 {
-	int index;
-	bool state; //Boolean to check if the entity has been destroyed or not
+	int index = -1;
+	bool state = false; //Boolean to check if the entity has been destroyed or not
 };

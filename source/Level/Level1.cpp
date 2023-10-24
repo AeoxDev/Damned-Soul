@@ -10,21 +10,22 @@
 #include "DeltaTime.h"
 #include "Model.h"
 #include "UIComponents.h"
-
+#include "States\StateManager.h"
 #include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
 
 void LoadLevel1()
 {
-
+	
 	EntityID stage = registry.CreateEntity();
-	EntityID player = registry.CreateEntity();
+	
 	EntityID playerUi = registry.CreateEntity();
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID skeleton3 = registry.CreateEntity();
 	EntityID skeleton4 = registry.CreateEntity();
-	EntityID eye = registry.CreateEntity();
+	EntityID skeleton5 = registry.CreateEntity();
+	//EntityID eye = registry.CreateEntity();
 	//EntityID eye2 = registry.CreateEntity();
 	//EntityID dog = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
@@ -35,39 +36,32 @@ void LoadLevel1()
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
-	
+	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 5.0f, 1, 0.0f, 0.0, -1.0f);
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(skeleton, enemyType::skeleton, -45.f, 0.f, -20.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(skeleton2, enemyType::skeleton, 40.f, 0.f, -35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(skeleton3, enemyType::skeleton, -30.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(skeleton4, enemyType::skeleton, -20.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(eye,				enemyType::eye, -25.f, 1.f, 15.f, 1.0f, 60.f, 15.f, 10.f, 5.f, 5);
+	SetupEnemy(skeleton, enemyType::skeleton, -45.f, 0.f, -20.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton2, enemyType::skeleton, 40.f, 0.f, -35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton3, enemyType::skeleton, -30.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton4, enemyType::skeleton, -20.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton5, enemyType::skeleton, -40.f, 0.f, 35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	//SetupEnemy(eye2, enemyType::eye, 35.f, 1.f, -15.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
-	//16 souls total
+	//5 souls total
 
-	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());
+	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+	stageModel->colorMultiplicativeRed = 0.75f;
+	stageModel->colorMultiplicativeGreen = 0.75f;
+	stageModel->colorMultiplicativeBlue = 0.75f;
+	//stageModel->colorAdditiveRed = 0.1f;
 	
 	// Stage (Default)
-	registry.AddComponent<TransformComponent>(stage);
+	TransformComponent *stageTransform = registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
 	phc->Load("default");
 	
-	// Player (Default)
-	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
-	playerTransform->facingZ = 1.0f;
-	playerTransform->mass = 3.0f;
 	
-	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 50.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-	registry.AddComponent<PlayerComponent>(player);
-
-	registry.AddComponent<ControllerComponent>(player);
 
 	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
-	PointOfInterestComponent poic;
-	poic.weight = 10.0f;
-	registry.AddComponent<PointOfInterestComponent>(player, poic);
+	
+	
 
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
@@ -93,8 +87,7 @@ void LoadLevel1()
 	
 	//Finally set the collision boxes
 
-	SetupPlayerCollisionBox(player, 1.0f);
-	MouseComponentAddComponent(player);
+	
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
@@ -122,21 +115,21 @@ void LoadLevel1()
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 
 	//Add static hazards on the where player does not spawn
-	const int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 120) - 60.0f;
-			float randZ = (float)(rand() % 120) - 60.0f;
-			if (randX * randX + randZ * randZ > 100)
-			{
-				EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
-					-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-					0.8f, 0.5f, 0.1f, 3.0f, (float)rand());
-				succeded = true;
-			}
-		}
-	}
+	//const int nrHazards = 3;
+	//for (size_t i = 0; i < nrHazards; i++)
+	//{
+	//	bool succeded = false;
+	//	while (!succeded)
+	//	{
+	//		float randX = (float)(rand() % 100) - 50.0f;
+	//		float randZ = (float)(rand() % 100) - 50.0f;
+	//		if (randX * randX + randZ * randZ > 80)
+	//		{
+	//			EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
+	//				-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
+	//				0.8f, 0.5f, 0.1f, 3.0f, (float)rand());
+	//			succeded = true;
+	//		}
+	//	}
+	//}
 }

@@ -38,10 +38,10 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 		}
 
 		// seed via delta time
-		srand(input->timeDelta);
+		srand((unsigned)(1.0f / (input->timeDelta + 0.001f)));
 
 		// Randomly select one of them
-		size_t randomlySelected = ((size_t)rand()) % potentialVictims.size();
+		int randomlySelected = ((size_t)rand()) % potentialVictims.size();
 
 		// The unfortunate one about to be struck by lightning
 		StatComponent* unfortunateVictim = registry.GetComponent<StatComponent>(potentialVictims[randomlySelected]);

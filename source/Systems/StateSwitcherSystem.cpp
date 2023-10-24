@@ -1,5 +1,5 @@
 #include "Systems\Systems.h"
-#include "EntityFramework.h"
+#include "Levels/LevelHelper.h"
 #include "Components.h"
 #include "Registry.h"
 #include "EventFunctions.h"
@@ -41,6 +41,19 @@ bool StateSwitcherSystem::Update()
 					playersComp->killingSpree += 1;
 				}
 				// start timed event for MURDER
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+				switch (registry.GetComponent<EnemyComponent>(entity)->type)
+				{
+				case enemyType::hellhound:
+					sfx->Play(Hellhound_Death, Channel_Base);
+					break;
+				case enemyType::skeleton:
+					sfx->Play(Skeleton_Death, Channel_Base);
+					break;
+				case enemyType::eye:
+					sfx->Play(Eye_Death, Channel_Base);
+					break;
+				}
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 			}
 			else // boss died lmao
@@ -53,6 +66,10 @@ bool StateSwitcherSystem::Update()
 				if (tempBossComp->deathCounter < 3) //spawn new mini russian doll skeleton
 				{
 					// start timed event for new little bossies
+					for (auto audioJungle : View<AudioEngineComponent>(registry)) //Remove this after playtest. It is just for the funnies.
+					{
+						registry.GetComponent<SoundComponent>(audioJungle)->Play(Music_StageCombat, Channel_Base);
+					}
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);
 				}
 				else // le snap
@@ -76,13 +93,19 @@ bool StateSwitcherSystem::Update()
 			EntityID portal = registry.CreateEntity();
 			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 		}
-		else if (playersComp->killingSpree >= 6 && !playersComp->portalCreated && stateManager.activeLevel == 3)
+		else if (playersComp->killingSpree >= 9 && !playersComp->portalCreated && stateManager.activeLevel == 3)
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();
 			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 		}
-		else if (playersComp->killingSpree >= 15 && !playersComp->portalCreated && stateManager.activeLevel == 5)
+		else if (playersComp->killingSpree >= 13 && !playersComp->portalCreated && stateManager.activeLevel == 5)
+		{
+			playersComp->portalCreated = true;
+			EntityID portal = registry.CreateEntity();
+			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
+		}
+		else if (playersComp->killingSpree >= 15 && !playersComp->portalCreated && stateManager.activeLevel == 7)
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();

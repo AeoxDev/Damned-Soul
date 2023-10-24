@@ -196,6 +196,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Level\Level4.cpp" />
     <ClCompile Include="source\Level\Shop.cpp" />
     <ClCompile Include="source\UIShopComponent.cpp" />
     <ClCompile Include="source\Animation.cpp" />
@@ -244,6 +245,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
+    <ClCompile Include="source\Systems\AudioSystem.cpp" />
     <ClCompile Include="source\Systems\ButtonSystem.cpp" />
     <ClCompile Include="source\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />

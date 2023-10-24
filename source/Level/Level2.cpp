@@ -19,12 +19,14 @@ void LoadLevel2()
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID skeleton3 = registry.CreateEntity();
-	EntityID eye = registry.CreateEntity();
+	EntityID skeleton4 = registry.CreateEntity();
+	EntityID skeleton5 = registry.CreateEntity();
+	EntityID skeleton6 = registry.CreateEntity();
+	EntityID skeleton7 = registry.CreateEntity();
 	EntityID dog = registry.CreateEntity();
 	EntityID dog2 = registry.CreateEntity();
 	EntityID playerUi = registry.CreateEntity();
-	//EntityID skeleton = registry.CreateEntity();
-	//EntityID skeleton2 = registry.CreateEntity();
+	//EntityID eye = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
@@ -34,16 +36,28 @@ void LoadLevel2()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(skeleton, enemyType::skeleton, -25.f, 0.f, 50.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(skeleton2, enemyType::skeleton, 50.f, 0.f, -45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(skeleton3, enemyType::skeleton, -50.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(dog, enemyType::hellhound, -35.f, 0.f, -25.f, 1.f, 150.f, 15.f, 10.f, 2.f, 8);
-	SetupEnemy(dog2, enemyType::hellhound, 45.f, 0.f, -45.f, 1.f, 150.f, 15.f, 10.f, 2.f, 8);
-	SetupEnemy(eye, enemyType::eye, 35.f, 1.f, -25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
-	//27 souls + 16 souls level 1 = 43 souls total before boss
+	//Player
+	//SetPlayerPosition(0.0, 0.0, 30.0f);
+	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
-	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
+	SetupEnemy(skeleton, enemyType::skeleton, -25.f, 0.f, 50.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton2, enemyType::skeleton, 50.f, 0.f, -45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton3, enemyType::skeleton, -20.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton4, enemyType::skeleton, 30.f, 0.f, -25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton5, enemyType::skeleton, -50.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton6, enemyType::skeleton, -40.f, 0.f, -45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton7, enemyType::skeleton, 35.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(dog, enemyType::hellhound, -35.f, 0.f, -25.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
+	SetupEnemy(dog2, enemyType::hellhound, 45.f, 0.f, -45.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
+	//SetupEnemy(eye, enemyType::eye, 35.f, 1.f, -25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 2);
+	//13 souls + 5 souls level 1 = 18 souls total
+
+	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+	stageModel->colorMultiplicativeRed = 1.4f;
+	stageModel->colorMultiplicativeGreen = 1.2f;
+	stageModel->colorMultiplicativeBlue = 0.8f;
+	stageModel->colorAdditiveRed = 0.1f;
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -52,6 +66,14 @@ void LoadLevel2()
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
 	phc->Load("default");
 
+
+	//Player Sounds
+	//SoundComponent* scp = registry.AddComponent<SoundComponent>(player);
+	//scp->Load(PLAYER);
+	//registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 50.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	//registry.AddComponent<PlayerComponent>(player);
+
+	//registry.AddComponent<ControllerComponent>(player);
 
 	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
@@ -83,11 +105,11 @@ void LoadLevel2()
 	mousePointOfInterset->mode = POI_MOUSE;
 
 
-	CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderThree, 0.35f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderForth, 0.35f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 	//Add static hazards on the where player does not spawn
@@ -97,13 +119,15 @@ void LoadLevel2()
 		bool succeded = false;
 		while (!succeded)
 		{
-			float randX = (float)(rand() % 120) - 60.0f;
-			float randZ = (float)(rand() % 120) - 60.0f;
-			if (randX * randX + randZ * randZ > 100)
+			float randX = (float)(rand() % 100) - 50.0f;
+			float randZ = (float)(rand() % 100) - 50.0f;
+			if (randX * randX + randZ * randZ > 80)
 			{
-				EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
-					-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-					0.8f, 0.5f, 0.1f, 3.0f, (float)rand());
+				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+				EntityID hazard1 = CreateSquareStaticHazard("LavaPlaceholder.mdl", randX, 0.1f, randZ, randScaleX, 0.1f, randScaleZ,
+					-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
+					0.8f, 0.5f, 0.2f, 3.0f, (float)rand());
 				succeded = true;
 			}
 		}

@@ -66,8 +66,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->moveSpeed / 2.f * GetDeltaTime();
 
 }
-
-void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, AnimationComponent* animComp)
+void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
 	sc->goalDirectionX = ptc->positionX - stc->positionX;
 	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
@@ -84,7 +83,9 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	{
 		sc->attackTimer = 0;
 		sc->attackStunDurationCounter = 0;
-		playerStats->UpdateHealth(-enemyStats->damage);
+		playerStats->UpdateHealth(-enemyStats->damage, true);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		sfx->Play(Skeleton_Attack, Channel_Base);
 		RedrawUI();
 	}
 }
@@ -126,7 +127,7 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 2.5f)
 			{
-				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyAnim);
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
 			}
 			else if (distance < 50) //hunting distance
 			{

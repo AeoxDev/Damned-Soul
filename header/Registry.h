@@ -3,4 +3,5 @@
 //struct Registry;
 extern Registry registry;
 
-void UnloadEntities(bool unloadPersistents = false);
+/// destructionTiers: 0: no persistents destroyed, 1: player, 2: audioEngine, 3: everything
+void UnloadEntities(int destructionTier = 0);
