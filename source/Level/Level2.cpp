@@ -19,12 +19,14 @@ void LoadLevel2()
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID skeleton3 = registry.CreateEntity();
-	EntityID eye = registry.CreateEntity();
+	EntityID skeleton4 = registry.CreateEntity();
+	EntityID skeleton5 = registry.CreateEntity();
+	EntityID skeleton6 = registry.CreateEntity();
+	EntityID skeleton7 = registry.CreateEntity();
 	EntityID dog = registry.CreateEntity();
 	EntityID dog2 = registry.CreateEntity();
 	EntityID playerUi = registry.CreateEntity();
-	//EntityID skeleton = registry.CreateEntity();
-	//EntityID skeleton2 = registry.CreateEntity();
+	//EntityID eye = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
@@ -37,11 +39,15 @@ void LoadLevel2()
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	SetupEnemy(skeleton, enemyType::skeleton, -25.f, 0.f, 50.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(skeleton2, enemyType::skeleton, 50.f, 0.f, -45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton3, enemyType::skeleton, -50.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton3, enemyType::skeleton, -20.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton4, enemyType::skeleton, 30.f, 0.f, -25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton5, enemyType::skeleton, -50.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton6, enemyType::skeleton, -40.f, 0.f, -45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton7, enemyType::skeleton, 35.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(dog, enemyType::hellhound, -35.f, 0.f, -25.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
 	SetupEnemy(dog2, enemyType::hellhound, 45.f, 0.f, -45.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
-	SetupEnemy(eye, enemyType::eye, 35.f, 1.f, -25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 2);
-	//11 souls + 6 souls level 1 = 17 souls total before boss
+	//SetupEnemy(eye, enemyType::eye, 35.f, 1.f, -25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 2);
+	//13 souls + 5 souls level 1 = 18 souls total
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
