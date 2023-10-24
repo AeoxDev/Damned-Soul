@@ -55,7 +55,12 @@ void LoadLevel3()
 	SetupEnemy(eye3, enemyType::eye, -50.f, 1.f, 25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 2);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
-	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+	stageModel->colorMultiplicativeRed = 1.2f;
+	stageModel->colorMultiplicativeGreen = 1.0f;
+	stageModel->colorMultiplicativeBlue = 1.4f;
+	stageModel->colorAdditiveBlue = 0.1f;
+	
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -97,11 +102,11 @@ void LoadLevel3()
 	mousePointOfInterset->mode = POI_MOUSE;
 
 
-	CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 	//Add static hazards on the where player does not spawn
@@ -115,9 +120,11 @@ void LoadLevel3()
 			float randZ = (float)(rand() % 100) - 50.0f;
 			if (randX * randX + randZ * randZ > 80)
 			{
-				EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
-					-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-					0.8f, 0.5f, 0.1f, 3.0f, (float)rand());
+				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+				EntityID hazard1 = CreateSquareStaticHazard("LavaPlaceholder.mdl", randX, 0.1f, randZ, randScaleX, 0.1f, randScaleZ,
+					-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
+					0.1f, 0.3f, 0.5f, 3.0f, (float)rand());
 				succeded = true;
 			}
 		}
