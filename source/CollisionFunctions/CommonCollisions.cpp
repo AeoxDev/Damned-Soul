@@ -205,7 +205,7 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 void AttackCollision(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
-	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+ 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
 	//Get the components of the attackee (stats for taking damage and transform for knockback)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);

@@ -357,7 +357,7 @@ void UIFunc::Shop_Heal(void* args)
 		if (stats->GetHealth() == stats->GetMaxHealth())
 			break;
 
-		int heal = stats->GetMaxHealth() * 0.25;
+		float heal = stats->GetMaxHealth() * 0.25f;
 
 		stats->UpdateHealth(heal);
 

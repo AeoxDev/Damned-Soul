@@ -6,7 +6,7 @@
 #include "UI/UIRenderer.h"
 #include <random>
 
-
+#define SKELETON_ATTACK_HITBOX 2
 
 void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
 {
@@ -68,25 +68,32 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
+	sc->attackTimer += GetDeltaTime() * enemyStats->attackSpeed;
 	sc->goalDirectionX = ptc->positionX - stc->positionX;
 	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
-	SmoothRotation(stc, sc->goalDirectionX, sc->goalDirectionZ);
+	//Elliot: Bruh, why is this here?
+	//SmoothRotation(stc, sc->goalDirectionX, sc->goalDirectionZ);
 
 	animComp->aAnim = ANIMATION_ATTACK;
 	animComp->aAnimIdx = 0;
-	animComp->aAnimTime = 0.5f + (sc->attackTimer / enemyStats->attackSpeed);
+	//Elliot: Change in calculations for attack timer:
+	animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->attackSpeed);
 	while (1.f < animComp->aAnimTime)
 		animComp->aAnimTime -= 1.f;
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
-		sc->attackTimer = 0;
-		sc->attackStunDurationCounter = 0;
-		playerStats->UpdateHealth(-enemyStats->damage, true);
+		
+		//playerStats->UpdateHealth(-enemyStats->damage, true);
+		//Set hitbox active here.
+		SetHitboxActive(ent, SKELETON_ATTACK_HITBOX, true);
+		SetHitboxCanDealDamage(ent, SKELETON_ATTACK_HITBOX, true);
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
 		sfx->Play(Skeleton_Attack, Channel_Base);
 		RedrawUI();
+		sc->attackTimer = 0;
+		sc->attackStunDurationCounter = 0;
 	}
 }
 
@@ -118,19 +125,36 @@ bool SkeletonBehaviourSystem::Update()
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			skeletonComponent->attackTimer += GetDeltaTime();
+			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
-
+			bool stunned = false;
 			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
 			{
 				// do nothing, stand like a bad doggo and be ashamed
+				//Elliot: When finished, reset attack timer and hitbox
+				skeletonComponent->attackTimer = 0.0f;
+				enemyAnim->aAnimTime -= (float)(enemyAnim->aAnimTime > 0.0f) * GetDeltaTime();
+				stunned = true;
 			}
-			else if (distance < 2.5f)
+			else//Elliot: Turn off attack hitbox to not make player rage.
+			{
+				
+				SetHitboxActive(enemyEntity, SKELETON_ATTACK_HITBOX, false);
+				SetHitboxCanDealDamage(enemyEntity, SKELETON_ATTACK_HITBOX, false);
+			}
+			//Elliot, denesting stunned for readability.
+			if (stunned)
+			{
+				continue;
+			}
+			//Elliot: If in attack, keep attacking even if player is outside
+			if (distance < 2.5f || skeletonComponent->attackTimer > 0.0f)
 			{
 				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
 			}
-			else if (distance < 50) //hunting distance
+			else if (distance < 50.f) //hunting distance
 			{
+				
 				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
 			else // idle
