@@ -23,8 +23,8 @@ struct UIShopRelicWindowComponent
 	bool doRedraw = true;
 
 	int shopPosition = -1;
-	int price = -1;
-	bool locked = false;
+
+	bool bought = false;
 
 	UIImage m_baseImage;
 	UIText m_priceText;

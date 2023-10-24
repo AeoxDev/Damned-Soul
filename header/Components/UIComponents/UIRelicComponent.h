@@ -14,6 +14,7 @@ struct UIRelicComponent
 	bool doRedraw = true;
 	int locked = -1;
 	int relicIndex = -1;
+	int price = -1;
 
 	UIImage sprite;
 	UIImage flavorTitleImage;

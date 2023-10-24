@@ -168,10 +168,15 @@ void UIFunc::Shop_BuyRelic(void* args)
 			if (uiElement->shopPosition != button->shopPosition)
 				continue;
 
-			if (player->GetSouls() < uiElement->price)
+			if (player->GetSouls() < uiRelic->price /*|| uiElement->bought*/)
 				break;
 
-			player->UpdateSouls(-uiElement->price);
+			/*uiElement->bought = true;
+
+			button->m_Images[0].SetImage("Dollar.png");
+			button->m_Images[1].SetImage("Dollar.png");*/
+
+			player->UpdateSouls(-uiRelic->price);
 			switch (uiRelic->relicIndex)
 			{
 			case DemonBonemarrow:
@@ -191,6 +196,12 @@ void UIFunc::Shop_BuyRelic(void* args)
 				break;
 			case SoulHealth:
 				Relics::SoulHealth(true);
+				break;
+			case SpeedyLittleDevil:
+				Relics::SpeedyLittleDevil(true);
+				break;
+			case LightningGod:
+				Relics::LightningGod(true);
 				break;
 			default:
 				break;
@@ -216,6 +227,17 @@ void UIFunc::Shop_LockRelic(void* args)
 			continue;
 		
 		uiRelic->locked *= -1;
+
+		if (uiRelic->locked == -1)
+		{
+			button->m_Images[0].SetImage("Unlocked.png");
+			button->m_Images[1].SetImage("Unlocked.png");
+		}
+		else
+		{
+			button->m_Images[0].SetImage("Locked.png");
+			button->m_Images[1].SetImage("Locked.png");
+		}
 
 		RedrawUI();
 		break;
@@ -252,7 +274,7 @@ void UIFunc::Shop_ReRollRelic(void* args)
 		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
 		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-		if (player->GetSouls() < uiElement->price)
+		if (player->GetSouls() < 1)
 			break;
 
 		if (uiRelic->locked == 1)
@@ -265,34 +287,52 @@ void UIFunc::Shop_ReRollRelic(void* args)
 		switch (includedRelics[counter])
 		{
 		case DemonBonemarrow:
+			uiRelic->price = 10;
 			uiRelic->sprite.SetImage(Relics::DemonBonemarrow(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::DemonBonemarrow(false).relicName, true);
 			uiRelic->flavorDesc.UpdateText(Relics::DemonBonemarrow(false).description, true);
 			break;
 		case FlameWeapon:
+			uiRelic->price = 3;
 			uiRelic->sprite.SetImage(Relics::FlameWeapon(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::FlameWeapon(false).relicName, true);
 			uiRelic->flavorDesc.UpdateText(Relics::FlameWeapon(false).description, true);
 			break;
 		case SoulPower:
+			uiRelic->price = 5;
 			uiRelic->sprite.SetImage(Relics::SoulPower(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::SoulPower(false).relicName, true);
 			uiRelic->flavorDesc.UpdateText(Relics::SoulPower(false).description, true);
 			break;
 		case DemonHeart:
+			uiRelic->price = 10;
 			uiRelic->sprite.SetImage(Relics::DemonHeart(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::DemonHeart(false).relicName, true);
 			uiRelic->flavorDesc.UpdateText(Relics::DemonHeart(false).description, true);
 			break;
 		case FrostFire:
+			uiRelic->price = 3;
 			uiRelic->sprite.SetImage(Relics::FrostFire(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::FrostFire(false).relicName, true);
 			uiRelic->flavorDesc.UpdateText(Relics::FrostFire(false).description, true);
 			break;
 		case SoulHealth:
+			uiRelic->price = 5;
 			uiRelic->sprite.SetImage(Relics::SoulHealth(false).filePath);
 			uiRelic->flavorTitle.UpdateText(Relics::SoulHealth(false).relicName, true);
 			uiRelic->flavorDesc.UpdateText(Relics::SoulHealth(false).description, true);
+			break;
+		case SpeedyLittleDevil:
+			uiRelic->price = 3;
+			uiRelic->sprite.SetImage(Relics::SpeedyLittleDevil(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::SpeedyLittleDevil(false).relicName, true);
+			uiRelic->flavorDesc.UpdateText(Relics::SpeedyLittleDevil(false).description, true);
+			break;
+		case LightningGod:
+			uiRelic->price = 10;
+			uiRelic->sprite.SetImage(Relics::LightningGod(false).filePath);
+			uiRelic->flavorTitle.UpdateText(Relics::LightningGod(false).relicName, true);
+			uiRelic->flavorDesc.UpdateText(Relics::LightningGod(false).description, true);
 			break;
 		default:
 			break;
@@ -301,8 +341,26 @@ void UIFunc::Shop_ReRollRelic(void* args)
 		counter++;
 	}
 
-	if (args && player->GetSouls() >= 2)
-		player->UpdateSouls(-2);
+	if (args && player->GetSouls() >= 1)
+		player->UpdateSouls(-1);
 
 	RedrawUI();
+}
+
+void UIFunc::Shop_Heal(void* args)
+{
+	for (auto entity : View<PlayerComponent, StatComponent>(registry))
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+
+		if (stats->GetHealth() == stats->GetMaxHealth())
+			break;
+
+		int heal = stats->GetMaxHealth() * 0.25;
+
+		stats->UpdateHealth(heal);
+
+		player->UpdateSouls(-2);
+	}
 }

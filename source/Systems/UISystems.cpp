@@ -310,8 +310,16 @@ bool UIShopSystem::Update()
                                         -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
         
         uiShopElement->playerInfo.UpdateText(playerInfo);
-        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 2) });
+        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 2) });
 
+    }
+
+    for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+    {
+        auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+        auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+
+        uiElement->m_priceText.UpdateText(("Price: " + std::to_string(uiRelic->price)).c_str());
     }
 
     return true;
