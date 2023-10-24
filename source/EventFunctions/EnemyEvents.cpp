@@ -252,10 +252,11 @@ void SplitBoss(EntityID& entity, const int& index)
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 	// Eat them souls
-	for (auto entity : View<PlayerComponent>(registry))
+	for (auto player : View<PlayerComponent>(registry))
 	{
-		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(entity);
-		pc->UpdateSouls(+1);
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
+		pc->UpdateSouls(ec->soulCount);
 	}
 
 	// I am inevitable 
