@@ -74,6 +74,7 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	//Elliot: Bruh, why is this here?
 	//SmoothRotation(stc, sc->goalDirectionX, sc->goalDirectionZ);
 
+	//Elliot & Herman request: Make animationtime scale better for faster startup and swing.
 	animComp->aAnim = ANIMATION_ATTACK;
 	animComp->aAnimIdx = 0;
 	//Elliot: Change in calculations for attack timer:
@@ -87,6 +88,7 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 		
 		//playerStats->UpdateHealth(-enemyStats->damage, true);
 		//Set hitbox active here.
+		//Elliot's request: Add Skeleton attack hitbox instead of define
 		SetHitboxActive(ent, SKELETON_ATTACK_HITBOX, true);
 		SetHitboxCanDealDamage(ent, SKELETON_ATTACK_HITBOX, true);
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
@@ -133,7 +135,7 @@ bool SkeletonBehaviourSystem::Update()
 				// do nothing, stand like a bad doggo and be ashamed
 				//Elliot: When finished, reset attack timer and hitbox
 				skeletonComponent->attackTimer = 0.0f;
-				enemyAnim->aAnimTime -= (float)(enemyAnim->aAnimTime > 0.0f) * GetDeltaTime();
+				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
 				stunned = true;
 			}
 			else//Elliot: Turn off attack hitbox to not make player rage.
