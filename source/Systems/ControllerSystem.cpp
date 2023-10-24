@@ -16,6 +16,9 @@ bool ControllerSystem::Update()
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		MouseComponent* mouseComponent = registry.GetComponent<MouseComponent>(entity);
 
+		if (controller->enabled == -1)
+			break;
+
 		//Store variables for checking to see how far the entity has moved, these are relevant to the camera
 		//transform->lastPositionZ = transform->positionZ;
 		//transform->lastPositionX = transform->positionX;

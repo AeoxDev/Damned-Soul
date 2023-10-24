@@ -19,7 +19,7 @@ void PauseState::Input()
 	{
 		SetInPause(false);
 		SetInPlay(true);
-		stateManager.levelScenes[0].Setup(0);
+		//stateManager.levelScenes[0].Setup(0);
 		Unload();
 	}
 }

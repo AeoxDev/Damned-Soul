@@ -5,6 +5,7 @@
 struct Menu
 {
 	bool m_active = false;
+	bool unloadAudioEngine = true;
 
 	void Setup();
 

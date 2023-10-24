@@ -2,9 +2,10 @@
 #include <dwrite.h>
 using namespace DirectX;
 
-void UIText::Setup(const std::wstring& string, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility)
+void UIText::Setup(const ML_String& text, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility)
 {
-	m_Text = string;
+	std::wstring textAsWString(text.begin(), text.end());
+	m_Text = textAsWString;
 
 	m_UiComponent.Setup(scale, rotation, visibility);
 	float fontSize = ui.GetTextFormat()->GetFontSize();
@@ -24,10 +25,13 @@ void UIText::Draw()
 	}
 }
 
-void UIText::UpdateText(std::wstring text)
+void UIText::UpdateText(const ML_String text, bool ignoreScale)
 {
-	m_Text = text;
+	std::wstring textAsWString(text.begin(), text.end());
+	m_Text = textAsWString;
 	float fontSize = ui.GetTextFormat()->GetFontSize();
 
 	m_UiComponent.m_OriginalBounds = { 0, 0, fontSize * m_Text.length(), fontSize + 5 };
+	if (!ignoreScale)
+		m_UiComponent.SetScale(m_UiComponent.m_Scale);
 }

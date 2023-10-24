@@ -11,17 +11,20 @@
 #include "Model.h"
 #include "UIComponents.h"
 
+#include "UIRenderer.h"
+
 void LoadLevel2()
 {
-	EntityID gameLevel = registry.CreateEntity();
 	EntityID stage = registry.CreateEntity();
-	EntityID player = registry.CreateEntity();
 	EntityID skeleton = registry.CreateEntity();
 	EntityID skeleton2 = registry.CreateEntity();
 	EntityID skeleton3 = registry.CreateEntity();
 	EntityID eye = registry.CreateEntity();
 	EntityID dog = registry.CreateEntity();
 	EntityID dog2 = registry.CreateEntity();
+	EntityID playerUi = registry.CreateEntity();
+	//EntityID skeleton = registry.CreateEntity();
+	//EntityID skeleton2 = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
@@ -30,6 +33,10 @@ void LoadLevel2()
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
+
+	//Player
+	//SetPlayerPosition(0.0, 0.0, 30.0f);
+	LoadPlayerSounds();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	SetupEnemy(skeleton, enemyType::skeleton, -25.f, 0.f, 50.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
@@ -41,56 +48,48 @@ void LoadLevel2()
 	//27 souls + 16 souls level 1 = 43 souls total before boss
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());
+	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
+	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
 	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
 	phc->Load("default");
 
-	// Player (Default)
-	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(player);
-	playerTransform->facingZ = 1.0f;
-	playerTransform->mass = 3.0f;
 
 	//Player Sounds
-	SoundComponent* scp = registry.AddComponent<SoundComponent>(player);
-	scp->Load(PLAYER);
-	registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 50.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
-	registry.AddComponent<PlayerComponent>(player);
+	//SoundComponent* scp = registry.AddComponent<SoundComponent>(player);
+	//scp->Load(PLAYER);
+	//registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 50.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	//registry.AddComponent<PlayerComponent>(player);
 
-	registry.AddComponent<ControllerComponent>(player);
+	//registry.AddComponent<ControllerComponent>(player);
 
 	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
-	registry.AddComponent<PointOfInterestComponent>(player, poic);
+	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
 
 
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
-	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
-	pcUiHpC->text.Setup(L"");
+	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->text.Setup("");
 
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(player, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup(L"");
+	pcUiSC->text.Setup("");
 
-	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(gameLevel, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
+	//Thing in the top right corner showing what level we're on
+	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 2);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup(L"");
+	gameLevelUIc->text.Setup("");
 
-	RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
-
-	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");
+	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
+	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
 
 	RenderGeometryIndependentCollision(stage);
 
-	//Finally set the collision boxes
-	SetupPlayerCollisionBox(player, 1.0f);
-	MouseComponentAddComponent(player);
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;

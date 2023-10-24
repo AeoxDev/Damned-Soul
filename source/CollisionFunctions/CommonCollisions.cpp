@@ -62,7 +62,7 @@ void SoftCollision(OnCollisionParameters& params)
 
 	//transform2->positionX += dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
 	//transform2->positionZ += dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
-
+	
 }
 
 void HardCollision(OnCollisionParameters& params)
@@ -313,6 +313,10 @@ void AttackCollision(OnCollisionParameters& params)
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
+	//next level is shop so we set the paramaters in statemanager as so
+	SetInPlay(false);
+	SetInShop(true);
+	
 	LoadLevel(++stateManager.activeLevel);
 }
 

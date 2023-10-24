@@ -2,13 +2,19 @@
 
 using namespace DirectX;
 
-void UIButton::Setup(const std::string& imageFile, const std::string& hoverImageFile, std::wstring buttonText, void* onClick, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIButton::Setup(const ML_String& imageFile, const ML_String& hoverImageFile, ML_String buttonText, void* onClick, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_UiComponent.Setup(scale, rotation, visibility);
 	m_Images[0].Setup(imageFile, position, scale, rotation, visibility, opacity);
 	m_UiComponent.m_OriginalBounds = m_Images[0].m_UiComponent.m_OriginalBounds;
 
 	m_onClick = onClick;
+
+	m_doRedraw = true;
+
+	shopPosition = 0;
+
+	m_CurrentImage = 0;
 
 	//Don't we do this already in constructor etc?
 	m_UiComponent.SetScale(scale);
@@ -20,9 +26,9 @@ void UIButton::Setup(const std::string& imageFile, const std::string& hoverImage
 	//Hover image is not necessarily needed
 	if (hoverImageFile != "")
 		m_Images[1].Setup(hoverImageFile, position, scale, rotation, visibility, opacity);
-	
+
 	//Button text is not necessarily needed
-	if (buttonText != L"")
+	if (buttonText != "")
 		m_Text.Setup(buttonText, position, scale, rotation, visibility);
 }
 
@@ -39,7 +45,7 @@ void UIButton::Draw()
 void UIButton::Interact(void* args)
 {
 	if (m_onClick && m_UiComponent.m_Visibility)
-		((void(*)(void* args))m_onClick)(args);
+		((void(*)(void*))m_onClick)(args);
 }
 
 void UIButton::Hover()

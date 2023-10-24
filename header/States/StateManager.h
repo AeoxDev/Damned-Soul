@@ -4,10 +4,10 @@
 #include "States\Game.h"
 #include "States\Pause.h"
 #include "Systems\Systems.h"
+#include "EntityID.h"
 #include <vector>
 
 //#include "MemLib\ML_Vector.hpp"
-
 
 struct StateManager;
 
@@ -17,14 +17,13 @@ extern StateManager stateManager;
 struct StateManager
 {
 	std::vector<System*> systems;
-	int activeLevel = 0;
-	int activeLevelScene = 0;//Current loaded level scene in array
-	GameScene levelScenes[2];
-	GameScene shop;
+	int activeLevel = -1;
+	int activeLevelScene = -1;//Current loaded level scene in array
+	GameScene scenes[3];
 	Menu menu;
 	SettingsState settings;
 	PauseState pause;
-
+	EntityID player;
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>

@@ -12,14 +12,19 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 	//calculate the direction away from the player
 	eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
 	eyeComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - eyeTransformComponent->positionZ);
-
+	float magnitude = sqrt(eyeComponent->goalDirectionX * eyeComponent->goalDirectionX + eyeComponent->goalDirectionZ * eyeComponent->goalDirectionZ);
+	if (magnitude < 0.001f)
+	{
+		magnitude = 0.001f;
+	}
+	eyeComponent->goalDirectionX /= magnitude;
+	eyeComponent->goalDirectionZ /= magnitude;
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 	float dirX = eyeTransformComponent->facingX, dirZ = eyeTransformComponent->facingZ;
-	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	if (magnitude > 0.001f)
+	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+	if (magnitude < 0.001f)
 	{
-		dirX /= magnitude;
-		dirZ /= magnitude;
+		magnitude = 0.001f;
 	}
 
 	eyeTransformComponent->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
@@ -90,12 +95,12 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	}
 	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	SmoothRotation(etc, dirX, dirZ, 10.f);
-	if (magnitude > 0.001f)
+	if (magnitude < 0.001f)
 	{
-		dirX /= magnitude;
-		dirZ /= magnitude;
+		magnitude = 0.001f;
 	}
-
+	dirX /= magnitude;
+	dirZ /= magnitude;
 	etc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
 	etc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
@@ -104,7 +109,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats)
 {
-	eyeComponent->timeCounter += GetDeltaTime();
+	/*eyeComponent->timeCounter += GetDeltaTime();
 	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
 	{
 		eyeComponent->timeCounter = 0.f;
@@ -123,6 +128,27 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	}
 
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+
+	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
+	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();*/
+	eyeComponent->timeCounter += GetDeltaTime();
+	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
+	{
+		eyeComponent->timeCounter = 0.f;
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// Define a uniform distribution for the range [-1.0, 1.0]
+		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+		float randomX = distribution(gen);
+		float randomZ = distribution(gen);
+		eyeComponent->goalDirectionX = randomX;
+		eyeComponent->goalDirectionZ = randomZ;
+		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+		eyeComponent->updateInterval = randomInterval(gen);
+	}
+
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+
 
 	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
@@ -234,6 +260,7 @@ bool EyeBehaviourSystem::Update()
 	HitboxComponent* enemyHitbox = nullptr;
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
+	
 
 	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	{
@@ -259,11 +286,11 @@ bool EyeBehaviourSystem::Update()
 			{
 				// do nothing, stand still and be ashamed
 			}
-			else if (distance < 15.0f && !eyeComponent->charging) // Retreat to safe distance if not charging
+			else if (distance < 25.0f && !eyeComponent->charging) // Retreat to safe distance if not charging
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats);
 			}
-			else if (eyeComponent->charging || eyeComponent->attackTimer > enemyStats->attackSpeed/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->attackSpeed && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				if (!eyeComponent->chargeAttackSoundPlaying)
@@ -275,7 +302,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity);
 
 			}
-			else if (distance <= 40.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
 				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
@@ -293,5 +320,7 @@ bool EyeBehaviourSystem::Update()
 			}
 		}
 	}
+
+	
 	return true;
 }

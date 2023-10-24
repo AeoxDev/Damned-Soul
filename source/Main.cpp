@@ -7,7 +7,7 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000
+#define TEST3000
 
 #ifdef TEST3000
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
@@ -36,13 +36,8 @@ int main(int argc, char* args[])
 #ifdef TEST3000
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
-		UIFunc::MainMenu_Start(nullptr);
+		UIFunc::LoadNextLevel(nullptr);
 
-		SetInMainMenu(true);
-		SetInPlay(false);
-		stateManager.levelScenes[0].Unload();
-		stateManager.levelScenes[1].Unload();
-		stateManager.menu.Setup();
 	}
 #endif // TEST3000
 

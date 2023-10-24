@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "Hitbox.h"
 #include "Model.h"
+#include "States\StateManager.h"
 
 void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float positionY , float positionZ , float mass , 
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth , float facingX ,
@@ -12,6 +13,7 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	TransformComponent transform;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
+	assert(mass > 0.0f);
 	transform.mass = mass;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
@@ -56,4 +58,44 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	}
 }
 
+void CreatePlayer(float positionX, float positionY, float positionZ, float mass, float health, float moveSpeed, float damage, float attackSpeed, int soulWorth, float facingX, float facingY, float facingZ, float scaleX, float scaleY, float scaleZ)
+{
+	//Create player
+	stateManager.player = registry.CreateEntity();
 
+	registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+
+	//stateManager.player Sounds
+	SoundComponent* scp = registry.AddComponent<SoundComponent>(stateManager.player);
+	scp->Load(PLAYER);
+
+	// Player (Default)
+	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
+	playerTransform->facingZ = facingZ;
+	playerTransform->mass = mass;
+
+	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
+	registry.AddComponent<PlayerComponent>(stateManager.player);
+
+	registry.AddComponent<ControllerComponent>(stateManager.player);
+	PointOfInterestComponent poic;
+	poic.weight = 10.0f;
+	registry.AddComponent<PointOfInterestComponent>(stateManager.player, poic);
+	SetupPlayerCollisionBox(stateManager.player, 1.0f);
+	MouseComponentAddComponent(stateManager.player);
+}
+
+void SetPlayerPosition(float positionX, float positionY, float positionZ)
+{
+	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
+	playerTransform->positionX = positionX;
+	playerTransform->positionY = positionY;
+	playerTransform->positionZ = positionZ;
+}
+
+void LoadPlayerSounds()
+{
+	SoundComponent* scp = registry.AddComponent<SoundComponent>(stateManager.player);
+	scp->Load(PLAYER);
+}
