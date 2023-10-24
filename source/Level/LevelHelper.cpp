@@ -30,7 +30,8 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	}
 	else if (eType == enemyType::skeleton)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("SkeletonOneDymmy.mdl"));
+		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHSkeleton.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<SkeletonBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 0.9f);
 	}
