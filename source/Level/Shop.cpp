@@ -22,8 +22,15 @@ void LoadShop()
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();
+
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
+	pcUiHpC->text.Setup("");
+
 	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
+	pcUiSC->text.Setup("");
 
 	UIShopComponent* shopComp = registry.AddComponent<UIShopComponent>(shop);
 	shopComp->Setup();
