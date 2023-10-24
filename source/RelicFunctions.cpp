@@ -52,7 +52,7 @@ Relics::RelicMetaData Relics::DemonBonemarrow(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Demon Bonemarrow",
 		/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
-		/*Description*/	"Increases your Strength by 15 when obtained."
+		/*Description*/	"Increases your Damage by 15 when obtained."
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
@@ -100,7 +100,7 @@ Relics::RelicMetaData Relics::SoulPower(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Soul Power",
 		/*Filepath*/	"RelicIcons\\Soul_Power.png",
-		/*Description*/	"You gain a dynamic bonus to your Strength equal to the number of Souls you currently possess"
+		/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess"
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
@@ -211,7 +211,7 @@ Relics::RelicMetaData Relics::SpeedyLittleDevil(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Speedy Little Devil",
 		/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
-		/*Description*/	"Increases your speed by 4 when obtained"
+		/*Description*/	"Increases your Movespeed by 4 when obtained"
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality

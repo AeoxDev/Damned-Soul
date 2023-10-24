@@ -28,4 +28,8 @@ void LoadShop()
 	UIShopComponent* shopComp = registry.AddComponent<UIShopComponent>(shop);
 	shopComp->Setup();
 
+	UIText* shopText = registry.AddComponent<UIText>(shop);
+	shopText->Setup("Shop");
+	shopText->m_UiComponent.SetPosition({ 0.0f, 0.8f });
+	shopText->m_UiComponent.SetScale({ 1.5f, 1.5f });
 }

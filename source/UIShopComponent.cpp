@@ -122,17 +122,17 @@ void UIShopComponent::Setup()
 
 	auto rerollEntity = registry.CreateEntity();
 	UIButton* rerollButton = registry.AddComponent<UIButton>(rerollEntity);
-	rerollButton->Setup("Roll.png", "Roll2.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 6.0f), spritePixelCoords.y - (0.1f * 13.5f) });
+	rerollButton->Setup("Roll.png", "Roll2.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 5.5f), spritePixelCoords.y - (0.1f * 13.5f) });
 
 	UIText* rerollPrice = registry.AddComponent<UIText>(rerollEntity);
-	rerollPrice->Setup("Price: 1", { spritePixelCoords.x + (0.1f * 7.0f), spritePixelCoords.y - (0.1f * 13.5f) });
+	rerollPrice->Setup("Re Roll Price: 1", { spritePixelCoords.x + (0.1f * 7.0f), spritePixelCoords.y - (0.1f * 13.5f) });
 
 	auto healEntity = registry.CreateEntity();
 	UIButton* healButton = registry.AddComponent<UIButton>(healEntity);
-	healButton->Setup("Heal.png", "Heal2.png", "", UIFunc::Shop_Heal, { spritePixelCoords.x + (0.1f * 6.0f), spritePixelCoords.y - (0.1f * 15) });
+	healButton->Setup("Heal.png", "Heal2.png", "", UIFunc::Shop_Heal, { spritePixelCoords.x + (0.1f * 5.5f), spritePixelCoords.y - (0.1f * 15) });
 
 	UIText* healPrice = registry.AddComponent<UIText>(healEntity);
-	healPrice->Setup("Price: 2", { spritePixelCoords.x + (0.1f * 7.0f), spritePixelCoords.y - (0.1f * 15) });
+	healPrice->Setup("Heal Price: 2", { spritePixelCoords.x + (0.1f * 7.0f), spritePixelCoords.y - (0.1f * 15) });
 
 	auto nextLevelEntity = registry.CreateEntity();
 	UIButton* nextLevelButton = registry.AddComponent<UIButton>(nextLevelEntity);
