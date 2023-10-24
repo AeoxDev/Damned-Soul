@@ -18,6 +18,8 @@ void LoadLevel4()
 	EntityID particle = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
 
+	//Player
+	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
 	EntityID tempBoss = registry.CreateEntity();
