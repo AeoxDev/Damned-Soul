@@ -43,7 +43,7 @@ void LoadLevel1()
 	SetupEnemy(skeleton4, enemyType::skeleton, -20.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(eye,				enemyType::eye, -25.f, 1.f, 15.f, 1.0f, 60.f, 15.f, 10.f, 5.f, 2);
 	//SetupEnemy(eye2, enemyType::eye, 35.f, 1.f, -15.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
-	//16 souls total
+	//6 souls total
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));

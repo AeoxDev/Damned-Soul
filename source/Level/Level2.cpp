@@ -41,7 +41,7 @@ void LoadLevel2()
 	SetupEnemy(dog, enemyType::hellhound, -35.f, 0.f, -25.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
 	SetupEnemy(dog2, enemyType::hellhound, 45.f, 0.f, -45.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
 	SetupEnemy(eye, enemyType::eye, 35.f, 1.f, -25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 2);
-	//27 souls + 16 souls level 1 = 43 souls total before boss
+	//11 souls + 6 souls level 1 = 17 souls total before boss
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
