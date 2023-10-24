@@ -15,8 +15,15 @@
 
 void PlayDeathAnimation(EntityID& entity, const int& index)
 {
-	//implement later, goddamn TA
+	// Eat them souls
+	for (auto player : View<PlayerComponent>(registry))
+	{
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
+		pc->UpdateSouls(ec->soulCount);
+	}
 
+	//implement later, goddamn TA
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;
@@ -251,14 +258,6 @@ void SplitBoss(EntityID& entity, const int& index)
 
 void RemoveEnemy(EntityID& entity, const int& index)
 {
-	// Eat them souls
-	for (auto player : View<PlayerComponent>(registry))
-	{
-		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
-		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
-		pc->UpdateSouls(ec->soulCount);
-	}
-
 	// I am inevitable 
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
