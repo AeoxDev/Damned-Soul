@@ -19,7 +19,7 @@ void LoadLevel3()
 	EntityID portal = registry.CreateEntity();
 
 	//Player
-	LoadPlayerSounds();
+	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
 	EntityID tempBoss = registry.CreateEntity();

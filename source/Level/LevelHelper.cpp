@@ -99,3 +99,44 @@ void LoadPlayerSounds()
 	SoundComponent* scp = registry.AddComponent<SoundComponent>(stateManager.player);
 	scp->Load(PLAYER);
 }
+
+void ReloadPlayerNonGlobals()
+
+{
+	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
+	if (modelLoaded == nullptr)
+	{
+		registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+	}
+	AnimationComponent* animationLoaded = registry.GetComponent<AnimationComponent>(stateManager.player);
+	if (animationLoaded == nullptr)
+	{
+		registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+	}
+
+	LoadPlayerSounds();
+
+	// Player (Default)
+	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);
+	if (playerTransform == nullptr)
+	{
+		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
+		playerTransform->mass = 3.0f;
+	}
+
+	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
+	if (controller == nullptr)
+	{
+		registry.AddComponent<ControllerComponent>(stateManager.player);
+	}
+	PointOfInterestComponent* cameraPoint = registry.GetComponent<PointOfInterestComponent>(stateManager.player);
+	if (cameraPoint == nullptr)
+	{
+		cameraPoint = registry.AddComponent<PointOfInterestComponent>(stateManager.player);
+		cameraPoint->weight = 10.0f;
+	}
+
+	
+	SetupPlayerCollisionBox(stateManager.player, 1.0f);
+	MouseComponentAddComponent(stateManager.player);
+}

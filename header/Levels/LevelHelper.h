@@ -23,3 +23,5 @@ void CreatePlayer(float positionX = 0.f, float positionY = 0.f, float positionZ 
 void SetPlayerPosition(float positionX = 0.f, float positionY = 0.f, float positionZ = 0.f);
 
 void LoadPlayerSounds();
+
+void ReloadPlayerNonGlobals();

@@ -36,16 +36,16 @@ void LoadLevel2()
 
 	//Player
 	//SetPlayerPosition(0.0, 0.0, 30.0f);
-	LoadPlayerSounds();
+	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(skeleton, enemyType::skeleton, -25.f, 0.f, 50.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(skeleton2, enemyType::skeleton, 50.f, 0.f, -45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(skeleton3, enemyType::skeleton, -50.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 2);
-	SetupEnemy(dog, enemyType::hellhound, -35.f, 0.f, -25.f, 1.f, 150.f, 15.f, 10.f, 2.f, 8);
-	SetupEnemy(dog2, enemyType::hellhound, 45.f, 0.f, -45.f, 1.f, 150.f, 15.f, 10.f, 2.f, 8);
-	SetupEnemy(eye, enemyType::eye, 35.f, 1.f, -25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
-	//27 souls + 16 souls level 1 = 43 souls total before boss
+	SetupEnemy(skeleton, enemyType::skeleton, -25.f, 0.f, 50.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton2, enemyType::skeleton, 50.f, 0.f, -45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton3, enemyType::skeleton, -50.f, 0.f, 25.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(dog, enemyType::hellhound, -35.f, 0.f, -25.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
+	SetupEnemy(dog2, enemyType::hellhound, 45.f, 0.f, -45.f, 1.f, 150.f, 15.f, 10.f, 2.f, 3);
+	SetupEnemy(eye, enemyType::eye, 35.f, 1.f, -25.f, 1.f, 60.f, 8.f, 10.f, 5.f, 2);
+	//11 souls + 6 souls level 1 = 17 souls total before boss
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -109,9 +109,9 @@ void LoadLevel2()
 		bool succeded = false;
 		while (!succeded)
 		{
-			float randX = (float)(rand() % 120) - 60.0f;
-			float randZ = (float)(rand() % 120) - 60.0f;
-			if (randX * randX + randZ * randZ > 100)
+			float randX = (float)(rand() % 100) - 50.0f;
+			float randZ = (float)(rand() % 100) - 50.0f;
+			if (randX * randX + randZ * randZ > 80)
 			{
 				EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
 					-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
