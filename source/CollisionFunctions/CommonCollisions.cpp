@@ -165,6 +165,11 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 	*/
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	if (params.entity2.index == stateManager.player.index)
+	{
+		//Screen shaking
+		int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+	}
 	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 
@@ -283,6 +288,8 @@ void AttackCollision(OnCollisionParameters& params)
 			break;
 		}
 	}
+	//Camera Shake
+	int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
 	//Hitstop
 	int index1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
 	int index2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);

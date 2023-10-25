@@ -52,3 +52,8 @@ void ResetColor(EntityID& entity, const int& index);
 //Stats
 void SetSpeedZero(EntityID& entity, const int& index);
 void ResetSpeed(EntityID& entity, const int& index);
+
+//Camera
+#define CAMERA_CONSTANT_SHAKE_TIME 0.4f
+void ShakeCamera(EntityID& entity, const int& index);
+void ResetCameraOffset(EntityID& entity, const int& index);
