@@ -165,7 +165,6 @@ int StateManager::Setup()
 }
 
 
-
 void StateManager::Input()
 {
 	//First read the keys
@@ -225,30 +224,6 @@ void StateManager::Update()
 	}
 
 	Input();
-}
-
-void StateManager::ComputeShaders()
-{
-	/*if (currentStates & State::InMainMenu)
-	{
-		menu.ComputeShaders();
-	}
-	if (currentStates & State::InPause)
-	{
-		pause.ComputeShaders();
-	}
-	if (currentStates & State::InSettings)
-	{
-		settings.ComputeShaders();
-	}
-	if (currentStates & State::InPlay)
-	{
-		levelScenes[activeLevelScene].ComputeShaders();
-	}
-	if (currentStates & State::InShop)
-	{
-		shop.ComputeShaders();
-	}*/
 }
 
 void StateManager::UnloadAll()

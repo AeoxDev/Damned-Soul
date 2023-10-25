@@ -1,8 +1,6 @@
 #include "UI/UIButton.h"
 
-using namespace DirectX;
-
-void UIButton::Setup(const ML_String& imageFile, const ML_String& hoverImageFile, ML_String buttonText, void* onClick, XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIButton::Setup(const ML_String& imageFile, const ML_String& hoverImageFile, ML_String buttonText, void* onClick, DSFLOAT2 position, DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_UiComponent.Setup(scale, rotation, visibility);
 	m_Images[0].Setup(imageFile, position, scale, rotation, visibility, opacity);
@@ -65,7 +63,7 @@ void UIButton::Release()
 		m_Images[1].Release();
 }
 
-void UIButton::SetPosition(XMFLOAT2 position)
+void UIButton::SetPosition(DSFLOAT2 position)
 {
 	m_UiComponent.SetPosition(position);
 	m_Images[0].m_UiComponent.SetPosition(position);
@@ -73,7 +71,7 @@ void UIButton::SetPosition(XMFLOAT2 position)
 	m_Text.m_UiComponent.SetPosition(position);
 }
 
-void UIButton::SetScale(XMFLOAT2 scale)
+void UIButton::SetScale(DSFLOAT2 scale)
 {
 	m_UiComponent.SetScale(scale);
 	m_Images[0].m_UiComponent.SetScale(scale);

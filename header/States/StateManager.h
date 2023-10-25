@@ -31,7 +31,6 @@ struct StateManager
 
 	void Input();//All input based cpu systems here
 	void Update();//All cpu systems here
-	void ComputeShaders();//All compute shaders here
 
 	void UnloadAll();
 	void EndFrame();//Clears all framebased variables.

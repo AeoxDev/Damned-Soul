@@ -4,7 +4,6 @@
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
 #include "MemLib/PoolPointer.hpp"
-#include "EntityFramework.h"
 #include "GameRenderer.h"
 #include <assert.h>
 #include <d2d1.h>
