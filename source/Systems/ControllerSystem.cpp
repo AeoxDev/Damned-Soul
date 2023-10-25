@@ -29,7 +29,7 @@ bool ControllerSystem::Update()
 		//Default the animation to idle, subject to be changed based off of user input
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-		anim->aAnimTime -= (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
+		ANIM_BRANCHLESS(anim);
 
 
 		/*MOVEMENT INPUT*/
@@ -88,8 +88,7 @@ bool ControllerSystem::Update()
 		{
 			anim->aAnim = ANIMATION_IDLE;
 			anim->aAnimIdx = 0;
-			if (1 < anim->aAnimTime)
-				anim->aAnimTime -= int(anim->aAnimTime);
+			ANIM_BRANCHLESS(anim);
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			
 		}

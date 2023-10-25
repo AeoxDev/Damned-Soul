@@ -121,11 +121,10 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 
 void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
-	enemyAnim->aAnim = ANIMATION_WALK;
+	enemyAnim->aAnim = hellhoundComponent->charge ? ANIMATION_ATTACK : ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime() * (1 + hellhoundComponent->charge);
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
@@ -155,8 +154,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	enemyAnim->aAnim = ANIMATION_IDLE;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	hellhoundComponent->timeCounter += GetDeltaTime();
 	if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
@@ -267,8 +265,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	enemyAnim->aAnim = ANIMATION_ATTACK;
 	enemyAnim->aAnimIdx = 1;
 	enemyAnim->aAnimTime += GetDeltaTime();
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox; //updates the range of the "flamethrower"
 
@@ -334,8 +331,7 @@ void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, S
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	float newGoalX = htc->positionX + hc->cowardDirectionX * 100.f;
 	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
@@ -436,6 +432,11 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
+				enemyAnim->aAnim = ANIMATION_ATTACK;
+				enemyAnim->aAnimIdx = 2;
+				enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+				ANIM_BRANCHLESS(enemyAnim);
+
 				// do nothing, stand like a bad doggo and be ashamed. You hit the player, bad doggo...
 				hellhoundComponent->isWating = true;
 			}

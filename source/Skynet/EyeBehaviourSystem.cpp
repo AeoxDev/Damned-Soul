@@ -13,8 +13,7 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	//calculate the direction away from the player
 	eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
@@ -44,8 +43,7 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 	enemyAnim->aAnim = ANIMATION_ATTACK;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	//impose timer so they cannot run and hit at the same time also not do a million damage per sec
 	if (ec->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
@@ -97,8 +95,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	float magnitude = 0.f;
 	float dirX = 0.f;
@@ -133,8 +130,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	enemyAnim->aAnim = ANIMATION_IDLE;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
-	if (1 < enemyAnim->aAnimTime)
-		enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+	ANIM_BRANCHLESS(enemyAnim);
 
 	/*eyeComponent->timeCounter += GetDeltaTime();
 	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
@@ -236,8 +232,6 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		enemyAnim->aAnim = ANIMATION_ATTACK;
 		enemyAnim->aAnimIdx = 0;
 		enemyAnim->aAnimTime += GetDeltaTime();
-		//if (1 < enemyAnim->aAnimTime)
-		//	enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
 
 		//calculate the current direction towards player
 		float dirX = (eyeComponent->targetX - eyeTransformComponent->positionX);
@@ -329,8 +323,7 @@ bool EyeBehaviourSystem::Update()
 				enemyAnim->aAnim = ANIMATION_IDLE;
 				enemyAnim->aAnimIdx = 0;
 				enemyAnim->aAnimTime += GetDeltaTime() * .7f;
-				if (1 < enemyAnim->aAnimTime)
-					enemyAnim->aAnimTime -= int(enemyAnim->aAnimTime);
+				ANIM_BRANCHLESS(enemyAnim);
 			}
 			else if (distance < 25.0f && !eyeComponent->charging) // Retreat to safe distance if not charging
 			{

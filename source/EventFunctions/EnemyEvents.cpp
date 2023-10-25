@@ -27,6 +27,14 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	offset -= 0.5f;
 	transform->positionZ += offset * 0.02f;
 
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim)
+	{
+		anim->aAnim = ANIMATION_DEATH;
+		anim->aAnimIdx = 0;
+		anim->aAnimTime = GetEventTimedElapsed(entity, index);
+	}
+
 	//Temp: Remove the light if dog dies during its flamethrower attack
 	RemoveLight(entity);
 }

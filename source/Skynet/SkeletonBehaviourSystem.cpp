@@ -16,9 +16,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
-	// Loop back
-	while (1.f < animComp->aAnimTime)
-		animComp->aAnimTime -= 1.f;
+	ANIM_BRANCHLESS(animComp);
 
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 	float dirX = skeletonTransformComponent->facingX, dirZ = skeletonTransformComponent->facingZ;
@@ -40,9 +38,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	animComp->aAnim = ANIMATION_IDLE;
 	animComp->aAnimIdx = 0;
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
-	// Loop back
-	while (1.f < animComp->aAnimTime)
-		animComp->aAnimTime -= 1.f;
+	ANIM_BRANCHLESS(animComp);
 
 	if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
 	{
@@ -77,11 +73,7 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	animComp->aAnimIdx = 0;
 	//Elliot: Change in calculations for attack timer:
 	animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->attackSpeed);
-	while (1.f < animComp->aAnimTime)
-	{
-		animComp->aAnimTime -= 1.f;
-	}
-		
+	ANIM_BRANCHLESS(animComp);
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
