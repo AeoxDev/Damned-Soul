@@ -21,11 +21,6 @@ void Menu::Setup()//Load
 	// Clear relics when entering the main menu
 	Relics::ClearRelicFunctions();
 
-	RedrawUI();
-	SetupImages();
-	SetupButtons();
-	SetupText();
-	Camera::ResetCamera();
 	//If audioengine is not loaded. Load it.
 	if (unloadAudioEngine)
 	{
@@ -40,6 +35,12 @@ void Menu::Setup()//Load
 		titleTheme->Play(Music_Title, Channel_Base);
 		unloadAudioEngine = false;
 	}
+
+	RedrawUI();
+	SetupImages();
+	SetupButtons();
+	SetupText();
+	Camera::ResetCamera();
 	
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented

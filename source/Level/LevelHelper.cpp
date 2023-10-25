@@ -67,8 +67,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
 
 	//stateManager.player Sounds
-	SoundComponent* scp = registry.AddComponent<SoundComponent>(stateManager.player);
-	scp->Load(PLAYER);
+	LoadPlayerSounds();
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
