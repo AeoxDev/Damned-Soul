@@ -11,6 +11,9 @@
 #include "UIComponents.h"
 #include <iomanip>
 
+#include "States/StateManager.h"
+#include "States/StateEnums.h"
+
 bool uiUpdated = true;
 
 void RedrawUI()
@@ -71,28 +74,31 @@ bool UIRenderSystem::Update()
 			uiElement->text.Draw();
 		}
 
-        for (auto entity : View<UIShopRelicWindowComponent>(registry))
+        if (currentStates & State::InShop)
         {
-            auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-            uiElement->m_baseImage.Draw();
-            uiElement->m_priceText.Draw();
-        }
+            for (auto entity : View<UIShopComponent>(registry))
+            {
+                auto uiElement = registry.GetComponent<UIShopComponent>(entity);
+                uiElement->baseImage.Draw();
+                uiElement->playerInfo.Draw();
+            }
 
-        for (auto entity : View<UIRelicComponent>(registry))
-        {
-            auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
-            uiElement->sprite.Draw();
-            uiElement->flavorTitleImage.Draw();
-            uiElement->flavorTitle.Draw();
-            uiElement->flavorDescImage.Draw();
-            uiElement->flavorDesc.Draw();
-        }
+            for (auto entity : View<UIShopRelicWindowComponent>(registry))
+            {
+                auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+                uiElement->m_baseImage.Draw();
+                uiElement->m_priceText.Draw();
+            }
 
-        for (auto entity : View<UIShopComponent>(registry))
-        {
-            auto uiElement = registry.GetComponent<UIShopComponent>(entity);
-            uiElement->baseImage.Draw();
-            uiElement->playerInfo.Draw();
+            for (auto entity : View<UIRelicComponent>(registry))
+            {
+                auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
+                uiElement->sprite.Draw();
+                uiElement->flavorTitleImage.Draw();
+                uiElement->flavorTitle.Draw();
+                uiElement->flavorDescImage.Draw();
+                uiElement->flavorDesc.Draw();
+            }
         }
 
         for (auto entity : View<UIButton>(registry))
@@ -316,7 +322,7 @@ bool UIShopSystem::Update()
         auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
         auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-        uiElement->m_priceText.UpdateText(("Price: " + std::to_string(uiRelic->price)).c_str());
+        uiElement->m_priceText.UpdateText(("Soul Cost: " + std::to_string(uiRelic->price)).c_str());
     }
 
     return true;

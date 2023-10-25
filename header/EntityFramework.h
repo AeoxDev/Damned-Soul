@@ -80,6 +80,7 @@ private:
 	{
 		EntityID id;
 		EntityGlobals::componentBitset components;
+		int persistencyTier = 0;
 
 		//Quick operator hack giving better visualization to the user, you're welcome <3
 		operator const int& () const { return id.index; }
@@ -98,7 +99,7 @@ public:
 	//	return entities.size() - availableEntitySlots.size();
 	//}
 
-	EntityID CreateEntity();
+	EntityID CreateEntity(int persistencyTier = 0);
 	//{
 	//	//When we destroy an entity, we store its index and version in the freeEntities-vector so we know where we can create new entities later
 	//	//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id
@@ -236,9 +237,9 @@ public:
 	}
 
 private:
-	EntityID CreateEntityId(int index, bool hasBeenDestroyed)
+	EntityID CreateEntityId(int index, bool hasBeenDestroyed, int persistencyTier)
 	{
-		return { index, hasBeenDestroyed };
+		return { index, hasBeenDestroyed, persistencyTier };
 	}
 
 	int GetEntityIndex(EntityID id)

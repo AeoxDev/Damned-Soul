@@ -105,7 +105,7 @@ int StateManager::Setup()
 	ui.Setup();
 
 	// Audio Engine VERY IMPORTANT TO LOAD THIS FIRST BEFORE ANY SOUND COMPONENT OR ELSE THINGS WILL GO WHACK!!!!!!!!!!!!!
-	EntityID audioJungle = registry.CreateEntity();
+	EntityID audioJungle = registry.CreateEntity(2);
 	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
 	audioEngine->Setup(audioJungle.index);
 

@@ -47,8 +47,6 @@ struct UIShopComponent
 
 	bool ignore = true;
 
-	ML_Vector<Relics::RelicMetaData> relics;
-
 	UIShopComponent();
 
 	void Setup();

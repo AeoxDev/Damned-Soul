@@ -10,10 +10,13 @@
 
 #include "UIComponents.h"
 
+#include "States/StateEnums.h"
+
 void LoadShop()
 {
 
-	EntityID shop = registry.CreateEntity();
+	EntityID shop = registry.CreateEntity(1);
+	EntityID shopUi = registry.CreateEntity(1);
 	
 	//faster loading to shop
 	//EntityID player = registry.CreateEntity();
@@ -39,4 +42,25 @@ void LoadShop()
 	shopText->Setup("Shop");
 	shopText->m_UiComponent.SetPosition({ 0.0f, 0.8f });
 	shopText->m_UiComponent.SetScale({ 1.5f, 1.5f });
+
+	SetInShop(true);
 }
+
+void ReloadShop()
+{
+	EntityID playerUi = registry.CreateEntity();
+
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
+	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
+	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
+	pcUiHpC->text.Setup("");
+
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
+	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
+	pcUiSC->text.Setup("");
+
+	bool* ignore = {};
+	UIFunc::Shop_ReRollRelic(ignore);
+	SetInShop(true);
+}
+

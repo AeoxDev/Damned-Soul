@@ -62,7 +62,7 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 void CreatePlayer(float positionX, float positionY, float positionZ, float mass, float health, float moveSpeed, float damage, float attackSpeed, int soulWorth, float facingX, float facingY, float facingZ, float scaleX, float scaleY, float scaleZ)
 {
 	//Create player
-	stateManager.player = registry.CreateEntity();
+	stateManager.player = registry.CreateEntity(1);
 
 	registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());

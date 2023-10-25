@@ -37,15 +37,6 @@ void GameScene::Input(bool isShop)
 			Unload(true);
 			stateManager.menu.Setup();
 		}
-
-		if (keyState[SDL_SCANCODE_RETURN] == pressed)
-		{
-			SetInMainMenu(false);
-			SetInPlay(true);
-			SetInShop(false);
-			Unload();
-			LoadLevel(++stateManager.activeLevel);
-		}
 	}
 	else
 	{
