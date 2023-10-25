@@ -36,13 +36,14 @@ int main(int argc, char* args[])
 #ifdef TEST3000
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
-		UIFunc::MainMenu_Start(nullptr);
+		UIFunc::LoadNextLevel(nullptr);
+		CountDeltaTime();
 
-		SetInMainMenu(true);
-		SetInPlay(false);
-		stateManager.levelScenes[0].Unload();
-		stateManager.levelScenes[1].Unload();
-		stateManager.menu.Setup();
+		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
+		stateManager.Update();//Lastly do the cpu work
+
+		stateManager.EndFrame();
+
 	}
 #endif // TEST3000
 

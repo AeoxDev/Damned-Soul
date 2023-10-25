@@ -4,6 +4,7 @@
 #include "UIComponents.h"
 #include "Registry.h"
 #include "Light.h"
+#include "States\StateManager.h"
 
 size_t Registry::GetEntityCount()
 {
@@ -41,8 +42,10 @@ void Registry::DestroyEntity(EntityID id)
 }
 
 int compCount = 0;
-
-void UnloadEntities(bool unloadPersistents)
+#define DESTROY_PLAYER 1
+#define DESTROY_AUDIO 2
+#define DESTROY_ALL 2
+void UnloadEntities(int destructionTier)
 {
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
@@ -53,6 +56,16 @@ void UnloadEntities(bool unloadPersistents)
 	for (auto entity : View<ModelSkeletonComponent>(registry))
 	{
 		ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
+		//SKip if destruction tier 0.
+		if (destructionTier < DESTROY_PLAYER && entity.index != -1 && registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+
+			p->killingSpree = 0;
+			p->portalCreated = false;
+
+			continue;
+		}
 		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
 	}
 
@@ -76,7 +89,8 @@ void UnloadEntities(bool unloadPersistents)
 		for (uint32_t i = 0; i < r->relics.size(); i++)
 		{
 			r->relics[i].sprite.Release();
-			r->relics[i].flavorImage.Release();
+			r->relics[i].flavorTitleImage.Release();
+			r->relics[i].flavorDescImage.Release();
 		}
 
 		r->relics.~ML_Vector();
@@ -95,6 +109,27 @@ void UnloadEntities(bool unloadPersistents)
 		b->Release();
 	}
 
+	for (auto entity : View<UIShopComponent>(registry))
+	{
+		UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
+		sh->baseImage.Release();
+		sh->relics.~ML_Vector();
+	}
+
+	for (auto entity : View<UIShopRelicWindowComponent>(registry))
+	{
+		UIShopRelicWindowComponent* sh = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		sh->m_baseImage.Release();
+	}
+
+	for (auto entity : View<UIRelicComponent>(registry))
+	{
+		UIRelicComponent* sh = registry.GetComponent<UIRelicComponent>(entity);
+		sh->sprite.Release();
+		sh->flavorTitleImage.Release();
+		sh->flavorDescImage.Release();
+	}
+
 	for (auto entity : View<UIImage>(registry))
 	{
 		UIImage* i = registry.GetComponent<UIImage>(entity);
@@ -104,6 +139,15 @@ void UnloadEntities(bool unloadPersistents)
 	for (auto entity : View<ProximityHitboxComponent>(registry))
 	{
 		ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(entity);
+		if (destructionTier < DESTROY_PLAYER && entity.index != -1 && registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		{
+			PlayerComponent* p = registry.GetComponent<PlayerComponent>(entity);
+
+			p->killingSpree = 0;
+			p->portalCreated = false;
+
+			continue;
+		}
 		p->pointList.~ML_Vector();
 	}
 
@@ -122,7 +166,7 @@ void UnloadEntities(bool unloadPersistents)
 		}
 	}
 
-	if (unloadPersistents)
+	if (destructionTier >= DESTROY_AUDIO)
 	{
 		for (auto entity : View<AudioEngineComponent>(registry))
 		{
@@ -137,16 +181,31 @@ void UnloadEntities(bool unloadPersistents)
 		EntityID check = registry.entities.at(i).id;
 		if (check.index != -1)
 		{
-			if (auto comp = registry.GetComponent<AudioEngineComponent>(check) != nullptr)
+			//Make sure not to unload player or audio engine
+			PlayerComponent* skipPlayer = registry.GetComponent<PlayerComponent>(check);
+			AudioEngineComponent* skipAudioEngine = registry.GetComponent<AudioEngineComponent>(check);
+			if (destructionTier < DESTROY_PLAYER && (skipPlayer || skipAudioEngine))
 			{
-				if ((check.state == false && !comp) || unloadPersistents)
-					registry.DestroyEntity(check);
+				if (skipPlayer)
+				{
+					skipPlayer->killingSpree = 0;
+					skipPlayer->portalCreated = false;
+				}
+				continue;
 			}
-			else if (check.state == false || unloadPersistents)
+			if (destructionTier < DESTROY_AUDIO && skipAudioEngine)
+			{
+				
+				continue;
+			}
+			if (check.state == false || destructionTier == DESTROY_ALL)
 				registry.DestroyEntity(check);
 		}
 	}
-
+	if (destructionTier >= DESTROY_AUDIO)
+	{
+		stateManager.menu.unloadAudioEngine = true;
+	}
 	//Destroy entity resets component bitmasks
 	//for (int i = 0; i < registry.entities.size(); i++)
 	//{
@@ -158,4 +217,5 @@ void UnloadEntities(bool unloadPersistents)
 	//	if (check.state == false)
 	//		registry.DestroyEntity(check);
 	//}
+		
 }

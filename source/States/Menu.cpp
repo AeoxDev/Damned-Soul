@@ -13,6 +13,8 @@
 #include "UIComponents.h"
 #include "RelicFunctions.h"
 
+#include "SDLHandler.h"
+
 void Menu::Setup()//Load
 {
 	m_active = true;
@@ -23,8 +25,27 @@ void Menu::Setup()//Load
 	SetupImages();
 	SetupButtons();
 	SetupText();
-	stateManager.activeLevelScene = 0;
 	Camera::ResetCamera();
+	//If audioengine is not loaded. Load it.
+	if (unloadAudioEngine)
+	{
+		// Audio Engine
+		EntityID audioJungle = registry.CreateEntity();
+		AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
+		audioEngine->Setup(audioJungle.index);
+
+		// Background OST
+		SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
+		titleTheme->Load(MUSIC);
+		titleTheme->Play(Music_Title, Channel_Base);
+		unloadAudioEngine = false;
+	}
+	
+
+	//Temp stuff for ui to not crash because saving between levels is not fully implemented
+	EntityID playerUi = registry.CreateEntity();
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
@@ -41,6 +62,8 @@ void Menu::Setup()//Load
 	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.12f;
 	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+
+	stateManager.activeLevel = 0;
 }
 
 void Menu::Input()
@@ -67,7 +90,7 @@ void Menu::SetupButtons()
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Start", UIFunc::MainMenu_Start, { -0.81f, -0.28f }, {0.7f, 0.6f} );
+		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Start", UIFunc::LoadNextLevel, { -0.81f, -0.28f }, {0.7f, 0.6f} );
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);
 	}
@@ -76,7 +99,7 @@ void Menu::SetupButtons()
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Settings", UIFunc::MainMenu_Settings, { -0.81f,  -0.54f }, {0.7f, 0.6f} );
+		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Settings", UIFunc::MainMenu_Settings, { -0.81f,  -0.54f }, {0.7f, 0.6f} );
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);
 	}
@@ -85,7 +108,7 @@ void Menu::SetupButtons()
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", L"Quit", UIFunc::MainMenu_Quit, { -0.81f, -0.8f }, {0.7f, 0.6f} );
+		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Quit", UIFunc::MainMenu_Quit, { -0.81f, -0.8f }, {0.7f, 0.6f} );
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);
 	}
@@ -121,11 +144,7 @@ void Menu::SetupImages()
 
 void Menu::SetupText()
 {
-	/*
-	auto t1 = registry.CreateEntity();
-	auto tc1 = registry.AddComponent<UIText>(t1);
-	tc1->Setup(L"This is the main menu!", { 0.0f, 0.0f });
-	*/
+
 }
 
 void Menu::Unload()
@@ -135,7 +154,7 @@ void Menu::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities(false);
+	UnloadEntities(0);
 
 	ClearUI();
 }

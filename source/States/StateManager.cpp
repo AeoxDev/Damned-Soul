@@ -13,6 +13,10 @@
 #include "Registry.h"
 #include "Components.h"
 
+//Cursed
+#include "SDLHandler.h"
+#include "Level.h"
+
 State currentStates;
 StateManager stateManager;
 
@@ -100,15 +104,7 @@ int StateManager::Setup()
 
 	ui.Setup();
 
-	// Audio Engine
-	EntityID audioJungle = registry.CreateEntity();
-	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
-	audioEngine->Setup(audioJungle.index);
-
-	// Background OST
-	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
-	titleTheme->Load(MUSIC);
-	titleTheme->Play(Music_Title, Channel_Base);
+	
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
@@ -160,8 +156,9 @@ int StateManager::Setup()
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
-	systems.push_back(new UIPlayerRelicsSystem());
+	systems.push_back(new UIRelicsSystem());
 	systems.push_back(new UIGameLevelSystem());
+	systems.push_back(new UIShopSystem());
 
 	return 0;
 
@@ -178,6 +175,27 @@ void StateManager::Input()
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
+
+		// :)
+		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
+		//{
+		//	//öhö
+		//	SetInMainMenu(false);
+		//	SetInPlay(true);
+		//	SetInShop(false);
+
+		//	menu.Unload();
+
+		//	LoadLevel(++stateManager.activeLevel);
+
+		//	//Ungodly amounts of cursed energy, update UI systems after the level has been loaded
+		//	for (size_t i = 17; i < systems.size(); i++)
+		//	{
+		//		systems[i]->Update();
+		//	}
+		//}
+
+		
 	}
 	if (currentStates & State::InPause)
 	{
@@ -189,11 +207,11 @@ void StateManager::Input()
 	}
 	if (currentStates & State::InPlay)
 	{
-		levelScenes[activeLevelScene].Input();
+		scenes[activeLevelScene].Input();
 	}
 	if (currentStates & State::InShop)
 	{
-		shop.Input();
+		scenes[activeLevelScene % 2 == 1].Input(true);
 	}
 }
 
@@ -202,7 +220,8 @@ void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
-		systems[i]->Update();
+		if (!systems[i]->Update())
+			break;
 	}
 
 	Input();
@@ -236,9 +255,10 @@ void StateManager::UnloadAll()
 {
 	menu.Unload();
 	settings.Unload();
-	shop.Unload();
-	levelScenes[0].Unload();
-	levelScenes[1].Unload();
+	scenes[0].Unload();
+	scenes[1].Unload();
+	scenes[2].Unload();
+	UnloadEntities(3);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();
@@ -257,5 +277,5 @@ void StateManager::EndFrame()
 
 GameScene& StateManager::GetCurrentLevel()
 {
-	return levelScenes[activeLevelScene];
+	return scenes[activeLevelScene];
 }

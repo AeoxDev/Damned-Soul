@@ -284,6 +284,7 @@ public:
 	~ML_Vector()
 	{
 		clear();
+		m_capacity = 0;
 		MemLib::pfree(m_data);
 	};
 };

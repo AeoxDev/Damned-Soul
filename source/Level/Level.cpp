@@ -5,6 +5,8 @@
 #include "States\StateManager.h"
 #include "RelicFunctions.h"
 #include "Registry.h"
+#include "Components.h"
+
 
 void LoadLevel(int level)
 {
@@ -19,21 +21,28 @@ void LoadLevel(int level)
 	RedrawUI();
 	Camera::ResetCamera();
 
-	stateManager.levelScenes[0].Unload();
-	stateManager.levelScenes[1].Unload();
+	stateManager.scenes[0].Unload();
+	stateManager.scenes[1].Unload();
+	stateManager.scenes[2].Unload();
 	
-	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 2;
-	stateManager.levelScenes[stateManager.activeLevelScene].Setup(1);
-	stateManager.levelScenes[stateManager.activeLevelScene].m_active = true;
-	RedrawUI();
+	for (auto entity : View<ControllerComponent>(registry))
+		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
+
+	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
+	stateManager.scenes[stateManager.activeLevelScene].m_active = true;
+	
 	switch (level)
 	{
 	case 1:	LoadLevel1(); break;
-	case 2: LoadLevel2(); break;
-	case 3: LoadLevel3(); break;
-	default:
+	case 2: LoadShop(); break;
+	case 3: LoadLevel2(); break;
+	case 4: LoadShop(); break;
+	case 5: LoadLevel3(); break;
+	case 6: LoadShop(); break;
+	case 7: LoadLevel4(); break;
+	default: 
 		//UnloadEntities(true);//Reset game
-		UnloadEntities(false);//Reset game
+		UnloadEntities(1);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}

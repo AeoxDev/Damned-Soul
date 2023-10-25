@@ -450,22 +450,22 @@ void OffsetFacing(EntityID& entity, const float& x, const float& y, const float&
         angleY *= -1.0f;
     }
     //Check if angle is changed or not
-    if (angleY != lightOffsets[light->slot].angleY)
-    {
-        float offsetXx = -sinf(angleY);
-        float offsetZz = -sinf(angleY);
-        float offsetXz = -cosf(angleY);
-        float offsetZx = cosf(angleY);
-        lightShaderBuffer.lights[light->slot].lightDirection.x = lightOffsets[light->slot].lightDirectionOffset.x * offsetXx + lightOffsets[light->slot].lightDirectionOffset.z * offsetXz;
-        lightShaderBuffer.lights[light->slot].lightDirection.z = lightOffsets[light->slot].lightDirectionOffset.z * offsetZz + lightOffsets[light->slot].lightDirectionOffset.x * offsetZx;
-        float length = sqrtf((lightShaderBuffer.lights[light->slot].lightDirection.x * lightShaderBuffer.lights[light->slot].lightDirection.x)
-            + (lightShaderBuffer.lights[light->slot].lightDirection.y * lightShaderBuffer.lights[light->slot].lightDirection.y)
-            + (lightShaderBuffer.lights[light->slot].lightDirection.z * lightShaderBuffer.lights[light->slot].lightDirection.z));
-        lightShaderBuffer.lights[light->slot].lightDirection.x /= length;
-        lightShaderBuffer.lights[light->slot].lightDirection.y /= length;
-        lightShaderBuffer.lights[light->slot].lightDirection.z /= length;
-        updateBuffer = true;
-    }
+    /*if (angleY != lightOffsets[light->slot].angleY)
+    {*/
+    float offsetXx = -sinf(angleY);
+    float offsetZz = -sinf(angleY);
+    float offsetXz = -cosf(angleY);
+    float offsetZx = cosf(angleY);
+    lightShaderBuffer.lights[light->slot].lightDirection.x = lightOffsets[light->slot].lightDirectionOffset.x * offsetXx + lightOffsets[light->slot].lightDirectionOffset.z * offsetXz;
+    lightShaderBuffer.lights[light->slot].lightDirection.z = lightOffsets[light->slot].lightDirectionOffset.z * offsetZz + lightOffsets[light->slot].lightDirectionOffset.x * offsetZx;
+    float length = sqrtf((lightShaderBuffer.lights[light->slot].lightDirection.x * lightShaderBuffer.lights[light->slot].lightDirection.x)
+        + (lightShaderBuffer.lights[light->slot].lightDirection.y * lightShaderBuffer.lights[light->slot].lightDirection.y)
+        + (lightShaderBuffer.lights[light->slot].lightDirection.z * lightShaderBuffer.lights[light->slot].lightDirection.z));
+    lightShaderBuffer.lights[light->slot].lightDirection.x /= length;
+    lightShaderBuffer.lights[light->slot].lightDirection.y /= length;
+    lightShaderBuffer.lights[light->slot].lightDirection.z /= length;
+    updateBuffer = true;
+  /*  }*/
     lightOffsets[light->slot].angleY = angleY;
 }
 
