@@ -5,7 +5,7 @@
 #include "Model.h"
 #include "States\StateManager.h"
 
-void SetupEnemy(enemyType eType, float positionX , float positionY , float positionZ , float mass , 
+EntityID SetupEnemy(enemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
 	float facingY , float facingZ  )
 {
@@ -193,6 +193,8 @@ void SetupEnemy(enemyType eType, float positionX , float positionY , float posit
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX);
 	}
+
+	return entity;
 }
 
 void CreatePlayer(float positionX, float positionY, float positionZ, float mass, float health, float moveSpeed, float damage, float attackSpeed, int soulWorth, float facingX, float facingY, float facingZ, float scaleX, float scaleY, float scaleZ)
