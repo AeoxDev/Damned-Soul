@@ -25,7 +25,8 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 
 	if (eType == enemyType::hellhound)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("HellhoundDummy_PH.mdl"));
+		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.3f);
 		//Sounds
@@ -44,7 +45,8 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	}
 	else if (eType == enemyType::eye)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FlyingEyeDymmy.mdl"));
+		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, false);
 		//Sounds

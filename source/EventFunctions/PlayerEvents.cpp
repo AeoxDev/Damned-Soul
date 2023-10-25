@@ -101,10 +101,20 @@ void PlayerDash(EntityID& entity, const int& index)
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
+	// Get animation
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
 	//Invalid entity doesn't have the required components
-	if (!transform || !stat || !dac)
+	if (!transform || !stat || !dac || !anim)
 		return;
+
+	//Perform attack animation, woo, loop using DT
+	anim->aAnim = ANIMATION_WALK;
+	anim->aAnimIdx = 1;
+	anim->aAnimTime += GetDeltaTime() * 5;
+
+	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
+	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 	
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();

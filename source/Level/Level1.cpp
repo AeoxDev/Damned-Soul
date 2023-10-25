@@ -41,8 +41,8 @@ void LoadLevel1()
 	SetupEnemy(skeleton, enemyType::skeleton, -45.f, 0.f, -20.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(skeleton2, enemyType::skeleton, 40.f, 0.f, -35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	SetupEnemy(skeleton3, enemyType::skeleton, -30.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton4, enemyType::skeleton, -20.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton5, enemyType::skeleton, -40.f, 0.f, 35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton4, enemyType::hellhound, -20.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
+	SetupEnemy(skeleton5, enemyType::eye, -40.f, 0.f, 35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
 	//SetupEnemy(eye2, enemyType::eye, 35.f, 1.f, -15.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
 	//5 souls total
 

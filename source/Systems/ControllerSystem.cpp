@@ -30,6 +30,10 @@ bool ControllerSystem::Update()
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 		anim->aAnim = ANIMATION_IDLE;
 		anim->aAnimIdx = 0;
+		anim->aAnimTime += GetDeltaTime();
+		if (1 < anim->aAnimTime)
+			anim->aAnimTime -= int(anim->aAnimTime);
+
 
 		/*MOVEMENT INPUT*/
 		bool moving = false;
