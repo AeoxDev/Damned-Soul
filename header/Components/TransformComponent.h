@@ -4,6 +4,8 @@ struct TransformComponent
 {
 	//Pos
 	float positionX = 0.f, positionY = 0.f, positionZ = .0f;
+	//Offset for special effects, does only affect rendering.
+	float offsetX = 0.0f, offsetY = 0.0f, offsetZ = 0.0f;
 	float lastPositionX = 0.f, lastPositionY = 0.f, lastPositionZ = .0f;
 	//Rotation
 	//What direction in coordinates

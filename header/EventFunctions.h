@@ -37,3 +37,18 @@ void SplitBoss(EntityID& entity, const int& index);
 
 //Loop static hazard hitbox
 void LoopHitbox(EntityID& entity, const int& index);
+
+//Hit Stop
+#define FREEZE_TIME 0.08f
+void HitStop(EntityID& entity, const int& index);
+
+//Animation functions
+void PauseAnimation(EntityID& entity, const int& index);
+void ContinueAnimation(EntityID& entity, const int& index);
+void ResetAnimation(EntityID& entity, const int& index);
+void BlinkColor(EntityID& entity, const int& index);
+void ResetColor(EntityID& entity, const int& index);
+
+//Stats
+void SetSpeedZero(EntityID& entity, const int& index);
+void ResetSpeed(EntityID& entity, const int& index);

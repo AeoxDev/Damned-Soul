@@ -62,11 +62,13 @@ void BeginHitting(EntityID& entity)
 {
 	auto comp = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
+	SetHitboxActive(entity, comp->attackHitBoxID, true);
 }
 void WeShallOverCome(EntityID& entity)
 {
 	auto comp = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
+	SetHitboxActive(entity, comp->attackHitBoxID, false);
 }
 
 void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EntityID& entity)

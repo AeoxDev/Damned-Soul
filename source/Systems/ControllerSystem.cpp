@@ -116,7 +116,9 @@ bool ControllerSystem::Update()
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		if (mouseButtonPressed[0] == pressed)
 		{
+			
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
+			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 		}
 	}
 	return true;
