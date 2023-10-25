@@ -46,6 +46,10 @@ void LoadLevel3()
 
 	registry.AddComponent<ControllerComponent>(player);
 
+	//Player Sounds
+	SoundComponent* scp = registry.AddComponent<SoundComponent>(player);
+	scp->Load(PLAYER);
+
 	ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;

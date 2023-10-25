@@ -170,13 +170,22 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 		switch (enemy->type)
 		{
 		case enemyType::hellhound:
-			sfx->Play(Hellhound_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::eye:
-			sfx->Play(Eye_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::skeleton:
-			sfx->Play(Skeleton_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
 			break;
 		}
 	}
@@ -281,13 +290,22 @@ void AttackCollision(OnCollisionParameters& params)
 		switch (enemy->type)
 		{
 		case enemyType::hellhound:
-			sfx->Play(Hellhound_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::eye:
-			sfx->Play(Eye_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::skeleton:
-			sfx->Play(Skeleton_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
 			break;
 		}
 	}
