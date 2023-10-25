@@ -10,7 +10,9 @@ enum temprelicslist
 	SoulPower,
 	DemonHeart,
 	FrostFire,
-	SoulHealth
+	SoulHealth,
+	SpeedyLittleDevil,
+	LightningGod
 };
 
 namespace UIFunc
@@ -47,4 +49,7 @@ namespace UIFunc
 
 	// Re-roll a relic in shop
 	void Shop_ReRollRelic(void* args);
+
+	// Heal the player
+	void Shop_Heal(void* args);
 }
