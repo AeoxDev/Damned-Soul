@@ -50,7 +50,7 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Enemy/Eye/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[11]);
 	this->volumes.push_back(0.25f);
 	this->system->createSound("SFX/Enemy/Eye/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[12]);
-	this->volumes.push_back(0.15f);
+	this->volumes.push_back(0.25f);
 
 	//Hellhound
 	this->system->createSound("SFX/Enemy/Hellhound/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[13]);
