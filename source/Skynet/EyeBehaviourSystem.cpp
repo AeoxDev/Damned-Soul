@@ -26,7 +26,7 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 	}
 	eyeComponent->goalDirectionX /= magnitude;
 	eyeComponent->goalDirectionZ /= magnitude;
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
 	float dirX = eyeTransformComponent->facingX, dirZ = eyeTransformComponent->facingZ;
 	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude < 0.001f)
@@ -115,7 +115,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 		dirZ = -ec->goalDirectionX;
 	}
 	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	SmoothRotation(etc, dirX, dirZ, 10.f);
+	SmoothRotation(etc, dirX, dirZ, 30.f);
 	if (magnitude < 0.001f)
 	{
 		magnitude = 0.001f;
@@ -174,7 +174,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		eyeComponent->updateInterval = randomInterval(gen);
 	}
 
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
 
 
 	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
@@ -228,7 +228,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//change what direction the eye is circling after each dash
 		(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
 
-		SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 20.0f);
+		SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 40.0f);
 	}
 	else 
 	{
@@ -257,7 +257,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//If charging scalar point direction > 0.0, charge
 		if (scalar > 0)
 		{
-			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 10.0f);
+			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 30.0f);
 
 			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 6.f * GetDeltaTime();
 			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 6.f * GetDeltaTime();

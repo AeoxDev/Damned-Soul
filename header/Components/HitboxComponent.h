@@ -39,6 +39,10 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag = tr
 void SetupEnemyCollisionBox(EntityID& entity, float radius, bool collideWithStage = true);
 void SetupPlayerCollisionBox(EntityID& entity, float radius);
 void SetupLavaCollisionBox(EntityID& entity, float radius);
+
+//Flag getting functions:
+bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID);
+
 //Loop through and find a hitbox that can hit the stage
 bool HitboxCanHitGI(EntityID& entity);
 

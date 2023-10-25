@@ -32,7 +32,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 
 	hc->goalDirectionX = ptc->positionX - htc->positionX;
 	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
-	SmoothRotation(htc, hc->goalDirectionX, hc->goalDirectionZ);
+	SmoothRotation(htc, hc->goalDirectionX, hc->goalDirectionZ, 35.f);
 
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
@@ -106,7 +106,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 		dirZ = -hc->goalDirectionX;
 	}
 	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	SmoothRotation(htc, dirX, dirZ, 10.f);
+	SmoothRotation(htc, dirX, dirZ, 40.f);
 	if (magnitude > 0.001f)
 	{
 		dirX /= magnitude;
@@ -130,7 +130,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
 
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 10.f);
+	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.f);
 	float dirX = hellhoundTransformComponent->facingX, dirZ = hellhoundTransformComponent->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude > 0.001f)
@@ -174,7 +174,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		hellhoundComponent->updateInterval = randomInterval(gen);
 	}
 
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ);
+	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
 
 
 	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
@@ -309,10 +309,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		hc->currentShootingAttackRange = 0.f;
 
 		//TEEEEEMP
-		for (auto dog : View<HellhoundBehaviour>(registry))
-		{
-			RemoveLight(dog);
-		}
+		RemoveLight(dog);
 		
 	}
 }
@@ -342,7 +339,7 @@ void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, S
 
 	float newGoalX = htc->positionX + hc->cowardDirectionX * 100.f;
 	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
-	SmoothRotation(htc, newGoalX, newGoalZ, 10.f);
+	SmoothRotation(htc, newGoalX, newGoalZ, 35.f);
 
 	htc->positionX += hc->cowardDirectionX * enemyStats->moveSpeed * GetDeltaTime();
 	htc->positionZ += hc->cowardDirectionZ * enemyStats->moveSpeed * GetDeltaTime();
@@ -455,7 +452,7 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{
-				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.3f) // attack the back
+				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.15f) // attack the back
 				{
 					hellhoundComponent->charge = true;
 					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);

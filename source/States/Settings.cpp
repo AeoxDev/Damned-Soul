@@ -43,14 +43,7 @@ void SettingsState::Setup()
 
 void SettingsState::Input()
 {
-}
 
-void SettingsState::Update()
-{
-}
-
-void SettingsState::ComputeShaders()
-{
 }
 
 void SettingsState::SetupButtons()

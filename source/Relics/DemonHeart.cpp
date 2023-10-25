@@ -2,7 +2,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_HEART_HEALTH_INCREASE 25
+#define DEMON_HEART_HEALTH_INCREASE 75
 
 void DEMON_HEART::IncreasePlayerHealth(void* data)
 {

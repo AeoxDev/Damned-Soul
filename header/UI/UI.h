@@ -42,3 +42,14 @@ struct UI
 	ID2D1SolidColorBrush*& GetYellowBrush();
 };
 
+struct DSFLOAT2
+{
+	float x;
+	float y;
+};
+
+struct DSINT2
+{
+	int x;
+	int y;
+};

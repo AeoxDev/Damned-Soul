@@ -5,7 +5,6 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include <cmath>
-#include <string>
 #include "Systems\Systems.h"
 #include "Components.h"
 #include <fstream>
@@ -172,12 +171,12 @@ void HandleDamageCollision()
 				}
 
 				HitboxComponent* secondHitbox = registry.GetComponent<HitboxComponent>(entity2);
-
 				for (int j = 0; j < SAME_TYPE_HITBOX_LIMIT; j++)
 				{
 					//If the circular hitbox can take damage, check collision with active hitboses
 					if (secondHitbox->circularFlags[j].canTakeDamage)
 					{
+						
 						if (firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
 						{
 							//Both are circular, do circle to circle.

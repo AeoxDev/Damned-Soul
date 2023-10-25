@@ -1,7 +1,6 @@
 #include "Hitbox.h"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
-#include <string>
 #include <fstream>
 #include <sstream>
 #include "Backend/Collision.h"
@@ -607,6 +606,10 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (!GetHitboxCanDealDamage(entity, hitboxID))
+	{
+		ResetAttackTrackerFlags(entity);
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].canDealDamage = setFlag;
@@ -615,7 +618,6 @@ void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 	{
 		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].canDealDamage = setFlag;
 	}
-	ResetAttackTrackerFlags(entity);
 }
 
 void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
@@ -721,13 +723,11 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStati
 
 	SetHitboxCanDealDamage(entity, sID, false);
 
-	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.2f, 0.f, -1.5f);
+	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
 	SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
-	SetHitboxActive(entity, enemyComp->attackHitBoxID);
-	SetHitboxIsMoveable(entity, enemyComp->attackHitBoxID);
-	SetHitboxCanTakeDamage(entity, enemyComp->attackHitBoxID, false);
+	SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
 	SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 }
 
@@ -738,10 +738,23 @@ void SetupLavaCollisionBox(EntityID& entity, float radius)
 	SetCollisionEvent(entity, staticID, StaticHazardAttackCollision);
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(entity, staticID);
-	SetHitboxActive(entity, staticID);
+	SetHitboxActive(entity, staticID, false);
 	//SetHitboxIsStaticHazard(entity, staticID);
 	//SetHitboxCanTakeDamage(entity, staticID, false);
-	SetHitboxCanDealDamage(entity, staticID, true);
+	SetHitboxCanDealDamage(entity, staticID, false);
+}
+
+bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		return hitbox->circularFlags[hitboxID].canDealDamage == 1;
+	}
+	else
+	{
+		return hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].canDealDamage == 1;
+	}
 }
 
 void SetupPlayerCollisionBox(EntityID& entity, float radius)
@@ -758,9 +771,9 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
-	SetHitboxHitStaticHazard(entity, hID, true);
+	
 	SetHitboxCanDealDamage(entity, hID, false);
-	SetHitboxCanTakeDamage(entity, hID, true);
+	SetHitboxCanTakeDamage(entity, hID, false);
 
 	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
 	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
@@ -774,13 +787,14 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 
 	int sID = CreateHitbox(entity, radius * 0.75f, .0f, -0.0f);
 	SetCollisionEvent(entity, sID, SoftCollision);
-	SetHitboxIsPlayer(entity, sID, false);
+	SetHitboxIsPlayer(entity, sID, true);
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
 	SetHitboxCanDealDamage(entity, sID, false);
 	SetHitboxCanTakeDamage(entity, sID, true);
 	SetHitboxHitStaticHazard(entity, sID, true);
+	SetHitboxHitStage(entity, sID);
 	playerComp->softHitboxID = sID;
 
 	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, -1.5f);

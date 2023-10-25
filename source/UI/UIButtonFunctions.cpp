@@ -253,7 +253,7 @@ void UIFunc::Shop_ReRollRelic(void* args)
 	ML_Array<int, 3> includedRelics;
 	ML_Vector<int> allRelics;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 8; i++)
 		allRelics.push_back(i);
 
 	for (int i = 0; i < 3; i++)
@@ -354,10 +354,13 @@ void UIFunc::Shop_Heal(void* args)
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 
+		if (player->GetSouls() < 2)
+			break;
+
 		if (stats->GetHealth() == stats->GetMaxHealth())
 			break;
 
-		int heal = stats->GetMaxHealth() * 0.25;
+		float heal = stats->GetMaxHealth() * 0.25f;
 
 		stats->UpdateHealth(heal);
 

@@ -36,9 +36,9 @@ void AudioEngineComponent::Setup(int& ID)
 
 	//Player
 	this->system->createSound("SFX/Player/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[6]);
-	this->volumes.push_back(0.1f);
-	this->system->createSound("SFX/Player/Dash.mp3", FMOD_DEFAULT, 0, &this->sounds[7]);
 	this->volumes.push_back(0.15f);
+	this->system->createSound("SFX/Player/Dash.mp3", FMOD_DEFAULT, 0, &this->sounds[7]);
+	this->volumes.push_back(0.1f);
 	this->system->createSound("SFX/Player/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[8]);
 	this->volumes.push_back(0.1f);
 	this->system->createSound("SFX/Player/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[9]);
@@ -70,7 +70,7 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Enemy/Skeleton/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[19]);
 	this->volumes.push_back(0.25f);
 	this->system->createSound("SFX/Enemy/Skeleton/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[20]);
-	this->volumes.push_back(0.05f);
+	this->volumes.push_back(0.25f);
 }
 
 void AudioEngineComponent::HandleSound()

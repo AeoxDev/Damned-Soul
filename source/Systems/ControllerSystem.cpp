@@ -28,11 +28,8 @@ bool ControllerSystem::Update()
 
 		//Default the animation to idle, subject to be changed based off of user input
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-		anim->aAnim = ANIMATION_IDLE;
-		anim->aAnimIdx = 0;
-		anim->aAnimTime += GetDeltaTime();
-		if (1 < anim->aAnimTime)
-			anim->aAnimTime -= int(anim->aAnimTime);
+		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+		anim->aAnimTime -= (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
 
 
 		/*MOVEMENT INPUT*/
@@ -89,6 +86,10 @@ bool ControllerSystem::Update()
 		//clamp moveTime to lower limit if not moving
 		else 
 		{
+			anim->aAnim = ANIMATION_IDLE;
+			anim->aAnimIdx = 0;
+			if (1 < anim->aAnimTime)
+				anim->aAnimTime -= int(anim->aAnimTime);
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			
 		}
@@ -120,7 +121,9 @@ bool ControllerSystem::Update()
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		if (mouseButtonPressed[0] == pressed)
 		{
+			
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
+			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 		}
 	}
 	return true;

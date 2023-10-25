@@ -20,14 +20,6 @@ void LoadLevel1()
 	EntityID stage = registry.CreateEntity();
 	
 	EntityID playerUi = registry.CreateEntity();
-	EntityID skeleton = registry.CreateEntity();
-	EntityID skeleton2 = registry.CreateEntity();
-	EntityID skeleton3 = registry.CreateEntity();
-	EntityID skeleton4 = registry.CreateEntity();
-	EntityID skeleton5 = registry.CreateEntity();
-	//EntityID eye = registry.CreateEntity();
-	//EntityID eye2 = registry.CreateEntity();
-	//EntityID dog = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
@@ -38,12 +30,11 @@ void LoadLevel1()
 	EntityID lightholderForth = registry.CreateEntity();
 	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 5.0f, 1, 0.0f, 0.0, -1.0f);
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(skeleton, enemyType::skeleton, -45.f, 0.f, -20.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton2, enemyType::skeleton, 40.f, 0.f, -35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton3, enemyType::skeleton, -30.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton4, enemyType::hellhound, -20.f, 0.f, 45.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	SetupEnemy(skeleton5, enemyType::eye, -40.f, 0.f, 35.f, 1.f, 100.f, 10.f, 5.f, 2.f, 1);
-	//SetupEnemy(eye2, enemyType::eye, 35.f, 1.f, -15.f, 1.f, 60.f, 8.f, 10.f, 5.f, 5);
+	SetupEnemy(enemyType::skeleton, -45.f, 0.f, -20.f);
+	SetupEnemy(enemyType::skeleton, 40.f, 0.f, -35.f);
+	SetupEnemy(enemyType::skeleton, -30.f, 0.f, 45.f);
+	SetupEnemy(enemyType::skeleton, -20.f, 0.f, 45.f);
+	SetupEnemy(enemyType::skeleton, -40.f, 0.f, 35.f);
 	//5 souls total
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
@@ -64,23 +55,23 @@ void LoadLevel1()
 	
 
 
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
 	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
 	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
 	pcUiHpC->text.Setup("");
 
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
 	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
 	pcUiSC->text.Setup("");
 
 	//Thing in the top right corner showing what level we're on
-	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f), 1);
+	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 1);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup("");
 
 	/*RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
 
-	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DirectX::XMFLOAT2(0.0f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 0);
+	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
 
 	RenderGeometryIndependentCollision(stage);
