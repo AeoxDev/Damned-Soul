@@ -245,6 +245,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
+    <ClCompile Include="source\Systems\AudioSystem.cpp" />
     <ClCompile Include="source\Systems\ButtonSystem.cpp" />
     <ClCompile Include="source\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />

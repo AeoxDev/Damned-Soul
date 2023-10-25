@@ -37,6 +37,12 @@ int main(int argc, char* args[])
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
 		UIFunc::LoadNextLevel(nullptr);
+		CountDeltaTime();
+
+		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
+		stateManager.Update();//Lastly do the cpu work
+
+		stateManager.EndFrame();
 
 	}
 #endif // TEST3000

@@ -27,7 +27,7 @@ void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool c
 	
 }
 
-void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* htc)
+void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* htc, EntityID& ent)
 {
 
 	hc->goalDirectionX = ptc->positionX - htc->positionX;
@@ -40,7 +40,9 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 	{
 		hc->attackTimer = 0;
 		hc->attackStunDurationCounter = 0;
-		playerStats->UpdateHealth(-enemyStats->damage);
+		playerStats->UpdateHealth(-enemyStats->damage, true);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		sfx->Play(Hellhound_Attack, Channel_Base);
 		RedrawUI();
 	}
 }
@@ -167,14 +169,18 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
 {	
+	hc->isShooting = true;
 	//Temp: Create SMALL spotlight when dog prepares to flame
+	
 	CreateSpotLight(dog, 1.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, -0.25f,
 		10.0f, 1.0f,
 		0.0f, 0.0f, -1.0f, 30.0f);
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(dog);
+	sfx->Play(Hellhound_Inhale, Channel_Base);
 	
 
-	hc->isShooting = true;
+	
 
 	//from hound  to player
  	float dx = ptc->positionX - htc->positionX;
@@ -261,7 +267,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		if (distance <= hc->currentShootingAttackRange)
 		{
 			//yes, player should get hit. Take damage
-			playerStats->UpdateHealth(-hc->flameDamage); // DEFINITELY MODIFY THIS LATER, very likely too much damage
+			playerStats->UpdateHealth(-hc->flameDamage, true); // DEFINITELY MODIFY THIS LATER, very likely too much damage
 			RedrawUI();
 		}
 	}
@@ -271,6 +277,9 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	if (hc->currentShootingAttackRange >= hc->offsetForward)
 	{
 		hc->isShooting = false;
+		hc->flameSoundsStartedPlaying = false;
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(dog);
+		sfx->Stop(Channel_Base);
 		hc->shootingCounter = 0.0f;
 		hc->shootingCooldownCounter = 0.0f;
 		hc->currentShootingAttackRange = 0.f;
@@ -357,7 +366,7 @@ bool HellhoundBehaviourSystem::Update()
 		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
 		hellhoundTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
-		
+
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
@@ -377,7 +386,14 @@ bool HellhoundBehaviourSystem::Update()
 				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingDuration) // have we charged long enough?
 				{
 					//it seems we have. Time to start shooting behaviour
-					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats/*, stc, stcTwo*/, enemyEntity); //this is damage thing
+					if (!hellhoundComponent->flameSoundsStartedPlaying)
+					{
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+						sfx->Play(Hellhound_Flame, Channel_Base);
+						hellhoundComponent->flameSoundsStartedPlaying = true;
+					}
+					
+					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats, enemyEntity/*, stc, stcTwo*/); //this is damage thing
 				}
 				//else we do nothing, we're just charging the flames.
 			}
@@ -395,7 +411,7 @@ bool HellhoundBehaviourSystem::Update()
 			else if (distance < 2.5f) // fight club and not currently shooting
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
-				CombatBehaviour(hellhoundComponent, enemyStats, playerStats, playerTransformCompenent, hellhoundTransformComponent);
+				CombatBehaviour(hellhoundComponent, enemyStats, playerStats, playerTransformCompenent, hellhoundTransformComponent, enemyEntity);
 			}
 			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
 			{

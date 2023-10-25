@@ -18,10 +18,12 @@ void LoadLevel4()
 	EntityID particle = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
 
+	//Player
+	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
 	EntityID tempBoss = registry.CreateEntity();
-	SetupEnemy(tempBoss, enemyType::tempBoss, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 3.f, 4, 1.f, 0.f, 1.f, 4.f, 4.f, 4.f);
+	SetupEnemy(tempBoss, enemyType::tempBoss, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 0.5f, 4, 1.f, 0.f, 1.f, 4.f, 4.f, 4.f);
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("HellhoundDummy_PH.mdl"));
 
@@ -48,7 +50,7 @@ void LoadLevel4()
 	pcUiSC->text.Setup("");
 
 	//Thing in the top right corner showing what level we're on
-	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 3);
+	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DirectX::XMFLOAT2(0.9f, 0.9f), DirectX::XMFLOAT2(1.0f, 1.0f), 4);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup("");
 

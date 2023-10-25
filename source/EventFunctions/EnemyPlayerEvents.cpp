@@ -19,8 +19,9 @@ void BeginHit(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	//Deal regular damage as well as on-hit damage from potential relics
-	stats->UpdateHealth(-attackerStats->damage);
+	stats->UpdateHealth(-attackerStats->damage, player != nullptr);
 	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
 	RelicInput::OnHitInput funcInput
 	{
@@ -95,9 +96,9 @@ void HazardBeginHit(EntityID& entity, const int& index)
 
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	//Deal regular damage as well as on-hit damage from potential relics
-	stats->UpdateHealth(-attackerStats->damage);
+	stats->UpdateHealth(-attackerStats->damage, player != nullptr);
 	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
 	RelicInput::OnHitInput funcInput
 	{

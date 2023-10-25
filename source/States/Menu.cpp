@@ -26,7 +26,21 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupText();
 	Camera::ResetCamera();
+	//If audioengine is not loaded. Load it.
+	if (unloadAudioEngine)
+	{
+		// Audio Engine
+		EntityID audioJungle = registry.CreateEntity();
+		AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
+		audioEngine->Setup(audioJungle.index);
 
+		// Background OST
+		SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
+		titleTheme->Load(MUSIC);
+		titleTheme->Play(Music_Title, Channel_Base);
+		unloadAudioEngine = false;
+	}
+	
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();
@@ -77,19 +91,26 @@ void Menu::SetupButtons()
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
 		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Start", UIFunc::LoadNextLevel, { -0.81f, -0.28f }, {0.7f, 0.6f} );
+		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+		buttonSound->Load(MENU);
 	}
 
 	//Settings Button
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Settings", UIFunc::MainMenu_Settings, { -0.81f,  -0.54f }, {0.7f, 0.6f} );	}
+		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Settings", UIFunc::MainMenu_Settings, { -0.81f,  -0.54f }, {0.7f, 0.6f} );
+		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+		buttonSound->Load(MENU);
+	}
 
 	//Exit Button
 	{
 		auto button = registry.CreateEntity();
 		UIButton* comp = registry.AddComponent<UIButton>(button);
 		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Quit", UIFunc::MainMenu_Quit, { -0.81f, -0.8f }, {0.7f, 0.6f} );
+		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+		buttonSound->Load(MENU);
 	}
 }
 
@@ -133,7 +154,7 @@ void Menu::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities(false);
+	UnloadEntities(0);
 
 	ClearUI();
 }

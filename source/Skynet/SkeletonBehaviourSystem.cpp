@@ -6,12 +6,19 @@
 #include "UI/UIRenderer.h"
 #include <random>
 
+#define SKELETON_ATTACK_HITBOX 2
 
-
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
 {
 	skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
 	skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+
+	animComp->aAnim = ANIMATION_WALK;
+	animComp->aAnimIdx = 0;
+	animComp->aAnimTime += GetDeltaTime();
+	// Loop back
+	while (1.f < animComp->aAnimTime)
+		animComp->aAnimTime -= 1.f;
 
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 	float dirX = skeletonTransformComponent->facingX, dirZ = skeletonTransformComponent->facingZ;
@@ -26,9 +33,17 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	skeletonTransformComponent->positionZ += dirZ * stats->moveSpeed * GetDeltaTime();
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats)
+void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
 {
 	skeletonComponent->timeCounter += GetDeltaTime();
+
+	animComp->aAnim = ANIMATION_IDLE;
+	animComp->aAnimIdx = 0;
+	animComp->aAnimTime += GetDeltaTime();
+	// Loop back
+	while (1.f < animComp->aAnimTime)
+		animComp->aAnimTime -= 1.f;
+
 	if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
 	{
 		skeletonComponent->timeCounter = 0.f;
@@ -51,20 +66,36 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->moveSpeed / 2.f * GetDeltaTime();
 
 }
-
-void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc)
+void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
+	sc->attackTimer += GetDeltaTime() * enemyStats->attackSpeed;
 	sc->goalDirectionX = ptc->positionX - stc->positionX;
 	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
-	SmoothRotation(stc, sc->goalDirectionX, sc->goalDirectionZ);
+	//Elliot: Bruh, why is this here?
+	//SmoothRotation(stc, sc->goalDirectionX, sc->goalDirectionZ);
+
+	//Elliot & Herman request: Make animationtime scale better for faster startup and swing.
+	animComp->aAnim = ANIMATION_ATTACK;
+	animComp->aAnimIdx = 0;
+	//Elliot: Change in calculations for attack timer:
+	animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->attackSpeed);
+	while (1.f < animComp->aAnimTime)
+		animComp->aAnimTime -= 1.f;
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
+		
+		//playerStats->UpdateHealth(-enemyStats->damage, true);
+		//Set hitbox active here.
+		//Elliot's request: Add Skeleton attack hitbox instead of define
+		SetHitboxActive(ent, SKELETON_ATTACK_HITBOX, true);
+		SetHitboxCanDealDamage(ent, SKELETON_ATTACK_HITBOX, true);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		sfx->Play(Skeleton_Attack, Channel_Base);
+		RedrawUI();
 		sc->attackTimer = 0;
 		sc->attackStunDurationCounter = 0;
-		playerStats->UpdateHealth(-enemyStats->damage);
-		RedrawUI();
 	}
 }
 
@@ -77,6 +108,7 @@ bool SkeletonBehaviourSystem::Update()
 	TransformComponent* skeletonTransformComponent = nullptr;
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
+	AnimationComponent* enemyAnim = nullptr;
 
 	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
 	{
@@ -90,28 +122,46 @@ bool SkeletonBehaviourSystem::Update()
 		skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
 
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			skeletonComponent->attackTimer += GetDeltaTime();
+			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
-
+			bool stunned = false;
 			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
 			{
 				// do nothing, stand like a bad doggo and be ashamed
+				//Elliot: When finished, reset attack timer and hitbox
+				skeletonComponent->attackTimer = 0.0f;
+				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
+				stunned = true;
 			}
-			else if (distance < 2.5f)
+			else//Elliot: Turn off attack hitbox to not make player rage.
 			{
-				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent);
+				
+				SetHitboxActive(enemyEntity, SKELETON_ATTACK_HITBOX, false);
+				SetHitboxCanDealDamage(enemyEntity, SKELETON_ATTACK_HITBOX, false);
 			}
-			else if (distance < 50) //hunting distance
+			//Elliot, denesting stunned for readability.
+			if (stunned)
 			{
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
+				continue;
+			}
+			//Elliot: If in attack, keep attacking even if player is outside
+			if (distance < 2.5f || skeletonComponent->attackTimer > 0.0f)
+			{
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
+			}
+			else if (distance < 50.f) //hunting distance
+			{
+				
+				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
 			else // idle
 			{
-				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats);
+				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
 		}
 	}

@@ -293,10 +293,7 @@ bool UIShopSystem::Update()
     {
         auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
 
-        ML_String playerInfo = ("Souls: " + std::to_string((int)player->GetSouls()) +
-            "\n\nPlayer Stats:\nMax Health: " + std::to_string((int)stats->GetMaxHealth()) +
-            "\nCurrent Health: " + std::to_string((int)stats->GetHealth()) +
-            "\nDamage: " + std::to_string((int)stats->damage) + 
+        ML_String playerInfo = ("Damage: " + std::to_string((int)stats->damage) + 
             "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
             "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
 
@@ -310,8 +307,16 @@ bool UIShopSystem::Update()
                                         -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
         
         uiShopElement->playerInfo.UpdateText(playerInfo);
-        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 2) });
+        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 2) });
 
+    }
+
+    for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+    {
+        auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+        auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+
+        uiElement->m_priceText.UpdateText(("Price: " + std::to_string(uiRelic->price)).c_str());
     }
 
     return true;

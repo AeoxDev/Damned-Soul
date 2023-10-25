@@ -182,7 +182,7 @@ float4 main(PS_IN input) : SV_TARGET
     addOnColor = saturate((addOnColor+/* diffuse+*/ diffuseDir + diffusePoint + diffuseSpot) * image.xyz); //Add ambient, diffuse and specular lights
     addOnColor = saturate(addOnColor + pointSpecular + spotSpecular + dirSpecular); //not multiply to put on top and not affect color of image
     addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
-    #define GAMMA_CORRECTION 1.1f
+    #define GAMMA_CORRECTION 1.25f
     return pow(float4(abs(addOnColor), 1), GAMMA_CORRECTION);
     //return float4(addOnColor, 1);
     

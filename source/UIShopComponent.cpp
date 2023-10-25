@@ -55,18 +55,17 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 
 	UIShopRelicWindowComponent* relicWindowC = registry.AddComponent<UIShopRelicWindowComponent>(relicWindow);
 	relicWindowC->Setup(positionMultiplier, relicWindowBaseImage, shopPrice);
-	relicWindowC->m_baseImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 4.5f), spritePixelCoords.y - (0.1f * 3 * positionMultiplier) + 0.1f });
-	relicWindowC->price = 2;
-	relicWindowC->m_priceText.UpdateText(("Price: " + std::to_string(relicWindowC->price)).c_str());
+	relicWindowC->m_baseImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 6.5f), spritePixelCoords.y - (0.1f * 3 * positionMultiplier) + 0.1f });
+	relicWindowC->m_priceText.UpdateText("Price: ");
 
-	relicDesc.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 3), spritePixelCoords.y + 0.35f });
-	relicDescImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 3), spritePixelCoords.y + 0.25f });
+	relicDesc.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 4), spritePixelCoords.y - (0.1f * 10.5f) });
+	relicDescImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 4), spritePixelCoords.y - (0.1f * 11) });
 	
 	ChangeOffset(spritePositionOffset, startingSpritePosition, spritePixelCoords, *relicWindowC);
 
 	relicImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y });
 
-	relicWindowC->m_priceText.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y - 0.1f });
+	relicWindowC->m_priceText.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.0f), spritePixelCoords.y - 0.1f });
 	
 	relicFlavorImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
 	relicName.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
@@ -79,7 +78,7 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	buyRelic->SetPosition({ spritePixelCoords.x + 0.01f, spritePixelCoords.y - (0.1f * 0) });
 
 	UIButton* lockRelic = registry.AddComponent<UIButton>(relicButtonLock);
-	lockRelic->Setup("TempLock.png", "TempLock.png", "", UIFunc::Shop_LockRelic);
+	lockRelic->Setup("UnLocked.png", "UnLocked.png", "", UIFunc::Shop_LockRelic);
 	lockRelic->shopPosition = positionMultiplier;
 	lockRelic->SetPosition({ spritePixelCoords.x + 0.01f, spritePixelCoords.y - (0.1f * 1) });
 
@@ -88,7 +87,7 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 
 UIShopComponent::UIShopComponent()
 {
-	baseImage.Setup("TempShopWindow.png", this->position, this->scale);
+	baseImage.Setup("TempShopWindow3.png", this->position, this->scale);
 	playerInfo.Setup("");
 
 	for (int i = 0; i < 6; i++)
@@ -123,19 +122,24 @@ void UIShopComponent::Setup()
 
 	auto rerollEntity = registry.CreateEntity();
 	UIButton* rerollButton = registry.AddComponent<UIButton>(rerollEntity);
-	rerollButton->Setup("TempReRoll.png", "TempReRoll.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 4.5f), spritePixelCoords.y - (0.1f * 10) });
+	rerollButton->Setup("Roll.png", "Roll2.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 5.5f), spritePixelCoords.y - (0.1f * 13.5f) });
 
 	UIText* rerollPrice = registry.AddComponent<UIText>(rerollEntity);
-	rerollPrice->Setup("Price: 2", { spritePixelCoords.x + (0.1f * 4.5f), spritePixelCoords.y - (0.1f * 11) });
+	rerollPrice->Setup("Re Roll Price: 1", { spritePixelCoords.x + (0.1f * 7.0f), spritePixelCoords.y - (0.1f * 13.5f) });
+
+	auto healEntity = registry.CreateEntity();
+	UIButton* healButton = registry.AddComponent<UIButton>(healEntity);
+	healButton->Setup("Heal.png", "Heal2.png", "", UIFunc::Shop_Heal, { spritePixelCoords.x + (0.1f * 5.5f), spritePixelCoords.y - (0.1f * 15) });
+
+	UIText* healPrice = registry.AddComponent<UIText>(healEntity);
+	healPrice->Setup("Heal Price: 2", { spritePixelCoords.x + (0.1f * 7.0f), spritePixelCoords.y - (0.1f * 15) });
 
 	auto nextLevelEntity = registry.CreateEntity();
 	UIButton* nextLevelButton = registry.AddComponent<UIButton>(nextLevelEntity);
-	nextLevelButton->Setup("TempNextLevel.png", "TempNextLevel.png", "", UIFunc::LoadNextLevel, { spritePixelCoords.x + (0.1f * 1), spritePixelCoords.y - (0.1f * 11) });
+	nextLevelButton->Setup("TempNextLevel.png", "TempNextLevel.png", "", UIFunc::LoadNextLevel, { spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 14.5f) }, {2.0f, 2.0f});
 	
 	for (int i = 0; i < 3; i++)
-	{
 		CreateShopEntity(*this, i + 1);
-	};
 
 	bool* ignore = {};
 

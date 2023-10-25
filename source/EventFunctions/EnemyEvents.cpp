@@ -81,7 +81,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	}*/
 	transComp.mass = transform->mass * 0.8f;
 	registry.AddComponent<TransformComponent>(newMini, transComp);
-	registry.AddComponent<EnemyComponent>(newMini, 2);
+	registry.AddComponent<EnemyComponent>(newMini, 2, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
 
 	

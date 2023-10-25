@@ -1,5 +1,4 @@
 #include "CollisionFunctions.h"
-#include "Registry.h"
 #include "Components.h"
 #include "DeltaTime.h"
 #include "States\StateManager.h"
@@ -10,6 +9,7 @@
 #include "RelicFunctions.h"
 #include "Relics\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
+#include "Levels/LevelHelper.h"
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -163,6 +163,23 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 	2. Continuous: Flash color using hue-shift, knockback depending on where we got attacked from
 	3. End: Enable being able to take damage again, and maybe for safety reasons make sure our hue-shift is back to normal
 	*/
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
+	if (enemy != nullptr)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+		switch (enemy->type)
+		{
+		case enemyType::hellhound:
+			sfx->Play(Hellhound_Hurt, Channel_Base);
+			break;
+		case enemyType::eye:
+			sfx->Play(Eye_Hurt, Channel_Base);
+			break;
+		case enemyType::skeleton:
+			sfx->Play(Skeleton_Hurt, Channel_Base);
+			break;
+		}
+	}
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
 	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
@@ -188,7 +205,7 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 void AttackCollision(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
-	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+ 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
 	//Get the components of the attackee (stats for taking damage and transform for knockback)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
@@ -257,6 +274,23 @@ void AttackCollision(OnCollisionParameters& params)
 	*/
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
+	if (enemy != nullptr)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+		switch (enemy->type)
+		{
+		case enemyType::hellhound:
+			sfx->Play(Hellhound_Hurt, Channel_Base);
+			break;
+		case enemyType::eye:
+			sfx->Play(Eye_Hurt, Channel_Base);
+			break;
+		case enemyType::skeleton:
+			sfx->Play(Skeleton_Hurt, Channel_Base);
+			break;
+		}
+	}
 	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, BeginHit, MiddleHit, 0.2f, EndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 	

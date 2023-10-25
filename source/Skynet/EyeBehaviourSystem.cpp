@@ -227,7 +227,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			//check if eye has collided with player
 			if (eyeComponent->dealtDamage == false && Collision(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ, 0.2f))
 			{
-				playerStats->UpdateHealth(-enemyStats->damage);
+				playerStats->UpdateHealth(-enemyStats->damage, true);
 				eyeComponent->dealtDamage = true;
 				RedrawUI();
 			}
@@ -240,6 +240,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 
 			//reset values
 			eyeComponent->charging = false;
+			eyeComponent->chargeAttackSoundPlaying = false;
 			eyeComponent->attackTimer = 0;
 			eyeComponent->attackStunDurationCounter = 0;
 			eyeComponent->dealtDamage = false;
@@ -292,7 +293,12 @@ bool EyeBehaviourSystem::Update()
 			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->attackSpeed && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
-				
+				if (!eyeComponent->chargeAttackSoundPlaying)
+				{
+					eyeComponent->chargeAttackSoundPlaying = true;
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+					sfx->Play(Eye_Attack, Channel_Base);
+				}
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity);
 
 			}

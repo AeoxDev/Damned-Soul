@@ -10,6 +10,8 @@
 #include "Particles.h"
 #include "D3D11Graphics.h"
 #include "Light.h"
+#include "Registry.h"
+#include "Components.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -20,10 +22,22 @@ StateManager stateManager;
 
 void SetInMainMenu(bool value)
 {
-	
 	if (value)
 	{
 		currentStates = (State)(currentStates | State::InMainMenu);
+
+		if (currentStates != (State)(currentStates | State::InSettings))
+		{
+			for (auto entity : View<AudioEngineComponent>(registry))
+			{
+				SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+				backgroundMusic->Stop(Channel_Base);
+				backgroundMusic->Stop(Channel_Extra);
+				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+				audioJungle->HandleSound();
+				backgroundMusic->Play(Music_Title, Channel_Base);
+			}
+		}
 	}
 	else
 	{
@@ -90,6 +104,8 @@ int StateManager::Setup()
 
 	ui.Setup();
 
+	
+
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
 	//models.Initialize();
@@ -133,6 +149,9 @@ int StateManager::Setup()
 	systems.push_back(new TransformSystem());
 	systems.push_back(new EventSystem());
 	systems.push_back(new StateSwitcherSystem());
+
+	//Audio (Needs to be close to last)
+	systems.push_back(new AudioSystem());
 
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
@@ -239,7 +258,7 @@ void StateManager::UnloadAll()
 	scenes[0].Unload();
 	scenes[1].Unload();
 	scenes[2].Unload();
-
+	UnloadEntities(3);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();

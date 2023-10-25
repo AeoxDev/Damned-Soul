@@ -42,7 +42,7 @@ void LoadLevel(int level)
 	case 7: LoadLevel4(); break;
 	default: 
 		//UnloadEntities(true);//Reset game
-		UnloadEntities(true);//Reset game
+		UnloadEntities(1);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}

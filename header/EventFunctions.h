@@ -22,7 +22,9 @@ void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
 
 //CONTINUOUS
+void PlayerAttackSound(EntityID& entity, const int& index);
 void PlayerAttack(EntityID& entity, const int& index);
+void PlayerDashSound(EntityID& entity, const int& index);
 void PlayerDash(EntityID& entity, const int& index);
 /*END OF PLAYER EVENTS*/
 

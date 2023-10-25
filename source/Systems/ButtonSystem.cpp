@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "UI/UIRenderer.h"
 #include "SDLHandler.h"
+#include "UIButtonFunctions.h"
 #include "UIComponents.h"
 
 bool ButtonSystem::Update()
@@ -17,6 +18,10 @@ bool ButtonSystem::Update()
 		{
 			if (comp->m_CurrentImage == 1 && comp->m_doRedraw)
 			{
+				//Set which sound to play
+				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+				if (sound != nullptr) sound->Play(Button_Hover, Channel_Base);
+
 				RedrawUI();
 				comp->m_doRedraw = false;
 			}
@@ -24,6 +29,20 @@ bool ButtonSystem::Update()
 			comp->Hover();
 			if (mouseButtonPressed[MouseButton::left] == released)
 			{
+				//Set which sound to play
+				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+				if (sound != nullptr)
+				{
+					if (comp->m_onClick == UIFunc::LoadNextLevel)	
+					{
+						sound->Play(Button_Start, Channel_Base);
+					}
+					else
+					{
+						sound->Play(Button_Press, Channel_Base);
+					}
+				}
+
 				comp->Interact(comp);
 				return true;
 			}
