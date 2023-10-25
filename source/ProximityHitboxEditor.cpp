@@ -3,13 +3,17 @@
 #include <sstream>
 #include <iostream>
 
-void HitboxEditorLoop(std::string fileName, bool clockwise)
+#include <string>
+
+void HitboxEditorLoop(const char* fileName, bool clockwise)
 {
 	CurrentHitboxVariables CHV;
 	bool done = false;
 
+	std::string tempFilename = fileName; //Herman Help;
+
 	//Read hitbox file if it exists
-	fileName = "HitboxFiles/" + fileName + ".box";
+	fileName = ("HitboxFiles/" + tempFilename + ".box").c_str();
 	std::ifstream file(fileName);
 	if (file.is_open())
 	{
@@ -187,7 +191,7 @@ void HitboxEditorLoop(std::string fileName, bool clockwise)
 				{
 					file.close();
 					//Delete the file before remaking it
-					remove(fileName.c_str());
+					remove(fileName);
 				}
 
 				//Create file
@@ -234,7 +238,7 @@ void HitboxEditorLoop(std::string fileName, bool clockwise)
 				{
 					file.close();
 					//Delete the file
-					remove(fileName.c_str());
+					remove(fileName);
 					std::cout << "Removed file" << std::endl;
 				}
 				done = true;

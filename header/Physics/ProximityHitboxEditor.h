@@ -1,6 +1,5 @@
 #pragma once
 #include "MemLib/ML_Vector.hpp"
-#include <string>
 #include <fstream>
 
 struct ProximityPointEdit
@@ -15,6 +14,6 @@ struct CurrentHitboxVariables
 	ML_Vector<ProximityPointEdit> list;
 };
 
-void HitboxEditorLoop(std::string fileName, bool clockwise = true);
+void HitboxEditorLoop(const char* fileName, bool clockwise = true);
 
 void EdgeCaseFixer(CurrentHitboxVariables& CHV, bool lastIncluded);

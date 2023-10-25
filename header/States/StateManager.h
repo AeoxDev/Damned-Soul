@@ -5,9 +5,10 @@
 #include "States\Pause.h"
 #include "Systems\Systems.h"
 #include "EntityID.h"
-#include <vector>
 
 //#include "MemLib\ML_Vector.hpp"
+
+#include <vector>
 
 struct StateManager;
 
@@ -16,6 +17,7 @@ extern StateManager stateManager;
 
 struct StateManager
 {
+	//ML_Vector<System*> systems; //Herman Help;
 	std::vector<System*> systems;
 	int activeLevel = -1;
 	int activeLevelScene = -1;//Current loaded level scene in array
