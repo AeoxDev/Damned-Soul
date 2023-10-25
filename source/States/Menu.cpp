@@ -26,20 +26,6 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupText();
 	Camera::ResetCamera();
-	//If audioengine is not loaded. Load it.
-	if (unloadAudioEngine)
-	{
-		// Audio Engine
-		EntityID audioJungle = registry.CreateEntity();
-		AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
-		audioEngine->Setup(audioJungle.index);
-
-		// Background OST
-		SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
-		titleTheme->Load(MUSIC);
-		titleTheme->Play(Music_Title, Channel_Base);
-		unloadAudioEngine = false;
-	}
 	
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented

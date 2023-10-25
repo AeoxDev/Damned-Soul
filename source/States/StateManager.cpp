@@ -104,7 +104,15 @@ int StateManager::Setup()
 
 	ui.Setup();
 
-	
+	// Audio Engine VERY IMPORTANT TO LOAD THIS FIRST BEFORE ANY SOUND COMPONENT OR ELSE THINGS WILL GO WHACK!!!!!!!!!!!!!
+	EntityID audioJungle = registry.CreateEntity();
+	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
+	audioEngine->Setup(audioJungle.index);
+
+	// Background OST
+	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
+	titleTheme->Load(MUSIC);
+	titleTheme->Play(Music_Title, Channel_Base);
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
