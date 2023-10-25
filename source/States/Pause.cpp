@@ -24,15 +24,6 @@ void PauseState::Input()
 	}
 }
 
-void PauseState::Update()
-{
-}
-
-void PauseState::ComputeShaders()
-{
-
-}
-
 void PauseState::Unload()
 {
 	// If this state is not active, simply skip the unload

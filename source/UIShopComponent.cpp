@@ -4,8 +4,7 @@
 #include "UI/UIRenderer.h"
 
 
-
-void ChangeOffset(DirectX::XMFLOAT2& spritePositionOffset, DirectX::XMFLOAT2& startingSpritePosition, DirectX::XMFLOAT2& spritePixelCoords, UIShopRelicWindowComponent& relicWindowC)
+void ChangeOffset(DSFLOAT2& spritePositionOffset, DSFLOAT2& startingSpritePosition, DSFLOAT2& spritePixelCoords, UIShopRelicWindowComponent& relicWindowC)
 {
 	spritePositionOffset = { relicWindowC.m_baseImage.m_UiComponent.m_CurrentBounds.right / (relicWindowC.m_baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
 											   relicWindowC.m_baseImage.m_UiComponent.m_CurrentBounds.bottom / (relicWindowC.m_baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
@@ -22,12 +21,12 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	auto relicButtonBuy = registry.CreateEntity();
 	auto relicButtonLock = registry.CreateEntity();
 
-	DirectX::XMFLOAT2 spritePositionOffset = { shop.baseImage.m_UiComponent.m_CurrentBounds.right / (shop.baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
+	DSFLOAT2 spritePositionOffset = { shop.baseImage.m_UiComponent.m_CurrentBounds.right / (shop.baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
 											   shop.baseImage.m_UiComponent.m_CurrentBounds.bottom / (shop.baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
 
-	DirectX::XMFLOAT2 startingSpritePosition = { abs(shop.baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+	DSFLOAT2 startingSpritePosition = { abs(shop.baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
 								   abs(shop.baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-	DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+	DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 									-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 	UIImage relicWindowBaseImage, relicImage, relicFlavorImage, relicDescImage;
@@ -111,12 +110,12 @@ UIShopComponent::UIShopComponent()
 void UIShopComponent::Setup()
 {
 
-	DirectX::XMFLOAT2 spritePositionOffset = { this->baseImage.m_UiComponent.m_CurrentBounds.right / (this->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
+	DSFLOAT2 spritePositionOffset = { this->baseImage.m_UiComponent.m_CurrentBounds.right / (this->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
 											   this->baseImage.m_UiComponent.m_CurrentBounds.bottom / (this->baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
 
-	DirectX::XMFLOAT2 startingSpritePosition = { abs(this->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+	DSFLOAT2 startingSpritePosition = { abs(this->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
 								   abs(this->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-	DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+	DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 									-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 

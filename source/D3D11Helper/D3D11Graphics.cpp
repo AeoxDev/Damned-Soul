@@ -5,7 +5,6 @@
 #include "SDLHandler.h"
 #include "MemLib/MemLib.hpp"
 #include <fstream>
-#include <string>
 #include <assert.h>
 
 //#ifdef _DEBUG

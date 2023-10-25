@@ -1,7 +1,6 @@
 #include "Hitbox.h"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
-#include <string>
 #include <fstream>
 #include <sstream>
 #include "Backend/Collision.h"
