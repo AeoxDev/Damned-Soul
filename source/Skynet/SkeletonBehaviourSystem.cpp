@@ -15,7 +15,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
-	animComp->aAnimTime += GetDeltaTime();
+	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	// Loop back
 	while (1.f < animComp->aAnimTime)
 		animComp->aAnimTime -= 1.f;
@@ -39,7 +39,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 	animComp->aAnim = ANIMATION_IDLE;
 	animComp->aAnimIdx = 0;
-	animComp->aAnimTime += GetDeltaTime();
+	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	// Loop back
 	while (1.f < animComp->aAnimTime)
 		animComp->aAnimTime -= 1.f;

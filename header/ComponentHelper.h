@@ -10,6 +10,7 @@ private:
 	float currentHealth = 100.f;
 	//defense? percentage-based or flat?
 public:
+	float baseMoveSpeed = 1.0f;
 	float moveSpeed = 1.0f;
 
 
@@ -21,7 +22,8 @@ public:
 	// for death animation
 	bool performingDeathAnimation = false;
 
-	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
+	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) 
+	{ baseMoveSpeed = moveSpeed; }
 
 	// Get the current health of the player
 	float GetHealth() const;

@@ -9,11 +9,16 @@
 
 void PlayerLoseControl(EntityID& entity, const int& index)
 {	
+	//Get relevant components
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	//If this is not the player, no need to remove controller
+	if (playerComp == nullptr)
+	{
+		return;
+	}
 	//Start by removing the players' ControllerComponent
 	registry.RemoveComponent<ControllerComponent>(entity);
 	
-	//Get relevant components
-	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 
 	//Store any specific condition in the timed event
@@ -35,11 +40,18 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 
 void PlayerRegainControl(EntityID& entity, const int& index)
 {
-	//Start by giving back the players' ControllerComponent
-	registry.AddComponent<ControllerComponent>(entity);
-
+	//Hitstop fixer
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	transform->offsetX = 0.0f;
 	//Get relevant components
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	//If this is not the player, return. No controlling enemies >:(
+	if (playerComp == nullptr)
+	{
+		return;
+	}
+	//Give back the players' ControllerComponent
+	registry.AddComponent<ControllerComponent>(entity);
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 
 	//Store any specific condition in the timed event
@@ -77,10 +89,10 @@ void PlayerAttack(EntityID& entity, const int& index)
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
 	anim->aAnimTime = powf(anim->aAnimTime, 2.f);
-	anim->aAnimTime += GetDeltaTime();
+	anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
 	anim->aAnimTime = powf(anim->aAnimTime, .5f);
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
-	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
+	anim->aAnimTime -= anim->aAnimTime * anim->aAnimTimeFactor > 1.f ? 1.f : 0.f;
 
 	//Make the players' attack hitbox active during the second half of the attack animation
 	if (/*GetEventTimedElapsed(entity, index)*/anim->aAnimTime >= 0.8f)

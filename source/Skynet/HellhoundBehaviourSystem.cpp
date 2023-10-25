@@ -290,10 +290,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		hc->currentShootingAttackRange = 0.f;
 
 		//TEEEEEMP
-		for (auto dog : View<HellhoundBehaviour>(registry))
-		{
-			RemoveLight(dog);
-		}
+		RemoveLight(dog);
 		
 	}
 }

@@ -283,7 +283,16 @@ void AttackCollision(OnCollisionParameters& params)
 			break;
 		}
 	}
-	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, BeginHit, MiddleHit, 0.2f, EndHit); //No special condition for now
+	//Hitstop
+	int index1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
+	int index2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
+	//Make player lose control during hit?
+	int indexSpeedControl1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+
+	//Take damage and blinking
+	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
+	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 	
 	//Redraw UI (player healthbar) since someone will have taken damage at this point. 
