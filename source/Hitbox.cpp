@@ -607,6 +607,10 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (!GetHitboxCanDealDamage(entity, hitboxID))
+	{
+		ResetAttackTrackerFlags(entity);
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].canDealDamage = setFlag;
@@ -615,7 +619,6 @@ void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 	{
 		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].canDealDamage = setFlag;
 	}
-	ResetAttackTrackerFlags(entity);
 }
 
 void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
@@ -740,6 +743,19 @@ void SetupLavaCollisionBox(EntityID& entity, float radius)
 	//SetHitboxIsStaticHazard(entity, staticID);
 	//SetHitboxCanTakeDamage(entity, staticID, false);
 	SetHitboxCanDealDamage(entity, staticID, false);
+}
+
+bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		return hitbox->circularFlags[hitboxID].canDealDamage == 1;
+	}
+	else
+	{
+		return hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].canDealDamage == 1;
+	}
 }
 
 void SetupPlayerCollisionBox(EntityID& entity, float radius)

@@ -16,7 +16,9 @@
 void PlayDeathAnimation(EntityID& entity, const int& index)
 {
 	//implement later, goddamn TA
-
+	RemoveHitbox(entity, 0);
+	RemoveHitbox(entity, 1);
+	RemoveHitbox(entity, 2);
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;

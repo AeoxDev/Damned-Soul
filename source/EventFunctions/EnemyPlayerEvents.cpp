@@ -4,7 +4,7 @@
 #include "RelicFunctions.h"
 #include "Relics/RelicFuncInputTypes.h" //Why isn't this included by RelicFunctions? Hermaaaaaaaaan
 #include "DeltaTime.h"
-#include <cmath> //sin
+
 
 #define KNOCKBACK_FACTOR 0.3f
 
@@ -39,17 +39,10 @@ void BeginHit(EntityID& entity, const int& index)
 
 void MiddleHit(EntityID& entity, const int& index)
 {
-	//Flash color red repeatedly
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetEventTimedElapsed(entity, index) * frequency) * std::cosf(GetEventTimedElapsed(entity, index) * frequency);
-	if (skelel)
-		skelel->colorAdditiveRed = cosineWave;
-	if (bonel)
-		bonel->colorAdditiveRed = cosineWave;
-
+	
 	//Take knockback
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
