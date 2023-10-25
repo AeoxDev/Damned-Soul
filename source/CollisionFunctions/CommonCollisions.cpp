@@ -163,23 +163,6 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 	2. Continuous: Flash color using hue-shift, knockback depending on where we got attacked from
 	3. End: Enable being able to take damage again, and maybe for safety reasons make sure our hue-shift is back to normal
 	*/
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy != nullptr)
-	{
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case enemyType::hellhound:
-			sfx->Play(Hellhound_Hurt, Channel_Base);
-			break;
-		case enemyType::eye:
-			sfx->Play(Eye_Hurt, Channel_Base);
-			break;
-		case enemyType::skeleton:
-			sfx->Play(Skeleton_Hurt, Channel_Base);
-			break;
-		}
-	}
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
 	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
@@ -281,13 +264,22 @@ void AttackCollision(OnCollisionParameters& params)
 		switch (enemy->type)
 		{
 		case enemyType::hellhound:
-			sfx->Play(Hellhound_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::eye:
-			sfx->Play(Eye_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::skeleton:
-			sfx->Play(Skeleton_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
 			break;
 		}
 	}

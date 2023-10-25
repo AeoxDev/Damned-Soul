@@ -39,7 +39,7 @@ void SplitBoss(EntityID& entity, const int& index);
 void LoopHitbox(EntityID& entity, const int& index);
 
 //Hit Stop
-#define FREEZE_TIME 0.1f
+#define FREEZE_TIME 0.08f
 void HitStop(EntityID& entity, const int& index);
 
 //Animation functions

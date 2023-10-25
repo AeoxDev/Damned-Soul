@@ -202,10 +202,6 @@ void UnloadEntities(int destructionTier)
 				registry.DestroyEntity(check);
 		}
 	}
-	if (destructionTier >= DESTROY_AUDIO)
-	{
-		stateManager.menu.unloadAudioEngine = true;
-	}
 	//Destroy entity resets component bitmasks
 	//for (int i = 0; i < registry.entities.size(); i++)
 	//{

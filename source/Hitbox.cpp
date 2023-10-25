@@ -1,7 +1,6 @@
 #include "Hitbox.h"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
-#include <string>
 #include <fstream>
 #include <sstream>
 #include "Backend/Collision.h"
@@ -724,7 +723,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStati
 
 	SetHitboxCanDealDamage(entity, sID, false);
 
-	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, -1.0f);
+	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
 	SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);

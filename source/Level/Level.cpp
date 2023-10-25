@@ -35,7 +35,7 @@ void LoadLevel(int level)
 	{
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
-	case 3: LoadLevel2(); break;
+	case 3: LoadLevel4(); break;
 	case 4: LoadShop(); break;
 	case 5: LoadLevel3(); break;
 	case 6: LoadShop(); break;

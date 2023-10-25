@@ -1,5 +1,5 @@
 #pragma once
-#include <DirectXMath.h>
+
 
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
@@ -17,8 +17,8 @@ struct EntityID;
 
 struct UIShopRelicWindowComponent
 {
-	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
-	DirectX::XMFLOAT2 scale = { 1.0f, 1.0f };
+	DSFLOAT2 position = { 0.0f, 0.0f };
+	DSFLOAT2 scale = { 1.0f, 1.0f };
 
 	bool doRedraw = true;
 
@@ -39,8 +39,8 @@ struct UIShopRelicWindowComponent
 
 struct UIShopComponent
 {
-	DirectX::XMFLOAT2 position = { 0.0f, 0.0f };
-	DirectX::XMFLOAT2 scale = { 1.0f, 1.0f };
+	DSFLOAT2 position = { 0.0f, 0.0f };
+	DSFLOAT2 scale = { 1.0f, 1.0f };
 
 	UIImage baseImage;
 	UIText playerInfo;
