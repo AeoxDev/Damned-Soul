@@ -186,7 +186,7 @@ bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = e
 		return false;
 }
 
-void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID)
+void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp)
 {
 	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(eID);
 
@@ -198,8 +198,8 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		eyeComponent->charging = true;
 
 		//while charging disable hitboxes
-		SetHitboxActive(eID, 0, false);
-		SetHitboxActive(eID, 1, false);
+		SetHitboxIsMoveable(eID, 0, false);
+		SetHitboxIsMoveable(eID, 1, false);
 
 		//direction from the enemy towards the player
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
@@ -256,19 +256,16 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 6.f * GetDeltaTime();
 			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 6.f * GetDeltaTime();
 
-			//check if eye has collided with player
-			if (eyeComponent->dealtDamage == false && Collision(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ, 0.2f))
-			{
-				playerStats->UpdateHealth(-enemyStats->damage, true);
-				eyeComponent->dealtDamage = true;
-				RedrawUI();
-			}
+			SetHitboxActive(eID, enemComp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, true);
 		}
 		else //else charge is finished
 		{
 			//reenable hitboxes
-			SetHitboxActive(eID, 0, true);
-			SetHitboxActive(eID, 1, true);
+			SetHitboxIsMoveable(eID, 0, true);
+			SetHitboxIsMoveable(eID, 1, true);
+			SetHitboxActive(eID, enemComp->attackHitBoxID, false);
+			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, false);
 
 			//reset values
 			eyeComponent->charging = false;
@@ -292,7 +289,7 @@ bool EyeBehaviourSystem::Update()
 	HitboxComponent* enemyHitbox = nullptr;
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
-	
+	EnemyComponent* enemComp = nullptr;
 
 	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	{
@@ -301,15 +298,16 @@ bool EyeBehaviourSystem::Update()
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
 	
-	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent>(registry))
+	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
 		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
 		eyeTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
+		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 
 
-		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr)// check if enemy is alive
+		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
 			// Get animation component
 			AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
@@ -338,7 +336,7 @@ bool EyeBehaviourSystem::Update()
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
 					sfx->Play(Eye_Attack, Channel_Base);
 				}
-				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity);
+				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp);
 
 			}
 			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)

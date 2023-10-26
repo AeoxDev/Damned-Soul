@@ -11,6 +11,7 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 
+
 HitboxVisualizeVariables hvv;
 
 bool SetupHitboxVisualizer()
@@ -698,7 +699,7 @@ void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 	}
 }
 
-void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStaticHazards)
+void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, bool affectedByStaticHazards)
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
@@ -723,12 +724,24 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStati
 
 	SetHitboxCanDealDamage(entity, sID, false);
 
-	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
-	SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
-	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
-	SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
-	SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
-	SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+	if (etype == EnemyType::eye) 
+	{
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.2f, 0.f, radius * 1.0f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+	}
+	else 
+	{
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+	}
 }
 
 void SetupLavaCollisionBox(EntityID& entity, float radius)

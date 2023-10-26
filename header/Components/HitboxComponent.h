@@ -1,4 +1,6 @@
 #pragma once
+#include "EnemyType.h"
+
 struct EntityID;
 
 struct HitboxComponent;
@@ -36,7 +38,7 @@ void SetHitboxHitEnemy(EntityID& entity, int hitboxID, bool setFlag = true);
 void SetHitboxHitStaticHazard(EntityID& entity, int hitboxID, bool setFlag = true);
 void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag = true);
 
-void SetupEnemyCollisionBox(EntityID& entity, float radius, bool collideWithStage = true);
+void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype,bool collideWithStage = true);
 void SetupPlayerCollisionBox(EntityID& entity, float radius);
 void SetupLavaCollisionBox(EntityID& entity, float radius);
 

@@ -44,13 +44,13 @@ bool StateSwitcherSystem::Update()
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 				switch (registry.GetComponent<EnemyComponent>(entity)->type)
 				{
-				case enemyType::hellhound:
+				case EnemyType::hellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
 					break;
-				case enemyType::skeleton:
+				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
 					break;
-				case enemyType::eye:
+				case EnemyType::eye:
 					sfx->Play(Eye_Death, Channel_Base);
 					break;
 				}
