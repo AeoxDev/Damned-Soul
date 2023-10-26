@@ -42,7 +42,7 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 	// Regular attack?
 	enemyAnim->aAnim = ANIMATION_ATTACK;
 	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
 	//impose timer so they cannot run and hit at the same time also not do a million damage per sec
@@ -200,7 +200,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//while charging disable hitboxes
 		SetHitboxIsMoveable(eID, 0, false);
 		SetHitboxIsMoveable(eID, 1, false);
-
+		enemyStats->knockback = 2.0f;
 		//direction from the enemy towards the player
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
 		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
@@ -232,7 +232,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		enemyAnim->aAnim = ANIMATION_ATTACK;
 		enemyAnim->aAnimIdx = 0;
 		enemyAnim->aAnimTime += GetDeltaTime();
-
+		
 		//calculate the current direction towards player
 		float dirX = (eyeComponent->targetX - eyeTransformComponent->positionX);
 		float dirZ = (eyeComponent->targetZ - eyeTransformComponent->positionZ);
@@ -261,6 +261,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		}
 		else //else charge is finished
 		{
+			enemyStats->knockback = 1.0f;
 			//reenable hitboxes
 			SetHitboxIsMoveable(eID, 0, true);
 			SetHitboxIsMoveable(eID, 1, true);

@@ -64,7 +64,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
-	sc->attackTimer += GetDeltaTime() * enemyStats->attackSpeed;
+	sc->attackTimer += GetDeltaTime() * animComp->aAnimTimeFactor;
 	sc->goalDirectionX = ptc->positionX - stc->positionX;
 	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
 

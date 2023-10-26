@@ -99,7 +99,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			attackSpeed = 0.5f;
+			attackSpeed = 0.1f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{

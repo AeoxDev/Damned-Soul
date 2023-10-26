@@ -74,7 +74,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EnemyComponent* enmComp, EntityID& ent)
 {
-	bc->attackTimer += GetDeltaTime() * enemyStats->attackSpeed;
+	bc->attackTimer += GetDeltaTime();
 	bc->goalDirectionX = ptc->positionX - btc->positionX;
 	bc->goalDirectionZ = ptc->positionZ - btc->positionZ;
 	//Elliot & Herman request: Make animationtime scale better for faster startup and swing.
@@ -128,7 +128,7 @@ bool TempBossBehaviourSystem::Update()
 		if (tempBossComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(tempBossTransformComponent->positionX, tempBossTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			tempBossComponent->attackTimer += GetDeltaTime();
+			
 			tempBossComponent->attackStunDurationCounter += GetDeltaTime();
 
 			if (tempBossComponent->attackStunDurationCounter <= tempBossComponent->attackStunDuration)
@@ -146,7 +146,7 @@ bool TempBossBehaviourSystem::Update()
 			}
 
 
-			if (distance < 7.f - tempBossComponent->deathCounter * 1.15f)
+			if (distance < 7.f - tempBossComponent->deathCounter * 1.15f || tempBossComponent->attackTimer > 0.0f)
 			{
 				CombatBehaviour(tempBossComponent, enemyStats, playerStats, playerTransformCompenent, tempBossTransformComponent, enmComp, enemyEntity);
 			}

@@ -91,6 +91,7 @@ struct EnemyComponent
 {
 	int soulCount = 0;
 	int attackHitBoxID = -1;
+	int specialHitBoxID = -1;
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };

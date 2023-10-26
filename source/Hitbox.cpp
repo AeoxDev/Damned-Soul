@@ -126,17 +126,17 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 		dx = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerX;
 		dx = dx * dx;
 
-		dz = cornerPosX[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
+		dz = cornerPosZ[i] - collisionComponent->convexHitbox[availableSlot].centerZ;
 		dz = dz * dz;
 
-		float tempDist = std::sqrt(dx * dx + dz * dz);
+		float tempDist = dx * dx + dz * dz;
 
 		if (tempDist > longestDistance)
 		{
 			longestDistance = tempDist;
 		}
 	}
-	collisionComponent->convexHitbox[availableSlot].boundingRadius = longestDistance;
+	collisionComponent->convexHitbox[availableSlot].boundingRadius = std::sqrt(longestDistance);
 	
 	//Set normals
 	float lineX, lineZ = 0.f;
@@ -724,23 +724,50 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 
 	SetHitboxCanDealDamage(entity, sID, false);
 
-	if (etype == EnemyType::eye) 
+
+	switch (etype)
 	{
+	case EnemyType::eye:
 		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.2f, 0.f, radius * 1.0f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
 		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
-	}
-	else 
-	{
+		break;
+
+	case EnemyType::hellhound:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.0f, 0.f, radius * -2.0f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+
+		float cornersX[3];// = { 0.0f, 0.5f, -0.5f };
+		cornersX[0] = 0.0f;
+		cornersX[1] = 0.5f;
+		cornersX[2] = -0.5f;
+		float cornersZ[3];// = { 0.0f, -0.5f, -0.5f };
+		cornersZ[0] = -1.0f;
+		cornersZ[1] = -1.5f;
+		cornersZ[2] = -1.5f;
+		enemyComp->specialHitBoxID = CreateHitbox(entity, 3, cornersX, cornersZ);
+		SetCollisionEvent(entity, enemyComp->specialHitBoxID, StaticHazardAttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
+		SetHitboxActive(entity, enemyComp->specialHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
+		break;
+
+	default:
 		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
 		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+		break;
 	}
 }
 
@@ -841,6 +868,74 @@ void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
 		hitbox->onConvexCollision[hitboxID- SAME_TYPE_HITBOX_LIMIT].CollisionFunction = (void(*)(OnCollisionParameters&))function;
 	}
 	
+}
+
+void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[])
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	assert(hitboxID >= SAME_TYPE_HITBOX_LIMIT);
+	int slot = hitboxID - SAME_TYPE_HITBOX_LIMIT;
+	//Redo center and bounding radius
+	float sumX = 0.f;
+	float sumZ = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		hitbox->convexHitbox[slot].cornerX[i] = cornersX[i];
+		hitbox->convexHitbox[slot].cornerZ[i] = cornersZ[i];
+		sumX += cornersX[i];
+		sumZ += cornersZ[i];
+	}
+	hitbox->convexHitbox[slot].cornerAmount = corners;
+	//Calculate centroid
+	hitbox->convexHitbox[slot].centerX = (sumX / (float)corners);
+	hitbox->convexHitbox[slot].centerZ = (sumZ / (float)corners);
+	//Calculate boundingRadius
+	//Get longest line from centroid
+	float longestDistance = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		float dx, dz = 0.f;
+		dx = cornersX[i] - hitbox->convexHitbox[slot].centerX;
+		dx = dx * dx;
+
+		dz = cornersZ[i] - hitbox->convexHitbox[slot].centerZ;
+		dz = dz * dz;
+
+		float tempDist = dx * dx + dz * dz;
+
+		if (tempDist > longestDistance)
+		{
+			longestDistance = tempDist;
+		}
+	}
+	hitbox->convexHitbox[slot].boundingRadius = sqrtf(longestDistance);
+	//Redo normals
+	//Set normals
+	float lineX, lineZ = 0.f;
+	float scalar = 0.f;
+	for (int i = 0; i < corners; i++)
+	{
+		//First get line
+		lineX = cornersX[(i + 1) % corners] - cornersX[i];
+		lineZ = cornersZ[(i + 1) % corners] - cornersZ[i];
+		//Rotate 90 degrees for normal
+		hitbox->convexHitbox[slot].normalX[i] = -lineZ;
+		hitbox->convexHitbox[slot].normalZ[i] = lineX;
+		//Get line from centroid to corner
+		lineX = cornersX[i] - hitbox->convexHitbox[slot].centerX;
+		lineZ = cornersZ[i] - hitbox->convexHitbox[slot].centerZ;
+		//Check if scalar is positive, if negative, reverse normal direction
+		scalar = (lineX * hitbox->convexHitbox[slot].normalX[i]) + (lineZ * hitbox->convexHitbox[slot].normalZ[i]);
+		if (scalar <= 0.f)
+		{
+			hitbox->convexHitbox[slot].normalX[i] *= -1.0f;
+			hitbox->convexHitbox[slot].normalZ[i] *= -1.0f;
+		}
+		float magnitude = sqrt(hitbox->convexHitbox[slot].normalX[i] * hitbox->convexHitbox[slot].normalX[i] +
+			hitbox->convexHitbox[slot].normalZ[i] * hitbox->convexHitbox[slot].normalZ[i]); // very logical line, yes.
+		hitbox->convexHitbox[slot].normalX[i] /= magnitude;
+		hitbox->convexHitbox[slot].normalZ[i] /= magnitude;
+	}
 }
 
 void ResetAttackTrackerFlags(EntityID& entity)

@@ -50,6 +50,8 @@ bool HitboxCanHitGI(EntityID& entity);
 
 void SetCollisionEvent(EntityID& entity, int hitboxID, void* function);
 
+void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[]);
+
 //Reset the attack hitboxes tracker flags to allow rehit.
 void ResetAttackTrackerFlags(EntityID& entity);
 
