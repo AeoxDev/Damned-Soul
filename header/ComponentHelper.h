@@ -18,6 +18,7 @@ public:
 	float damage = 10.0f;
 	float attackSpeed = 1.0f;
 
+	float knockback = 1.0f;
 
 	// for death animation
 	bool performingDeathAnimation = false;

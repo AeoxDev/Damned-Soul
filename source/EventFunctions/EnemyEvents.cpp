@@ -32,7 +32,7 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	{
 		anim->aAnim = ANIMATION_DEATH;
 		anim->aAnimIdx = 0;
-		anim->aAnimTime = GetEventTimedElapsed(entity, index);
+		anim->aAnimTime = GetTimedEventElapsedTime(entity, index);
 	}
 
 	//Temp: Remove the light if dog dies during its flamethrower attack

@@ -1,5 +1,5 @@
 #pragma once
-#include "EntityFramework.h"
+#include "EntityID.h"
 
 //void RandomPosition(EntityID& entity, const int& index);
 
@@ -48,6 +48,9 @@ void ContinueAnimation(EntityID& entity, const int& index);
 void ResetAnimation(EntityID& entity, const int& index);
 void BlinkColor(EntityID& entity, const int& index);
 void ResetColor(EntityID& entity, const int& index);
+void SquashStretch(EntityID& entity, const int& index);
+void ResetSquashStretch(EntityID& entity, const int& index);
+
 
 //Stats
 void SetSpeedZero(EntityID& entity, const int& index);

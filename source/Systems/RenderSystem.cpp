@@ -38,7 +38,10 @@ bool RenderSystem::Update()
 		{
 			tc->offsetY = 0.0f;
 		}
-		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX,0);
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ, 
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX,0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 		LOADED_MODELS[mc->model].RenderAllSubmeshes();
@@ -57,7 +60,10 @@ bool RenderSystem::Update()
 		{
 			tc->offsetY = 0.0f;
 		}
-		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ, tc->facingX, tc->facingY, -tc->facingZ, tc->scaleX, tc->scaleY, tc->scaleZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ, 
+			tc->facingX, tc->facingY, -tc->facingZ, 
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 

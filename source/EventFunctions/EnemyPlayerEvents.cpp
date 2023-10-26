@@ -7,7 +7,6 @@
 #include "Levels/LevelHelper.h"
 //#include <cmath> //sin
 
-
 #define KNOCKBACK_FACTOR 0.3f
 
 void BeginHit(EntityID& entity, const int& index)
@@ -55,14 +54,14 @@ void MiddleHit(EntityID& entity, const int& index)
 		return;
 	}
 
-	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
+	/*StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 	if (cpc && transform)
 	{
-		float knockbackFactor = KNOCKBACK_FACTOR / (0.1f + transform->mass * GetEventTimedElapsed(entity, index));
+		float knockbackFactor = KNOCKBACK_FACTOR / (0.1f + transform->mass * GetTimedEventElapsedTime(entity, index));
 		knockbackFactor *= knockbackFactor;
 		transform->positionX += cpc->params.normal1X * GetDeltaTime() * knockbackFactor;
 		transform->positionZ += cpc->params.normal1Z * GetDeltaTime() * knockbackFactor;
-	}
+	}*/
 }
 
 void EndHit(EntityID& entity, const int& index)

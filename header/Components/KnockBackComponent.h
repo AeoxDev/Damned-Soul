@@ -1,4 +1,6 @@
 #pragma once
+#define SELF_KNOCKBACK_FACTOR 0.2f
+
 
 struct EntityID;
 

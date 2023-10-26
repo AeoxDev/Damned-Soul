@@ -12,8 +12,9 @@
 #include "MouseComponent.h"
 // Physics Components
 #include "GeometryIndependentComponent.h"
+//Event Components
 #include "TimedEventComponent.h"
-
+#include "SquashStretchComponent.h"
 //To Be Decapritated
 #include "ParticleComponent.h"
 

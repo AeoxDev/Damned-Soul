@@ -105,6 +105,16 @@ bool ControllerSystem::Update()
 				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
+				SquashStretchComponent* squashComp = registry.AddComponent<SquashStretchComponent>(entity);
+				squashComp->type = Linear;
+				squashComp->startScaleX = 1.2f;
+				squashComp->startScaleY = 1.2f;
+				squashComp->startScaleZ = 0.8f;
+				squashComp->useStartScale = true;
+				squashComp->goalScaleZ = 1.5f;
+				squashComp->goalScaleY = 0.8f;
+				squashComp->goalScaleX = 0.8f;
+				int squashStretch = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, ResetSquashStretch, SquashStretch, 0.2f, ResetSquashStretch, 0, 1);
 			}
 			else
 			{

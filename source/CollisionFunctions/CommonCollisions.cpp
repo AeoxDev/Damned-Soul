@@ -197,7 +197,7 @@ void AttackCollision(OnCollisionParameters& params)
 
 	//Get the components of the attackee (stats for taking damage and transform for knockback)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
-	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+
 
 	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
@@ -296,7 +296,16 @@ void AttackCollision(OnCollisionParameters& params)
 	//Make player lose control during hit?
 	int indexSpeedControl1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
 	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
-
+	SquashStretchComponent* squashComp = registry.AddComponent<SquashStretchComponent>(params.entity2);
+	squashComp->type = Constant;
+	squashComp->goalScaleZ = 0.9f;
+	squashComp->goalScaleY = 1.1f;
+	squashComp->goalScaleX = 1.1f;
+	int squashStretch = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->knockback * params.normal1X / transform1->mass, stat2->knockback * params.normal1Z / transform1->mass);
+	AddKnockBack(params.entity2, stat1->knockback * params.normal2X / transform1->mass, stat1->knockback * params.normal2Z / transform1->mass);
 	//Take damage and blinking
 	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
 	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now

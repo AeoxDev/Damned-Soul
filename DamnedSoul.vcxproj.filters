@@ -280,6 +280,15 @@
     <ClCompile Include="source\Systems\KnockBackSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\FeedbackFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventFunctions\StatFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\MemLib\ML_Map.hpp" />
@@ -434,12 +443,6 @@
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\ImageComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Components\PlayerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIShopComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -510,6 +513,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Relics\SpeedyLittleDevil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\SquashStretchComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
