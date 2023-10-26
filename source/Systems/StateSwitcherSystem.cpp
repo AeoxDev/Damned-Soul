@@ -87,33 +87,13 @@ bool StateSwitcherSystem::Update()
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
-		if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && stateManager.activeLevel == 1)
-		{
-			playersComp->portalCreated = true;
-			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-		}
-		else if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && stateManager.activeLevel == 3)
-		{
-			playersComp->portalCreated = true;
-			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-		}
-		else if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && stateManager.activeLevel == 5)
-		{
-			playersComp->portalCreated = true;
-			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-		}
-		else if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && stateManager.activeLevel == 7)
+		if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && !(currentStates & State::InShop))
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();
 			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 		}
 	}
-	
-	
 
 	return true;
 }
