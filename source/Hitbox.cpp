@@ -1,7 +1,6 @@
 #include "Hitbox.h"
 #include "D3D11Graphics.h"
 #include "D3D11Helper.h"
-#include <string>
 #include <fstream>
 #include <sstream>
 #include "Backend/Collision.h"
@@ -607,6 +606,10 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (!GetHitboxCanDealDamage(entity, hitboxID))
+	{
+		ResetAttackTrackerFlags(entity);
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].canDealDamage = setFlag;
@@ -615,7 +618,6 @@ void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 	{
 		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].canDealDamage = setFlag;
 	}
-	ResetAttackTrackerFlags(entity);
 }
 
 void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
@@ -721,7 +723,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, bool affectedByStati
 
 	SetHitboxCanDealDamage(entity, sID, false);
 
-	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, -1.0f);
+	enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
 	SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
@@ -740,6 +742,19 @@ void SetupLavaCollisionBox(EntityID& entity, float radius)
 	//SetHitboxIsStaticHazard(entity, staticID);
 	//SetHitboxCanTakeDamage(entity, staticID, false);
 	SetHitboxCanDealDamage(entity, staticID, false);
+}
+
+bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		return hitbox->circularFlags[hitboxID].canDealDamage == 1;
+	}
+	else
+	{
+		return hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].canDealDamage == 1;
+	}
 }
 
 void SetupPlayerCollisionBox(EntityID& entity, float radius)

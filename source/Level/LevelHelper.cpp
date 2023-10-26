@@ -5,16 +5,151 @@
 #include "Model.h"
 #include "States\StateManager.h"
 
-void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float positionY , float positionZ , float mass , 
-	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth , float facingX ,
-	float facingY , float facingZ , float scaleX , float scaleY, float scaleZ )
+EntityID SetupEnemy(enemyType eType, float positionX , float positionY , float positionZ , float mass ,
+	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
+	float facingY , float facingZ  )
 {
-
+	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
+
+	assert(mass > 0.0f);
+	if (mass == 6969.f)
+	{
+		if (eType == enemyType::eye)
+		{
+			mass = 1.f;
+		}
+		else if (eType == enemyType::hellhound)
+		{
+			mass = 6.f;
+		}
+		else if (eType == enemyType::tempBoss)
+		{
+			mass = 50.f;
+		}
+		else if (eType == enemyType::skeleton)
+		{
+			mass = 3.f;
+		}
+	}
+	if (health == 6969.f)
+	{
+		if (eType == enemyType::eye)
+		{
+			health = 60.f;
+		}
+		else if (eType == enemyType::hellhound)
+		{
+			health = 150.f;
+		}
+		else if (eType == enemyType::tempBoss)
+		{
+			health = 400.f;
+		}
+		else if (eType == enemyType::skeleton)
+		{
+			health = 100.f;
+		}
+	}
+	if (moveSpeed == 6969.f)
+	{
+		if (eType == enemyType::eye)
+		{
+			moveSpeed = 13.f;
+		}
+		else if (eType == enemyType::hellhound)
+		{
+			moveSpeed = 15.f;
+		}
+		else if (eType == enemyType::tempBoss)
+		{
+			moveSpeed = 10.f;
+		}
+		else if (eType == enemyType::skeleton)
+		{
+			moveSpeed = 10.f;
+		}
+	}
+	if (damage == 6969.f)
+	{
+		if (eType == enemyType::eye)
+		{
+			damage = 10.f;
+		}
+		else if (eType == enemyType::hellhound)
+		{
+			damage = 10.f;
+		}
+		else if (eType == enemyType::tempBoss)
+		{
+			damage = 20.f;
+		}
+		else if (eType == enemyType::skeleton)
+		{
+			damage = 5.f;
+		}
+	}
+	if (attackSpeed == 6969.f)
+	{
+		if (eType == enemyType::eye)
+		{
+			attackSpeed = 5.f;
+		}
+		else if (eType == enemyType::hellhound)
+		{
+			attackSpeed = 0.5f;
+		}
+		else if (eType == enemyType::tempBoss)
+		{
+			attackSpeed = 0.5f;
+		}
+		else if (eType == enemyType::skeleton)
+		{
+			attackSpeed = 0.5f;
+		}
+	}
+	if (soulWorth == 6969.f)
+	{
+		if (eType == enemyType::eye)
+		{
+			soulWorth = 2;
+		}
+		else if (eType == enemyType::hellhound)
+		{
+			soulWorth = 3;
+		}
+		else if (eType == enemyType::tempBoss)
+		{
+			soulWorth = 4;
+		}
+		else if (eType == enemyType::skeleton)
+		{
+			soulWorth = 1;
+		}
+	}
+	if (soulWorth == 6969.f)
+	{
+		if (eType == enemyType::eye)
+		{
+			soulWorth = 2;
+		}
+		else if (eType == enemyType::hellhound)
+		{
+			soulWorth = 3;
+		}
+		else if (eType == enemyType::tempBoss)
+		{
+			soulWorth = 4;
+		}
+		else if (eType == enemyType::skeleton)
+		{
+			soulWorth = 1;
+		}
+	}
+
+	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
-	assert(mass > 0.0f);
-	transform.mass = mass;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
 
@@ -25,7 +160,8 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 
 	if (eType == enemyType::hellhound)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("HellhoundDummy_PH.mdl"));
+		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.3f);
 		//Sounds
@@ -44,7 +180,8 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 	}
 	else if (eType == enemyType::eye)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FlyingEyeDymmy.mdl"));
+		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, false);
 		//Sounds
@@ -57,6 +194,8 @@ void SetupEnemy(EntityID& entity, enemyType eType, float positionX , float posit
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX);
 	}
+
+	return entity;
 }
 
 void CreatePlayer(float positionX, float positionY, float positionZ, float mass, float health, float moveSpeed, float damage, float attackSpeed, int soulWorth, float facingX, float facingY, float facingZ, float scaleX, float scaleY, float scaleZ)
@@ -68,8 +207,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
 
 	//stateManager.player Sounds
-	SoundComponent* scp = registry.AddComponent<SoundComponent>(stateManager.player);
-	scp->Load(PLAYER);
+	LoadPlayerSounds();
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);

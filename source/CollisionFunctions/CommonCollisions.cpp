@@ -163,25 +163,13 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 	2. Continuous: Flash color using hue-shift, knockback depending on where we got attacked from
 	3. End: Enable being able to take damage again, and maybe for safety reasons make sure our hue-shift is back to normal
 	*/
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy != nullptr)
-	{
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case enemyType::hellhound:
-			sfx->Play(Hellhound_Hurt, Channel_Base);
-			break;
-		case enemyType::eye:
-			sfx->Play(Eye_Hurt, Channel_Base);
-			break;
-		case enemyType::skeleton:
-			sfx->Play(Skeleton_Hurt, Channel_Base);
-			break;
-		}
-	}
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	if (params.entity2.index == stateManager.player.index)
+	{
+		//Screen shaking
+		int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+	}
 	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 
@@ -281,17 +269,37 @@ void AttackCollision(OnCollisionParameters& params)
 		switch (enemy->type)
 		{
 		case enemyType::hellhound:
-			sfx->Play(Hellhound_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::eye:
-			sfx->Play(Eye_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
 			break;
 		case enemyType::skeleton:
-			sfx->Play(Skeleton_Hurt, Channel_Base);
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
 			break;
 		}
 	}
-	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, BeginHit, MiddleHit, 0.2f, EndHit); //No special condition for now
+	//Camera Shake
+	int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+	//Hitstop
+	int index1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
+	int index2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
+	//Make player lose control during hit?
+	int indexSpeedControl1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+
+	//Take damage and blinking
+	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
+	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 	
 	//Redraw UI (player healthbar) since someone will have taken damage at this point. 

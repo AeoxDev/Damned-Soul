@@ -8,8 +8,6 @@ struct SettingsState
 	void Setup();
 
 	void Input();
-	void Update();
-	void ComputeShaders();
 
 	void SetupButtons();
 	void SetupImages();

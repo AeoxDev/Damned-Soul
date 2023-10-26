@@ -44,6 +44,7 @@ int main(int argc, char* args[])
 
 		stateManager.EndFrame();
 
+		MemLib::pdefrag();
 	}
 #endif // TEST3000
 
@@ -58,6 +59,8 @@ int main(int argc, char* args[])
 		stateManager.Update();//Lastly do the cpu work
 
 		stateManager.EndFrame();
+
+		MemLib::pdefrag();
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

@@ -26,26 +26,12 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupText();
 	Camera::ResetCamera();
-	//If audioengine is not loaded. Load it.
-	if (unloadAudioEngine)
-	{
-		// Audio Engine
-		EntityID audioJungle = registry.CreateEntity();
-		AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
-		audioEngine->Setup(audioJungle.index);
-
-		// Background OST
-		SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
-		titleTheme->Load(MUSIC);
-		titleTheme->Play(Music_Title, Channel_Base);
-		unloadAudioEngine = false;
-	}
 	
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
@@ -69,20 +55,8 @@ void Menu::Setup()//Load
 void Menu::Input()
 {
 	
-	//Particles::PrepareParticleCompute();
-	//Dispatch(1, 2, 0);
-	//Particles::FinishParticleCompute();
 }
 
-void Menu::Update()
-{
-
-}
-
-void Menu::ComputeShaders()
-{
-
-}
 
 void Menu::SetupButtons()
 {

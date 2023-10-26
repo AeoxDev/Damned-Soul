@@ -354,6 +354,9 @@ void UIFunc::Shop_Heal(void* args)
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 
+		if (player->GetSouls() < 2)
+			break;
+
 		if (stats->GetHealth() == stats->GetMaxHealth())
 			break;
 

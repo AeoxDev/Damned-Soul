@@ -1,8 +1,7 @@
 #include "UI/UIText.h"
 #include <dwrite.h>
-using namespace DirectX;
 
-void UIText::Setup(const ML_String& text, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility)
+void UIText::Setup(const ML_String& text, DSFLOAT2 position, DSFLOAT2 scale, float rotation, bool visibility)
 {
 	std::wstring textAsWString(text.begin(), text.end());
 	m_Text = textAsWString;

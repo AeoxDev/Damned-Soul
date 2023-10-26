@@ -46,20 +46,24 @@ PoolPointer<CameraConstantBuffer> BufferData;
 
 float orthWidth, orthHeight, orthDepth;
 
+float offsetX = 0.0f;
+float offsetY = 0.0f;
+float offsetZ = 0.0f;
+
 void Camera::SetPosition(const float x, const float y, const float z, const bool includeOffset)
 {
-	GameCamera->m_position.x = x + (includeOffset * CAMERA_OFFSET_X);
-	GameCamera->m_position.y = y + (includeOffset * CAMERA_OFFSET_Y);
-	GameCamera->m_position.z = z + (includeOffset * CAMERA_OFFSET_Z);
+	GameCamera->m_position.x = x + (includeOffset * CAMERA_OFFSET_X) + offsetX;
+	GameCamera->m_position.y = y + (includeOffset * CAMERA_OFFSET_Y) + offsetY;
+	GameCamera->m_position.z = z + (includeOffset * CAMERA_OFFSET_Z) + offsetZ;
 
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
 
 void Camera::SetLookAt(const float x, const float y, const float z)
 {
-	GameCamera->m_lookAt.x = x;
-	GameCamera->m_lookAt.y = y;
-	GameCamera->m_lookAt.z = z;
+	GameCamera->m_lookAt.x = x + offsetX;
+	GameCamera->m_lookAt.y = y + offsetY;
+	GameCamera->m_lookAt.z = z + offsetZ;
 }
 
 void Camera::SetUp(const float x, const float y, const float z)
@@ -90,6 +94,14 @@ void Camera::SetFOV(const float radians)
 	{
 		GameCamera->m_FOV = radians;
 	}
+}
+
+void Camera::SetOffset(const float& x, const float& y, const float& z)
+{
+
+	offsetX = x;
+	offsetY = y;
+	offsetZ = z;
 }
 
 void Camera::SetWidth(const float& width)

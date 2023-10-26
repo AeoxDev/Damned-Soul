@@ -15,9 +15,10 @@
 
 void PlayDeathAnimation(EntityID& entity, const int& index)
 {
-	
-
 	//implement later, goddamn TA
+	RemoveHitbox(entity, 0);
+	RemoveHitbox(entity, 1);
+	RemoveHitbox(entity, 2);
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;
@@ -25,6 +26,14 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	offset = float(rand() % 2);
 	offset -= 0.5f;
 	transform->positionZ += offset * 0.02f;
+
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim)
+	{
+		anim->aAnim = ANIMATION_DEATH;
+		anim->aAnimIdx = 0;
+		anim->aAnimTime = GetEventTimedElapsed(entity, index);
+	}
 
 	//Temp: Remove the light if dog dies during its flamethrower attack
 	RemoveLight(entity);
