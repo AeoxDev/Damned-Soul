@@ -495,7 +495,7 @@ void SetHitboxActive(EntityID& entity, int hitboxID, bool setFlag)
 	{
 		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].active = setFlag;
 	}
-	ResetAttackTrackerFlags(entity);
+	//ResetAttackTrackerFlags(entity);
 }
 
 void SetHitboxIsStage(EntityID& entity, int hitboxID, bool setFlag)
@@ -600,7 +600,7 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 	{
 		hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].canTakeDamage = setFlag;
 	}
-	ResetAttackTrackerFlags(entity);
+	//ResetAttackTrackerFlags(entity);
 }
 
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)

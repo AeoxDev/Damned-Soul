@@ -47,6 +47,7 @@ public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
 	int killingSpree = 0;
+	int killThreshold = 0;
 	bool portalCreated = false;
 
 	// Update the number of souls in the player's possession

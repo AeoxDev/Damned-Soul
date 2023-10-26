@@ -11,6 +11,8 @@ EntityID SetupEnemy(enemyType eType, float positionX , float positionY , float p
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
+	auto player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	
 
 	assert(mass > 0.0f);
 	if (mass == 6969.f)
@@ -167,6 +169,7 @@ EntityID SetupEnemy(enemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
+		player->killThreshold++;
 	}
 	else if (eType == enemyType::skeleton)
 	{
@@ -177,6 +180,7 @@ EntityID SetupEnemy(enemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
+		player->killThreshold++;
 	}
 	else if (eType == enemyType::eye)
 	{
@@ -187,12 +191,14 @@ EntityID SetupEnemy(enemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(EYE);
+		player->killThreshold++;
 	}
 	else if (eType == enemyType::tempBoss)
 	{
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX);
+		player->killThreshold += 15;
 	}
 
 	return entity;

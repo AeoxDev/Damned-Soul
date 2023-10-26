@@ -40,7 +40,7 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
-{
+{	
 	EntityID newMini = registry.CreateEntity();
 
 
