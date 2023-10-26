@@ -797,7 +797,7 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, sID);
 	playerComp->softHitboxID = sID;
 
-	playerComp->attackHitboxID = CreateHitbox(entity, radius * 1.5f, 0.f, -1.5f);
+	playerComp->attackHitboxID = CreateHitbox(entity, radius * 2.f, 0.f, -0.5f);
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
 	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
 	SetHitboxActive(entity, playerComp->attackHitboxID);

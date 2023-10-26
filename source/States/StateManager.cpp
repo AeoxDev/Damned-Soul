@@ -137,11 +137,10 @@ int StateManager::Setup()
 	systems.push_back(new ButtonSystem());
 
 	// CPU
+	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new ControllerSystem());
-	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new GeometryIndependentSystem());
-	systems.push_back(new PointOfInterestSystem());
 
 	//Damage Over Time (Misc Combat Systems?)
 	systems.push_back(new DamageOverTimeSystem());
@@ -154,9 +153,12 @@ int StateManager::Setup()
 
 
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
-	systems.push_back(new TransformSystem());
 	systems.push_back(new EventSystem());
+
+	//CPU work that can affect rendering
 	systems.push_back(new StateSwitcherSystem());
+	systems.push_back(new PointOfInterestSystem());
+	systems.push_back(new TransformSystem());
 
 	//Audio (Needs to be close to last)
 	systems.push_back(new AudioSystem());

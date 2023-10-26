@@ -56,8 +56,8 @@ bool IsCircularCollision(EntityID& entity1, EntityID& entity2, int circleID1, in
 	float offset2X = RotateOffset(circle2->circleHitbox[circleID2].offsetX, circle2->circleHitbox[circleID2].offsetZ, circle2->offsetXx, circle2->offsetXz);
 	float offset1Z = RotateOffset(circle1->circleHitbox[circleID1].offsetZ, circle1->circleHitbox[circleID1].offsetX, circle1->offsetZz, circle1->offsetZx);
 	float offset2Z = RotateOffset(circle2->circleHitbox[circleID2].offsetZ, circle2->circleHitbox[circleID2].offsetX, circle2->offsetZz, circle2->offsetZx);
-	float dx = (pos1x + offset1X) - (pos2x + offset2X); 
-	float dz = (pos1z + offset1Z) - (pos2z + offset2Z); 
+	float dx = (pos1x + offset1X) - (pos2x + offset2X);
+	float dz = (pos1z + offset1Z) - (pos2z + offset2Z);
 	float distance = std::sqrtf(dx * dx + dz * dz);
 	bool hit = distance <= (circle1->circleHitbox[circleID1].radius + circle2->circleHitbox[circleID2].radius);
 	//Use onCollission function for first and second respectively

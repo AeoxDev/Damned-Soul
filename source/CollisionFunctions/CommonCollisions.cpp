@@ -290,18 +290,19 @@ void AttackCollision(OnCollisionParameters& params)
 	}
 	//Camera Shake
 	int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
-	//Hitstop
+	//Hitstop, pause both animations for extra effect
 	int index1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
 	int index2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
-	//Make player lose control during hit?
+	//Freeze both entities as they hit eachother for extra effect
 	int indexSpeedControl1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
 	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
-	SquashStretchComponent* squashComp = registry.AddComponent<SquashStretchComponent>(params.entity2);
-	squashComp->type = Constant;
-	squashComp->goalScaleZ = 0.9f;
-	squashComp->goalScaleY = 1.1f;
-	squashComp->goalScaleX = 1.1f;
-	int squashStretch = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+	//Squash both entities for extra effect
+	float squashKnockbackFactor = 1.0f + stat1->knockback * 0.1f;
+	AddSquashStretch(params.entity2, Constant, 0.75f / squashKnockbackFactor, 1.1f, 1.25f);
+	int squashStretch2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+	AddSquashStretch(params.entity1, Constant, 0.9f, 1.1f, 1.1f);
+	//Knockback mechanic
+	int squashStretch1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->knockback * params.normal1X / transform1->mass, stat2->knockback * params.normal1Z / transform1->mass);

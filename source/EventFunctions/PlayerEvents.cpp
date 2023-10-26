@@ -94,7 +94,7 @@ void PlayerAttack(EntityID& entity, const int& index)
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
 	// Branchless reset
-	anim->aAnimTime -= (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
+	anim->aAnimTime += (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
 	float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack animation

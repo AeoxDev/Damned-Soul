@@ -250,9 +250,10 @@ void ReloadPlayerNonGlobals()
 	AnimationComponent* animationLoaded = registry.GetComponent<AnimationComponent>(stateManager.player);
 	if (animationLoaded == nullptr)
 	{
-		registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+		animationLoaded = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+		
 	}
-
+	animationLoaded->aAnimTimeFactor = 1.0f;
 	LoadPlayerSounds();
 
 	// Player (Default)
@@ -274,7 +275,6 @@ void ReloadPlayerNonGlobals()
 		cameraPoint = registry.AddComponent<PointOfInterestComponent>(stateManager.player);
 		cameraPoint->weight = 10.0f;
 	}
-
 	
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);

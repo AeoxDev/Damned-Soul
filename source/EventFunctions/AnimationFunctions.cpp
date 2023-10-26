@@ -107,6 +107,27 @@ void SquashStretch(EntityID& entity, const int& index)
 		transform->offsetScaleY = scaleY + dy * linearTime;
 		transform->offsetScaleZ = scaleZ + dz * linearTime;
 	}
+	if (squashStrech->type == Accelerating)
+	{
+		//Start at start if available, otherwise transform scale.
+		float scaleX = transform->scaleX;
+		float scaleY = transform->scaleY;
+		float scaleZ = transform->scaleZ;
+		if (squashStrech->useStartScale)
+		{
+			scaleX = squashStrech->startScaleX;
+			scaleY = squashStrech->startScaleY;
+			scaleZ = squashStrech->startScaleZ;
+		}
+		float acceleratingTime = (currentTime / (totalTime + 0.00001f));
+		acceleratingTime *= acceleratingTime;
+		float dx = squashStrech->goalScaleX - scaleX;
+		float dy = squashStrech->goalScaleY - scaleY;
+		float dz = squashStrech->goalScaleZ - scaleZ;
+		transform->offsetScaleX = scaleX + dx * acceleratingTime;
+		transform->offsetScaleY = scaleY + dy * acceleratingTime;
+		transform->offsetScaleZ = scaleZ + dz * acceleratingTime;
+	}
 }
 
 void ResetSquashStretch(EntityID& entity, const int& index)
@@ -119,4 +140,18 @@ void ResetSquashStretch(EntityID& entity, const int& index)
 	transform->offsetScaleX = 1.0f;
 	transform->offsetScaleY = 1.0f;
 	transform->offsetScaleZ = 1.0f;
+}
+
+SquashStretchComponent* AddSquashStretch(EntityID& entity, const SquashStretchType type, const float& goalX, const float& goalY, const float& goalZ, const bool& useStartScale, const float& startX, const float& startY, const float& startZ)
+{
+	SquashStretchComponent* component = registry.AddComponent<SquashStretchComponent>(entity);
+	component->type = type;
+	component->goalScaleX = goalX;
+	component->goalScaleY = goalY;
+	component->goalScaleZ = goalZ;
+	component->useStartScale = useStartScale;
+	component->startScaleX = startX;
+	component->startScaleY = startY;
+	component->startScaleZ = startZ;
+	return component;
 }
