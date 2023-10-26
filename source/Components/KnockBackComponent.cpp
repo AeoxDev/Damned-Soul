@@ -15,7 +15,7 @@ KnockBackComponent::KnockBackComponent(const float x, const float z)
 void KnockBackComponent::Diminish(const float deltaTime)
 {
 	// Calculate the sum of the components' size
-	float total = abs(m_velocity_x) + abs(m_velocity_z);
+	//float total = abs(m_velocity_x) + abs(m_velocity_z);
 	
 	// Calculate the movements
 	/*float update_x = deltaTime * BASE_SPEED * m_velocity_x / total;
