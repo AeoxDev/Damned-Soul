@@ -23,7 +23,7 @@ void LoadLevel4()
 
 	//**************************************************
 	EntityID tempBoss = registry.CreateEntity();
-	SetupEnemy(enemyType::tempBoss, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 0.5f, 4, 4.f, 4.f, 4.f);
+	SetupEnemy(enemyType::tempBoss, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 3.0f, 4, 4.f, 4.f, 4.f);
 
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);

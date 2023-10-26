@@ -53,49 +53,51 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 }
 
-void TemporaryPretendAnimation()
-{
-	// lmao funny code do many many things
-	int i = 0;
-}
-void BeginHitting(EntityID& entity)
-{
-	auto comp = registry.GetComponent<EnemyComponent>(entity);
-	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
-	SetHitboxActive(entity, comp->attackHitBoxID, true);
-}
-void WeShallOverCome(EntityID& entity)
-{
-	auto comp = registry.GetComponent<EnemyComponent>(entity);
-	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
-	SetHitboxActive(entity, comp->attackHitBoxID, false);
-}
-
-void CombatBehaviour(TempBossBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EntityID& entity)
-{
-	sc->goalDirectionX = ptc->positionX - btc->positionX;
-	sc->goalDirectionZ = ptc->positionZ - btc->positionZ;
-	SmoothRotation(btc, sc->goalDirectionX, sc->goalDirectionZ);
-	//rotation
+//void TemporaryPretendAnimation()
+//{
+//	// lmao funny code do many many things
+//	int i = 0;
+//}
+//void BeginHitting(EntityID& entity)
+//{
+//	auto comp = registry.GetComponent<EnemyComponent>(entity);
+//	SetHitboxActive(entity, comp->attackHitBoxID, true);
+//	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
+//}
+//void WeShallOverCome(EntityID& entity)
+//{
+//	auto comp = registry.GetComponent<EnemyComponent>(entity);
+//	SetHitboxActive(entity, comp->attackHitBoxID, false);
+//	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
+//}
 
 
-	////impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	//if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
-	//{
-	//	sc->attackTimer = 0;
-	//	sc->attackStunDurationCounter = 0;
-	//	playerStats->UpdateHealth(-enemyStats->damage);
-	//	RedrawUI();§
-	//}
-	
+void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EnemyComponent* enmComp, EntityID& ent)
+{
+	bc->attackTimer += GetDeltaTime() * enemyStats->attackSpeed;
+	bc->goalDirectionX = ptc->positionX - btc->positionX;
+	bc->goalDirectionZ = ptc->positionZ - btc->positionZ;
+	//Elliot & Herman request: Make animationtime scale better for faster startup and swing.
+	//animComp->aAnim = ANIMATION_ATTACK;
+	//animComp->aAnimIdx = 0;
+	//Elliot: Change in calculations for attack timer:
+	//animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->attackSpeed);
+	//ANIM_BRANCHLESS(animComp);
 
-	//SetHitboxCanDealDamage(entity, 1, true);
-	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
+	if (bc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
 	{
-		sc->attackTimer = 0;
-		sc->attackStunDurationCounter = 0;
-		AddTimedEventComponentStartContinuousEnd(entity, 0.f, BeginHitting, TemporaryPretendAnimation, 0.2f, WeShallOverCome);
+		//Set hitbox active here.
+		//Elliot's request: Add Skeleton attack hitbox instead of define
+		SetHitboxActive(ent, enmComp->attackHitBoxID, true);
+		SetHitboxCanDealDamage(ent, enmComp->attackHitBoxID, true);
+		//SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		//sfx->Play(Skeleton_Attack, Channel_Base);
+		RedrawUI();
+		bc->attackTimer = 0;
+		bc->attackStunDurationCounter = 0;
 	}
+		//AddTimedEventComponentStartContinuousEnd(entity, 0.f, BeginHitting, TemporaryPretendAnimation, 0.3f, WeShallOverCome);
 }
 
 bool TempBossBehaviourSystem::Update()
@@ -107,6 +109,7 @@ bool TempBossBehaviourSystem::Update()
 	TransformComponent* tempBossTransformComponent = nullptr;
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
+	EnemyComponent* enmComp = nullptr;
 
 	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
 	{
@@ -120,8 +123,9 @@ bool TempBossBehaviourSystem::Update()
 		tempBossComponent = registry.GetComponent<TempBossBehaviour>(enemyEntity);
 		tempBossTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 
-		if (tempBossComponent != nullptr && playerTransformCompenent != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
+		if (tempBossComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(tempBossTransformComponent->positionX, tempBossTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			tempBossComponent->attackTimer += GetDeltaTime();
@@ -130,10 +134,21 @@ bool TempBossBehaviourSystem::Update()
 			if (tempBossComponent->attackStunDurationCounter <= tempBossComponent->attackStunDuration)
 			{
 				// do nothing, stand like a bad doggo and be ashamed
+				//Elliot: When finished, reset attack timer and hitbox
+				tempBossComponent->attackTimer = 0.0f;
+				//enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
+				continue;
 			}
-			else if (distance < 7.f - tempBossComponent->deathCounter * 1.15f)
+			else//Elliot: Turn off attack hitbox to not make player rage.
 			{
-				CombatBehaviour(tempBossComponent, enemyStats, playerStats, playerTransformCompenent, tempBossTransformComponent, enemyEntity);
+				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
+				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
+			}
+
+
+			if (distance < 7.f - tempBossComponent->deathCounter * 1.15f)
+			{
+				CombatBehaviour(tempBossComponent, enemyStats, playerStats, playerTransformCompenent, tempBossTransformComponent, enmComp, enemyEntity);
 			}
 			else if (distance < 50) //hunting distance
 			{

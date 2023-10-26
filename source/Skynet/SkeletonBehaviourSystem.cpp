@@ -142,7 +142,6 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 50.f) //hunting distance
 			{
-				
 				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
 			else // idle
