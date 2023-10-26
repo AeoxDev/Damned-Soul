@@ -189,6 +189,8 @@ void UnloadEntities(int destructionTier)
 				if (skipPlayer)
 				{
 					skipPlayer->killingSpree = 0;
+					skipPlayer->killThreshold = 0;
+
 					skipPlayer->portalCreated = false;
 				}
 				continue;

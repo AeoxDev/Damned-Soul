@@ -268,19 +268,19 @@ void AttackCollision(OnCollisionParameters& params)
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
 		switch (enemy->type)
 		{
-		case enemyType::hellhound:
+		case EnemyType::hellhound:
 			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
 			{
 				sfx->Play(Hellhound_Hurt, Channel_Base);
 			}
 			break;
-		case enemyType::eye:
+		case EnemyType::eye:
 			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
 			{
 				sfx->Play(Eye_Hurt, Channel_Base);
 			}
 			break;
-		case enemyType::skeleton:
+		case EnemyType::skeleton:
 			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
 			{
 				sfx->Play(Skeleton_Hurt, Channel_Base);

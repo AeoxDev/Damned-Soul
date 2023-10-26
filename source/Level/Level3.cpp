@@ -27,19 +27,19 @@ void LoadLevel3()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(enemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(enemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(enemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(enemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(enemyType::skeleton, -50.f, 0.f, 45.f);
-	SetupEnemy(enemyType::skeleton, -40.f, 0.f, -45.f);
-	SetupEnemy(enemyType::skeleton, 35.f, 0.f, 25.f);
-	SetupEnemy(enemyType::hellhound, 45.f, 0.f, 50.f);
-	SetupEnemy(enemyType::hellhound, -35.f, 0.f, 45.f);
-	SetupEnemy(enemyType::hellhound, 15.f, 0.f, -45.f);
-	SetupEnemy(enemyType::eye, 35.f, 1.f, 45.f);
-	SetupEnemy(enemyType::eye, -25.f, 1.f, -35.f);
-	SetupEnemy(enemyType::eye, -50.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
+	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
+	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, 50.f);
+	SetupEnemy(EnemyType::hellhound, -35.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::hellhound, 15.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
+	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));

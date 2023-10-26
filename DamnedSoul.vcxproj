@@ -435,6 +435,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopComponent.h" />
+    <ClInclude Include="header\EnemyType.h" />
     <ClInclude Include="header\EntityCreation.h" />
     <ClInclude Include="header\EntityID.h" />
     <ClInclude Include="header\EventFunctions.h" />

@@ -1,18 +1,9 @@
 #pragma once
 
 #include "EntityFramework.h"
+#include "EnemyType.h"
 
-enum enemyType
-{
-	invalidType = -1,
-	hellhound,
-	skeleton,
-	eye,
-	tempBoss
-};
-
-
-EntityID SetupEnemy(enemyType eType, float positionX = 0.f, float positionY = 0.f, float positionZ = 0.f, float mass = 6969.f,
+EntityID SetupEnemy(EnemyType eType, float positionX = 0.f, float positionY = 0.f, float positionZ = 0.f, float mass = 6969.f,
 	float health = 6969.f, float moveSpeed = 6969.f, float damage = 6969.f, float attackSpeed = 6969.f, int soulWorth = 6969, float scaleX = 1.f, 
 	float scaleY = 1.f, float scaleZ = 1.f, float facingX = 1.f,float facingY = 0.f, float facingZ = 1.f);
 

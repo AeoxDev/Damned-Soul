@@ -174,12 +174,9 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
 
-
 	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
 	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
 }
-
-
 
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
 {	
@@ -242,7 +239,6 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 
 	
 }
-
 
 bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float p3X, float p3Z, float playerX, float playerZ)
 {
@@ -350,13 +346,6 @@ void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, S
 	}
 }
 
-
-
-
-
-
-
-
 bool HellhoundBehaviourSystem::Update()
 {
 	//First find the skynet component
@@ -366,8 +355,6 @@ bool HellhoundBehaviourSystem::Update()
 	TransformComponent* hellhoundTransformComponent = nullptr;
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
-
-
 
 	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	{

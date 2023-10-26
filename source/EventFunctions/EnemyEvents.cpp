@@ -40,7 +40,7 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
-{
+{	
 	EntityID newMini = registry.CreateEntity();
 
 
@@ -268,7 +268,7 @@ void RemoveEnemy(EntityID& entity, const int& index)
 		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
 		pc->UpdateSouls(ec->soulCount);
 	}
-
+	
 	// I am inevitable 
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
