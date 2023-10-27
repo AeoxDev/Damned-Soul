@@ -136,6 +136,12 @@ int StateManager::Setup()
 	//Input based CPU
 	systems.push_back(new ButtonSystem());
 
+	//AI Systems
+	systems.push_back(new SkeletonBehaviourSystem());
+	systems.push_back(new HellhoundBehaviourSystem());
+	systems.push_back(new EyeBehaviourSystem());
+	systems.push_back(new TempBossBehaviourSystem());
+
 	// CPU
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new KnockBackSystem());
@@ -148,11 +154,7 @@ int StateManager::Setup()
 	//Damage Over Time (Misc Combat Systems?)
 	systems.push_back(new DamageOverTimeSystem());
 
-	//AI Systems
-	systems.push_back(new SkeletonBehaviourSystem());
-	systems.push_back(new HellhoundBehaviourSystem());
-	systems.push_back(new EyeBehaviourSystem());
-	systems.push_back(new TempBossBehaviourSystem());
+
 
 
 
