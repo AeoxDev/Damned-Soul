@@ -55,6 +55,7 @@ void UnloadEntities(int destructionTier)
 		if (player != nullptr)
 		{
 			player->killingSpree = 0;
+			player->killThreshold = 0;
 			player->portalCreated = false;
 		}
 		
