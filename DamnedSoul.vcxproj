@@ -196,6 +196,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Components\UIElementComponent.cpp" />
     <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\FeedbackFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\StatFunctions.cpp" />
@@ -420,6 +421,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\OnClickComponent.h" />
     <ClInclude Include="header\Components\SquashStretchComponent.h" />
     <ClInclude Include="header\Components\ShopComponent.h" />
     <ClInclude Include="header\Components\UIComponents.h" />
@@ -429,9 +431,11 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIElementComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIHoverComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h" />
