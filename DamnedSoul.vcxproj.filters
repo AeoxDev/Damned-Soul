@@ -518,6 +518,9 @@
     <ClInclude Include="header\Components\SquashStretchComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\EnemyType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
@@ -528,10 +531,11 @@
     <ResourceCompile Include="DamnedSoul.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon1.ico" />
-    <Image Include="icon2.ico" />
     <Image Include="resource\DamnedSoul.ico" />
     <Image Include="resource\DamnedSoulsIcon.png" />
+    <Image Include="resource\skill-icons_05.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />

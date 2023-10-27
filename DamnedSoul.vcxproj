@@ -522,10 +522,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon1.ico" />
-    <Image Include="icon2.ico" />
     <Image Include="resource\DamnedSoul.ico" />
     <Image Include="resource\DamnedSoulsIcon.png" />
+    <Image Include="resource\skill-icons_05.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DamnedSoul.rc">
