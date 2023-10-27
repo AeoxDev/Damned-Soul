@@ -71,7 +71,7 @@ void GameScene::Unload(bool unloadPersistent)
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities((int)unloadPersistent);
+	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
 }
 
 void GameScene::GameOver()

@@ -4,4 +4,4 @@
 extern Registry registry;
 
 /// destructionTiers: 0: no persistents destroyed, 1: player, 2: audioEngine, 3: everything
-void UnloadEntities(int destructionTier = 0);
+void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier = ENT_PERSIST_BASIC);

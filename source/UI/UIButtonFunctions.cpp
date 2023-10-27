@@ -18,7 +18,7 @@ void UIFunc::LoadNextLevel(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
-	UnloadEntities(0);
+	UnloadEntities();
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
@@ -43,7 +43,7 @@ void UIFunc::MainMenu_Settings(void* args)
 
 void UIFunc::MainMenu_Quit(void* args)
 {
-	UnloadEntities(0);
+	UnloadEntities();
 	sdl.quit = true;
 }
 

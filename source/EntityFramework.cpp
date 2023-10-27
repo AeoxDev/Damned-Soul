@@ -13,7 +13,7 @@ size_t Registry::GetEntityCount()
 	return entities.size() - availableEntitySlots.size();
 }
 
-EntityID Registry::CreateEntity(int persistencyTier)
+EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 {
 	//When we destroy an entity, we store its index and version in the freeEntities-vector so we know where we can create new entities later
 	//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id
@@ -34,7 +34,7 @@ EntityID Registry::CreateEntity(int persistencyTier)
 
 void Registry::DestroyEntity(EntityID id)
 {
-	EntityID nullID = CreateEntityId(-1, true, 0);
+	EntityID nullID = CreateEntityId(-1, true, ENT_PERSIST_BASIC);
 
 	entities[GetEntityIndex(id)].id = nullID;
 	entities[GetEntityIndex(id)].components.reset();
@@ -43,10 +43,8 @@ void Registry::DestroyEntity(EntityID id)
 }
 
 int compCount = 0;
-#define DESTROY_PLAYER 1
-#define DESTROY_AUDIO 2
-#define DESTROY_ALL 2
-void UnloadEntities(int destructionTier)
+
+void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 {
 
 	if (stateManager.player.index != -1)
@@ -211,26 +209,6 @@ void UnloadEntities(int destructionTier)
 		EntityID check = registry.entities.at(i).id;
 		if (check.index != -1)
 		{
-			////Make sure not to unload player or audio engine
-			//PlayerComponent* skipPlayer = registry.GetComponent<PlayerComponent>(check);
-			//AudioEngineComponent* skipAudioEngine = registry.GetComponent<AudioEngineComponent>(check);
-			//if (destructionTier < DESTROY_PLAYER && (skipPlayer || skipAudioEngine))
-			//{
-			//	if (skipPlayer)
-			//	{
-			//		skipPlayer->killingSpree = 0;
-			//		skipPlayer->portalCreated = false;
-			//	}
-			//	continue;
-			//}
-			//if (destructionTier < DESTROY_AUDIO && skipAudioEngine)
-			//{
-			//	
-			//	continue;
-			//}
-			//if (check.state == false || destructionTier == DESTROY_ALL)
-			//	
-
 			if (check.persistentTier <= destructionTier)
 				registry.DestroyEntity(check);
 

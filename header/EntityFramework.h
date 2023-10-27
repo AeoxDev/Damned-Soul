@@ -99,7 +99,7 @@ public:
 	//	return entities.size() - availableEntitySlots.size();
 	//}
 
-	EntityID CreateEntity(int persistencyTier = 0);
+	EntityID CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier = ENT_PERSIST_BASIC);
 	//{
 	//	//When we destroy an entity, we store its index and version in the freeEntities-vector so we know where we can create new entities later
 	//	//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id
@@ -237,7 +237,7 @@ public:
 	}
 
 private:
-	EntityID CreateEntityId(int index, bool hasBeenDestroyed, int persistencyTier)
+	EntityID CreateEntityId(int index, bool hasBeenDestroyed, ENTITY_PERSISTENCY_TIER persistencyTier)
 	{
 		return { index, hasBeenDestroyed, persistencyTier };
 	}
