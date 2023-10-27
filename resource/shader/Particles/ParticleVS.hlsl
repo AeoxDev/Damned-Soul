@@ -16,7 +16,8 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 worldPosition : SV_POSITION;
+    float4 position : SV_POSITION;
+    float4 worldPosition : POSITION;
     float4 rgb : RGB;
     float rotationZ : ROTATIONZ;
     float size : SIZE;
@@ -26,7 +27,8 @@ VS_OUT main(VS_IN inval)
 {
     VS_OUT retval;
     
-    retval.worldPosition = mul(float4(inval.position, 1.f), world);
+    retval.position = float4(inval.position, 1.f);
+    retval.worldPosition = mul(retval.position, world);
     retval.rgb = float4(inval.rgb, 1.f);
     retval.rotationZ = inval.rotationZ;
     retval.size = inval.size;

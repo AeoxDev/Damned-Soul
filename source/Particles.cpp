@@ -37,7 +37,7 @@ void Particles::InitializeParticles()
 		particles[i].time = 0.f;
 		particles[i].velocity = DirectX::XMFLOAT3(1.f, 1.f, 0.f);
 		particles[i].rotationZ = 0.f;
-		particles[i].rgb = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+		particles[i].rgb = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 		particles[i].size = 0.f;
 	}
 
@@ -125,7 +125,6 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 {
 	SetTopology(POINTLIST);
 
-	SetWorldMatrix(0.f, 0.f, 0.f, BIND_VERTEX, 0);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0]);
@@ -165,7 +164,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 }
 
-ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float posX, float posY, float posZ, ComputeShaders pattern)
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float v0X, float v0Z, float v1X, float v1Z, float v2X, float v2Z, ComputeShaders pattern)
 {
 	metadataSlot = FindSlot();
 
@@ -175,7 +174,11 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
 	data->metadata[metadataSlot].pattern = pattern;
 	data->metadata[metadataSlot].rotationY = rotationY;
-	data->metadata[metadataSlot].miscInfo.x = posX; data->metadata[metadataSlot].miscInfo.y = posY; data->metadata[metadataSlot].miscInfo.z = posZ;
+	data->metadata[metadataSlot].positionInfo.x = 0.0f;
+	data->metadata[metadataSlot].positionInfo.y = v0X; data->metadata[metadataSlot].positionInfo.z = v0Z;
+	data->metadata[metadataSlot].morePositionInfo.x = v1X; data->metadata[metadataSlot].morePositionInfo.y = v1Z; data->metadata[metadataSlot].morePositionInfo.z = v2X;  data->metadata[metadataSlot].morePositionInfo.w = v2Z;
+
+	data->metadata[metadataSlot].positionInfo.x = -99.f;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 }

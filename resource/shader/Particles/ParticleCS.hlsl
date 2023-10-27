@@ -24,7 +24,8 @@ struct metadata
     // Slot 100-255 is a random number between 1.0 and 5.0
     
     float rotationY;
-    float3 miscInfo;
+    float3 positionInfo;
+    float4 morePositionInfo;
 };
 
 cbuffer metadataBuffer : register(b0)
@@ -51,10 +52,6 @@ RWStructuredBuffer<Input> outputParticleData : register(u1);
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 {
-
-    
-
-    
     if (meta[blockID.y].life > 0)
     {
         // 0 = SMOKE
@@ -123,14 +120,14 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     
     if (travelledDistance >= (meta[blockID.y].maxRange + meta[One_OneHundo].deltaTime))
     {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), 1.0f);
+        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), meta[blockID.y].startPosition.z);
 
         particle.position = startPosition;
         particle.time = 0.f;
     }
     if (particle.time >= (meta[blockID.y].life + meta[One_OneHundo].deltaTime))
     {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), 1.0f);
+        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), meta[blockID.y].startPosition.z);
 
         particle.position = startPosition;
         particle.time = 0.f;
@@ -201,25 +198,30 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     
     
     // EXLUSIVE FOR FLAME THROWER //
-    // LIFE and RANGE are now variables that hold the YZ coords for dogs triangle
+    // THEESE WEIRD VARIABLES ARE MEANT TO BE WEIRD, THEY HOLD VALUES
+    float2 v0 = float2(meta[blockID.y].positionInfo.y, meta[blockID.y].positionInfo.z);
+    float2 v1 = float2(meta[blockID.y].morePositionInfo.x, meta[blockID.y].morePositionInfo.y);
+    float2 v2 = float2(meta[blockID.y].morePositionInfo.z, meta[blockID.y].morePositionInfo.w);
+
     
-    float2 v0 = float2(meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
-    float2 v1 = float2(meta[blockID.y].miscInfo.y, meta[blockID.y].miscInfo.z);
-    float2 v2 = float2(meta[blockID.y].life, meta[blockID.y].maxRange);
+    float2 middlePoint = (v2 - v1) / 2;
+    float2 dirVec = normalize(middlePoint - v0);
     
-    if (IsPointInTriangle(particle.position.xy, v0, v1, v2))
+    if (IsPointInTriangle(particle.position.xz, v0, v1, v2))
     {
-        particle.position.z = particle.position.z - particle.velocity.z * meta[OneHundo_TwoFiveFive].deltaTime * dt;
-        particle.position.y = particle.position.y + ((float)DTid.x - 127) / 128 * dt;
+        particle.position.x = particle.position.x + ((float) DTid.x - 127) / 128 * dirVec.x * dt;
+        particle.position.y = particle.position.y; // + (((float) DTid.x - 127) / 128) * dt;
+        particle.position.z = particle.position.z - (particle.velocity.z * dirVec.y * meta[OneHundo_TwoFiveFive].deltaTime) * dt;
 
     }
     else
     {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, 1.0f);
+        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
 
         particle.position = startPosition;
         particle.time = 0.f;
     }
+
     
     
     
@@ -293,10 +295,30 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
 // Function to check if a point is inside a triangle
 bool IsPointInTriangle(float2 spot, float2 v0, float2 v1, float2 v2)
 {
-    // Calculate barycentric coordinates
-    float detT = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
-    float alpha = ((v1.y - v2.y) * (spot.x - v2.x) + (v2.x - v1.x) * (spot.y - v2.y)) / detT;
-    float beta = ((v2.y - v0.y) * (spot.x - v2.x) + (v0.x - v2.x) * (spot.y - v2.y)) / detT;
+    bool retVal = true;
     
-    return alpha >= 0.0 && beta >= 0.0 && (alpha + beta) <= 1.0;
+    float area = ((v1.x - v0.x) * (v2.y - v0.y) - (v1.y - v0.y) * (v2.x - v0.x)) / 2;
+    
+    float baryOne = ((v1.x - spot.x) * (v2.y - spot.y) - (v1.y - spot.y) * (v2.x - spot.x)) / 2;
+    float baryTwo = ((spot.x - v0.x) * (v2.y - v0.y) - (spot.y - v0.y) * (v2.x - v0.x)) / 2;
+    float baryThree = ((v1.x - v0.x) * (spot.y - v0.y) - (v1.y - v0.y) * (spot.x - v0.x)) / 2;
+    
+    float alpha = baryOne / area;
+    float beta = baryTwo / area;
+    float gamma = baryThree / area;
+
+    if ((alpha < 0 || beta < 0 || gamma < 0) || (alpha > 1 || beta > 1 || gamma > 1))
+    {
+        retVal = false;
+    }
+    else if ((alpha + beta + gamma > 1))
+    {
+        retVal = false;
+    }
+    
+
+    return retVal;
+
+    
+   
 }

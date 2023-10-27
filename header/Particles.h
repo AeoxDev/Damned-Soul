@@ -36,7 +36,8 @@ struct ParticleMetadata
 
 	float deltaTime = 0;
 	float rotationY = 0;
-	DirectX::XMFLOAT3 miscInfo{ 0.f, 0.f, 0.f };
+	DirectX::XMFLOAT3 positionInfo{ 0.f, 0.f, 0.f };
+	DirectX::XMFLOAT4 morePositionInfo{ 0.f, 0.f, 0.f, 0.f };
 
 };
 

@@ -24,7 +24,9 @@ struct ParticleComponent
 	int FindSlot();
 
 	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
-	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float posX, float posY, float posZ, ComputeShaders pattern);
+
+	// Overload for FlameThrower
+	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float v0X, float v0Z, float v1X, float v1Z, float v2X, float v2Z,  ComputeShaders pattern);
 	~ParticleComponent();
 
 
