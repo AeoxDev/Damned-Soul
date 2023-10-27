@@ -131,38 +131,32 @@ int StateManager::Setup()
 
 	// Render/GPU
 	systems.push_back(new UIRenderSystem());
+	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new RenderSystem());
 	
-	//Input based CPU
+	//Input based CPU 
 	systems.push_back(new ButtonSystem());
 
+	//CPU WORK (ORDER IMPORTANT)
 	//AI Systems
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
-
-	// CPU
-	systems.push_back(new ParticleSystemCPU());
+	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
-	systems.push_back(new TransformSystem());
+	systems.push_back(new TransformSystem()); //Must be before controller
 	systems.push_back(new ControllerSystem());
-	systems.push_back(new EventSystem());
+	systems.push_back(new EventSystem());//Must be after controller system for correct animations
 	systems.push_back(new GeometryIndependentSystem());
 
 	//Damage Over Time (Misc Combat Systems?)
 	systems.push_back(new DamageOverTimeSystem());
 
-
-
-
-
-
 	//CPU work that can affect rendering
 	systems.push_back(new StateSwitcherSystem());
 	systems.push_back(new PointOfInterestSystem());
-
 
 	//Audio (Needs to be close to last)
 	systems.push_back(new AudioSystem());
@@ -175,7 +169,6 @@ int StateManager::Setup()
 	systems.push_back(new UIShopSystem());
 
 	return 0;
-
 }
 
 
