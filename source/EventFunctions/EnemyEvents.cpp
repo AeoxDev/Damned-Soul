@@ -16,7 +16,9 @@
 void PlayDeathAnimation(EntityID& entity, const int& index)
 {
 	//implement later, goddamn TA
-
+	RemoveHitbox(entity, 0);
+	RemoveHitbox(entity, 1);
+	RemoveHitbox(entity, 2);
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;
@@ -25,12 +27,20 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	offset -= 0.5f;
 	transform->positionZ += offset * 0.02f;
 
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim)
+	{
+		anim->aAnim = ANIMATION_DEATH;
+		anim->aAnimIdx = 0;
+		anim->aAnimTime = GetTimedEventElapsedTime(entity, index);
+	}
+
 	//Temp: Remove the light if dog dies during its flamethrower attack
 	RemoveLight(entity);
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
-{
+{	
 	EntityID newMini = registry.CreateEntity();
 
 
@@ -74,7 +84,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	}*/
 	transComp.mass = transform->mass * 0.8f;
 	registry.AddComponent<TransformComponent>(newMini, transComp);
-	registry.AddComponent<EnemyComponent>(newMini, 2);
+	registry.AddComponent<EnemyComponent>(newMini, 2, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
 
 	
@@ -252,12 +262,13 @@ void SplitBoss(EntityID& entity, const int& index)
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 	// Eat them souls
-	for (auto entity : View<PlayerComponent>(registry))
+	for (auto player : View<PlayerComponent>(registry))
 	{
-		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(entity);
-		pc->UpdateSouls(+1);
+		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
+		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
+		pc->UpdateSouls(ec->soulCount);
 	}
-
+	
 	// I am inevitable 
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);

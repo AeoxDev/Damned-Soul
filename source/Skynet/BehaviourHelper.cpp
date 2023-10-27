@@ -2,6 +2,7 @@
 #include <random>
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
+#include <DirectXMath.h>
 
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z)
 {
@@ -46,11 +47,11 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ, float rota
 		float orthDot = goalX * orthogonalX + goalZ * orthogonalZ;
 		if (orthDot > 0.0f)
 		{//if left
-			angle += GetDeltaTime() * (2.1f - dot) * rotationFactor;
+			angle += GetDeltaTime() * (1.01f - dot) * rotationFactor;
 		}
 		else
 		{
-			angle -= GetDeltaTime() * (2.1f - dot) * rotationFactor;
+			angle -= GetDeltaTime() * (1.01f - dot) * rotationFactor;
 		}
 		tc->facingX = cosf(angle);
 		tc->facingZ = sinf(angle);

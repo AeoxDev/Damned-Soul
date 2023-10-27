@@ -22,7 +22,15 @@ class ControllerSystem : public System
 {
 	bool Update();
 };
+class KnockBackSystem : public System
+{
+	bool Update();
+};
 class GeometryIndependentSystem : public System
+{
+	bool Update();
+};
+class AudioSystem : public System
 {
 	bool Update();
 };
@@ -39,11 +47,15 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIPlayerRelicsSystem : public System
+class UIRelicsSystem : public System
 {
 	bool Update();
 };
 class UIGameLevelSystem : public System
+{
+	bool Update();
+};
+class UIShopSystem : public System
 {
 	bool Update();
 };

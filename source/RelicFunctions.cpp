@@ -52,7 +52,7 @@ Relics::RelicMetaData Relics::DemonBonemarrow(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Demon Bonemarrow",
 		/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
-		/*Description*/	"Increases your Strength by 15 when obtained."
+		/*Description*/	"Increases your Damage by 15 when obtained."
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
@@ -100,7 +100,7 @@ Relics::RelicMetaData Relics::SoulPower(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Soul Power",
 		/*Filepath*/	"RelicIcons\\Soul_Power.png",
-		/*Description*/	"You gain a dynamic bonus to your Strength equal to the number of Souls you currently possess"
+		/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess"
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
@@ -128,7 +128,7 @@ Relics::RelicMetaData Relics::DemonHeart(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Demon Heart",
 		/*Filepath*/	"RelicIcons\\Demon_Heart.png",
-		/*Description*/	"Increases your Maximum Health by 25 when obtained."
+		/*Description*/	"Increases your Maximum Health by 75 when obtained."
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
@@ -153,7 +153,7 @@ Relics::RelicMetaData Relics::FrostFire(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Frost Fire",
 		/*Filepath*/	"RelicIcons\\Frost_Fire.png",
-		/*Description*/	"When you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and stun them (20s cooldown)"
+		/*Description*/	"Once per level when you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and permanently slow them by 20%"
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality
@@ -162,10 +162,14 @@ Relics::RelicMetaData Relics::FrostFire(const bool AddRelicFunctions)
 		// Make sure the relic function map exists
 		_validateRelicFunctions();
 
-		//// Call the increase health function
-		//DEMON_HEART::IncreasePlayerHealth(nullptr);
-		//// Add it to the list of On Obtain functions
-		//(*_RelicFunctions)[FUNC_ON_OBTAIN].push_back(DEMON_HEART::IncreasePlayerHealth);
+		// Mark as available immediately
+		FROST_FIRE::SetAvailable(nullptr);
+
+		// Add reset function to level swap list
+		(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(FROST_FIRE::SetAvailable);
+
+		// Add it to the list of On Obtain functions
+		(*_RelicFunctions)[FUNC_ON_HEALTH_MODIFIED].push_back(FROST_FIRE::PushBackAndFreeze);
 	}
 
 	// Return the metadata
@@ -207,7 +211,7 @@ Relics::RelicMetaData Relics::SpeedyLittleDevil(const bool AddRelicFunctions)
 	{
 		/*Name*/		"Speedy Little Devil",
 		/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
-		/*Description*/	"Increases your speed by 4 when obtained"
+		/*Description*/	"Increases your Movespeed by 4 when obtained"
 	};
 
 	// If the relic is to be added, and not just "read", run the functionality

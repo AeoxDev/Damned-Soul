@@ -1,9 +1,24 @@
 #pragma once
 
+#include "RelicFunctions.h"
+#include "MemLib/ML_Vector.hpp"
+
+enum temprelicslist
+{
+	DemonBonemarrow,
+	FlameWeapon,
+	SoulPower,
+	DemonHeart,
+	FrostFire,
+	SoulHealth,
+	SpeedyLittleDevil,
+	LightningGod
+};
+
 namespace UIFunc
 {
-	// Go from start menu to game
-	void MainMenu_Start(void* args);
+	// Start the next level
+	void LoadNextLevel(void* args);
 
 	// Go from start menu to settings
 	void MainMenu_Settings(void* args);
@@ -25,4 +40,16 @@ namespace UIFunc
 
 	// Change to fullscreen from settings
 	void Settings_Fullscreen(void* args);
+
+	// Buy a relic in shop
+	void Shop_BuyRelic(void* args);
+
+	// Lock a relic in shop
+	void Shop_LockRelic(void* args);
+
+	// Re-roll a relic in shop
+	void Shop_ReRollRelic(void* args);
+
+	// Heal the player
+	void Shop_Heal(void* args);
 }

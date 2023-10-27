@@ -4,6 +4,8 @@
 #include <vector>
 #include "EntityFramework.h"
 
+//#include "MemLib/ML_Vector.hpp"
+
 //Real
 //Hitbox variables
 struct VisualHitbox
@@ -21,6 +23,7 @@ struct HitboxVisualizeVariables
 	ID3D11PixelShader* pShader = nullptr;
 
 	//Buffer, Input layout, and SRV used for Vertex Pulling
+	//ML_Vector<VisualHitbox> hitboxes; //Herman Help;
 	std::vector<VisualHitbox> hitboxes;
 	ID3D11Buffer* hitboxStructuredBuffer = nullptr;
 	ID3D11InputLayout* hitboxInputLayout = nullptr;

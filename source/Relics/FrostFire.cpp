@@ -2,9 +2,20 @@
 #include "Relics\RelicFuncInputTypes.h"
 #include "Registry.h"
 #include "Components.h"
-
-// Used for cooldowns
+#include "EventFunctions.h"
+#include "KnockBackComponent.h"
 #include <chrono>
+
+#define FROST_FIRE_BASE_KNOCKBACK (1.f)
+
+#define FROST_FIRE_SPEED_MULTIPLIER (.8f)
+
+static bool FrostFireAvailable = true;
+
+void FROST_FIRE::SetAvailable(void* data)
+{
+	FrostFireAvailable = true;
+}
 
 void FROST_FIRE::PushBackAndFreeze(void* data)
 {
@@ -20,16 +31,29 @@ void FROST_FIRE::PushBackAndFreeze(void* data)
 	for (auto entity : View<PlayerComponent>(registry))
 		player = entity;
 
-	TransformComponent* playerTrans = registry.GetComponent<TransformComponent>(player);
+	// Get player stat component and do nothing if ...
+	StatComponent* playerStat = registry.GetComponent<StatComponent>(player);
+	// ... the hurt component isn't the player's component
+	// ... the player's remaining health is greater than 50%
+	// ... Frost Fire has already activated this level
+	if (playerStat != input->adressOfStatComponent || .5f < playerStat->GetHealthFraction() || false == FrostFireAvailable)
+		return;
 
-	for (auto entity : View<TransformComponent, StatComponent>(registry))
+	// Set frost fire to used
+	FrostFireAvailable = false;
+
+	for (auto entity : View<EnemyComponent>(registry))
 	{
-		if (entity.index != player.index)
-		{
-			// Knockback
+		float dx, dy, v, x, y;
 
-			// Short Time Freeze
-		}
+		CalculateKnockBackDirection(player, entity, dx, dy);
+		// Flat knock back for now
+		v = FROST_FIRE_BASE_KNOCKBACK;
+		CalculateKnockBack(dx, dy, v, x, y);
+
+		AddKnockBack(entity, x, y);
+
+		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+		stat->moveSpeed *= FROST_FIRE_SPEED_MULTIPLIER;
 	}
-
 }

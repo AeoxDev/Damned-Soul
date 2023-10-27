@@ -1,5 +1,4 @@
 #include "CollisionFunctions.h"
-#include "Registry.h"
 #include "Components.h"
 #include "DeltaTime.h"
 #include "States\StateManager.h"
@@ -10,6 +9,7 @@
 #include "RelicFunctions.h"
 #include "Relics\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
+#include "Levels/LevelHelper.h"
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -62,7 +62,7 @@ void SoftCollision(OnCollisionParameters& params)
 
 	//transform2->positionX += dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
 	//transform2->positionZ += dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
-
+	
 }
 
 void HardCollision(OnCollisionParameters& params)
@@ -165,6 +165,11 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 	*/
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	if (params.entity2.index == stateManager.player.index)
+	{
+		//Screen shaking
+		int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+	}
 	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 
@@ -188,11 +193,11 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 void AttackCollision(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
-	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+ 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
 	//Get the components of the attackee (stats for taking damage and transform for knockback)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
-	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+
 
 	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
@@ -257,7 +262,54 @@ void AttackCollision(OnCollisionParameters& params)
 	*/
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
-	int index = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, BeginHit, MiddleHit, 0.2f, EndHit); //No special condition for now
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
+	if (enemy != nullptr)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+		switch (enemy->type)
+		{
+		case EnemyType::hellhound:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::eye:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::skeleton:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
+			break;
+		}
+	}
+	//Camera Shake
+	int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+	//Hitstop, pause both animations for extra effect
+	int index1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
+	int index2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
+	//Freeze both entities as they hit eachother for extra effect
+	int indexSpeedControl1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+	//Squash both entities for extra effect
+	float squashKnockbackFactor = 1.0f + stat1->knockback * 0.1f;
+	AddSquashStretch(params.entity2, Constant, 0.75f / squashKnockbackFactor, 1.1f, 1.25f);
+	int squashStretch2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+	AddSquashStretch(params.entity1, Constant, 0.9f, 1.1f, 1.1f);
+	//Knockback mechanic
+	int squashStretch1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->knockback * params.normal1X / transform1->mass, stat2->knockback * params.normal1Z / transform1->mass);
+	AddKnockBack(params.entity2, stat1->knockback * params.normal2X / transform1->mass, stat1->knockback * params.normal2Z / transform1->mass);
+	//Take damage and blinking
+	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
+	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 	
 	//Redraw UI (player healthbar) since someone will have taken damage at this point. 
@@ -279,6 +331,10 @@ void AttackCollision(OnCollisionParameters& params)
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
+	//next level is shop so we set the paramaters in statemanager as so
+	SetInPlay(false);
+	SetInShop(true);
+	
 	LoadLevel(++stateManager.activeLevel);
 }
 
