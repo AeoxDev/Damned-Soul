@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "Hitbox.h"
 #include "Model.h"
+#include "EventFunctions.h"
 #include "States\StateManager.h"
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
@@ -284,4 +285,6 @@ void ReloadPlayerNonGlobals()
 	
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
+
+	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
 }
