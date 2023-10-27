@@ -100,6 +100,6 @@ void SettingsState::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities(0);
+	UnloadEntities();
 	
 }

@@ -515,6 +515,9 @@
     <ClInclude Include="header\Relics\SpeedyLittleDevil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Components\ShopComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="header\Components\SquashStretchComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>

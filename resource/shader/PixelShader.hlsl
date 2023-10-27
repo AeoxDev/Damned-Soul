@@ -79,9 +79,9 @@ float4 main(PS_IN input) : SV_TARGET
     float4 materialShininess = { 8.0f, 0.0f, 0.0f, 1.0f };
 
     float4 image = diffuseTex.Sample(WrapSampler, input.uv); //texturImage
-    
+    clip(image.a - 0.1f);
     //Ambient, diffuse, specular
-    float3 addOnColor = materialAmbient.xyz; //Ambient //lighting-effects to apply to texture
+        float3 addOnColor = materialAmbient.xyz; //Ambient //lighting-effects to apply to texture
     float3 diffuse = materialDiffuse.xyz; //Sum of all diffuse lights
     float3 specular = materialSpecular.xyz; //Sum of all specular lights
     
@@ -183,7 +183,7 @@ float4 main(PS_IN input) : SV_TARGET
     addOnColor = saturate(addOnColor + pointSpecular + spotSpecular + dirSpecular); //not multiply to put on top and not affect color of image
     addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
     #define GAMMA_CORRECTION 1.25f
-    return pow(float4(abs(addOnColor), 1), GAMMA_CORRECTION);
+    return pow(float4(abs(addOnColor).rgb, image.a), GAMMA_CORRECTION);
     //return float4(addOnColor, 1);
     
 	//return diffuseTex.Sample(WrapSampler, input.uv)/*.xyzw*/;

@@ -48,10 +48,10 @@ class UIRelicsSystem : public System
 {
 	bool Update();
 };
-class UIGameLevelSystem : public System
-{
-	bool Update();
-};
+//class UIGameLevelSystem : public System
+//{
+//	bool Update();
+//};
 class UIShopSystem : public System
 {
 	bool Update();

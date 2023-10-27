@@ -7,6 +7,7 @@
 #include "Registry.h"
 #include "Components.h"
 
+#include "UIButtonFunctions.h"
 
 void LoadLevel(int level)
 {
@@ -24,6 +25,8 @@ void LoadLevel(int level)
 	stateManager.scenes[0].Unload();
 	stateManager.scenes[1].Unload();
 	stateManager.scenes[2].Unload();
+
+	SetInShop(false);
 	
 	for (auto entity : View<ControllerComponent>(registry))
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
@@ -42,7 +45,7 @@ void LoadLevel(int level)
 	case 7: LoadLevel4(); break;
 	default: 
 		//UnloadEntities(true);//Reset game
-		UnloadEntities(1);//Reset game
+		UnloadEntities(ENT_PERSIST_PLAYER);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}

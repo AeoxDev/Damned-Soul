@@ -29,16 +29,18 @@ EntityID CreateRoundStaticHazard(const char* file, const float& posX, const floa
 	return hazard;
 }
 
-EntityID CreateSquareStaticHazard(const char* file, const float& posX, const float& posY, const float& posZ, const float& scaleX, const float& scaleY, const float& scaleZ, const float& corner1X, const float& corner1Y, const float& corner2X, const float& corner2Y, const float& corner3X, const float& corner3Y, const float& corner4X, const float& corner4Y, const float& colorRed, const float& colorGreen, const float& colorBlue, const float& damage, const float& rotationY)
+EntityID CreateSquareStaticHazard(const char* file, const float& posX, const float& posY, const float& posZ, const float& scaleX, const float& scaleY, const float& scaleZ, const float& corner1X, const float& corner1Y, const float& corner2X, const float& corner2Y, const float& corner3X, const float& corner3Y, const float& corner4X, const float& corner4Y, const float& damage, const float& rotationY,
+	const float& colorAdditiveRed, const float& colorAdditiveGreen, const float& colorAdditiveBlue, const float& colorMultiRed, const float& colorMultiGreen, const float& colorMultiBlue)
 {
 	EntityID hazard = registry.CreateEntity();
 	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel(file));
-	hazardModel->colorAdditiveRed = colorRed;
-	hazardModel->colorAdditiveGreen = colorGreen;
-	hazardModel->colorAdditiveBlue = colorBlue;
-	//hazardModel->colorMultiplicativeRed = 1.0f;
-	//hazardModel->colorMultiplicativeGreen = 1.0f;
-	//hazardModel->colorMultiplicativeBlue = 1.0f;
+	hazardModel->colorAdditiveRed = colorAdditiveRed;
+	hazardModel->colorAdditiveGreen = colorAdditiveGreen;
+	hazardModel->colorAdditiveBlue = colorAdditiveBlue;
+	hazardModel->colorMultiplicativeRed = colorMultiRed;
+	hazardModel->colorMultiplicativeGreen = colorMultiGreen;
+	hazardModel->colorMultiplicativeBlue = colorMultiBlue;
+
 	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 	hazardTransform->positionX = posX;
 	hazardTransform->positionY = posY;
