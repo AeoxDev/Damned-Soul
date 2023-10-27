@@ -16,5 +16,6 @@ EntityID CreateSquareStaticHazard(const char* file, const float& posX, const flo
 	const float& corner2X = 1.0f, const float& corner2Y = -1.0f,
 	const float& corner3X = 1.0f, const float& corner3Y = 1.0f,
 	const float& corner4X = -1.0f, const float& corner4Y = 1.0f,
-	const float& colorRed = .0f, const float& colorGreen = 0.f, const float& colorBlue = 0.f,
-	const float& damage = 1.0f, const float& rotationY = -3.1415f * 0.5f);
+	const float& damage = 1.0f, const float& rotationY = -3.1415f * 0.5f,
+	const float& colorAdditiveRed = .0f, const float& colorAdditiveGreen = 0.f, const float& colorAdditiveBlue = 0.f,
+	const float& colorMultiRed = 1.0f, const float& colorMultiGreen = 1.0f, const float& colorMultiBlue = 1.0f);

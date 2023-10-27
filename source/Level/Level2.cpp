@@ -42,11 +42,18 @@ void LoadLevel2()
 	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, -45.f);
 	//13 souls + 5 souls level 1 = 18 souls total
 
+	float redAdd = 0.1f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.0f;
+	float redMult = 1.4f;
+	float greenMult = 1.2f;
+	float blueMult = 0.8f;
+
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 1.4f;
-	stageModel->colorMultiplicativeGreen = 1.2f;
-	stageModel->colorMultiplicativeBlue = 0.8f;
-	stageModel->colorAdditiveRed = 0.1f;
+	stageModel->colorMultiplicativeRed = redMult;
+	stageModel->colorMultiplicativeGreen = greenMult;
+	stageModel->colorMultiplicativeBlue = blueMult;
+	stageModel->colorAdditiveRed = redAdd;
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -116,7 +123,10 @@ void LoadLevel2()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard1 = CreateSquareStaticHazard("LavaPlaceholder.mdl", randX, 0.1f, randZ, randScaleX, 0.1f, randScaleZ,
 					-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-					0.8f, 0.5f, 0.2f, 3.0f, (float)rand());
+					3.0f, (float)rand(),
+					redAdd, greenAdd, blueAdd,
+					redMult, greenMult, blueMult);
+
 				succeded = true;
 			}
 		}

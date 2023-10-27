@@ -42,11 +42,18 @@ void LoadLevel3()
 	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
+	float redAdd = 0.0f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.1f;
+	float redMult = 1.2f;
+	float greenMult = 1.0f;
+	float blueMult = 1.4f;
+
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 1.2f;
-	stageModel->colorMultiplicativeGreen = 1.0f;
-	stageModel->colorMultiplicativeBlue = 1.4f;
-	stageModel->colorAdditiveBlue = 0.1f;
+	stageModel->colorMultiplicativeRed = redMult;
+	stageModel->colorMultiplicativeGreen = greenMult;
+	stageModel->colorMultiplicativeBlue = blueMult;
+	stageModel->colorAdditiveBlue = blueAdd;
 	
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
@@ -111,7 +118,9 @@ void LoadLevel3()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard1 = CreateSquareStaticHazard("LavaPlaceholder.mdl", randX, 0.1f, randZ, randScaleX, 0.1f, randScaleZ,
 					-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-					0.1f, 0.3f, 0.5f, 3.0f, (float)rand());
+										3.0f, (float)rand(),
+					redAdd - 0.1f, greenAdd - 0.1f, blueAdd +0.5f,
+					redMult * 0.8f, greenMult * 0.8f, blueMult * 1.5f);
 				succeded = true;
 			}
 		}
