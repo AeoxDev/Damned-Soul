@@ -1,5 +1,5 @@
 #pragma once
-
+#include<cinttypes>
 //Condition 0 = no special condition for timed event functions
 #define CONDITION_DASH ((uint32_t)1)
 #define CONDITION_DAMAGE ((uint32_t)2)
@@ -21,9 +21,11 @@ int AddTimedEventComponentStartContinous(EntityID& entityID, float startTime, vo
 int AddTimedEventComponentStartContinuousEnd(EntityID& entityID, float startTime, void* startFunction,
 	void* continousFunction, float endTime, void* endFunction, uint32_t condition = 0, int maxStacks = 1);
 
+uint32_t GetTimedEventCondition(EntityID& entity, const int& timedEventSlot);
 uint32_t GetTimedEventCondition(TimedEventComponent*& comp, const int& timedEventSlot);
 
 //Returns -1.0f if no component.
-float GetEventTimedElapsed(EntityID& entityID, const int& timedEventSlot);
+float GetTimedEventElapsedTime(EntityID& entityID, const int& timedEventSlot);
+float GetTimedEventTotalTime(EntityID& entityID, const int& timedEventSlot);
 void CancelTimedEvent(EntityID& entityID, const int& timedEventSlot);
 void ReleaseTimedEvents(EntityID& entity);

@@ -9,11 +9,16 @@
 
 void PlayerLoseControl(EntityID& entity, const int& index)
 {	
+	//Get relevant components
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	//If this is not the player, no need to remove controller
+	if (playerComp == nullptr)
+	{
+		return;
+	}
 	//Start by removing the players' ControllerComponent
 	registry.RemoveComponent<ControllerComponent>(entity);
 	
-	//Get relevant components
-	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 
 	//Store any specific condition in the timed event
@@ -23,6 +28,8 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, false);
+		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+		anim->aAnimTimeFactor = 5.f;
 		//SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
 	}
 }
@@ -35,11 +42,18 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 
 void PlayerRegainControl(EntityID& entity, const int& index)
 {
-	//Start by giving back the players' ControllerComponent
-	registry.AddComponent<ControllerComponent>(entity);
-
+	//Hitstop fixer
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	transform->offsetX = 0.0f;
 	//Get relevant components
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	//If this is not the player, return. No controlling enemies >:(
+	if (playerComp == nullptr)
+	{
+		return;
+	}
+	//Give back the players' ControllerComponent
+	registry.AddComponent<ControllerComponent>(entity);
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 
 	//Store any specific condition in the timed event
@@ -50,6 +64,9 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
 	}
+
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	anim->aAnimTimeFactor = 1.f;
 }
 
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
@@ -76,16 +93,14 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	anim->aAnimTime = powf(anim->aAnimTime, 2.f);
-	anim->aAnimTime += GetDeltaTime();
-	anim->aAnimTime = powf(anim->aAnimTime, .5f);
-	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
-	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
+	// Branchless reset
+	anim->aAnimTime += (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
+	float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack animation
-	if (/*GetEventTimedElapsed(entity, index)*/anim->aAnimTime >= 0.8f)
+	if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
 		SetPlayerAttackHitboxInactive(entity, index);
-	else if (/*GetEventTimedElapsed(entity, index)*/anim->aAnimTime >= 0.5f)
+	else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
 		SetPlayerAttackHitboxActive(entity, index);
 }
 
@@ -101,10 +116,20 @@ void PlayerDash(EntityID& entity, const int& index)
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
+	// Get animation
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
 	//Invalid entity doesn't have the required components
-	if (!transform || !stat || !dac)
+	if (!transform || !stat || !dac || !anim)
 		return;
+
+	//Perform attack animation, woo, loop using DT
+	anim->aAnim = ANIMATION_WALK;
+	anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+	anim->aAnimIdx = 1;
+
+	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
+	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 	
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();

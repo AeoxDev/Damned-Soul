@@ -28,8 +28,9 @@ bool ControllerSystem::Update()
 
 		//Default the animation to idle, subject to be changed based off of user input
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-		anim->aAnim = ANIMATION_IDLE;
-		anim->aAnimIdx = 0;
+		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(anim);
+
 
 		/*MOVEMENT INPUT*/
 		bool moving = false;
@@ -85,6 +86,9 @@ bool ControllerSystem::Update()
 		//clamp moveTime to lower limit if not moving
 		else 
 		{
+			anim->aAnim = ANIMATION_IDLE;
+			anim->aAnimIdx = 0;
+			ANIM_BRANCHLESS(anim);
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			
 		}
@@ -101,6 +105,8 @@ bool ControllerSystem::Update()
 				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
+				AddSquashStretch(entity, Linear, 0.8f, 0.8f, 1.5f, true, 1.2f, 1.2f, 0.8f);
+				int squashStretch = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, ResetSquashStretch, SquashStretch, 0.2f, ResetSquashStretch, 0, 1);
 			}
 			else
 			{
@@ -116,6 +122,8 @@ bool ControllerSystem::Update()
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		if (mouseButtonPressed[0] == pressed)
 		{
+			
+			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
 		}
 	}

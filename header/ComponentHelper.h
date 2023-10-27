@@ -10,6 +10,7 @@ private:
 	float currentHealth = 100.f;
 	//defense? percentage-based or flat?
 public:
+	float baseMoveSpeed = 1.0f;
 	float moveSpeed = 1.0f;
 
 
@@ -17,11 +18,13 @@ public:
 	float damage = 10.0f;
 	float attackSpeed = 1.0f;
 
+	float knockback = 1.0f;
 
 	// for death animation
 	bool performingDeathAnimation = false;
 
-	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
+	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) 
+	{ baseMoveSpeed = moveSpeed; }
 
 	// Get the current health of the player
 	float GetHealth() const;
@@ -45,6 +48,7 @@ public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
 	int killingSpree = 0;
+	int killThreshold = 0;
 	bool portalCreated = false;
 
 	// Update the number of souls in the player's possession
@@ -87,6 +91,7 @@ struct EnemyComponent
 {
 	int soulCount = 0;
 	int attackHitBoxID = -1;
+	int specialHitBoxID = -1;
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };

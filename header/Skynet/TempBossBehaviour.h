@@ -6,7 +6,7 @@ struct TempBossBehaviour
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	float attackTimer = 0.f;
 	float attackStunDurationCounter = 0.f;
-	const float attackStunDuration = 0.8f;
+	const float attackStunDuration = 1.2f;
 	int deathCounter = 0;
 
 	int hitBoxID = 0;

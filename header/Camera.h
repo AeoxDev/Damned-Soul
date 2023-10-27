@@ -12,7 +12,7 @@ namespace Camera
 	void SetUp(const float x, const float y, const float z);
 	void SetRotation(const float x, const float y, const float z);
 	void SetFOV(const float radians);
-
+	void SetOffset(const float& x, const float& y, const float& z);
 	//This function is for orthographic usage
 	void SetWidth(const float& width);
 	//This function is for orthographic usage

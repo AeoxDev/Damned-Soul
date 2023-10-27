@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Particles.h"
 #include "Levels\LevelHelper.h"
-
+#include "States/StateManager.h"
 #include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
 
@@ -23,6 +23,7 @@ void LoadShop()
 	//registry.AddComponent<PlayerComponent>(player)->UpdateSouls(20);
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
+	SetInShop(true);
 	EntityID playerUi = registry.CreateEntity();
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));

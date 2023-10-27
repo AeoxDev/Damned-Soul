@@ -5,7 +5,7 @@
 #include "Relics/RelicFuncInputTypes.h" //Why isn't this included by RelicFunctions? Hermaaaaaaaaan
 #include "DeltaTime.h"
 #include "Levels/LevelHelper.h"
-#include <cmath> //sin
+//#include <cmath> //sin
 
 #define KNOCKBACK_FACTOR 0.3f
 
@@ -40,17 +40,10 @@ void BeginHit(EntityID& entity, const int& index)
 
 void MiddleHit(EntityID& entity, const int& index)
 {
-	//Flash color red repeatedly
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetEventTimedElapsed(entity, index) * frequency) * std::cosf(GetEventTimedElapsed(entity, index) * frequency);
-	if (skelel)
-		skelel->colorAdditiveRed = cosineWave;
-	if (bonel)
-		bonel->colorAdditiveRed = cosineWave;
-
+	
 	//Take knockback
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
@@ -61,14 +54,14 @@ void MiddleHit(EntityID& entity, const int& index)
 		return;
 	}
 
-	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
+	/*StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 	if (cpc && transform)
 	{
-		float knockbackFactor = KNOCKBACK_FACTOR / (0.1f + transform->mass * GetEventTimedElapsed(entity, index));
+		float knockbackFactor = KNOCKBACK_FACTOR / (0.1f + transform->mass * GetTimedEventElapsedTime(entity, index));
 		knockbackFactor *= knockbackFactor;
 		transform->positionX += cpc->params.normal1X * GetDeltaTime() * knockbackFactor;
 		transform->positionZ += cpc->params.normal1Z * GetDeltaTime() * knockbackFactor;
-	}
+	}*/
 }
 
 void EndHit(EntityID& entity, const int& index)
@@ -96,19 +89,19 @@ void HazardBeginHit(EntityID& entity, const int& index)
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		switch (enemy->type)
 		{
-		case enemyType::hellhound:
+		case EnemyType::hellhound:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
 				sfx->Play(Hellhound_Hurt, Channel_Base);
 			}
 			break;
-		case enemyType::eye:
+		case EnemyType::eye:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
 				sfx->Play(Eye_Hurt, Channel_Base);
 			}
 			break;
-		case enemyType::skeleton:
+		case EnemyType::skeleton:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
 				sfx->Play(Skeleton_Hurt, Channel_Base);
