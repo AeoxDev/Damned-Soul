@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 #include "UI\UIButton.h"

@@ -434,12 +434,6 @@
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\ImageComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Components\PlayerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIShopComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -510,6 +504,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Relics\SpeedyLittleDevil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\ShopComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

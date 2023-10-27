@@ -52,8 +52,12 @@ void UnloadEntities(int destructionTier)
 	if (stateManager.player.index != -1)
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-		player->killingSpree = 0;
-		player->portalCreated = false;
+		if (player != nullptr)
+		{
+			player->killingSpree = 0;
+			player->portalCreated = false;
+		}
+		
 	}
 
 
@@ -84,7 +88,7 @@ void UnloadEntities(int destructionTier)
 	
 	}
 
-	for (auto entity : View<UIGameLevelComponent>(registry))
+	/*for (auto entity : View<UIGameLevelComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
 		{
@@ -92,7 +96,7 @@ void UnloadEntities(int destructionTier)
 			ps->image.Release();
 		}
 		
-	}
+	}*/
 
 	for (auto entity : View<UIPlayerRelicsComponent>(registry))
 	{

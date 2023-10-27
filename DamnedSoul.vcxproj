@@ -417,6 +417,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\ShopComponent.h" />
     <ClInclude Include="header\Components\UIComponents.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />

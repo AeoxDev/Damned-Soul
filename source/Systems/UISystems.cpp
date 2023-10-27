@@ -49,15 +49,15 @@ bool UIRenderSystem::Update()
                 uiElement->relics[i].flavorTitle.Draw();*/
         }
 
-		for (auto entity : View<UIText>(registry))
-			registry.GetComponent<UIText>(entity)->Draw();
+	    for (auto entity : View<UIText>(registry))
+		    registry.GetComponent<UIText>(entity)->Draw();
 
-		for (auto entity : View<UIGameLevelComponent>(registry))
+	    /*for (auto entity : View<UIGameLevelComponent>(registry))
 		{
 			auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
 			uiElement->image.Draw();
 			uiElement->text.Draw();
-		}
+		}*/
 
 		for (auto entity : View<UIHealthComponent>(registry))
 		{
@@ -272,17 +272,17 @@ bool UIRelicsSystem::Update()
     return true;
 }
 
-bool UIGameLevelSystem::Update()
-{
-	for (auto entity : View<UIGameLevelComponent>(registry))
-	{
-		auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
-
-        ML_String valueAsString = std::to_string(uiElement->value).c_str();
-        SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
-    }
-    return true;
-}
+//bool UIGameLevelSystem::Update()
+//{
+//	for (auto entity : View<UIGameLevelComponent>(registry))
+//	{
+//		auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
+//
+//        ML_String valueAsString = std::to_string(uiElement->value).c_str();
+//        SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
+//    }
+//    return true;
+//}
 
 bool UIShopSystem::Update()
 {

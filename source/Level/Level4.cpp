@@ -50,9 +50,9 @@ void LoadLevel4()
 	pcUiSC->text.Setup("");
 
 	//Thing in the top right corner showing what level we're on
-	UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.9f, 0.9f), DSFLOAT2(1.0f, 1.0f), 4);
+	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.9f, 0.9f), DSFLOAT2(1.0f, 1.0f), 4);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");
+	gameLevelUIc->text.Setup("");*/
 
 	RenderGeometryIndependentCollision(stage);
 

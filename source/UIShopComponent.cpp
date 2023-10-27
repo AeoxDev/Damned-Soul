@@ -17,9 +17,9 @@ void ChangeOffset(DSFLOAT2& spritePositionOffset, DSFLOAT2& startingSpritePositi
 
 void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 {
-	auto relicWindow = registry.CreateEntity(1);
-	auto relicButtonBuy = registry.CreateEntity(1);
-	auto relicButtonLock = registry.CreateEntity(1);
+	auto relicWindow = registry.CreateEntity();
+	auto relicButtonBuy = registry.CreateEntity();
+	auto relicButtonLock = registry.CreateEntity();
 
 	DSFLOAT2 spritePositionOffset = { shop.baseImage.m_UiComponent.m_CurrentBounds.right / (shop.baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
 											   shop.baseImage.m_UiComponent.m_CurrentBounds.bottom / (shop.baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
@@ -72,7 +72,7 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	UIRelicComponent* relicComp = registry.AddComponent<UIRelicComponent>(relicWindow, relicImage, relicFlavorImage, relicName, relicDescImage, relicDesc);
 
 	UIButton* buyRelic = registry.AddComponent<UIButton>(relicButtonBuy);
-	buyRelic->Setup("Dollar.png", "Dollar.png", "", UIFunc::Shop_BuyRelic);
+	buyRelic->Setup("TempBuy.png", "Dollar.png", "", UIFunc::Shop_BuyRelic);
 	buyRelic->shopPosition = positionMultiplier;
 	buyRelic->SetPosition({ spritePixelCoords.x + 0.01f, spritePixelCoords.y - (0.1f * 0) });
 
@@ -102,21 +102,21 @@ void UIShopComponent::Setup()
 									-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 
-	auto rerollEntity = registry.CreateEntity(1);
+	auto rerollEntity = registry.CreateEntity();
 	UIText* rerollPrice = registry.AddComponent<UIText>(rerollEntity);
 	rerollPrice->Setup("Re Roll Relics Price: 1 Soul", { spritePixelCoords.x + (0.1f * 6.0f), spritePixelCoords.y - (0.1f * 12) });
 	
 	UIButton* rerollButton = registry.AddComponent<UIButton>(rerollEntity);
 	rerollButton->Setup("Roll.png", "Roll2.png", "", UIFunc::Shop_ReRollRelic, { spritePixelCoords.x + (0.1f * 6.0f), spritePixelCoords.y - (0.1f * 13) });
 
-	auto healEntity = registry.CreateEntity(1);
+	auto healEntity = registry.CreateEntity();
 	UIText* healPrice = registry.AddComponent<UIText>(healEntity);
 	healPrice->Setup("Heal 25% Health Price: 2 Souls", { spritePixelCoords.x + (0.1f * 6.0f), spritePixelCoords.y - (0.1f * 14) });
 	
 	UIButton* healButton = registry.AddComponent<UIButton>(healEntity);
 	healButton->Setup("Heal.png", "Heal2.png", "", UIFunc::Shop_Heal, { spritePixelCoords.x + (0.1f * 6.0f), spritePixelCoords.y - (0.1f * 15) });
 
-	auto nextLevelEntity = registry.CreateEntity(1);
+	auto nextLevelEntity = registry.CreateEntity();
 	UIButton* nextLevelButton = registry.AddComponent<UIButton>(nextLevelEntity);
 	nextLevelButton->Setup("TempNextLevel.png", "TempNextLevel.png", "", UIFunc::LoadNextLevel, { spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 14.5f) }, {2.0f, 2.0f});
 	

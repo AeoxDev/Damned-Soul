@@ -15,8 +15,7 @@
 void LoadShop()
 {
 
-	EntityID shop = registry.CreateEntity(1);
-	EntityID shopUi = registry.CreateEntity(1);
+	EntityID shop = registry.CreateEntity();
 	
 	//faster loading to shop
 	//EntityID player = registry.CreateEntity();
