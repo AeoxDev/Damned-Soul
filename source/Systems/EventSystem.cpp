@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Input.h"
 #include "MemLib\ML_Vector.hpp"
+#include <assert.h>
 
 struct TimedEvent
 {
