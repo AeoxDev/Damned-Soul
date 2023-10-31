@@ -1,11 +1,9 @@
 #include "UI/UIImage.h"
 #include <d2d1.h>
 #include <wincodec.h>
+#include <assert.h>
 
-
-using namespace DirectX;
-
-void UIImage::Setup(const ML_String& filepath, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIImage::Setup(const ML_String& filepath, DSFLOAT2 position, DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_UiComponent.Setup(scale, rotation, visibility);
 	m_Bitmap = nullptr;

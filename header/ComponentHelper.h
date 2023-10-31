@@ -1,6 +1,4 @@
 #pragma once
-#include <bitset>
-#include "Relics.h"
 #include "Backend/Collision.h"
 
 //Stats that every character in the game levels will have (player and enemies), modifyable by weapons and relics
@@ -12,6 +10,7 @@ private:
 	float currentHealth = 100.f;
 	//defense? percentage-based or flat?
 public:
+	float baseMoveSpeed = 1.0f;
 	float moveSpeed = 1.0f;
 
 
@@ -19,11 +18,13 @@ public:
 	float damage = 10.0f;
 	float attackSpeed = 1.0f;
 
+	float knockback = 1.0f;
 
 	// for death animation
 	bool performingDeathAnimation = false;
 
-	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) {}
+	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) 
+	{ baseMoveSpeed = moveSpeed; }
 
 	// Get the current health of the player
 	float GetHealth() const;
@@ -47,6 +48,7 @@ public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
 	int killingSpree = 0;
+	int killThreshold = 0;
 	bool portalCreated = false;
 
 	// Update the number of souls in the player's possession
@@ -89,91 +91,92 @@ struct EnemyComponent
 {
 	int soulCount = 0;
 	int attackHitBoxID = -1;
+	int specialHitBoxID = -1;
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
 
 //
-#define MAX_RELICS 8
-struct RelicHolderComponent
-{
-#define MAX_LENGTH 16
-
-	char name[MAX_LENGTH] = "Default Name";
-	std::bitset<MAX_RELICS> relicBitset; //I have become bitset enjoyer
-
-	RelicHolderComponent(const char name_in[MAX_LENGTH])
-	{
-		std::memcpy(name, name_in, MAX_LENGTH);
-	}
-
-	struct RelicArray
-	{
-		RelicArray(size_t relicSize)
-		{
-			this->relicSize = relicSize;
-			this->data = new char[relicSize];
-		}
-
-		inline void* get()
-		{
-			return data;
-		}
-
-		~RelicArray()
-		{
-			delete[] data;
-		}
-
-		char* data = nullptr;
-
-	private:
-		size_t relicSize = 0;
-	};
-
-	//Any time GetId() is called on a new type of relic, relicCount gets incremented, which results in the ID number for every component type being unique
-	int relicCount = 0;
-	template <typename T>
-	int GetId()
-	{
-		static int id = relicCount++;
-		return id;
-	}
-
-	template<typename T>
-	void AddRelic()
-	{
-		//Ehe
-		int id = GetId<T>();
-
-		//Create relic and cast to RelicArray data
-		T* relicPointer = new (relics->get()) T();
-
-		//Set the component bitset of the entity at "id" to match the component we're passing in
-		relicBitset.set(id);
-	}
-
-	template<typename T>
-	T* GetRelic()
-	{
-		int id = GetId<T>(); //Since GetId is being called on a type T that it's been called on before, the id won't be incremented. It's brilliant honestly
-
-		if (!relicBitset.test(id)) //Test to see if we have the relic before we try returning it
-			return nullptr;
-
-		//Get relic by casting RelicArray data back to the relic struct (but pointer)
-		T* relicPointer = (T*)(relics->get());
-
-		return relicPointer;
-	}
-
-	template<typename T>
-	void RemoveRelic()
-	{
-		int id = GetId<T>();
-		relicBitset.reset(id);
-	}
-
-private:
-	RelicArray* relics = new RelicArray(sizeof(DamageRelic)); //Since all relics are the same size, this is fine
-};
+//#define MAX_RELICS 8
+//struct RelicHolderComponent
+//{
+//#define MAX_LENGTH 16
+//
+//	char name[MAX_LENGTH] = "Default Name";
+//	std::bitset<MAX_RELICS> relicBitset; //I have become bitset enjoyer
+//
+//	RelicHolderComponent(const char name_in[MAX_LENGTH])
+//	{
+//		std::memcpy(name, name_in, MAX_LENGTH);
+//	}
+//
+//	struct RelicArray
+//	{
+//		RelicArray(size_t relicSize)
+//		{
+//			this->relicSize = relicSize;
+//			this->data = new char[relicSize];
+//		}
+//
+//		inline void* get()
+//		{
+//			return data;
+//		}
+//
+//		~RelicArray()
+//		{
+//			delete[] data;
+//		}
+//
+//		char* data = nullptr;
+//
+//	private:
+//		size_t relicSize = 0;
+//	};
+//
+//	//Any time GetId() is called on a new type of relic, relicCount gets incremented, which results in the ID number for every component type being unique
+//	int relicCount = 0;
+//	template <typename T>
+//	int GetId()
+//	{
+//		static int id = relicCount++;
+//		return id;
+//	}
+//
+//	template<typename T>
+//	void AddRelic()
+//	{
+//		//Ehe
+//		int id = GetId<T>();
+//
+//		//Create relic and cast to RelicArray data
+//		T* relicPointer = new (relics->get()) T();
+//
+//		//Set the component bitset of the entity at "id" to match the component we're passing in
+//		relicBitset.set(id);
+//	}
+//
+//	template<typename T>
+//	T* GetRelic()
+//	{
+//		int id = GetId<T>(); //Since GetId is being called on a type T that it's been called on before, the id won't be incremented. It's brilliant honestly
+//
+//		if (!relicBitset.test(id)) //Test to see if we have the relic before we try returning it
+//			return nullptr;
+//
+//		//Get relic by casting RelicArray data back to the relic struct (but pointer)
+//		T* relicPointer = (T*)(relics->get());
+//
+//		return relicPointer;
+//	}
+//
+//	template<typename T>
+//	void RemoveRelic()
+//	{
+//		int id = GetId<T>();
+//		relicBitset.reset(id);
+//	}
+//
+//private:
+//	RelicArray* relics = new RelicArray(sizeof(DamageRelic)); //Since all relics are the same size, this is fine
+//};

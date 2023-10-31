@@ -44,13 +44,13 @@ bool StateSwitcherSystem::Update()
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 				switch (registry.GetComponent<EnemyComponent>(entity)->type)
 				{
-				case enemyType::hellhound:
+				case EnemyType::hellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
 					break;
-				case enemyType::skeleton:
+				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
 					break;
-				case enemyType::eye:
+				case EnemyType::eye:
 					sfx->Play(Eye_Death, Channel_Base);
 					break;
 				}
@@ -87,33 +87,13 @@ bool StateSwitcherSystem::Update()
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
-		if (playersComp->killingSpree >= 5 && !playersComp->portalCreated && stateManager.activeLevel == 1)
-		{
-			playersComp->portalCreated = true;
-			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-		}
-		else if (playersComp->killingSpree >= 9 && !playersComp->portalCreated && stateManager.activeLevel == 3)
-		{
-			playersComp->portalCreated = true;
-			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-		}
-		else if (playersComp->killingSpree >= 13 && !playersComp->portalCreated && stateManager.activeLevel == 5)
-		{
-			playersComp->portalCreated = true;
-			EntityID portal = registry.CreateEntity();
-			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-		}
-		else if (playersComp->killingSpree >= 15 && !playersComp->portalCreated && stateManager.activeLevel == 7)
+		if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && !(currentStates & State::InShop))
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();
 			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 		}
 	}
-	
-	
 
 	return true;
 }

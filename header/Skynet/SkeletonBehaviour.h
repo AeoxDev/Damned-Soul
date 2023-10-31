@@ -8,4 +8,5 @@ struct SkeletonBehaviour
 	float attackTimer = 0.f;
 	float attackStunDurationCounter = 0.f;
 	const float attackStunDuration = 0.8f;
+	int attackHitboxID = 2;
 };

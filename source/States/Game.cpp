@@ -37,15 +37,6 @@ void GameScene::Input(bool isShop)
 			Unload(true);
 			stateManager.menu.Setup();
 		}
-
-		if (keyState[SDL_SCANCODE_RETURN] == pressed)
-		{
-			SetInMainMenu(false);
-			SetInPlay(true);
-			SetInShop(false);
-			Unload();
-			LoadLevel(++stateManager.activeLevel);
-		}
 	}
 	else
 	{
@@ -80,7 +71,7 @@ void GameScene::Unload(bool unloadPersistent)
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities((int)unloadPersistent);
+	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
 }
 
 void GameScene::GameOver()

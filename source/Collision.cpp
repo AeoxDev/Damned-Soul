@@ -5,7 +5,6 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include <cmath>
-#include <string>
 #include "Systems\Systems.h"
 #include "Components.h"
 #include <fstream>

@@ -30,8 +30,8 @@ void Menu::Setup()//Load
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.8f), DirectX::XMFLOAT2(1.0f, 1.0f));
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DirectX::XMFLOAT2(-0.8f, 0.6f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
+	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
@@ -55,20 +55,8 @@ void Menu::Setup()//Load
 void Menu::Input()
 {
 	
-	//Particles::PrepareParticleCompute();
-	//Dispatch(1, 2, 0);
-	//Particles::FinishParticleCompute();
 }
 
-void Menu::Update()
-{
-
-}
-
-void Menu::ComputeShaders()
-{
-
-}
 
 void Menu::SetupButtons()
 {
@@ -140,7 +128,7 @@ void Menu::Unload()
 		return;
 	m_active = false; // Set active to false
 
-	UnloadEntities(0);
+	UnloadEntities();
 
 	ClearUI();
 }

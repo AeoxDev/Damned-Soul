@@ -12,12 +12,10 @@
 #include "MouseComponent.h"
 // Physics Components
 #include "GeometryIndependentComponent.h"
-#include "PlayerComponent.h"
+//Event Components
 #include "TimedEventComponent.h"
-
-//GUI To Be Decapritated
-#include "TextComponent.h"
-#include "ImageComponent.h"
+#include "SquashStretchComponent.h"
+//To Be Decapritated
 #include "ParticleComponent.h"
 
 //Collision

@@ -105,7 +105,7 @@ int StateManager::Setup()
 	ui.Setup();
 
 	// Audio Engine VERY IMPORTANT TO LOAD THIS FIRST BEFORE ANY SOUND COMPONENT OR ELSE THINGS WILL GO WHACK!!!!!!!!!!!!!
-	EntityID audioJungle = registry.CreateEntity();
+	EntityID audioJungle = registry.CreateEntity(ENT_PERSIST_AUDIO);
 	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
 	audioEngine->Setup(audioJungle.index);
 
@@ -131,32 +131,32 @@ int StateManager::Setup()
 
 	// Render/GPU
 	systems.push_back(new UIRenderSystem());
+	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new RenderSystem());
 	
-	//Input based CPU
+	//Input based CPU 
 	systems.push_back(new ButtonSystem());
 
-	// CPU
-	systems.push_back(new KnockBackSystem());
-	systems.push_back(new ControllerSystem());
-	systems.push_back(new ParticleSystemCPU());
-	systems.push_back(new GeometryIndependentSystem());
-	systems.push_back(new PointOfInterestSystem());
-
-	//Damage Over Time (Misc Combat Systems?)
-	systems.push_back(new DamageOverTimeSystem());
-
+	//CPU WORK (ORDER IMPORTANT)
 	//AI Systems
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
-
-
+	//ORDER VERY IMPORTANT
+	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
-	systems.push_back(new TransformSystem());
-	systems.push_back(new EventSystem());
+	systems.push_back(new TransformSystem()); //Must be before controller
+	systems.push_back(new ControllerSystem());
+	systems.push_back(new EventSystem());//Must be after controller system for correct animations
+	systems.push_back(new GeometryIndependentSystem());
+
+	//Damage Over Time (Misc Combat Systems?)
+	systems.push_back(new DamageOverTimeSystem());
+
+	//CPU work that can affect rendering
 	systems.push_back(new StateSwitcherSystem());
+	systems.push_back(new PointOfInterestSystem());
 
 	//Audio (Needs to be close to last)
 	systems.push_back(new AudioSystem());
@@ -165,13 +165,11 @@ int StateManager::Setup()
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
-	systems.push_back(new UIGameLevelSystem());
+	//systems.push_back(new UIGameLevelSystem());
 	systems.push_back(new UIShopSystem());
 
 	return 0;
-
 }
-
 
 
 void StateManager::Input()
@@ -235,30 +233,6 @@ void StateManager::Update()
 	Input();
 }
 
-void StateManager::ComputeShaders()
-{
-	/*if (currentStates & State::InMainMenu)
-	{
-		menu.ComputeShaders();
-	}
-	if (currentStates & State::InPause)
-	{
-		pause.ComputeShaders();
-	}
-	if (currentStates & State::InSettings)
-	{
-		settings.ComputeShaders();
-	}
-	if (currentStates & State::InPlay)
-	{
-		levelScenes[activeLevelScene].ComputeShaders();
-	}
-	if (currentStates & State::InShop)
-	{
-		shop.ComputeShaders();
-	}*/
-}
-
 void StateManager::UnloadAll()
 {
 	menu.Unload();
@@ -266,7 +240,7 @@ void StateManager::UnloadAll()
 	scenes[0].Unload();
 	scenes[1].Unload();
 	scenes[2].Unload();
-	UnloadEntities(3);
+	UnloadEntities(ENT_PERSIST_HIGHEST_TIER);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();

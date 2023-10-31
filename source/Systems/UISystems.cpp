@@ -11,6 +11,9 @@
 #include "UIComponents.h"
 #include <iomanip>
 
+#include "States/StateManager.h"
+#include "States/StateEnums.h"
+
 bool uiUpdated = true;
 
 void RedrawUI()
@@ -18,7 +21,7 @@ void RedrawUI()
 	uiUpdated = true;
 }
 
-void SetTextAndImageProperties(ML_String, UIText&, UIImage&, DirectX::XMFLOAT2, DirectX::XMFLOAT2);
+void SetTextAndImageProperties(ML_String, UIText&, UIImage&, DSFLOAT2, DSFLOAT2);
 
 bool UIRenderSystem::Update()
 {
@@ -46,15 +49,15 @@ bool UIRenderSystem::Update()
                 uiElement->relics[i].flavorTitle.Draw();*/
         }
 
-		for (auto entity : View<UIText>(registry))
-			registry.GetComponent<UIText>(entity)->Draw();
+	    for (auto entity : View<UIText>(registry))
+		    registry.GetComponent<UIText>(entity)->Draw();
 
-		for (auto entity : View<UIGameLevelComponent>(registry))
+	    /*for (auto entity : View<UIGameLevelComponent>(registry))
 		{
 			auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
 			uiElement->image.Draw();
 			uiElement->text.Draw();
-		}
+		}*/
 
 		for (auto entity : View<UIHealthComponent>(registry))
 		{
@@ -71,28 +74,31 @@ bool UIRenderSystem::Update()
 			uiElement->text.Draw();
 		}
 
-        for (auto entity : View<UIShopRelicWindowComponent>(registry))
+        if (currentStates & State::InShop)
         {
-            auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-            uiElement->m_baseImage.Draw();
-            uiElement->m_priceText.Draw();
-        }
+            for (auto entity : View<UIShopComponent>(registry))
+            {
+                auto uiElement = registry.GetComponent<UIShopComponent>(entity);
+                uiElement->baseImage.Draw();
+                uiElement->playerInfo.Draw();
+            }
 
-        for (auto entity : View<UIRelicComponent>(registry))
-        {
-            auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
-            uiElement->sprite.Draw();
-            uiElement->flavorTitleImage.Draw();
-            uiElement->flavorTitle.Draw();
-            uiElement->flavorDescImage.Draw();
-            uiElement->flavorDesc.Draw();
-        }
+            for (auto entity : View<UIShopRelicWindowComponent>(registry))
+            {
+                auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+                uiElement->m_baseImage.Draw();
+                uiElement->m_priceText.Draw();
+            }
 
-        for (auto entity : View<UIShopComponent>(registry))
-        {
-            auto uiElement = registry.GetComponent<UIShopComponent>(entity);
-            uiElement->baseImage.Draw();
-            uiElement->playerInfo.Draw();
+            for (auto entity : View<UIRelicComponent>(registry))
+            {
+                auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
+                uiElement->sprite.Draw();
+                uiElement->flavorTitleImage.Draw();
+                uiElement->flavorTitle.Draw();
+                uiElement->flavorDescImage.Draw();
+                uiElement->flavorDesc.Draw();
+            }
         }
 
         for (auto entity : View<UIButton>(registry))
@@ -169,12 +175,12 @@ bool UIRelicsSystem::Update()
 		if (uiElement->relics.size() == 0)
 			return true;
 
-		DirectX::XMFLOAT2 spritePositionOffset = { uiElement->baseImage.m_UiComponent.m_CurrentBounds.right/ (uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 40.0f) ,
+		DSFLOAT2 spritePositionOffset = { uiElement->baseImage.m_UiComponent.m_CurrentBounds.right/ (uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 40.0f) ,
 												uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom /(uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 40.0f)};
 
-		DirectX::XMFLOAT2 startingSpritePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+		DSFLOAT2 startingSpritePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
 									   abs(uiElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-		DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+		DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 										-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 		if (uiElement->relicIndex == uiElement->relics.size() - 1)
@@ -266,17 +272,17 @@ bool UIRelicsSystem::Update()
     return true;
 }
 
-bool UIGameLevelSystem::Update()
-{
-	for (auto entity : View<UIGameLevelComponent>(registry))
-	{
-		auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
-
-        ML_String valueAsString = std::to_string(uiElement->value).c_str();
-        SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
-    }
-    return true;
-}
+//bool UIGameLevelSystem::Update()
+//{
+//	for (auto entity : View<UIGameLevelComponent>(registry))
+//	{
+//		auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
+//
+//        ML_String valueAsString = std::to_string(uiElement->value).c_str();
+//        SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
+//    }
+//    return true;
+//}
 
 bool UIShopSystem::Update()
 {
@@ -298,12 +304,12 @@ bool UIShopSystem::Update()
             "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
 
 
-        DirectX::XMFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
+        DSFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
                                                uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
 
-        DirectX::XMFLOAT2 startingSpritePosition = { abs(uiShopElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+        DSFLOAT2 startingSpritePosition = { abs(uiShopElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
                                        abs(uiShopElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-        DirectX::XMFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+        DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
                                         -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
         
         uiShopElement->playerInfo.UpdateText(playerInfo);
@@ -316,13 +322,13 @@ bool UIShopSystem::Update()
         auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
         auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-        uiElement->m_priceText.UpdateText(("Price: " + std::to_string(uiRelic->price)).c_str());
+        uiElement->m_priceText.UpdateText(("Soul Cost: " + std::to_string(uiRelic->price)).c_str());
     }
 
     return true;
 }
 
-void SetTextAndImageProperties(ML_String text, UIText& uiText, UIImage& uiImage, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 position)
+void SetTextAndImageProperties(ML_String text, UIText& uiText, UIImage& uiImage, DSFLOAT2 scale, DSFLOAT2 position)
 {
 
     uiText.UpdateText(text);

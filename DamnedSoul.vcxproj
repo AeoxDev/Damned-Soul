@@ -196,6 +196,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
+    <ClCompile Include="source\EventFunctions\FeedbackFunctions.cpp" />
+    <ClCompile Include="source\EventFunctions\StatFunctions.cpp" />
     <ClCompile Include="source\Level\Level4.cpp" />
     <ClCompile Include="source\Level\Shop.cpp" />
     <ClCompile Include="source\UIShopComponent.cpp" />
@@ -417,24 +420,23 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\SquashStretchComponent.h" />
+    <ClInclude Include="header\Components\ShopComponent.h" />
     <ClInclude Include="header\Components\UIComponents.h" />
-    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
-    <ClInclude Include="header\Components\ImageComponent.h" />
     <ClInclude Include="header\Components\GeometryIndependentComponent.h" />
     <ClInclude Include="header\Components\ModelComponent.h" />
-    <ClInclude Include="header\Components\PlayerComponent.h" />
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h" />
-    <ClInclude Include="header\Components\TextComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopComponent.h" />
+    <ClInclude Include="header\EnemyType.h" />
     <ClInclude Include="header\EntityCreation.h" />
     <ClInclude Include="header\EntityID.h" />
     <ClInclude Include="header\EventFunctions.h" />
@@ -472,7 +474,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />
     <ClInclude Include="header\States\CleanupMacros.h" />
     <ClInclude Include="header\States\Pause.h" />
-    <ClInclude Include="header\Relics.h" />
     <ClInclude Include="header\Systems\Systems.h" />
     <ClInclude Include="header\UI\UIButtonFunctions.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
@@ -522,10 +523,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon1.ico" />
-    <Image Include="icon2.ico" />
     <Image Include="resource\DamnedSoul.ico" />
     <Image Include="resource\DamnedSoulsIcon.png" />
+    <Image Include="resource\skill-icons_05.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DamnedSoul.rc">
