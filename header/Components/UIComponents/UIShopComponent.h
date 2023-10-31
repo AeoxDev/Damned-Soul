@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "UI\UIImage.h"
 #include "UI\UIText.h"
 #include "UI\UIButton.h"
@@ -46,8 +44,6 @@ struct UIShopComponent
 	UIText playerInfo;
 
 	bool ignore = true;
-
-	ML_Vector<Relics::RelicMetaData> relics;
 
 	UIShopComponent();
 

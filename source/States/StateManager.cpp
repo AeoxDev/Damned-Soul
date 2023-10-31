@@ -106,7 +106,7 @@ int StateManager::Setup()
 	ui.Setup();
 
 	// Audio Engine VERY IMPORTANT TO LOAD THIS FIRST BEFORE ANY SOUND COMPONENT OR ELSE THINGS WILL GO WHACK!!!!!!!!!!!!!
-	EntityID audioJungle = registry.CreateEntity();
+	EntityID audioJungle = registry.CreateEntity(ENT_PERSIST_AUDIO);
 	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
 	audioEngine->Setup(audioJungle.index);
 
@@ -171,7 +171,7 @@ int StateManager::Setup()
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
-	systems.push_back(new UIGameLevelSystem());
+	//systems.push_back(new UIGameLevelSystem());
 	systems.push_back(new UIShopSystem());
 
 	return 0;
@@ -251,7 +251,7 @@ void StateManager::UnloadAll()
 	scenes[0].Unload();
 	scenes[1].Unload();
 	scenes[2].Unload();
-	UnloadEntities(3);
+	UnloadEntities(ENT_PERSIST_HIGHEST_TIER);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();

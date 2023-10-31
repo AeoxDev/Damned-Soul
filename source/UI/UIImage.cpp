@@ -1,6 +1,7 @@
 #include "UI/UIImage.h"
 #include <d2d1.h>
 #include <wincodec.h>
+#include <assert.h>
 
 void UIImage::Setup(const ML_String& filepath, DSFLOAT2 position, DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {

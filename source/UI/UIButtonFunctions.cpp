@@ -18,7 +18,7 @@ void UIFunc::LoadNextLevel(void* args)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
-	UnloadEntities(0);
+	UnloadEntities();
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
@@ -43,7 +43,7 @@ void UIFunc::MainMenu_Settings(void* args)
 
 void UIFunc::MainMenu_Quit(void* args)
 {
-	UnloadEntities(0);
+	UnloadEntities();
 	sdl.quit = true;
 }
 
@@ -173,8 +173,7 @@ void UIFunc::Shop_BuyRelic(void* args)
 
 			/*uiElement->bought = true;
 
-			button->m_Images[0].SetImage("Dollar.png");
-			button->m_Images[1].SetImage("Dollar.png");*/
+			button->m_Images[0].SetImage("Dollar.png");*/
 
 			player->UpdateSouls(-uiRelic->price);
 			switch (uiRelic->relicIndex)
@@ -265,9 +264,6 @@ void UIFunc::Shop_ReRollRelic(void* args)
 
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 
-	//for (auto entity : View<PlayerComponent, StatComponent>(registry))
-	//	player = registry.GetComponent<PlayerComponent>(entity);
-
 	int counter = 0;
 	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
 	{
@@ -282,6 +278,22 @@ void UIFunc::Shop_ReRollRelic(void* args)
 			counter++;
 			continue;
 		}
+
+		/*if (uiElement->bought && args)
+		{
+			for (auto buttonEntity : View<UIButton>(registry))
+			{
+				auto button = registry.GetComponent<UIButton>(buttonEntity);
+				if (uiElement->shopPosition != button->shopPosition)
+					continue;
+
+				button->m_Images[0].SetImage("TempBuy.png");
+				break;
+			}
+
+			continue;
+		}*/
+		
 
 		uiRelic->relicIndex = includedRelics[counter];
 		switch (includedRelics[counter])

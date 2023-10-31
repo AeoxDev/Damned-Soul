@@ -18,22 +18,23 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 	cooldown -= input->timeDelta;
 	if (cooldown < 0)
 	{
-		// Get player
-		EntityID player;
-		for (auto entity : View<PlayerComponent>(registry))
-			player = entity;
+		// Should always happen no matter what
+		cooldown += LIGHTNING_GOD_COOLDOWN_SECONDS;
+
+		//// Get player
+		//EntityID player;
+		//for (auto entity : View<PlayerComponent>(registry))
+		//	player = entity;
 
 		// Get all "killable" things
 		ML_Vector<EntityID> potentialVictims;
-		for (auto entity : View<StatComponent>(registry))
+		for (auto entity : View<EnemyComponent>(registry))
 		{
-			if (entity.index != player.index)
-				potentialVictims.push_back(entity);
+			potentialVictims.push_back(entity);
 		}
 
 		if (0 == potentialVictims.size())
 		{
-			cooldown += LIGHTNING_GOD_COOLDOWN_SECONDS;
 			return;
 		}
 
@@ -46,8 +47,5 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 		// The unfortunate one about to be struck by lightning
 		StatComponent* unfortunateVictim = registry.GetComponent<StatComponent>(potentialVictims[randomlySelected]);
 		unfortunateVictim->UpdateHealth(-LIGHTNING_GOD_DAMAGE_FLAT);
-
-		// Add the cooldown onto the remaining cooldown
-		cooldown += LIGHTNING_GOD_COOLDOWN_SECONDS;
 	}
 }

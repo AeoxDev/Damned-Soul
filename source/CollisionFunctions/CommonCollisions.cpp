@@ -298,11 +298,11 @@ void AttackCollision(OnCollisionParameters& params)
 	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
 	//Squash both entities for extra effect
 	float squashKnockbackFactor = 1.0f + stat1->knockback * 0.1f;
-	AddSquashStretch(params.entity2, Constant, 0.75f / squashKnockbackFactor, 1.1f, 1.25f);
+	AddSquashStretch(params.entity2, Constant, 1.15f * squashKnockbackFactor, 1.1f, 0.75f);
 	int squashStretch2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
-	AddSquashStretch(params.entity1, Constant, 0.9f, 1.1f, 1.1f);
-	//Knockback mechanic
+	AddSquashStretch(params.entity1, Constant, 1.1f, 1.1f, 0.9f);
 	int squashStretch1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+	//Knockback mechanic
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->knockback * params.normal1X / transform1->mass, stat2->knockback * params.normal1Z / transform1->mass);
