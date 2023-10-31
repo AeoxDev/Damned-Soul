@@ -70,7 +70,7 @@ int main(int argc, char* args[])
 
 void UpdateDebugWindowTitle(std::string& title)
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
 	{
 		return;
@@ -81,5 +81,5 @@ void UpdateDebugWindowTitle(std::string& title)
 		//title+="";//Add more debugging information here, updates every second.
 		SetWindowTitle(title);
 	}
-#endif // _DEBUG Debugging purposes, not compiled in release
+//#endif // _DEBUG Debugging purposes, not compiled in release
 }

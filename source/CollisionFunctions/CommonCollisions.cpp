@@ -10,6 +10,7 @@
 #include "Relics\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
+
 #define SOFT_COLLISION_FACTOR 0.5f
 
 

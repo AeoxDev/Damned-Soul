@@ -64,7 +64,7 @@ float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
 	{
 		hpUpdate[i](&hpUpdateData);
 	}
-
+	RedrawUI();
 	// Return the new current health
 	return this->currentHealth;
 }
