@@ -274,6 +274,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		0.0f, 1.0f, -0.25f,
 		hc->currentShootingAttackRange + 1.0f, 1.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);
+
 	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
 	float  cornersX[3] = {0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
@@ -282,6 +283,18 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);//Reset hitbox
 	SetHitboxActive(dog, enemy->specialHitBoxID, true);
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, true);
+
+	if (registry.GetComponent<ParticleComponent>(dog) == nullptr)
+	{
+		registry.AddComponent<ParticleComponent>(dog, 1.0f, 0.0f, 0.5f,
+			0.0f, 2.5f, 3.0f, 0.0f,
+			cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], FLAMETHROWER);
+	}
+	else
+	{
+		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
+		Particles::UpdateMetadata(pc->metadataSlot, cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2]);
+	}
 
 	//if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
 	//{
@@ -314,6 +327,13 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		//TEEEEEMP
 		RemoveLight(dog);
 		hc->shootingTimer = 0.0f;
+
+		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
+		if (pc!= nullptr)
+		{
+			pc->Release();
+			registry.RemoveComponent<ParticleComponent>(dog);
+		}
 		
 	}
 }

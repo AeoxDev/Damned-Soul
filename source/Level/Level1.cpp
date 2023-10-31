@@ -20,7 +20,6 @@ void LoadLevel1()
 	EntityID stage = registry.CreateEntity();
 	
 	EntityID playerUi = registry.CreateEntity();
-	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -30,12 +29,14 @@ void LoadLevel1()
 	EntityID lightholderForth = registry.CreateEntity();
 	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 5.0f, 1, 0.0f, 0.0, -1.0f);
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
-	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
-	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
+	SetupEnemy(EnemyType::hellhound, -45.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::hellhound, 40.f, 0.f, -35.f);
+	//SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
+	//SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
+	//SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
 	//SetupEnemy(EnemyType::eye, -0.f, 0.f, 25.f);
+	// 
+	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
 	//5 souls total
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
@@ -47,12 +48,7 @@ void LoadLevel1()
 	// Stage (Default)
 	TransformComponent *stageTransform = registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
-	
-	
-
-	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
-	
+	phc->Load("default");	
 	
 
 

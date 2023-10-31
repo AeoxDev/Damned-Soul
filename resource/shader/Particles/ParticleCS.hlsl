@@ -43,7 +43,7 @@ inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
 inline void ImplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void RainMovement(in uint3 DTid, in uint3 blockID);
 
-bool IsPointInTriangle(float2 spot, float2 v0, float2 v1, float2 v2);
+bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
 
 
 RWStructuredBuffer<Input> inputParticleData : register(u0);
@@ -134,9 +134,9 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     }
             
     if (DTid.x < 126)
-        particle.position.x = particle.position.z - (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
+        particle.position.x = particle.position.x - (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
     else
-        particle.position.x = particle.position.z - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
+        particle.position.x = particle.position.x - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
 
     particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + psuedoRand) * dt;
 
@@ -202,16 +202,32 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     float2 v0 = float2(meta[blockID.y].positionInfo.y, meta[blockID.y].positionInfo.z);
     float2 v1 = float2(meta[blockID.y].morePositionInfo.x, meta[blockID.y].morePositionInfo.y);
     float2 v2 = float2(meta[blockID.y].morePositionInfo.z, meta[blockID.y].morePositionInfo.w);
-
+    
+    float2 legOne = v1 - v0;
+    float2 legTwo = v2 - v0;
     
     float2 middlePoint = (v2 - v1) / 2;
-    float2 dirVec = normalize(middlePoint - v0);
+    float2 middleVector = middlePoint - v0;
     
-    if (IsPointInTriangle(particle.position.xz, v0, v1, v2))
+    
+    
+    
+    //float2 dirVec = normalize(middlePoint - v0);
+    
+    
+    float2 v0ToParticle = particle.position.xz - v0;
+    
+    
+    float alpha = acos(dot(legOne, middleVector) / (length(legOne) * length(middleVector))) * 0.25f;
+    float beta = ((alpha * 2 * ((float) DTid.x / NUM_THREADS))) - alpha + PI*0.5f;
+
+    
+    
+    if (length(v0ToParticle) < length(middleVector))
     {
-        particle.position.x = particle.position.x + ((float) DTid.x - 127) / 128 * dirVec.x * dt;
-        particle.position.y = particle.position.y; // + (((float) DTid.x - 127) / 128) * dt;
-        particle.position.z = particle.position.z - (particle.velocity.z * dirVec.y * meta[OneHundo_TwoFiveFive].deltaTime) * dt;
+        particle.position.x = particle.position.x + cos(beta) * particle.velocity.x * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+        particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
+        particle.position.z = particle.position.z + sin(beta) * particle.velocity.z * dt * meta[OneHundo_TwoFiveFive].deltaTime;
 
     }
     else
@@ -293,32 +309,10 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
 }
 
 // Function to check if a point is inside a triangle
-bool IsPointInTriangle(float2 spot, float2 v0, float2 v1, float2 v2)
+bool IsPointInTriangle(float2 particleVector, float2 triangleVector)
 {
-    bool retVal = true;
-    
-    float area = ((v1.x - v0.x) * (v2.y - v0.y) - (v1.y - v0.y) * (v2.x - v0.x)) / 2;
-    
-    float baryOne = ((v1.x - spot.x) * (v2.y - spot.y) - (v1.y - spot.y) * (v2.x - spot.x)) / 2;
-    float baryTwo = ((spot.x - v0.x) * (v2.y - v0.y) - (spot.y - v0.y) * (v2.x - v0.x)) / 2;
-    float baryThree = ((v1.x - v0.x) * (spot.y - v0.y) - (v1.y - v0.y) * (spot.x - v0.x)) / 2;
-    
-    float alpha = baryOne / area;
-    float beta = baryTwo / area;
-    float gamma = baryThree / area;
+    //float degree = dot(particleVector, triangleVector) / length(triangleVector);
+    float scalar = dot(particleVector, triangleVector) / (length(particleVector) * length(triangleVector));
 
-    if ((alpha < 0 || beta < 0 || gamma < 0) || (alpha > 1 || beta > 1 || gamma > 1))
-    {
-        retVal = false;
-    }
-    else if ((alpha + beta + gamma > 1))
-    {
-        retVal = false;
-    }
-    
-
-    return retVal;
-
-    
-   
+    return true;
 }

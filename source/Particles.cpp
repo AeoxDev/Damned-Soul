@@ -35,7 +35,7 @@ void Particles::InitializeParticles()
 	{
 		particles[i].position = DirectX::XMFLOAT3(99999.f, 9999999.f, 9999999.f);
 		particles[i].time = 0.f;
-		particles[i].velocity = DirectX::XMFLOAT3(1.f, 1.f, 0.f);
+		particles[i].velocity = DirectX::XMFLOAT3(10.f, 10.f, 10.f);
 		particles[i].rotationZ = 0.f;
 		particles[i].rgb = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 		particles[i].size = 0.f;
@@ -77,6 +77,13 @@ void Particles::UpdateMetadata(int metadataSlot, float x, float y, float z)
 	data->metadata[metadataSlot].spawnPos.x = x;
 	data->metadata[metadataSlot].spawnPos.y = y;
 	data->metadata[metadataSlot].spawnPos.z = z;
+}
+
+void Particles::UpdateMetadata(int metadataSlot, float v0x, float v0z, float v1x, float v1z, float v2x, float v2z)
+{
+	data->metadata[metadataSlot].positionInfo.y = v0x; data->metadata[metadataSlot].positionInfo.z = v0z;
+	data->metadata[metadataSlot].morePositionInfo.x = v1x; 	data->metadata[metadataSlot].morePositionInfo.y = v1z;
+	data->metadata[metadataSlot].morePositionInfo.z = v2x; data->metadata[metadataSlot].morePositionInfo.w = v2z;
 }
 
 ParticleMetadataBuffer* Particles::GetData()

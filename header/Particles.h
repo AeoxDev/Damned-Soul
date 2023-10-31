@@ -58,6 +58,8 @@ namespace Particles
 	void ReleaseParticles();
 
 	void UpdateMetadata(int metadataSlot, float x, float y, float z);
+	// Overload for flamethrower triangles
+	void UpdateMetadata(int metadataSlot, float v0x, float v0z, float v1x, float v1z, float v2x, float v2z);
 	ParticleMetadataBuffer* GetData();
 
 	//Calls for D3D11Helper to set the compute shader and the resources it requires
