@@ -16,6 +16,8 @@
     <FxCompile Include="resource\shader\Particles\ParticleCS.hlsl" />
     <FxCompile Include="resource\shader\VertexShader.hlsl" />
     <FxCompile Include="resource\shader\PixelShader.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleSamplerVS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleSamplerPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />

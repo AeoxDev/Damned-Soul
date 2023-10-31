@@ -2,7 +2,6 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Components.h"
-#include "Particles.h"
 #include "EventFunctions.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
@@ -17,7 +16,6 @@ void LoadLevel3()
 {
 	EntityID stage = registry.CreateEntity();
 	EntityID playerUi = registry.CreateEntity();
-	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -66,7 +64,6 @@ void LoadLevel3()
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
-	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);

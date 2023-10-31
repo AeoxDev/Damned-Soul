@@ -5,6 +5,7 @@
 #include "UI/UIRenderer.h"
 #include <random>
 #include "Skynet\BehaviourHelper.h"
+#include "ParticleComponent.h"
 
 // input true on stuff you want to reset
 void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
@@ -220,7 +221,7 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 
 	dx /= magnitude;
 	dz /= magnitude;
-	
+
 
 	float targetX = htc->positionX + dx * hc->offsetForward;
 	float targetZ = htc->positionZ +  dz  * hc->offsetForward;
@@ -235,13 +236,11 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 	orthoZ /= magnitude;
 
 	hc->shootingSideTarget1X = targetX + orthoX * hc->offsetSide;
-	hc->shootingSideTarget1Z = targetZ  + orthoZ * hc->offsetSide;
-	hc->shootingSideTarget2X = targetX  - orthoX * hc->offsetSide;
+	hc->shootingSideTarget1Z = targetZ + orthoZ * hc->offsetSide;
+	hc->shootingSideTarget2X = targetX - orthoX * hc->offsetSide;
 	hc->shootingSideTarget2Z = targetZ - orthoZ * hc->offsetSide;
 	hc->shootingStartX = htc->positionX;
 	hc->shootingStartZ = htc->positionZ;
-
-	
 }
 
 bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float p3X, float p3Z, float playerX, float playerZ)
@@ -275,6 +274,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		0.0f, 1.0f, -0.25f,
 		hc->currentShootingAttackRange + 1.0f, 1.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);
+
 	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
 	float  cornersX[3] = {0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
@@ -283,6 +283,18 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);//Reset hitbox
 	SetHitboxActive(dog, enemy->specialHitBoxID, true);
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, true);
+
+	if (registry.GetComponent<ParticleComponent>(dog) == nullptr)
+	{
+		registry.AddComponent<ParticleComponent>(dog, 1.0f, 0.0f, 0.5f,
+			0.0f, 2.5f, 3.0f, 0.0f,
+			cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], FLAMETHROWER);
+	}
+	else
+	{
+		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
+		Particles::UpdateMetadata(pc->metadataSlot, cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2]);
+	}
 
 	//if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
 	//{
@@ -315,6 +327,13 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		//TEEEEEMP
 		RemoveLight(dog);
 		hc->shootingTimer = 0.0f;
+
+		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
+		if (pc!= nullptr)
+		{
+			pc->Release();
+			registry.RemoveComponent<ParticleComponent>(dog);
+		}
 		
 	}
 }
@@ -376,6 +395,7 @@ bool HellhoundBehaviourSystem::Update()
 		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
+
 
 	// FOR TESTING
 	/*int i = 0; 

@@ -12,6 +12,7 @@
 #include "Light.h"
 #include "Registry.h"
 #include "Components.h"
+#include "DeltaTime.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -120,7 +121,7 @@ int StateManager::Setup()
 	Camera::InitializeCamera();
 	menu.Setup();
 
-	Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
+	Particles::InitializeParticles();
 	//SetupTestHitbox();
 	RedrawUI();
 
@@ -133,8 +134,13 @@ int StateManager::Setup()
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new RenderSystem());
+	//systems[2]->timeCap = 1.f / 60.f;
+	systems.push_back(new ParticleSystem());
+	//systems[6]->timeCap = 1.f / 30.f;
+
+
 	
-	//Input based CPU 
+	//Input based CPU
 	systems.push_back(new ButtonSystem());
 
 	//CPU WORK (ORDER IMPORTANT)
@@ -226,8 +232,13 @@ void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
-		if (!systems[i]->Update())
-			break;
+		systems[i]->timeElapsed += GetDeltaTime();
+
+		if (systems[i]->timeElapsed >= systems[i]->timeCap)
+		{
+			systems[i]->Update();
+			systems[i]->timeElapsed -= systems[i]->timeCap;
+		}
 	}
 
 	Input();
