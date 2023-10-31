@@ -1,5 +1,5 @@
 #pragma once
-#include "EntityFramework.h"
+#include "EntityID.h"
 
 //void RandomPosition(EntityID& entity, const int& index);
 
@@ -22,7 +22,9 @@ void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
 
 //CONTINUOUS
+void PlayerAttackSound(EntityID& entity, const int& index);
 void PlayerAttack(EntityID& entity, const int& index);
+void PlayerDashSound(EntityID& entity, const int& index);
 void PlayerDash(EntityID& entity, const int& index);
 /*END OF PLAYER EVENTS*/
 
@@ -35,3 +37,26 @@ void SplitBoss(EntityID& entity, const int& index);
 
 //Loop static hazard hitbox
 void LoopHitbox(EntityID& entity, const int& index);
+
+//Hit Stop
+#define FREEZE_TIME 0.08f
+void HitStop(EntityID& entity, const int& index);
+
+//Animation functions
+void PauseAnimation(EntityID& entity, const int& index);
+void ContinueAnimation(EntityID& entity, const int& index);
+void ResetAnimation(EntityID& entity, const int& index);
+void BlinkColor(EntityID& entity, const int& index);
+void ResetColor(EntityID& entity, const int& index);
+void SquashStretch(EntityID& entity, const int& index);
+void ResetSquashStretch(EntityID& entity, const int& index);
+
+
+//Stats
+void SetSpeedZero(EntityID& entity, const int& index);
+void ResetSpeed(EntityID& entity, const int& index);
+
+//Camera
+#define CAMERA_CONSTANT_SHAKE_TIME 0.4f
+void ShakeCamera(EntityID& entity, const int& index);
+void ResetCameraOffset(EntityID& entity, const int& index);

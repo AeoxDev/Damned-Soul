@@ -3,9 +3,12 @@
 class System
 {
 public:
+	float timeCap = 0.f;
+	float timeElapsed = 0.f;
 	virtual bool Update() = 0;
 };
 
+void SetTime(System& systemName, float updateCallTime);
 
 class RenderSystem : public System
 {
@@ -27,6 +30,10 @@ class GeometryIndependentSystem : public System
 {
 	bool Update();
 };
+class AudioSystem : public System
+{
+	bool Update();
+};
 
 class UIRenderSystem : public System
 {
@@ -40,11 +47,15 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIPlayerRelicsSystem : public System
+class UIRelicsSystem : public System
 {
 	bool Update();
 };
-class UIGameLevelSystem : public System
+//class UIGameLevelSystem : public System
+//{
+//	bool Update();
+//};
+class UIShopSystem : public System
 {
 	bool Update();
 };
@@ -63,6 +74,10 @@ class ParticleSystemGPU : public System
 	bool Update();
 };
 class ParticleSystemCPU : public System
+{
+	bool Update();
+};
+class ParticleSystem : public System
 {
 	bool Update();
 };

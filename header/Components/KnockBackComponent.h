@@ -1,4 +1,6 @@
 #pragma once
+#define SELF_KNOCKBACK_FACTOR 0.2f
+
 
 struct EntityID;
 
@@ -6,6 +8,7 @@ struct KnockBackComponent
 {
 	float m_velocity_x;
 	float m_velocity_z;
+	float friction;
 
 	KnockBackComponent(const float x, const float z);
 

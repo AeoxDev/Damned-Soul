@@ -70,17 +70,22 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 	float scalarDist = 0.f;
 	int normalHit = -1;
 	//Check if circle if behind all of the lines of the convex shape
+	float circleXPos = (pos1x + RotateOffset(scaling1 * circle->circleHitbox[circleID].offsetX, scaling1 * circle->circleHitbox[circleID].offsetZ, circle->offsetXx, circle->offsetXz));
+	float circleZPos = (pos1z + RotateOffset(scaling1 * circle->circleHitbox[circleID].offsetZ, scaling1 * circle->circleHitbox[circleID].offsetX, circle->offsetZz, circle->offsetZx));
 	for (size_t i = 0; i < convex->convexHitbox[convexID].cornerAmount; i++)
 	{
 		//Get line
-		cornerToCircleX = (pos1x + RotateOffset(scaling1 * circle->circleHitbox[circleID].offsetX, scaling1 * circle->circleHitbox[circleID].offsetZ, circle->offsetXx, circle->offsetXz)) -
-			(pos2x + RotateOffset(scaling2X * convex->convexHitbox[convexID].cornerX[i], scaling2Z * convex->convexHitbox[convexID].cornerZ[i], convex->offsetXx, convex->offsetXz));
-		cornerToCircleZ = (pos1z + RotateOffset(scaling1 * circle->circleHitbox[circleID].offsetZ, scaling1 * circle->circleHitbox[circleID].offsetX, circle->offsetZz, circle->offsetZx)) - 
-			(pos2z +RotateOffset(scaling2Z * convex->convexHitbox[convexID].cornerZ[i], scaling2X * convex->convexHitbox[convexID].cornerX[i], convex->offsetZz, convex->offsetZx));
+		//Get line corner to circle
+		float convexXPos = (pos2x + RotateOffset(scaling2X * convex->convexHitbox[convexID].cornerX[i], scaling2Z * convex->convexHitbox[convexID].cornerZ[i], convex->offsetXx, convex->offsetXz));
+		float convexZPos = (pos2z + RotateOffset(scaling2Z * convex->convexHitbox[convexID].cornerZ[i], scaling2X * convex->convexHitbox[convexID].cornerX[i], convex->offsetZz, convex->offsetZx));
+		cornerToCircleX = circleXPos - convexXPos;
+		cornerToCircleZ = circleZPos - convexZPos;
 
 		//Do scalar with normal
-		scalarDist = (cornerToCircleX * RotateOffset(convex->convexHitbox[convexID].normalX[i], convex->convexHitbox[convexID].normalZ[i], convex->offsetXx, convex->offsetXz)) +
-			(cornerToCircleZ * RotateOffset(convex->convexHitbox[convexID].normalZ[i], convex->convexHitbox[convexID].normalX[i], convex->offsetZz, convex->offsetZx));
+		//Get rotated normal:
+		float normalX = RotateOffset(convex->convexHitbox[convexID].normalX[i], convex->convexHitbox[convexID].normalZ[i], convex->offsetXx, convex->offsetXz);
+		float normalZ = RotateOffset(convex->convexHitbox[convexID].normalZ[i], convex->convexHitbox[convexID].normalX[i], convex->offsetZz, convex->offsetZx);
+		scalarDist = (cornerToCircleX * normalX) + (cornerToCircleZ * normalZ);
 
 		//Check for radius
 		scalarDist = scalarDist - circle->circleHitbox[circleID].radius*scaling1;

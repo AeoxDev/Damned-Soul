@@ -1,46 +1,21 @@
 #include "UI/UIImage.h"
 #include <d2d1.h>
 #include <wincodec.h>
+#include <assert.h>
 
-
-using namespace DirectX;
-
-void UIImage::Setup(const std::string& file, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIImage::Setup(const ML_String& filepath, DSFLOAT2 position, DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 	m_UiComponent.Setup(scale, rotation, visibility);
 	m_Bitmap = nullptr;
 	m_Opacity = opacity;
 
-	HRESULT hr;
-	IWICBitmapDecoder* decoder = nullptr;
-	IWICBitmapFrameDecode* source = nullptr;
-	IWICFormatConverter* converter = nullptr;
-	IWICImagingFactory* factory = ui.GetImagingFactory();
-	const std::wstring path = L"../resource/GUI/" + std::wstring(file.begin(), file.end());
-
-	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
-	assert(!FAILED(hr));
-
-	hr = decoder->GetFrame(0, &source);
-	assert(!FAILED(hr));
-
-	hr = factory->CreateFormatConverter(&converter);
-	assert(!FAILED(hr));
-
-	hr = converter->Initialize(source, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeMedianCut);
-	assert(!FAILED(hr));
-
-
-	hr = ui.GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
-	assert(!FAILED(hr));
+	SetImage(filepath);
 
 	m_UiComponent.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
 
 	m_UiComponent.SetTransform(position, scale, rotation);
 
-	converter->Release();
-	source->Release();
-	decoder->Release();
+	
 }
 
 void UIImage::Release()
@@ -77,4 +52,36 @@ ID2D1Bitmap*& UIImage::GetBitmap()
 void UIImage::NullifyBitmap()
 {
 	m_Bitmap = nullptr;
+}
+
+void UIImage::SetImage(const ML_String& filepath)
+{
+	Release();
+
+	HRESULT hr;
+	IWICBitmapDecoder* decoder = nullptr;
+	IWICBitmapFrameDecode* source = nullptr;
+	IWICFormatConverter* converter = nullptr;
+	IWICImagingFactory* factory = ui.GetImagingFactory();
+	const std::wstring path = L"../resource/GUI/" + std::wstring(filepath.begin(), filepath.end());
+
+	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
+	assert(!FAILED(hr));
+
+	hr = decoder->GetFrame(0, &source);
+	assert(!FAILED(hr));
+
+	hr = factory->CreateFormatConverter(&converter);
+	assert(!FAILED(hr));
+
+	hr = converter->Initialize(source, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeMedianCut);
+	assert(!FAILED(hr));
+
+
+	hr = ui.GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &m_Bitmap);
+	assert(!FAILED(hr));
+
+	converter->Release();
+	source->Release();
+	decoder->Release();
 }

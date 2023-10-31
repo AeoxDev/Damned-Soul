@@ -1,5 +1,8 @@
 #pragma once
 #include "GameRenderer.h"
+#include "Particles.h"
+#include "EntityFramework.h"
+#include "Registry.h"
 
 enum ComputeShaders
 {
@@ -20,8 +23,16 @@ struct ParticleComponent
 	// Finds the index of the metadata for this component
 	int FindSlot();
 
-	ParticleComponent(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+
+	// Overload for FlameThrower
+	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float v0X, float v0Z, float v1X, float v1Z, float v2X, float v2Z,  ComputeShaders pattern);
 	~ParticleComponent();
 
-	void Setup(RenderSetupComponent constantBuffer[8], int RenderSlot, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
+
+	//void SetupFlamethrower(float seconds, float radius, float size, float x, float y, float z);
+	void Release();
+	void RemoveParticles(EntityID& entity);
+
 };
+

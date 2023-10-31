@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Input.h"
 #include "MemLib\ML_Vector.hpp"
+#include <assert.h>
 
 struct TimedEvent
 {
@@ -172,17 +173,34 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 	return tc->timedEvents.size() - 1;
 }
 
+uint32_t GetTimedEventCondition(EntityID& entity, const int& timedEventSlot)
+{
+	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
+	assert(comp != nullptr);
+	return comp->timedEvents[timedEventSlot].condition;//Needs to be fixed
+}
+
 uint32_t GetTimedEventCondition(TimedEventComponent*& comp, const int& timedEventSlot)
 {
 	return comp->timedEvents[timedEventSlot].condition;//Needs to be fixed
 }
 
-float GetEventTimedElapsed(EntityID& entityID, const int& timedEventSlot)
+float GetTimedEventElapsedTime(EntityID& entityID, const int& timedEventSlot)
 {
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entityID);
 	if (comp)
 	{
-		return comp->timedEvents[timedEventSlot].timer;
+		return comp->timedEvents[timedEventSlot].timer - comp->timedEvents[timedEventSlot].startTime;
+	}
+	return -1.0f;
+}
+
+float GetTimedEventTotalTime(EntityID& entityID, const int& timedEventSlot)
+{
+	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entityID);
+	if (comp)
+	{
+		return comp->timedEvents[timedEventSlot].endTime - comp->timedEvents[timedEventSlot].startTime;
 	}
 	return -1.0f;
 }

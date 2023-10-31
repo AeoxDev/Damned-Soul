@@ -2,6 +2,7 @@
 #include <random>
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
+#include <DirectXMath.h>
 
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z)
 {

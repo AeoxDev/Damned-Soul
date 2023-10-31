@@ -1,6 +1,7 @@
 #pragma once
 #include "ComponentHelper.h"
 #include "PointOfInterestComponent.h"
+#include "Audio.h"
 
 // Renderable Components
 #include "ModelComponent.h"
@@ -11,20 +12,10 @@
 #include "MouseComponent.h"
 // Physics Components
 #include "GeometryIndependentComponent.h"
-#include "PlayerComponent.h"
+//Event Components
 #include "TimedEventComponent.h"
-
-//GUI
-//This is a compiler slug. Please remove directxmath from includes for these before adding them to components.h
-//#include "UIComponents/UIButtonComponent.h"
-//#include "UIComponents/UIHealthComponent.h"
-//#include "UIComponents/UIPlayerSoulsComponent.h"
-//#include "UIComponents/UIPlayerRelicsComponent.h"
-//#include "UIComponents/UIGameLevelComponent.h"
-
-//GUI To Be Decapritated
-#include "TextComponent.h"
-#include "ImageComponent.h"
+#include "SquashStretchComponent.h"
+//To Be Decapritated
 #include "ParticleComponent.h"
 
 //Collision

@@ -2,8 +2,6 @@
 #include "SDLHandler.h"
 #include <d2d1.h>
 
-using namespace DirectX;
-
 void UIComponent::UpdateTransform()
 {
 	m_Transform = D2D1::Matrix3x2F::Scale(1.0f, 1.0f)
@@ -11,40 +9,29 @@ void UIComponent::UpdateTransform()
 		* D2D1::Matrix3x2F::Rotation(m_Rotation, { sdl.WIDTH / 2.0f, sdl.HEIGHT / 2.0f });
 }
 
-void UIComponent::SetTransform(XMFLOAT2 position, XMFLOAT2 scale, float rotation)
+void UIComponent::SetTransform(DSFLOAT2 position, DSFLOAT2 scale, float rotation)
 {
 	SetScale(scale);
 	SetPosition(position);
 	SetRotation(rotation);
 }
 
-//UIComponent::UIComponent(XMFLOAT2 position, XMFLOAT2 scale, float rotation, bool visibility)
-//	:m_Scale(scale), m_Rotation(rotation), m_Visibility(visibility)
-//{
-//	m_CurrentBounds = { 0, 0, 0, 0 };
-//	m_OriginalBounds = { 0, 0, 0, 0 };
-//	
-//	m_Position = {0, 0};
-//	
-//	UpdateTransform();
-//}
-
-XMFLOAT2 UIComponent::GetPosition()
+DSFLOAT2 UIComponent::GetPosition() const
 {
 	return m_Position;
 }
 
-XMFLOAT2 UIComponent::GetScale()
+DSFLOAT2 UIComponent::GetScale() const
 {
 	return m_Scale;
 }
 
-float UIComponent::GetRotation()
+float UIComponent::GetRotation() const
 {
 	return m_Rotation;
 }
 
-void UIComponent::Setup(DirectX::XMFLOAT2 scale, float rotation, bool visibility)
+void UIComponent::Setup(DSFLOAT2 scale, float rotation, bool visibility)
 {
 	m_Scale = scale;
 	m_Rotation = rotation;
@@ -57,20 +44,18 @@ void UIComponent::Setup(DirectX::XMFLOAT2 scale, float rotation, bool visibility
 	UpdateTransform();
 }
 
-void UIComponent::SetPosition(XMFLOAT2 position)
+void UIComponent::SetPosition(DSFLOAT2 position)
 {
 	// calculate screen space to pixel coords
 	// (-1,-1) -> (1,1) => (0,0) -> (width, height)
 	// (-1,-1) is the bottom left coorner, (1, 1) is the top right coorner
-	//int currentWindowWidth, currentWindowHeight;
-	//SDL_GetWindowSize(sdl.sdlWindow, &currentWindowWidth, &currentWindowHeight);
-	XMFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.BASE_WIDTH, (1.0f - position.y) * 0.5f * sdl.BASE_HEIGHT };
+	DSFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.BASE_WIDTH, (1.0f - position.y) * 0.5f * sdl.BASE_HEIGHT };
 
 	m_Position = { pixelCoords.x - (m_CurrentBounds.right / 2.0f) , pixelCoords.y - (m_CurrentBounds.bottom / 2.0f)};
 	UpdateTransform();
 }
 
-void UIComponent::SetScale(XMFLOAT2 scale)
+void UIComponent::SetScale(DSFLOAT2 scale)
 {	
 	m_Scale.x = scale.x;
 	m_Scale.y = scale.y;
@@ -109,7 +94,7 @@ bool UIComponent::IsVisible()
 	return m_Visibility;
 }
 
-bool UIComponent::Intersect(DirectX::XMINT2 mousePos)
+bool UIComponent::Intersect(DSINT2 mousePos)
 {
 	return (mousePos.x > m_Position.x) && (mousePos.x < m_Position.x + m_CurrentBounds.right) &&
 		(mousePos.y > m_Position.y) && (mousePos.y < m_Position.y + m_CurrentBounds.bottom);
