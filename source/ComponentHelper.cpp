@@ -1,5 +1,5 @@
 #include "Components.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include "Relics/RelicFuncInputTypes.h"
 #include "UIRenderer.h"
 

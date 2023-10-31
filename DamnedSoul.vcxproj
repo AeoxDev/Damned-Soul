@@ -227,7 +227,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\MouseComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
-    <ClCompile Include="source\RelicFunctions.cpp" />
+    <ClCompile Include="source\Relics\RelicFunctions.cpp" />
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
     <ClCompile Include="source\Relics\DemonHeart.cpp" />
     <ClCompile Include="source\Relics\FrostFire.cpp" />
@@ -471,13 +471,15 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
-    <ClInclude Include="header\RelicFunctions.h" />
+    <ClInclude Include="header\Relics\RelicData.h" />
+    <ClInclude Include="header\Relics\RelicFunctions.h" />
     <ClInclude Include="header\Relics\DemonBonemarrow.h" />
     <ClInclude Include="header\Relics\DemonHeart.h" />
     <ClInclude Include="header\Relics\FlameWeapon.h" />
     <ClInclude Include="header\Relics\FrostFire.h" />
     <ClInclude Include="header\Relics\LightningGod.h" />
     <ClInclude Include="header\Relics\RelicFuncInputTypes.h" />
+    <ClInclude Include="header\Relics\RelicInternalHelper.h" />
     <ClInclude Include="header\Relics\SoulHealth.h" />
     <ClInclude Include="header\Relics\SoulPower.h" />
     <ClInclude Include="header\Relics\SpeedyLittleDevil.h" />

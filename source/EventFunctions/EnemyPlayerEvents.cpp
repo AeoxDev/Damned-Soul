@@ -1,7 +1,7 @@
 #include "EventFunctions.h"
 #include "Components.h"
 #include "Registry.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include "Relics/RelicFuncInputTypes.h" //Why isn't this included by RelicFunctions? Hermaaaaaaaaan
 #include "DeltaTime.h"
 #include "Levels/LevelHelper.h"

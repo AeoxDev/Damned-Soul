@@ -2,6 +2,9 @@
 
 namespace SOUL_POWER
 {
+	// Call to set active for a specific entity (usually player)
+	void Initialize(void* input);
+
 	// Modifies the player's Strength by the current soul count initially
 	void ModifyPlayerStrengthInitial(void* data);
 

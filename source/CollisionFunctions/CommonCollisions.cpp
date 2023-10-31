@@ -5,7 +5,8 @@
 #include "Level.h"
 #include "UIRenderer.h"
 #include <assert.h>
-#include "RelicFunctions.h"
+#include "UIRenderer.h"
+#include "Relics/RelicFunctions.h"
 #include "Relics\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"

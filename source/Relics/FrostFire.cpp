@@ -1,16 +1,31 @@
+#include "Relics/RelicInternalHelper.h"
 #include "Relics/FrostFire.h"
 #include "Relics\RelicFuncInputTypes.h"
 #include "Registry.h"
 #include "Components.h"
 #include "EventFunctions.h"
 #include "KnockBackComponent.h"
-#include <chrono>
 
 #define FROST_FIRE_BASE_KNOCKBACK (1.f)
 
 #define FROST_FIRE_SPEED_MULTIPLIER (.8f)
 
 static bool FrostFireAvailable = true;
+
+void FROST_FIRE::Initialize(void* input)
+{
+	// Make sure the relic function map exists
+	_validateRelicFunctions();
+
+	// Mark as available immediately
+	FROST_FIRE::SetAvailable(nullptr);
+
+	// Add reset function to level swap list
+	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(FROST_FIRE::SetAvailable);
+
+	// Add it to the list of On Obtain functions
+	(*_RelicFunctions)[FUNC_ON_HEALTH_MODIFIED].push_back(FROST_FIRE::PushBackAndFreeze);
+}
 
 void FROST_FIRE::SetAvailable(void* data)
 {
