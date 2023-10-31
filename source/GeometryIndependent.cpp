@@ -8,7 +8,7 @@
 #include "Hitbox.h"
 #include "Model.h"
 
-#define TEXTURE_DIMENSIONS 128
+
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing
@@ -30,7 +30,7 @@ struct GeometryIndependentComponent
 	GIConstantBufferData shaderData;
 	float width, height, offsetX, offsetZ;
 	//TextureComponent
-	int8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+	int8_t texture[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS];
 
 	~GeometryIndependentComponent();
 };
@@ -40,8 +40,18 @@ struct giPixel
 };
 struct giCopyTexture
 {
-	giPixel texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+	giPixel texture[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS];
 };
+
+GIMapData* GetMapTexture(EntityID& entity)
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(entity);
+	if (GIcomponent == nullptr)
+	{
+		return nullptr;
+	}
+	return (GIMapData*)&GIcomponent->texture;
+}
 
 void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 {
@@ -175,9 +185,9 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 
 	//Another task: Save to a texture with custom size (int8 per pixel)
 
-	for (size_t i = 0; i < TEXTURE_DIMENSIONS; i++)
+	for (size_t i = 0; i < GI_TEXTURE_DIMENSIONS; i++)
 	{
-		for (size_t j = 0; j < TEXTURE_DIMENSIONS; j++)
+		for (size_t j = 0; j < GI_TEXTURE_DIMENSIONS; j++)
 		{
 			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
 		}
@@ -244,7 +254,7 @@ RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity)
 	}
 	//Create a renderTargetView for the GI
 	GIcomponent->renderTargetView = CreateRenderTargetView(USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS::BIND_RENDER_TARGET,
-		(CPU_FLAGS)0, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS, FORMAT_R32G32B32A32_UINT);
+		(CPU_FLAGS)0, GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS, FORMAT_R32G32B32A32_UINT);
 	return GIcomponent->renderTargetView;
 }
 DSV_IDX SetupGIDepthStencil(EntityID& stageEntity)
@@ -256,7 +266,7 @@ DSV_IDX SetupGIDepthStencil(EntityID& stageEntity)
 		return -1;
 	}
 	//Create a renderTargetView for the GI
-	GIcomponent->depthStencil = CreateDepthStencil(TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	GIcomponent->depthStencil = CreateDepthStencil(GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS);
 	return GIcomponent->depthStencil;
 }
 
@@ -304,7 +314,7 @@ TX_IDX SetupGIStagingTexture(EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32G32B32A32_UINT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32G32B32A32_UINT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS);
 	return GIcomponent->stagingTexture;
 }
 
@@ -329,7 +339,7 @@ RS_IDX SetupGIViewport(EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->viewport = CreateViewport(TEXTURE_DIMENSIONS, TEXTURE_DIMENSIONS);
+	GIcomponent->viewport = CreateViewport(GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS);
 	return GIcomponent->viewport;
 }
 
@@ -360,8 +370,8 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, float x, float z)
 {
 	//Get component for gi
 	//Calculate size per pixel:
-	float pixelX = gi->width / TEXTURE_DIMENSIONS;
-	float pixelZ = gi->height / TEXTURE_DIMENSIONS;
+	float pixelX = gi->width / GI_TEXTURE_DIMENSIONS;
+	float pixelZ = gi->height / GI_TEXTURE_DIMENSIONS;
 	//Calculate offset:
 	float offX = gi->width * 0.5f - gi->offsetX;
 	float offZ = gi->height * 0.5f- gi->offsetZ;
@@ -369,9 +379,9 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, float x, float z)
 	float px = (x + offX) /pixelX;
 	float pz = (-z + offZ) / pixelZ;
 	//Check if pixel in bounds
-	if (px < TEXTURE_DIMENSIONS && px >= 0)
+	if (px < GI_TEXTURE_DIMENSIONS && px >= 0)
 	{
-		if (pz < TEXTURE_DIMENSIONS && pz >= 0)
+		if (pz < GI_TEXTURE_DIMENSIONS && pz >= 0)
 		{
 			if (gi->texture[(int)pz][(int)px] == 0)
 			{

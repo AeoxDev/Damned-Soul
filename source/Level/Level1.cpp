@@ -14,6 +14,7 @@
 #include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
 
+
 void LoadLevel1()
 {
 	
@@ -75,6 +76,9 @@ void LoadLevel1()
 	
 	//Finally set the collision boxes
 
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
+	playerComp->mapID = stage;
+
 	
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
@@ -102,6 +106,8 @@ void LoadLevel1()
 	//EntityID hazard2 = CreateRoundStaticHazard("PlaceholderScene.mdl",18.5f, 0.1f, -20.0f, 0.08f, 0.1f, 0.08f, 0.8f, 0.4f, 0.1f, 3.0f, 2.0f);
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 
+	
+
 	//Add static hazards on the where player does not spawn
 	//const int nrHazards = 3;
 	//for (size_t i = 0; i < nrHazards; i++)
@@ -120,4 +126,5 @@ void LoadLevel1()
 	//		}
 	//	}
 	//}
+
 }

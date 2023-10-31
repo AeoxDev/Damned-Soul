@@ -51,6 +51,9 @@ public:
 	int killThreshold = 0;
 	bool portalCreated = false;
 
+	EntityID mapID; // this will be used for pathfinding, DO NOT TOUCH OUR COOKIE
+	//trust the process, I'm an engineer
+
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses

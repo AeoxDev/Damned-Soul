@@ -6,6 +6,7 @@
 #include "UI/UIRenderer.h"
 #include <random>
 
+
 #define SKELETON_ATTACK_HITBOX 2
 
 void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
@@ -107,6 +108,10 @@ bool SkeletonBehaviourSystem::Update()
 		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
+	PathfindingMap valueGrid;
+	if(playerComponent != nullptr)
+		valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID, playerTransformCompenent);
+
 
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
 	{

@@ -11,6 +11,7 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 
+#include "Skynet\BehaviourHelper.h"
 
 HitboxVisualizeVariables hvv;
 
