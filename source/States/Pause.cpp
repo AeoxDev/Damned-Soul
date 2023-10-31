@@ -16,6 +16,33 @@ void PauseState::Setup()
 
 void PauseState::Input()
 {
+	/*
+	if (isShop)
+	{
+		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
+		{
+			SetInMainMenu(true);
+			SetInPlay(false);
+			SetInShop(false);
+			Unload(true);
+			stateManager.menu.Setup();
+		}
+	}
+	else
+	{
+		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
+		{
+			SetInPause(true);
+			SetInPlay(false);
+			SetInShop(false);
+			Unload();
+
+			gameSpeed = 0.0f;
+			ResetInput();
+		}
+
+
+		*/
 	if (keyState[SCANCODE_ESCAPE] == pressed)
 	{
 		SetInPause(false);
@@ -33,3 +60,6 @@ void PauseState::Unload()
 		return;
 	m_active = false; // Set active to false
 }
+
+/*
+	}*/

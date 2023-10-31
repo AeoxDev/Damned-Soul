@@ -56,7 +56,7 @@ void GameScene::Input(bool isShop)
 
 void GameScene::Update()
 {
-	
+
 }
 
 void GameScene::ComputeShaders()
