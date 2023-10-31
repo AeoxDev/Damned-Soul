@@ -5,6 +5,7 @@
 #include "Relics/RelicFuncInputTypes.h" //Why isn't this included by RelicFunctions? Hermaaaaaaaaan
 #include "DeltaTime.h"
 #include "Levels/LevelHelper.h"
+#include "UIRenderer.h"
 //#include <cmath> //sin
 
 #define KNOCKBACK_FACTOR 0.3f
@@ -24,6 +25,7 @@ void BeginHit(EntityID& entity, const int& index)
 	//Deal regular damage as well as on-hit damage from potential relics
 	stats->UpdateHealth(-attackerStats->damage, player != nullptr);
 	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
+	RedrawUI();
 	RelicInput::OnHitInput funcInput
 	{
 		cpc->params.entity1,
@@ -77,6 +79,7 @@ void EndHit(EntityID& entity, const int& index)
 		skelel->colorAdditiveRed = 0.0f;
 	if (bonel)
 		bonel->colorAdditiveRed = 0.0f;
+	RedrawUI();//Bug fix redraw
 }
 
 
