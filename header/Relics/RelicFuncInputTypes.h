@@ -4,6 +4,12 @@
 
 namespace RelicInput
 {
+	struct OnStatCalcInput
+	{
+		EntityID entity;
+		void* adressOfStatComonent;
+	};
+
 	struct OnHitInput
 	{
 		EntityID attacker;

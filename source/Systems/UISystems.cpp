@@ -299,9 +299,9 @@ bool UIShopSystem::Update()
     {
         auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
 
-        ML_String playerInfo = ("Damage: " + std::to_string((int)stats->damage) + 
-            "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
-            "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
+        ML_String playerInfo = ("Damage: " + std::to_string((int)stats->GetDamage()) + 
+            "\nMove Speed: " + std::to_string((int)stats->GetSpeed()) +
+            "\nAttack Speed: " + std::to_string((int)stats->GetAttackSpeed())).c_str(); // Warning gets to stay for now
 
 
         DSFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,

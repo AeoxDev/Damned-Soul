@@ -69,6 +69,6 @@ void FROST_FIRE::PushBackAndFreeze(void* data)
 		AddKnockBack(entity, x, y);
 
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-		stat->moveSpeed *= FROST_FIRE_SPEED_MULTIPLIER;
+		//stat->moveSpeed *= FROST_FIRE_SPEED_MULTIPLIER;
 	}
 }
