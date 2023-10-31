@@ -1,9 +1,23 @@
+#include "Relics/RelicInternalHelper.h"
 #include "Relics/SoulHealth.h"
 #include "Relics/RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 
 #define SOUL_HEALTH_SOUL_FACTOR (1.f)
+
+void SOUL_HEALTH::Initialize(void* input)
+{
+	// Make sure the relic function map exists
+	_validateRelicFunctions();
+
+	// Modify player Health by current souls
+	// This effect is NOT added to the "On Obtain" list, since this isn't meant to be a one and done, but rather a setup for a constantly updating bonus
+	SOUL_HEALTH::ModifyPlayerHealthInitial(nullptr);
+
+	// Add the "On Soul Update" function that takes the delta of souls and modifies Health by it and adds it to the list
+	(*_RelicFunctions)[FUNC_ON_SOUL_UPDATE].push_back(SOUL_HEALTH::ModifyPlayerHealthUpdate);
+}
 
 void SOUL_HEALTH::ModifyPlayerHealthInitial(void* data)
 {
