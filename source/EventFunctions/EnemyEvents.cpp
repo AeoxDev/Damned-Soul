@@ -37,6 +37,9 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 
 	//Temp: Remove the light if dog dies during its flamethrower attack
 	RemoveLight(entity);
+	EnemyComponent* enmComp = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxActive(entity, enmComp->specialHitBoxID, false);
+	SetHitboxCanDealDamage(entity, enmComp->specialHitBoxID, false);
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
