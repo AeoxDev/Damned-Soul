@@ -121,7 +121,7 @@ void HardCollision(OnCollisionParameters& params)
 }
 
 //Check if attacker is static hazard and defender can hit static hazard.
-void StaticHazardAttackCollision(OnCollisionParameters& params)
+void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 {
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 

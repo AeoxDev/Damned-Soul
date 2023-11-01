@@ -1,3 +1,11 @@
+cbuffer GIConstantBufferData : register(b4)
+{
+	//Contains what is needed for the pixel shader to know what it should be doing
+    float heightThreshold; //The height in y to consider as stage or not
+    float idValue; //1 is stage, 2+ are static hazards, this is not used when reading from textures
+    float padding;
+    bool isTexture; //When hazard, if texture, read from texture instead.
+};
 
 struct PS_IN
 {
@@ -17,7 +25,7 @@ uint4 main(PS_IN input) : SV_TARGET
     uint result = 0;
     if (input.position.z > -10.0f)
     {
-        result = 1;
+        result = idValue;
     }
     return uint4(result, 0, 0, 0);
 }

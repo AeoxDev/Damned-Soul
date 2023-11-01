@@ -7,9 +7,9 @@
 #include "States/StateManager.h"
 #include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
-
+#include "UIRenderer.h"
 #include "UIComponents.h"
-
+#include "Model.h"
 #include "States/StateEnums.h"
 
 void LoadShop()
@@ -42,8 +42,6 @@ void LoadShop()
 	shopText->Setup("Shop");
 	shopText->m_UiComponent.SetPosition({ 0.0f, 0.8f });
 	shopText->m_UiComponent.SetScale({ 1.5f, 1.5f });
-
-	SetInShop(true);
 }
 
 void ReloadShop()

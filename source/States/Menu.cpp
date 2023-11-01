@@ -50,6 +50,38 @@ void Menu::Setup()//Load
 	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 
 	stateManager.activeLevel = 0;
+
+	const int nrHazards = 8;
+	for (size_t i = 0; i < nrHazards; i++)
+	{
+		bool succeded = false;
+		while (!succeded)
+		{
+			float randX = (float)(rand() % 100) - 50.0f;
+			float randZ = (float)(rand() % 100) - 50.0f;
+			if (randX * randX + randZ * randZ > 80)
+			{
+				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+				EntityID hazard = registry.CreateEntity();
+				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+
+				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+				hazardTransform->positionX = randX;
+				hazardTransform->positionY = 0.1f;
+				hazardTransform->positionZ = randZ;
+				hazardTransform->scaleX = randScaleX;
+				hazardTransform->scaleY = 0.1f;
+				hazardTransform->scaleZ = randScaleZ;
+				hazardTransform->facingX = cosf((float)rand());
+				hazardTransform->facingZ = sinf((float)rand());
+				AddStaticHazard(hazard, HAZARD_LAVA);
+
+				succeded = true;
+			}
+		}
+	}
+	RenderGeometryIndependentCollision(stage);
 }
 
 void Menu::Input()

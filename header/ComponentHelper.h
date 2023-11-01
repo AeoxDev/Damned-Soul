@@ -60,6 +60,11 @@ public:
 	bool IsModified() const;
 	// Set all stat bonuses to zero
 	void ZeroBonusStats();
+	//Hazards
+	float baseHazardModifier = 1.0f;
+	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
+
+	
 
 // Defensive Stats
 	// Get max health

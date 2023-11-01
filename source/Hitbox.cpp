@@ -754,7 +754,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		cornersZ[1] = -1.5f;
 		cornersZ[2] = -1.5f;
 		enemyComp->specialHitBoxID = CreateHitbox(entity, 3, cornersX, cornersZ);
-		SetCollisionEvent(entity, enemyComp->specialHitBoxID, StaticHazardAttackCollision);
+		SetCollisionEvent(entity, enemyComp->specialHitBoxID, HellhoundBreathAttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
 		SetHitboxActive(entity, enemyComp->specialHitBoxID, false);
@@ -776,7 +776,7 @@ void SetupLavaCollisionBox(EntityID& entity, float radius)
 {
 	AddHitboxComponent(entity);
 	int staticID = CreateHitbox(entity, radius, 0.f, 0.0f);
-	SetCollisionEvent(entity, staticID, StaticHazardAttackCollision);
+	SetCollisionEvent(entity, staticID, HellhoundBreathAttackCollision);
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(entity, staticID);
 	SetHitboxActive(entity, staticID, false);
@@ -1001,26 +1001,16 @@ void SetupTestHitbox()
 	//UpdatePhysics( registry);
 }
 
-EntityID CreateAndRenderGeometryIndependentCollision(EntityID& m)
-{
-	EntityID stage = registry.CreateEntity();
-	AddGeometryIndependentComponent(stage);
-	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stage);
-
-	RenderGeometryIndependentCollisionToTexture(stage);
-	ReleaseGI(stage);
-	return stage;
-}
-
 void RenderGeometryIndependentCollision(EntityID& m)
 {
 	AddGeometryIndependentComponent(m);
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(m);
-	/*while (true)
-	{
-		RenderGeometryIndependentCollisionToTexture(m);
-		Present();
-	}*/
+	//while (true)//Debugging GI
+	//{
+	//	RenderGeometryIndependentCollisionToTexture(m);
+	//	Present();
+	//}
+
 	RenderGeometryIndependentCollisionToTexture(m);
 	ReleaseGI(m);
 	return;

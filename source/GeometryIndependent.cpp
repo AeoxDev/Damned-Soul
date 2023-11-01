@@ -12,10 +12,10 @@
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing
-	float heightThreshold;//The height in y to consider as stage or not
-	float idValue;//1 is stage, 2+ are static hazards, this is not used when reading from textures
-	float padding;
-	bool isTexture;//When hazard, if texture, read from texture instead.
+	float heightThreshold = 0.0f;//The height in y to consider as stage or not
+	float idValue = -1.0f;//1 is stage, 2+ are static hazards, this is not used when reading from textures
+	float padding = -1.0f;
+	bool isTexture = false;//When hazard, if texture, read from texture instead.
 };
 struct GeometryIndependentComponent
 {
@@ -152,16 +152,35 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	ClearDepthStencilView(GIcomponent->depthStencil);
 	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
-	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
 	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
 	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
 	
 
 	//Update CB
+	GIcomponent->shaderData.idValue = 1.0f;
 	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 
 	//Render texture to RTV
 	LOADED_MODELS[model->model].RenderAllSubmeshes();
+
+	//Render all existing static hazards on to the submesh.
+	for (auto entity : View<StaticHazardComponent, TransformComponent, ModelBonelessComponent>(registry))
+	{
+		ModelBonelessComponent *hazardModel = registry.GetComponent<ModelBonelessComponent>(entity);
+		StaticHazardComponent* hazardComponent = registry.GetComponent<StaticHazardComponent>(entity);
+		TransformComponent* hazardTransform = registry.GetComponent<TransformComponent>(entity);
+		SetWorldMatrix(hazardTransform->positionX, hazardTransform->positionY, hazardTransform->positionZ,
+			hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ, 
+			hazardTransform->scaleX, hazardTransform->scaleY, hazardTransform->scaleZ, 
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[hazardModel->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[hazardModel->model].m_indexBuffer);
+		GIcomponent->shaderData.idValue = (float)hazardComponent->type;
+		UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+		LOADED_MODELS[hazardModel->model].RenderAllSubmeshes();
+	}
+
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;
 	GetTextureByType(RTVResource, TEXTURE_HOLDER_TYPE::RENDER_TARGET_VIEW, GIcomponent->renderTargetView);
@@ -189,10 +208,13 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	{
 		for (size_t j = 0; j < GI_TEXTURE_DIMENSIONS; j++)
 		{
+			if ((int8_t)(mappingTexture->texture[i][j]).r > 1)
+			{
+				GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
+			}
 			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
 		}
 	}
-
 
 	bool succeeded = MemLib::spop();
 
@@ -366,29 +388,45 @@ GeometryIndependentComponent::~GeometryIndependentComponent()
 	//ReleaseTexture(stagingTexture);
 }
 
-int PixelValueOnPosition(GeometryIndependentComponent*& gi, float x, float z)
+int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*& transform)
 {
-	//Get component for gi
 	//Calculate size per pixel:
-	float pixelX = gi->width / GI_TEXTURE_DIMENSIONS;
-	float pixelZ = gi->height / GI_TEXTURE_DIMENSIONS;
-	//Calculate offset:
-	float offX = gi->width * 0.5f - gi->offsetX;
-	float offZ = gi->height * 0.5f- gi->offsetZ;
-	//Translate position to pixel using the size.
-	float px = (x + offX) /pixelX;
-	float pz = (-z + offZ) / pixelZ;
+	GridPosition pixelPos = PositionOnGrid(gi, transform);
 	//Check if pixel in bounds
-	if (px < GI_TEXTURE_DIMENSIONS && px >= 0)
+	if (pixelPos.x < TEXTURE_DIMENSIONS && pixelPos.x >= 0)
 	{
-		if (pz < GI_TEXTURE_DIMENSIONS && pz >= 0)
+		if (pixelPos.z < TEXTURE_DIMENSIONS && pixelPos.z >= 0)
 		{
-			if (gi->texture[(int)pz][(int)px] == 0)
+			if (gi->texture[pixelPos.x][pixelPos.z] == 0)
 			{
-				return gi->texture[(int)pz][(int)px];
+				return gi->texture[pixelPos.z][pixelPos.x];
 			}
-			return gi->texture[(int)pz][(int)px];
+			return gi->texture[pixelPos.z][pixelPos.x];
 		}
 	}
 	return 0;
+}
+
+GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent*& transform)
+{
+	GridPosition toReturn;
+	//Calculate size per pixel:
+	float pixelX = gi->width / TEXTURE_DIMENSIONS;
+	float pixelZ = gi->height / TEXTURE_DIMENSIONS;
+	//Calculate offset:
+	float offX = gi->width * 0.5f - gi->offsetX;
+	float offZ = gi->height * 0.5f - gi->offsetZ;
+	//Translate position to pixel using the size.
+	float px = (transform->positionX + offX) / pixelX;
+	float pz = (-transform->positionZ + offZ) / pixelZ;
+	toReturn.x = (int)px;
+	toReturn.z = (int)pz;
+	
+	return toReturn;
+}
+
+void AddStaticHazard(EntityID& entity, const StaticHazardType& type)
+{
+	StaticHazardComponent* hazard = registry.AddComponent<StaticHazardComponent>(entity);
+	hazard->type = type;
 }
