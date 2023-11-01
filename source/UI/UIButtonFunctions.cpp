@@ -2,7 +2,7 @@
 #include "States\StateManager.h"
 #include "SDLHandler.h"
 #include "Level.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "Registry.h"
 #include "Components.h"

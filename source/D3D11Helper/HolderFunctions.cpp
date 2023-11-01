@@ -1,4 +1,4 @@
-#include "D3D11Graphics.h"
+#include "D3D11Helper/D3D11Graphics.h"
 
 #define FIND_NEXT_SUITABLE(main_map, var)			\
 uint32_t infinityLoopCheck = 0;						\
