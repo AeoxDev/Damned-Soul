@@ -1,13 +1,12 @@
 #include "Model.h"
 #include <fstream>
 #include "MemLib\MemLib.hpp"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "STB_Helper.h"
-#include "D3D11Helper.h"
 #include "MemLib\ML_String.hpp"
 #include "Hashing.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Graphics.h"
 
 #include "DeltaTime.h"
 

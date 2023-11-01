@@ -1,8 +1,8 @@
 #pragma once
 #include "UI/UIRenderer.h"
 #include "SDLHandler.h"
-#include "D3D11Graphics.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Graphics.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "MemLib/PoolPointer.hpp"
 #include "GameRenderer.h"
 #include <assert.h>

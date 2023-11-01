@@ -4,11 +4,11 @@
 #include "Hitbox.h"
 #include "Camera.h"
 #include "Particles.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UI/UIRenderer.h"
 #include "Particles.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "Light.h"
 #include "Registry.h"
 #include "Components.h"
@@ -106,7 +106,7 @@ int StateManager::Setup()
 	ui.Setup();
 
 	// Audio Engine VERY IMPORTANT TO LOAD THIS FIRST BEFORE ANY SOUND COMPONENT OR ELSE THINGS WILL GO WHACK!!!!!!!!!!!!!
-	EntityID audioJungle = registry.CreateEntity(ENT_PERSIST_AUDIO);
+	EntityID audioJungle = registry.CreateEntity(ENT_PERSIST_GAME);
 	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
 	audioEngine->Setup(audioJungle.index);
 
@@ -174,7 +174,6 @@ int StateManager::Setup()
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
-	//systems.push_back(new UIGameLevelSystem());
 	systems.push_back(new UIShopSystem());
 
 	return 0;
@@ -249,12 +248,12 @@ void StateManager::Update()
 
 void StateManager::UnloadAll()
 {
-	menu.Unload();
+	/*menu.Unload();
 	settings.Unload();
 	scenes[0].Unload();
 	scenes[1].Unload();
-	scenes[2].Unload();
-	UnloadEntities(ENT_PERSIST_HIGHEST_TIER);
+	scenes[2].Unload();*/
+	UnloadEntities(ENT_PERSIST_HIGHEST);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();
