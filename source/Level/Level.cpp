@@ -44,7 +44,7 @@ void LoadLevel(int level)
 	case 7: LoadLevel4(); break;
 	default: 
 		//UnloadEntities(true);//Reset game
-		UnloadEntities(ENT_PERSIST_PLAYER);//Reset game
+		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}

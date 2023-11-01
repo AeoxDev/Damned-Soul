@@ -1,9 +1,9 @@
 #include "Light.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "MemLib/ML_Vector.hpp"
 
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include <assert.h>
 #include "LightComponent.h"
 

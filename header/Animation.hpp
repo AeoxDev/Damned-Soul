@@ -1,5 +1,5 @@
 #pragma once
-#include "IDX_Types.h"
+#include "D3D11Helper\IDX_Types.h"
 #include "MemLib\PoolPointer.hpp"
 #include <DirectXMath.h>
 #include "AnimationType.h"

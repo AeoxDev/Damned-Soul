@@ -208,7 +208,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 void CreatePlayer(float positionX, float positionY, float positionZ, float mass, float health, float moveSpeed, float damage, float attackSpeed, int soulWorth, float facingX, float facingY, float facingZ, float scaleX, float scaleY, float scaleZ)
 {
 	//Create player
-	stateManager.player = registry.CreateEntity(ENT_PERSIST_PLAYER);
+	stateManager.player = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
