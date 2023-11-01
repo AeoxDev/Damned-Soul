@@ -13,6 +13,10 @@ namespace Relics
 		// arguments: foo(void)
 		FUNC_ON_OBTAIN,
 
+		// Called when calculating an entity's bonus stats
+		// arguments: foo(EntityID, StatComponent*)
+		FUNC_ON_STAT_CALC,
+
 		// Called when an enemy is hit by a weapon attack
 		// arguments: foo(PlayerEntity, EnemyEntity)
 		FUNC_ON_WEAPON_HIT,

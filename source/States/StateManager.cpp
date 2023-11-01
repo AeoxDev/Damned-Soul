@@ -4,11 +4,11 @@
 #include "Hitbox.h"
 #include "Camera.h"
 #include "Particles.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UI/UIRenderer.h"
 #include "Particles.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "Light.h"
 #include "Registry.h"
 #include "Components.h"
@@ -142,6 +142,9 @@ int StateManager::Setup()
 	
 	//Input based CPU
 	systems.push_back(new ButtonSystem());
+
+	// Stat Calculatoins
+	systems.push_back(new StatCalcSystem()); // Should be before behaviours and controllers so that the correct stats are applied
 
 	//CPU WORK (ORDER IMPORTANT)
 	//AI Systems

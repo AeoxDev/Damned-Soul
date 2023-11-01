@@ -298,7 +298,7 @@ void AttackCollision(OnCollisionParameters& params)
 	int indexSpeedControl1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
 	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
 	//Squash both entities for extra effect
-	float squashKnockbackFactor = 1.0f + stat1->knockback * 0.1f;
+	float squashKnockbackFactor = 1.0f + stat1->GetKnockback() * 0.1f;
 	AddSquashStretch(params.entity2, Constant, 1.15f * squashKnockbackFactor, 1.1f, 0.75f);
 	int squashStretch2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 	AddSquashStretch(params.entity1, Constant, 1.1f, 1.1f, 0.9f);
@@ -306,8 +306,8 @@ void AttackCollision(OnCollisionParameters& params)
 	//Knockback mechanic
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->knockback * params.normal1X / transform1->mass, stat2->knockback * params.normal1Z / transform1->mass);
-	AddKnockBack(params.entity2, stat1->knockback * params.normal2X / transform1->mass, stat1->knockback * params.normal2Z / transform1->mass);
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform1->mass, stat1->GetKnockback() * params.normal2Z / transform1->mass);
 	//Take damage and blinking
 	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
 	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now

@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <random>
+#include <time.h>
 
 ML_Map<RELIC_FUNCTION_TYPE, ML_Vector<VECTOR_FUNCTION_TYPE>>* _RelicFunctions = nullptr;
 
