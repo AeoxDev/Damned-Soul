@@ -48,7 +48,7 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID)
 		
 		// x z = functionCallFromElliot
 
-		returnMap.cost[X][Z] += 8;
+		//returnMap.cost[X][Z] += 8;
 	}
 
 

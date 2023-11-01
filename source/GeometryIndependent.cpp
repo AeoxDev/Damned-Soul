@@ -393,9 +393,9 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*&
 	//Calculate size per pixel:
 	GridPosition pixelPos = PositionOnGrid(gi, transform);
 	//Check if pixel in bounds
-	if (pixelPos.x < TEXTURE_DIMENSIONS && pixelPos.x >= 0)
+	if (pixelPos.x < GI_TEXTURE_DIMENSIONS && pixelPos.x >= 0)
 	{
-		if (pixelPos.z < TEXTURE_DIMENSIONS && pixelPos.z >= 0)
+		if (pixelPos.z < GI_TEXTURE_DIMENSIONS && pixelPos.z >= 0)
 		{
 			if (gi->texture[pixelPos.x][pixelPos.z] == 0)
 			{
@@ -411,8 +411,8 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 {
 	GridPosition toReturn;
 	//Calculate size per pixel:
-	float pixelX = gi->width / TEXTURE_DIMENSIONS;
-	float pixelZ = gi->height / TEXTURE_DIMENSIONS;
+	float pixelX = gi->width / GI_TEXTURE_DIMENSIONS;
+	float pixelZ = gi->height / GI_TEXTURE_DIMENSIONS;
 	//Calculate offset:
 	float offX = gi->width * 0.5f - gi->offsetX;
 	float offZ = gi->height * 0.5f - gi->offsetZ;

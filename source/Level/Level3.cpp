@@ -9,7 +9,7 @@
 #include "DeltaTime.h"
 #include "Model.h"
 #include "UIComponents.h"
-
+#include "States\StateManager.h"
 #include "UIRenderer.h"
 
 void LoadLevel3()
@@ -138,4 +138,6 @@ void LoadLevel3()
 		}
 	}
 	RenderGeometryIndependentCollision(stage);
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
+	playerComp->mapID = stage;
 }

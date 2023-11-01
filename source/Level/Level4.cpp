@@ -6,6 +6,7 @@
 #include "Levels\LevelHelper.h"
 #include "Model.h"
 #include "UIComponents.h"
+#include "States\StateManager.h"
 
 void LoadLevel4()
 {
@@ -51,6 +52,9 @@ void LoadLevel4()
 	gameLevelUIc->text.Setup("");*/
 
 	RenderGeometryIndependentCollision(stage);
+
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
+	playerComp->mapID = stage;
 
 	EntityID mouse = registry.CreateEntity();
 	registry.AddComponent<TransformComponent>(mouse);

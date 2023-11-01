@@ -110,8 +110,13 @@ bool SkeletonBehaviourSystem::Update()
 	}
 	PathfindingMap valueGrid;
 	
-	if (playerComponent != nullptr)
-		valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID);
+	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
+	{
+		if (playerComponent != nullptr)
+			valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID);
+		continue;
+	}
+	
 
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
 	{
