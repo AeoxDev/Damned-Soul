@@ -8,7 +8,8 @@
 #include "Hitbox.h"
 #include "Model.h"
 
-#define TEXTURE_DIMENSIONS 128
+//480 is the size memlib allows without crashing. 
+#define TEXTURE_DIMENSIONS 480
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing

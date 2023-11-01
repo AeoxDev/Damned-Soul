@@ -26,6 +26,8 @@ public:
 	//Hazards
 	float baseHazardModifier = 1.0f;
 	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
+	bool baseCanWalkOnCrack = false;//onCrack
+	bool canWalkOnCrack = false;//If the entity can walk on cracks or not.
 
 	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) 
 	{ baseMoveSpeed = moveSpeed; }
