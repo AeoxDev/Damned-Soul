@@ -67,7 +67,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
-		stats->hazardModifier = 1.0f;
+		stats->hazardModifier = stats->baseHazardModifier;
 	}
 
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);

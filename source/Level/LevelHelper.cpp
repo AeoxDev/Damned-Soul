@@ -164,6 +164,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	if (eType == EnemyType::hellhound)
 	{
 		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
 		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
@@ -187,6 +188,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	else if (eType == EnemyType::eye)
 	{
 		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
 		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
