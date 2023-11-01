@@ -66,11 +66,6 @@ void GameScene::ComputeShaders()
 
 void GameScene::Unload(bool unloadPersistent)
 {
-	// If this state is not active, simply skip the unload
-	if (false == m_active)
-		return;
-	m_active = false; // Set active to false
-
 	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
 }
 

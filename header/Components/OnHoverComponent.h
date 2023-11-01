@@ -1,18 +1,21 @@
 #pragma once
 #include "UI.h"
 
-struct OnClickComponent
+struct OnHoverComponent
 {
 	DSFLOAT2 position = { 0.0f, 0.0f };
 	DSBOUNDS bounds = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-	void(*onClick)(void*);
+	bool redrawUI = true;
+	bool hasBeenDrawn = false;
 
-	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*))
+	void(*onHover)(void*, bool);
+
+	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, bool))
 	{
 		position = pos;
 		bounds = bnds;
-		onClick = func;	
+		onHover = func;
 	};
 
 	bool Intersect(DSINT2 mousePosition)

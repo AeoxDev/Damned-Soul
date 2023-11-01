@@ -18,8 +18,10 @@ void LoadLevel1()
 {
 	
 	EntityID stage = registry.CreateEntity();
+
+	EntityID playerHealth = registry.CreateEntity(ENT_PERSIST_PLAYER);
+	EntityID playerSouls = registry.CreateEntity(ENT_PERSIST_PLAYER);
 	
-	EntityID playerUi = registry.CreateEntity();
 	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
@@ -38,6 +40,7 @@ void LoadLevel1()
 	//SetupEnemy(EnemyType::eye, -0.f, 0.f, 25.f);
 	//5 souls total
 
+
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	stageModel->colorMultiplicativeRed = 0.75f;
 	stageModel->colorMultiplicativeGreen = 0.75f;
@@ -51,14 +54,13 @@ void LoadLevel1()
 
 	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
-	pcUiHpC->text.Setup("");
+	UIComponent* ui1 = registry.AddComponent<UIComponent>(playerHealth);
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(playerHealth);
+	ui1->Setup("ExMenu/FullHealth", "ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
 
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
-	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup("");
+	UIComponent* ui2 = registry.AddComponent<UIComponent>(playerSouls);
+	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(playerSouls);
+	ui2->Setup("", "ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.6f));
 
 	//Thing in the top right corner showing what level we're on
 	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 1);

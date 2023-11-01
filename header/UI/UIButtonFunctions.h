@@ -52,4 +52,6 @@ namespace UIFunc
 
 	// Heal the player
 	void Shop_Heal(void* args);
+
+	void HoverImage(void* args, bool hover);
 }

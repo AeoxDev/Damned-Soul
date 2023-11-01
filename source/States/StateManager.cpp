@@ -135,7 +135,8 @@ int StateManager::Setup()
 	systems.push_back(new RenderSystem());
 	
 	//Input based CPU 
-	systems.push_back(new ButtonSystem());
+	systems.push_back(new OnClickSystem());
+	systems.push_back(new OnHoverSystem());
 
 	//CPU WORK (ORDER IMPORTANT)
 	//AI Systems
@@ -220,7 +221,6 @@ void StateManager::Input()
 		scenes[activeLevelScene % 2 == 1].Input(true);
 	}
 }
-
 
 void StateManager::Update()
 {

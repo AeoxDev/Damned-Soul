@@ -32,7 +32,6 @@ void LoadLevel(int level)
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
-	stateManager.scenes[stateManager.activeLevelScene].m_active = true;
 	
 	switch (level)
 	{
@@ -44,7 +43,6 @@ void LoadLevel(int level)
 	case 6: LoadShop(); break;
 	case 7: LoadLevel4(); break;
 	default: 
-		//UnloadEntities(true);//Reset game
 		UnloadEntities(ENT_PERSIST_PLAYER);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;

@@ -31,78 +31,43 @@ bool UIRenderSystem::Update()
 		UpdateUI();
 		Begin2dFrame(ui);
 
-        for (auto entity : View<UIImage>(registry))
-            registry.GetComponent<UIImage>(entity)->Draw();
-
-		for (auto entity : View<UIPlayerRelicsComponent>(registry))
+		for (auto entity : View<UIComponent>(registry))
 		{
-			auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-			uiElement->baseImage.Draw();
+			auto uiElement = registry.GetComponent<UIComponent>(entity);
+            uiElement->m_BaseImage.Draw();
+            uiElement->m_Image.Draw();
+            uiElement->m_Text.Draw();
+		}
 
-            /*for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-                uiElement->relics[i].sprite.Draw();
-
-            for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-                uiElement->relics[i].flavorTitleImage.Draw();
-
-            for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-                uiElement->relics[i].flavorTitle.Draw();*/
-        }
-
-	    for (auto entity : View<UIText>(registry))
-		    registry.GetComponent<UIText>(entity)->Draw();
-
-	    /*for (auto entity : View<UIGameLevelComponent>(registry))
+		/*for (auto entity : View<UIPlayerSoulsComponent, UIElementComponent>(registry))
 		{
-			auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
-			uiElement->image.Draw();
-			uiElement->text.Draw();
+			auto uiElement = registry.GetComponent<UIElementComponent>(entity);
+            uiElement->Draw();
+		}
+
+		for (auto entity : View<OnHoverComponent, UIElementComponent>(registry))
+		{
+			auto uiElement = registry.GetComponent<UIElementComponent>(entity);
+			uiElement->Draw();
 		}*/
 
-		for (auto entity : View<UIHealthComponent>(registry))
-		{
-			auto uiElement = registry.GetComponent<UIHealthComponent>(entity);
-			uiElement->backgroundImage.Draw();
-			uiElement->healthImage.Draw();
-			uiElement->text.Draw();
-		}
-
-		for (auto entity : View<UIPlayerSoulsComponent>(registry))
-		{
-			auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(entity);
-			uiElement->image.Draw();
-			uiElement->text.Draw();
-		}
-
-        if (currentStates & State::InShop)
+       /* for (auto entity : View<UIShopComponent>(registry))
         {
-            for (auto entity : View<UIShopComponent>(registry))
-            {
-                auto uiElement = registry.GetComponent<UIShopComponent>(entity);
-                uiElement->baseImage.Draw();
-                uiElement->playerInfo.Draw();
-            }
-
-            for (auto entity : View<UIShopRelicWindowComponent>(registry))
-            {
-                auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-                uiElement->m_baseImage.Draw();
-                uiElement->m_priceText.Draw();
-            }
-
-            for (auto entity : View<UIRelicComponent>(registry))
-            {
-                auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
-                uiElement->sprite.Draw();
-                uiElement->flavorTitleImage.Draw();
-                uiElement->flavorTitle.Draw();
-                uiElement->flavorDescImage.Draw();
-                uiElement->flavorDesc.Draw();
-            }
+            auto uiElement = registry.GetComponent<UIShopComponent>(entity);
+            uiElement->uiElement.Draw();
         }
 
-        for (auto entity : View<UIButton>(registry))
-            registry.GetComponent<UIButton>(entity)->Draw();
+        for (auto entity : View<UIShopRelicWindowComponent>(registry))
+        {
+            auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+            uiElement->uiElement.Draw();
+        }
+
+        for (auto entity : View<UIRelicComponent>(registry))
+        {
+            auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
+            uiElement->uiElement.Draw();
+        }*/
 
         End2dFrame(ui);
     }
@@ -112,33 +77,33 @@ bool UIRenderSystem::Update()
 
 bool UIHealthSystem::Update()
 {
-	EntityID playerUI;
-	for (auto entity : View<UIHealthComponent, UIPlayerSoulsComponent>(registry))
-		playerUI = entity;
+	DSFLOAT2 healthScale = {};
+	int healthBoundsRight = 0;
+	float percentageHealth = 0.0f, currentHealth = 0.0f;
 
 	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 	{
-		auto uiElement = registry.GetComponent<UIHealthComponent>(playerUI);
 		auto stats = registry.GetComponent<StatComponent>(entity);
-		auto currentHealth = stats->GetHealth();
 		auto maxHealth = stats->GetMaxHealth();
-		uiElement->value = currentHealth;
+		currentHealth = stats->GetHealth();
 
-		uiElement->backgroundImage.m_UiComponent.SetPosition(uiElement->position);
-		uiElement->backgroundImage.m_UiComponent.SetScale(uiElement->scale);
+		percentageHealth = currentHealth / maxHealth;
+	}
 
-		float percentageHealth = currentHealth / maxHealth;
+	for (auto entity : View<UIHealthComponent, UIComponent>(registry))
+	{
+		auto health = registry.GetComponent<UIHealthComponent>(entity);
+		auto uiElement = registry.GetComponent<UIComponent>(entity);
 
-		auto healthScale = uiElement->healthImage.m_UiComponent.GetScale();
-		auto healthBoundsRight = uiElement->healthImage.m_UiComponent.m_OriginalBounds.right;
-		uiElement->healthImage.m_UiComponent.SetScale({ healthScale.x, healthScale.y });
-		uiElement->healthImage.m_UiComponent.SetPosition({ uiElement->position.x, uiElement->position.y });
-		uiElement->healthImage.m_UiComponent.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
+		health->value = currentHealth;
+		healthScale = uiElement->m_BaseImage.baseUI.GetScale();
+		int healthBoundsRight = uiElement->m_Image.baseUI.m_OriginalBounds.right;
 
-		ML_String valueAsString = ("Health: " + std::to_string((int)uiElement->value)).c_str();
-		uiElement->text.UpdateText(valueAsString);
-		uiElement->text.m_UiComponent.SetScale(uiElement->scale);
-		uiElement->text.m_UiComponent.SetPosition(uiElement->position);
+		uiElement->m_Image.baseUI.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
+
+		uiElement->m_Text.SetText(("Health: " + std::to_string((int)health->value)).c_str());
+		uiElement->m_Text.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(), 
+			uiElement->m_BaseImage.baseUI.GetRotation(), true, uiElement->m_BaseImage.baseUI.GetOpacity());
 	}
 
 	return true;
@@ -146,18 +111,24 @@ bool UIHealthSystem::Update()
 
 bool UIPlayerSoulsSystem::Update()
 {
-    EntityID playerUI;
-    for (auto entity : View<UIHealthComponent, UIPlayerSoulsComponent>(registry))
-        playerUI = entity;
+	int currentSouls = 0;
 
-    for (auto entity : View<PlayerComponent>(registry))
+	for (auto entity : View<PlayerComponent>(registry))
+	{
+		auto player = registry.GetComponent<PlayerComponent>(entity);
+		currentSouls = player->GetSouls();
+	}
+
+    for (auto entity : View<UIPlayerSoulsComponent, UIComponent>(registry))
     {
-        auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(playerUI);
-        auto player = registry.GetComponent<PlayerComponent>(entity);
-        uiElement->value = player->GetSouls();
+		auto souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
+		auto uiElement = registry.GetComponent<UIComponent>(entity);
 
-		ML_String valueAsString = ("Souls: " + std::to_string(uiElement->value)).c_str();
-		SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
+		souls->value = currentSouls;
+
+		uiElement->m_Text.SetText(("Souls: " + std::to_string((int)souls->value)).c_str());
+		uiElement->m_Text.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(),
+			uiElement->m_BaseImage.baseUI.GetRotation(), true, uiElement->m_BaseImage.baseUI.GetOpacity());
 	}
 
 	return true;
@@ -165,110 +136,111 @@ bool UIPlayerSoulsSystem::Update()
 
 bool UIRelicsSystem::Update()
 {
-    for (auto entity : View<UIPlayerRelicsComponent>(registry))
-    {
-        auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+  //  for (auto entity : View<UIPlayerRelicsComponent>(registry))
+  //  {
+  //      auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
 
-		uiElement->baseImage.m_UiComponent.SetScale(uiElement->scale);
-		uiElement->baseImage.m_UiComponent.SetPosition(uiElement->position);
+		//uiElement->baseImage.m_UiComponent.SetScale(uiElement->scale);
+		//uiElement->baseImage.m_UiComponent.SetPosition(uiElement->position);
 
-		if (uiElement->relics.size() == 0)
-			return true;
+		//if (uiElement->relics.size() == 0)
+		//	return true;
 
-		DSFLOAT2 spritePositionOffset = { uiElement->baseImage.m_UiComponent.m_CurrentBounds.right/ (uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 40.0f) ,
-												uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom /(uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 40.0f)};
+		//DSFLOAT2 spritePositionOffset = { uiElement->baseImage.m_UiComponent.m_CurrentBounds.right/ (uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 40.0f) ,
+		//										uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom /(uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 40.0f)};
 
-		DSFLOAT2 startingSpritePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
-									   abs(uiElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-		DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-										-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+		//DSFLOAT2 startingSpritePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+		//							   abs(uiElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
+		//DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+		//								-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-		if (uiElement->relicIndex == uiElement->relics.size() - 1)
-		{
-			uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetScale({ 1.0f , 1.0f });
+		//if (uiElement->relicIndex == uiElement->relics.size() - 1)
+		//{
+		//	uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetScale({ 1.0f , 1.0f });
 
-			/*if (uiElement->relicIndex % 3 == 0 && uiElement->relicIndex != 0)
-			{
-				uiElement->gridPosition.y++;
-				uiElement->gridPosition.x = 0;
-			}*/
+		//	/*if (uiElement->relicIndex % 3 == 0 && uiElement->relicIndex != 0)
+		//	{
+		//		uiElement->gridPosition.y++;
+		//		uiElement->gridPosition.x = 0;
+		//	}*/
 
-            uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
-            uiElement->relics[uiElement->relicIndex].flavorTitle.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
-            uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y) + 1.25f) });
+  //          uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
+  //          uiElement->relics[uiElement->relicIndex].flavorTitle.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
+  //          uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y) + 1.25f) });
 
-			uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
-			uiElement->relicIndex++;
-			uiElement->gridPosition.x++;
+		//	uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
+		//	uiElement->relicIndex++;
+		//	uiElement->gridPosition.x++;
 
-			RedrawUI();
-		} 
+		//	RedrawUI();
+		//} 
 
-		for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-		{
-			if (uiElement->relics[i].sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
-			{
+		//for (uint32_t i = 0; i < uiElement->relics.size(); i++)
+		//{
+		//	if (uiElement->relics[i].sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
+		//	{
 
-                uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(true);
-                uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(true);
-                //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(true);
+  //              uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(true);
+  //              uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(true);
+  //              //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(true);
 
-                if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible() && uiElement->relics[i].doRedraw)
-                {
-                    RedrawUI();
-                    uiElement->relics[i].doRedraw = false;
-                }
+  //              if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible() && uiElement->relics[i].doRedraw)
+  //              {
+  //                  RedrawUI();
+  //                  uiElement->relics[i].doRedraw = false;
+  //              }
 
-            }
-            else
-            {
-                if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible())
-                {
-                    RedrawUI();
-                    uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(false);
-                    uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(false);
-                    //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(false);
-                    uiElement->relics[i].doRedraw = true;
-                }
-
-
-            }
-        }
-    }
-
-    for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
-    {
-        auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-        auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
-
-        if (uiRelic->sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
-        {
-            uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(true);
-            uiRelic->flavorTitle.m_UiComponent.SetVisibility(true);
-            uiRelic->flavorDescImage.m_UiComponent.SetVisibility(true);
-            uiRelic->flavorDesc.m_UiComponent.SetVisibility(true);
-
-            if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible() && uiRelic->doRedraw)
-            {
-                RedrawUI();
-                uiRelic->doRedraw = false;
-            }
-        }
-        else
-        {
-            if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible())
-            {
-                RedrawUI();
-                uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(false);
-                uiRelic->flavorTitle.m_UiComponent.SetVisibility(false);
-                uiRelic->flavorDescImage.m_UiComponent.SetVisibility(false);
-                uiRelic->flavorDesc.m_UiComponent.SetVisibility(false);
-                uiRelic->doRedraw = true;
-            }
+  //          }
+  //          else
+  //          {
+  //              if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible())
+  //              {
+  //                  RedrawUI();
+  //                  uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(false);
+  //                  uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(false);
+  //                  //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(false);
+  //                  uiElement->relics[i].doRedraw = true;
+  //              }
 
 
-        }
-    }
+  //          }
+  //      }
+  //  }
+
+  //  for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+  //  {
+  //      auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+  //      auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+
+  //      if (uiRelic->sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
+  //      {
+  //          uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(true);
+  //          uiRelic->flavorTitle.m_UiComponent.SetVisibility(true);
+  //          uiRelic->flavorDescImage.m_UiComponent.SetVisibility(true);
+  //          uiRelic->flavorDesc.m_UiComponent.SetVisibility(true);
+
+  //          if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible() && uiRelic->doRedraw)
+  //          {
+  //              RedrawUI();
+  //              uiRelic->doRedraw = false;
+  //          }
+  //      }
+  //      else
+  //      {
+  //          if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible())
+  //          {
+  //              RedrawUI();
+  //              uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(false);
+  //              uiRelic->flavorTitle.m_UiComponent.SetVisibility(false);
+  //              uiRelic->flavorDescImage.m_UiComponent.SetVisibility(false);
+  //              uiRelic->flavorDesc.m_UiComponent.SetVisibility(false);
+  //              uiRelic->doRedraw = true;
+  //          }
+
+
+  //      }
+  //  }
+
     return true;
 }
 
@@ -286,44 +258,44 @@ bool UIRelicsSystem::Update()
 
 bool UIShopSystem::Update()
 {
-    StatComponent* stats = nullptr;
-    PlayerComponent* player = nullptr;
+    //StatComponent* stats = nullptr;
+    //PlayerComponent* player = nullptr;
 
-    for (auto entity : View<PlayerComponent, StatComponent>(registry))
-    {
-        stats = registry.GetComponent<StatComponent>(entity);
-        player = registry.GetComponent<PlayerComponent>(entity);
-    }
+    //for (auto entity : View<PlayerComponent, StatComponent>(registry))
+    //{
+    //    stats = registry.GetComponent<StatComponent>(entity);
+    //    player = registry.GetComponent<PlayerComponent>(entity);
+    //}
 
-    for (auto entity : View<UIShopComponent>(registry))
-    {
-        auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
+    //for (auto entity : View<UIShopComponent>(registry))
+    //{
+    //    auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
 
-        ML_String playerInfo = ("Damage: " + std::to_string((int)stats->damage) + 
-            "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
-            "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
+    //    ML_String playerInfo = ("Damage: " + std::to_string((int)stats->damage) + 
+    //        "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
+    //        "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
 
 
-        DSFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
-                                               uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
+    //    DSFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
+    //                                           uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
 
-        DSFLOAT2 startingSpritePosition = { abs(uiShopElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
-                                       abs(uiShopElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-        DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-                                        -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
-        
-        uiShopElement->playerInfo.UpdateText(playerInfo);
-        uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 2) });
+    //    DSFLOAT2 startingSpritePosition = { abs(uiShopElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
+    //                                   abs(uiShopElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
+    //    DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+    //                                    -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+    //    
+    //    uiShopElement->playerInfo.UpdateText(playerInfo);
+    //    uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 2) });
 
-    }
+    //}
 
-    for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
-    {
-        auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-        auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+    //for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+    //{
+    //    auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+    //    auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-        uiElement->m_priceText.UpdateText(("Soul Cost: " + std::to_string(uiRelic->price)).c_str());
-    }
+    //    uiElement->m_priceText.UpdateText(("Soul Cost: " + std::to_string(uiRelic->price)).c_str());
+    //}
 
     return true;
 }
@@ -331,12 +303,12 @@ bool UIShopSystem::Update()
 void SetTextAndImageProperties(ML_String text, UIText& uiText, UIImage& uiImage, DSFLOAT2 scale, DSFLOAT2 position)
 {
 
-    uiText.UpdateText(text);
+   /* uiText.UpdateText(text);
 
 	uiText.m_UiComponent.SetScale(scale);
 	uiText.m_UiComponent.SetPosition(position);
 
 	uiImage.m_UiComponent.SetScale(scale);
-	uiImage.m_UiComponent.SetPosition(position);
+	uiImage.m_UiComponent.SetPosition(position);*/
 
 }

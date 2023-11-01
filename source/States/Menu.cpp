@@ -17,7 +17,6 @@
 
 void Menu::Setup()//Load
 {
-	m_active = true;
 	// Clear relics when entering the main menu
 	Relics::ClearRelicFunctions();
 
@@ -26,12 +25,6 @@ void Menu::Setup()//Load
 	SetupButtons();
 	SetupText();
 	Camera::ResetCamera();
-	
-
-	//Temp stuff for ui to not crash because saving between levels is not fully implemented
-	EntityID playerUi = registry.CreateEntity();
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
@@ -57,32 +50,41 @@ void Menu::Input()
 	
 }
 
-
 void Menu::SetupButtons()
 {
-	//Start Button
-	{
-		auto button = registry.CreateEntity();
-		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Start", UIFunc::LoadNextLevel, { -0.81f, -0.28f }, {0.7f, 0.6f} );
-		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
-		buttonSound->Load(MENU);
-	}
 
-	//Settings Button
-	{
-		auto button = registry.CreateEntity();
-		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Settings", UIFunc::MainMenu_Settings, { -0.81f,  -0.54f }, {0.7f, 0.6f} );
-		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
-		buttonSound->Load(MENU);
-	}
+	ML_Array<ML_String, 3> texts;
+	texts[0] = "Start";
+	texts[1] = "Settings";
+	texts[2] = "Quit";
 
-	//Exit Button
+	ML_Array<DSFLOAT2, 3> positions;
+	positions[0] = { -0.81f, -0.28f };
+	positions[1] = { -0.81f,  -0.54f };
+	positions[2] = { -0.81f, -0.8f };
+
+	ML_Array<DSFLOAT2, 3> scales;
+	scales[0] = { 0.7f, 0.6f };
+	scales[1] = { 0.7f, 0.6f };
+	scales[2] = { 0.7f, 0.6f };
+
+	ML_Array<void(*)(void*), 3> functions;
+	functions[0] = UIFunc::LoadNextLevel;
+	functions[1] = UIFunc::MainMenu_Settings;
+	functions[2] = UIFunc::MainMenu_Quit;
+
+	for (int i = 0; i < 3; i++)
 	{
 		auto button = registry.CreateEntity();
-		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Quit", UIFunc::MainMenu_Quit, { -0.81f, -0.8f }, {0.7f, 0.6f} );
+		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+
+		uiElement->Setup("Exmenu/ButtonBackground", "Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
+		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);
 	}
@@ -92,28 +94,8 @@ void Menu::SetupImages()
 {
 	//Title
 	auto title = registry.CreateEntity();
-	auto tc = registry.AddComponent<UIImage>(title);
-	tc->Setup("ExMenu/DamnedTitle3.png", { 0.0f, 0.20f }, { 1.0f, 1.0f});
-	/*
-	auto title2 = registry.CreateEntity();
-	auto tc2 = registry.AddComponent<UIImage>(title2);
-	tc2->Setup("ExMenu/DamnedTitle2.png", { 0.0f, 0.0f }, { 1.0f, 1.0f });
-
-	auto title3 = registry.CreateEntity();
-	auto tc3 = registry.AddComponent<UIImage>(title3);
-	tc3->Setup("ExMenu/DamnedTitle3.png", { 0.0f, -0.25f }, { 1.0f, 1.0f });
-	*/
-/*
-	//Eye 1
-	auto eye1 = registry.CreateEntity();
-	auto ec1 = registry.AddComponent<UIImage>(eye1);
-	ec1->Setup("ExMenu/Eye.png", { -0.8f, 0.6f }, { 1.5f, 1.5f });
-
-	//Eye 2
-	auto eye2 = registry.CreateEntity();
-	auto ec2 = registry.AddComponent<UIImage>(eye2);
-	ec2->Setup("ExMenu/Eye.png", { 0.8f, 0.6f }, { 1.5f, 1.5f });
-*/
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
+	uiElement->Setup("", "ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });
 }
 
 void Menu::SetupText()
@@ -123,12 +105,6 @@ void Menu::SetupText()
 
 void Menu::Unload()
 {
-	// If this state is not active, simply skip the unload
-	if (false == m_active)
-		return;
-	m_active = false; // Set active to false
-
 	UnloadEntities();
-
 	ClearUI();
 }

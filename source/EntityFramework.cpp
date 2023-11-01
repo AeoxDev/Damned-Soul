@@ -77,14 +77,13 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		
 	}
 
-	for (auto entity : View<UIPlayerSoulsComponent>(registry))
+	for (auto entity : View<UIComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
 		{
-			UIPlayerSoulsComponent* ps = registry.GetComponent<UIPlayerSoulsComponent>(entity);
-			ps->image.Release();
+			UIComponent* ps = registry.GetComponent<UIComponent>(entity);
+			ps->Release();
 		}
-	
 	}
 
 	/*for (auto entity : View<UIGameLevelComponent>(registry))
@@ -97,59 +96,40 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		
 	}*/
 
-	for (auto entity : View<UIPlayerRelicsComponent>(registry))
-	{
-		UIPlayerRelicsComponent* r = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-		r->baseImage.Release();
+	//for (auto entity : View<UIPlayerRelicsComponent>(registry))
+	//{
+	//	UIPlayerRelicsComponent* r = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+	//	r->baseImage.Release();
 
-		for (uint32_t i = 0; i < r->relics.size(); i++)
-		{
-			r->relics[i].sprite.Release();
-			r->relics[i].flavorTitleImage.Release();
-			r->relics[i].flavorDescImage.Release();
-		}
+	//	for (uint32_t i = 0; i < r->relics.size(); i++)
+	//	{
+	//		r->relics[i].sprite.Release();
+	//		r->relics[i].flavorTitleImage.Release();
+	//		r->relics[i].flavorDescImage.Release();
+	//	}
 
-		r->relics.~ML_Vector();
-	}
+	//	r->relics.~ML_Vector();
+	//}
 
-	for (auto entity : View<UIHealthComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
-			ph->backgroundImage.Release();
-			ph->healthImage.Release();
-		}
-	}
-
-	for (auto entity : View<UIButton>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIButton* b = registry.GetComponent<UIButton>(entity);
-			b->Release();
-		}
-	}
-
-	for (auto entity : View<UIShopComponent>(registry))
+	/*for (auto entity : View<UIShopComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
 		{
 			UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
 			sh->baseImage.Release();
 		}
-	}
+	}*/
 
-	for (auto entity : View<UIShopRelicWindowComponent>(registry))
+	/*for (auto entity : View<UIShopRelicWindowComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
 		{
 			UIShopRelicWindowComponent* sh = registry.GetComponent<UIShopRelicWindowComponent>(entity);
 			sh->m_baseImage.Release();
 		}
-	}
+	}*/
 
-	for (auto entity : View<UIRelicComponent>(registry))
+	/*for (auto entity : View<UIRelicComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
 		{
@@ -158,16 +138,7 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			sh->flavorTitleImage.Release();
 			sh->flavorDescImage.Release();
 		}
-	}
-
-	for (auto entity : View<UIImage>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIImage* i = registry.GetComponent<UIImage>(entity);
-			i->Release();
-		}
-	}
+	}*/
 
 	for (auto entity : View<ProximityHitboxComponent>(registry))
 	{

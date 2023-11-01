@@ -94,7 +94,7 @@
     <ClCompile Include="source\EntityFramework.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Systems\ButtonSystem.cpp">
+    <ClCompile Include="source\Systems\OnClickSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Systems\RenderSystem.cpp">
@@ -199,9 +199,6 @@
     <ClCompile Include="source\Systems\StateSwitcherSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Systems\ButtonSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\UIShopComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -287,6 +284,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\EventFunctions\StatFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\UIElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\OnHoverSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -519,6 +522,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\SquashStretchComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\OnClickComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\UI\UIElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIHoverComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\EnemyType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\OnHoverComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

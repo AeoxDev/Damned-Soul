@@ -11,7 +11,11 @@ class RenderSystem : public System
 {
 	bool Update();
 };
-class ButtonSystem : public System
+class OnClickSystem : public System
+{
+	bool Update();
+};
+class OnHoverSystem : public System
 {
 	bool Update();
 };
