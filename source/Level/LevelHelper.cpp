@@ -156,13 +156,14 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
 
-	registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
+	StatComponent* stat = registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
 	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
 
 	
 
 	if (eType == EnemyType::hellhound)
 	{
+		stat->hazardModifier = 0.0f;
 		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
@@ -185,6 +186,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::eye)
 	{
+		stat->hazardModifier = 0.0f;
 		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
@@ -196,6 +198,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
+		stat->hazardModifier = 0.0f;
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);

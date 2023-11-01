@@ -7,9 +7,10 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000
+#define TEST3000
 
 #ifdef TEST3000
+#define SIMULATED_FRAMES 1
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 #endif // TEST
 
@@ -37,14 +38,18 @@ int main(int argc, char* args[])
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
 		UIFunc::LoadNextLevel(nullptr);
-		CountDeltaTime();
+		for (size_t i = 0; i < SIMULATED_FRAMES; i++)
+		{
+			CountDeltaTime();
 
-		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
-		stateManager.Update();//Lastly do the cpu work
+			UpdateDebugWindowTitle(title);
+			stateManager.Update();
 
-		stateManager.EndFrame();
+			stateManager.EndFrame();
 
-		MemLib::pdefrag();
+			MemLib::pdefrag();
+		}
+		
 	}
 #endif // TEST3000
 

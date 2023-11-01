@@ -8,9 +8,12 @@ void BeginHit(EntityID& entity, const int& index);
 void MiddleHit(EntityID& entity, const int& index);
 void EndHit(EntityID& entity, const int& index);
 
-//
+//Hellhound breath hazard
 void HazardBeginHit(EntityID& entity, const int& index);
 void HazardEndHit(EntityID& entity, const int& index);
+//Static Hazard Damage
+void StaticHazardDamage(EntityID& entity, const int& index);
+void LavaBlinkColor(EntityID& entity, const int& index);
 
 /*PLAYER EVENTS*/
 //START

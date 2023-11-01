@@ -131,7 +131,7 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystemGPU());
 
 	// Render/GPU
-	systems.push_back(new UIRenderSystem());
+	
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new RenderSystem());
 	//systems[2]->timeCap = 1.f / 60.f;
@@ -173,7 +173,8 @@ int StateManager::Setup()
 	systems.push_back(new UIRelicsSystem());
 	//systems.push_back(new UIGameLevelSystem());
 	systems.push_back(new UIShopSystem());
-
+	//Lastly redraw the 2D UI
+	systems.push_back(new UIRenderSystem());//Render in 2D. Does not use 3d pipeline
 	return 0;
 }
 
