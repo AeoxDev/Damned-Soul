@@ -130,6 +130,13 @@ bool SkeletonBehaviourSystem::Update()
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			ML_Vector<Node> finalPath;
+			skeletonComponent->updatePathCounter += GetDeltaTime();
+			if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
+			{
+				skeletonComponent->updatePathCounter = 0;
+				//finalPath = CalculateAStarPath(playerComponent->mapID, valueGrid, skeletonTransformComponent, playerTransformCompenent);
+			}
+			
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
