@@ -2,11 +2,13 @@
 
 struct PauseState
 {
-	bool m_active = false;
-
 	void Setup();
 
 	void Input();
+
+	void SetupButtons();
+	void SetupImages();
+	void SetupText();
 
 	void Unload(bool unloadPersistent = false);
 };

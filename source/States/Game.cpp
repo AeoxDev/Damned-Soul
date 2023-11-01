@@ -30,7 +30,6 @@ void GameScene::Input(bool isShop)
 		{
 			SetInPause(true);
 			//SetInShop(false);
-			
 			gameSpeed = 0.0f;
 			ResetInput();
 			stateManager.pause.Setup();

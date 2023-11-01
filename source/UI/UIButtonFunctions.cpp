@@ -6,11 +6,12 @@
 #include "GameRenderer.h"
 #include "Registry.h"
 #include "Components.h"
-
+#include "DeltaTime.h"
 #include "Registry.h"
 #include "Components.h"
 #include "UIRenderer.h"
 #include "UIComponents.h"
+#include "Input.h"
 
 #include <random>
 
@@ -45,6 +46,35 @@ void UIFunc::MainMenu_Quit(void* args)
 {
 	UnloadEntities();
 	sdl.quit = true;
+}
+
+void UIFunc::PauseState_ResumeGame(void* args)
+{
+	if (currentStates & State::InShop)
+	{
+		SetInPause(false);
+		SetInShop(true);
+		RedrawUI();
+		gameSpeed = 1.0f;
+		ResetInput();
+	}
+	else
+	{
+		SetInPause(false);
+		SetInPlay(true);
+		RedrawUI();
+		gameSpeed = 1.0f;
+		ResetInput();
+	}
+}
+
+void UIFunc::PauseState_MainMenu(void* args)
+{
+	SetInMainMenu(true);
+	SetInPause(false);
+	UnloadEntities(ENT_PERSIST_LEVEL);
+	gameSpeed = 1.0f;
+	stateManager.menu.Setup();
 }
 
 void UIFunc::Settings_Back(void* args)
