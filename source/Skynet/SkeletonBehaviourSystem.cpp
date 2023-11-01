@@ -109,12 +109,14 @@ bool SkeletonBehaviourSystem::Update()
 		playerStats = registry.GetComponent< StatComponent>(playerEntity);
 	}
 	PathfindingMap valueGrid;
-	if(playerComponent != nullptr)
-		valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID, playerTransformCompenent);
-
+	
+	if (playerComponent != nullptr)
+		valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID);
 
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
 	{
+		
+
 		skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
@@ -122,6 +124,7 @@ bool SkeletonBehaviourSystem::Update()
 
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
+			ML_Vector<Node> finalPath;
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();

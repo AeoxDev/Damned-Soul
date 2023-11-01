@@ -1,6 +1,6 @@
 #include "Skynet\BehaviourHelper.h"
 
-PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformComponent* playerTransform)
+PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID)
 {
 	GIMapData* mapGrid = nullptr;
 	mapGrid = GetMapTexture(mapID); // get map from collision
@@ -15,7 +15,7 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformCompon
 	{
 		for (int j = 0; j < GI_TEXTURE_DIMENSIONS; j++)
 		{
-			returnMap.grid[i][j] = 0;
+			returnMap.cost[i][j] = 0;
 		}
 	}
 
@@ -27,20 +27,29 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformCompon
 			if (mapGrid->texture[x][z] == 0)
 			{
 				//not walkable, bad number
-				returnMap.grid[x][z] = 10000;
+				returnMap.cost[x][z] = 10000;
 			}
 			else if (mapGrid->texture[x][z] == 1) // normal ground?
 			{
-				returnMap.grid[x][z] = 1;
+				returnMap.cost[x][z] = 1;
 			}
-			else if (returnMap.grid[x][z] >= 2) // is the floor lava?
+			else if (returnMap.cost[x][z] >= 2) // is the floor lava?
 			{
-				returnMap.grid[x][z] = 5;
+				returnMap.cost[x][z] = 5;
 			}
 		}
 	}
+	
+	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
+	{
+		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
+		if (enemyTransformCompenent == nullptr)
+			continue;
+		
+		// x z = functionCallFromElliot
 
-
+		returnMap.cost[X][Z] += 8;
+	}
 
 
 	return returnMap;
