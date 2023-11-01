@@ -1,35 +1,48 @@
 #include "Relics/SoulPower.h"
+#include "Relics/RelicInternalHelper.h"
 #include "Relics/RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_POWER_SOUL_FACTOR (1.f)
+#define SOUL_POWER_SOUL_FACTOR_PLAYER (1.f)
+#define SOUL_POWER_SOUL_FACTOR_ENEMY (10.f)
 
-void SOUL_POWER::ModifyPlayerStrengthInitial(void* data)
+EntityID SOUL_POWER::_OWNER;
+
+void SOUL_POWER::Initialize(void* input)
 {
-	// Should return only the player entity
-	for (auto entity : View<PlayerComponent, StatComponent>(registry))
-	{
-		// Get stats
-		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-		// Get souls
-		PlayerComponent* playerData = registry.GetComponent<PlayerComponent>(entity);
-		// Modify stats by souls
-		stats->damage += SOUL_POWER_SOUL_FACTOR * playerData->GetSouls();
-	}
+	// Set owner
+	SOUL_POWER::_OWNER = *((EntityID*)input);
+
+	// This is a stat altering relic, mark the entity as having modified stats
+	registry.GetComponent<StatComponent>(SOUL_POWER::_OWNER)->MarkAsModified();
+
+	// Make sure the relic function map exists
+	_validateRelicFunctions();
+
+	// Add the modify health function to the stat calc functions
+	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(SOUL_POWER::ModifyStrength);
 }
 
-void SOUL_POWER::ModifyPlayerStrengthUpdate(void* data)
+void SOUL_POWER::ModifyStrength(void* data)
 {
-	// Take the input for the soul update function
-	RelicInput::OnSoulUpdate* input = (RelicInput::OnSoulUpdate*)data;
+	RelicInput::OnStatCalcInput* input = (RelicInput::OnStatCalcInput*)data;
 
-	// Should return only the player entity
-	for (auto entity : View<PlayerComponent, StatComponent>(registry))
+	// Check if this is the owner
+	if (input->entity.index == SOUL_POWER::_OWNER.index)
 	{
-		// Check the soul delta
-		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-		// Modify stats by soul delta
-		stats->damage += SOUL_POWER_SOUL_FACTOR * input->soulDelta;
+		// Get stats
+		StatComponent* stats = (StatComponent*)input->adressOfStatComonent;
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(SOUL_POWER::_OWNER);
+		if (player)
+		{
+			// Increase health based on souls
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_PLAYER * player->GetSouls());
+		}
+		else
+		{
+			EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(SOUL_POWER::_OWNER);
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_ENEMY * enemy->soulCount);
+		}
 	}
 }

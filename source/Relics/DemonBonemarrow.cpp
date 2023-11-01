@@ -1,15 +1,38 @@
 #include "Relics/DemonBonemarrow.h"
+#include "Relics/RelicInternalHelper.h"
+#include "Relics/RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 
 #define DEMON_BONEMARROW_STRENGTH_INCREASE 15
 
+EntityID DEMON_BONEMARROW::_OWNER;
+
+void DEMON_BONEMARROW::Initialize(void* input)
+{	
+	// Set owner
+	DEMON_BONEMARROW::_OWNER = *((EntityID*)input);
+
+	// This is a stat altering relic, mark the entity as having modified stats
+	registry.GetComponent<StatComponent>(DEMON_BONEMARROW::_OWNER)->MarkAsModified();
+
+	// Make sure the relic function map exists
+	_validateRelicFunctions();
+
+	// Add it to the list of Stat Calc functions
+	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(DEMON_BONEMARROW::IncreasePlayerStrength);
+}
+
 void DEMON_BONEMARROW::IncreasePlayerStrength(void* data)
 {
-	// Should return only the player entity
-	for (auto entity : View<PlayerComponent, StatComponent>(registry))
+	RelicInput::OnStatCalcInput* input = (RelicInput::OnStatCalcInput*)data;
+
+	// Check if this is the owner
+	if (input->entity.index == DEMON_BONEMARROW::_OWNER.index)
 	{
-		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-		stats->damage += DEMON_BONEMARROW_STRENGTH_INCREASE;
+		// Get stats
+		StatComponent* stats = (StatComponent*)input->adressOfStatComonent;
+		// Increase damage
+		stats->UpdateBonusDamage(+DEMON_BONEMARROW_STRENGTH_INCREASE);
 	}
 }

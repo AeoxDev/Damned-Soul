@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "UIRenderer.h"
 #include "States\StateManager.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include "Registry.h"
 #include "Components.h"
 

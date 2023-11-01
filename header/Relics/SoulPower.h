@@ -1,10 +1,13 @@
 #pragma once
+#include "EntityID.h"
 
 namespace SOUL_POWER
 {
-	// Modifies the player's Strength by the current soul count initially
-	void ModifyPlayerStrengthInitial(void* data);
+	extern EntityID _OWNER;
 
-	// Modifies the player's Strength when souls count is altered
-	void ModifyPlayerStrengthUpdate(void* data);
+	// Call to set active for a specific entity (usually player)
+	void Initialize(void* input);
+
+	// The modify damage function
+	void ModifyStrength(void* data);
 }

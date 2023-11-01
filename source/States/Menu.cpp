@@ -11,7 +11,7 @@
 #include "Level.h"
 #include "Model.h"
 #include "UIComponents.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 
 #include "SDLHandler.h"
 
@@ -19,7 +19,7 @@ void Menu::Setup()//Load
 {
 	m_active = true;
 	// Clear relics when entering the main menu
-	Relics::ClearRelicFunctions();
+	Relics::ResetRelics();
 
 	RedrawUI();
 	SetupImages();

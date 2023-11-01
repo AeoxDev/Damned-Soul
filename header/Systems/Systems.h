@@ -18,6 +18,10 @@ class ButtonSystem : public System
 {
 	bool Update();
 };
+class StatCalcSystem : public System
+{
+	bool Update();
+};
 class ControllerSystem : public System
 {
 	bool Update();

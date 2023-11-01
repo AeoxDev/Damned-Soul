@@ -1,10 +1,13 @@
 #pragma once
+#include "EntityID.h"
 
 namespace SOUL_HEALTH
 {
-	// Modifies the player's Health by the current soul count initially
-	void ModifyPlayerHealthInitial(void* data);
+	extern EntityID _OWNER;
 
-	// Modifies the player's Health when souls count is altered
-	void ModifyPlayerHealthUpdate(void* data);
+	// Call to set active for a specific entity (usually player)
+	void Initialize(void* input);
+
+	// The modify health function
+	void ModifyHealth(void* data);
 }

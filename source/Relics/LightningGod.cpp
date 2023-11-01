@@ -1,3 +1,4 @@
+#include "Relics/RelicInternalHelper.h"
 #include "Relics/LightningGod.h"
 #include "Relics/RelicFuncInputTypes.h"
 #include "Components.h"
@@ -8,6 +9,15 @@
 
 #define LIGHTNING_GOD_COOLDOWN_SECONDS (3.f)
 #define LIGHTNING_GOD_DAMAGE_FLAT (100.f)
+
+void LIGHTNING_GOD::Initialize(void* input)
+{
+	// Make sure the relic function map exists
+	_validateRelicFunctions();
+
+	// Add the lightning bolt with cooldown to the Frame Update vector
+	(*_RelicFunctions)[FUNC_ON_FRAME_UPDATE].push_back(LIGHTNING_GOD::OnUpdate);
+}
 
 void LIGHTNING_GOD::OnUpdate(void* data)
 {
@@ -38,10 +48,7 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 			return;
 		}
 
-		// seed via delta time
-		srand((unsigned)(1.0f / (input->timeDelta + 0.001f)));
-
-		// Randomly select one of them
+		// Randomly select one of them, srand is called when validating relics the first time
 		int randomlySelected = ((size_t)rand()) % potentialVictims.size();
 
 		// The unfortunate one about to be struck by lightning
