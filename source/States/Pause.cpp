@@ -4,62 +4,53 @@
 #include "UI/UIRenderer.h"
 #include "Camera.h"
 #include "DeltaTime.h"
+#include "SDLHandler.h"
+#include "Registry.h"
+#include "Components.h"
+#include "Model.h"
 
 void PauseState::Setup()
 {
 	RedrawUI();
-
-	Camera::ResetCamera();
-
-	m_active = true;
 }
 
 void PauseState::Input()
 {
-	/*
-	if (isShop)
+	if (keyState[SDL_SCANCODE_Q] == pressed)
 	{
-		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
-		{
-			SetInMainMenu(true);
-			SetInPlay(false);
-			SetInShop(false);
-			Unload(true);
-			stateManager.menu.Setup();
-		}
-	}
-	else
-	{
-		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
-		{
-			SetInPause(true);
-			SetInPlay(false);
-			SetInShop(false);
-			Unload();
-
-			gameSpeed = 0.0f;
-			ResetInput();
-		}
-
-
-		*/
-	if (keyState[SCANCODE_ESCAPE] == pressed)
-	{
+		SetInMainMenu(true);
 		SetInPause(false);
-		SetInPlay(true);
-		RedrawUI();
+		Unload(true);
+
 		gameSpeed = 1.0f;
 		ResetInput();
+
+		stateManager.menu.Setup();
+	}
+
+	if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
+	{
+		if (currentStates & State::InShop)
+		{
+			SetInPause(false);
+			SetInShop(true);
+			RedrawUI();
+			gameSpeed = 1.0f;
+			ResetInput();
+		}
+		else
+		{
+			SetInPause(false);
+			SetInPlay(true);
+			RedrawUI();
+			gameSpeed = 1.0f;
+			ResetInput();
+
+		}
 	}
 }
 
-void PauseState::Unload()
+void PauseState::Unload(bool unloadPersistent)
 {
-	// If this state is not active, simply skip the unload
-	if (false == m_active)
-		return;
-	m_active = false; // Set active to false
+	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
 }
-
-/*
-	}*/

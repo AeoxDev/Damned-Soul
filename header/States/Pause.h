@@ -8,5 +8,5 @@ struct PauseState
 
 	void Input();
 
-	void Unload();
+	void Unload(bool unloadPersistent = false);
 };

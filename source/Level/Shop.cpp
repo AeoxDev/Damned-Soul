@@ -7,14 +7,11 @@
 #include "States/StateManager.h"
 #include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
-
 #include "UIComponents.h"
-
 #include "States/StateEnums.h"
 
 void LoadShop()
 {
-
 	EntityID shop = registry.CreateEntity();
 	
 	//faster loading to shop
