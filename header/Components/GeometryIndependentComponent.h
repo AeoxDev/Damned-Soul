@@ -9,4 +9,11 @@ struct GeometryIndependentComponent;
 void RenderGeometryIndependentCollision(EntityID& stageEntity);
 
 //Functions for getting information:
-int PixelValueOnPosition(GeometryIndependentComponent*& giComponent, float x, float z);
+int PixelValueOnPosition(GeometryIndependentComponent*& giComponent, TransformComponent*& transform);
+struct GridPosition
+{
+	int x;
+	int z;
+};
+
+GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent*& transform);

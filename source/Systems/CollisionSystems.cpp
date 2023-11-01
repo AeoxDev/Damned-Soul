@@ -27,7 +27,7 @@ bool GeometryIndependentSystem::Update()
 			//Now take position and translate to pixel on texture and check if stage, if not, reset pos for now
 			if (HitboxCanHitGI(entity))
 			{
-				int r = PixelValueOnPosition(geoCo, p->positionX, p->positionZ);
+				int r = PixelValueOnPosition(geoCo,p);
 				int takeDamage = 0;
 				switch (r)
 				{

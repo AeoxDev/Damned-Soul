@@ -378,31 +378,41 @@ GeometryIndependentComponent::~GeometryIndependentComponent()
 	//ReleaseTexture(stagingTexture);
 }
 
-int PixelValueOnPosition(GeometryIndependentComponent*& gi, float x, float z)
+int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*& transform)
 {
-	//Get component for gi
+	//Calculate size per pixel:
+	GridPosition pixelPos = PositionOnGrid(gi, transform);
+	//Check if pixel in bounds
+	if (pixelPos.x < TEXTURE_DIMENSIONS && pixelPos.x >= 0)
+	{
+		if (pixelPos.z < TEXTURE_DIMENSIONS && pixelPos.z >= 0)
+		{
+			if (gi->texture[pixelPos.x][pixelPos.z] == 0)
+			{
+				return gi->texture[pixelPos.z][pixelPos.x];
+			}
+			return gi->texture[pixelPos.z][pixelPos.x];
+		}
+	}
+	return 0;
+}
+
+GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent*& transform)
+{
+	GridPosition toReturn;
 	//Calculate size per pixel:
 	float pixelX = gi->width / TEXTURE_DIMENSIONS;
 	float pixelZ = gi->height / TEXTURE_DIMENSIONS;
 	//Calculate offset:
 	float offX = gi->width * 0.5f - gi->offsetX;
-	float offZ = gi->height * 0.5f- gi->offsetZ;
+	float offZ = gi->height * 0.5f - gi->offsetZ;
 	//Translate position to pixel using the size.
-	float px = (x + offX) /pixelX;
-	float pz = (-z + offZ) / pixelZ;
-	//Check if pixel in bounds
-	if (px < TEXTURE_DIMENSIONS && px >= 0)
-	{
-		if (pz < TEXTURE_DIMENSIONS && pz >= 0)
-		{
-			if (gi->texture[(int)pz][(int)px] == 0)
-			{
-				return gi->texture[(int)pz][(int)px];
-			}
-			return gi->texture[(int)pz][(int)px];
-		}
-	}
-	return 0;
+	float px = (transform->positionX + offX) / pixelX;
+	float pz = (-transform->positionZ + offZ) / pixelZ;
+	toReturn.x = (int)px;
+	toReturn.z = (int)pz;
+	
+	return toReturn;
 }
 
 void AddStaticHazard(EntityID& entity, const StaticHazardType& type)
