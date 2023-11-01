@@ -5,11 +5,10 @@
 void SetSpeedZero(EntityID& entity, const int& index)
 {
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-	stats->baseMoveSpeed = stats->moveSpeed;
-	stats->moveSpeed = 0.0f;
+	stats->SetSpeedMult(0.f);
 }
 void ResetSpeed(EntityID& entity, const int& index)
 {
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-	stats->moveSpeed = stats->baseMoveSpeed;
+	stats->SetSpeedMult(1.f);
 }

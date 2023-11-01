@@ -52,4 +52,8 @@ void LoadLevel4()
 
 	RenderGeometryIndependentCollision(stage);
 
+	EntityID mouse = registry.CreateEntity();
+	registry.AddComponent<TransformComponent>(mouse);
+	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
+	mousePointOfInterset->mode = POI_MOUSE;
 }

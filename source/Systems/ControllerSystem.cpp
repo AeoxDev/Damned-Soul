@@ -77,8 +77,8 @@ bool ControllerSystem::Update()
 			}
 			controller->goalZ /= len;
 			controller->goalX /= len;
-			transform->positionZ += controller->goalZ * stat->moveSpeed * GetDeltaTime();
-			transform->positionX += controller->goalX * stat->moveSpeed * GetDeltaTime();
+			transform->positionZ += controller->goalZ * stat->GetSpeed() * GetDeltaTime();
+			transform->positionX += controller->goalX * stat->GetSpeed() * GetDeltaTime();
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 		}
