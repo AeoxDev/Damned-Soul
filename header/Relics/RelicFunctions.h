@@ -17,9 +17,13 @@ namespace Relics
 		// arguments: foo(EntityID, StatComponent*)
 		FUNC_ON_STAT_CALC,
 
+		// Called when damage is calculated
+		//arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
+		FUNC_ON_DAMAGE_CALC,
+
 		// Called when an enemy is hit by a weapon attack
-		// arguments: foo(PlayerEntity, EnemyEntity)
-		FUNC_ON_WEAPON_HIT,
+		// arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
+		FUNC_ON_DAMAGE_APPLY,
 
 		// Called when the player's health is modified, such as when struck by an attack or healed
 		// arguments: foo(hpDelta)

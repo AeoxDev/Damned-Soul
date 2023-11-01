@@ -68,10 +68,10 @@ public:
 	float GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
-	// Update current health
-	float UpdateHealth(const float delta, const bool hitByEnemy = false);
 	// Update the entity's bonus health
 	void UpdateBonusHealth(const float delta);
+	// Update current health
+	float UpdateHealth(const float delta, const bool hitByEnemy = false);
 
 // Speed
 	// Get the current speed

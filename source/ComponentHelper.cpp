@@ -43,14 +43,15 @@ float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
 	// If damage is being delt, apply the damage
 	if (delta < 0)
 	{
-		this->m_currentHealth += delta;
+		// Damage is affected by damage reduction
+		m_currentHealth += delta;
 		if (hitByEnemy)
 		{
 			//Play hurt sound
 			for (auto entity : View<PlayerComponent>(registry))
 			{
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-				if (this->m_currentHealth <= 0)
+				if (m_currentHealth <= 0)
 				{
 					sfx->Play(Player_Death, Channel_Base);
 				}
@@ -62,15 +63,15 @@ float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
 		}
 	}
 	// If healing is being applied, increase current health and then cap it at maximum health
-	else if (0 < delta && this->m_currentHealth < this->m_baseHealth)
+	else if (0 < delta && m_currentHealth < GetMaxHealth())
 	{
-		this->m_currentHealth += delta;
-		this->m_currentHealth = this->m_currentHealth < this->m_baseHealth ? this->m_currentHealth : this->m_baseHealth;
+		m_currentHealth += delta;
+		m_currentHealth = m_currentHealth < GetMaxHealth() ? m_currentHealth : GetMaxHealth();
 	}
 	// Else, do nothing, only return
 	else
 	{
-		return this->m_currentHealth;
+		return m_currentHealth;
 	}
 
 	// Some sort of health mod happened, do the health mod relics
@@ -86,7 +87,7 @@ float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
 	}
 	RedrawUI();
 	// Return the new current health
-	return this->m_currentHealth;
+	return m_currentHealth;
 }
 
 void StatComponent::UpdateBonusHealth(const float delta)
