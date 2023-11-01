@@ -37,13 +37,13 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 	animComp->aAnim = ANIMATION_ATTACK;
 	animComp->aAnimIdx = 0;
 	//Elliot: Change in calculations for attack timer:
-	animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->attackSpeed);
+	animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 	ANIM_BRANCHLESS(animComp);
 	
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	if (hc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	if (hc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
-		enemyStats->knockback = 8.0f;
+		enemyStats->SetKnockbackMultiplier(8.0f);
 		SetHitboxActive(ent, enmComp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(ent, enmComp->attackHitBoxID, true);
 		
@@ -121,8 +121,8 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 		dirX /= magnitude;
 		dirZ /= magnitude;
 	}
-	htc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
-	htc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
+	htc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	htc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	hc->goalDirectionX = ptc->positionX - htc->positionX;
 	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
 }
@@ -154,8 +154,8 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	{
 		speedMultiplier = 2.f;
 	}
-	hellhoundTransformComponent->positionX += dirX * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
+	hellhoundTransformComponent->positionX += dirX * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	hellhoundTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
 }
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
@@ -183,8 +183,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
 
-	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
-	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
+	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
+	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
 }
 
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
@@ -364,8 +364,8 @@ void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, S
 	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
 	SmoothRotation(htc, newGoalX, newGoalZ, 35.f);
 
-	htc->positionX += hc->cowardDirectionX * enemyStats->moveSpeed * GetDeltaTime();
-	htc->positionZ += hc->cowardDirectionZ * enemyStats->moveSpeed * GetDeltaTime();
+	htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
+	htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
 
 	hc->cowardCounter += GetDeltaTime();
 
@@ -456,7 +456,7 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
-				enemyStats->knockback = 1.0f;
+				enemyStats->SetKnockbackMultiplier(1.0f);
 				enemyAnim->aAnim = ANIMATION_ATTACK;
 				enemyAnim->aAnimIdx = 2;
 				enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;

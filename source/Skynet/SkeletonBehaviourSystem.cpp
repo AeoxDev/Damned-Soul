@@ -27,8 +27,8 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-	skeletonTransformComponent->positionX += dirX * stats->moveSpeed * GetDeltaTime();
-	skeletonTransformComponent->positionZ += dirZ * stats->moveSpeed * GetDeltaTime();
+	skeletonTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
+	skeletonTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
 }
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
@@ -58,8 +58,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 
 
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
+	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
+	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
 
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
@@ -72,11 +72,11 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	animComp->aAnim = ANIMATION_ATTACK;
 	animComp->aAnimIdx = 0;
 	//Elliot: Change in calculations for attack timer:
-	animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->attackSpeed);
+	animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 	ANIM_BRANCHLESS(animComp);
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	if (sc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	if (sc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
 		//Set hitbox active here.
 		//Elliot's request: Add Skeleton attack hitbox instead of define

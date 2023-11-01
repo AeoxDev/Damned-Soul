@@ -23,8 +23,8 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-	tempBossTransformComponent->positionX += dirX * stats->moveSpeed * GetDeltaTime();
-	tempBossTransformComponent->positionZ += dirZ * stats->moveSpeed * GetDeltaTime();
+	tempBossTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
+	tempBossTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
 }
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, TempBossBehaviour* tempBossComponent, TransformComponent* tempBossTransformComponent, StatComponent* stats)
@@ -48,8 +48,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ);
 
 
-	tempBossTransformComponent->positionX += tempBossTransformComponent->facingX * stats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
-	tempBossTransformComponent->positionZ += tempBossTransformComponent->facingZ * stats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
+	tempBossTransformComponent->positionX += tempBossTransformComponent->facingX * stats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
+	tempBossTransformComponent->positionZ += tempBossTransformComponent->facingZ * stats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
 
 }
 
@@ -85,7 +85,7 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 	//ANIM_BRANCHLESS(animComp);
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	if (bc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	if (bc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
 		//Set hitbox active here.
 		//Elliot's request: Add Skeleton attack hitbox instead of define

@@ -143,6 +143,9 @@ int StateManager::Setup()
 	//Input based CPU
 	systems.push_back(new ButtonSystem());
 
+	// Stat Calculatoins
+	systems.push_back(new StatCalcSystem()); // Should be before behaviours and controllers so that the correct stats are applied
+
 	//CPU WORK (ORDER IMPORTANT)
 	//AI Systems
 	systems.push_back(new SkeletonBehaviourSystem());

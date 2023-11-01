@@ -33,8 +33,8 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 		magnitude = 0.001f;
 	}
 
-	eyeTransformComponent->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
-	eyeTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
+	eyeTransformComponent->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
 bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
@@ -46,7 +46,7 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 	ANIM_BRANCHLESS(enemyAnim);
 
 	//impose timer so they cannot run and hit at the same time also not do a million damage per sec
-	if (ec->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	if (ec->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
 		ec->attackTimer = 0;
 		ec->attackStunDurationCounter = 0;
@@ -119,8 +119,8 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	}
 	dirX /= magnitude;
 	dirZ /= magnitude;
-	etc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
-	etc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
+	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
 	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 }
@@ -173,8 +173,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
 
 
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / (2.f * GetDeltaTime() + 0.00001f);
+	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
+	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() / (2.f * GetDeltaTime() + 0.00001f);
 }
 
 bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = enemy pos, B = player pos, tolerance = 
@@ -200,7 +200,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//while charging disable hitboxes
 		SetHitboxIsMoveable(eID, 0, false);
 		SetHitboxIsMoveable(eID, 1, false);
-		enemyStats->knockback = 2.0f;
+		enemyStats->SetKnockbackMultiplier(2.0f);
 		//direction from the enemy towards the player
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
 		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
@@ -253,15 +253,15 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		{
 			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 30.0f);
 
-			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 6.f * GetDeltaTime();
-			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
 
 			SetHitboxActive(eID, enemComp->attackHitBoxID, true);
 			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, true);
 		}
 		else //else charge is finished
 		{
-			enemyStats->knockback = 1.0f;
+			enemyStats->SetKnockbackMultiplier(1.0f);
 			//reenable hitboxes
 			SetHitboxIsMoveable(eID, 0, true);
 			SetHitboxIsMoveable(eID, 1, true);
@@ -328,7 +328,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
-			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->attackSpeed && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->GetDamage() && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				if (!eyeComponent->chargeAttackSoundPlaying)

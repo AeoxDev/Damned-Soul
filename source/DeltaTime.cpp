@@ -1,5 +1,5 @@
 #include "DeltaTime.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include <chrono>
 
 #define DELTACAP 1.f / 30.f
