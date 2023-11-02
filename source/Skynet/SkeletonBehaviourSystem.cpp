@@ -167,9 +167,8 @@ bool SkeletonBehaviourSystem::Update()
 			{
 				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
 			}
-			else if (distance < 50.f) //hunting distance
+			else if (distance < 590.f) //hunting distance
 			{
-				bool path = false;
 				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
 				{
 					skeletonComponent->updatePathCounter = 0;
@@ -178,12 +177,39 @@ bool SkeletonBehaviourSystem::Update()
 					if (finalPath.size() > 1)
 					{
 						skeletonComponent->dirX = finalPath[1].x - finalPath[0].x;
-						skeletonComponent->dirZ = finalPath[1].z - finalPath[0].z;
-						path = true;
+						skeletonComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
+						skeletonComponent->dir2X = finalPath[2].x - finalPath[1].x;
+						skeletonComponent->dir2Z = -(finalPath[2].z - finalPath[1].z);
+						skeletonComponent->followPath = true;
+					}
+					else
+					{
+						skeletonComponent->followPath = false;
 					}
 				}
-				float x = 2.f; float y = 2.f;
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, path);
+				if (distance < 10.f)
+				{
+					skeletonComponent->followPath = false;
+				}
+				for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent, StatComponent>(registry))
+				{
+
+
+					HellhoundBehaviour*doggoB = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
+					TransformComponent* doggoT = registry.GetComponent<TransformComponent>(enemyEntity);
+					
+					
+					doggoT->facingX = skeletonComponent->dirX;
+					doggoT->facingZ = skeletonComponent->dirZ;
+				
+				}
+				if (skeletonComponent->followPath == true && skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit / 2.f  )
+				{
+					skeletonComponent->dirX = skeletonComponent->dir2X;
+					skeletonComponent->dirZ = skeletonComponent->dir2Z;
+				}
+				
+				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
 			}
 			else // idle
 			{
