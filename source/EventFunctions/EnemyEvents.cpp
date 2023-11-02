@@ -343,5 +343,5 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 		type = tempBoss;
 	}
 	float time = (float)(rand() % 8);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy, time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }
