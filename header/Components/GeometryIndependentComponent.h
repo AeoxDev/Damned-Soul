@@ -23,6 +23,12 @@ struct GridPosition
 	int z;
 };
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent*& transform);
+struct Coordinate2D
+{
+	float x;
+	float z;
+};
 
+GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent*& transform);
+Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi);
 GIMapData* GetMapTexture(EntityID& entity);

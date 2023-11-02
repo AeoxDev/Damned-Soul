@@ -142,7 +142,7 @@ bool SkeletonBehaviourSystem::Update()
 		{
 			ML_Vector<Node> finalPath;
 			skeletonComponent->updatePathCounter += GetDeltaTime();
-			
+			skeletonComponent->testUpdateTimer += GetDeltaTime();
 			
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
@@ -169,10 +169,24 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 590.f) //hunting distance
 			{
+				TransformComponent* doggoT;
+				for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent, StatComponent>(registry))
+				{
+					doggoT = registry.GetComponent<TransformComponent>(enemyEntity);
+				}
 				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
 				{
+					
+					skeletonComponent->counterForTest = 0;
 					skeletonComponent->updatePathCounter = 0;
 					finalPath = CalculateAStarPath(playerComponent->mapID, valueGrid, skeletonTransformComponent, playerTransformCompenent);
+					skeletonComponent->coolVec.clear();
+
+					for (int p = 0; p < finalPath.size(); p++)
+					{
+						skeletonComponent->coolVec.push_back(finalPath[p].x);
+						skeletonComponent->coolVec.push_back(finalPath[p].z);
+					}
 					// goal (next node) - current
 					if (finalPath.size() > 1)
 					{
@@ -184,10 +198,24 @@ bool SkeletonBehaviourSystem::Update()
 					}
 					else
 					{
-						skeletonComponent->followPath = false;
+ 						skeletonComponent->followPath = false;
 					}
+				}   
+				else if(skeletonComponent->counterForTest + 1 < skeletonComponent->coolVec.size() && (skeletonComponent->testUpdateTimer >= skeletonComponent->testUpdateLimit))
+				{
+					skeletonComponent->testUpdateTimer = 0.f;
+					Coordinate2D gridOnPos;
+					GridPosition coorde;
+					coorde.x = skeletonComponent->coolVec[skeletonComponent->counterForTest];
+					coorde.z = skeletonComponent->coolVec[skeletonComponent->counterForTest + 1];
+					GeometryIndependentComponent* ggg = registry.GetComponent<GeometryIndependentComponent>(playerComponent->mapID); //just need GIcomp
+
+					gridOnPos = GridOnPosition(coorde, ggg);
+					doggoT->positionX = gridOnPos.x;
+					doggoT->positionZ = gridOnPos.z;
+					skeletonComponent->counterForTest += 2;
 				}
-				if (distance < 10.f)
+				if (distance < 1.f)
 				{
 					skeletonComponent->followPath = false;
 				}
@@ -195,12 +223,12 @@ bool SkeletonBehaviourSystem::Update()
 				{
 
 
-					HellhoundBehaviour*doggoB = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
+					/*HellhoundBehaviour*doggoB = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
 					TransformComponent* doggoT = registry.GetComponent<TransformComponent>(enemyEntity);
 					
 					
 					doggoT->facingX = skeletonComponent->dirX;
-					doggoT->facingZ = skeletonComponent->dirZ;
+					doggoT->facingZ = skeletonComponent->dirZ;*/
 				
 				}
 				if (skeletonComponent->followPath == true && skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit / 2.f  )

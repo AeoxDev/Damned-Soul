@@ -43,6 +43,7 @@ struct giCopyTexture
 	giPixel texture[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS];
 };
 
+
 GIMapData* GetMapTexture(EntityID& entity)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(entity);
@@ -422,6 +423,24 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 	toReturn.x = (int)px;
 	toReturn.z = (int)pz;
 	
+	return toReturn;
+}
+
+Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi)
+{
+	Coordinate2D toReturn;
+	toReturn.x = gridPos.x;
+	toReturn.z = gridPos.z;
+	// posx = px * pixelX - offX
+	// posz = -(pz * pixelZ - offZ)
+
+	float pixelX = gi->width / GI_TEXTURE_DIMENSIONS;
+	float pixelZ = gi->height / GI_TEXTURE_DIMENSIONS;
+	float offX = gi->width * 0.5f - gi->offsetX;
+	float offZ = gi->height * 0.5f - gi->offsetZ;
+
+	toReturn.x = toReturn.x * pixelX - offX;
+	toReturn.z = -(toReturn.z * pixelZ - offZ);
 	return toReturn;
 }
 

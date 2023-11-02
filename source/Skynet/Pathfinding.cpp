@@ -37,7 +37,7 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID)
 			}
 			else if (mapGrid->texture[x][z] >= 2) // is the floor lava?
 			{
-				returnMap.cost[x][z] = 40000; // this doesn't trigger yet. ELLIOT FIX gosh darn it
+				returnMap.cost[x][z] = 5000; // this doesn't trigger yet. ELLIOT FIX gosh darn it
 			}
 		}
 	}
@@ -104,6 +104,7 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 	ML_Vector<Node> theReverseWay; // trust me, we need this. temp
 
 	Node tempNode = endNode;
+	Coordinate2D coord;
 
 	while (tempNode.g != 0)
 	{
@@ -229,7 +230,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
 				{
@@ -264,7 +265,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 
 				
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
@@ -299,7 +300,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
 				{
@@ -331,7 +332,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
 				{
@@ -364,7 +365,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
 				{
@@ -395,7 +396,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
 				{
@@ -427,7 +428,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
 				{
@@ -458,7 +459,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = newNode.g + newNode.h; // top g
+				newNode.f = currentNode.f + newNode.g + newNode.h; // top g
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
 				{
 					tempPush.x = newNode.x;

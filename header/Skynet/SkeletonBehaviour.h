@@ -11,7 +11,7 @@ struct SkeletonBehaviour
 	int attackHitboxID = 2;
 
 	float updatePathCounter = 1.8f;
-	float updatePathLimit = 1.0f;
+	float updatePathLimit = 0.5f;
 
 	float dirX = 0.f;
 	float dirZ = 0.f;
@@ -19,4 +19,11 @@ struct SkeletonBehaviour
 	float dir2Z = 0.f;
 	bool followPath = false;
 
+	int counterForTest = 0;
+
+
+	float testUpdateTimer = 1.f;
+	float testUpdateLimit = 0.005f;
+
+	std::vector<int> coolVec;
 };
