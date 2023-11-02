@@ -183,7 +183,7 @@ bool SkeletonBehaviourSystem::Update()
 					}
 				}
 				float x = 2.f; float y = 2.f;
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, x, y, path);
+				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, path);
 			}
 			else // idle
 			{
