@@ -173,7 +173,9 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			ReleaseTimedEvents(entity);
 	}
 
-	Light::FreeLight();
+	if (destructionTier != -1)
+		Light::FreeLight();
+	
 	for (auto entity : View<SoundComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
