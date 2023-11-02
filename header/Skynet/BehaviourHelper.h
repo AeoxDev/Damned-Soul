@@ -20,6 +20,8 @@ struct Node // to save path
 	float h = 0; // manhattan distance
 	float f = 0; // total cost
 
+	float fx = 0.f;
+	float fz = 0.f;
 	int parentX, parentZ;
 
 	~Node() = default;

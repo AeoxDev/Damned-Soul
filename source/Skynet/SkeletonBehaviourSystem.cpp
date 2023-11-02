@@ -182,10 +182,19 @@ bool SkeletonBehaviourSystem::Update()
 					finalPath = CalculateAStarPath(playerComponent->mapID, valueGrid, skeletonTransformComponent, playerTransformCompenent);
 					skeletonComponent->coolVec.clear();
 
+					if (finalPath.size() > 1)
+					{
+						skeletonComponent->fx = finalPath[0].fx;
+						skeletonComponent->fz = finalPath[0].fz;
+					}
+					
+
 					for (int p = 0; p < finalPath.size(); p++)
 					{
-						skeletonComponent->coolVec.push_back(finalPath[p].x);
-						skeletonComponent->coolVec.push_back(finalPath[p].z);
+						finalPath[p].fx = skeletonComponent->fx;
+						finalPath[p].fz = skeletonComponent->fz;
+						skeletonComponent->coolVec.push_back((float)finalPath[p].x);
+						skeletonComponent->coolVec.push_back((float)finalPath[p].z);
 					}
 					// goal (next node) - current
 					if (finalPath.size() > 1)
@@ -206,13 +215,20 @@ bool SkeletonBehaviourSystem::Update()
 					skeletonComponent->testUpdateTimer = 0.f;
 					Coordinate2D gridOnPos;
 					GridPosition coorde;
+					
 					coorde.x = skeletonComponent->coolVec[skeletonComponent->counterForTest];
 					coorde.z = skeletonComponent->coolVec[skeletonComponent->counterForTest + 1];
 					GeometryIndependentComponent* ggg = registry.GetComponent<GeometryIndependentComponent>(playerComponent->mapID); //just need GIcomp
 
+
+					coorde.fx = skeletonComponent->fx;
+					coorde.fz = skeletonComponent->fz;
+
 					gridOnPos = GridOnPosition(coorde, ggg);
 					doggoT->positionX = gridOnPos.x;
 					doggoT->positionZ = gridOnPos.z;
+
+
 					skeletonComponent->counterForTest += 2;
 				}
 				if (distance < 1.f)

@@ -25,5 +25,9 @@ struct SkeletonBehaviour
 	float testUpdateTimer = 1.f;
 	float testUpdateLimit = 0.005f;
 
-	std::vector<int> coolVec;
+
+	float fx = 0.f;
+	float fz = 0.f;
+
+	std::vector<float> coolVec;
 };

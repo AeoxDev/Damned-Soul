@@ -393,12 +393,13 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*&
 {
 	//Calculate size per pixel:
 	GridPosition pixelPos = PositionOnGrid(gi, transform);
+	//Coordinate2D testPos = GridOnPosition(pixelPos, gi);
 	//Check if pixel in bounds
 	if (pixelPos.x < GI_TEXTURE_DIMENSIONS && pixelPos.x >= 0)
 	{
 		if (pixelPos.z < GI_TEXTURE_DIMENSIONS && pixelPos.z >= 0)
 		{
-			if (gi->texture[pixelPos.x][pixelPos.z] == 0)
+			if (gi->texture[pixelPos.z][pixelPos.x] == 0)
 			{
 				return gi->texture[pixelPos.z][pixelPos.x];
 			}
@@ -420,6 +421,10 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 	//Translate position to pixel using the size.
 	float px = (transform->positionX + offX) / pixelX;
 	float pz = (-transform->positionZ + offZ) / pixelZ;
+
+	toReturn.fx = px - (float)(int)px;
+	toReturn.fz = pz - (float)(int)pz;
+
 	toReturn.x = (int)px;
 	toReturn.z = (int)pz;
 	
@@ -429,18 +434,20 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi)
 {
 	Coordinate2D toReturn;
-	toReturn.x = gridPos.x;
-	toReturn.z = gridPos.z;
+	toReturn.x = (float)gridPos.x + gridPos.fx;
+	toReturn.z = (float)gridPos.z + gridPos.fz;
 	// posx = px * pixelX - offX
 	// posz = -(pz * pixelZ - offZ)
 
 	float pixelX = gi->width / GI_TEXTURE_DIMENSIONS;
 	float pixelZ = gi->height / GI_TEXTURE_DIMENSIONS;
-	float offX = gi->width * 0.5f - gi->offsetX;
-	float offZ = gi->height * 0.5f - gi->offsetZ;
+	float offX = gi->width * 0.5f - gi->offsetX;//In world
+	float offZ = gi->height * 0.5f - gi->offsetZ;//In world
 
+	//Get pixel to world
+	//Pixel 73/64 is 0.0 in world. Put pixel
 	toReturn.x = toReturn.x * pixelX - offX;
-	toReturn.z = -(toReturn.z * pixelZ - offZ);
+	toReturn.z = -(toReturn.z * pixelZ) + offZ;
 	return toReturn;
 }
 

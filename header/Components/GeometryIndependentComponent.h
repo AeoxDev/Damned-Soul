@@ -21,6 +21,9 @@ struct GridPosition
 {
 	int x;
 	int z;
+
+	float fx;
+	float fz;
 };
 
 struct Coordinate2D
