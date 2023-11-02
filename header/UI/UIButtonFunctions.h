@@ -51,13 +51,13 @@ namespace UIFunc
 	void Shop_BuyRelic(void* args, int a);
 
 	// Lock a relic in shop
-	void Shop_LockRelic(void* args);
+	void Shop_LockRelic(void* args, int a);
 
 	// Re-roll a relic in shop
-	void Shop_ReRollRelic(void* args);
+	void Shop_ReRollRelic(void* args, int a);
 
 	// Heal the player
-	void Shop_Heal(void* args);
+	void Shop_Heal(void* args, int a);
 
 	void HoverImage(void* args, int index, bool hover);
 }

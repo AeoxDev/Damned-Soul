@@ -216,7 +216,7 @@ void UIFunc::Shop_BuyRelic(void* args, int a)
 	//		uiRelic->relicData->m_function(&(stateManager.player));
 }
 
-void UIFunc::Shop_LockRelic(void* args)
+void UIFunc::Shop_LockRelic(void* args, int a)
 {
 	/*UIButton* button = (UIButton*)args;
 
@@ -246,7 +246,7 @@ void UIFunc::Shop_LockRelic(void* args)
 	}*/
 }
 
-void UIFunc::Shop_ReRollRelic(void* args)
+void UIFunc::Shop_ReRollRelic(void* args, int a)
 {
 
 	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
@@ -304,7 +304,7 @@ void UIFunc::Shop_ReRollRelic(void* args)
 	//RedrawUI();
 }
 
-void UIFunc::Shop_Heal(void* args)
+void UIFunc::Shop_Heal(void* args, int a)
 {
 	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 	{
