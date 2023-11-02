@@ -44,4 +44,10 @@ struct OnHoverComponent
 
 		return retval;
 	};
+
+	void Release()
+	{
+		positions.~ML_Vector();
+		bounds.~ML_Vector();
+	};
 };

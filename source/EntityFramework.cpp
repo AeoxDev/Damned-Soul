@@ -87,6 +87,24 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
+	for (auto entity : View<OnClickComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			OnClickComponent* onC = registry.GetComponent<OnClickComponent>(entity);
+			onC->Release();
+		}
+	}
+
+	for (auto entity : View<OnHoverComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			OnHoverComponent* onH = registry.GetComponent<OnHoverComponent>(entity);
+			onH->Release();
+		}
+	}
+
 	for (auto entity : View<ProximityHitboxComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)

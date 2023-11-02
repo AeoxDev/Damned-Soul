@@ -37,7 +37,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
-		UIFunc::LoadNextLevel(nullptr);
+		UIFunc::LoadNextLevel(nullptr, i);
 		CountDeltaTime();
 
 		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism

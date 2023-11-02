@@ -36,4 +36,10 @@ struct OnClickComponent
 
 		return retval;
 	};
+
+	void Release()
+	{
+		positions.~ML_Vector();
+		bounds.~ML_Vector();
+	};
 };

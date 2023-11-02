@@ -27,10 +27,10 @@ namespace UIFunc
 	void MainMenu_Quit(void* args, int a);
 
 	// Resume game from pause state
-	void PauseState_ResumeGame(void* args);
+	void PauseState_ResumeGame(void* args, int a);
 
 	// Return to main menu from pause state
-	void PauseState_MainMenu(void* args);
+	void PauseState_MainMenu(void* args, int a);
 
 	// Go back from the settings menu to the main menu
 	void Settings_Back(void* args, int a);

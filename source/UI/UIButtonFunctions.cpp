@@ -49,7 +49,7 @@ void UIFunc::MainMenu_Quit(void* args, int a)
 	sdl.quit = true;
 }
 
-void UIFunc::PauseState_ResumeGame(void* args)
+void UIFunc::PauseState_ResumeGame(void* args, int a)
 {
 	if (currentStates & State::InShop)
 	{
@@ -82,7 +82,7 @@ void UIFunc::PauseState_MainMenu(void* args, int a)
 	stateManager.menu.Setup();
 }
 
-void UIFunc::Settings_Back(void* args)
+void UIFunc::Settings_Back(void* args, int a)
 {
 	SetInMainMenu(true);
 	SetInSettings(false);
