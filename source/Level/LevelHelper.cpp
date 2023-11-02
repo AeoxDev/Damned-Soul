@@ -172,7 +172,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::skeleton)
 	{
@@ -183,7 +186,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
+		
 	}
 	else if (eType == EnemyType::eye)
 	{
@@ -196,7 +203,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(EYE);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
@@ -204,7 +214,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
-		player->killThreshold += 15;
+		if (player)
+		{
+			player->killThreshold+=15;
+		}
 	}
 
 	return entity;
@@ -292,4 +305,12 @@ void ReloadPlayerNonGlobals()
 	MouseComponentAddComponent(stateManager.player);
 
 	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
+}
+
+EntityID RandomPlayerEnemy(EnemyType enemyType) {
+	EntityID enemy = SetupEnemy(enemyType, (float)(rand() % 100) - 50.0f, 0.f, (float)(rand() % 100) - 50.0f);
+	SetHitboxIsPlayer(enemy, 1, true);
+	registry.AddComponent<PlayerComponent>(enemy);
+	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
+	return enemy;
 }

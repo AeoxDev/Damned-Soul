@@ -9,7 +9,9 @@
 #include "Model.h"
 
 //480 is the size memlib allows without crashing. 
-#define TEXTURE_DIMENSIONS 480
+
+GITexture* giTexture = nullptr;
+
 struct GIConstantBufferData
 {
 	//Contains what is needed for the pixel shader to know what it should be doing
@@ -31,7 +33,7 @@ struct GeometryIndependentComponent
 	GIConstantBufferData shaderData;
 	float width, height, offsetX, offsetZ;
 	//TextureComponent
-	int8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
+	
 
 	~GeometryIndependentComponent();
 };
@@ -39,6 +41,7 @@ struct giPixel
 {
 	unsigned r, g, b, a;
 };
+
 struct giCopyTexture
 {
 	giPixel texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
@@ -46,6 +49,10 @@ struct giCopyTexture
 
 void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 {
+	if (giTexture == nullptr)
+	{
+		giTexture = (GITexture*)MemLib::spush(sizeof(char) * TEXTURE_DIMENSIONS * TEXTURE_DIMENSIONS);
+	}
 	//Find GI component
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
 	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(stageEntity);
@@ -201,9 +208,9 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 		{
 			if ((int8_t)(mappingTexture->texture[i][j]).r > 1)
 			{
-				GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
+				giTexture->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
 			}
-			GIcomponent->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
+			giTexture->texture[i][j] = (int8_t)(mappingTexture->texture[i][j]).r;
 		}
 	}
 
@@ -319,6 +326,7 @@ CB_IDX SetupGIConstantBuffer(EntityID& stageEntity)
 	return GIcomponent->constantBuffer;
 }
 
+
 TX_IDX SetupGIStagingTexture(EntityID& stageEntity)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
@@ -388,11 +396,11 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*&
 	{
 		if (pixelPos.z < TEXTURE_DIMENSIONS && pixelPos.z >= 0)
 		{
-			if (gi->texture[pixelPos.x][pixelPos.z] == 0)
+			if (giTexture->texture[pixelPos.x][pixelPos.z] == 0)
 			{
-				return gi->texture[pixelPos.z][pixelPos.x];
+				return giTexture->texture[pixelPos.z][pixelPos.x];
 			}
-			return gi->texture[pixelPos.z][pixelPos.x];
+			return giTexture->texture[pixelPos.z][pixelPos.x];
 		}
 	}
 	return 0;

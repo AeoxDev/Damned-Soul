@@ -147,19 +147,20 @@ bool UIHealthSystem::Update()
 bool UIPlayerSoulsSystem::Update()
 {
     EntityID playerUI;
+
     for (auto entity : View<UIHealthComponent, UIPlayerSoulsComponent>(registry))
         playerUI = entity;
 
-    for (auto entity : View<PlayerComponent>(registry))
+    if (stateManager.player.index != -1 && playerUI.index != -1)
     {
         auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(playerUI);
-        auto player = registry.GetComponent<PlayerComponent>(entity);
+        auto player = registry.GetComponent<PlayerComponent>(stateManager.player);
         uiElement->value = player->GetSouls();
 
-		ML_String valueAsString = ("Souls: " + std::to_string(uiElement->value)).c_str();
-		SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
-	}
-
+        ML_String valueAsString = ("Souls: " + std::to_string(uiElement->value)).c_str();
+        SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
+    }
+       
 	return true;
 }
 

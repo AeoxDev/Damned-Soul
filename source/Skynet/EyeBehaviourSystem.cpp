@@ -291,27 +291,55 @@ bool EyeBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enemComp = nullptr;
-
-	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
-	{
-		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-		playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	}
+	//Find available entity
+	
 	
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
+		
+		
 		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
 		eyeTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+		AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+		//Find a player to kill.
+		if (enemComp->lastPlayer.index == -1)
+		{
+			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+			{
+				if (enemyEntity.index == playerEntity.index)
+				{
+					continue;
+				}
 
+				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+				playerStats = registry.GetComponent< StatComponent>(playerEntity);
+				enemComp->lastPlayer = playerEntity;
+				if (rand() % 2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			playerComponent = registry.GetComponent<PlayerComponent>(enemComp->lastPlayer);
+			playerTransformCompenent = registry.GetComponent<TransformComponent>(enemComp->lastPlayer);
+			playerStats = registry.GetComponent< StatComponent>(enemComp->lastPlayer);
+			if (playerComponent == nullptr)
+			{
+				enemComp->lastPlayer.index = -1;
+			}
+		}
+		
 
 		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
 			// Get animation component
-			AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+			
 
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			eyeComponent->attackTimer += GetDeltaTime();
@@ -354,8 +382,15 @@ bool EyeBehaviourSystem::Update()
 			}
 			else // idle
 			{
+				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
+		}
+		//Idle if there are no players on screen.
+		else if (enemyStats->GetHealth() > 0.0f)
+		{
+			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
+			IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 		}
 	}
 

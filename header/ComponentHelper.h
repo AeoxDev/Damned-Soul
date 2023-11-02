@@ -95,6 +95,7 @@ struct CollisionParamsComponent
 //
 struct EnemyComponent
 {
+	EntityID lastPlayer = {-1, false, ENT_PERSIST_BASIC};//The last player to hit the enemy
 	int soulCount = 0;
 	int attackHitBoxID = -1;
 	int specialHitBoxID = -1;

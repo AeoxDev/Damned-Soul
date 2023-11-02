@@ -12,8 +12,9 @@
 #include "Model.h"
 #include "UIComponents.h"
 #include "Relics/RelicFunctions.h"
-
+#include "Levels\LevelHelper.h"
 #include "SDLHandler.h"
+#include "EventFunctions.h"
 
 void Menu::Setup()//Load
 {
@@ -27,6 +28,7 @@ void Menu::Setup()//Load
 	SetupText();
 	Camera::ResetCamera();
 	
+	stateManager.player = registry.CreateEntity(ENT_PERSIST_PLAYER);
 
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();
@@ -35,21 +37,103 @@ void Menu::Setup()//Load
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
-	// Stage Model
-	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
-	stageM->model = LoadModel("PlaceholderScene.mdl");
+	
 	// Stage Transform
 	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("default");
 	// Stage POI
 	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
 	stageP->mode = POI_FORCE;
-	stageP->height = CAMERA_OFFSET_Y * -0.85f;
+	stageP->height = CAMERA_OFFSET_Y * -0.75f;
 	stageP->rotationY = 0.0f;
-	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
-	stageP->rotationAccel = 0.12f;
+	stageP->rotationRadius = -0.84f * CAMERA_OFFSET_Z;
+	stageP->rotationAccel = 0.08f;
 	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 
 	stateManager.activeLevel = 0;
+	AddTimedEventComponentStart(stage, 2.0f, LoopSpawnMainMenuEnemy, skeleton, 1);
+	EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
+	SetHitboxIsPlayer(enemy, 1, true);
+	registry.AddComponent<PlayerComponent>(stateManager.player);
+	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
+
+	//Randomize enemies on screen max 6 of each'
+	for (size_t i = 0; i < 12; i++)
+	{
+		if (rand() % 8 == 0)//Dog, rare
+			RandomPlayerEnemy(hellhound);
+	}
+
+	for (size_t i = 0; i < 12; i++)
+	{
+		if (rand() % 16 == 0)//Eye, very rare
+			RandomPlayerEnemy(eye);
+	}
+
+	for (size_t i = 0; i < 12; i++)
+	{
+		if (rand() % 2 == 0)//Skeleton, common
+			RandomPlayerEnemy(skeleton);
+	}
+	if (rand() % 4096 == 0)//Boss, Pokemon Shiny rarity :)
+		RandomPlayerEnemy(tempBoss);
+	int random = rand() % 4;//Level 1, 2, 3
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
+
+	// Stage Model
+	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage);
+	stageModel->model = LoadModel("PlaceholderScene.mdl");
+
+	switch (random)
+	{
+	case 0: //level 1
+		CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+		//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		stageModel->colorMultiplicativeRed = 0.75f;
+		stageModel->colorMultiplicativeGreen = 0.75f;
+		stageModel->colorMultiplicativeBlue = 0.75f;
+		break;
+	case 1: //level 2
+		CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+		CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderThree, 0.35f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderForth, 0.35f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+
+		stageModel->colorMultiplicativeRed = 1.4f;
+		stageModel->colorMultiplicativeGreen = 1.2f;
+		stageModel->colorMultiplicativeBlue = 0.8f;
+		stageModel->colorAdditiveRed = 0.1f;
+		break;
+	case 2:
+		CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+		CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		stageModel->colorMultiplicativeRed = 1.2f;
+		stageModel->colorMultiplicativeGreen = 1.0f;
+		stageModel->colorMultiplicativeBlue = 1.4f;
+		stageModel->colorAdditiveBlue = 0.1f;
+		break;
+	default:
+		CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+		//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		break;
+	}
+	
 
 	const int nrHazards = 8;
 	for (size_t i = 0; i < nrHazards; i++)
