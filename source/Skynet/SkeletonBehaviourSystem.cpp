@@ -58,8 +58,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 
 
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() / 2.f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() / 2.f * GetDeltaTime();
+	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
 
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)

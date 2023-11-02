@@ -8,8 +8,14 @@
 
 bool ControllerSystem::Update()
 {
+	//Controller for player during play
+	
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
+		if (gameSpeed < 0.00001f)
+		{
+			break;
+		}
 		//Get the relevant components from the entity
 		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -127,5 +133,6 @@ bool ControllerSystem::Update()
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
 		}
 	}
+	//Loop for player during other places
 	return true;
 }

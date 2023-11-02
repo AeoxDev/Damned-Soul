@@ -17,44 +17,43 @@
 #include "Camera.h"
 #include "Light.h"
 #include "UIComponents.h"
-
 #include "MemLib\ML_String.hpp"
-
 #include "Level.h"
-
-// Relic Stuff
 #include "Relics/RelicFunctions.h"
 
 void GameScene::Input(bool isShop)
 {
+	// If Shop level is loaded
 	if (isShop)
 	{
 		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
-			SetInMainMenu(true);
-			SetInPlay(false);
+			SetInPause(true);
 			SetInShop(false);
-			Unload(true);
-			stateManager.menu.Setup();
+
+			gameSpeed = 0.0f;
+			ResetInput();
+			stateManager.pause.Setup();
 		}
 	}
+	// If Game Level is loaded
 	else
 	{
 		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
-			SetInMainMenu(true);
+			SetInPause(true);
 			SetInPlay(false);
-			SetInShop(false);
-			Unload(true);
-			stateManager.menu.Setup();
+			
+			gameSpeed = 0.0f;
+			ResetInput();
+			stateManager.pause.Setup();
 		}
-
 	}
 }
 
 void GameScene::Update()
 {
-	
+
 }
 
 void GameScene::ComputeShaders()
@@ -64,7 +63,7 @@ void GameScene::ComputeShaders()
 	Particles::FinishParticleCompute();*/
 }
 
-void GameScene::Unload(bool unloadPersistent)
+void GameScene::Unload(int unloadPersistent)
 {
 	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
 }

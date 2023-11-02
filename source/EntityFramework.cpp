@@ -51,7 +51,7 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 	if (EntityGlobals::IsEntityValid(stateManager.player))
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-		if (player != nullptr) 
+		if (player != nullptr && destructionTier >= 0) 
 		{
 			player->killingSpree = 0; 
 			player->killThreshold = 0; 
@@ -62,8 +62,11 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 	//Release memory from relevant components
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
-		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
-		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		if (entity.persistentTier <= destructionTier)
+		{
+			ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
+			ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		}
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry))
@@ -95,16 +98,22 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
-		ReleaseTimedEvents(entity);
+		if(destructionTier != ENT_PERSIST_PAUSE)
+			ReleaseTimedEvents(entity);
 	}
 
-	Light::FreeLight();
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
+	
 	for (auto entity : View<SoundComponent>(registry))
 	{
-		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-		if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
-			sound->Unload();
+			SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+			if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+			{
+				sound->Unload();
+			}
 		}
 	}
 

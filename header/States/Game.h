@@ -7,6 +7,6 @@ struct GameScene
 	void Update();
 	void ComputeShaders();
 
-	void Unload(bool unloadPersistent = false);
+	void Unload(int unloadPersistent = 0);
 	void GameOver();
 };

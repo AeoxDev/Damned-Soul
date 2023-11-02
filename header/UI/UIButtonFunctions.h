@@ -26,6 +26,12 @@ namespace UIFunc
 	// Quit the game from the start menu
 	void MainMenu_Quit(void* args, int a);
 
+	// Resume game from pause state
+	void PauseState_ResumeGame(void* args);
+
+	// Return to main menu from pause state
+	void PauseState_MainMenu(void* args);
+
 	// Go back from the settings menu to the main menu
 	void Settings_Back(void* args, int a);
 

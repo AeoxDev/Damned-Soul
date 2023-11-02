@@ -15,7 +15,7 @@
 
 #include "SDLHandler.h"
 
-void Menu::Setup()//Load
+void Menu::Setup()
 {
 	// Clear relics when entering the main menu
 	Relics::ResetRelics();
@@ -92,7 +92,7 @@ void Menu::SetupButtons()
 
 void Menu::SetupImages()
 {
-	//Title
+	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
 	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });

@@ -6,37 +6,10 @@
 #include "DeltaTime.h"
 #include "Levels/LevelHelper.h"
 #include "UIRenderer.h"
+#include "CombatFunctions.h"
 //#include <cmath> //sin
 
 #define KNOCKBACK_FACTOR 0.3f
-
-void HitInteraction(const EntityID& attacker, StatComponent* attackerStats, const EntityID& defender, StatComponent* defenderStats)
-{
-	PlayerComponent* player = registry.GetComponent<PlayerComponent>(defender);
-	//Deal regular damage as well as on-hit damage from potential relics
-
-	// Calculate damage
-	// Some values can start with default
-	RelicInput::OnDamageCalculation funcInput;
-	funcInput.attacker = attacker;
-	funcInput.defender = defender;
-	funcInput.damage = attackerStats->GetDamage();
-	funcInput.cap = defenderStats->GetHealth();
-
-	// Apply on damage calc functions
-	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
-		func(&funcInput);
-
-	// Apply on damage final
-	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
-		func(&funcInput);
-
-	// Update health
-	defenderStats->UpdateHealth(-1.f * funcInput.CollapseDamage(), player != nullptr);
-
-	RedrawUI();
-}
-
 
 void BeginHit(EntityID& entity, const int& index)
 {
@@ -49,7 +22,7 @@ void BeginHit(EntityID& entity, const int& index)
 	//ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	//ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
+	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
 	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	////Deal regular damage as well as on-hit damage from potential relics
@@ -156,7 +129,7 @@ void HazardBeginHit(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
+	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
 	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 

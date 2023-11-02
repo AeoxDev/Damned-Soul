@@ -6,7 +6,6 @@
 #include "Relics/RelicFunctions.h"
 #include "Registry.h"
 #include "Components.h"
-
 #include "UIButtonFunctions.h"
 
 void LoadLevel(int level)
