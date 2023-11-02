@@ -156,6 +156,8 @@ void UIText::SetText(const char* text, DSBOUNDS bounds)
 {
 	m_Text = text;
 
+	//ui.GetTextFormat(). doesnt give me the functions send help
+
 	if (bounds.right == 0)
 		baseUI.m_OriginalBounds = { 0, 0, 20.0f * m_Text.length(), 25.0f };
 	else

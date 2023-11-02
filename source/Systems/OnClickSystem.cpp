@@ -23,7 +23,7 @@ bool OnClickSystem::Update()
 			if (mouseButtonPressed[MouseButton::left] == released)
 			{
 				//Set which sound to play
-				/*SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 				if (sound != nullptr)
 				{
 					if (comp->onClick == UIFunc::LoadNextLevel)	
@@ -34,7 +34,7 @@ bool OnClickSystem::Update()
 					{
 						sound->Play(Button_Press, Channel_Base);
 					}
-				}*/
+				}
 
 				comp->onClick(comp, index);
 				return true;
