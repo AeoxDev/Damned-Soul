@@ -15,7 +15,10 @@
 #include "Relics\LifeSteal.h"
 #include "Relics\AdvancedFighting.h"
 	/*Defense*/
-#include "Relics\DemonHeart.h"
+#include "Relics\Hearts\DemonHeart.h"
+#include "Relics\Hearts\CorruptedHeart.h"
+#include "Relics\Hearts\MoltenHeart.h"
+#include "Relics\Hearts\MummifiedHeart.h"
 #include "Relics\FrostFire.h"
 #include "Relics\SoulHealth.h"
 #include "Relics\DemonSkin.h"
@@ -120,10 +123,34 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Demon Heart",
 				/*Filepath*/	"RelicIcons\\Demon_Heart.png",
-				/*Description*/	"Increases your Maximum Health by 75 when obtained.",
-				/*Price*/		10,
+				/*Description*/	"Increases your Maximum Health by 25",
+				/*Price*/		6,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Corrupted Heart",
+				/*Filepath*/	"RelicIcons\\Corrupted_Heart.png",
+				/*Description*/	"Increases your Maximum Health by 40",
+				/*Price*/		9,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	CORRUPTED_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Molten Heart",
+				/*Filepath*/	"RelicIcons\\Molten_Heart.png",
+				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained.",
+				/*Price*/		7,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	MOLTEN_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Mummified Heart",
+				/*Filepath*/	"RelicIcons\\Mummified_Heart.png",
+				/*Description*/	"Increases your Maximum Health by 15",
+				/*Price*/		3,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	MUMMIFIED_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Frost Fire",

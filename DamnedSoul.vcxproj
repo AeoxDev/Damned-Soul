@@ -198,6 +198,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Relics\AdvancedFighting.cpp" />
+    <ClCompile Include="source\Relics\Hearts\CorruptedHeart.cpp" />
+    <ClCompile Include="source\Relics\Hearts\MoltenHeart.cpp" />
+    <ClCompile Include="source\Relics\Hearts\MummifiedHeart.cpp" />
     <ClCompile Include="source\Relics\RelicData.cpp" />
     <ClCompile Include="source\Relics\RelicFuncInputTypes.cpp" />
     <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
@@ -240,7 +243,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\Relics\RelicFunctions.cpp" />
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
-    <ClCompile Include="source\Relics\DemonHeart.cpp" />
+    <ClCompile Include="source\Relics\Hearts\DemonHeart.cpp" />
     <ClCompile Include="source\Relics\FrostFire.cpp" />
     <ClCompile Include="source\Relics\LightningGod.cpp" />
     <ClCompile Include="source\Relics\SoulHealth.cpp" />
@@ -495,13 +498,16 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Registry.h" />
     <ClInclude Include="header\Relics\AdvancedFighting.h" />
     <ClInclude Include="header\Relics\DemonSkin.h" />
+    <ClInclude Include="header\Relics\Hearts\CorruptedHeart.h" />
+    <ClInclude Include="header\Relics\Hearts\MummifiedHeart.h" />
     <ClInclude Include="header\Relics\LifeSteal.h" />
     <ClInclude Include="header\Relics\ML_RelicArray.h" />
+    <ClInclude Include="header\Relics\Hearts\MoltenHeart.h" />
     <ClInclude Include="header\Relics\Reckless.h" />
     <ClInclude Include="header\Relics\RelicData.h" />
     <ClInclude Include="header\Relics\RelicFunctions.h" />
     <ClInclude Include="header\Relics\DemonBonemarrow.h" />
-    <ClInclude Include="header\Relics\DemonHeart.h" />
+    <ClInclude Include="header\Relics\Hearts\DemonHeart.h" />
     <ClInclude Include="header\Relics\FlameWeapon.h" />
     <ClInclude Include="header\Relics\FrostFire.h" />
     <ClInclude Include="header\Relics\LightningGod.h" />
