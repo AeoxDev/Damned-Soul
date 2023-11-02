@@ -15,9 +15,10 @@
 
 #include "SDLHandler.h"
 
-void Menu::Setup()//Load
+void Menu::Setup()
 {
 	m_active = true;
+	
 	// Clear relics when entering the main menu
 	Relics::ResetRelics();
 
@@ -27,7 +28,6 @@ void Menu::Setup()//Load
 	SetupText();
 	Camera::ResetCamera();
 	
-
 	//Temp stuff for ui to not crash because saving between levels is not fully implemented
 	EntityID playerUi = registry.CreateEntity();
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
@@ -56,7 +56,6 @@ void Menu::Input()
 {
 	
 }
-
 
 void Menu::SetupButtons()
 {
@@ -90,30 +89,10 @@ void Menu::SetupButtons()
 
 void Menu::SetupImages()
 {
-	//Title
+	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
 	auto tc = registry.AddComponent<UIImage>(title);
 	tc->Setup("ExMenu/DamnedTitle3.png", { 0.0f, 0.20f }, { 1.0f, 1.0f});
-	/*
-	auto title2 = registry.CreateEntity();
-	auto tc2 = registry.AddComponent<UIImage>(title2);
-	tc2->Setup("ExMenu/DamnedTitle2.png", { 0.0f, 0.0f }, { 1.0f, 1.0f });
-
-	auto title3 = registry.CreateEntity();
-	auto tc3 = registry.AddComponent<UIImage>(title3);
-	tc3->Setup("ExMenu/DamnedTitle3.png", { 0.0f, -0.25f }, { 1.0f, 1.0f });
-	*/
-/*
-	//Eye 1
-	auto eye1 = registry.CreateEntity();
-	auto ec1 = registry.AddComponent<UIImage>(eye1);
-	ec1->Setup("ExMenu/Eye.png", { -0.8f, 0.6f }, { 1.5f, 1.5f });
-
-	//Eye 2
-	auto eye2 = registry.CreateEntity();
-	auto ec2 = registry.AddComponent<UIImage>(eye2);
-	ec2->Setup("ExMenu/Eye.png", { 0.8f, 0.6f }, { 1.5f, 1.5f });
-*/
 }
 
 void Menu::SetupText()

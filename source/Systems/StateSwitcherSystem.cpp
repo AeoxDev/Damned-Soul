@@ -18,7 +18,7 @@ bool StateSwitcherSystem::Update()
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 		if (statComp != nullptr)
 		{
-			if (statComp->GetHealth() <= 0)
+			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay)
 			{
 				stateManager.GetCurrentLevel().GameOver();
 			}
