@@ -196,6 +196,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\CombatFunctions.cpp" />
+    <ClCompile Include="source\Relics\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\RelicData.cpp" />
     <ClCompile Include="source\Relics\RelicFuncInputTypes.cpp" />
     <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
@@ -206,6 +208,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\DemonSkin.cpp" />
     <ClCompile Include="source\Relics\LifeSteal.cpp" />
     <ClCompile Include="source\Relics\Reckless.cpp" />
+    <ClCompile Include="source\Relics\RelicParticleHelper.cpp" />
+    <ClCompile Include="source\Relics\SoulSpeed.cpp" />
+    <ClCompile Include="source\Relics\SpikedSkin.cpp" />
     <ClCompile Include="source\Systems\ParticleSystem.cpp" />
     <ClCompile Include="source\Systems\StatCalcSystem.cpp" />
     <ClCompile Include="source\UIShopComponent.cpp" />
@@ -444,6 +449,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClInclude Include="header\Animation.hpp" />
     <ClInclude Include="header\AnimationType.h" />
+    <ClInclude Include="header\CombatFunctions.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
@@ -487,6 +493,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
+    <ClInclude Include="header\Relics\AdvancedFighting.h" />
     <ClInclude Include="header\Relics\DemonSkin.h" />
     <ClInclude Include="header\Relics\LifeSteal.h" />
     <ClInclude Include="header\Relics\ML_RelicArray.h" />
@@ -500,9 +507,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\LightningGod.h" />
     <ClInclude Include="header\Relics\RelicFuncInputTypes.h" />
     <ClInclude Include="header\Relics\RelicInternalHelper.h" />
+    <ClInclude Include="header\Relics\RelicParticleHelper.h" />
     <ClInclude Include="header\Relics\SoulHealth.h" />
     <ClInclude Include="header\Relics\SoulPower.h" />
+    <ClInclude Include="header\Relics\SoulSpeed.h" />
     <ClInclude Include="header\Relics\SpeedyLittleDevil.h" />
+    <ClInclude Include="header\Relics\SpikedSkin.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />

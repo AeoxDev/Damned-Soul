@@ -289,13 +289,13 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     float idxFraction = (index % 256) / 255.f;
     float timeFraction = PI * (1 - (particle.time / meta[blockID.y].life));
     
-    float alpha = pow(sin(2 * PI * idxFraction + timeFraction), 3) * 2; // Pi
+    float alpha = pow(sin(2 * PI * idxFraction + timeFraction), 3); // Pi
     float beta = pow(sin(4 * 2.71828f * idxFraction + 4 * timeFraction), 3); // Eulers
-    float gamma = pow(sin(6 * sqrt(5) * idxFraction + 9 * timeFraction), 3) * 2; // Root(5)
+    float gamma = pow(sin(6 * sqrt(5) * idxFraction + 9 * timeFraction), 3); // Root(5)
     
     particle.position.y = posy;
-    particle.position.x = (alpha + beta + gamma);
-    particle.position.z = 0;
+    particle.position.x = (2*alpha + beta + 2*gamma);
+    particle.position.z = (alpha + 2*beta - gamma);
     
     outputParticleData[index] = particle;
 }

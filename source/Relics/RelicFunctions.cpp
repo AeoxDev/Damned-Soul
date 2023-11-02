@@ -13,18 +13,21 @@
 #include "Relics\FlameWeapon.h"
 #include "Relics\SoulPower.h"
 #include "Relics\LifeSteal.h"
+#include "Relics\AdvancedFighting.h"
 	/*Defense*/
 #include "Relics\DemonHeart.h"
 #include "Relics\FrostFire.h"
-#include "Relics/SoulHealth.h"
-#include "Relics/DemonSkin.h"
+#include "Relics\SoulHealth.h"
+#include "Relics\DemonSkin.h"
+#include "Relics\SpikedSkin.h"
 	/*Gadget*/
-#include "Relics/SpeedyLittleDevil.h"
-#include "Relics/LightningGod.h"
-#include "Relics/Reckless.h"
+#include "Relics\SpeedyLittleDevil.h"
+#include "Relics\LightningGod.h"
+#include "Relics\Reckless.h"
+#include "Relics\SoulSpeed.h"
 // End of include all relics
 
-#include "Relics/ML_RelicArray.h"
+#include "Relics\ML_RelicArray.h"
 #include "MemLib\ML_Vector.hpp"
 
 #include <random>
@@ -106,6 +109,14 @@ void _validateMasterRelicList()
 			//	/*Type*/		RELIC_OFFENSE,
 			//	/*Function*/	LIFE_STEAL::Initialize
 			//),
+			RelicData(
+				/*Name*/		"Advanced Fighting",
+				/*Filepath*/	"RelicIcons\\Advanced_Fighting.png",
+				/*Description*/	"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
+				/*Price*/		0, // 5?
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	ADVANCED_FIGHTING::Initialize
+			),
 			//RelicData(
 			//	/*Name*/		"Demon Heart",
 			//	/*Filepath*/	"RelicIcons\\Demon_Heart.png",
@@ -139,29 +150,46 @@ void _validateMasterRelicList()
 			//	/*Function*/	DEMON_SKIN::Initialize
 			//),
 			RelicData(
-				/*Name*/		"Speedy Little Devil",
-				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
-				/*Description*/	"Increases your Movespeed by 4 when obtained",
-				/*Price*/		3,
-				/*Type*/		RELIC_GADGET,
-				/*Function*/	SPEEDY_LITTLE_DEVIL::Initialize
+				/*Name*/		"Spiked Skin",
+				/*Filepath*/	"RelicIcons\\Spiked_Skin.png",
+				/*Description*/	"Whenever an enemy strikes you, it takes 15% of the damage it would deal (before reduction) as irresistable damage",
+				/*Price*/		0, // 5?
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	SPIKED_SKIN::Initialize
 			),
+			//RelicData(
+			//	/*Name*/		"Speedy Little Devil",
+			//	/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
+			//	/*Description*/	"Increases your Movespeed by 4 when obtained",
+			//	/*Price*/		3,
+			//	/*Type*/		RELIC_GADGET,
+			//	/*Function*/	SPEEDY_LITTLE_DEVIL::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Lightning God",
+			//	/*Filepath*/	"RelicIcons\\Lightning_God.png",
+			//	/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
+			//	/*Price*/		1,
+			//	/*Type*/		RELIC_GADGET,
+			//	/*Function*/	LIGHTNING_GOD::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Reckless",
+			//	/*Filepath*/	"RelicIcons\\Reckless.png",
+			//	/*Description*/	"You deal 50% more damage, but also take double damage",
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_GADGET,
+			//	/*Function*/	RECKLESS::Initialize
+			//),
 			RelicData(
-				/*Name*/		"Lightning God",
-				/*Filepath*/	"RelicIcons\\Lightning_God.png",
-				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive damage",
-				/*Price*/		1,
+				/*Name*/		"Soul Speed",
+				/*Filepath*/	"RelicIcons\\Soul_Speed.png",
+				/*Description*/	"You gain a bonus to your speed equal to your souls",
+				/*Price*/		0, // 5?
 				/*Type*/		RELIC_GADGET,
-				/*Function*/	LIGHTNING_GOD::Initialize
+				/*Function*/	SOUL_SPEED::Initialize
 			),
-			RelicData(
-				/*Name*/		"Reckless",
-				/*Filepath*/	"RelicIcons\\Reckless.png",
-				/*Description*/	"You deal 50% more damage, but also take double damage",
-				/*Price*/		10,
-				/*Type*/		RELIC_GADGET,
-				/*Function*/	RECKLESS::Initialize
-			)
+
 		};
 		// Copy over
 		std::memcpy(&MasterRelicList, &MasterInitializer, sizeof(ML_RelicArray));
