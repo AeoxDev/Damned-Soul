@@ -249,8 +249,9 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		float scalar = dirX * eyeComponent->changeDirX + dirZ * eyeComponent->changeDirZ;
 
 		//If charging scalar point direction > 0.0, charge
-		if (scalar > 0)
+		if (scalar > 0 && eyeComponent->chargeTimer < 3.0f)
 		{
+			eyeComponent->chargeTimer += GetDeltaTime();
 			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 30.0f);
 
 			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 6.f * GetDeltaTime();
@@ -364,6 +365,7 @@ bool EyeBehaviourSystem::Update()
 					eyeComponent->chargeAttackSoundPlaying = true;
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
 					sfx->Play(Eye_Attack, Channel_Base);
+					eyeComponent->chargeTimer = 0.0f;
 				}
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp);
 
