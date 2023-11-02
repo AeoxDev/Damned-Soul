@@ -9,10 +9,21 @@
 
 #define SKELETON_ATTACK_HITBOX 2
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, 
+	TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp, float goalDirectionX, float goalDirectionZ, bool path)
 {
-	skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
-	skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+	if (path)
+	{
+		skeletonComponent->goalDirectionX = goalDirectionX;
+		skeletonComponent->goalDirectionZ = goalDirectionZ;
+	}
+	else
+	{
+		skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
+		skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+	}
+	//
+	 //
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
@@ -131,11 +142,7 @@ bool SkeletonBehaviourSystem::Update()
 		{
 			ML_Vector<Node> finalPath;
 			skeletonComponent->updatePathCounter += GetDeltaTime();
-			if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
-			{
-				skeletonComponent->updatePathCounter = 0;
-				//finalPath = CalculateAStarPath(playerComponent->mapID, valueGrid, skeletonTransformComponent, playerTransformCompenent);
-			}
+			
 			
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
@@ -162,7 +169,21 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 50.f) //hunting distance
 			{
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
+				bool path = false;
+				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
+				{
+					skeletonComponent->updatePathCounter = 0;
+					finalPath = CalculateAStarPath(playerComponent->mapID, valueGrid, skeletonTransformComponent, playerTransformCompenent);
+					// goal (next node) - current
+					if (finalPath.size() > 1)
+					{
+						skeletonComponent->dirX = finalPath[1].x - finalPath[0].x;
+						skeletonComponent->dirZ = finalPath[1].z - finalPath[0].z;
+						path = true;
+					}
+				}
+				float x = 2.f; float y = 2.f;
+				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, x, y, path);
 			}
 			else // idle
 			{

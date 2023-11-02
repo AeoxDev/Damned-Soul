@@ -37,7 +37,7 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID)
 			}
 			else if (returnMap.cost[x][z] >= 2) // is the floor lava?
 			{
-				returnMap.cost[x][z] = 5; // this doesn't trigger yet. ELLIOT FIX gosh darn it
+				returnMap.cost[x][z] = 15; // this doesn't trigger yet. ELLIOT FIX gosh darn it
 			}
 		}
 	}
@@ -98,7 +98,7 @@ Node CreateNewNode(PathfindingMap gridValues, int x, int z, Node parent)
 	return returnNode;
 }
 
-ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS])
+ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS], Node start)
 {
 	ML_Vector<Node> theWay;
 	ML_Vector<Node> theReverseWay; // trust me, we need this. temp
@@ -110,6 +110,7 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 		theReverseWay.push_back(tempNode);
 		tempNode = nodeMap[tempNode.parentX][tempNode.parentZ];
 	}
+	theWay.push_back(start);
 	for (int i = theReverseWay.size() - 1; i >= 0; i--)
 	{
 		theWay.push_back(theReverseWay[i]);
@@ -168,7 +169,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 	tempPush.z = start.z;
 	openList.push_back(tempPush);
 
-	while (!openList.size() == 0 )
+	while (!openList.size() == 0 ) //this is where A* starts
 	{
 		GridPosition currPos = *openList.begin();
 		Node currentNode = nodeMap[currPos.x][currPos.z];
@@ -198,6 +199,9 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 		S.E--> South-East  (i+1, j+1)
 		*/
 		
+
+		float currentDist = CalculateEuclideanDistance(currentNode.x, currentNode.z, goal);
+
 		//generating first Indiana Jones (explorer)
 		if (IsCellValid(currentNode.x - 1, currentNode.z - 1)) // NW
 		{
@@ -205,7 +209,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -214,15 +218,18 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
-				
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
-				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+				if (newNode.h <= currentDist)
+				{
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -240,7 +247,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -250,14 +257,17 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
 
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h <= currentDist)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -273,7 +283,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -283,14 +293,17 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
 
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h <= currentDist)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -305,7 +318,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -315,14 +328,17 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
 
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h <= currentDist)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -338,7 +354,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -348,14 +364,17 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
 
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h <= currentDist)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -369,7 +388,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -379,14 +398,17 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
 
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h <= currentDist)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -401,7 +423,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -411,14 +433,17 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
 
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h <= currentDist)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -432,7 +457,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			if (AreWeThereYet(newNode.x, newNode.z, goal))
 			{
 				// goal found, code later
-				returnVector = TracePath(newNode, goal, nodeMap);
+				returnVector = TracePath(newNode, goal, nodeMap, start);
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
@@ -442,14 +467,17 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				//calc total cost
 				newNode.f = newNode.g + newNode.h; // top g
 
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h <= currentDist)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}

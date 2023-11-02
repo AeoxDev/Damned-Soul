@@ -10,9 +10,10 @@ struct SkeletonBehaviour
 	const float attackStunDuration = 0.8f;
 	int attackHitboxID = 2;
 
-	float updatePathCounter = 0.f;
-	float updatePathLimit = 0.2f;
+	float updatePathCounter = 0.8f;
+	float updatePathLimit = 0.6f;
 
-
+	float dirX = 0.f;
+	float dirZ = 0.f;
 
 };
