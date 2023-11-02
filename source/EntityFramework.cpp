@@ -169,16 +169,16 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
-		if(destructionTier != -1)
+		if(destructionTier != ENT_PERSIST_PAUSE)
 			ReleaseTimedEvents(entity);
 	}
 
-	if (destructionTier != -1)
+	if (destructionTier != ENT_PERSIST_PAUSE)
 		Light::FreeLight();
 	
 	for (auto entity : View<SoundComponent>(registry))
 	{
-		if (entity.persistentTier <= destructionTier)
+		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
 			SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 			if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
