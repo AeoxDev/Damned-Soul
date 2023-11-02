@@ -88,36 +88,6 @@ void LoadLevel1()
 	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	//CreateSpotLight(stage, 1.0f, 0.1f, 4.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f, 1.0f, -1.0f, 1.0f, 30.0f);
-	//CreateSpotLight(skeleton, 100.0f, 0.1f, 4.1f, 0.0f, -10.0f, 0.0f, 100.0f, .1f, 1.0f, 1.0f, 1.0f, 80.0f);
-	//CreateSpotLight(skeleton2, 1.0f, 0.1f, 4.1f, -30.0f, 10.0f, 0.0f, 100.0f, 100.0f, 1.0f, -10.0f, 1.0f, 30.0f);
-	//RemoveLight(dog);
-	//RemoveLight(stage);
-	//RemoveLight(lightholder);
-	//RemoveLight(lightholderTwo);
-	//RemoveLight(lightholderThree);
-	//RemoveLight(lightholderForth);
 
-	//EntityID hazard1 = CreateRoundStaticHazard("PlaceholderScene.mdl",20.0f, 0.1f, -0.0f, 0.04f, 0.1f, 0.04f, 0.8f, 0.4f, 0.1f, 1.5f, 2.0f);
-	//EntityID hazard2 = CreateRoundStaticHazard("PlaceholderScene.mdl",18.5f, 0.1f, -20.0f, 0.08f, 0.1f, 0.08f, 0.8f, 0.4f, 0.1f, 3.0f, 2.0f);
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
-
-	//Add static hazards on the where player does not spawn
-	//const int nrHazards = 3;
-	//for (size_t i = 0; i < nrHazards; i++)
-	//{
-	//	bool succeded = false;
-	//	while (!succeded)
-	//	{
-	//		float randX = (float)(rand() % 100) - 50.0f;
-	//		float randZ = (float)(rand() % 100) - 50.0f;
-	//		if (randX * randX + randZ * randZ > 80)
-	//		{
-	//			EntityID hazard1 = CreateSquareStaticHazard("PlaceholderScene.mdl", randX, 0.1f, randZ, 0.1f, 0.1f, 0.1f,
-	//				-60.0f, -60.0f, 60.0f, -60.0f, 60.0f, 60.0f, -60.f, 60.f,
-	//				0.8f, 0.5f, 0.1f, 3.0f, (float)rand());
-	//			succeded = true;
-	//		}
-	//	}
-	//}
 }

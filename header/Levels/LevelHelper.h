@@ -16,3 +16,5 @@ void SetPlayerPosition(float positionX = 0.f, float positionY = 0.f, float posit
 void LoadPlayerSounds();
 
 void ReloadPlayerNonGlobals();
+
+EntityID RandomPlayerEnemy(EnemyType enemyType);

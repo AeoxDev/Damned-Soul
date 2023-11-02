@@ -1,5 +1,6 @@
 #pragma once
 #include <EntityID.h>
+#include <cinttypes>
 
 #define HAZARD_LAVA_UPDATE_TIME  0.25f
 #define HAZARD_LAVA_DAMAGE 4
@@ -20,5 +21,7 @@ void AddStaticHazard(EntityID& entity, const StaticHazardType& type = HAZARD_LAV
 //This needs to be in the same Entity as the stage for it to be seen by GI
 struct StaticHazardTextureComponent
 {
-	unsigned textureID;
+	int16_t textureID;
+	uint64_t modelID;
+	void LoadPlaneAndTexture(char* texture, char* model);
 };

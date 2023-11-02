@@ -30,13 +30,16 @@ float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
 			for (auto entity : View<PlayerComponent>(registry))
 			{
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-				if (this->currentHealth <= 0)
+				if (sfx)
 				{
-					sfx->Play(Player_Death, Channel_Base);
-				}
-				else
-				{
-					sfx->Play(Player_Hurt, Channel_Base);
+					if (this->currentHealth <= 0)
+					{
+						sfx->Play(Player_Death, Channel_Base);
+					}
+					else
+					{
+						sfx->Play(Player_Hurt, Channel_Base);
+					}
 				}
 			}
 		}

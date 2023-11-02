@@ -196,6 +196,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Components\StaticHazardComponent.cpp" />
     <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\FeedbackFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\StatFunctions.cpp" />

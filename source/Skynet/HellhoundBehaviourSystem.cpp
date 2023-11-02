@@ -160,7 +160,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
-	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
 	ANIM_BRANCHLESS(enemyAnim);
@@ -389,12 +389,12 @@ bool HellhoundBehaviourSystem::Update()
 	EnemyComponent* enmComp = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
 
-	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
-	{
-		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-		playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	}
+	//for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+	//{
+	//	playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+	//	playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+	//	playerStats = registry.GetComponent< StatComponent>(playerEntity);
+	//}
 
 
 	// FOR TESTING
@@ -421,7 +421,38 @@ bool HellhoundBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
-
+		//Find a player to kill.
+		if (enmComp->lastPlayer.index == -1)
+		{
+			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+			{
+				if (enemyEntity.index == playerEntity.index)
+				{
+					continue;
+				}
+				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+				playerStats = registry.GetComponent< StatComponent>(playerEntity);
+				enmComp->lastPlayer = playerEntity;
+				if (rand() % 2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			playerComponent = registry.GetComponent<PlayerComponent>(enmComp->lastPlayer);
+			playerTransformCompenent = registry.GetComponent<TransformComponent>(enmComp->lastPlayer);
+			playerStats = registry.GetComponent< StatComponent>(enmComp->lastPlayer);
+			if (playerComponent == nullptr)
+			{
+				for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+				{
+					enmComp->lastPlayer.index = -1;
+				}
+			}
+		}
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyAnim != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
@@ -502,9 +533,17 @@ bool HellhoundBehaviourSystem::Update()
 			else // idle
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
+				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 			}
 		}
+		//Idle if there are no players on screen.
+		else if (enemyStats->GetHealth() > 0.0f)
+		{
+			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
+			IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
+		}
+
 	}
 	return true;
 }

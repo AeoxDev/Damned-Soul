@@ -74,7 +74,7 @@ bool EventSystem::Update()
 	return true;
 }
 //Check stacks for events here
-int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* startFunction, int maxStacks)
+int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* startFunction, uint32_t condition,int maxStacks)
 {
 	TimedEventComponent* tc = registry.GetComponent<TimedEventComponent>(entityID);
 	if (!tc)
@@ -83,6 +83,7 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 		tc->timedEvents.Initialize();
 	}
 	TimedEvent timedEvent;
+	timedEvent.condition = condition;
 	timedEvent.id = (unsigned long long)startFunction;
 	if (CheckDuplicates(tc, (unsigned long long)startFunction) > maxStacks)
 	{
@@ -96,7 +97,7 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 	return tc->timedEvents.size() - 1;
 }
 //Adds a start and an end event. Use functions from the EventFunctions folder.
-int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* startFunction, float endTime, void* endFunction, int maxStacks)
+int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* startFunction, float endTime, void* endFunction, uint32_t condition,int maxStacks)
 {
 	TimedEventComponent* tc = registry.GetComponent<TimedEventComponent>(eventity);
 	if (!tc)
@@ -105,6 +106,7 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 		tc->timedEvents.Initialize();
 	}
 	TimedEvent timedEvent;
+	
 	timedEvent.id = (unsigned long long)startFunction + (unsigned long long)endFunction;
 	if (CheckDuplicates(tc, (unsigned long long)startFunction + (unsigned long long)endFunction) >= maxStacks)
 	{
@@ -115,6 +117,7 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 	timedEvent.startFunction = (void(*)(EntityID&, const int&))startFunction;
 	timedEvent.endTime = endTime;
 	timedEvent.endFunction = (void(*)(EntityID&, const int&))endFunction;
+	timedEvent.condition = condition;
 	tc->timedEvents.push_back(timedEvent);
 	return tc->timedEvents.size() - 1;
 }
