@@ -57,6 +57,8 @@ void UIFunc::PauseState_ResumeGame(void* args)
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
+
+		UnloadEntities(ENT_PERSIST_PAUSE);
 	}
 	else
 	{
@@ -65,6 +67,8 @@ void UIFunc::PauseState_ResumeGame(void* args)
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
+
+		UnloadEntities(ENT_PERSIST_PAUSE);
 	}
 }
 

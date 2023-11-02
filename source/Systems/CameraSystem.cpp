@@ -14,6 +14,9 @@
 
 bool PointOfInterestSystem::Update()
 {
+	if (gameSpeed == 0.0f)
+		return true;
+
 	PointOfInterestComponent* poiCo = nullptr;
 	TransformComponent* tCo = nullptr;
 	DirectX::XMVECTOR lookVector = Camera::GetLookAt();

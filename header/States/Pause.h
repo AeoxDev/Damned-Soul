@@ -10,5 +10,5 @@ struct PauseState
 	void SetupImages();
 	void SetupText();
 
-	void Unload(bool unloadPersistent = false);
+	void Unload(int unloadPersistent = 0);
 };

@@ -2,6 +2,7 @@
 
 enum ENTITY_PERSISTENCY_TIER
 {
+	ENT_PERSIST_PAUSE = -1, //Used to make sure we only remove pause menu ui and nothing else
 	ENT_PERSIST_LOWEST, //Note to future self: If we end up needing another persist lower than this one, give herman a pat on the back
 	ENT_PERSIST_LEVEL, //Persists between levels, for example player
 	ENT_PERSIST_GAME, //Persists throughout the game, for example the audio engine

@@ -29,7 +29,8 @@ void GameScene::Input(bool isShop)
 		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
 			SetInPause(true);
-			//SetInShop(false);
+			SetInShop(false);
+
 			gameSpeed = 0.0f;
 			ResetInput();
 			stateManager.pause.Setup();
@@ -62,7 +63,7 @@ void GameScene::ComputeShaders()
 	Particles::FinishParticleCompute();*/
 }
 
-void GameScene::Unload(bool unloadPersistent)
+void GameScene::Unload(int unloadPersistent)
 {
 	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
 }
