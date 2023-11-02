@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "UIRenderer.h"
 #include "States\StateManager.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include "Registry.h"
 #include "Components.h"
 
@@ -43,7 +43,7 @@ void LoadLevel(int level)
 	case 6: LoadShop(); break;
 	case 7: LoadLevel4(); break;
 	default: 
-		UnloadEntities(ENT_PERSIST_PLAYER);//Reset game
+		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}

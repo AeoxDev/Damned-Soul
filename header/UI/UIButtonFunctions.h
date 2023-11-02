@@ -1,19 +1,19 @@
 #pragma once
 
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include "MemLib/ML_Vector.hpp"
 
-enum temprelicslist
-{
-	DemonBonemarrow,
-	FlameWeapon,
-	SoulPower,
-	DemonHeart,
-	FrostFire,
-	SoulHealth,
-	SpeedyLittleDevil,
-	LightningGod
-};
+//enum temprelicslist
+//{
+//	DemonBonemarrow,
+//	FlameWeapon,
+//	SoulPower,
+//	DemonHeart,
+//	FrostFire,
+//	SoulHealth,
+//	SpeedyLittleDevil,
+//	LightningGod
+//};
 
 namespace UIFunc
 {

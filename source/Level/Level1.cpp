@@ -22,7 +22,6 @@ void LoadLevel1()
 	EntityID playerHealth = registry.CreateEntity(ENT_PERSIST_PLAYER);
 	EntityID playerSouls = registry.CreateEntity(ENT_PERSIST_PLAYER);
 	
-	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -38,6 +37,8 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
 	//SetupEnemy(EnemyType::eye, -0.f, 0.f, 25.f);
+	// 
+	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
 	//5 souls total
 
 
@@ -50,9 +51,9 @@ void LoadLevel1()
 	// Stage (Default)
 	TransformComponent *stageTransform = registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
+	phc->Load("default");	
+	
 
-	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 
 	UIComponent* ui1 = registry.AddComponent<UIComponent>(playerHealth);
 	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(playerHealth);

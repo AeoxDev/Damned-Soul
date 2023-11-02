@@ -1,18 +1,38 @@
+#include "Relics/RelicInternalHelper.h"
 #include "Relics/SpeedyLittleDevil.h"
+#include "Relics/RelicFuncInputTypes.h"
 #include "Registry.h"
 #include "Components.h"
 
 #define SPEEDY_LITTLE_DEVIL_SPEED_INCREASE (4.f)
 
-void SPEEDY_LITTLE_DEVIL::IncreasePlayerSpeed(void* data)
-{
-	EntityID player;
-	for (auto entity : View<PlayerComponent>(registry))
-		player = entity;
+EntityID SPEEDY_LITTLE_DEVIL::_OWNER;
 
-	StatComponent* stats = registry.GetComponent<StatComponent>(player);
-	if (stats)
+void SPEEDY_LITTLE_DEVIL::Initialize(void* input)
+{
+	// Set owner
+	SPEEDY_LITTLE_DEVIL::_OWNER = *((EntityID*)input);
+
+	// This is a stat altering relic, mark the entity as having modified stats
+	registry.GetComponent<StatComponent>(SPEEDY_LITTLE_DEVIL::_OWNER)->MarkAsModified();
+
+	// Make sure the relic function map exists
+	_validateRelicFunctions();
+
+	// Add it to the list of On Obtain functions
+	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(SPEEDY_LITTLE_DEVIL::IncreaseSpeed);
+}
+
+void SPEEDY_LITTLE_DEVIL::IncreaseSpeed(void* data)
+{
+	RelicInput::OnStatCalcInput* input = (RelicInput::OnStatCalcInput*)data;
+
+	// Check if this is the owner
+	if (input->entity.index == SPEEDY_LITTLE_DEVIL::_OWNER.index)
 	{
-		stats->moveSpeed += SPEEDY_LITTLE_DEVIL_SPEED_INCREASE;
+		// Get stats
+		StatComponent* stats = (StatComponent*)input->adressOfStatComonent;
+		// Increase damage
+		stats->UpdateBonusSpeed(SPEEDY_LITTLE_DEVIL_SPEED_INCREASE);
 	}
 }

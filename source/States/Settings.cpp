@@ -7,7 +7,7 @@
 #include "UI/UIRenderer.h"
 #include "Camera.h"
 #include "UI/UIButtonFunctions.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UIComponents.h"
 #include "Model.h"

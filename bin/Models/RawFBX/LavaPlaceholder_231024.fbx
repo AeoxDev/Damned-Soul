@@ -31,14 +31,14 @@ FBXHeaderExtension:  {
 			Comment: ""
 		}
 		Properties70:  {
-			P: "DocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\FbxFiles\FbxFinished\LavaPlaceholder_231024.fbx"
-			P: "SrcDocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\FbxFiles\FbxFinished\LavaPlaceholder_231024.fbx"
+			P: "DocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\FbxFiles\FbxFinished\LavaPlaceholderAlpha_231024.fbx"
+			P: "SrcDocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\FbxFiles\FbxFinished\LavaPlaceholderAlpha_231024.fbx"
 			P: "Original", "Compound", "", ""
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya"
 			P: "Original|ApplicationVersion", "KString", "", "", "2024"
 			P: "Original|DateTime_GMT", "DateTime", "", "", "24/10/2023 09:00:26.149"
-			P: "Original|FileName", "KString", "", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\FbxFiles\FbxFinished\LavaPlaceholder_231024.fbx"
+			P: "Original|FileName", "KString", "", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\FbxFiles\FbxFinished\LavaPlaceholderAlpha_231024.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya"
@@ -376,12 +376,12 @@ Objects:  {
 	Video: 2779913365792, "Video::file1", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:/Users/Proj/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/FbxFinished/Textures/LavaPlaceholder.png"
-			P: "RelPath", "KString", "XRefUrl", "", "Textures\LavaPlaceholder.png"
+			P: "Path", "KString", "XRefUrl", "", "C:/Users/Proj/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/FbxFinished/Textures/LavaPlaceholderAlpha.png"
+			P: "RelPath", "KString", "XRefUrl", "", "Textures\LavaPlaceholderAlpha.png"
 		}
 		UseMipMap: 0
-		Filename: "C:/Users/Proj/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/FbxFinished/Textures/LavaPlaceholder.png"
-		RelativeFilename: "Textures\LavaPlaceholder.png"
+		Filename: "C:/Users/Proj/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/FbxFinished/Textures/LavaPlaceholderAlpha.png"
+		RelativeFilename: "Textures\LavaPlaceholderAlpha.png"
 	}
 	Texture: 2779913362432, "Texture::file1", "" {
 		Type: "TextureVideoClip"
@@ -393,8 +393,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file1"
-		FileName: "C:/Users/Proj/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/FbxFinished/Textures/LavaPlaceholder.png"
-		RelativeFilename: "Textures\LavaPlaceholder.png"
+		FileName: "C:/Users/Proj/OneDrive - BTH Student/1StortSpelDamnedSoul/FbxFiles/FbxFinished/Textures/LavaPlaceholderAlpha.png"
+		RelativeFilename: "Textures\LavaPlaceholderAlpha.png"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"

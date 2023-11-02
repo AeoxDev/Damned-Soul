@@ -3,9 +3,12 @@
 class System
 {
 public:
+	float timeCap = 0.f;
+	float timeElapsed = 0.f;
 	virtual bool Update() = 0;
 };
 
+void SetTime(System& systemName, float updateCallTime);
 
 class RenderSystem : public System
 {
@@ -16,6 +19,10 @@ class OnClickSystem : public System
 	bool Update();
 };
 class OnHoverSystem : public System
+{
+	bool Update();
+};
+class StatCalcSystem : public System
 {
 	bool Update();
 };
@@ -75,6 +82,10 @@ class ParticleSystemGPU : public System
 	bool Update();
 };
 class ParticleSystemCPU : public System
+{
+	bool Update();
+};
+class ParticleSystem : public System
 {
 	bool Update();
 };

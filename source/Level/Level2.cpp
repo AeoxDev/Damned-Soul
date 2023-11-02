@@ -2,7 +2,6 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Components.h"
-#include "Particles.h"
 #include "EventFunctions.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
@@ -16,7 +15,6 @@
 void LoadLevel2()
 {
 	EntityID stage = registry.CreateEntity();
-	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -41,11 +39,18 @@ void LoadLevel2()
 	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, -45.f);
 	//13 souls + 5 souls level 1 = 18 souls total
 
+	float redAdd = 0.1f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.0f;
+	float redMult = 1.4f;
+	float greenMult = 1.2f;
+	float blueMult = 0.8f;
+
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 1.4f;
-	stageModel->colorMultiplicativeGreen = 1.2f;
-	stageModel->colorMultiplicativeBlue = 0.8f;
-	stageModel->colorAdditiveRed = 0.1f;
+	stageModel->colorMultiplicativeRed = redMult;
+	stageModel->colorMultiplicativeGreen = greenMult;
+	stageModel->colorMultiplicativeBlue = blueMult;
+	stageModel->colorAdditiveRed = redAdd;
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -63,7 +68,6 @@ void LoadLevel2()
 
 	//registry.AddComponent<ControllerComponent>(player);
 
-	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
@@ -105,7 +109,10 @@ void LoadLevel2()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard1 = CreateSquareStaticHazard("LavaPlaceholder.mdl", randX, 0.1f, randZ, randScaleX, 0.1f, randScaleZ,
 					-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-					0.8f, 0.5f, 0.2f, 3.0f, (float)rand());
+					3.0f, (float)rand(),
+					redAdd, greenAdd, blueAdd,
+					redMult, greenMult, blueMult);
+
 				succeded = true;
 			}
 		}

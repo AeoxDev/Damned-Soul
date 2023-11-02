@@ -1,7 +1,7 @@
 #pragma once
 #include "EntityFramework.h"
-//struct Registry;
+
 extern Registry registry;
 
-/// destructionTiers: 0: no persistents destroyed, 1: player, 2: audioEngine, 3: everything
-void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier = ENT_PERSIST_BASIC);
+//When UnloadEntities is called, every entity with persistency EQUAL TO OR BELOW the value specified will be unloaded
+void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier = ENT_PERSIST_LOWEST);

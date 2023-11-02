@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "Registry.h"
 #include <cmath> //sin
+#include <assert.h>
 
 void PauseAnimation(EntityID& entity, const int& index)
 {

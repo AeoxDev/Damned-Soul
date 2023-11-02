@@ -4,14 +4,15 @@
 #include "Hitbox.h"
 #include "Camera.h"
 #include "Particles.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UI/UIRenderer.h"
 #include "Particles.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "Light.h"
 #include "Registry.h"
 #include "Components.h"
+#include "DeltaTime.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -105,7 +106,7 @@ int StateManager::Setup()
 	ui.Setup();
 
 	// Audio Engine VERY IMPORTANT TO LOAD THIS FIRST BEFORE ANY SOUND COMPONENT OR ELSE THINGS WILL GO WHACK!!!!!!!!!!!!!
-	EntityID audioJungle = registry.CreateEntity(ENT_PERSIST_AUDIO);
+	EntityID audioJungle = registry.CreateEntity(ENT_PERSIST_GAME);
 	AudioEngineComponent* audioEngine = registry.AddComponent<AudioEngineComponent>(audioJungle);
 	audioEngine->Setup(audioJungle.index);
 
@@ -120,7 +121,7 @@ int StateManager::Setup()
 	Camera::InitializeCamera();
 	menu.Setup();
 
-	Particles::InitializeParticles(); // THIS YIELDS MEMORY LEAK UNRELEASED OBJECT
+	Particles::InitializeParticles();
 	//SetupTestHitbox();
 	RedrawUI();
 
@@ -133,10 +134,18 @@ int StateManager::Setup()
 	systems.push_back(new UIRenderSystem());
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new RenderSystem());
+	//systems[2]->timeCap = 1.f / 60.f;
+	systems.push_back(new ParticleSystem());
+	//systems[6]->timeCap = 1.f / 30.f;
+
+
 	
 	//Input based CPU 
 	systems.push_back(new OnClickSystem());
 	systems.push_back(new OnHoverSystem());
+
+	// Stat Calculatoins
+	systems.push_back(new StatCalcSystem()); // Should be before behaviours and controllers so that the correct stats are applied
 
 	//CPU WORK (ORDER IMPORTANT)
 	//AI Systems
@@ -166,7 +175,6 @@ int StateManager::Setup()
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
-	//systems.push_back(new UIGameLevelSystem());
 	systems.push_back(new UIShopSystem());
 
 	return 0;
@@ -226,8 +234,13 @@ void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
-		if (!systems[i]->Update())
-			break;
+		systems[i]->timeElapsed += GetDeltaTime();
+
+		if (systems[i]->timeElapsed >= systems[i]->timeCap)
+		{
+			systems[i]->Update();
+			systems[i]->timeElapsed -= systems[i]->timeCap;
+		}
 	}
 
 	Input();
@@ -235,12 +248,12 @@ void StateManager::Update()
 
 void StateManager::UnloadAll()
 {
-	menu.Unload();
+	/*menu.Unload();
 	settings.Unload();
 	scenes[0].Unload();
 	scenes[1].Unload();
-	scenes[2].Unload();
-	UnloadEntities(ENT_PERSIST_HIGHEST_TIER);
+	scenes[2].Unload();*/
+	UnloadEntities(ENT_PERSIST_HIGHEST);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
 	DestroyHitboxVisualizeVariables();

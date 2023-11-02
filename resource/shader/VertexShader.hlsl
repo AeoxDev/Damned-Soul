@@ -35,6 +35,7 @@ VS_OUT main(VS_INPUTS pos)
     output.uv = pos.uv;
 	
     output.normal = mul(pos.normal, world); //
+    output.normal = normalize(output.normal);
 	
     output.position = mul(pos.position, world);
     output.world = output.position;

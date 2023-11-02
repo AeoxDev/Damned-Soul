@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <dxgi.h>
-#include "D3D11Graphics.h"
+#include "D3D11Helper/D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "MemLib/MemLib.hpp"
 #include <fstream>

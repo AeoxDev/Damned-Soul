@@ -34,9 +34,18 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 		anim->aAnimIdx = 0;
 		anim->aAnimTime = GetTimedEventElapsedTime(entity, index);
 	}
+	ParticleComponent* pc = registry.GetComponent<ParticleComponent>(entity);
+	if (pc != nullptr)
+	{
+		pc->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
 
 	//Temp: Remove the light if dog dies during its flamethrower attack
 	RemoveLight(entity);
+	EnemyComponent* enmComp = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxActive(entity, enmComp->specialHitBoxID, false);
+	SetHitboxCanDealDamage(entity, enmComp->specialHitBoxID, false);
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
@@ -51,9 +60,9 @@ void CreateMini(const EntityID& original, const float offsetValue)
 
 	//Set stats of new boss based on original
 	float bossHP = bossStats->GetMaxHealth() / 2.f;
-	float bossSpeed = bossStats->moveSpeed;
-	float bossDamage = bossStats->damage / 2.f;
-	float bossAttackSpeed = bossStats->attackSpeed;
+	float bossSpeed = bossStats->GetSpeed();
+	float bossDamage = bossStats->GetDamage() / 2.f;
+	float bossAttackSpeed = bossStats->GetAttackSpeed();
 	registry.AddComponent<StatComponent>(newMini, bossHP, bossSpeed, bossDamage, bossAttackSpeed);
 
 	//Set transform

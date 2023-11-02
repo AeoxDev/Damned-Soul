@@ -8,6 +8,7 @@ cbuffer CameraBuffer : register(b1)
 struct GS_IN
 {
     float4 position : SV_POSITION;
+    float4 worldPosition : POSITION;
     float4 rgb : RGB;
     float rotationZ : ROTATIONZ;
     float size : SIZE;
@@ -25,7 +26,7 @@ void main(
 	inout TriangleStream< GS_OUT > retval
 )
 {
-    float3 look = cameraPosition.xyz - inval[0].position.xyz;
+    float3 look = cameraPosition.xyz - inval[0].worldPosition.xyz;
     //look.y = 0.f;
     look = normalize(look);
     
@@ -38,12 +39,12 @@ void main(
     
     // Now construct the billboard, starting with positions
     float3 vertices[6];
-    vertices[0] = inval[0].position.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom left vertex
-    vertices[1] = inval[0].position.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
-    vertices[2] = inval[0].position.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
-    vertices[3] = inval[0].position.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
-    vertices[4] = inval[0].position.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
-    vertices[5] = inval[0].position.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top right vertex
+    vertices[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom left vertex
+    vertices[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
+    vertices[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
+    vertices[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
+    vertices[4] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
+    vertices[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top right vertex
 
     float4x4 viewProj = mul(view, projection);
 
@@ -52,7 +53,7 @@ void main(
     [unroll]
     for (int i = 0; i < 6; i++)
     {
-        retappend.position = mul(float4(vertices[i].xyz, inval[0].position.w), viewProj); // times rotationZ here?
+        retappend.position = mul(float4(vertices[i].xyz, inval[0].worldPosition.w), viewProj); // times rotationZ here?
         // INSERT rotate on Z-axis
         retappend.position = retappend.position / retappend.position.w;
         retappend.rgb = inval[0].rgb;

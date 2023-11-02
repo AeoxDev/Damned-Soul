@@ -4,7 +4,7 @@
 #include "Model.h"
 #include "GameRenderer.h"
 #include "SDLHandler.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "Particles.h"
 #include "Components.h"
 #include "Input.h"
@@ -23,7 +23,7 @@
 #include "Level.h"
 
 // Relic Stuff
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 
 void GameScene::Input(bool isShop)
 {
@@ -74,6 +74,6 @@ void GameScene::GameOver()
 	SetInMainMenu(true);
 	SetInPlay(false);
 	Unload(true);
-	//Relics::ClearRelicFunctions();
+	//Relics::ResetRelics();
 	stateManager.menu.Setup();
 }

@@ -2,7 +2,7 @@
 #include "States\StateManager.h"
 #include "SDLHandler.h"
 #include "Level.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "Registry.h"
 #include "Components.h"
@@ -176,42 +176,10 @@ void UIFunc::Shop_BuyRelic(void* args, int a)
 
 	//		button->m_Images[0].SetImage("Dollar.png");*/
 
-	//		player->UpdateSouls(-uiRelic->price);
-	//		switch (uiRelic->relicIndex)
-	//		{
-	//		case DemonBonemarrow:
-	//			Relics::DemonBonemarrow(true);
-	//			break;
-	//		case FlameWeapon:
-	//			Relics::FlameWeapon(true);
-	//			break;
-	//		case SoulPower:
-	//			Relics::SoulPower(true);
-	//			break;
-	//		case DemonHeart:
-	//			Relics::DemonHeart(true);
-	//			break;
-	//		case FrostFire:
-	//			Relics::FrostFire(true);
-	//			break;
-	//		case SoulHealth:
-	//			Relics::SoulHealth(true);
-	//			break;
-	//		case SpeedyLittleDevil:
-	//			Relics::SpeedyLittleDevil(true);
-	//			break;
-	//		case LightningGod:
-	//			Relics::LightningGod(true);
-	//			break;
-	//		default:
-	//			break;
-	//		}
+			//button->m_Images[0].SetImage("Dollar.png");
 
-	//		RedrawUI();
-	//		break;
-	//	}		
-	//}
-}
+			player->UpdateSouls(-uiRelic->price);
+			uiRelic->relicData->m_function(&(stateManager.player));
 
 
 void UIFunc::Shop_LockRelic(void* args)
@@ -246,113 +214,55 @@ void UIFunc::Shop_LockRelic(void* args)
 
 void UIFunc::Shop_ReRollRelic(void* args)
 {
-	//std::random_device dev;
-	//std::mt19937 rng(dev());
-	//std::uniform_int_distribution<std::mt19937::result_type> randomNumber(0, 512);
-	//int rnd = -1;
-	//ML_Array<int, 3> includedRelics;
-	//ML_Vector<int> allRelics;
 
-	//for (int i = 0; i < 8; i++)
-	//	allRelics.push_back(i);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	rnd = randomNumber(rng) % allRelics.size();
-	//	includedRelics[i] = allRelics[rnd];
-	//	allRelics.erase(rnd);
-	//}
+	// Put all relics in the shop back, if they aren't bought, locked, or nonexistent
+	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+	{
+		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+		if (uiRelic->locked == 1)
+		{
+			uiElement->bought = false;
+			continue;
+		}
+
+		// If the relic is not bought and the relic has a value, put it back
+		if (false == uiElement->bought)
+			Relics::PutBackRelic(uiRelic->relicData);
+	}
 
 	//int counter = 0;
-	//for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
-	//{
-	//	auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-	//	auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+	// Put in new relics into the shop
+	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+	{
+		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
 	//	if (player->GetSouls() < 1)
 	//		break;
 
-	//	if (uiRelic->locked == 1)
-	//	{
-	//		counter++;
-	//		continue;
-	//	}
+		if (uiRelic->locked == 1)
+		{
+			//counter++;
+			uiElement->bought = false;
+			continue;
+		}
 
-	//	/*if (uiElement->bought && args)
-	//	{
-	//		for (auto buttonEntity : View<UIButton>(registry))
-	//		{
-	//			auto button = registry.GetComponent<UIButton>(buttonEntity);
-	//			if (uiElement->shopPosition != button->shopPosition)
-	//				continue;
+		// Very iffy code to circumvent const here, but we want const everywhere to prevent people from modifying the data itself
+		// This is not pretty, but its the only thing we know "works" at the moment
+		const RelicData* selected = Relics::PickRandomRelic(Relics::RELIC_UNTYPED);
+		std::memcpy(&uiRelic->relicData, &selected, sizeof(RelicData*));
 
-	//			button->m_Images[0].SetImage("TempBuy.png");
-	//			break;
-	//		}
-
-	//		continue;
-	//	}*/
-	//	
-
-	//	uiRelic->relicIndex = includedRelics[counter];
-	//	switch (includedRelics[counter])
-	//	{
-	//	case DemonBonemarrow:
-	//		uiRelic->price = 10;
-	//		uiRelic->sprite.SetImage(Relics::DemonBonemarrow(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::DemonBonemarrow(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::DemonBonemarrow(false).description, true);
-	//		break;
-	//	case FlameWeapon:
-	//		uiRelic->price = 3;
-	//		uiRelic->sprite.SetImage(Relics::FlameWeapon(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::FlameWeapon(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::FlameWeapon(false).description, true);
-	//		break;
-	//	case SoulPower:
-	//		uiRelic->price = 5;
-	//		uiRelic->sprite.SetImage(Relics::SoulPower(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::SoulPower(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::SoulPower(false).description, true);
-	//		break;
-	//	case DemonHeart:
-	//		uiRelic->price = 10;
-	//		uiRelic->sprite.SetImage(Relics::DemonHeart(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::DemonHeart(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::DemonHeart(false).description, true);
-	//		break;
-	//	case FrostFire:
-	//		uiRelic->price = 3;
-	//		uiRelic->sprite.SetImage(Relics::FrostFire(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::FrostFire(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::FrostFire(false).description, true);
-	//		break;
-	//	case SoulHealth:
-	//		uiRelic->price = 5;
-	//		uiRelic->sprite.SetImage(Relics::SoulHealth(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::SoulHealth(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::SoulHealth(false).description, true);
-	//		break;
-	//	case SpeedyLittleDevil:
-	//		uiRelic->price = 3;
-	//		uiRelic->sprite.SetImage(Relics::SpeedyLittleDevil(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::SpeedyLittleDevil(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::SpeedyLittleDevil(false).description, true);
-	//		break;
-	//	case LightningGod:
-	//		uiRelic->price = 10;
-	//		uiRelic->sprite.SetImage(Relics::LightningGod(false).filePath);
-	//		uiRelic->flavorTitle.UpdateText(Relics::LightningGod(false).relicName, true);
-	//		uiRelic->flavorDesc.UpdateText(Relics::LightningGod(false).description, true);
-	//		break;
-	//	default:
-	//		break;
-	//	}
-
-	//	counter++;
-	//}
+		uiRelic->price = uiRelic->relicData->m_price;
+		uiRelic->sprite.SetImage(uiRelic->relicData->m_filePath);
+		uiRelic->flavorTitle.UpdateText(uiRelic->relicData->m_relicName, true);
+		uiRelic->flavorDesc.UpdateText(uiRelic->relicData->m_description, true);
+		uiElement->bought = false;
+		//counter++;
+	}
 
 	//if (args && player->GetSouls() >= 1)
 	//	player->UpdateSouls(-1);

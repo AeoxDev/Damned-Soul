@@ -198,6 +198,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\UI\UIElement.cpp" />
+    <ClCompile Include="source\Relics\RelicData.cpp" />
+    <ClCompile Include="source\Relics\RelicFuncInputTypes.cpp" />
     <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\FeedbackFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\StatFunctions.cpp" />
@@ -205,6 +207,11 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="source\Level\Shop.cpp" />
+    <ClCompile Include="source\Relics\DemonSkin.cpp" />
+    <ClCompile Include="source\Relics\LifeSteal.cpp" />
+    <ClCompile Include="source\Relics\Reckless.cpp" />
+    <ClCompile Include="source\Systems\ParticleSystem.cpp" />
+    <ClCompile Include="source\Systems\StatCalcSystem.cpp" />
     <ClCompile Include="source\UIShopComponent.cpp" />
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\ComponentHelper.cpp" />
@@ -234,7 +241,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\MouseComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
-    <ClCompile Include="source\RelicFunctions.cpp" />
+    <ClCompile Include="source\Relics\RelicFunctions.cpp" />
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
     <ClCompile Include="source\Relics\DemonHeart.cpp" />
     <ClCompile Include="source\Relics\FrostFire.cpp" />
@@ -268,6 +275,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\ParticleSystemGPU.cpp" />
     <ClCompile Include="source\Systems\RenderSystem.cpp" />
     <ClCompile Include="source\Systems\StateSwitcherSystem.cpp" />
+    <ClCompile Include="source\Systems\Systems.cpp" />
     <ClCompile Include="source\Systems\TransformSystem.cpp" />
     <ClCompile Include="source\Systems\UISystems.cpp" />
     <ClCompile Include="source\UI\UIButtonFunctions.cpp" />
@@ -309,7 +317,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="resource\shader\Particles\ParticlePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -325,7 +333,19 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="resource\shader\Particles\ParticleSamplerPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="resource\shader\Particles\ParticleSamplerVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="resource\shader\Particles\ParticleVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -458,7 +478,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Components\ParticleComponent.h" />
     <ClInclude Include="header\Hashing.h" />
-    <ClInclude Include="header\IDX_Types.h" />
+    <ClInclude Include="header\D3D11Helper\IDX_Types.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\Level.h" />
     <ClInclude Include="header\Levels\LevelHelper.h" />
@@ -472,13 +492,19 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
-    <ClInclude Include="header\RelicFunctions.h" />
+    <ClInclude Include="header\Relics\DemonSkin.h" />
+    <ClInclude Include="header\Relics\LifeSteal.h" />
+    <ClInclude Include="header\Relics\ML_RelicArray.h" />
+    <ClInclude Include="header\Relics\Reckless.h" />
+    <ClInclude Include="header\Relics\RelicData.h" />
+    <ClInclude Include="header\Relics\RelicFunctions.h" />
     <ClInclude Include="header\Relics\DemonBonemarrow.h" />
     <ClInclude Include="header\Relics\DemonHeart.h" />
     <ClInclude Include="header\Relics\FlameWeapon.h" />
     <ClInclude Include="header\Relics\FrostFire.h" />
     <ClInclude Include="header\Relics\LightningGod.h" />
     <ClInclude Include="header\Relics\RelicFuncInputTypes.h" />
+    <ClInclude Include="header\Relics\RelicInternalHelper.h" />
     <ClInclude Include="header\Relics\SoulHealth.h" />
     <ClInclude Include="header\Relics\SoulPower.h" />
     <ClInclude Include="header\Relics\SpeedyLittleDevil.h" />
@@ -497,8 +523,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
     <ClInclude Include="header\Audio.h" />
-    <ClInclude Include="header\D3D11Graphics.h" />
-    <ClInclude Include="header\D3D11Helper.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Graphics.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\MemLib\ML_Vector.hpp" />
@@ -538,10 +564,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <Library Include="lib\SDL2\lib\x64\SDL2test.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon1.ico" />
-    <Image Include="icon2.ico" />
     <Image Include="resource\DamnedSoul.ico" />
     <Image Include="resource\DamnedSoulsIcon.png" />
+    <Image Include="resource\skill-icons_05.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DamnedSoul.rc">

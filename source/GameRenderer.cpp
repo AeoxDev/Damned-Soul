@@ -2,8 +2,8 @@
 #include <d3d11.h>
 #include <dxgi.h>
 #include "GameRenderer.h"
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Helper.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "UI/UIRenderer.h"
 #include "Light.h"
@@ -102,9 +102,9 @@ int SetupGameRenderer()
 	SetConstantBuffer(Light::GetLightBufferIndex(3), BIND_PIXEL, 4);*/
 
 	Vertex triangle[3] = {
-		0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
-		-0.9f, -0.9f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
-		0, 0.9f, 0.5f, 1.f,			/**/ 0, 0, -1.f, 0, /**/ 0.5, 1 };
+		-1.f, -1.f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 1, 0,
+		-1.f, 3.f, 0.5f, 1.f,		/**/ 0, 0, -1.f, 0, /**/ 0, 0,
+		3.f, -1.f, 0.5f, 1.f,			/**/ 0, 0, -1.f, 0, /**/ 0.5, 1 };
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(triangle, sizeof(Vertex), 3, USAGE_IMMUTABLE);
 	uint32_t idxs[3] = { 0, 1, 2 };
 	renderStates[currentSize].indexBuffer = CreateIndexBuffer(idxs, sizeof(uint32_t), 3);
@@ -142,6 +142,8 @@ int SetupParticles()
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
 	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("ParticleVS.cso", PARTICLE);
 	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("ParticlePS.cso");
+	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("ParticleSamplerVS.cso", DEFAULT);
+	renderStates[currentSize].pixelShaders[1] = LoadPixelShader("ParticleSamplerPS.cso");
 	renderStates[currentSize].geometryShader = LoadGeometryShader("ParticleGS.cso");
 	renderStates[currentSize].computeShader = LoadComputeShader("ParticleCS.cso");
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "UIElement.h"
 #include "UIButtonFunctions.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 
 #include "MemLib/ML_Vector.hpp"
 #include "MemLib/ML_Array.hpp"

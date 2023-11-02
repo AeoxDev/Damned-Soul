@@ -2,7 +2,6 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Components.h"
-#include "Particles.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
 #include "Model.h"
@@ -14,7 +13,6 @@ void LoadLevel4()
 	EntityID stage = registry.CreateEntity();
 	//EntityID skeleton = registry.CreateEntity();
 	//EntityID skeleton2 = registry.CreateEntity();
-	EntityID particle = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
 
 	//Player
@@ -34,18 +32,15 @@ void LoadLevel4()
 	stc->scaleZ = 1.0f;
 
 
-	ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 
-	//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
-	////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.9f, 0.9f), DSFLOAT2(1.0f, 1.0f), 4);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
 
 	RenderGeometryIndependentCollision(stage);
 
+	EntityID mouse = registry.CreateEntity();
+	registry.AddComponent<TransformComponent>(mouse);
+	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
+	mousePointOfInterset->mode = POI_MOUSE;
 }
