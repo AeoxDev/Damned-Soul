@@ -5,10 +5,12 @@
 #include "Registry.h"
 #include "DeltaTime.h"
 #include "MemLib/ML_Vector.hpp"
+#include "EventFunctions.h"
 #include <random>
 
 #define LIGHTNING_GOD_COOLDOWN_SECONDS (3.f)
 #define LIGHTNING_GOD_DAMAGE_FLAT (100.f)
+#define LIGHTNING_GOD_SFX_DURATION (0.5f)
 
 void LIGHTNING_GOD::Initialize(void* input)
 {
@@ -18,6 +20,20 @@ void LIGHTNING_GOD::Initialize(void* input)
 	// Add the lightning bolt with cooldown to the Frame Update vector
 	(*_RelicFunctions)[FUNC_ON_FRAME_UPDATE].push_back(LIGHTNING_GOD::OnUpdate);
 }
+
+void _LG_Particles_Begin(EntityID& entity, const int& index)
+{
+	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION, 0, 0.15f, 0, 0, 0, LIGHTNING);
+}
+
+void _LG_Particles_End(EntityID& entity, const int& index)
+{
+	//implement later, goddamn TA
+	auto particles = registry.GetComponent<ParticleComponent>(entity);
+	particles->Release();
+	registry.DestroyEntity(entity);
+}
+
 
 void LIGHTNING_GOD::OnUpdate(void* data)
 {
@@ -53,6 +69,16 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 
 		// The unfortunate one about to be struck by lightning
 		StatComponent* unfortunateVictim = registry.GetComponent<StatComponent>(potentialVictims[randomlySelected]);
+		TransformComponent* victimTransform = registry.GetComponent<TransformComponent>(potentialVictims[randomlySelected]);
+
+		EntityID percyJackson = registry.CreateEntity();
+		TransformComponent newTrans;
+		newTrans.positionX = victimTransform->positionX;
+		newTrans.positionY = victimTransform->positionY;
+		newTrans.positionZ = victimTransform->positionZ;
+		registry.AddComponent<TransformComponent>(percyJackson, newTrans);
+ 		AddTimedEventComponentStartEnd(percyJackson, 0, _LG_Particles_Begin, LIGHTNING_GOD_SFX_DURATION+0.01f, _LG_Particles_End);
+
 		unfortunateVictim->UpdateHealth(-LIGHTNING_GOD_DAMAGE_FLAT);
 	}
 }

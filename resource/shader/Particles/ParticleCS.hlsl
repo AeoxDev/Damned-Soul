@@ -1,40 +1,4 @@
-#define NUM_THREADS 256
-
-struct Input
-{
-    float3 position;
-    float time; // Time (in seconds) particles has been active
-    float3 velocity;
-    float rotationZ;
-    float3 rgb; // Red Green Blue
-    float size;
-};
-
-struct metadata
-{
-    float life; // How much time (in seconds) a particle is allowed to live
-    float maxRange; // How long particle is allowed to go 
-    float size; // Size of particle
-    int pattern; // The movement pattern of the particle and decidor of size
-    
-    float3 startPosition;
-    float deltaTime;
-    // Slot 0 is reserved for delta time
-    // Slot 1-99 is a random number between 0.0 and 1.0
-    // Slot 100-255 is a random number between 1.0 and 5.0
-    
-    float rotationY;
-    float3 positionInfo;
-    float4 morePositionInfo;
-};
-
-cbuffer metadataBuffer : register(b0)
-{
-    metadata meta[256];
-};
-
-static const float PI = 3.14159265f;
-
+#include "ParticleHeader.hlsli"
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
 inline void ArchMovement(in uint3 DTid, in uint3 blockID);
@@ -42,12 +6,9 @@ inline void ExplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
 inline void ImplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void RainMovement(in uint3 DTid, in uint3 blockID);
+inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 
 bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
-
-
-RWStructuredBuffer<Input> inputParticleData : register(u0);
-RWStructuredBuffer<Input> outputParticleData : register(u1);
 
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
@@ -88,6 +49,11 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         if (meta[blockID.y].pattern == 6)
         {
             //SinusMovement(DTid, blockID);
+        }
+        // 7 = LIGHTNING
+        if (meta[blockID.y].pattern == 7)
+        {
+            LightningMovement(DTid, blockID);
         }
     }
 
@@ -306,6 +272,32 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
     //____________________________________________________________________
     //test.position = test.position;
     outputParticleData[DTid.x] = particle;
+}
+
+void LightningMovement(in uint3 DTid, in uint3 blockID)
+{
+// -- SAME FOR ALL FUNCTIONS -- //
+    uint index = (DTid.x + blockID.y * NUM_THREADS);
+    Input particle = inputParticleData[index];
+    
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
+    
+    
+    float posy = (index % 256) * 0.2f; // 51 / 255
+    float idxFraction = (index % 256) / 255.f;
+    float timeFraction = PI * (1 - (particle.time / meta[blockID.y].life));
+    
+    float alpha = pow(sin(2 * PI * idxFraction + timeFraction), 3) * 2; // Pi
+    float beta = pow(sin(4 * 2.71828f * idxFraction + 4 * timeFraction), 3); // Eulers
+    float gamma = pow(sin(6 * sqrt(5) * idxFraction + 9 * timeFraction), 3) * 2; // Root(5)
+    
+    particle.position.y = posy;
+    particle.position.x = (alpha + beta + gamma);
+    particle.position.z = 0;
+    
+    outputParticleData[index] = particle;
 }
 
 // Function to check if a point is inside a triangle

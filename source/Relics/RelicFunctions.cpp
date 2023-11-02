@@ -74,70 +74,70 @@ void _validateMasterRelicList()
 	if (0 == MasterRelicList.m_size)
 	{
 		ML_RelicArray MasterInitializer {
-			RelicData(
-				/*Name*/		"Demon Bonemarrow",
-				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
-				/*Description*/	"Increases your Damage by 15 when obtained.",
-				/*Price*/		10,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	DEMON_BONEMARROW::Initialize
-			),
-			RelicData(
-				/*Name*/		"Flame Weapon",
-				/*Filepath*/	"RelicIcons\\Flame_Weapon.png",
-				/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
-				/*Price*/		3,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	FLAME_WEAPON::Initialize
-			),
-			RelicData(
-				/*Name*/		"Soul Power",
-				/*Filepath*/	"RelicIcons\\Soul_Power.png",
-				/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess",
-				/*Price*/		5,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	SOUL_POWER::Initialize
-			),
-			RelicData(
-				/*Name*/		"Life Steal",
-				/*Filepath*/	"RelicIcons\\Life_Steal.png",
-				/*Description*/	"You heal for 15% of the damage you deal",
-				/*Price*/		5,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	LIFE_STEAL::Initialize
-			),
-			RelicData(
-				/*Name*/		"Demon Heart",
-				/*Filepath*/	"RelicIcons\\Demon_Heart.png",
-				/*Description*/	"Increases your Maximum Health by 75 when obtained.",
-				/*Price*/		10,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	DEMON_HEART::Initialize
-			),
-			RelicData(
-				/*Name*/		"Frost Fire",
-				/*Filepath*/	"RelicIcons\\Frost_Fire.png",
-				/*Description*/	"Once per level when you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and permanently slow them by 20%",
-				/*Price*/		3,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	FROST_FIRE::Initialize
-			),
-			RelicData(
-				/*Name*/		"Soul Health",
-				/*Filepath*/	"RelicIcons\\Soul_Health.png",
-				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess.",
-				/*Price*/		5,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	SOUL_HEALTH::Initialize
-			),
-			RelicData(
-				/*Name*/		"Demon Skin",
-				/*Filepath*/	"RelicIcons\\Demon_Skin.png",
-				/*Description*/	"Reduces the damage you take by 20%",
-				/*Price*/		5,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	DEMON_SKIN::Initialize
-			),
+			//RelicData(
+			//	/*Name*/		"Demon Bonemarrow",
+			//	/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
+			//	/*Description*/	"Increases your Damage by 15 when obtained.",
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	DEMON_BONEMARROW::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Flame Weapon",
+			//	/*Filepath*/	"RelicIcons\\Flame_Weapon.png",
+			//	/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
+			//	/*Price*/		3,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	FLAME_WEAPON::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Soul Power",
+			//	/*Filepath*/	"RelicIcons\\Soul_Power.png",
+			//	/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	SOUL_POWER::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Life Steal",
+			//	/*Filepath*/	"RelicIcons\\Life_Steal.png",
+			//	/*Description*/	"You heal for 15% of the damage you deal",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	LIFE_STEAL::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Demon Heart",
+			//	/*Filepath*/	"RelicIcons\\Demon_Heart.png",
+			//	/*Description*/	"Increases your Maximum Health by 75 when obtained.",
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	DEMON_HEART::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Frost Fire",
+			//	/*Filepath*/	"RelicIcons\\Frost_Fire.png",
+			//	/*Description*/	"Once per level when you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and permanently slow them by 20%",
+			//	/*Price*/		3,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	FROST_FIRE::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Soul Health",
+			//	/*Filepath*/	"RelicIcons\\Soul_Health.png",
+			//	/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess.",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	SOUL_HEALTH::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Demon Skin",
+			//	/*Filepath*/	"RelicIcons\\Demon_Skin.png",
+			//	/*Description*/	"Reduces the damage you take by 20%",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	DEMON_SKIN::Initialize
+			//),
 			RelicData(
 				/*Name*/		"Speedy Little Devil",
 				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
@@ -150,7 +150,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Lightning God",
 				/*Filepath*/	"RelicIcons\\Lightning_God.png",
 				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive damage",
-				/*Price*/		10,
+				/*Price*/		1,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	LIGHTNING_GOD::Initialize
 			),

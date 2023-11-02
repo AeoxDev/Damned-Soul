@@ -18,6 +18,7 @@
     <FxCompile Include="resource\shader\PixelShader.hlsl" />
     <FxCompile Include="resource\shader\Particles\ParticleSamplerVS.hlsl" />
     <FxCompile Include="resource\shader\Particles\ParticleSamplerPS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleTimeResetCS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -207,9 +208,6 @@
     <ClCompile Include="source\UIShopComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\RelicFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -295,6 +293,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Systems\Systems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\RelicData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\RelicFuncInputTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\DemonSkin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\LifeSteal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Reckless.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\StatCalcSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\RelicFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -457,9 +476,6 @@
     <ClInclude Include="header\Skynet\EyeBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\RelicFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\Relics\DemonBonemarrow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -532,6 +548,27 @@
     <ClInclude Include="header\EnemyType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Relics\DemonSkin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\LifeSteal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\ML_RelicArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Reckless.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\RelicData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\RelicFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\RelicInternalHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />
@@ -551,5 +588,6 @@
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
     <None Include="lib\SDL2\lib\x64\SDL2.dll" />
+    <None Include="resource\shader\Particles\ParticleHeader.hlsli" />
   </ItemGroup>
 </Project>
