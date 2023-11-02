@@ -16,15 +16,14 @@ bool OnClickSystem::Update()
 	for (auto entity : View<OnClickComponent>(registry))
 	{
 		auto comp = registry.GetComponent<OnClickComponent>(entity);
-		if (comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
+		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
+		
+		if (index > -1)
 		{
-			/*SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-				if (sound != nullptr) sound->Play(Button_Hover, Channel_Base);*/
-
 			if (mouseButtonPressed[MouseButton::left] == released)
 			{
 				//Set which sound to play
-				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+				/*SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 				if (sound != nullptr)
 				{
 					if (comp->onClick == UIFunc::LoadNextLevel)	
@@ -35,9 +34,9 @@ bool OnClickSystem::Update()
 					{
 						sound->Play(Button_Press, Channel_Base);
 					}
-				}
+				}*/
 
-				comp->onClick(comp);
+				comp->onClick(comp, index);
 				return true;
 			}
 		}

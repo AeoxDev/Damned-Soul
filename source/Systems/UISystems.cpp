@@ -21,8 +21,6 @@ void RedrawUI()
 	uiUpdated = true;
 }
 
-void SetTextAndImageProperties(ML_String, UIText&, UIImage&, DSFLOAT2, DSFLOAT2);
-
 bool UIRenderSystem::Update()
 {
 	if (uiUpdated)
@@ -35,7 +33,10 @@ bool UIRenderSystem::Update()
 		{
 			auto uiElement = registry.GetComponent<UIComponent>(entity);
             uiElement->m_BaseImage.Draw();
-            uiElement->m_Image.Draw();
+
+			for (UIImage image : uiElement->m_Images)
+				image.Draw();
+
             uiElement->m_Text.Draw();
 		}
 
@@ -97,11 +98,11 @@ bool UIHealthSystem::Update()
 
 		health->value = currentHealth;
 		healthScale = uiElement->m_BaseImage.baseUI.GetScale();
-		int healthBoundsRight = uiElement->m_Image.baseUI.m_OriginalBounds.right;
+		int healthBoundsRight = uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
 
-		uiElement->m_Image.baseUI.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
+		uiElement->m_Images[0].baseUI.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
 
-		uiElement->m_Text.SetText(("Health: " + std::to_string((int)health->value)).c_str());
+		uiElement->m_Text.SetText(("Health: " + std::to_string((int)health->value)).c_str(), uiElement->m_Text.baseUI.GetBounds());
 		uiElement->m_Text.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(), 
 			uiElement->m_BaseImage.baseUI.GetRotation(), true, uiElement->m_BaseImage.baseUI.GetOpacity());
 	}
@@ -126,7 +127,7 @@ bool UIPlayerSoulsSystem::Update()
 
 		souls->value = currentSouls;
 
-		uiElement->m_Text.SetText(("Souls: " + std::to_string((int)souls->value)).c_str());
+		uiElement->m_Text.SetText(("Souls: " + std::to_string((int)souls->value)).c_str(), uiElement->m_Text.baseUI.GetBounds());
 		uiElement->m_Text.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(),
 			uiElement->m_BaseImage.baseUI.GetRotation(), true, uiElement->m_BaseImage.baseUI.GetOpacity());
 	}
@@ -298,17 +299,4 @@ bool UIShopSystem::Update()
     //}
 
     return true;
-}
-
-void SetTextAndImageProperties(ML_String text, UIText& uiText, UIImage& uiImage, DSFLOAT2 scale, DSFLOAT2 position)
-{
-
-   /* uiText.UpdateText(text);
-
-	uiText.m_UiComponent.SetScale(scale);
-	uiText.m_UiComponent.SetPosition(position);
-
-	uiImage.m_UiComponent.SetScale(scale);
-	uiImage.m_UiComponent.SetPosition(position);*/
-
 }

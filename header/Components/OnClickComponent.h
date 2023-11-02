@@ -3,21 +3,37 @@
 
 struct OnClickComponent
 {
-	DSFLOAT2 position = { 0.0f, 0.0f };
-	DSBOUNDS bounds = { 0.0f, 0.0f, 0.0f, 0.0f };
+	ML_Vector<DSFLOAT2> positions;
+	ML_Vector<DSBOUNDS> bounds;
 
-	void(*onClick)(void*);
+	void(*onClick)(void*, int);
 
-	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*))
+	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int))
 	{
-		position = pos;
-		bounds = bnds;
-		onClick = func;	
+		AddElement(pos, bnds);
+		onClick = func;
 	};
 
-	bool Intersect(DSINT2 mousePosition)
+	void AddElement(DSFLOAT2 pos, DSBOUNDS bnds)
 	{
-		return (mousePosition.x > position.x) && (mousePosition.x < position.x + bounds.right) &&
-			(mousePosition.y > position.y) && (mousePosition.y < position.y + bounds.bottom);
+		positions.push_back(pos);
+		bounds.push_back(bnds);
+	};
+
+	//Returns -1 for no intersect, positive number for first index that interacted, 
+	int Intersect(DSINT2 mousePosition)
+	{
+		int retval = -1;
+		for (int i = 0; i < positions.size(); i++)
+		{
+			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
+				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
+			{
+				retval = i;
+				break;
+			}
+		}
+
+		return retval;
 	};
 };

@@ -131,6 +131,11 @@ DSBOUNDS UIBase::GetBounds() const
 	return m_CurrentBounds;
 }
 
+DSBOUNDS UIBase::GetOriginalBounds() const
+{
+	return m_OriginalBounds;
+}
+
 float UIBase::GetRotation() const
 {
 	return m_Rotation;
@@ -146,14 +151,15 @@ float UIBase::GetOpacity() const
 	return m_Opacity;
 }
 
-void UIText::SetText(const ML_String text)
+void UIText::SetText(const ML_String text, DSBOUNDS bounds)
 {
 	m_Text = text;
 	std::wstring textAsWString(m_Text.begin(), m_Text.end());
 
-	float fontSize = 20;
-
-	baseUI.m_OriginalBounds = { 0, 0, fontSize * m_Text.length(), fontSize + 5 };
+	if (bounds.right == 0)
+		baseUI.m_OriginalBounds = { 0, 0, 20.0f * text.length(), 25.0f };
+	else
+		baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
 }
 
 void UIText::Draw()
@@ -196,7 +202,7 @@ void UIImage::Draw()
 	}
 }
 
-void UIComponent::Setup(const ML_String& imageFilepath, const ML_String& baseImageFilepath, const ML_String& text, DSFLOAT2 position,
+void UIComponent::Setup(const ML_String& baseImageFilepath, const ML_String& text, DSFLOAT2 position,
 	DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 
@@ -211,21 +217,32 @@ void UIComponent::Setup(const ML_String& imageFilepath, const ML_String& baseIma
 		m_BaseImage.baseUI.Setup(position, scale, rotation, visibility, opacity);
 	}
 
-	if (imageFilepath != "")
-	{
-		m_Image.SetImage(imageFilepath);
-		m_Image.baseUI.Setup(position, scale, rotation, visibility, opacity);
-	}
-	else
-		m_Image.baseUI.SetVisibility(false);
-
 	if (text != "")
 	{
-		m_Text.SetText(text);
+		m_Text.SetText(text, m_BaseImage.baseUI.GetOriginalBounds());
 		m_Text.baseUI.Setup(position, scale, rotation, visibility, opacity);
 	}
 	else
 		m_Text.baseUI.SetVisibility(false);
+}
+
+void UIComponent::AddImage(const ML_String& imageFilepath, DSFLOAT2 position, DSFLOAT2 scale, bool translateText)
+{
+	m_Images.push_back();
+
+	if (imageFilepath != "")
+		m_Images[m_Images.size() - 1].SetImage(imageFilepath);
+	else
+		m_Images[m_Images.size() - 1].SetImage("TempBaseImage");
+
+	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale);
+
+	if (translateText)
+	{
+		m_Text.SetText(m_Text.m_Text, m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds());
+		m_Text.baseUI.SetScale(m_Text.baseUI.GetScale());
+		m_Text.baseUI.SetPosition(m_Text.baseUI.GetPosition());
+	}
 }
 
 void UIComponent::Release()
@@ -236,10 +253,13 @@ void UIComponent::Release()
 		m_BaseImage.m_Bitmap = nullptr;
 	}
 
-	if (m_Image.m_Bitmap)
+	for (UIImage image : m_Images)
 	{
-		m_Image.m_Bitmap->Release();
-		m_Image.m_Bitmap = nullptr;
+		if (image.m_Bitmap)
+		{
+			image.m_Bitmap->Release();
+			image.m_Bitmap = nullptr;
+		}
 	}
 
 }

@@ -2,6 +2,7 @@
 #include "UI.h"
 
 #include "MemLib/ML_String.hpp"
+#include "MemLib/ML_Vector.hpp"
 
 #include <d2d1helper.h>
 
@@ -35,6 +36,7 @@ struct UIBase
 	DSFLOAT2 GetPixelCoords() const;
 	DSFLOAT2 GetScale() const;
 	DSBOUNDS GetBounds() const;
+	DSBOUNDS GetOriginalBounds() const;
 	float GetRotation() const;
 	bool GetVisibility() const;
 	float GetOpacity() const;
@@ -45,7 +47,7 @@ struct UIText
 	UIBase baseUI;
 	ML_String m_Text;
 
-	void SetText(const ML_String text);
+	void SetText(const ML_String text, DSBOUNDS bounds);
 
 	void Draw();
 };
@@ -66,11 +68,13 @@ struct UIImage
 struct UIComponent
 {
 	UIImage m_BaseImage;
-	UIImage m_Image;
+	ML_Vector<UIImage> m_Images;
 	UIText m_Text;
 
-	void Setup(const ML_String& imageFilepath, const ML_String& baseImageFilepath, const ML_String& text, DSFLOAT2 position = { 0.0f, 0.0f },
+	void Setup(const ML_String& baseImageFilepath, const ML_String& text, DSFLOAT2 position,
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
+
+	void AddImage(const ML_String& imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
 
 	void Release();
 };

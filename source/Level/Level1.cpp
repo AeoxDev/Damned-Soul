@@ -56,11 +56,12 @@ void LoadLevel1()
 
 	UIComponent* ui1 = registry.AddComponent<UIComponent>(playerHealth);
 	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(playerHealth);
-	ui1->Setup("ExMenu/FullHealth", "ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
+	ui1->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
+	ui1->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
 
 	UIComponent* ui2 = registry.AddComponent<UIComponent>(playerSouls);
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(playerSouls);
-	ui2->Setup("", "ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.6f));
+	ui2->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.6f));
 
 	//Thing in the top right corner showing what level we're on
 	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 1);

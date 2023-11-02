@@ -54,9 +54,9 @@ void Menu::SetupButtons()
 {
 
 	ML_Array<ML_String, 3> texts;
-	texts[0] = "Start";
-	texts[1] = "Settings";
-	texts[2] = "Quit";
+	texts[0] = "\nStart";
+	texts[1] = "\nSettings";
+	texts[2] = "\nQuit";
 
 	ML_Array<DSFLOAT2, 3> positions;
 	positions[0] = { -0.81f, -0.28f };
@@ -68,7 +68,7 @@ void Menu::SetupButtons()
 	scales[1] = { 0.7f, 0.6f };
 	scales[2] = { 0.7f, 0.6f };
 
-	ML_Array<void(*)(void*), 3> functions;
+	ML_Array<void(*)(void*, int), 3> functions;
 	functions[0] = UIFunc::LoadNextLevel;
 	functions[1] = UIFunc::MainMenu_Settings;
 	functions[2] = UIFunc::MainMenu_Quit;
@@ -80,7 +80,7 @@ void Menu::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonBackground", "Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
@@ -95,7 +95,7 @@ void Menu::SetupImages()
 	//Title
 	auto title = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("", "ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });
+	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });
 }
 
 void Menu::SetupText()

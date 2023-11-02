@@ -18,31 +18,31 @@ enum temprelicslist
 namespace UIFunc
 {
 	// Start the next level
-	void LoadNextLevel(void* args);
+	void LoadNextLevel(void* args, int a);
 
 	// Go from start menu to settings
-	void MainMenu_Settings(void* args);
+	void MainMenu_Settings(void* args, int a);
 
 	// Quit the game from the start menu
-	void MainMenu_Quit(void* args);
+	void MainMenu_Quit(void* args, int a);
 
 	// Go back from the settings menu to the main menu
-	void Settings_Back(void* args);
+	void Settings_Back(void* args, int a);
 
 	// Change to low Resolution from settings
-	void Settings_LowRes(void* args);
+	void Settings_LowRes(void* args, int a);
 	
 	// Change to medium Resolution from settings
-	void Settings_MediumRes(void* args);
+	void Settings_MediumRes(void* args, int a);
 
 	// Change to high Resolution from settings
-	void Settings_HighRes(void* args);
+	void Settings_HighRes(void* args, int a);
 
 	// Change to fullscreen from settings
-	void Settings_Fullscreen(void* args);
+	void Settings_Fullscreen(void* args, int a);
 
 	// Buy a relic in shop
-	void Shop_BuyRelic(void* args);
+	void Shop_BuyRelic(void* args, int a);
 
 	// Lock a relic in shop
 	void Shop_LockRelic(void* args);
@@ -53,5 +53,5 @@ namespace UIFunc
 	// Heal the player
 	void Shop_Heal(void* args);
 
-	void HoverImage(void* args, bool hover);
+	void HoverImage(void* args, int index, bool hover);
 }

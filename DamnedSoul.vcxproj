@@ -440,13 +440,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIShopWindowComponent.h" />
     <ClInclude Include="header\UI\UIElement.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIHoverComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h" />

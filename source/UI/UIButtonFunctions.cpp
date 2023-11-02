@@ -14,7 +14,7 @@
 
 #include <random>
 
-void UIFunc::LoadNextLevel(void* args)
+void UIFunc::LoadNextLevel(void* args, int a)
 {
 	SetInPlay(true);
 	SetInMainMenu(false);
@@ -30,10 +30,11 @@ void UIFunc::LoadNextLevel(void* args)
 		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
 	}
 
-	LoadLevel(++stateManager.activeLevel);
+	//LoadLevel(++stateManager.activeLevel);
+	LoadLevel(2);
 }
 
-void UIFunc::MainMenu_Settings(void* args)
+void UIFunc::MainMenu_Settings(void* args, int a)
 {
 	SetInSettings(true);
 	SetInMainMenu(false);
@@ -41,13 +42,13 @@ void UIFunc::MainMenu_Settings(void* args)
 	stateManager.settings.Setup();
 }
 
-void UIFunc::MainMenu_Quit(void* args)
+void UIFunc::MainMenu_Quit(void* args, int a)
 {
 	UnloadEntities();
 	sdl.quit = true;
 }
 
-void UIFunc::Settings_Back(void* args)
+void UIFunc::Settings_Back(void* args, int a)
 {
 	SetInMainMenu(true);
 	SetInSettings(false);
@@ -55,7 +56,7 @@ void UIFunc::Settings_Back(void* args)
 	stateManager.menu.Setup();
 }
 
-void UIFunc::Settings_LowRes(void* args)
+void UIFunc::Settings_LowRes(void* args, int a)
 {
 	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
 	{
@@ -77,7 +78,7 @@ void UIFunc::Settings_LowRes(void* args)
 	}
 }
 
-void UIFunc::Settings_MediumRes(void* args)
+void UIFunc::Settings_MediumRes(void* args, int a)
 {
 	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
 	{
@@ -99,7 +100,7 @@ void UIFunc::Settings_MediumRes(void* args)
 	}
 }
 
-void UIFunc::Settings_HighRes(void* args)
+void UIFunc::Settings_HighRes(void* args, int a)
 {
 	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
 	{
@@ -122,7 +123,7 @@ void UIFunc::Settings_HighRes(void* args)
 	}
 }
 
-void UIFunc::Settings_Fullscreen(void* args)
+void UIFunc::Settings_Fullscreen(void* args, int a)
 {
 	sdl.windowFlags = SDL_GetWindowFlags(sdl.sdlWindow);
 	if ((sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
@@ -146,7 +147,7 @@ void UIFunc::Settings_Fullscreen(void* args)
 	}
 }
 
-void UIFunc::Shop_BuyRelic(void* args)
+void UIFunc::Shop_BuyRelic(void* args, int a)
 {
 	//UIButton* button = (UIButton*)args;
 	//PlayerComponent* player = nullptr;
@@ -380,15 +381,35 @@ void UIFunc::Shop_Heal(void* args)
 	}
 }
 
-void UIFunc::HoverImage(void* args, bool hover)
+void UIFunc::HoverImage(void* args, int index, bool hover)
 {
 	UIComponent* ui = (UIComponent*)args;
-	ML_String fileName = ui->m_Image.m_fileName;
-	ML_String hoverFileName = fileName;
-	hoverFileName.append("Hover");
+	ML_String fileName = "";
+	ML_String hoverFileName = "";
+	if (ui->m_Images.size() == 0)
+	{
+		fileName = ui->m_BaseImage.m_fileName;
+		hoverFileName = fileName;
+		hoverFileName.append("Hover");
 
-	if (hover)
-		ui->m_Image.SetImage(hoverFileName, true);
+		if (hover)
+			ui->m_BaseImage.SetImage(hoverFileName, true);
+		else
+			ui->m_BaseImage.SetImage(fileName, true);
+	}
 	else
-		ui->m_Image.SetImage(fileName, true);
+	{
+		fileName = ui->m_Images[index].m_fileName;
+		hoverFileName = fileName;
+		hoverFileName.append("Hover");
+
+		if (hover)
+			ui->m_Images[index].SetImage(hoverFileName, true);
+		else
+			ui->m_Images[index].SetImage(fileName, true);
+	}
+
+	
+
+	
 }
