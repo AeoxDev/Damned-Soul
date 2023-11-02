@@ -289,7 +289,13 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	auto toAppend2 = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (toAppend2 != nullptr)
 		ReleaseModel(toAppend2->model);
-		
+	
+	SoundComponent* s = registry.GetComponent<SoundComponent>(entity);
+	if (s != nullptr)
+	{
+		s->Unload();
+	}
+
 	registry.DestroyEntity(entity);
 }
 

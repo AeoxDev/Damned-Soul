@@ -2,6 +2,7 @@
 #include "Relics/RelicFunctions.h"
 #include "Relics/RelicFuncInputTypes.h"
 #include "UIRenderer.h"
+#include "States\StateManager.h"
 
 float StatComponent::GetHealth() const
 {
@@ -27,9 +28,10 @@ float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
 		if (hitByEnemy)
 		{
 			//Play hurt sound
-			for (auto entity : View<PlayerComponent>(registry))
+			StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+			if (stats == this)
 			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
 				if (sfx)
 				{
 					if (this->currentHealth <= 0)
