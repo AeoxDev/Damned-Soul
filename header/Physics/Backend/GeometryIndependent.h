@@ -1,5 +1,5 @@
 #pragma once
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "EntityFramework.h"
 
 RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity);

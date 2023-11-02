@@ -1,5 +1,5 @@
 #pragma once
-#include "IDX_Types.h"
+#include "D3D11Helper\IDX_Types.h"
 #include "MemLib\PoolPointer.hpp"
 #include "MemLib\ML_Vector.hpp"
 #include "MemLib\ML_Map.hpp"

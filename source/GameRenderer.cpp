@@ -2,8 +2,8 @@
 #include <d3d11.h>
 #include <dxgi.h>
 #include "GameRenderer.h"
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Helper.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "UI/UIRenderer.h"
 #include "Light.h"

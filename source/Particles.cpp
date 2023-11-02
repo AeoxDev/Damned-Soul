@@ -1,6 +1,6 @@
 #include "Particles.h"
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Helper.h"	
+#include "D3D11Helper\D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "Systems\Systems.h"
 #include "SDLHandler.h"

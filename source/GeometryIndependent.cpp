@@ -1,6 +1,6 @@
 #include "Backend\GeometryIndependent.h"
 #include "Camera.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "Components.h"
 #include "GameRenderer.h"

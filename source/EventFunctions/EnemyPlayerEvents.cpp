@@ -12,6 +12,34 @@
 
 #define KNOCKBACK_FACTOR 0.3f
 
+void HitInteraction(const EntityID& attacker, StatComponent* attackerStats, const EntityID& defender, StatComponent* defenderStats)
+{
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(defender);
+	//Deal regular damage as well as on-hit damage from potential relics
+
+	// Calculate damage
+	// Some values can start with default
+	RelicInput::OnDamageCalculation funcInput;
+	funcInput.attacker = attacker;
+	funcInput.defender = defender;
+	funcInput.damage = attackerStats->GetDamage();
+	funcInput.cap = defenderStats->GetHealth();
+
+	// Apply on damage calc functions
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
+		func(&funcInput);
+
+	// Apply on damage final
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
+		func(&funcInput);
+
+	// Update health
+	defenderStats->UpdateHealth(-1.f * funcInput.CollapseDamage(), player != nullptr);
+
+	RedrawUI();
+}
+
+
 void BeginHit(EntityID& entity, const int& index)
 {
 	//Get relevant components
@@ -20,23 +48,29 @@ void BeginHit(EntityID& entity, const int& index)
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 
-	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
-	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	//ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	//ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-	//Deal regular damage as well as on-hit damage from potential relics
-	stats->UpdateHealth(-attackerStats->GetDamage(), player != nullptr);
-	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
-	RedrawUI();
-	RelicInput::OnHitInput funcInput
-	{
-		cpc->params.entity1,
-		entity
-	};
-	for (uint32_t i = 0; i < funcVector.size(); ++i)
-	{
-		funcVector[i](&funcInput);
-	}
+	HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
+
+	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+	////Deal regular damage as well as on-hit damage from potential relics
+
+	//// Calculate damage
+	//float calculatedDamage = attackerStats->CalculateDamageDealt(stats);
+
+	//stats->UpdateHealth(-calculatedDamage, player != nullptr);
+	//auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY);
+	//RedrawUI();
+	//RelicInput::OnHitInput funcInput
+	//{
+	//	cpc->params.entity1,
+	//	entity
+	//};
+	//for (uint32_t i = 0; i < funcVector.size(); ++i)
+	//{
+	//	funcVector[i](&funcInput);
+	//}
 
 	//Disable damage taken until EndHit
 	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
@@ -123,19 +157,26 @@ void HazardBeginHit(EntityID& entity, const int& index)
 
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-	//Deal regular damage as well as on-hit damage from potential relics
-	stats->UpdateHealth(-attackerStats->GetDamage(), player != nullptr);
-	auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_WEAPON_HIT);
-	RelicInput::OnHitInput funcInput
-	{
-		cpc->params.entity1,
-		entity
-	};
-	for (uint32_t i = 0; i < funcVector.size(); ++i)
-	{
-		funcVector[i](&funcInput);
-	}
+
+	HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
+
+	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
+	//// Calculate damage
+	//float calculatedDamage = attackerStats->CalculateDamageDealt(stats);
+
+	////Deal regular damage as well as on-hit damage from potential relics
+	//stats->UpdateHealth(-calculatedDamage, player != nullptr);
+	//auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY);
+	//RelicInput::OnHitInput funcInput
+	//{
+	//	cpc->params.entity1,
+	//	entity
+	//};
+	//for (uint32_t i = 0; i < funcVector.size(); ++i)
+	//{
+	//	funcVector[i](&funcInput);
+	//}
 
 	//Become red
 	if (skelel)

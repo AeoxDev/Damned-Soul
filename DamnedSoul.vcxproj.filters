@@ -291,9 +291,6 @@
     <ClCompile Include="source\Systems\ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Relics\RelicFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Systems\Systems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -308,8 +305,8 @@
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
     <ClInclude Include="header\Audio.h" />
-    <ClInclude Include="header\D3D11Graphics.h" />
-    <ClInclude Include="header\D3D11Helper.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Graphics.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\MemLib\ML_Vector.hpp" />
@@ -418,7 +415,7 @@
     <ClInclude Include="header\Hashing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\IDX_Types.h">
+    <ClInclude Include="header\D3D11Helper\IDX_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\MemLib\ML_ComponentMap.hpp">

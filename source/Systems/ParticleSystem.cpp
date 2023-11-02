@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "GameRenderer.h"
 #include "Particles.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 
 
 

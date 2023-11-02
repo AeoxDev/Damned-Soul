@@ -19,27 +19,28 @@ void FLAME_WEAPON::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 	// Add the DoT to the weapon
-	(*_RelicFunctions)[FUNC_ON_WEAPON_HIT].push_back(FLAME_WEAPON::PlaceDamageOverTime);
+	(*_RelicFunctions)[FUNC_ON_DAMAGE_APPLY].push_back(FLAME_WEAPON::PlaceDamageOverTime);
 }
 
 void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 {
-	RelicInput::OnHitInput* input = (RelicInput::OnHitInput*)data;
+	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
 	// Check if it is the right entity that is attacking
 	if (FLAME_WEAPON::_OWNER.index != input->attacker.index)
 		return;
 
-	StatComponent* playerStats = registry.GetComponent<StatComponent>(input->attacker);
+	StatComponent* attackerStats = registry.GetComponent<StatComponent>(input->attacker);
+	StatComponent* defenderStats = registry.GetComponent<StatComponent>(input->defender);
+
 	DamageOverTimeComponent newDoT
 	{
 		/*Duration*/	FLAME_WEAPON_DOT_DURATION,
-		/*DPS*/			(FLAME_WEAPON_BASE_DAMAGE + (FLAME_WEAPON_DOT_FRACTION * playerStats->GetDamage())) / FLAME_WEAPON_DOT_DURATION
+		/*DPS*/			(FLAME_WEAPON_BASE_DAMAGE + (FLAME_WEAPON_DOT_FRACTION * input->CollapseDamage())) / FLAME_WEAPON_DOT_DURATION
 	};
 	DamageOverTimeComponent* EnemyDoT = registry.GetComponent<DamageOverTimeComponent>(input->defender);
 	if (nullptr == EnemyDoT || EnemyDoT->LessThan(newDoT))
 	{
 		registry.AddComponent<DamageOverTimeComponent>(input->defender, newDoT);
 	}
-
 }
