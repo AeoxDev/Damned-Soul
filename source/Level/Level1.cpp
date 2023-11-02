@@ -19,8 +19,8 @@ void LoadLevel1()
 	
 	EntityID stage = registry.CreateEntity();
 
-	EntityID playerHealth = registry.CreateEntity(ENT_PERSIST_PLAYER);
-	EntityID playerSouls = registry.CreateEntity(ENT_PERSIST_PLAYER);
+	EntityID playerHealth = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	EntityID playerSouls = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	
 	EntityID mouse = registry.CreateEntity();
 

@@ -31,7 +31,7 @@ struct OnHoverComponent
 	int Intersect(DSINT2 mousePosition)
 	{
 		int retval = -1;
-		for (int i = 0; i < positions.size(); i++)
+		for (uint32_t i = 0; i < positions.size(); i++)
 		{
 			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))

@@ -47,7 +47,7 @@ struct UIText
 	UIBase baseUI;
 	ML_String m_Text;
 
-	void SetText(const ML_String text, DSBOUNDS bounds);
+	void SetText(const char* text, DSBOUNDS bounds);
 
 	void Draw();
 };
@@ -60,7 +60,7 @@ struct UIImage
 	ML_String m_fileName;
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
-	void SetImage(const ML_String& filepath, bool ignoreRename = false);
+	void SetImage(const char* filepath, bool ignoreRename = false);
 
 	void Draw();
 };
@@ -71,10 +71,10 @@ struct UIComponent
 	ML_Vector<UIImage> m_Images;
 	UIText m_Text;
 
-	void Setup(const ML_String& baseImageFilepath, const ML_String& text, DSFLOAT2 position,
+	void Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
-	void AddImage(const ML_String& imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
+	void AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
 
 	void Release();
 };

@@ -30,8 +30,8 @@ void UIFunc::LoadNextLevel(void* args, int a)
 		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
 	}
 
-	//LoadLevel(++stateManager.activeLevel);
-	LoadLevel(2);
+	LoadLevel(++stateManager.activeLevel);
+	//LoadLevel(2);
 }
 
 void UIFunc::MainMenu_Settings(void* args, int a)
@@ -178,9 +178,9 @@ void UIFunc::Shop_BuyRelic(void* args, int a)
 
 			//button->m_Images[0].SetImage("Dollar.png");
 
-			player->UpdateSouls(-uiRelic->price);
-			uiRelic->relicData->m_function(&(stateManager.player));
-
+	//		player->UpdateSouls(-uiRelic->price);
+	//		uiRelic->relicData->m_function(&(stateManager.player));
+}
 
 void UIFunc::Shop_LockRelic(void* args)
 {
@@ -215,54 +215,54 @@ void UIFunc::Shop_LockRelic(void* args)
 void UIFunc::Shop_ReRollRelic(void* args)
 {
 
-	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 
-	// Put all relics in the shop back, if they aren't bought, locked, or nonexistent
-	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
-	{
-		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+	//// Put all relics in the shop back, if they aren't bought, locked, or nonexistent
+	//for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+	//{
+	//	auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+	//	auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-		if (uiRelic->locked == 1)
-		{
-			uiElement->bought = false;
-			continue;
-		}
+	//	if (uiRelic->locked == 1)
+	//	{
+	//		uiElement->bought = false;
+	//		continue;
+	//	}
 
-		// If the relic is not bought and the relic has a value, put it back
-		if (false == uiElement->bought)
-			Relics::PutBackRelic(uiRelic->relicData);
-	}
+	//	// If the relic is not bought and the relic has a value, put it back
+	//	if (false == uiElement->bought)
+	//		Relics::PutBackRelic(uiRelic->relicData);
+	//}
 
-	//int counter = 0;
-	// Put in new relics into the shop
-	for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
-	{
-		auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-		auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+	////int counter = 0;
+	//// Put in new relics into the shop
+	//for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
+	//{
+	//	auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
+	//	auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
 
-	//	if (player->GetSouls() < 1)
-	//		break;
+	////	if (player->GetSouls() < 1)
+	////		break;
 
-		if (uiRelic->locked == 1)
-		{
-			//counter++;
-			uiElement->bought = false;
-			continue;
-		}
+	//	if (uiRelic->locked == 1)
+	//	{
+	//		//counter++;
+	//		uiElement->bought = false;
+	//		continue;
+	//	}
 
-		// Very iffy code to circumvent const here, but we want const everywhere to prevent people from modifying the data itself
-		// This is not pretty, but its the only thing we know "works" at the moment
-		const RelicData* selected = Relics::PickRandomRelic(Relics::RELIC_UNTYPED);
-		std::memcpy(&uiRelic->relicData, &selected, sizeof(RelicData*));
+	//	// Very iffy code to circumvent const here, but we want const everywhere to prevent people from modifying the data itself
+	//	// This is not pretty, but its the only thing we know "works" at the moment
+	//	const RelicData* selected = Relics::PickRandomRelic(Relics::RELIC_UNTYPED);
+	//	std::memcpy(&uiRelic->relicData, &selected, sizeof(RelicData*));
 
-		uiRelic->price = uiRelic->relicData->m_price;
-		uiRelic->sprite.SetImage(uiRelic->relicData->m_filePath);
-		uiRelic->flavorTitle.UpdateText(uiRelic->relicData->m_relicName, true);
-		uiRelic->flavorDesc.UpdateText(uiRelic->relicData->m_description, true);
-		uiElement->bought = false;
-		//counter++;
-	}
+	//	uiRelic->price = uiRelic->relicData->m_price;
+	//	uiRelic->sprite.SetImage(uiRelic->relicData->m_filePath);
+	//	uiRelic->flavorTitle.UpdateText(uiRelic->relicData->m_relicName, true);
+	//	uiRelic->flavorDesc.UpdateText(uiRelic->relicData->m_description, true);
+	//	uiElement->bought = false;
+	//	//counter++;
+	//}
 
 	//if (args && player->GetSouls() >= 1)
 	//	player->UpdateSouls(-1);
@@ -303,9 +303,9 @@ void UIFunc::HoverImage(void* args, int index, bool hover)
 		hoverFileName.append("Hover");
 
 		if (hover)
-			ui->m_BaseImage.SetImage(hoverFileName, true);
+			ui->m_BaseImage.SetImage(hoverFileName.c_str(), true);
 		else
-			ui->m_BaseImage.SetImage(fileName, true);
+			ui->m_BaseImage.SetImage(fileName.c_str(), true);
 	}
 	else
 	{
@@ -314,12 +314,8 @@ void UIFunc::HoverImage(void* args, int index, bool hover)
 		hoverFileName.append("Hover");
 
 		if (hover)
-			ui->m_Images[index].SetImage(hoverFileName, true);
+			ui->m_Images[index].SetImage(hoverFileName.c_str(), true);
 		else
-			ui->m_Images[index].SetImage(fileName, true);
+			ui->m_Images[index].SetImage(fileName.c_str(), true);
 	}
-
-	
-
-	
 }

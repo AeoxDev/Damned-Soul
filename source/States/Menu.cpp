@@ -80,7 +80,7 @@ void Menu::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i].c_str(), positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);

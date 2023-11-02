@@ -40,36 +40,6 @@ bool UIRenderSystem::Update()
             uiElement->m_Text.Draw();
 		}
 
-		/*for (auto entity : View<UIPlayerSoulsComponent, UIElementComponent>(registry))
-		{
-			auto uiElement = registry.GetComponent<UIElementComponent>(entity);
-            uiElement->Draw();
-		}
-
-		for (auto entity : View<OnHoverComponent, UIElementComponent>(registry))
-		{
-			auto uiElement = registry.GetComponent<UIElementComponent>(entity);
-			uiElement->Draw();
-		}*/
-
-       /* for (auto entity : View<UIShopComponent>(registry))
-        {
-            auto uiElement = registry.GetComponent<UIShopComponent>(entity);
-            uiElement->uiElement.Draw();
-        }
-
-        for (auto entity : View<UIShopRelicWindowComponent>(registry))
-        {
-            auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-            uiElement->uiElement.Draw();
-        }
-
-        for (auto entity : View<UIRelicComponent>(registry))
-        {
-            auto uiElement = registry.GetComponent<UIRelicComponent>(entity);
-            uiElement->uiElement.Draw();
-        }*/
-
         End2dFrame(ui);
     }
 

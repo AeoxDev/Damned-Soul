@@ -19,6 +19,7 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 	//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id
 	if (!availableEntitySlots.empty())
 	{
+		
 		int newIndex = availableEntitySlots.back();
 		availableEntitySlots.pop_back();
 
@@ -83,50 +84,6 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
-	//for (auto entity : View<UIPlayerRelicsComponent>(registry))
-	//{
-	//	UIPlayerRelicsComponent* r = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-	//	r->baseImage.Release();
-
-	//	for (uint32_t i = 0; i < r->relics.size(); i++)
-	//	{
-	//		r->relics[i].sprite.Release();
-	//		r->relics[i].flavorTitleImage.Release();
-	//		r->relics[i].flavorDescImage.Release();
-	//	}
-
-	//	r->relics.~ML_Vector();
-	//}
-
-	/*for (auto entity : View<UIShopComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
-			sh->baseImage.Release();
-		}
-	}*/
-
-	/*for (auto entity : View<UIShopRelicWindowComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIShopRelicWindowComponent* sh = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-			sh->m_baseImage.Release();
-		}
-	}*/
-
-	/*for (auto entity : View<UIRelicComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIRelicComponent* sh = registry.GetComponent<UIRelicComponent>(entity);
-			sh->sprite.Release();
-			sh->flavorTitleImage.Release();
-			sh->flavorDescImage.Release();
-		}
-	}*/
-
 	for (auto entity : View<ProximityHitboxComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
@@ -172,4 +129,12 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			registry.DestroyEntity(check);
 		}
 	}
+
+	//Since UI can't depth-check, its entities need to be in numerical order, but availableEntitySlots is in ascending order and pops from the back
+	registry.SortAvailableEntitySlotsVector();
+}
+
+void Registry::SortAvailableEntitySlotsVector()
+{
+	std::sort(availableEntitySlots.begin(), availableEntitySlots.end(), std::greater<int>());
 }

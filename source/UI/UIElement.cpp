@@ -5,7 +5,7 @@
 #include <wincodec.h>
 #include <d2d1.h>
 
-void SetupImage(const ML_String& filepath, ID2D1Bitmap*& bitmap)
+void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 {
 	if (bitmap)
 	{
@@ -13,12 +13,14 @@ void SetupImage(const ML_String& filepath, ID2D1Bitmap*& bitmap)
 		bitmap = nullptr;
 	}
 
+	ML_String pathAsString = filepath;
+
 	HRESULT hr;
 	IWICBitmapDecoder* decoder = nullptr;
 	IWICBitmapFrameDecode* source = nullptr;
 	IWICFormatConverter* converter = nullptr;
 	IWICImagingFactory* factory = ui.GetImagingFactory();
-	const std::wstring path = L"../resource/GUI/" + std::wstring(filepath.begin(), filepath.end()) + L".png";
+	const std::wstring path = L"../resource/GUI/" + std::wstring(pathAsString.begin(), pathAsString.end()) + L".png";
 
 	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
 	assert(!FAILED(hr));
@@ -31,7 +33,6 @@ void SetupImage(const ML_String& filepath, ID2D1Bitmap*& bitmap)
 
 	hr = converter->Initialize(source, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeMedianCut);
 	assert(!FAILED(hr));
-
 
 	hr = ui.GetRenderTarget()->CreateBitmapFromWicBitmap(converter, NULL, &bitmap);
 	assert(!FAILED(hr));
@@ -151,13 +152,12 @@ float UIBase::GetOpacity() const
 	return m_Opacity;
 }
 
-void UIText::SetText(const ML_String text, DSBOUNDS bounds)
+void UIText::SetText(const char* text, DSBOUNDS bounds)
 {
 	m_Text = text;
-	std::wstring textAsWString(m_Text.begin(), m_Text.end());
 
 	if (bounds.right == 0)
-		baseUI.m_OriginalBounds = { 0, 0, 20.0f * text.length(), 25.0f };
+		baseUI.m_OriginalBounds = { 0, 0, 20.0f * m_Text.length(), 25.0f };
 	else
 		baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
 }
@@ -176,7 +176,7 @@ void UIText::Draw()
 	}
 }
 
-void UIImage::SetImage(const ML_String& filepath, bool ignoreRename)
+void UIImage::SetImage(const char* filepath, bool ignoreRename)
 {
 	if (filepath != "")
 	{
@@ -202,7 +202,7 @@ void UIImage::Draw()
 	}
 }
 
-void UIComponent::Setup(const ML_String& baseImageFilepath, const ML_String& text, DSFLOAT2 position,
+void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
 	DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
 
@@ -226,7 +226,7 @@ void UIComponent::Setup(const ML_String& baseImageFilepath, const ML_String& tex
 		m_Text.baseUI.SetVisibility(false);
 }
 
-void UIComponent::AddImage(const ML_String& imageFilepath, DSFLOAT2 position, DSFLOAT2 scale, bool translateText)
+void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale, bool translateText)
 {
 	m_Images.push_back();
 
@@ -239,7 +239,7 @@ void UIComponent::AddImage(const ML_String& imageFilepath, DSFLOAT2 position, DS
 
 	if (translateText)
 	{
-		m_Text.SetText(m_Text.m_Text, m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds());
+		m_Text.SetText(m_Text.m_Text.c_str(), m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds());
 		m_Text.baseUI.SetScale(m_Text.baseUI.GetScale());
 		m_Text.baseUI.SetPosition(m_Text.baseUI.GetPosition());
 	}
@@ -251,6 +251,7 @@ void UIComponent::Release()
 	{
 		m_BaseImage.m_Bitmap->Release();
 		m_BaseImage.m_Bitmap = nullptr;
+		m_BaseImage.m_fileName.~ML_String();
 	}
 
 	for (UIImage image : m_Images)
@@ -259,7 +260,10 @@ void UIComponent::Release()
 		{
 			image.m_Bitmap->Release();
 			image.m_Bitmap = nullptr;
+			image.m_fileName.~ML_String();
 		}
 	}
 
+	m_Text.m_Text.~ML_String();
+	m_Images.~ML_Vector();
 }

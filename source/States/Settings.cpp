@@ -48,9 +48,6 @@ void SettingsState::Input()
 void SettingsState::SetupButtons()
 {
 
-
-
-
 	ML_Array<ML_String, 5> texts;
 	texts[0] = "\n1280x720";
 	texts[1] = "\n1600x900";
@@ -86,22 +83,21 @@ void SettingsState::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i].c_str(), positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
 
 	}	
 
-	auto settingsPanel = registry.CreateEntity();
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsPanel);
-	uiElement->Setup("ExMenu/ButtonBackgroundHover", "", { 0.0f, 0.0f }, { 2.5f, 2.5f });
-
 }
 
 void SettingsState::SetupImages()
 {
 	// Settings backdrop panel
+	auto settingsPanel = registry.CreateEntity();
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsPanel);
+	uiElement->Setup("ExMenu/ButtonBackgroundHover", "", { 0.0f, 0.0f }, { 2.5f, 2.5f });
 
 }
 

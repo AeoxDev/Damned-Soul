@@ -129,6 +129,9 @@ public:
 	//Destroys the entity with the specified ID
 	void DestroyEntity(EntityID id);
 
+	//UI Reasons
+	void SortAvailableEntitySlotsVector();
+
 	//Add a component T along with potential arguments to the entity with the specified ID
 	template<typename T, typename ...Args>
 	T* AddComponent(EntityID id, Args ...args)
