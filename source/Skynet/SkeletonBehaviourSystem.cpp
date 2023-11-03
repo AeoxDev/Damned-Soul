@@ -237,7 +237,7 @@ bool SkeletonBehaviourSystem::Update()
 					coorde.fx = skeletonComponent->fx;
 					coorde.fz = skeletonComponent->fz;
 
-					gridOnPos = GridOnPosition(coorde, ggg);
+					gridOnPos = GridOnPosition(coorde, ggg, true);
 					doggoT->positionX = gridOnPos.x;
 					doggoT->positionZ = gridOnPos.z;
 
