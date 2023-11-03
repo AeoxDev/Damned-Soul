@@ -211,6 +211,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\DemonSkin.cpp" />
     <ClCompile Include="source\Relics\Offensive\LifeSteal.cpp" />
     <ClCompile Include="source\Relics\Gadget\Reckless.cpp" />
+    <ClCompile Include="source\Relics\Utility\RelicInternalHelper.cpp" />
     <ClCompile Include="source\Relics\Utility\RelicParticleHelper.cpp" />
     <ClCompile Include="source\Relics\Gadget\SoulSpeed.cpp" />
     <ClCompile Include="source\Relics\Defensive\SpikedSkin.cpp" />
