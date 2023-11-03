@@ -66,9 +66,7 @@ public:
 	bool IsModified() const;
 	// Set all stat bonuses to zero
 	void ZeroBonusStats();
-	//Hazards
-	float baseHazardModifier = 1.0f;
-	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
+	
 
 	
 
@@ -124,8 +122,7 @@ public:
 	int killThreshold = 0;
 	bool portalCreated = false;
 
-	EntityID mapID; // this will be used for pathfinding, DO NOT TOUCH OUR COOKIE
-	//trust the process, I'm an engineer
+	
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);

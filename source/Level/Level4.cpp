@@ -53,11 +53,11 @@ void LoadLevel4()
 
 	RenderGeometryIndependentCollision(stage);
 
-	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
-	playerComp->mapID = stage;
 
 	EntityID mouse = registry.CreateEntity();
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
+
+	stateManager.stage = stage;
 }

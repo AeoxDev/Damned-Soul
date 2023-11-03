@@ -1,14 +1,14 @@
 #include "Skynet\BehaviourHelper.h"
 #include "MemLib\ML_Array.hpp"
 #include "MemLib\MemLib.hpp"
+#include "States\StateManager.h"
 
-PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformComponent* playerTransform)
+PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransform)
 {
-	GIMapData* mapGrid = nullptr;
-	mapGrid = GetMapTexture(mapID); // get map from collision
+	GITexture* mapGrid = giTexture;
 
-	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(mapID); //just need GIcomp
-	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, true); // grid position
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, false); // grid position
 
 	bool onLava = false;
 	if (mapGrid->texture[playerPos.z][playerPos.x] >= 2) // is on lava, don't penalize lava
@@ -33,21 +33,23 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformCompon
 
 	float lavaPunish = 6;
 
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+
 	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			// is it walkable?
-			if (mapGrid->texture[z][x] == 0)
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
 			{
 				//not walkable, bad number
 				returnMap.cost[x][z] += 10000;
 			}
-			else if (mapGrid->texture[z][x] == 1) // normal ground?
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
 				returnMap.cost[x][z] += 1;
 			}
-			else if (mapGrid->texture[z][x] >= 2) // is the floor lava?
+			else if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_LAVA) // is the floor lava?
 			{
 				if (onLava) //treat as ground to save time. optimize shit
 				{
@@ -92,7 +94,7 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformCompon
 			continue;
 		
 		// x z = functionCallFromElliot
-		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(mapID);
+		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
 
 		returnMap.cost[pos.x][pos.z] += 6;
@@ -168,11 +170,11 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 }
 
 
-ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform)
+ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform)
 {
 	Node start; 
 	Node goal;
-	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(mapID); //just need GIcomp
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
 	GridPosition enemyPos = PositionOnGrid(GIcomponent, enemyTransform, true); // grid position
 	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, true); // grid position
 	GridPosition tempPush; // used for pushing stuff, don't mind this one....but we need it

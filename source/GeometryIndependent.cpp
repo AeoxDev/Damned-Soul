@@ -87,14 +87,14 @@ void RenderHazardTexture(GeometryIndependentComponent*& GIcomponent, int16_t& id
 }
 
 
-GIMapData* GetMapTexture(EntityID& entity)
+GITexture* GetMapTexture(EntityID& entity)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(entity);
 	if (GIcomponent == nullptr)
 	{
 		return nullptr;
 	}
-	return (GIMapData*)&GIcomponent->texture;
+	return (GITexture*)&giTexture;
 }
 
 void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
@@ -485,7 +485,7 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*&
 	{
 		if (pixelPos.z < GI_TEXTURE_DIMENSIONS && pixelPos.z >= 0)
 		{
-			if (gi->texture[pixelPos.z][pixelPos.x] == 0)
+			if (giTexture->texture[pixelPos.z][pixelPos.x] == 0)
 			{
 				return giTexture->texture[pixelPos.z][pixelPos.x];
 			}

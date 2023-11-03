@@ -119,9 +119,11 @@ bool SkeletonBehaviourSystem::Update()
 	AnimationComponent* enemyAnim = nullptr;
 	EnemyComponent* enmComp = nullptr;
 
+	bool updateGridOnce = true;
+	PathfindingMap valueGrid;
+
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
-		PathfindingMap valueGrid;
 		skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
@@ -210,10 +212,10 @@ bool SkeletonBehaviourSystem::Update()
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID, playerTransformCompenent);
+						valueGrid = CalculateGlobalMapValuesSkeleton(playerTransformCompenent);
 					}
 						
-					finalPath = CalculateAStarPath(playerComponent->mapID, valueGrid, skeletonTransformComponent, playerTransformCompenent);
+					finalPath = CalculateAStarPath(valueGrid, skeletonTransformComponent, playerTransformCompenent);
 #ifdef PATH_FINDING_VISUALIZER
 					skeletonComponent->coolVec.clear();
 					skeletonComponent->counterForTest = 0;

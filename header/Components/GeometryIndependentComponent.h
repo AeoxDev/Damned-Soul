@@ -1,17 +1,23 @@
 #pragma once
 #include <cinttypes>
-#define GI_TEXTURE_DIMENSIONS 128
+#define GI_TEXTURE_DIMENSIONS 512
 #define GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING 128
 struct EntityID;
 
 struct GeometryIndependentComponent;
+
+struct GITexture
+{
+	int8_t texture[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS];
+};
+extern GITexture* giTexture;
+
 
 struct GIMapData
 {
 	int8_t texture[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS];
 };
 
-EntityID CreateAndRenderGeometryIndependentCollision(EntityID& modelEntity);
 //This takes in an EntityID for the stage, assuming there is an existing model for it.
 //It also checks for each StaticHazardComponent with a TransformComponent and renders them as well.
 void RenderGeometryIndependentCollision(EntityID& stageEntity);
@@ -35,4 +41,4 @@ struct Coordinate2D
 
 GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent*& transform, bool pathfinding);
 Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, bool pathfinding);
-GIMapData* GetMapTexture(EntityID& entity);
+GITexture* GetMapTexture(EntityID& entity);

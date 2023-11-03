@@ -3,11 +3,7 @@
 #include "EntityFramework.h"
 #include "EntityID.h"
 #define TEXTURE_DIMENSIONS 512
-struct GITexture
-{
-	int8_t texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
-};
-extern GITexture* giTexture;
+
 
 RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity);
 PS_IDX SetupGIPixelShader(EntityID& stageEntity);

@@ -174,6 +174,7 @@ void Menu::Setup()
 		}
 	}
 	RenderGeometryIndependentCollision(stage);
+	stateManager.stage = stage;
 }
 
 void Menu::Input()

@@ -78,8 +78,7 @@ void LoadLevel1()
 	
 	//Finally set the collision boxes
 
-	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
-	playerComp->mapID = stage;
+	
 
 	
 	registry.AddComponent<TransformComponent>(mouse);
@@ -96,4 +95,6 @@ void LoadLevel1()
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
+
+	stateManager.stage = stage;
 }

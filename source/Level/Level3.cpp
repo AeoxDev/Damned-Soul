@@ -138,6 +138,6 @@ void LoadLevel3()
 		}
 	}
 	RenderGeometryIndependentCollision(stage);
-	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
-	playerComp->mapID = stage;
+
+	stateManager.stage = stage;
 }
