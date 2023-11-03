@@ -18,7 +18,7 @@ bool DamageOverTimeSystem::Update()
 		float effectiveTime = dt < remainingTime ? dt : remainingTime;
 		remainingTime -= dt;
 
-		stats->UpdateHealth(-effectiveTime * DoT->damagePerSecond);
+		stats->ApplyDamage(effectiveTime * DoT->damagePerSecond);
 
 		if (remainingTime <= 0.f)
 			registry.RemoveComponent<DamageOverTimeComponent>(entity);

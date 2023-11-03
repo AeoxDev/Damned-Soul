@@ -323,7 +323,7 @@ void UIFunc::Shop_Heal(void* args)
 
 		float heal = stats->GetMaxHealth() * 0.25f;
 
-		stats->UpdateHealth(heal);
+		stats->ApplyHealing(heal);
 
 		player->UpdateSouls(-2);
 	}

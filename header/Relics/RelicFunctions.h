@@ -25,9 +25,13 @@ namespace Relics
 		// arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
 		FUNC_ON_DAMAGE_APPLY,
 
-		// Called when the player's health is modified, such as when struck by an attack or healed
-		// arguments: foo(hpDelta)
-		FUNC_ON_HEALTH_MODIFIED,
+		// Called when damaged (damage healing is applied)
+		// arguments: foo(TargetStats, hpDelta)
+		FUNC_ON_DAMAGE_TAKEN,
+
+		// Called when healed (after healing is applied)
+		// arguments: foo(TargetStats, hpDelta)
+		FUNC_ON_HEALING_TAKEN,
 
 		// Called when the player's number of souls is updated
 		// arguments: foo(soulDelta)

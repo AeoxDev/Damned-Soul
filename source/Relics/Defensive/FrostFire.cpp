@@ -24,7 +24,7 @@ void FROST_FIRE::Initialize(void* input)
 	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(FROST_FIRE::SetAvailable);
 
 	// Add it to the list of On Obtain functions
-	(*_RelicFunctions)[FUNC_ON_HEALTH_MODIFIED].push_back(FROST_FIRE::PushBackAndFreeze);
+	(*_RelicFunctions)[FUNC_ON_DAMAGE_TAKEN].push_back(FROST_FIRE::PushBackAndFreeze);
 }
 
 void FROST_FIRE::SetAvailable(void* data)

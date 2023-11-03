@@ -14,12 +14,11 @@ void MOLTEN_HEART::Initialize(void* input)
 	MOLTEN_HEART::_OWNER = *((EntityID*)input);
 
 	// This is a stat altering relic, mark the entity as having modified stats
-	StatComponent* ownerStats = registry.GetComponent<StatComponent>(MOLTEN_HEART::_OWNER);
-	ownerStats->MarkAsModified();
-	// Molten Heart also heals the when obtained
-	ownerStats->UpdateHealth(MOLTEN_HEART_VALUE);
+	// It also raises max HP while elevating current hp to match, meaning this is nessecary
+	RELIC_RAISE_CURRENT_MAX_HP(MOLTEN_HEART::_OWNER, MOLTEN_HEART_VALUE);
 
-
+	// Molten Heart also heals (real healing, not just HP elevation to match max hp increase) the when obtained
+	registry.GetComponent<StatComponent>(MOLTEN_HEART::_OWNER)->ApplyHealing(MOLTEN_HEART_VALUE);
 
 	// Make sure the relic function map exists
 	_validateRelicFunctions();

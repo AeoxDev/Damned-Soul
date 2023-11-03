@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define CORRUPTED_HEART_HEALTH_INCREASE (static_cast<long int>(40))
+#define CORRUPTED_HEART_HEALTH_INCREASE (40)
 
 EntityID CORRUPTED_HEART::_OWNER;
 
@@ -25,7 +25,8 @@ void CORRUPTED_HEART::Initialize(void* input)
 	CORRUPTED_HEART::_OWNER = *((EntityID*)input);
 
 	// This is a stat altering relic, mark the entity as having modified stats
-	registry.GetComponent<StatComponent>(CORRUPTED_HEART::_OWNER)->MarkAsModified();
+	// It also raises max HP while elevating current hp to match, meaning this is nessecary
+	RELIC_RAISE_CURRENT_MAX_HP(CORRUPTED_HEART::_OWNER, CORRUPTED_HEART_HEALTH_INCREASE);
 
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
