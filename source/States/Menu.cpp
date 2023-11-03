@@ -53,10 +53,10 @@ void Menu::Setup()
 	stageP->rotationAccel = 0.08f;
 	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 
-	char ctexture[] = "3-1C.png";
+	/*char ctexture[] = "3-1C.png";
 	char ltexture[] = "3-1L.png";
 	char emptyTexture[] = "";
-	AddStaticHazardTexture(stage, ctexture, ltexture, emptyTexture);
+	AddStaticHazardTexture(stage, ctexture, ltexture, emptyTexture);*/
 
 
 	stateManager.activeLevel = 0;
