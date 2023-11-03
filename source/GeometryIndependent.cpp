@@ -1,6 +1,7 @@
 #include "Backend\GeometryIndependent.h"
 #include "Camera.h"
 #include "D3D11Graphics.h"
+#include "D3D11Helper.h"
 #include "MemLib/MemLib.hpp"
 #include "Components.h"
 #include "GameRenderer.h"
@@ -46,6 +47,44 @@ struct giCopyTexture
 {
 	giPixel texture[TEXTURE_DIMENSIONS][TEXTURE_DIMENSIONS];
 };
+
+
+VB_IDX CreateQuad()
+{
+	//Create the quad
+	struct vertex
+	{
+		float position[4];
+		float normal[4];
+		float uv[2];
+	};
+	vertex quad[6] = {//Create a quad and resize it
+		{{-1.0f, 0.0f, -1.0f, 1.0f},{0.0f, 1.0f, 0.0f, 0.0f},{1.0f, 0.0f}},
+		{{-1.0f, 0.0f, 1.0f, 1.0f},{0.0f, 1.0f, 0.0f, 0.0f},{1.0f, 1.0f}},
+		{{1.0f, 0.0f, 1.0f, 1.0f},{0.0f, 1.0f, 0.0f, 0.0f},{0.0f, 1.0f}},
+
+		{{-1.0f, 0.0f, -1.0f, 1.0f},{0.0f, 1.0f, 0.0f, 0.0f},{1.0f, 0.0f}},
+		{{1.0f, 0.0f, 1.0f, 1.0f},{0.0f, 1.0f, 0.0f, 0.0f},{0.0f, 1.0f}},
+		{{1.0f, 0.0f, -1.0f, 1.0f},{0.0f, 1.0f, 0.0f, 0.0f},{0.0f, 0.0f}},
+	};
+
+	return CreateVertexBuffer(quad, sizeof(vertex), 6, USAGE_FLAGS::USAGE_DEFAULT);
+}
+
+void RenderHazardTexture(GeometryIndependentComponent*& GIcomponent, int16_t& id, const StaticHazardType& type)
+{
+	//Set the texture data
+	GIcomponent->shaderData.idValue = type;
+	GIcomponent->shaderData.isTexture = true;
+	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+	//Create a quad and scale the world matrix to acomidate the stage.
+	SetWorldMatrix(GIcomponent->offsetX, 0.01f, GIcomponent->offsetZ,
+		0.0f, 0.0f, -1.0f,
+		GIcomponent->width * 0.5f, 1.0f, GIcomponent->height * 0.5f,
+		SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	SetTexture(id, BIND_PIXEL, 0);
+	Render(6);
+}
 
 void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 {
@@ -126,8 +165,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 			greatestZ = zPos;
 		}
 	}
-	GIcomponent->width = 10.0f + greatestX - smallestX;
-	GIcomponent->height = 10.0f + greatestZ - smallestZ;
+	GIcomponent->width = 0.0f + greatestX - smallestX;
+	GIcomponent->height = 0.0f + greatestZ - smallestZ;
 	GIcomponent->offsetX = 0.5f * (greatestX + smallestX);
 	GIcomponent->offsetZ = 0.5f * (greatestZ + smallestZ);
 	Camera::SetPosition(GIcomponent->offsetX,greatestY+ 2.0f, GIcomponent->offsetZ, false);//Set this to center of stage offset upwards
@@ -161,6 +200,44 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 
 	//Render texture to RTV
 	LOADED_MODELS[model->model].RenderAllSubmeshes();
+
+	//Render the static hazard texture if it exists
+	StaticHazardTextureComponent* texture = registry.GetComponent<StaticHazardTextureComponent>(stageEntity);
+	if (texture != nullptr)
+	{	
+		
+		VB_IDX slot = CreateQuad();
+		SetVertexBuffer(slot);
+		
+		//Render the crack
+		if (texture->crackTextureID != -1)
+		{
+			RenderHazardTexture(GIcomponent, texture->crackTextureID, HAZARD_CRACK);
+			DeleteD3D11Texture(texture->crackTextureID);
+		}
+		
+		//Render the crack
+		if (texture->lavaTextureID != -1)
+		{
+			//Set the texture data
+			RenderHazardTexture(GIcomponent, texture->lavaTextureID, HAZARD_LAVA);
+			DeleteD3D11Texture(texture->lavaTextureID);
+		}
+
+		//Render the crack
+		if (texture->iceTextureID != -1)
+		{
+			//Set the texture data
+			RenderHazardTexture(GIcomponent, texture->iceTextureID, HAZARD_ICE);
+			DeleteD3D11Texture(texture->iceTextureID);
+		}
+		//Remove the textures afterwards, we don't need them
+		
+		
+		
+		DeleteD3D11Buffer(slot);
+		GIcomponent->shaderData.isTexture = false;
+	}
 
 	//Render all existing static hazards on to the submesh.
 	for (auto entity : View<StaticHazardComponent, TransformComponent, ModelBonelessComponent>(registry))
@@ -428,4 +505,32 @@ void AddStaticHazard(EntityID& entity, const StaticHazardType& type)
 {
 	StaticHazardComponent* hazard = registry.AddComponent<StaticHazardComponent>(entity);
 	hazard->type = type;
+}
+
+void AddStaticHazardTexture(EntityID& entity, char* crackTexture, char* lavaTexture, char* iceTexture)
+{
+	StaticHazardTextureComponent* hazard = registry.AddComponent<StaticHazardTextureComponent>(entity);
+
+	std::string adress = crackTexture;
+	if (adress.length() > 1)
+	{
+		adress = "/HazardMap/" + adress;
+		//Create a plane and load a texture
+		hazard->crackTextureID = LoadTexture(adress.c_str());
+	}
+	adress = lavaTexture;
+	if (adress.length() > 1)
+	{
+		adress = "/HazardMap/" + adress;
+		//Create a plane and load a texture
+		hazard->lavaTextureID = LoadTexture(adress.c_str());
+	}
+	adress = iceTexture;
+	if (adress.length() > 1)
+	{
+		adress = "/HazardMap/" + adress;
+		//Create a plane and load a texture
+		hazard->iceTextureID = LoadTexture(adress.c_str());
+	}
+
 }

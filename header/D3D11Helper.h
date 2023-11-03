@@ -181,8 +181,6 @@ VB_IDX CreateVertexBuffer(const size_t& size, const size_t& count, const USAGE_F
 bool SetVertexBuffer(const VB_IDX idx);
 // Sets vertex buffer to NULL
 void UnsetVertexBuffer();
-// Release for a single vertex buffer
-void ReleaseVB(const VB_IDX idx);
 
 // Create an Index Buffer with provided data and return a unique index to it
 // Needs to take unsigned 32 bit integers as data, as that is the underlying DXGI format used

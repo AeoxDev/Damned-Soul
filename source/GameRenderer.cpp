@@ -178,6 +178,11 @@ void Clear(const int& s)
 	SetRenderTargetViewAndDepthStencil(renderStates[s].renderTargetView, renderStates[s].depthStencilView);
 }
 
+void Render(const size_t& count)
+{
+	d3d11Data->deviceContext->Draw((UINT)count, 0);
+}
+
 void RenderIndexed(const size_t& count)
 {
 	d3d11Data->deviceContext->DrawIndexed((UINT)count, 0, 0);

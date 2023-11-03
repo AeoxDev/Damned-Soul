@@ -33,6 +33,7 @@ int SetupParticles();
 void PrepareBackBuffer(const bool use_skeleton = false);
 void ClearBackBuffer();
 void Clear(const int& componentSlot);
+void Render(const size_t& count);
 void RenderIndexed(const size_t& count);
 // Calls Draw, instead of DrawIndexed
 void RenderOffset(const size_t& count, const size_t& offset);

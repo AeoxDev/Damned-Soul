@@ -50,7 +50,9 @@ void LoadLevel1()
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
 	phc->Load("default");	
 	
-
+	char ctexture[] = "1-1C.png";
+	char emptyTexture[] = "";
+	AddStaticHazardTexture(stage, ctexture, emptyTexture, emptyTexture);
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
 	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");

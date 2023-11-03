@@ -196,6 +196,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
+		stat->baseCanWalkOnCrack = true;
+		stat->canWalkOnCrack = true;
 		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
