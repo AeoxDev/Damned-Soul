@@ -31,6 +31,6 @@ void LIFE_STEAL::HealFromDamage(void* data)
 		StatComponent* stats = registry.GetComponent<StatComponent>(_OWNER);
 
 		// Heal from the damage dealt
-		stats->UpdateHealth(LIFE_STEAL_HEALING_MULTIPLIER * input->CollapseDamage());
+		stats->ApplyHealing(LIFE_STEAL_HEALING_MULTIPLIER * input->CollapseDamage());
 	}
 }

@@ -14,7 +14,7 @@ void Combat::DamageFlash(EntityID& defender, const float damage)
 void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage)
 {
 	// Update health
-	defenderStats->UpdateHealth(-1.f * damage, false); // Edit later?
+	defenderStats->ApplyDamage(damage, false); // Edit later?
 
 	// Update UI
 	RedrawUI();

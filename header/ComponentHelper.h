@@ -70,8 +70,17 @@ public:
 	float GetHealthFraction() const;
 	// Update the entity's bonus health
 	void UpdateBonusHealth(const float delta);
-	// Update current health
-	float UpdateHealth(const float delta, const bool hitByEnemy = false);
+
+	// Limit current health to max health
+	float CapHealth();
+	// Update current health while not triggering triggered effects (aside from updating UI)
+	// This should NOT normally be called anywhere without very good reason, use ApplyDamage or ApplyHealing instead
+	// Negative values becomes damage, positive values becomes healing
+	float StealthilyModifyHealth(const float delta);
+	// Apply damage
+	float ApplyDamage(const float damage, const bool hitByEnemy = false);
+	// Apply healing
+	float ApplyHealing(const float healing, const bool hitByEnemy = false);
 
 // Speed
 	// Get the current speed
