@@ -49,9 +49,10 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
 {
+
 	skeletonComponent->timeCounter += GetDeltaTime();
 
-	animComp->aAnim = ANIMATION_IDLE;
+	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
@@ -74,8 +75,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
 
 
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() / 2.f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() / 2.f * GetDeltaTime();
+	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
 
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
@@ -116,27 +117,52 @@ bool SkeletonBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
+	EnemyComponent* enmComp = nullptr;
 
-	bool updateGridOnce = true;
-
-	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
+	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
-		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-		playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	}
-	PathfindingMap valueGrid;
-	
-	
-
-	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
-	{
-		
-
+		PathfindingMap valueGrid;
 		skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+		//Find a player to kill.
+		if (enmComp->lastPlayer.index == -1)
+		{
+			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+			{
+				if (enemyEntity.index == playerEntity.index)
+				{
+					continue;
+				}
+				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+				playerStats = registry.GetComponent< StatComponent>(playerEntity);
+				enmComp->lastPlayer = playerEntity;
+				if (rand() % 2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			playerComponent = registry.GetComponent<PlayerComponent>(enmComp->lastPlayer);
+			playerTransformCompenent = registry.GetComponent<TransformComponent>(enmComp->lastPlayer);
+			playerStats = registry.GetComponent< StatComponent>(enmComp->lastPlayer);
+			if (playerComponent == nullptr)
+			{
+				for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+				{
+					if (enemyEntity.index == playerEntity.index)
+					{
+						continue;
+					}
+					enmComp->lastPlayer.index = -1;
+				}
+			}
+		}
 
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
@@ -260,8 +286,15 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else // idle
 			{
+				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
+		}
+		//Idle if there are no players on screen.
+		else  if (enemyStats->GetHealth() > 0.0f)
+		{
+			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
+			IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 		}
 	}
 

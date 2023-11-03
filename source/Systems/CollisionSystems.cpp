@@ -41,6 +41,15 @@ bool GeometryIndependentSystem::Update()
 				case HAZARD_LAVA:
 					takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
 					break;
+				case HAZARD_CRACK:
+					if (!stat->canWalkOnCrack)
+					{
+						//Detect edge
+						//Edge direction
+						p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
+						p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
+					}
+					
 				default:
 					break;
 				}

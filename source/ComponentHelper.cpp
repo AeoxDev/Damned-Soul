@@ -1,7 +1,8 @@
 #include "Components.h"
 #include "Relics/RelicFunctions.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "UIRenderer.h"
+#include "States\StateManager.h"
 
 void StatComponent::MarkAsModified()
 {
@@ -48,16 +49,20 @@ float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
 		if (hitByEnemy)
 		{
 			//Play hurt sound
-			for (auto entity : View<PlayerComponent>(registry))
+			StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+			if (stats == this)
 			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-				if (m_currentHealth <= 0)
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+				if (sfx)
 				{
-					sfx->Play(Player_Death, Channel_Base);
-				}
-				else
-				{
-					sfx->Play(Player_Hurt, Channel_Base);
+					if (this->GetHealth() <= 0)
+					{
+						sfx->Play(Player_Death, Channel_Base);
+					}
+					else
+					{
+						sfx->Play(Player_Hurt, Channel_Base);
+					}
 				}
 			}
 		}

@@ -6,7 +6,6 @@
 #include "Relics/RelicFunctions.h"
 #include "Registry.h"
 #include "Components.h"
-
 #include "UIButtonFunctions.h"
 
 void LoadLevel(int level)
@@ -32,7 +31,7 @@ void LoadLevel(int level)
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
-	stateManager.scenes[stateManager.activeLevelScene].m_active = true;
+	//stateManager.scenes[stateManager.activeLevelScene].m_active = true;
 	
 	switch (level)
 	{

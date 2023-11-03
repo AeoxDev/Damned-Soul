@@ -63,3 +63,8 @@ void ResetSpeed(EntityID& entity, const int& index);
 #define CAMERA_CONSTANT_SHAKE_TIME 0.4f
 void ShakeCamera(EntityID& entity, const int& index);
 void ResetCameraOffset(EntityID& entity, const int& index);
+
+//Spawning uses condition for type
+void SpawnMainMenuEnemy(EntityID& entity, const int& index);
+//Main menu loop for spawning random enemies
+void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);

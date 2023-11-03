@@ -1007,6 +1007,10 @@ void RenderGeometryIndependentCollision(EntityID& m)
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(m);
 	//while (true)//Debugging GI
 	//{
+	//	char ctexture[] = "2-1C.png";
+	//	char ltexture[] = "2-1L.png";
+	//	char emptyTexture[] = "";
+	//	AddStaticHazardTexture(m, ctexture, ltexture, emptyTexture);
 	//	RenderGeometryIndependentCollisionToTexture(m);
 	//	Present();
 	//}

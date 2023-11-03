@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "UIRenderer.h"
 #include "Relics/RelicFunctions.h"
-#include "Relics\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
 
@@ -166,6 +166,33 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	*/
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
+	if (enemy != nullptr)
+	{
+		enemy->lastPlayer = params.entity1;
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+		switch (enemy->type)
+		{
+		case EnemyType::hellhound:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::eye:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::skeleton:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
+			break;
+		}
+	}
 	if (params.entity2.index == stateManager.player.index)
 	{
 		//Screen shaking
@@ -266,6 +293,7 @@ void AttackCollision(OnCollisionParameters& params)
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
 	if (enemy != nullptr)
 	{
+		enemy->lastPlayer = params.entity1;
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
 		switch (enemy->type)
 		{

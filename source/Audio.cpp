@@ -7,7 +7,7 @@ void AudioEngineComponent::Setup(int& ID)
 	this->result = FMOD::System_Create(&this->system);      // Create the main system object.
 	assert(this->result == FMOD_OK);
 
-	this->result = this->system->init(32, FMOD_INIT_NORMAL, 0);    // Initialize FMOD (The value 32 is the max amount of channels. If we have problems, increase this value)
+	this->result = this->system->init(256, FMOD_INIT_NORMAL, 0);    // Initialize FMOD (The value 32 is the max amount of channels. If we have problems, increase this value)
 	assert(this->result == FMOD_OK);
 
 	//Load all sounds to use in the game

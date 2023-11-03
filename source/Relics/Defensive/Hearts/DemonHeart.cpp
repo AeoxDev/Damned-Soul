@@ -1,10 +1,10 @@
-#include "Relics/RelicInternalHelper.h"
-#include "Relics/RelicFuncInputTypes.h"
-#include "Relics/DemonHeart.h"
+#include "Relics\Defensive\Hearts\DemonHeart.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_HEART_HEALTH_INCREASE 75
+#define DEMON_HEART_HEALTH_INCREASE 25
 
 EntityID DEMON_HEART::_OWNER;
 

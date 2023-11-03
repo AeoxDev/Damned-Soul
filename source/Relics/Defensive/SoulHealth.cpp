@@ -1,6 +1,6 @@
-#include "Relics/RelicInternalHelper.h"
-#include "Relics/SoulHealth.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Defensive\SoulHealth.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 

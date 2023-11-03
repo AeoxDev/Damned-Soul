@@ -1,14 +1,16 @@
-#include "Relics/RelicInternalHelper.h"
-#include "Relics/LightningGod.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Gadget\LightningGod.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicParticleHelper.h"
 #include "Components.h"
 #include "Registry.h"
 #include "DeltaTime.h"
+#include "CombatFunctions.h"
 #include "MemLib/ML_Vector.hpp"
-#include <random>
 
-#define LIGHTNING_GOD_COOLDOWN_SECONDS (3.f)
-#define LIGHTNING_GOD_DAMAGE_FLAT (100.f)
+#define LIGHTNING_GOD_COOLDOWN_SECONDS (1.5f)
+#define LIGHTNING_GOD_DAMAGE_FLAT (10.f)
+#define LIGHTNING_GOD_SFX_DURATION (0.5f)
 
 void LIGHTNING_GOD::Initialize(void* input)
 {
@@ -17,6 +19,11 @@ void LIGHTNING_GOD::Initialize(void* input)
 
 	// Add the lightning bolt with cooldown to the Frame Update vector
 	(*_RelicFunctions)[FUNC_ON_FRAME_UPDATE].push_back(LIGHTNING_GOD::OnUpdate);
+}
+
+void _LG_Particles_Begin(EntityID& entity, const int& index)
+{
+	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION, 0, 0.15f, 0, 0, 0, LIGHTNING);
 }
 
 void LIGHTNING_GOD::OnUpdate(void* data)
@@ -53,6 +60,11 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 
 		// The unfortunate one about to be struck by lightning
 		StatComponent* unfortunateVictim = registry.GetComponent<StatComponent>(potentialVictims[randomlySelected]);
-		unfortunateVictim->UpdateHealth(-LIGHTNING_GOD_DAMAGE_FLAT);
+		
+		// Spawn Lightning
+		ParticleAtEntityLocation(potentialVictims[randomlySelected], LIGHTNING_GOD_SFX_DURATION, _LG_Particles_Begin);
+
+		// Flat damage
+		Combat::HitFlat(potentialVictims[randomlySelected], unfortunateVictim, LIGHTNING_GOD_DAMAGE_FLAT);
 	}
 }

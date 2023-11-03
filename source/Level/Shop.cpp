@@ -14,7 +14,6 @@
 
 void LoadShop()
 {
-
 	EntityID shop = registry.CreateEntity();
 	
 	//faster loading to shop
