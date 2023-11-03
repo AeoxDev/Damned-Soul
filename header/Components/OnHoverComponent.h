@@ -8,7 +8,7 @@ struct OnHoverComponent
 	ML_Vector<DSFLOAT2> positions;
 	ML_Vector<DSBOUNDS> bounds;
 
-	int index;
+	int index = -1;
 
 	bool redrawUI = true;
 	bool hasBeenDrawn = false;

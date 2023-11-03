@@ -16,7 +16,7 @@ bool OnHoverSystem::Update()
 	for (auto entity : View<OnHoverComponent, UIComponent>(registry))
 	{
 		auto comp = registry.GetComponent<OnHoverComponent>(entity);
-		auto ui = registry.GetComponent<UIComponent>(entity);
+		auto uiElement = registry.GetComponent<UIComponent>(entity);
 
 		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 
@@ -31,7 +31,7 @@ bool OnHoverSystem::Update()
 				RedrawUI();
 				comp->redrawUI = false;
 				comp->hasBeenDrawn = true;
-				comp->onHover(ui, index, true);
+				comp->onHover(uiElement, index, true);
 			}
 		}
 		else
@@ -39,7 +39,7 @@ bool OnHoverSystem::Update()
 			if (comp->hasBeenDrawn)
 			{
 				RedrawUI();
-				comp->onHover(ui, comp->index, false);
+				comp->onHover(uiElement, comp->index, false);
 				comp->hasBeenDrawn = false;
 				comp->redrawUI = true;
 			}

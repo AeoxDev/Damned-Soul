@@ -20,12 +20,9 @@ void LoadLevel(int level)
 
 	RedrawUI();
 	Camera::ResetCamera();
-	SetInShop(false);
 	stateManager.scenes[0].Unload();
 	stateManager.scenes[1].Unload();
 	stateManager.scenes[2].Unload();
-
-	SetInShop(false);
 	
 	for (auto entity : View<ControllerComponent>(registry))
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;

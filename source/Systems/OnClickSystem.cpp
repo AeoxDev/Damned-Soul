@@ -13,9 +13,11 @@
 
 bool OnClickSystem::Update()
 {
-	for (auto entity : View<OnClickComponent>(registry))
+	for (auto entity : View<OnClickComponent, UIComponent>(registry))
 	{
 		auto comp = registry.GetComponent<OnClickComponent>(entity);
+		auto uiElement = registry.GetComponent<UIComponent>(entity);
+
 		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 		
 		if (index > -1)
@@ -36,7 +38,7 @@ bool OnClickSystem::Update()
 					}
 				}
 
-				comp->onClick(comp, index);
+				comp->onClick(uiElement, comp->index);
 				return true;
 			}
 		}

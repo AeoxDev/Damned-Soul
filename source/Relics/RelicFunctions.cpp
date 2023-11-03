@@ -65,7 +65,7 @@ ML_Vector<const RelicData*>* RemainingRelicList = nullptr;
 void doNothing(void* nothing) { return; }
 RelicData DefaultRelicRock(
 	/*Name*/		"Useless Rock",
-	/*Filepath*/	"RelicIcons\\DefaultStone_Relic.png",
+	/*Filepath*/	"RelicIcons\\DefaultStone_Relic",
 	/*Description*/	"Somewhat shiny? It is advertised to do SOMETHING but it seems to be just a pebble...",
 	/*Price*/		1,
 	/*Type*/		RELIC_UNTYPED,
@@ -79,7 +79,7 @@ void _validateMasterRelicList()
 		ML_RelicArray MasterInitializer {
 			RelicData(
 				/*Name*/		"Demon Bonemarrow",
-				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
+				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
 				/*Description*/	"Increases your Damage by 15 when obtained.",
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
@@ -87,7 +87,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Flame Weapon",
-				/*Filepath*/	"RelicIcons\\Flame_Weapon.png",
+				/*Filepath*/	"RelicIcons\\Flame_Weapon",
 				/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
 				/*Price*/		3,
 				/*Type*/		RELIC_OFFENSE,
@@ -95,7 +95,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Soul Power",
-				/*Filepath*/	"RelicIcons\\Soul_Power.png",
+				/*Filepath*/	"RelicIcons\\Soul_Power",
 				/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess",
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
@@ -103,7 +103,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Life Steal",
-				/*Filepath*/	"RelicIcons\\Life_Steal.png",
+				/*Filepath*/	"RelicIcons\\Life_Steal",
 				/*Description*/	"You heal for 15% of the damage you deal",
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
@@ -111,7 +111,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Advanced Fighting",
-				/*Filepath*/	"RelicIcons\\Advanced_Fighting.png",
+				/*Filepath*/	"RelicIcons\\Advanced_Fighting",
 				/*Description*/	"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
@@ -119,7 +119,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Demon Heart",
-				/*Filepath*/	"RelicIcons\\Demon_Heart.png",
+				/*Filepath*/	"RelicIcons\\Demon_Heart",
 				/*Description*/	"Increases your Maximum Health by 75 when obtained.",
 				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
@@ -127,7 +127,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Frost Fire",
-				/*Filepath*/	"RelicIcons\\Frost_Fire.png",
+				/*Filepath*/	"RelicIcons\\Frost_Fire",
 				/*Description*/	"Once per level when you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and permanently slow them by 20%",
 				/*Price*/		3,
 				/*Type*/		RELIC_DEFENSE,
@@ -135,7 +135,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Soul Health",
-				/*Filepath*/	"RelicIcons\\Soul_Health.png",
+				/*Filepath*/	"RelicIcons\\Soul_Health",
 				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess.",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
@@ -143,7 +143,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Demon Skin",
-				/*Filepath*/	"RelicIcons\\Demon_Skin.png",
+				/*Filepath*/	"RelicIcons\\Demon_Skin",
 				/*Description*/	"Reduces the damage you take by 20%",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
@@ -151,7 +151,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Spiked Skin",
-				/*Filepath*/	"RelicIcons\\Spiked_Skin.png",
+				/*Filepath*/	"RelicIcons\\Spiked_Skin",
 				/*Description*/	"Whenever an enemy strikes you, it takes 15% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
@@ -159,7 +159,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Speedy Little Devil",
-				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
+				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil",
 				/*Description*/	"Increases your Movespeed by 4 when obtained",
 				/*Price*/		3,
 				/*Type*/		RELIC_GADGET,
@@ -167,7 +167,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Lightning God",
-				/*Filepath*/	"RelicIcons\\Lightning_God.png",
+				/*Filepath*/	"RelicIcons\\Lightning_God",
 				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
 				/*Price*/		1,
 				/*Type*/		RELIC_GADGET,
@@ -175,7 +175,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Reckless",
-				/*Filepath*/	"RelicIcons\\Reckless.png",
+				/*Filepath*/	"RelicIcons\\Reckless",
 				/*Description*/	"You deal 50% more damage, but also take double damage",
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
@@ -183,7 +183,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Soul Speed",
-				/*Filepath*/	"RelicIcons\\Soul_Speed.png",
+				/*Filepath*/	"RelicIcons\\Soul_Speed",
 				/*Description*/	"You gain a bonus to your speed equal to your souls",
 				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,

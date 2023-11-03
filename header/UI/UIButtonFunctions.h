@@ -48,16 +48,18 @@ namespace UIFunc
 	void Settings_Fullscreen(void* args, int a);
 
 	// Buy a relic in shop
-	void Shop_BuyRelic(void* args, int a);
+	void SelectRelic(void* args, int index);
 
 	// Lock a relic in shop
-	void Shop_LockRelic(void* args, int a);
+	void Shop_LockRelic(void* args, int index);
 
 	// Re-roll a relic in shop
-	void Shop_ReRollRelic(void* args, int a);
+	void Shop_ReRollRelic(void* args, int index);
 
 	// Heal the player
-	void Shop_Heal(void* args, int a);
+	void Shop_Heal(void* args, int index);
 
 	void HoverImage(void* args, int index, bool hover);
+
+	void HoverRelic(void* args, int index, bool hover);
 }

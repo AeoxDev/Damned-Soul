@@ -10,23 +10,115 @@
 #include "UIComponents.h"
 #include "States/StateEnums.h"
 
+void CreateUIRelics(UIComponent& uiComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
+{
+	ML_Array<float, 2> xPos;
+	xPos[0] = pos.x - 0.05f;
+	xPos[1] = pos.x + 0.05f;
+
+	for (int i = 0; i < 2; i++)
+	{
+		const RelicData* relic = Relics::PickRandomRelic(type);
+		uiComp.AddImage(relic->m_filePath, { xPos[i], pos.y - 0.025f }, { 1.5f, 1.5f }, false);
+	}
+
+	uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
+	uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
+	uiComp.m_Images[uiComp.m_Images.size() - 2].baseUI.SetVisibility(false);
+	uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.SetVisibility(false);
+
+};
+
+
+void CreateRelicWindows()
+{
+	ML_Array<ML_String, 3> texts;
+	texts[0] = "Offence";
+	texts[1] = "Defence";
+	texts[2] = "Gadget";
+
+	ML_Array<DSFLOAT2, 3> positions;
+	positions[0] = { 0.3f, 0.6f };
+	positions[1] = { 0.3f, 0.3f };
+	positions[2] = { 0.3f, 0.0f };
+
+	ML_Array<Relics::RELIC_TYPE, 3> type;
+	type[0] = Relics::RELIC_UNTYPED;
+	type[1] = Relics::RELIC_UNTYPED;
+	type[2] = Relics::RELIC_UNTYPED;
+
+
+	for (int i = 0; i < 3; i++)
+	{
+		EntityID relicWindow = registry.CreateEntity();
+		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
+		uiElement->Setup("TempRelicFlavorHolder", texts[i].c_str(), positions[i]);
+
+		CreateUIRelics(*uiElement, type[i], positions[i]);
+
+		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
+		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
+
+		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::SelectRelic);
+		uiOnClick->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::SelectRelic);
+
+		uiOnHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverRelic);
+		uiOnHover->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverRelic);
+
+		UIRelicWindowComponent* uiRelicWindow = registry.AddComponent<UIRelicWindowComponent>(relicWindow);
+	}
+
+};
+
+void CreateSingleWindows()
+{
+	ML_Array<ML_String, 4> texts;
+	texts[0] = "Heal";
+	texts[1] = "Reroll";
+	texts[2] = "Lock";
+	texts[3] = "Buy";
+
+	ML_Array<DSFLOAT2, 4> positions;
+	positions[0] = { 0.525f, 0.6f };
+	positions[1] = { 0.525f, 0.3f };
+	positions[2] = { 0.525f, 0.0f };
+	positions[3] = { 0.525f, -0.3f };
+
+	ML_Array<ML_String, 4> imageName;
+	imageName[0] = "Heal";
+	imageName[1] = "Reroll";
+	imageName[2] = "Lock";
+	imageName[3] = "Buy";
+
+	ML_Array<void(*)(void*, int, bool), 4> functions;
+	functions[0] = UIFunc::HoverImage;
+	functions[1] = UIFunc::HoverImage;
+	functions[2] = UIFunc::HoverImage;
+	functions[3] = UIFunc::HoverImage;
+
+	for (int i = 0; i < 4; i++)
+	{
+		EntityID relicWindow = registry.CreateEntity();
+		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
+
+		uiElement->Setup("", texts[i].c_str(), positions[i]);
+		uiElement->AddImage(imageName[i].c_str(), { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
+
+		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
+		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
+
+		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+	}
+}
+
 void LoadShop()
 {
 
 	EntityID shopTitle = registry.CreateEntity();
-	EntityID shopOffence = registry.CreateEntity();
-	EntityID shopDefence = registry.CreateEntity();
-	EntityID shopGadget = registry.CreateEntity();
 	EntityID shopWeapon = registry.CreateEntity();
-
-	EntityID shopHeal = registry.CreateEntity();
-	EntityID shopReroll = registry.CreateEntity();
-	EntityID shopLock = registry.CreateEntity();
-	EntityID shopConfirm = registry.CreateEntity();
+	EntityID shopNextLevel = registry.CreateEntity();
 	
 	EntityID impText = registry.CreateEntity();
-
-	EntityID shopNextLevel = registry.CreateEntity();
 
 	//faster loading to shop for debug purposes
 	EntityID player = registry.CreateEntity();
@@ -37,66 +129,15 @@ void LoadShop()
 	uiTitle->Setup("TempShopTitle", "Lil Devils Shop", { 0.3f, 0.8f });
 	uiTitle->m_BaseImage.baseUI.SetVisibility(false);
 
-	UIComponent* uiOffence = registry.AddComponent<UIComponent>(shopOffence);
-	uiOffence->Setup("TempRelicFlavorHolder", "Offence", { 0.3f, 0.6f });
-	uiOffence->AddImage("RelicIcons/Adrenaline_Rush", { 0.25f, 0.6f }, { 1.0f, 1.0f }, false);
-	uiOffence->AddImage("RelicIcons/Advanced_Fighting", { 0.35f, 0.6f }, { 1.0f, 1.0f }, false);
+	CreateRelicWindows();
 
-	OnClickComponent* uiOffenceOnClick = registry.AddComponent<OnClickComponent>(shopOffence);
-	OnHoverComponent* uiOffenceOnHover = registry.AddComponent<OnHoverComponent>(shopOffence);
-
-	//uiOffenceOnClick->Setup(uiOffence->m_Images[0].baseUI.GetPixelCoords(), uiOffence->m_Images[0].baseUI.GetBounds(), UIFunc::Shop_BuyRelic);
-	//uiOffenceOnClick->Setup(uiOffence->m_Images[1].baseUI.GetPixelCoords(), uiOffence->m_Images[1].baseUI.GetBounds(), UIFunc::Shop_BuyRelic);
-
-	UIComponent* uiHeal = registry.AddComponent<UIComponent>(shopHeal);
-	uiHeal->Setup("", "Heal", { 0.525f, 0.6f });
-	uiHeal->AddImage("Heal", { 0.525f, 0.55f }, { 1.0f, 1.0f }, false);
-
-	OnClickComponent* uiHealOnClick = registry.AddComponent<OnClickComponent>(shopHeal);
-	OnHoverComponent* uiHealOnHover = registry.AddComponent<OnHoverComponent>(shopHeal);
-
-	UIComponent* uiDefence = registry.AddComponent<UIComponent>(shopDefence);
-	uiDefence->Setup("TempRelicFlavorHolder", "Defence", { 0.3f, 0.3f });
-	uiDefence->AddImage("RelicIcons/Soul_Health", { 0.25f, 0.3f }, { 1.0f, 1.0f }, false);
-	uiDefence->AddImage("RelicIcons/Second_Wind", { 0.35f, 0.3f }, { 1.0f, 1.0f }, false);
-
-	OnClickComponent* uiDefenceOnClick = registry.AddComponent<OnClickComponent>(shopDefence);
-	OnHoverComponent* uiDefenceOnHover = registry.AddComponent<OnHoverComponent>(shopDefence);
-
-	UIComponent* uiReroll = registry.AddComponent<UIComponent>(shopReroll);
-	uiReroll->Setup("", "Reroll", { 0.525f, 0.3f });
-	uiReroll->AddImage("Roll", { 0.525f, 0.25f }, { 1.0f, 1.0f }, false);
-
-	OnClickComponent* uiRerollOnClick = registry.AddComponent<OnClickComponent>(shopReroll);
-	OnHoverComponent* uiRerollOnHover = registry.AddComponent<OnHoverComponent>(shopReroll);
-
-	UIComponent* uiGadget = registry.AddComponent<UIComponent>(shopGadget);
-	uiGadget->Setup("TempRelicFlavorHolder", "Gadget", { 0.3f, 0.0f });
-	uiGadget->AddImage("RelicIcons/Dash_Flash", { 0.25f, 0.0f }, { 1.0f, 1.0f }, false);
-	uiGadget->AddImage("RelicIcons/Icy_Blade", { 0.35f, 0.0f }, { 1.0f, 1.0f }, false);
-
-	OnClickComponent* uiGadgetOnClick = registry.AddComponent<OnClickComponent>(shopGadget);
-	OnHoverComponent* uiGadgetOnHover = registry.AddComponent<OnHoverComponent>(shopGadget);
-
-	UIComponent* uiLock = registry.AddComponent<UIComponent>(shopLock);
-	uiLock->Setup("", "Lock", { 0.525f, 0.0f });
-	uiLock->AddImage("Lock", { 0.525f, -0.05f }, { 1.0f, 1.0f }, false);
-
-	OnClickComponent* uiLockOnClick = registry.AddComponent<OnClickComponent>(shopLock);
-	OnHoverComponent* uiLockOnHover = registry.AddComponent<OnHoverComponent>(shopLock);
+	CreateSingleWindows();
 
 	UIComponent* uiWeapon = registry.AddComponent<UIComponent>(shopWeapon);
 	uiWeapon->Setup("TempRelicFlavorHolder", "Weapon", { 0.3f, -0.3f });
-	uiWeapon->AddImage("TempRelicFlavorHolder", { 0.3f, -0.3f });
 
 	OnClickComponent* uiWeaponOnClick = registry.AddComponent<OnClickComponent>(shopWeapon);
 	OnHoverComponent* uiWeaponOnHover = registry.AddComponent<OnHoverComponent>(shopWeapon);
-
-	UIComponent* uiConfirm = registry.AddComponent<UIComponent>(shopConfirm);
-	uiConfirm->Setup("", "Confirm", { 0.525f, -0.3f });
-
-	OnClickComponent* uiConfirmOnClick = registry.AddComponent<OnClickComponent>(shopConfirm);
-	OnHoverComponent* uiConfirmOnHover = registry.AddComponent<OnHoverComponent>(shopConfirm);
 
 	UIComponent* uiNextLevel = registry.AddComponent<UIComponent>(shopNextLevel);
 	uiNextLevel->Setup("TempNextLevel", "", { 0.3f, -0.55f }, { 1.5f, 1.5f });
@@ -105,8 +146,7 @@ void LoadShop()
 	OnHoverComponent* uiNextLevelOnHover = registry.AddComponent<OnHoverComponent>(shopNextLevel);
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("TempRelicHolder", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla interdum, ante varius tempus rhoncus, mi sapien imperdiet nisi, ac tincidunt nisi ligula vel nibh. Donec eu mi eu quam volutpat lacinia. Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 
-		{ -0.2f, -0.1f }, { 2.0f, 2.0f });
+	uiImpText->Setup("TempRelicHolder", "", { -0.2f, -0.1f }, { 2.0f, 2.0f });
 	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
 
 }

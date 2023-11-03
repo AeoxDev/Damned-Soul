@@ -6,6 +6,8 @@ struct OnClickComponent
 	ML_Vector<DSFLOAT2> positions;
 	ML_Vector<DSBOUNDS> bounds;
 
+	int index = -1;
+
 	void(*onClick)(void*, int);
 
 	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int))
@@ -30,6 +32,7 @@ struct OnClickComponent
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
 			{
 				retval = i;
+				index = i;
 				break;
 			}
 		}
