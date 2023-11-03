@@ -213,6 +213,11 @@ bool SkeletonBehaviourSystem::Update()
 					{
 						updateGridOnce = false;
 						valueGrid = CalculateGlobalMapValuesSkeleton(playerTransformCompenent);
+						if (valueGrid.cost[0][0] == -69.f)
+						{
+							updateGridOnce = true;
+							continue;
+						}
 					}
 						
 					finalPath = CalculateAStarPath(valueGrid, skeletonTransformComponent, playerTransformCompenent);

@@ -57,10 +57,10 @@ int main(int argc, char* args[])
 	//Simulate main menu for 3000 frames
 	gameSpeed = 24.0f;
 	LoadLevel(666);//Load the menu
-	for (size_t i = 0; i < 30000; i++)
+	for (size_t i = 0; i < 3000; i++)
 	{
 		CountDeltaTime();
-		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / 30 000");
+		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / 3000");
 		stateManager.Update();
 		stateManager.EndFrame();
 		MemLib::pdefrag();

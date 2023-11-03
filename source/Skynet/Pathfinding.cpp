@@ -97,10 +97,18 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransf
 		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
 
-		returnMap.cost[pos.x][pos.z] += 6;
+		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+		{
+			returnMap.cost[pos.x][pos.z] += 6;
+		}
+		else
+		{
+			returnMap.cost[0][0] = -69.f;
+			return returnMap;
+		}
 	}
 
-
+	
 	return returnMap;
 }
 
