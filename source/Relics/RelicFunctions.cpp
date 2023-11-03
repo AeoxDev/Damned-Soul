@@ -196,7 +196,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Lightning God",
 				/*Filepath*/	"RelicIcons\\Lightning_God.png",
 				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
-				/*Price*/		1,
+				/*Price*/		0,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	LIGHTNING_GOD::Initialize
 			),

@@ -8,8 +8,8 @@
 #include "CombatFunctions.h"
 #include "MemLib/ML_Vector.hpp"
 
-#define LIGHTNING_GOD_COOLDOWN_SECONDS (3.f)
-#define LIGHTNING_GOD_DAMAGE_FLAT (100.f)
+#define LIGHTNING_GOD_COOLDOWN_SECONDS (0.1f)
+#define LIGHTNING_GOD_DAMAGE_FLAT (999.f)
 #define LIGHTNING_GOD_SFX_DURATION (0.5f)
 
 void LIGHTNING_GOD::Initialize(void* input)
