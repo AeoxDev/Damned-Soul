@@ -7,6 +7,10 @@
 #include <random>
 
 
+
+
+
+
 #define SKELETON_ATTACK_HITBOX 2
 
 void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, 
@@ -113,6 +117,8 @@ bool SkeletonBehaviourSystem::Update()
 	StatComponent* playerStats = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
 
+	bool updateGridOnce = true;
+
 	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
 	{
 		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
@@ -121,12 +127,6 @@ bool SkeletonBehaviourSystem::Update()
 	}
 	PathfindingMap valueGrid;
 	
-	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
-	{
-		if (playerComponent != nullptr)
-			valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID);
-		continue;
-	}
 	
 
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
@@ -142,8 +142,9 @@ bool SkeletonBehaviourSystem::Update()
 		{
 			ML_Vector<Node> finalPath;
 			skeletonComponent->updatePathCounter += GetDeltaTime();
+#ifdef PATH_FINDING_VISUALIZER
 			skeletonComponent->testUpdateTimer += GetDeltaTime();
-			
+#endif // TEST
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
@@ -163,32 +164,42 @@ bool SkeletonBehaviourSystem::Update()
 
 
 			//Elliot: If in attack, keep attacking even if player is outside
-			if (distance < 2.5f || skeletonComponent->attackTimer > 0.0f)
+			if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f)
 			{
 				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
 			}
-			else if (distance < 590.f) //hunting distance
+			else if (distance < 50.f) //hunting distance
 			{
+#ifdef PATH_FINDING_VISUALIZER
 				TransformComponent* doggoT;
 				for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent, StatComponent>(registry))
 				{
 					doggoT = registry.GetComponent<TransformComponent>(enemyEntity);
 				}
+
+#endif // TEST
 				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
 				{
-					
-					skeletonComponent->counterForTest = 0;
 					skeletonComponent->updatePathCounter = 0;
+					if (playerComponent != nullptr && updateGridOnce)
+					{
+						updateGridOnce = false;
+						valueGrid = CalculateGlobalMapValuesSkeleton(playerComponent->mapID, playerTransformCompenent);
+					}
+						
 					finalPath = CalculateAStarPath(playerComponent->mapID, valueGrid, skeletonTransformComponent, playerTransformCompenent);
+#ifdef PATH_FINDING_VISUALIZER
 					skeletonComponent->coolVec.clear();
-
-					if (finalPath.size() > 1)
+					skeletonComponent->counterForTest = 0;
+#endif // TEST
+					if (finalPath.size() > 2)
 					{
 						skeletonComponent->fx = finalPath[0].fx;
 						skeletonComponent->fz = finalPath[0].fz;
+						skeletonComponent->followPath = true;
 					}
 					
-
+#ifdef PATH_FINDING_VISUALIZER
 					for (int p = 0; p < finalPath.size(); p++)
 					{
 						finalPath[p].fx = skeletonComponent->fx;
@@ -196,8 +207,9 @@ bool SkeletonBehaviourSystem::Update()
 						skeletonComponent->coolVec.push_back((float)finalPath[p].x);
 						skeletonComponent->coolVec.push_back((float)finalPath[p].z);
 					}
+#endif // TEST
 					// goal (next node) - current
-					if (finalPath.size() > 1)
+					if (finalPath.size() > 2 && skeletonComponent->followPath)
 					{
 						skeletonComponent->dirX = finalPath[1].x - finalPath[0].x;
 						skeletonComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
@@ -210,6 +222,7 @@ bool SkeletonBehaviourSystem::Update()
  						skeletonComponent->followPath = false;
 					}
 				}   
+#ifdef PATH_FINDING_VISUALIZER
 				else if(skeletonComponent->counterForTest + 1 < skeletonComponent->coolVec.size() && (skeletonComponent->testUpdateTimer >= skeletonComponent->testUpdateLimit))
 				{
 					skeletonComponent->testUpdateTimer = 0.f;
@@ -231,28 +244,18 @@ bool SkeletonBehaviourSystem::Update()
 
 					skeletonComponent->counterForTest += 2;
 				}
-				if (distance < 1.f)
-				{
-					skeletonComponent->followPath = false;
-				}
-				for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent, StatComponent>(registry))
-				{
-
-
-					/*HellhoundBehaviour*doggoB = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
-					TransformComponent* doggoT = registry.GetComponent<TransformComponent>(enemyEntity);
-					
-					
-					doggoT->facingX = skeletonComponent->dirX;
-					doggoT->facingZ = skeletonComponent->dirZ;*/
+#endif // TEST
 				
-				}
-				if (skeletonComponent->followPath == true && skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit / 2.f  )
+				if (skeletonComponent->followPath == true && skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit / 2.f)
 				{
 					skeletonComponent->dirX = skeletonComponent->dir2X;
 					skeletonComponent->dirZ = skeletonComponent->dir2Z;
 				}
 				
+				if (distance < skeletonComponent->meleeDistance * 2.f) // dont follow path, go melee
+				{
+					skeletonComponent->followPath = false;
+				} 
 				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
 			}
 			else // idle

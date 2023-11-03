@@ -6,7 +6,7 @@
 
 struct PathfindingMap //costs of tiles on map
 {
-	float cost[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS] = { 0 };
+	float cost[GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING][GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING] = { 0 };
 
 	~PathfindingMap() = default;
 };
@@ -29,6 +29,6 @@ struct Node // to save path
 
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z);
 //void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 5.1f);
-PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID);
+PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformComponent* playerTransform);
 
 ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);

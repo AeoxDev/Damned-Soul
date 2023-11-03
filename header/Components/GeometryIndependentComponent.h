@@ -1,6 +1,7 @@
 #pragma once
 #include <cinttypes>
 #define GI_TEXTURE_DIMENSIONS 128
+#define GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING 128
 struct EntityID;
 
 struct GeometryIndependentComponent;
@@ -32,6 +33,6 @@ struct Coordinate2D
 	float z;
 };
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent*& transform);
-Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi);
+GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent*& transform, bool pathfinding);
+Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, bool pathfinding);
 GIMapData* GetMapTexture(EntityID& entity);

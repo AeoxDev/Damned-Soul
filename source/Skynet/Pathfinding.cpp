@@ -2,28 +2,38 @@
 #include "MemLib\ML_Array.hpp"
 #include "MemLib\MemLib.hpp"
 
-PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID)
+PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformComponent* playerTransform)
 {
 	GIMapData* mapGrid = nullptr;
 	mapGrid = GetMapTexture(mapID); // get map from collision
 
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(mapID); //just need GIcomp
+	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, true); // grid position
+
+	bool onLava = false;
+	if (mapGrid->texture[playerPos.z][playerPos.x] >= 2) // is on lava, don't penalize lava
+	{
+		onLava = true;
+	}
+
+	
 
 	// 0 = non-walkable 
 	// 1 = walkable
 	// 2+ = lava
 
 	PathfindingMap returnMap;
-	for (int i = 0; i < GI_TEXTURE_DIMENSIONS; i++)
+	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
 	{
-		for (int j = 0; j < GI_TEXTURE_DIMENSIONS; j++)
+		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
 		{
 			returnMap.cost[i][j] = 0;
 		}
 	}
 
-	for (int x = 0; x < GI_TEXTURE_DIMENSIONS; x++)
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
 	{
-		for (int z = 0; z < GI_TEXTURE_DIMENSIONS; z++)
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			// is it walkable?
 			if (mapGrid->texture[z][x] == 0)
@@ -37,21 +47,37 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID)
 			}
 			else if (mapGrid->texture[z][x] >= 2) // is the floor lava?
 			{
-				returnMap.cost[x][z] += 10; // this is original lava
+				if (onLava) //treat as ground to save time. optimize shit
+				{
+					returnMap.cost[x][z] += 1;
+				}
+				else
+				{
+					returnMap.cost[x][z] += 4; // this is original lava
 
-				//RIght column
-				returnMap.cost[x+1][z+1] += 5;
-				returnMap.cost[x+1][z] += 5;
-				returnMap.cost[x+1][z-1] += 5;
+					//RIght column
+					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+						returnMap.cost[x + 1][z + 1] += 2;
+					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+						returnMap.cost[x + 1][z] += 2;
+					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
+						returnMap.cost[x + 1][z - 1] += 2;
 
-				//Middle column
-				returnMap.cost[x][z-1] += 5;
-				returnMap.cost[x][z+1] += 5;
+					//Middle column
+					if (z > 0)
+						returnMap.cost[x][z - 1] += 2;
+					if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+						returnMap.cost[x][z + 1] += 2;
 
-				//Left column
-				returnMap.cost[x-1][z-1] += 5;
-				returnMap.cost[x-1][z] += 5;
-				returnMap.cost[x-1][z+1] += 5;
+					//Left column
+
+					if (x > 0 && z > 0)
+						returnMap.cost[x - 1][z - 1] += 2;
+					if (x > 0)
+						returnMap.cost[x - 1][z] += 2;
+					if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+						returnMap.cost[x - 1][z + 1] += 2;
+				}
 
 			}
 		}
@@ -65,9 +91,9 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID)
 		
 		// x z = functionCallFromElliot
 		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(mapID);
-		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent); // grid position of an AI, trust the math, we're engineers
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
 
-		returnMap.cost[pos.x][pos.z] += 8;
+		returnMap.cost[pos.x][pos.z] += 6;
 	}
 
 
@@ -86,9 +112,9 @@ bool AreWeThereYet(int x, int z, Node goal)
 
 bool IsCellValid(int x, int z)
 {
-	if (x >= 0 && x <= GI_TEXTURE_DIMENSIONS)
+	if (x >= 0 && x <= GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 	{
-		if (z >= 0 && z <= GI_TEXTURE_DIMENSIONS)
+		if (z >= 0 && z <= GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 		{
 			return true;
 		}
@@ -113,7 +139,7 @@ Node CreateNewNode(PathfindingMap gridValues, int x, int z, Node parent)
 	return returnNode;
 }
 
-ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS], Node start)
+ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING][GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING], Node start)
 {
 	ML_Vector<Node> theWay;
 	ML_Vector<Node> theReverseWay; // trust me, we need this. temp
@@ -145,8 +171,8 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 	Node start; 
 	Node goal;
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(mapID); //just need GIcomp
-	GridPosition enemyPos = PositionOnGrid(GIcomponent, enemyTransform); // grid position
-	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform); // grid position
+	GridPosition enemyPos = PositionOnGrid(GIcomponent, enemyTransform, true); // grid position
+	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, true); // grid position
 	GridPosition tempPush; // used for pushing stuff, don't mind this one....but we need it
 
 	start.x = enemyPos.x;
@@ -159,10 +185,10 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 	
 
 	//Node nodeMap[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS]; // this is for keeping track of all grid values
-	PoolPointer<Node[GI_TEXTURE_DIMENSIONS]> nodeMap = MemLib::palloc(sizeof(Node) * GI_TEXTURE_DIMENSIONS * GI_TEXTURE_DIMENSIONS); // this is for keeping track of all grid values
-	for (int x = 0; x < GI_TEXTURE_DIMENSIONS; x++)
+	PoolPointer<Node[GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING]> nodeMap = MemLib::palloc(sizeof(Node) * GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING * GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // this is for keeping track of all grid values
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
 	{
-		for (int z = 0; z < GI_TEXTURE_DIMENSIONS; z++)
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			nodeMap[x][z].f = FLT_MAX;
 			nodeMap[x][z].g = gridValues.cost[x][z];
@@ -180,7 +206,7 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 		return returnVector; // You're the destination, Harry!
 	}
 	ML_Vector<GridPosition> openList; // nodes that are "alive"
-	bool closedList[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS] = { false }; // dead nodes we don't follow anymore, if true it is dead. if false, it is alive
+	bool closedList[GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING][GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING] = { false }; // dead nodes we don't follow anymore, if true it is dead. if false, it is alive
 	start.parentX = start.x;
 	start.parentZ = start.z;
 	start.f = 0.f;
@@ -252,6 +278,8 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
+
+				if(goal.g )
 				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
 				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way

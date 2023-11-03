@@ -392,7 +392,7 @@ GeometryIndependentComponent::~GeometryIndependentComponent()
 int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*& transform)
 {
 	//Calculate size per pixel:
-	GridPosition pixelPos = PositionOnGrid(gi, transform);
+	GridPosition pixelPos = PositionOnGrid(gi, transform, false);
 	//Coordinate2D testPos = GridOnPosition(pixelPos, gi);
 	//Check if pixel in bounds
 	if (pixelPos.x < GI_TEXTURE_DIMENSIONS && pixelPos.x >= 0)
@@ -409,12 +409,18 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*&
 	return 0;
 }
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent*& transform)
+GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent*& transform, bool pathfinding)
 {
+	int dimension = GI_TEXTURE_DIMENSIONS;
+	if (pathfinding)
+	{
+		dimension = GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	}
+
 	GridPosition toReturn;
 	//Calculate size per pixel:
-	float pixelX = gi->width / GI_TEXTURE_DIMENSIONS;
-	float pixelZ = gi->height / GI_TEXTURE_DIMENSIONS;
+	float pixelX = gi->width / dimension;
+	float pixelZ = gi->height / dimension;
 	//Calculate offset:
 	float offX = gi->width * 0.5f - gi->offsetX;
 	float offZ = gi->height * 0.5f - gi->offsetZ;
@@ -431,16 +437,22 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 	return toReturn;
 }
 
-Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi)
+Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, bool pathfinding)
 {
+	int dimension = GI_TEXTURE_DIMENSIONS;
+	if (pathfinding)
+	{
+		dimension = GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	}
+
 	Coordinate2D toReturn;
 	toReturn.x = (float)gridPos.x + gridPos.fx;
 	toReturn.z = (float)gridPos.z + gridPos.fz;
 	// posx = px * pixelX - offX
 	// posz = -(pz * pixelZ - offZ)
 
-	float pixelX = gi->width / GI_TEXTURE_DIMENSIONS;
-	float pixelZ = gi->height / GI_TEXTURE_DIMENSIONS;
+	float pixelX = gi->width / dimension;
+	float pixelZ = gi->height / dimension;
 	float offX = gi->width * 0.5f - gi->offsetX;//In world
 	float offZ = gi->height * 0.5f - gi->offsetZ;//In world
 

@@ -416,7 +416,6 @@ bool HellhoundBehaviourSystem::Update()
 
 	for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent, StatComponent, EnemyComponent, AnimationComponent>(registry))
 	{
-		return true;
 		hellhoundComponent = registry.GetComponent<HellhoundBehaviour>(enemyEntity);
 		hellhoundTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);

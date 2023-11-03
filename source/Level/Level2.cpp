@@ -29,16 +29,15 @@ void LoadLevel2()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f, 6969.f, 20000.f);
-	SetupEnemy(EnemyType::hellhound, 0.f, 0.f, 0.f);
-	/*SetupEnemy(EnemyType::skeleton, 0.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
+	SetupEnemy(EnemyType::skeleton, 0.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 0.f);
 	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::hellhound, 0.f, 0.f, -5.f);
-	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, -45.f);*/
+	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, -45.f);
 	//13 souls + 5 souls level 1 = 18 souls total
 
 	float redAdd = 0.1f;
