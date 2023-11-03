@@ -282,12 +282,18 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
 	if (toAppend != nullptr)
+	{
 		ReleaseModel(toAppend->model);
+		registry.RemoveComponent<ModelBonelessComponent>(entity);
+	}
 
 
 	auto toAppend2 = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (toAppend2 != nullptr)
+	{
 		ReleaseModel(toAppend2->model);
+		registry.RemoveComponent<ModelSkeletonComponent>(entity);
+	}
 		
-	registry.DestroyEntity(entity);
+	//registry.DestroyEntity(entity);
 }

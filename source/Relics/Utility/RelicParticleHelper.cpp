@@ -6,7 +6,8 @@ void _RelicParticleDespawn(EntityID& entity, const int& index)
 {
 	auto particles = registry.GetComponent<ParticleComponent>(entity);
 	particles->Release();
-	registry.DestroyEntity(entity);
+	//ReleaseTimedEvents(entity);
+	//registry.DestroyEntity(entity);
 }
 
 void ParticleAtEntityLocation(const EntityID& origin, const float duration, void* funcStart)
