@@ -31,6 +31,8 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformCompon
 		}
 	}
 
+	float lavaPunish = 6;
+
 	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
@@ -53,30 +55,30 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(EntityID& mapID, TransformCompon
 				}
 				else
 				{
-					returnMap.cost[x][z] += 4; // this is original lava
+					returnMap.cost[x][z] += lavaPunish; // this is original lava
 
 					//RIght column
 					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x + 1][z + 1] += 2;
+						returnMap.cost[x + 1][z + 1] += lavaPunish / 2;
 					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x + 1][z] += 2;
+						returnMap.cost[x + 1][z] += lavaPunish / 2;
 					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
-						returnMap.cost[x + 1][z - 1] += 2;
+						returnMap.cost[x + 1][z - 1] += lavaPunish / 2;
 
 					//Middle column
 					if (z > 0)
-						returnMap.cost[x][z - 1] += 2;
+						returnMap.cost[x][z - 1] += lavaPunish / 2;
 					if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x][z + 1] += 2;
+						returnMap.cost[x][z + 1] += lavaPunish / 2;
 
 					//Left column
 
 					if (x > 0 && z > 0)
-						returnMap.cost[x - 1][z - 1] += 2;
+						returnMap.cost[x - 1][z - 1] += lavaPunish / 2;
 					if (x > 0)
-						returnMap.cost[x - 1][z] += 2;
+						returnMap.cost[x - 1][z] += lavaPunish / 2;
 					if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x - 1][z + 1] += 2;
+						returnMap.cost[x - 1][z + 1] += lavaPunish / 2;
 				}
 
 			}
@@ -175,6 +177,8 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, true); // grid position
 	GridPosition tempPush; // used for pushing stuff, don't mind this one....but we need it
 
+	
+
 	start.x = enemyPos.x;
 	start.z = enemyPos.z;
 	goal.x = playerPos.x;
@@ -183,6 +187,9 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 	start.fx = enemyPos.fx;
 	start.fz = enemyPos.fz;
 	
+	float maximumAllowedDistance = CalculateEuclideanDistance(start.x, start.z, goal) * 1.25f;
+
+
 
 	//Node nodeMap[GI_TEXTURE_DIMENSIONS][GI_TEXTURE_DIMENSIONS]; // this is for keeping track of all grid values
 	PoolPointer<Node[GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING]> nodeMap = MemLib::palloc(sizeof(Node) * GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING * GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // this is for keeping track of all grid values
@@ -274,22 +281,27 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 				MemLib::pfree(nodeMap);
 				return returnVector;
 			}
-			else if(closedList[newNode.x][newNode.z] == false && newNode.g < 10000)//10000 is what unwalkable gets
+			else if (closedList[newNode.x][newNode.z] == false && newNode.g < 10000)//10000 is what unwalkable gets
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-
-				if(goal.g )
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					closedList[newNode.x][newNode.z] = true;
+				}
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -315,19 +327,24 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-
-				
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
-
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					closedList[newNode.x][newNode.z] = true;
 				}
-				
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
+
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
+				}
 			}
 		}
 
@@ -350,16 +367,23 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					closedList[newNode.x][newNode.z] = true;
+				}
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -382,16 +406,23 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					closedList[newNode.x][newNode.z] = true;
+				}
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -415,16 +446,23 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					closedList[newNode.x][newNode.z] = true;
+				}
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -446,16 +484,23 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					closedList[newNode.x][newNode.z] = true;
+				}
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -478,16 +523,23 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					closedList[newNode.x][newNode.z] = true;
+				}
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
@@ -509,15 +561,23 @@ ML_Vector<Node> CalculateAStarPath(EntityID& mapID, PathfindingMap gridValues, T
 			{
 				newNode.h = CalculateEuclideanDistance(newNode.x, newNode.z, goal);
 				//calc total cost
-				newNode.f = currentNode.g + newNode.g + newNode.h; // top g
-				if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+				if (newNode.h > maximumAllowedDistance)
 				{
-					tempPush.x = newNode.x;
-					tempPush.z = newNode.z;
-					openList.push_back(tempPush);
+					closedList[newNode.x][newNode.z] = true;
+				}
+				else
+				{
+					newNode.f = currentNode.g + newNode.g + newNode.h; // top g
 
-					//update value of grid position 
-					nodeMap[newNode.x][newNode.z] = newNode;
+					if (nodeMap[newNode.x][newNode.z].f == FLT_MAX || nodeMap[newNode.x][newNode.z].f > newNode.f) // if not explored or we found a cheaper way
+					{
+						tempPush.x = newNode.x;
+						tempPush.z = newNode.z;
+						openList.push_back(tempPush);
+
+						//update value of grid position 
+						nodeMap[newNode.x][newNode.z] = newNode;
+					}
 				}
 			}
 		}
