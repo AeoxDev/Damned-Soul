@@ -6,6 +6,7 @@
 #include "Levels\LevelHelper.h"
 #include "Model.h"
 #include "UIComponents.h"
+#include "States\StateManager.h"
 
 void LoadLevel4()
 {
@@ -52,8 +53,11 @@ void LoadLevel4()
 
 	RenderGeometryIndependentCollision(stage);
 
+
 	EntityID mouse = registry.CreateEntity();
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
+
+	stateManager.stage = stage;
 }

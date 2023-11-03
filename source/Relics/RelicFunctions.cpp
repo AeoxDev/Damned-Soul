@@ -54,7 +54,7 @@ void _validateRelicFunctions()
 		_RelicFunctions->emplace((RELIC_FUNCTION_TYPE)i, ML_Vector<VECTOR_FUNCTION_TYPE>());
 	}
 
-	std::srand(time(NULL));
+	std::srand((unsigned)time(NULL));
 };
 
 // Master list of relics, used to keep track of all relics that exist
@@ -196,7 +196,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Lightning God",
 				/*Filepath*/	"RelicIcons\\Lightning_God.png",
 				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
-				/*Price*/		0,
+				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	LIGHTNING_GOD::Initialize
 			),

@@ -2,6 +2,7 @@
 #include <d2d1.h>
 #include <wincodec.h>
 #include <assert.h>
+#include "UIRenderer.h"
 
 void UIImage::Setup(const ML_String& filepath, DSFLOAT2 position, DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
@@ -15,7 +16,7 @@ void UIImage::Setup(const ML_String& filepath, DSFLOAT2 position, DSFLOAT2 scale
 
 	m_UiComponent.SetTransform(position, scale, rotation);
 
-	
+	RedrawUI();
 }
 
 void UIImage::Release()

@@ -10,12 +10,11 @@ bool StateSwitcherSystem::Update()
 {
 	PlayerComponent* playersComp = nullptr;
 
-	// Loop through registry to find an entity that has PlayerComponent AND StatComponent
-	for (auto entity : View<PlayerComponent, StatComponent>(registry))
+	// Get player entity stat component
+	if (stateManager.player.index != -1)
 	{
-		// Get player entity stat component
-		playersComp = registry.GetComponent<PlayerComponent>(entity);
-		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
+		playersComp = registry.GetComponent<PlayerComponent>(stateManager.player);
+		StatComponent* statComp = registry.GetComponent<StatComponent>(stateManager.player);
 		if (statComp != nullptr)
 		{
 			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay)
@@ -24,6 +23,7 @@ bool StateSwitcherSystem::Update()
 			}
 		}
 	}
+	
 
 	for (auto entity : View<EnemyComponent, StatComponent>(registry))
 	{

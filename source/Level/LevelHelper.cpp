@@ -156,13 +156,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
 
-	registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
+	StatComponent* stat = registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
 	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
 
 	
 
 	if (eType == EnemyType::hellhound)
 	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
 		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
@@ -170,7 +172,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::skeleton)
 	{
@@ -181,10 +186,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
+		
 	}
 	else if (eType == EnemyType::eye)
 	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->baseCanWalkOnCrack = true;
+		stat->canWalkOnCrack = true;
 		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
@@ -192,14 +205,21 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(EYE);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
+		stat->hazardModifier = 0.0f;
 		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
-		player->killThreshold += 15;
+		if (player)
+		{
+			player->killThreshold+=15;
+		}
 	}
 
 	return entity;
@@ -287,4 +307,12 @@ void ReloadPlayerNonGlobals()
 	MouseComponentAddComponent(stateManager.player);
 
 	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
+}
+
+EntityID RandomPlayerEnemy(EnemyType enemyType) {
+	EntityID enemy = SetupEnemy(enemyType, (float)(rand() % 100) - 50.0f, 0.f, (float)(rand() % 100) - 50.0f);
+	SetHitboxIsPlayer(enemy, 1, true);
+	registry.AddComponent<PlayerComponent>(enemy);
+	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
+	return enemy;
 }

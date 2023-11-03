@@ -126,4 +126,5 @@ void UIShopComponent::Setup()
 	bool* ignore = {};
 
 	UIFunc::Shop_ReRollRelic(ignore);
+	RedrawUI();
 }
