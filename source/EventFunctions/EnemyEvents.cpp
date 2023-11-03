@@ -15,7 +15,6 @@
 
 void PlayDeathAnimation(EntityID& entity, const int& index)
 {
-	//implement later, goddamn TA
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
 	RemoveHitbox(entity, 2);
@@ -282,12 +281,19 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
 	if (toAppend != nullptr)
+	{
 		ReleaseModel(toAppend->model);
+		registry.RemoveComponent<ModelBonelessComponent>(entity);
+	}
 
 
 	auto toAppend2 = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (toAppend2 != nullptr)
+	{
 		ReleaseModel(toAppend2->model);
-		
-	registry.DestroyEntity(entity);
+		registry.RemoveComponent<ModelSkeletonComponent>(entity);
+	}
+
+	// This caused memory leaks as it only released the above components and prevented the main removal function from detecting the others
+	//registry.DestroyEntity(entity);
 }
