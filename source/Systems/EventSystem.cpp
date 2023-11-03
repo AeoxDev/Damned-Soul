@@ -9,6 +9,8 @@
 
 struct TimedEvent
 {
+	bool isActive = true;
+
 	unsigned long long id;
 	uint32_t condition = 0; //In case we want to define some extra condition as to how functions should be called. 0 means nothing
 	float timer = 0.0f;
@@ -33,7 +35,7 @@ int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
 	//Loop through and check for same function pointer
 	for (unsigned i = 0; i < comp->timedEvents.size(); i++)
 	{
-		if (comp->timedEvents[i].id == id)
+		if (comp->timedEvents[i].isActive && comp->timedEvents[i].id == id)
 		{
 			++amount;
 		}
@@ -45,10 +47,13 @@ bool EventSystem::Update()
 {
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
-		
 		auto comp = registry.GetComponent<TimedEventComponent>(entity);
 		for (unsigned i = 0; i < comp->timedEvents.size(); i++)
 		{
+			if (!comp->timedEvents[i].isActive)
+			{
+				continue;
+			}
 			comp->timedEvents[i].timer += GetDeltaTime();
 			if (comp->timedEvents[i].startFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer)
 			{
@@ -61,18 +66,43 @@ bool EventSystem::Update()
 			}
 			if (comp->timedEvents[i].endFunction != nullptr && comp->timedEvents[i].endTime < comp->timedEvents[i].timer)
 			{
+				comp->timedEvents[i].isActive = false;
 				comp->timedEvents[i].endFunction(comp->timedEvents[i].eventity, i);
-				comp->timedEvents[i].endFunction = nullptr;
 			}
-			if (comp->timedEvents[i].endTime < comp->timedEvents[i].timer)
+			else if (comp->timedEvents[i].endTime < comp->timedEvents[i].timer)
 			{
-				comp->timedEvents.erase(i);
+				comp->timedEvents[i].isActive = false;
 			}
 		}
 		
 	}
 	return true;
 }
+
+//Find available slot, if no available. Create a slot
+int FindAndInit(EntityID& entityID)
+{
+	TimedEventComponent* tc = registry.GetComponent<TimedEventComponent>(entityID);
+	if (!tc)
+	{
+		return -1;
+	}
+	int slot = -1;
+	for (unsigned i = 0; i < tc->timedEvents.size(); i++)
+	{
+		if (tc->timedEvents[i].isActive == false)
+		{
+			slot = i;
+		}
+	}
+	if (slot == -1)
+	{
+		TimedEvent event;
+		slot = (int)tc->timedEvents.push_back(event);
+	}
+	return slot;
+}
+
 //Check stacks for events here
 int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* startFunction, uint32_t condition,int maxStacks)
 {
@@ -93,8 +123,9 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 	timedEvent.startTime = startTime;
 	timedEvent.endTime = startTime;
 	timedEvent.startFunction = (void(*)(EntityID&, const int&))startFunction;
-	tc->timedEvents.push_back(timedEvent);
-	return tc->timedEvents.size() - 1;
+	int slot = FindAndInit(entityID);
+	tc->timedEvents[slot] = timedEvent;
+	return slot;
 }
 //Adds a start and an end event. Use functions from the EventFunctions folder.
 int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* startFunction, float endTime, void* endFunction, uint32_t condition,int maxStacks)
@@ -118,8 +149,9 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 	timedEvent.endTime = endTime;
 	timedEvent.endFunction = (void(*)(EntityID&, const int&))endFunction;
 	timedEvent.condition = condition;
-	tc->timedEvents.push_back(timedEvent);
-	return tc->timedEvents.size() - 1;
+	int slot = FindAndInit(eventity);
+	tc->timedEvents[slot] = timedEvent;
+	return slot;
 }
 int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, void* startFunction,
 	float continousTime, void* continousFunction, int maxStacks)
@@ -142,8 +174,9 @@ int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, vo
 
 	timedEvent.endTime = continousTime;
 	timedEvent.continousFunction = (void(*)(EntityID&, const int&))continousFunction;
-	tc->timedEvents.push_back(timedEvent);
-	return tc->timedEvents.size() - 1;
+	int slot = FindAndInit(eventity);
+	tc->timedEvents[slot] = timedEvent;
+	return slot;
 }
 
 int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime, void* startFunction, 
@@ -172,7 +205,8 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 
 	timedEvent.endTime = endTime;
 	timedEvent.endFunction = (void(*)(EntityID&, const int&))endFunction;
-	tc->timedEvents.push_back(timedEvent);
+	int slot = FindAndInit(eventity);
+	tc->timedEvents[slot] = timedEvent;
 	return tc->timedEvents.size() - 1;
 }
 
@@ -214,7 +248,7 @@ void CancelTimedEvent(EntityID& entity, const int& timedEventSlot)
 	if (comp)
 	{
 		//registry.RemoveComponent<TimedEventComponent>(entity);
-		comp->timedEvents.erase(timedEventSlot);
+		comp->timedEvents[timedEventSlot].isActive = false;
 	}
 }
 

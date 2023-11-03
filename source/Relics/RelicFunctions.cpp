@@ -43,7 +43,7 @@ void _validateRelicFunctions()
 		_RelicFunctions->emplace((RELIC_FUNCTION_TYPE)i, ML_Vector<VECTOR_FUNCTION_TYPE>());
 	}
 
-	std::srand(time(NULL));
+	std::srand((unsigned)time(NULL));
 };
 
 // Master list of relics, used to keep track of all relics that exist

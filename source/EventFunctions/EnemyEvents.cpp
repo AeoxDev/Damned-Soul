@@ -47,6 +47,8 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	EnemyComponent* enmComp = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enmComp->specialHitBoxID, false);
 	SetHitboxCanDealDamage(entity, enmComp->specialHitBoxID, false);
+
+
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
@@ -294,6 +296,12 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	if (s != nullptr)
 	{
 		s->Unload();
+	}
+
+	TimedEventComponent* timed = registry.GetComponent<TimedEventComponent>(entity);
+	if (timed != nullptr)
+	{
+		ReleaseTimedEvents(entity);
 	}
 
 	registry.DestroyEntity(entity);
