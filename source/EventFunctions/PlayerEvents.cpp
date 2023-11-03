@@ -137,6 +137,6 @@ void PlayerDash(EntityID& entity, const int& index)
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 	
 	//Move player quickly in the relevant direction
-	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();
-	transform->positionZ += dac->z * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();
+	transform->positionX += dac->x * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
+	transform->positionZ += dac->z * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
 }

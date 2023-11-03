@@ -46,9 +46,8 @@ bool GeometryIndependentSystem::Update()
 					{
 						//Detect edge
 						//Edge direction
-
-						p->positionX -= p->facingX * GetDeltaTime() * stat->moveSpeed;
-						p->positionZ -= p->facingZ * GetDeltaTime() * stat->moveSpeed;
+						p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
+						p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
 					}
 					
 				default:

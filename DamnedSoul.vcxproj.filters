@@ -18,6 +18,7 @@
     <FxCompile Include="resource\shader\PixelShader.hlsl" />
     <FxCompile Include="resource\shader\Particles\ParticleSamplerVS.hlsl" />
     <FxCompile Include="resource\shader\Particles\ParticleSamplerPS.hlsl" />
+    <FxCompile Include="resource\shader\Particles\ParticleTimeResetCS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl" />
@@ -207,6 +208,9 @@
     <ClCompile Include="source\UIShopComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Relics\Offensive\DemonBonemarrow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -216,19 +220,19 @@
     <ClCompile Include="source\Systems\DamageOverTimeSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Relics\FlameWeapon.cpp">
+    <ClCompile Include="source\Relics\Offensive\FlameWeapon.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Relics\SoulPower.cpp">
+    <ClCompile Include="source\Relics\Offensive\SoulPower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\ComponentHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Relics\SoulHealth.cpp">
+    <ClCompile Include="source\Relics\Defensive\SoulHealth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Relics\FrostFire.cpp">
+    <ClCompile Include="source\Relics\Defensive\FrostFire.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\MouseComponent.cpp">
@@ -264,10 +268,10 @@
     <ClCompile Include="source\Level\Level3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Relics\LightningGod.cpp">
+    <ClCompile Include="source\Relics\Gadget\LightningGod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Relics\SpeedyLittleDevil.cpp">
+    <ClCompile Include="source\Relics\Gadget\SpeedyLittleDevil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp">
@@ -286,6 +290,60 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\EventFunctions\StatFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\Systems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\RelicData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Utility\RelicFuncInputTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Defensive\DemonSkin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Offensive\LifeSteal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Gadget\Reckless.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Systems\StatCalcSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\RelicFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Utility\RelicParticleHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Gadget\SoulSpeed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Defensive\SpikedSkin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CombatFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Relics\Defensive\Hearts\DemonHeart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Systems\ParticleSystem.cpp">
@@ -311,8 +369,8 @@
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
     <ClInclude Include="header\Audio.h" />
-    <ClInclude Include="header\D3D11Graphics.h" />
-    <ClInclude Include="header\D3D11Helper.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Graphics.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\MemLib\ML_Vector.hpp" />
@@ -421,7 +479,7 @@
     <ClInclude Include="header\Hashing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\IDX_Types.h">
+    <ClInclude Include="header\D3D11Helper\IDX_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\MemLib\ML_ComponentMap.hpp">
@@ -460,28 +518,29 @@
     <ClInclude Include="header\Skynet\EyeBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Relics\Offensive\DemonBonemarrow.h">
     <ClInclude Include="header\Relics\DemonBonemarrow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Relics\DemonHeart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics\FlameWeapon.h">
+    <ClInclude Include="header\Relics\Offensive\FlameWeapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics\RelicFuncInputTypes.h">
+    <ClInclude Include="header\Relics\Utility\RelicFuncInputTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\DamageOverTimeComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics\SoulPower.h">
+    <ClInclude Include="header\Relics\Offensive\SoulPower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics\SoulHealth.h">
+    <ClInclude Include="header\Relics\Defensive\SoulHealth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics\FrostFire.h">
+    <ClInclude Include="header\Relics\Defensive\FrostFire.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Skynet\EyeBehaviour.h">
@@ -517,10 +576,10 @@
     <ClInclude Include="header\Components\KnockBackComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics\LightningGod.h">
+    <ClInclude Include="header\Relics\Gadget\LightningGod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Relics\SpeedyLittleDevil.h">
+    <ClInclude Include="header\Relics\Gadget\SpeedyLittleDevil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\ShopComponent.h">
@@ -530,6 +589,54 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\EnemyType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Defensive\DemonSkin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Offensive\LifeSteal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Utility\ML_RelicArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Gadget\Reckless.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\RelicData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\RelicFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Utility\RelicInternalHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Utility\RelicParticleHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Gadget\SoulSpeed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Defensive\SpikedSkin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\CombatFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Defensive\Hearts\MummifiedHeart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Relics\Defensive\Hearts\DemonHeart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Relics\RelicData.h">
@@ -566,5 +673,6 @@
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
     <None Include="lib\SDL2\lib\x64\SDL2.dll" />
+    <None Include="resource\shader\Particles\ParticleHeader.hlsli" />
   </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <dxgi.h>
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper/D3D11Helper.h"
+#include "D3D11Helper/D3D11Graphics.h"
 #include "STB_Helper.h"
 #include "Hashing.h"
 #include <assert.h>

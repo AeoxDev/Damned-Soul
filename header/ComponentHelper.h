@@ -5,20 +5,47 @@
 struct StatComponent
 {
 private:
-	//Base stats
-	float maximumHealth = 100.f;
-	float currentHealth = 100.f;
-	//defense? percentage-based or flat?
+// Defensive stats
+	//Base Max Health
+	float m_baseHealth = 100.f;
+	// Bonus Max Health, affected by things such as relics
+	float m_bonusHealth = 0.f;
+	// Current health
+	float m_currentHealth = 100.f;
+	
+	// Multiplicative damage reduction, affected by things such as relics
+	float m_damageReduction = 1.f;
+
+// Movement stats
+	// Base move speed
+	float m_baseMoveSpeed = 1.f;
+	// Bonus Move Speed, affected by things such as relics
+	float m_bonusMoveSpeed = 0.f;
+	// Used to alter speed when performing actions such as attacking
+	float m_speedMult = 1.0f;
+
+
+//Weapon stats
+	// Damage
+	float m_baseDamage = 10.f;
+	// Bonus damage, affected by things such as relics
+	float m_bonusDamage = 0.f;
+
+	// Attack speed
+	float m_baseAttackSpeed = 1.f;
+	// Bonus attack speed, affected by things such as relics
+	float m_bonusAttackSpeed = 0.f;
+
+	// Knockback on hit
+	float m_baseKnockback = 1.f;
+	// Bonus knockback, affected by things such as relics
+	float m_bonusKnockback = 0.f;
+	// Used to alter knockback for certain special actions of the enemies
+	float m_knockbackMultiplier = 1.f;
+
+	// If the entity has bonus stats, used to skip entities in the system
+	bool m_modifiedStats = false;
 public:
-	float baseMoveSpeed = 1.0f;
-	float moveSpeed = 1.0f;
-
-
-	//Weapon stats
-	float damage = 10.0f;
-	float attackSpeed = 1.0f;
-
-	float knockback = 1.0f;
 
 	// for death animation
 	bool performingDeathAnimation = false;
@@ -29,19 +56,54 @@ public:
 	bool baseCanWalkOnCrack = false;//onCrack
 	bool canWalkOnCrack = false;//If the entity can walk on cracks or not.
 
-	StatComponent(float hp, float ms, float dmg, float as) : maximumHealth(hp), currentHealth(hp), moveSpeed(ms), damage(dmg), attackSpeed(as) 
-	{ baseMoveSpeed = moveSpeed; }
+	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
+	{/* m_baseMoveSpeed = m_moveSpeed; */}
 
-	// Get the current health of the player
-	float GetHealth() const;
-	// Get the max health of the player
+// Metadata
+	// Mark the entity as being modified and having stat bonueses to calculate
+	void MarkAsModified();
+	// Check if the entity is modified and needs to have bonus stats calculated
+	bool IsModified() const;
+	// Set all stat bonuses to zero
+	void ZeroBonusStats();
+
+// Defensive Stats
+	// Get max health
 	float GetMaxHealth() const;
+	// Get current health
+	float GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
-	// Update the current health of the player
+	// Update the entity's bonus health
+	void UpdateBonusHealth(const float delta);
+	// Update current health
 	float UpdateHealth(const float delta, const bool hitByEnemy = false);
-	// Update the max health of the player
-	float UpdateMaxHealth(const float delta);
+
+// Speed
+	// Get the current speed
+	float GetSpeed() const;
+	// Update the entity's bonus speed
+	void UpdateBonusSpeed(const float delta);
+	// Set the entity's speed mult
+	void SetSpeedMult(const float mult);
+
+// Offensive
+	// Get the damage of the entity
+	float GetDamage() const;
+	// update the entity's bonus damage
+	void UpdateBonusDamage(const float delta);
+
+	// Get the attack speed of the entity
+	float GetAttackSpeed() const;
+	// Update the entity's bonus attack speed
+	void UpdateBonusAttackSpeed(const float delta);
+
+	// Get the entity's knockback value
+	float GetKnockback() const;
+	// Update the entity's bonus knockback
+	void UpdateBonusKnockback(const float delta);
+	// Set the entity's knockback multiplier
+	void SetKnockbackMultiplier(const float mult);
 };
 
 //Stats specific to the player
@@ -95,7 +157,7 @@ struct CollisionParamsComponent
 //
 struct EnemyComponent
 {
-	EntityID lastPlayer = {-1, false, ENT_PERSIST_BASIC};//The last player to hit the enemy
+	EntityID lastPlayer = {-1, false, ENT_PERSIST_LOWEST};//The last player to hit the enemy
 	int soulCount = 0;
 	int attackHitBoxID = -1;
 	int specialHitBoxID = -1;

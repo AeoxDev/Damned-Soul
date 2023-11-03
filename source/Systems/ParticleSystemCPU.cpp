@@ -2,7 +2,7 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include "Components.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "Particles.h"
 
 

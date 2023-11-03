@@ -36,6 +36,7 @@ int main(int argc, char* args[])
 	
 	//Reload stress-test
 #ifdef TEST3000
+	int numReloads = 0;
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
 		UIFunc::LoadNextLevel(nullptr);
@@ -43,6 +44,7 @@ int main(int argc, char* args[])
 		{
 			CountDeltaTime();
 
+			//Show the amount of reloads we've done up in the window title. No real reason
 			UpdateDebugWindowTitle(title, " load: " + std::to_string(i) + " / 3000");
 			stateManager.Update();
 
@@ -95,7 +97,7 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 	SetWindowTitle(title + extra);
 	if (NewSecond())
 	{
-		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps)";
+		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps) ";
 		//title+="";//Add more debugging information here, updates every second.
 		SetWindowTitle(title + extra);
 	}

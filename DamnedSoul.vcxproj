@@ -196,13 +196,27 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\CombatFunctions.cpp" />
+    <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
+    <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
+    <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
+    <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
+    <ClCompile Include="source\Relics\RelicData.cpp" />
+    <ClCompile Include="source\Relics\Utility\RelicFuncInputTypes.cpp" />
     <ClCompile Include="source\Components\StaticHazardComponent.cpp" />
     <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\FeedbackFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\StatFunctions.cpp" />
     <ClCompile Include="source\Level\Level4.cpp" />
     <ClCompile Include="source\Level\Shop.cpp" />
+    <ClCompile Include="source\Relics\Defensive\DemonSkin.cpp" />
+    <ClCompile Include="source\Relics\Offensive\LifeSteal.cpp" />
+    <ClCompile Include="source\Relics\Gadget\Reckless.cpp" />
+    <ClCompile Include="source\Relics\Utility\RelicParticleHelper.cpp" />
+    <ClCompile Include="source\Relics\Gadget\SoulSpeed.cpp" />
+    <ClCompile Include="source\Relics\Defensive\SpikedSkin.cpp" />
     <ClCompile Include="source\Systems\ParticleSystem.cpp" />
+    <ClCompile Include="source\Systems\StatCalcSystem.cpp" />
     <ClCompile Include="source\UIShopComponent.cpp" />
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\ComponentHelper.cpp" />
@@ -229,13 +243,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\Relics\RelicFunctions.cpp" />
-    <ClCompile Include="source\Relics\DemonBonemarrow.cpp" />
-    <ClCompile Include="source\Relics\DemonHeart.cpp" />
-    <ClCompile Include="source\Relics\FrostFire.cpp" />
-    <ClCompile Include="source\Relics\LightningGod.cpp" />
-    <ClCompile Include="source\Relics\SoulHealth.cpp" />
-    <ClCompile Include="source\Relics\SoulPower.cpp" />
-    <ClCompile Include="source\Relics\SpeedyLittleDevil.cpp" />
+    <ClCompile Include="source\Relics\Offensive\DemonBonemarrow.cpp" />
+    <ClCompile Include="source\Relics\Defensive\Hearts\DemonHeart.cpp" />
+    <ClCompile Include="source\Relics\Defensive\FrostFire.cpp" />
+    <ClCompile Include="source\Relics\Gadget\LightningGod.cpp" />
+    <ClCompile Include="source\Relics\Defensive\SoulHealth.cpp" />
+    <ClCompile Include="source\Relics\Offensive\SoulPower.cpp" />
+    <ClCompile Include="source\Relics\Gadget\SpeedyLittleDevil.cpp" />
     <ClCompile Include="source\Skynet\BehaviourHelper.cpp" />
     <ClCompile Include="source\Skynet\EyeBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\HellhoundBehaviourSystem.cpp" />
@@ -334,6 +348,16 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\Particles\ParticleTimeResetCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="resource\shader\Particles\ParticleVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -429,6 +453,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClInclude Include="header\Animation.hpp" />
     <ClInclude Include="header\AnimationType.h" />
+    <ClInclude Include="header\CombatFunctions.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
@@ -460,7 +485,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Components\ParticleComponent.h" />
     <ClInclude Include="header\Hashing.h" />
-    <ClInclude Include="header\IDX_Types.h" />
+    <ClInclude Include="header\D3D11Helper\IDX_Types.h" />
     <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\Level.h" />
     <ClInclude Include="header\Levels\LevelHelper.h" />
@@ -474,18 +499,29 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
+    <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h" />
+    <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
+    <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h" />
+    <ClInclude Include="header\Relics\Defensive\Hearts\MummifiedHeart.h" />
+    <ClInclude Include="header\Relics\Offensive\LifeSteal.h" />
+    <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
+    <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />
+    <ClInclude Include="header\Relics\Gadget\Reckless.h" />
     <ClInclude Include="header\Relics\RelicData.h" />
     <ClInclude Include="header\Relics\RelicFunctions.h" />
-    <ClInclude Include="header\Relics\DemonBonemarrow.h" />
-    <ClInclude Include="header\Relics\DemonHeart.h" />
-    <ClInclude Include="header\Relics\FlameWeapon.h" />
-    <ClInclude Include="header\Relics\FrostFire.h" />
-    <ClInclude Include="header\Relics\LightningGod.h" />
-    <ClInclude Include="header\Relics\RelicFuncInputTypes.h" />
-    <ClInclude Include="header\Relics\RelicInternalHelper.h" />
-    <ClInclude Include="header\Relics\SoulHealth.h" />
-    <ClInclude Include="header\Relics\SoulPower.h" />
-    <ClInclude Include="header\Relics\SpeedyLittleDevil.h" />
+    <ClInclude Include="header\Relics\Offensive\DemonBonemarrow.h" />
+    <ClInclude Include="header\Relics\Defensive\Hearts\DemonHeart.h" />
+    <ClInclude Include="header\Relics\Offensive\FlameWeapon.h" />
+    <ClInclude Include="header\Relics\Defensive\FrostFire.h" />
+    <ClInclude Include="header\Relics\Gadget\LightningGod.h" />
+    <ClInclude Include="header\Relics\Utility\RelicFuncInputTypes.h" />
+    <ClInclude Include="header\Relics\Utility\RelicInternalHelper.h" />
+    <ClInclude Include="header\Relics\Utility\RelicParticleHelper.h" />
+    <ClInclude Include="header\Relics\Defensive\SoulHealth.h" />
+    <ClInclude Include="header\Relics\Offensive\SoulPower.h" />
+    <ClInclude Include="header\Relics\Gadget\SoulSpeed.h" />
+    <ClInclude Include="header\Relics\Gadget\SpeedyLittleDevil.h" />
+    <ClInclude Include="header\Relics\Defensive\SpikedSkin.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
@@ -501,8 +537,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\ConfigInterpreter.h" />
     <ClInclude Include="header\ConfigManager.h" />
     <ClInclude Include="header\Audio.h" />
-    <ClInclude Include="header\D3D11Graphics.h" />
-    <ClInclude Include="header\D3D11Helper.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Graphics.h" />
+    <ClInclude Include="header\D3D11Helper\D3D11Helper.h" />
     <ClInclude Include="header\DeltaTime.h" />
     <ClInclude Include="header\EntityFramework.h" />
     <ClInclude Include="header\MemLib\ML_Vector.hpp" />
@@ -530,11 +566,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\States\Settings.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
-    <ClCompile Include="source\Relics\FlameWeapon.cpp" />
+    <ClCompile Include="source\Relics\Offensive\FlameWeapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
     <None Include="lib\SDL2\lib\x64\SDL2.dll" />
+    <None Include="resource\shader\Particles\ParticleHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\SDL2\lib\x64\SDL2.lib" />

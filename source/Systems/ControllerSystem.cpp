@@ -9,8 +9,14 @@
 
 bool ControllerSystem::Update()
 {
+	//Controller for player during play
+	
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
+		if (gameSpeed < 0.00001f)
+		{
+			break;
+		}
 		//Get the relevant components from the entity
 		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -78,8 +84,8 @@ bool ControllerSystem::Update()
 			}
 			controller->goalZ /= len;
 			controller->goalX /= len;
-			transform->positionZ += controller->goalZ * stat->moveSpeed * GetDeltaTime();
-			transform->positionX += controller->goalX * stat->moveSpeed * GetDeltaTime();
+			transform->positionZ += controller->goalZ * stat->GetSpeed() * GetDeltaTime();
+			transform->positionX += controller->goalX * stat->GetSpeed() * GetDeltaTime();
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 		}
@@ -135,12 +141,6 @@ bool ControllerSystem::Update()
 			hitbox->circleHitbox[2].radius = 10000000.0f;
 			if (pStats->hazardModifier > -100.0f)
 			{
-				pStats->UpdateMaxHealth(1000000.0f);
-				pStats->baseMoveSpeed += 100.0f;
-				pStats->damage += 100000.0f;
-				pStats->knockback += 10.0f;
-				pStats->hazardModifier += -128.0f;
-				pStats->moveSpeed = pStats->baseMoveSpeed;
 				transform->mass += 100.0f;
 				player->killingSpree = 10000;
 				player->UpdateSouls(1000000);
@@ -148,12 +148,6 @@ bool ControllerSystem::Update()
 			}
 			else
 			{
-				pStats->UpdateMaxHealth(-1000000.0f);
-				pStats->baseMoveSpeed -= 100.0f;
-				pStats->damage -= 100000.0f;
-				pStats->knockback -= 10.0f;
-				pStats->hazardModifier -= -128.0f;
-				pStats->moveSpeed = pStats->baseMoveSpeed;
 				transform->mass -= 100.0f;
 				hitbox->circleHitbox[2].radius -= 10000000.0f;
 			}
@@ -161,5 +155,6 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 	}
+	//Loop for player during other places
 	return true;
 }

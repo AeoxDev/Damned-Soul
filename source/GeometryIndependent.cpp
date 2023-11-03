@@ -1,7 +1,7 @@
 #include "Backend\GeometryIndependent.h"
 #include "Camera.h"
-#include "D3D11Graphics.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Graphics.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "Components.h"
 #include "GameRenderer.h"
@@ -74,7 +74,7 @@ VB_IDX CreateQuad()
 void RenderHazardTexture(GeometryIndependentComponent*& GIcomponent, int16_t& id, const StaticHazardType& type)
 {
 	//Set the texture data
-	GIcomponent->shaderData.idValue = type;
+	GIcomponent->shaderData.idValue = (float)type;
 	GIcomponent->shaderData.isTexture = true;
 	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 	//Create a quad and scale the world matrix to acomidate the stage.

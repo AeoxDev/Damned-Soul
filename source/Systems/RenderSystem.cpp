@@ -3,7 +3,7 @@
 #include "Registry.h"
 #include "DeltaTime.h"
 #include "Components.h"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "UIRenderer.h"
 #include "Camera.h"

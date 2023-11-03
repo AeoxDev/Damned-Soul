@@ -13,6 +13,7 @@ enum ComputeShaders
 	IMPLOSION = 4,
 	RAIN = 5,
 	SINUS = 6,
+	LIGHTNING = 7
 };
 
 struct ParticleComponent

@@ -1,6 +1,6 @@
 #include "Particles.h"
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper\D3D11Helper.h"	
+#include "D3D11Helper\D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include "Systems\Systems.h"
 #include "SDLHandler.h"
@@ -11,6 +11,9 @@ PoolPointer<ParticleInputOutput> Particles::m_readWriteBuffer;
 PoolPointer<ParticleMetadataBuffer> data;
 
 int Particles::RenderSlot;
+
+// Compute shader used to reset particle components
+CS_IDX setToZeroCS = -1;
 
 void Particles::SwitchInputOutput()
 {
@@ -169,6 +172,20 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].pattern = pattern;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+	if (-1 == setToZeroCS)
+		setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
+
+	// Prepare dispatch
+	SetComputeShader(setToZeroCS);
+	SetUnorderedAcessView(Particles::m_readWriteBuffer->inputUAV, 0);
+	SetUnorderedAcessView(Particles::m_readWriteBuffer->outputUAV, 1);
+
+	// Reset the time values of the particles to a glorious zero
+	Dispatch(1, metadataSlot + 1, 1); //x * y * z
+
+	// Call the finish function, no need to reinvent the wheel for this one
+	Particles::FinishParticleCompute(renderStates);
 }
 
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float v0X, float v0Z, float v1X, float v1Z, float v2X, float v2Z, ComputeShaders pattern)

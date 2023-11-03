@@ -16,7 +16,6 @@
 
 void PlayDeathAnimation(EntityID& entity, const int& index)
 {
-	//implement later, goddamn TA
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
 	RemoveHitbox(entity, 2);
@@ -63,9 +62,9 @@ void CreateMini(const EntityID& original, const float offsetValue)
 
 	//Set stats of new boss based on original
 	float bossHP = bossStats->GetMaxHealth() / 2.f;
-	float bossSpeed = bossStats->moveSpeed;
-	float bossDamage = bossStats->damage / 2.f;
-	float bossAttackSpeed = bossStats->attackSpeed;
+	float bossSpeed = bossStats->GetSpeed();
+	float bossDamage = bossStats->GetDamage() / 2.f;
+	float bossAttackSpeed = bossStats->GetAttackSpeed();
 	registry.AddComponent<StatComponent>(newMini, bossHP, bossSpeed, bossDamage, bossAttackSpeed);
 
 	//Set transform
@@ -285,13 +284,18 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
 	if (toAppend != nullptr)
+	{
 		ReleaseModel(toAppend->model);
+		registry.RemoveComponent<ModelBonelessComponent>(entity);
+	}
 
 
 	auto toAppend2 = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (toAppend2 != nullptr)
+	{
 		ReleaseModel(toAppend2->model);
-	
+		registry.RemoveComponent<ModelSkeletonComponent>(entity);
+	}
 	SoundComponent* s = registry.GetComponent<SoundComponent>(entity);
 	if (s != nullptr)
 	{

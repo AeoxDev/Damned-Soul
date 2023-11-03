@@ -14,6 +14,9 @@
 
 bool PointOfInterestSystem::Update()
 {
+	if (gameSpeed == 0.0f)
+		return true;
+
 	PointOfInterestComponent* poiCo = nullptr;
 	TransformComponent* tCo = nullptr;
 	DirectX::XMVECTOR lookVector = Camera::GetLookAt();
@@ -37,7 +40,7 @@ bool PointOfInterestSystem::Update()
 		tCo = registry.GetComponent<TransformComponent>(entity);
 		if (poiCo->mode == POI_ACTIVE)
 		{
-			float predict = CAMERA_PREDICT_FACTOR / GetDeltaTime();
+			float predict = CAMERA_PREDICT_FACTOR / (GetDeltaTime() + 0.0001f);
 			float difX = (tCo->positionX - tCo->lastPositionX) * predict;//From last to position
 			float difY = (tCo->positionY - tCo->lastPositionY) * predict;//From last to position
 			float difZ = (tCo->positionZ - tCo->lastPositionZ) * predict;//From last to position
@@ -66,7 +69,7 @@ bool PointOfInterestSystem::Update()
 		{
 			poiCo->time -= GetDeltaTime();
 			//First add the new positions, use the last position aswell for a smoother movement (midpoint of both positions)
-			float predict = CAMERA_PREDICT_FACTOR / GetDeltaTime();
+			float predict = CAMERA_PREDICT_FACTOR / (GetDeltaTime() + 0.0001f);
 			float difX = (tCo->positionX - tCo->lastPositionX) * predict;//From last to position
 			float difY = (tCo->positionY - tCo->lastPositionY) * predict;//From last to position
 			float difZ = (tCo->positionZ - tCo->lastPositionZ) * predict;//From last to positionif (difX * difX + difY*difY + difZ*difZ > 4.0f)
