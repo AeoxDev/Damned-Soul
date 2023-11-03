@@ -188,7 +188,7 @@ void StaticHazardDamage(EntityID& entity, const int& index)
 		{
 			cameraShake = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, ShakeCamera, HAZARD_LAVA_UPDATE_TIME, ResetCameraOffset, 0, 1);
 		}
-		stat->UpdateHealth(-HAZARD_LAVA_DAMAGE * stat->hazardModifier, entity.index == stateManager.player.index);
+		stat->ApplyDamage(HAZARD_LAVA_DAMAGE * stat->hazardModifier, entity.index == stateManager.player.index);
 		color = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, LavaBlinkColor, HAZARD_LAVA_UPDATE_TIME, ResetColor); //No special condition for now
 		break;
 	default:
