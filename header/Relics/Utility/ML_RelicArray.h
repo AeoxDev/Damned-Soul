@@ -1,7 +1,7 @@
 #pragma once
 #include <cinttypes>
 #include "MemLib\MemLib.hpp"
-#include "RelicData.h"
+#include "Relics\RelicData.h"
 #include <cstring>
 
 struct ML_RelicArray

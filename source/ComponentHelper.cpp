@@ -1,6 +1,6 @@
 #include "Components.h"
 #include "Relics/RelicFunctions.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "UIRenderer.h"
 
 void StatComponent::MarkAsModified()

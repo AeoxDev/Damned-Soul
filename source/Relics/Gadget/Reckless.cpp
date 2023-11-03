@@ -1,6 +1,6 @@
-#include "Relics\Reckless.h"
-#include "Relics/RelicInternalHelper.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Gadget\Reckless.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 

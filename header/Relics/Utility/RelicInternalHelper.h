@@ -8,6 +8,7 @@
 		/Erika
 */
 
+#include "MemLib\ML_String.hpp"
 #include "MemLib\ML_Map.hpp"
 #include "Relics\RelicFunctions.h"
 

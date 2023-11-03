@@ -1,4 +1,4 @@
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 
 float RelicInput::OnDamageCalculation::CollapseDamage()
 {

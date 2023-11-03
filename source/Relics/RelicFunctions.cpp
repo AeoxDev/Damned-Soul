@@ -1,5 +1,5 @@
-#include "Relics/RelicFunctions.h"
-#include "Relics/RelicInternalHelper.h"
+#include "Relics\RelicFunctions.h"
+#include "Relics\Utility\RelicInternalHelper.h"
 // Include MemLib
 #include "MemLib\MemLib.hpp"
 // Used to contain the different function vectors
@@ -9,28 +9,28 @@
 
 // Include all relics
 	/*Offense*/
-#include "Relics\DemonBonemarrow.h"
-#include "Relics\FlameWeapon.h"
-#include "Relics\SoulPower.h"
-#include "Relics\LifeSteal.h"
-#include "Relics\AdvancedFighting.h"
+#include "Relics\Offensive\DemonBonemarrow.h"
+#include "Relics\Offensive\FlameWeapon.h"
+#include "Relics\Offensive\SoulPower.h"
+#include "Relics\Offensive\LifeSteal.h"
+#include "Relics\Offensive\AdvancedFighting.h"
 	/*Defense*/
-#include "Relics\Hearts\DemonHeart.h"
-#include "Relics\Hearts\CorruptedHeart.h"
-#include "Relics\Hearts\MoltenHeart.h"
-#include "Relics\Hearts\MummifiedHeart.h"
-#include "Relics\FrostFire.h"
-#include "Relics\SoulHealth.h"
-#include "Relics\DemonSkin.h"
-#include "Relics\SpikedSkin.h"
+#include "Relics\Defensive\Hearts\DemonHeart.h"
+#include "Relics\Defensive\Hearts\CorruptedHeart.h"
+#include "Relics\Defensive\Hearts\MoltenHeart.h"
+#include "Relics\Defensive\Hearts\MummifiedHeart.h"
+#include "Relics\Defensive\FrostFire.h"
+#include "Relics\Defensive\SoulHealth.h"
+#include "Relics\Defensive\DemonSkin.h"
+#include "Relics\Defensive\SpikedSkin.h"
 	/*Gadget*/
-#include "Relics\SpeedyLittleDevil.h"
-#include "Relics\LightningGod.h"
-#include "Relics\Reckless.h"
-#include "Relics\SoulSpeed.h"
+#include "Relics\Gadget\SpeedyLittleDevil.h"
+#include "Relics\Gadget\LightningGod.h"
+#include "Relics\Gadget\Reckless.h"
+#include "Relics\Gadget\SoulSpeed.h"
 // End of include all relics
 
-#include "Relics\ML_RelicArray.h"
+#include "Relics\Utility\ML_RelicArray.h"
 #include "MemLib\ML_Vector.hpp"
 
 #include <random>

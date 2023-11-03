@@ -1,6 +1,6 @@
-#include "Relics/Hearts/DemonHeart.h"
-#include "Relics/RelicInternalHelper.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Defensive\Hearts\DemonHeart.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 

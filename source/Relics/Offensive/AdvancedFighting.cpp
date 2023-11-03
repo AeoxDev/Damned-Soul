@@ -1,7 +1,7 @@
-#include "Relics\AdvancedFighting.h"
-#include "Relics\RelicInternalHelper.h"
-#include "Relics\RelicFuncInputTypes.h"
-#include "Relics\RelicParticleHelper.h"
+#include "Relics\Offensive\AdvancedFighting.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicParticleHelper.h"
 #include "Registry.h"
 #include "Components.h"
 

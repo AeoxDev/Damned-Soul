@@ -7,7 +7,7 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000
+#define TEST3000
 
 #ifdef TEST3000
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing

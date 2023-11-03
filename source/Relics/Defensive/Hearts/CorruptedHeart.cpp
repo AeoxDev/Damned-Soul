@@ -1,12 +1,23 @@
-#include "Relics/Hearts/CorruptedHeart.h"
-#include "Relics/RelicInternalHelper.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Defensive\Hearts\CorruptedHeart.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
 
-#define CORRUPTED_HEART_HEALTH_INCREASE 40
+#define CORRUPTED_HEART_HEALTH_INCREASE (static_cast<long int>(40))
 
 EntityID CORRUPTED_HEART::_OWNER;
+
+//char* CORRUPTED_HEART::GetDescription()
+//{
+//	static ML_String desc;
+//	if (0 == desc.length())
+//	{
+//		// Fill in the description
+//		desc.append("Increases your Maximum Health by ");
+//		desc.append(CORRUPTED_HEART_HEALTH_INCREASE);
+//	}
+//}
 
 void CORRUPTED_HEART::Initialize(void* input)
 {

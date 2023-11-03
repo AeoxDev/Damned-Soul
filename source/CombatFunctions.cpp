@@ -1,7 +1,7 @@
 #include "CombatFunctions.h"
 #include "EventFunctions.h"
 #include "Relics\RelicFunctions.h"
-#include "Relics\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "UIRenderer.h"
 
 #define FLASH_TIME(dmg) ((dmg * 0.025f) + 0.2f)

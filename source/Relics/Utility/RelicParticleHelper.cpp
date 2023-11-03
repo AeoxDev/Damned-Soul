@@ -1,4 +1,4 @@
-#include "Relics\RelicParticleHelper.h"
+#include "Relics\Utility\RelicParticleHelper.h"
 #include "Registry.h"
 #include "Components.h"
 

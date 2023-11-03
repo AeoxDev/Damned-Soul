@@ -1,6 +1,6 @@
-#include "Relics/RelicInternalHelper.h"
-#include "Relics/SpeedyLittleDevil.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Gadget\SpeedyLittleDevil.h"
+#include "Relics\Utility\RelicInternalHelper.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Registry.h"
 #include "Components.h"
 

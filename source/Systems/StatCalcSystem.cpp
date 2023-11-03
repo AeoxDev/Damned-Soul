@@ -3,7 +3,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "Relics\RelicFunctions.h"
-#include "Relics\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 
 bool StatCalcSystem::Update()
 {
