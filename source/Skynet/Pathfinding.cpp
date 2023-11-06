@@ -11,10 +11,18 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransf
 	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, false); // grid position
 
 	bool onLava = false;
-	if (mapGrid->texture[playerPos.z][playerPos.x] >= 2) // is on lava, don't penalize lava
+	if (playerPos.x >= 0 && playerPos.x < GI_TEXTURE_DIMENSIONS && playerPos.z >= 0 && playerPos.z < GI_TEXTURE_DIMENSIONS)
 	{
-		onLava = true;
+		if (mapGrid->texture[playerPos.z][playerPos.x] >= 2) // is on lava, don't penalize lava
+		{
+			onLava = true;
+		}
 	}
+	else
+	{
+		onLava = true;//Assume its on an illegal place.
+	}
+	
 
 	
 
