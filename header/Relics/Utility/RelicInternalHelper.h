@@ -20,3 +20,14 @@ extern ML_Map<RELIC_FUNCTION_TYPE, ML_Vector<VECTOR_FUNCTION_TYPE>>* _RelicFunct
 
 // Validate relics
 void _validateRelicFunctions();
+
+// Calls MarkAsModified, UpdateBonusHealth, and StealthilyModifyHealth
+// These need to be called for relics like the hearts, which raise max hp and current hp simultaneously
+// Everything is contained with a mini scope
+#define RELIC_RAISE_CURRENT_MAX_HP(owner, delta)						\
+{																		\
+	StatComponent* stats = registry.GetComponent<StatComponent>(owner);	\
+	stats->MarkAsModified();											\
+	stats->UpdateBonusHealth(delta);									\
+	stats->StealthilyModifyHealth(delta);								\
+}																							

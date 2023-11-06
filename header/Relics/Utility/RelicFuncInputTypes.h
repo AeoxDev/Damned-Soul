@@ -32,8 +32,8 @@ namespace RelicInput
 
 	struct OnHealthUpdate
 	{
-		float hpDelta;
 		void* adressOfStatComponent;
+		float hpDelta;
 	};
 
 	struct OnSoulUpdate

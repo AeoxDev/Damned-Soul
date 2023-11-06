@@ -176,7 +176,7 @@ public:
 	}
 
 	// Append a float type number
-	const ML_String& append(const long float& number)
+	const ML_String& append(const double& number)
 	{
 		// Should be enough to cover every concievable number
 		char* temp = (char*)MemLib::spush(64);
