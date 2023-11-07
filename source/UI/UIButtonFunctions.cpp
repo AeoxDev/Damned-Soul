@@ -231,7 +231,24 @@ void UIFunc::SelectRelic(void* args, int index)
 		}
 		
 
-		uiWindow->shopSelections[index] = shopState::SELECTED;
+		if (uiWindow->shopSelections[index] == shopState::AVALIABLE)
+		{
+			uiWindow->shopSelections[index] = shopState::SELECTED;
+		}
+		else if (uiWindow->shopSelections[index] == shopState::SELECTED)
+		{
+			if (index == 0)
+			{
+				uiElement->m_Images[uiElement->m_Images.size() - 2].SetImage("RelicIcons\\HoverRelic");
+
+			}
+			else if (index == 1)
+			{
+				uiElement->m_Images[uiElement->m_Images.size() - 1].SetImage("RelicIcons\\HoverRelic");
+
+			}
+			uiWindow->shopSelections[index] = shopState::AVALIABLE;
+		}
 
 	}
 
