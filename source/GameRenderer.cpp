@@ -8,6 +8,7 @@
 #include "UI/UIRenderer.h"
 #include "Light.h"
 #include "Particles.h"
+#include "RenderDepthPass.h"
 
 RenderSetupComponent renderStates[8];
 int currentSize = 0;
@@ -130,6 +131,10 @@ int SetupGameRenderer()
 	// Set a render target view and depth stencil view
 	s = SetRenderTargetViewAndDepthStencil(renderStates[currentSize].renderTargetView, renderStates[currentSize].depthStencilView);
 
+	//DepthPassShader
+	char depthShader[] = "DepthPixel.cso";
+	CreateDepthPassPixelShader(depthShader);
+	CreateDepthPass();
 	return currentSize++;
 }
 

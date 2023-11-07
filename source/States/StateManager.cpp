@@ -13,6 +13,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "DeltaTime.h"
+#include "RenderDepthPass.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -260,6 +261,7 @@ void StateManager::UnloadAll()
 	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
+	ReleaseDepthPass();
 	EndDirectX();
 }
 

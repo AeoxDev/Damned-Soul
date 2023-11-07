@@ -130,6 +130,34 @@ bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t
 	return true;
 }
 
+bool UnsetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot)
+{
+	ID3D11ShaderResourceView* nullTexture = nullptr;
+	switch (shader)
+	{
+	case BIND_VERTEX:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_HULL:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_DOMAIN:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_GEOMETRY:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_PIXEL:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	default:
+		assert("Corrupt or incorrent Shader Type to bind!"[0] == "ERROR"[0]);
+		return false;
+		break; // Yes, this break is unnessecary, but it looks nice
+	}
+	return true;
+}
+
 void ReleaseTX(const TX_IDX idx)
 {
 	if (txHolder->srv_map[idx] != nullptr)

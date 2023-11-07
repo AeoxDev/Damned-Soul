@@ -1,6 +1,7 @@
 Texture2D diffuseTex : register(t0);
 Texture2D normalTex : register(t1);
 Texture2D emissionTex : register(t2);
+Texture2D depthTexture : register(t3);
 
 SamplerState WrapSampler : register(s0);
 
@@ -73,6 +74,12 @@ struct PS_IN
 
 float4 main(PS_IN input) : SV_TARGET
 {
+    
+    if (depthTexture.Load(input.position.xyz).w >= input.position.w + 0.0001f)
+    {
+        clip(-1.0f);
+    }
+  
     float4 materialAmbient = { 0.02f, 0.02f, 0.02f, 1.0f }; //temp before material buffer
     float4 materialDiffuse = { 0.2f, 0.2f, 0.2f, 1.0f };
     float4 materialSpecular = { 0.2f, 0.2f, 0.2f, 1.0f };

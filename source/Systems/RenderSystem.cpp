@@ -9,24 +9,10 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Model.h"
+#include "RenderDepthPass.h"
 
-bool RenderSystem::Update()
+void Render()
 {
-	ClearBackBuffer();
-
-	// Render UI
-	RenderUI();
-
-	//Render Geometry
-
-	//Set shaders here.
-	PrepareBackBuffer();
-	//If light needs to update, update it.
-	SetConstantBuffer(Light::GetLightBufferIndex(), BIND_PIXEL, 2);
-	Light::UpdateLight();
-
-
-
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
@@ -40,14 +26,14 @@ bool RenderSystem::Update()
 		}
 		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
 			tc->facingX, tc->facingY, -tc->facingZ,
-			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ, 
-			SHADER_TO_BIND_RESOURCE::BIND_VERTEX,0);
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 	}
 
-	PrepareBackBuffer(true);
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, AnimationComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
@@ -60,8 +46,8 @@ bool RenderSystem::Update()
 		{
 			tc->offsetY = 0.0f;
 		}
-		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ, 
-			tc->facingX, tc->facingY, -tc->facingZ, 
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
 			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
@@ -70,6 +56,34 @@ bool RenderSystem::Update()
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->aAnimTime);
 	}
+}
+
+bool RenderSystem::Update()
+{
+	//Forward+ depth pass
+	SetTopology(TRIANGLELIST);
+
+	SetDepthPassTexture(true);
+	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
+	SetPixelShader(GetDepthPassPixelShader());
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
+	Render();
+	ClearBackBuffer();
+	// Render UI
+	RenderUI();
+
+	//Render Lightpass
+
+	//Set shaders here.
+	PrepareBackBuffer();
+	//If light needs to update, update it.
+	SetConstantBuffer(Light::GetLightBufferIndex(), BIND_PIXEL, 2);
+	Light::UpdateLight();
+	SetDepthPassTexture(false);
+
+
+	Render();
 	//UpdateGlobalShaderBuffer();
+	UnsetDepthPassTexture(false);
 	return true;
 }
