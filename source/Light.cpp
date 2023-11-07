@@ -48,7 +48,7 @@ struct LightComponentShaderBuffer
 {
     int firstLight = 0;//First light in array
     int lastLight = 31;//Last light in array
-    float padding1 = 0.0;
+    float gammaCorrection = 0.0;
     float padding2 = 0.0;
     DirectX::XMFLOAT4 dirLightColor;
     DirectX::XMFLOAT4 dirLightDirection;
@@ -318,6 +318,13 @@ void Light::UpdateLight()
         updateBuffer = false;
     }
     
+}
+
+void Light::SetGammaCorrection(const float& gc)
+{
+    lightShaderBuffer.gammaCorrection = gc;
+    updateBuffer = true;
+    UpdateLight();
 }
 
 void Light::FreeLight()
