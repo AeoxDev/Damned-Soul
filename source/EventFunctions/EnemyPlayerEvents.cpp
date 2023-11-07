@@ -26,6 +26,7 @@ void BeginHit(EntityID& entity, const int& index)
 
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
+
 	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	////Deal regular damage as well as on-hit damage from potential relics
 

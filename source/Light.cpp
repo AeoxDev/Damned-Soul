@@ -10,7 +10,7 @@
 #include "EntityFramework.h"
 #include "Registry.h"
 #include <DirectXMath.h>
-#define LIGHT_COMPONENT_ARRAY_LIMIT 32
+#define LIGHT_COMPONENT_ARRAY_LIMIT 64
 
 //struct LightingStruct
 //{
@@ -334,6 +334,11 @@ void Light::FreeLight()
     //MemLib::pfree(SpotLight);
     //freeSlot->~ML_Vector();
     lastSlot = 0;
+    for (auto entity : View<LightComponent>(registry))
+    {
+        LightComponent* light = registry.GetComponent<LightComponent>(entity);
+        registry.RemoveComponent<LightComponent>(entity);
+    }
     for (int i = LIGHT_COMPONENT_ARRAY_LIMIT - 1; i >= 0; --i)
     {
         //freeSlot->push_back(i);
@@ -429,21 +434,32 @@ void RemoveLight(EntityID& entity)
     updateBuffer = true;
 }
 
-void OffsetPosition(EntityID& entity, const float& x, const float& y, const float& z)
+void OffsetPosition(EntityID& entity, const float& x, const float& y, const float& z, const float& fx, const float& fy, const float& fz)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
     
-    //If there is actual movement, then do a gpu call
-    if (lightShaderBuffer.lights[light->slot].lightPosition.x != lightOffsets[light->slot].lightPositionOffset.x + x ||
-        lightShaderBuffer.lights[light->slot].lightPosition.y != lightOffsets[light->slot].lightPositionOffset.y + y ||
-        lightShaderBuffer.lights[light->slot].lightPosition.z != lightOffsets[light->slot].lightPositionOffset.z + z)
+    float angleY = acosf(fx);
+
+    //Offset position by x, y, z respectively.
+    if (fz < 0.0f)
     {
-        //Offset position by x, y, z respectively.
-        lightShaderBuffer.lights[light->slot].lightPosition.x = lightOffsets[light->slot].lightPositionOffset.x + x;
-        lightShaderBuffer.lights[light->slot].lightPosition.y = lightOffsets[light->slot].lightPositionOffset.y + y;
-        lightShaderBuffer.lights[light->slot].lightPosition.z = lightOffsets[light->slot].lightPositionOffset.z + z;
-        updateBuffer = true;
+        angleY *= -1.0f;
     }
+    //Check if angle is changed or not
+    /*if (angleY != lightOffsets[light->slot].angleY)
+    {*/
+    float offsetXx = -sinf(angleY);
+    float offsetZz = -sinf(angleY);
+    float offsetXz = -cosf(angleY);
+    float offsetZx = cosf(angleY);
+
+    float lengthX = lightOffsets[light->slot].lightPositionOffset.x * offsetXx + lightOffsets[light->slot].lightPositionOffset.z * offsetXz;
+    float lengthZ = lightOffsets[light->slot].lightPositionOffset.z * offsetZz + lightOffsets[light->slot].lightPositionOffset.x * offsetZx;
+
+    lightShaderBuffer.lights[light->slot].lightPosition.x = lengthX + x;
+    lightShaderBuffer.lights[light->slot].lightPosition.y = lightOffsets[light->slot].lightPositionOffset.y + y;
+    lightShaderBuffer.lights[light->slot].lightPosition.z = lengthZ + z;
+    updateBuffer = true;
    
 }
 void OffsetFacing(EntityID& entity, const float& x, const float& y, const float& z)
@@ -527,7 +543,10 @@ float GetLightAngle(const EntityID& entity)
 void SetLightPosition(const EntityID& entity, const float& x, const float& y, const float& z)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
-    assert(light != nullptr);
+    if (light == nullptr)
+    {
+        return;
+    }
     lightOffsets[light->slot].lightPositionOffset.x = x;
     lightOffsets[light->slot].lightPositionOffset.y = y;
     lightOffsets[light->slot].lightPositionOffset.z = z;
@@ -536,7 +555,10 @@ void SetLightPosition(const EntityID& entity, const float& x, const float& y, co
 void SetLightColor(const EntityID& entity, const float& x, const float& y, const float& z)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
-    assert(light != nullptr);
+    if (light == nullptr)
+    {
+        return;
+    }
     lightShaderBuffer.lights[light->slot].lightColor.x = x;
     lightShaderBuffer.lights[light->slot].lightColor.y = y;
     lightShaderBuffer.lights[light->slot].lightColor.z = z;
@@ -545,7 +567,10 @@ void SetLightColor(const EntityID& entity, const float& x, const float& y, const
 void SetLightDirection(const EntityID& entity, const float& x, const float& y, const float& z)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
-    assert(light != nullptr);
+    if (light == nullptr)
+    {
+        return;
+    }
     lightOffsets[light->slot].lightDirectionOffset.x = x;
     lightOffsets[light->slot].lightDirectionOffset.y = y;
     lightOffsets[light->slot].lightDirectionOffset.z = z;
@@ -554,21 +579,30 @@ void SetLightDirection(const EntityID& entity, const float& x, const float& y, c
 void SetLightRange(const EntityID& entity, const float& range)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
-    assert(light != nullptr);
+    if (light == nullptr)
+    {
+        return;
+    }
     lightShaderBuffer.lights[light->slot].lightRange = range;
     updateBuffer = true;
 }
 void SetLightFallofFactor(const EntityID& entity, const float& fallof)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
-    assert(light != nullptr);
+    if (light == nullptr)
+    {
+        return;
+    }
     lightShaderBuffer.lights[light->slot].lightRange = fallof;
     updateBuffer = true;
 }
 void SetLightAngle(const EntityID& entity, const float& angle)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
-    assert(light != nullptr);
+    if (light == nullptr)
+    {
+        return;
+    }
     lightShaderBuffer.lights[light->slot].lightCone = 3.1415f * angle / 180.0f;
     updateBuffer = true;
 }

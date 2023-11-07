@@ -121,7 +121,7 @@ void LoadLevel3()
 				hazardModel->colorMultiplicativeRed = redMult;
 				hazardModel->colorMultiplicativeGreen = greenMult;
 				hazardModel->colorMultiplicativeBlue = blueMult;
-
+				hazardModel->gammaCorrection = 1.5f;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
 				hazardTransform->positionY = 0.1f;

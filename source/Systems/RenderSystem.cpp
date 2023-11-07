@@ -17,7 +17,7 @@ void Render()
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
-		Light::SetGammaCorrection(0.9f);
+		Light::SetGammaCorrection(mc->gammaCorrection);
 		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
 			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
 		if (tc->offsetX != 0.0f)
@@ -40,7 +40,7 @@ void Render()
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
 		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
-		Light::SetGammaCorrection(1.5f);
+		Light::SetGammaCorrection(mc->gammaCorrection);
 		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
 			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
 		if (tc->offsetX != 0.0f)

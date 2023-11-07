@@ -5,7 +5,7 @@ Texture2D depthTexture : register(t3);
 
 SamplerState WrapSampler : register(s0);
 
-#define LIGHT_COMPONENT_ARRAY_LIMIT 32
+#define LIGHT_COMPONENT_ARRAY_LIMIT 64
 
 struct LightComponent
 {
