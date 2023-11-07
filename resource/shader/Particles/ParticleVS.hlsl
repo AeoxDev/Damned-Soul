@@ -21,6 +21,7 @@ struct VS_OUT
     float4 rgb : RGB;
     float rotationZ : ROTATIONZ;
     float size : SIZE;
+    float time : TIME;
 };
 
 VS_OUT main(VS_IN inval)
@@ -32,6 +33,7 @@ VS_OUT main(VS_IN inval)
     retval.rgb = float4(inval.rgb, 1.f);
     retval.rotationZ = inval.rotationZ;
     retval.size = inval.size;
+    retval.time = inval.time;
 
     return retval;
 }

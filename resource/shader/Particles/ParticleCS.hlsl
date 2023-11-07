@@ -95,6 +95,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
 {
+    
     // -- SAME FOR ALL FUNCTIONS -- //
     int index = DTid.x + blockID.y * NUM_THREADS;
     Input particle = inputParticleData[index];
@@ -138,8 +139,11 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     else
         particle.position.x = particle.position.x - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
 
-    particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + psuedoRand) * dt;
+    particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime/* + psuedoRand*/) * dt;
 
+    particle.rgb.r = 0.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 1.0f;
 
     outputParticleData[index] = particle;
 }
@@ -297,7 +301,9 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
     particle.position.x += scatterX;
     particle.position.z += scatterZ;
     particle.position.y -= speedOfRain;
-    
+    particle.rgb.r = 0.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 1.0f;
     
     if (particle.position.y < 0.0f)
     {

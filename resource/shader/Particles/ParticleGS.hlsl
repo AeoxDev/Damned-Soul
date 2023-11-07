@@ -12,12 +12,15 @@ struct GS_IN
     float4 rgb : RGB;
     float rotationZ : ROTATIONZ;
     float size : SIZE;
+    float time : TIME;
 };
 
 struct GS_OUT
 {
     float4 position : SV_POSITION;
     float4 rgb : RGB;
+    float2 uv : UV;
+    float time : TIME;
 };
 
 [maxvertexcount(6)]
@@ -39,13 +42,38 @@ void main(
     
     // Now construct the billboard, starting with positions
     float3 vertices[6];
-    vertices[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom left vertex
-    vertices[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
-    vertices[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
-    vertices[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
-    vertices[4] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
-    vertices[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top right vertex
-
+    float2 uvCord[6];
+    
+    // Get bottom left vertex
+    vertices[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2);
+    //uvCord[0] = float2(0.0f, 1.0f);
+    uvCord[0] = float2(1.0f, 1.0f);
+    
+    // Get top left vertex
+    vertices[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2);
+    //uvCord[1] = float2(0.0f, 0.0f);
+    uvCord[1] = float2(1.0f, 0.0f);
+    
+    // Get bottom right vertex
+    vertices[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2);
+    //uvCord[2] = float2(1.0f, 1.0f);
+    uvCord[2] = float2(0.0f, 1.0f);
+    
+    // Get bottom right vertex
+    vertices[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2);
+    //uvCord[3] = float2(1.0f, 1.0f);
+    uvCord[3] = float2(0.0f, 1.0f);
+    
+    // Get top left vertex
+    vertices[4] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2);
+    //uvCord[4] = float2(0.0f, 0.0f);
+    uvCord[4] = float2(1.0f, 0.0f);
+    
+    // Get top right vertex
+    vertices[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2);
+    //uvCord[5] = float2(1.0f, 0.0f);
+    uvCord[5] = float2(0.0f, 0.0f);
+    
     float4x4 viewProj = mul(view, projection);
 
     // Now append it to output
@@ -57,7 +85,8 @@ void main(
         // INSERT rotate on Z-axis
         retappend.position = retappend.position / retappend.position.w;
         retappend.rgb = inval[0].rgb;
-
+        retappend.uv = uvCord[i];
+        retappend.time = inval[0].time;
 
         retval.Append(retappend);
 

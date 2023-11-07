@@ -12,6 +12,10 @@ PoolPointer<ParticleMetadataBuffer> data;
 
 int Particles::RenderSlot;
 
+TX_IDX flipBookTexture; /// create holder for texture
+TX_IDX flipBookTextureTwo; /// create holder for texture
+SMP_IDX sampler; //create holder for sampler
+
 void Particles::SwitchInputOutput()
 {
 	UAV_IDX tempInput = m_readWriteBuffer->inputUAV;
@@ -29,7 +33,11 @@ void Particles::InitializeParticles()
 	Particle* particles;
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
 
+	flipBookTexture = LoadTexture("\\LavaPlaceholderAlpha.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
+	/*flipBookTextureTwo = LoadTexture("\\DefaultParticle.png");*/
+	flipBookTextureTwo = LoadTexture("\\Test.png");
 
+	sampler = CreateSamplerState(); //created sampler resource
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
@@ -128,7 +136,22 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_readWriteBuffer->outputUAV);
 }
 
-void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
+//void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
+//{
+//	SetTopology(POINTLIST);
+//
+//	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
+//
+//	SetVertexShader(renderStates[RenderSlot].vertexShaders[0]);
+//	SetGeometryShader(renderStates[RenderSlot].geometryShader);
+//	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
+//
+//	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
+//	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
+//
+//}
+
+void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int metaDataSlot)
 {
 	SetTopology(POINTLIST);
 
@@ -140,6 +163,20 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 
 	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
+
+	if(data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	{
+		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
+
+		//SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
+		SetSamplerState(sampler, 2); //Set sampler
+	}
+	else
+	{
+		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+		SetSamplerState(sampler, 2); //Set sampler
+	}
+	
 
 }
 
@@ -155,6 +192,9 @@ void Particles::FinishParticlePass()
 
 	//UnsetVertexBuffer();
 	UnsetRasterizerState();
+
+	//UnsetTexture missing//			   //Unset texture 
+	UnsetSamplerState(2); //Unset sampler 
 }
 
 // -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //

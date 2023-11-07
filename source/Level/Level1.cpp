@@ -34,6 +34,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
+	SetupEnemy(EnemyType::hellhound, 0.f, 0.f, -5.f);
 	//SetupEnemy(EnemyType::eye, -0.f, 0.f, 25.f);
 	// 
 	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
@@ -79,6 +80,8 @@ void LoadLevel1()
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
+
+	registry.AddComponent<ParticleComponent>(stage, 6, 50, 2, 0, 5, 20, SMOKE);//(entity,float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
 	

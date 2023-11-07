@@ -181,10 +181,10 @@ float4 main(PS_IN input) : SV_TARGET
     //Need to add Gamma correction
     addOnColor = saturate((addOnColor+/* diffuse+*/ diffuseDir + diffusePoint + diffuseSpot) * image.xyz); //Add ambient, diffuse and specular lights
     addOnColor = saturate(addOnColor + pointSpecular + spotSpecular + dirSpecular); //not multiply to put on top and not affect color of image
-    addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
+    //addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
     #define GAMMA_CORRECTION 1.25f
-    return pow(float4(abs(addOnColor).rgb, image.a), GAMMA_CORRECTION);
-    //return float4(addOnColor, 1);
+    //return pow(float4(abs(addOnColor).rgb, image.a), GAMMA_CORRECTION);
+    return float4(addOnColor, image.a);
     
 	//return diffuseTex.Sample(WrapSampler, input.uv)/*.xyzw*/;
 }

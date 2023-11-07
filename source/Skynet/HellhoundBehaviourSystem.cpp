@@ -286,7 +286,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 
 	if (registry.GetComponent<ParticleComponent>(dog) == nullptr)
 	{
-		registry.AddComponent<ParticleComponent>(dog, 1.0f, 0.0f, 0.5f,
+		registry.AddComponent<ParticleComponent>(dog, 50.0f, 0.0f, 0.5f,
 			0.0f, 2.5f, 3.0f, 0.0f,
 			cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], FLAMETHROWER);
 	}
