@@ -63,7 +63,14 @@ bool EventSystem::Update()
 			if (comp->timedEvents[i].startFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer)
 			{
 				comp->timedEvents[i].startFunction(comp->timedEvents[i].eventity, i);
-				comp->timedEvents[i].startFunction = nullptr;
+				if (i < comp->timedEvents.size())
+				{
+					comp->timedEvents[i].startFunction = nullptr;
+				}
+				else
+				{
+					continue;
+				}
 			}
 			if (comp->timedEvents[i].continousFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer && comp->timedEvents[i].timer < comp->timedEvents[i].endTime)
 			{

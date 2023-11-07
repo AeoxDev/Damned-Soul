@@ -33,8 +33,6 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		anim->aAnimTimeFactor = 5.f;
 
 		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
-		SetLightColor(entity, 1.0f, 1.0f, 1.0f);
-		SetLightRange(entity, 2.5f);
 		//SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
 	}
 }
@@ -70,8 +68,6 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
 		stats->hazardModifier = stats->baseHazardModifier;
-		SetLightColor(entity, 0.2f, 0.8f, 0.8f);
-		SetLightRange(entity, 2.0f);
 	}
 
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -91,9 +87,7 @@ void PlayerAttackSound(EntityID& entity, const int& index)
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
-{
-	SetLightColor(entity, 0.9f, 0.7f, 0.2f);
-	SetLightRange(entity, 2.5f);
+{;
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
@@ -112,15 +106,11 @@ void PlayerAttack(EntityID& entity, const int& index)
 	if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
-		SetLightColor(entity, 0.2f, 0.8f, 0.8f);
-		SetLightRange(entity, 2.0f);
 	}
 		
 	else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
 	{
 		SetPlayerAttackHitboxActive(entity, index);
-		SetLightColor(entity, 1.0f, 0.3f, 0.3f);
-		SetLightRange(entity, 3.0f);
 	}
 }
 
