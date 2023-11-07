@@ -1,5 +1,5 @@
-#include "Relics/RelicFunctions.h"
-#include "Relics/RelicInternalHelper.h"
+#include "Relics\RelicFunctions.h"
+#include "Relics\Utility\RelicInternalHelper.h"
 // Include MemLib
 #include "MemLib\MemLib.hpp"
 // Used to contain the different function vectors
@@ -9,22 +9,28 @@
 
 // Include all relics
 	/*Offense*/
-#include "Relics\DemonBonemarrow.h"
-#include "Relics\FlameWeapon.h"
-#include "Relics\SoulPower.h"
-#include "Relics\LifeSteal.h"
+#include "Relics\Offensive\DemonBonemarrow.h"
+#include "Relics\Offensive\FlameWeapon.h"
+#include "Relics\Offensive\SoulPower.h"
+#include "Relics\Offensive\LifeSteal.h"
+#include "Relics\Offensive\AdvancedFighting.h"
 	/*Defense*/
-#include "Relics\DemonHeart.h"
-#include "Relics\FrostFire.h"
-#include "Relics/SoulHealth.h"
-#include "Relics/DemonSkin.h"
+#include "Relics\Defensive\Hearts\DemonHeart.h"
+#include "Relics\Defensive\Hearts\CorruptedHeart.h"
+#include "Relics\Defensive\Hearts\MoltenHeart.h"
+#include "Relics\Defensive\Hearts\MummifiedHeart.h"
+#include "Relics\Defensive\FrostFire.h"
+#include "Relics\Defensive\SoulHealth.h"
+#include "Relics\Defensive\DemonSkin.h"
+#include "Relics\Defensive\SpikedSkin.h"
 	/*Gadget*/
-#include "Relics/SpeedyLittleDevil.h"
-#include "Relics/LightningGod.h"
-#include "Relics/Reckless.h"
+#include "Relics\Gadget\SpeedyLittleDevil.h"
+#include "Relics\Gadget\LightningGod.h"
+#include "Relics\Gadget\Reckless.h"
+#include "Relics\Gadget\SoulSpeed.h"
 // End of include all relics
 
-#include "Relics/ML_RelicArray.h"
+#include "Relics\Utility\ML_RelicArray.h"
 #include "MemLib\ML_Vector.hpp"
 
 #include <random>
@@ -48,7 +54,7 @@ void _validateRelicFunctions()
 		_RelicFunctions->emplace((RELIC_FUNCTION_TYPE)i, ML_Vector<VECTOR_FUNCTION_TYPE>());
 	}
 
-	std::srand(time(NULL));
+	std::srand((unsigned)time(NULL));
 };
 
 // Master list of relics, used to keep track of all relics that exist
@@ -107,12 +113,44 @@ void _validateMasterRelicList()
 				/*Function*/	LIFE_STEAL::Initialize
 			),
 			RelicData(
+				/*Name*/		"Advanced Fighting",
+				/*Filepath*/	"RelicIcons\\Advanced_Fighting.png",
+				/*Description*/	"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
+				/*Price*/		5,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	ADVANCED_FIGHTING::Initialize
+			),
+			RelicData(
 				/*Name*/		"Demon Heart",
 				/*Filepath*/	"RelicIcons\\Demon_Heart.png",
-				/*Description*/	"Increases your Maximum Health by 75 when obtained.",
-				/*Price*/		10,
+				/*Description*/	"Increases your Maximum Health by 25",
+				/*Price*/		6,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Corrupted Heart",
+				/*Filepath*/	"RelicIcons\\Corrupted_Heart.png",
+				/*Description*/	"Increases your Maximum Health by 40",
+				/*Price*/		9,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	CORRUPTED_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Molten Heart",
+				/*Filepath*/	"RelicIcons\\Molten_Heart.png",
+				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained.",
+				/*Price*/		7,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	MOLTEN_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Mummified Heart",
+				/*Filepath*/	"RelicIcons\\Mummified_Heart.png",
+				/*Description*/	"Increases your Maximum Health by 15",
+				/*Price*/		3,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	MUMMIFIED_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Frost Fire",
@@ -139,6 +177,14 @@ void _validateMasterRelicList()
 				/*Function*/	DEMON_SKIN::Initialize
 			),
 			RelicData(
+				/*Name*/		"Spiked Skin",
+				/*Filepath*/	"RelicIcons\\Spiked_Skin.png",
+				/*Description*/	"Whenever an enemy strikes you, it takes 15% of the damage it would deal (before reduction) as irresistable damage",
+				/*Price*/		5,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	SPIKED_SKIN::Initialize
+			),
+			RelicData(
 				/*Name*/		"Speedy Little Devil",
 				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
 				/*Description*/	"Increases your Movespeed by 4 when obtained",
@@ -149,7 +195,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Lightning God",
 				/*Filepath*/	"RelicIcons\\Lightning_God.png",
-				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive damage",
+				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	LIGHTNING_GOD::Initialize
@@ -161,7 +207,16 @@ void _validateMasterRelicList()
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	RECKLESS::Initialize
-			)
+			),
+			RelicData(
+				/*Name*/		"Soul Speed",
+				/*Filepath*/	"RelicIcons\\Soul_Speed.png",
+				/*Description*/	"You gain a bonus to your speed equal to your souls",
+				/*Price*/		5,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	SOUL_SPEED::Initialize
+			),
+
 		};
 		// Copy over
 		std::memcpy(&MasterRelicList, &MasterInitializer, sizeof(ML_RelicArray));

@@ -8,9 +8,12 @@ void BeginHit(EntityID& entity, const int& index);
 void MiddleHit(EntityID& entity, const int& index);
 void EndHit(EntityID& entity, const int& index);
 
-//
+//Hellhound breath hazard
 void HazardBeginHit(EntityID& entity, const int& index);
 void HazardEndHit(EntityID& entity, const int& index);
+//Static Hazard Damage
+void StaticHazardDamage(EntityID& entity, const int& index);
+void LavaBlinkColor(EntityID& entity, const int& index);
 
 /*PLAYER EVENTS*/
 //START
@@ -60,3 +63,8 @@ void ResetSpeed(EntityID& entity, const int& index);
 #define CAMERA_CONSTANT_SHAKE_TIME 0.4f
 void ShakeCamera(EntityID& entity, const int& index);
 void ResetCameraOffset(EntityID& entity, const int& index);
+
+//Spawning uses condition for type
+void SpawnMainMenuEnemy(EntityID& entity, const int& index);
+//Main menu loop for spawning random enemies
+void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);

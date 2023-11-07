@@ -1,10 +1,12 @@
 #pragma once
 #include "MemLib\MemLib.hpp"
 #include <cinttypes>
+#include <charconv>
 #include <stdexcept>
 
-#ifndef ZeroMemory
-#define ZeroMemory(dest, len) memset((dest), 0, (len))
+
+#ifndef ML_ZeroMemory
+#define ML_ZeroMemory(dest, len) memset((dest), 0, (len))
 #endif
 
 struct ML_String
@@ -137,7 +139,7 @@ public:
 
 		// Set data at location
 		std::memcpy(&m_data[m_len], &(*other), other.m_len);
-		ZeroMemory(&m_data[newLen], m_capacity - newLen);
+		ML_ZeroMemory(&m_data[newLen], m_capacity - newLen);
 
 		// Set new length and return the object
 		m_len = newLen;
@@ -155,12 +157,34 @@ public:
 
 		// Set data at location
 		std::memcpy(&m_data[m_len], other, otherLen);
-		ZeroMemory(&m_data[newLen], m_capacity - newLen);
+		ML_ZeroMemory(&m_data[newLen], m_capacity - newLen);
 
 		// Set new length and return the object
 		m_len = newLen;
 		return (*this);
 	};
+
+	// Append an integer type number
+	const ML_String& append(const long int& number)
+	{
+		// Should be enough to cover every concievable number
+		char* temp = (char*)MemLib::spush(64);
+		std::to_chars(temp, temp + 64, number);
+		append(temp);
+		// Pop
+		MemLib::spop();
+	}
+
+	// Append a float type number
+	const ML_String& append(const double& number)
+	{
+		// Should be enough to cover every concievable number
+		char* temp = (char*)MemLib::spush(64);
+		std::to_chars(temp, temp + 64, number);
+		append(temp);
+		// Pop
+		MemLib::spop();
+	}
 
 	const char& operator*() const
 	{
@@ -189,7 +213,7 @@ public:
 
 		// Deep copy data
 		std::memcpy(m_data, other.m_data, m_len);
-		ZeroMemory(&(m_data[m_len]), m_capacity - m_len);
+		ML_ZeroMemory(&(m_data[m_len]), m_capacity - m_len);
 
 		return *this;
 	}

@@ -48,8 +48,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ);
 
 
-	tempBossTransformComponent->positionX += tempBossTransformComponent->facingX * stats->GetSpeed() / 2.f * GetDeltaTime();
-	tempBossTransformComponent->positionZ += tempBossTransformComponent->facingZ * stats->GetSpeed() / 2.f * GetDeltaTime();
+	tempBossTransformComponent->positionX += tempBossTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+	tempBossTransformComponent->positionZ += tempBossTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
 
 }
 
@@ -111,12 +111,6 @@ bool TempBossBehaviourSystem::Update()
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enmComp = nullptr;
 
-	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
-	{
-		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-		playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	}
 
 	for (auto enemyEntity : View<TempBossBehaviour, TransformComponent, StatComponent>(registry))
 	{
@@ -124,7 +118,42 @@ bool TempBossBehaviourSystem::Update()
 		tempBossTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
-
+		//Find a player to kill.
+		if (enmComp->lastPlayer.index == -1)
+		{
+			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+			{
+				if (enemyEntity.index == playerEntity.index)
+				{
+					continue;
+				}
+				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+				playerStats = registry.GetComponent< StatComponent>(playerEntity);
+				enmComp->lastPlayer = playerEntity;
+				if (rand() % 2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			playerComponent = registry.GetComponent<PlayerComponent>(enmComp->lastPlayer);
+			playerTransformCompenent = registry.GetComponent<TransformComponent>(enmComp->lastPlayer);
+			playerStats = registry.GetComponent< StatComponent>(enmComp->lastPlayer);
+			if (playerComponent == nullptr)
+			{
+				for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+				{
+					if (enemyEntity.index == playerEntity.index)
+					{
+						continue;
+					}
+					enmComp->lastPlayer.index = -1;
+				}
+			}
+		}
 		if (tempBossComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			float distance = Calculate2dDistance(tempBossTransformComponent->positionX, tempBossTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
@@ -156,8 +185,15 @@ bool TempBossBehaviourSystem::Update()
 			}
 			else // idle
 			{
+				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, tempBossComponent, tempBossTransformComponent, enemyStats);
 			}
+		}
+		//Idle if there are no players on screen.
+		else if (enemyStats->GetHealth() > 0.0f)
+		{
+			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
+			IdleBehaviour(playerComponent, playerTransformCompenent, tempBossComponent, tempBossTransformComponent, enemyStats);
 		}
 	}
 

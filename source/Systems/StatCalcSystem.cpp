@@ -3,7 +3,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "Relics\RelicFunctions.h"
-#include "Relics\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 
 bool StatCalcSystem::Update()
 {
@@ -28,6 +28,9 @@ bool StatCalcSystem::Update()
 				// Apply relic
 				func(&input);
 			}
+
+			// It is possible for HP bonus to be reduced to a point that current health is now above maximum without the cap ever being called
+			stats->CapHealth();
 		}
 	}
 	return true;
