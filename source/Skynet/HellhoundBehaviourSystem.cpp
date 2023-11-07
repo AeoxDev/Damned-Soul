@@ -6,6 +6,7 @@
 #include <random>
 #include "Skynet\BehaviourHelper.h"
 #include "ParticleComponent.h"
+#include "Particles.h"
 
 // input true on stuff you want to reset
 void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)

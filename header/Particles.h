@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include "MemLib/PoolPointer.hpp"
 #include "ParticleComponent.h"
+#include "GameRenderer.h"
 
 #define PARTICLE_METADATA_LIMIT 256
 #define THREADS_PER_GROUP 256

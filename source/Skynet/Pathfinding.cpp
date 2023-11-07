@@ -2,6 +2,7 @@
 #include "MemLib\ML_Array.hpp"
 #include "MemLib\MemLib.hpp"
 #include "States\StateManager.h"
+#include "Registry.h"
 
 PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransform)
 {
