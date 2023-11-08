@@ -131,7 +131,13 @@ bool RenderSystem::Update()
 	SetDepthPassTexture(false);
 	SetShadowmap(false);
 
+
+	// Set Geometry Shader used for normalmapping
+	SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+	// Render
 	Render();
+	// Unset geometry shader
+	UnsetGeometryShader();
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
 	UnsetShadowmap(false);

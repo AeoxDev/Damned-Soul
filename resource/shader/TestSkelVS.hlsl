@@ -1,48 +1,6 @@
-cbuffer WorldMatrix : register (b0)
-{
-	matrix world;
-}
+#include "RenderPipelineHeader.hlsli"
 
-cbuffer CameraBuffer : register(b1)
-{
-    float4 cameraPosition;
-    matrix view;
-    matrix projection;
-}
-
-// Structured buffer of bones
-StructuredBuffer<matrix> skeleMath : register(t0);
-
-struct VS_INPUTS
-{
-	float4 position : POSITION;
-	float4 normal : NORMAL;
-	float2 uv : UV;
-	uint4 bIdx : BONE_INDEX;
-	float4 bWeight : BONE_WIEGHT;
-};
-
-//struct VS_OUT
-//{
-//	float4 position : SV_POSITION;
-//	float4 normal : NORMAL;
-//	float2 uv : UV;
-//	uint4 index : INDEX;
-//	float4 weight : WEIGHT;
-//    float4 camToWorldObject : CAM; // normalized //för att vsOut ska se likadan ut i båda vertexshaders 
-//};
-
-struct VS_OUT //VS_OUT needs to be exaxtly the same in all vertexshaders
-{
-    float4 position : SV_POSITION; //world, view, projection - multiplyed
-    float4 normal : WNORMAL; //world - multiplyed
-    float2 uv : UV;
-    float4 camToWorldObject : CAM; // normalized 
-    float4 world : WORLD;
-    float2 depth : DEPTH;
-};
-
-VS_OUT main(VS_INPUTS pos)
+VS_OUT main(VS_INPUTS_SKELETON pos)
 {
 	VS_OUT retval;
 
@@ -53,10 +11,10 @@ VS_OUT main(VS_INPUTS pos)
 	sTrans[3] = skeleMath[pos.bIdx.w] * pos.bWeight.w;
 	matrix skeletonTransform = sTrans[0] + sTrans[1] + sTrans[2] + sTrans[3];
 
-	retval.position = pos.position;
+	retval.position = pos.base.position;
 	
-    retval.normal = mul(normalize(pos.normal), world); //
-	retval.uv = pos.uv;
+    retval.normal = normalize(mul(pos.base.normal, worldNormal)); //
+	retval.uv = pos.base.uv;
 	
 	retval.position = mul(retval.position, skeletonTransform);
 	retval.position = mul(retval.position, world);

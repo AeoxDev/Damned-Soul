@@ -94,6 +94,8 @@ int SetupGameRenderer()
 	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("TestSkelVS.cso", LAYOUT_DESC::SKELETAL);
 	Light::SetupLight();
 	SetVertexShader(renderStates[currentSize].vertexShaders[0]);////////
+
+	renderStates[currentSize].geometryShader = LoadGeometryShader("NormalMappingGS.cso");
 	//Light::CreateLight(1);
 	//Light::CreateLight(2);
 	//Light::CreateLight(3);
