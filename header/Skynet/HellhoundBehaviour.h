@@ -22,7 +22,7 @@ struct HellhoundBehaviour
 	float attackStunDurationCounter = 0.8f;
 	const float attackStunDuration = 0.8f;
 
-
+	float meleeDistance = 3.5f;
 
 
 	// SHOOTING VARIABLES
@@ -68,4 +68,24 @@ struct HellhoundBehaviour
 
 
 	
+
+	//how often pathfinding
+	float updatePathCounter = 1.8f;
+	float updatePathLimit = 0.5f;
+
+	//pathfinding
+	float dirX = 0.f;
+	float dirZ = 0.f;
+	float dir2X = 0.f;
+	float dir2Z = 0.f;
+	bool followPath = false;
+
+
+
+
+	//trust me, these are needed. int errors
+	float fx = 0.f;
+	float fz = 0.f;
+
+
 };
