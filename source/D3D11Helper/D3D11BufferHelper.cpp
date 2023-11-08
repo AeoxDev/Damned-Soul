@@ -1,8 +1,8 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <dxgi.h>
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper/D3D11Helper.h"
+#include "D3D11Helper/D3D11Graphics.h"
 #include "MemLib/MemLib.hpp"
 #include <DirectXMath.h>
 #include <assert.h>
@@ -377,6 +377,7 @@ void UnsetVertexBuffer()
 {
 	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &bfr_NULL, 0, 0);
 }
+
 
 
 // Create an Index Buffer with provided data and return a unique index to it

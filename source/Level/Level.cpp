@@ -3,10 +3,9 @@
 #include "Camera.h"
 #include "UIRenderer.h"
 #include "States\StateManager.h"
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include "Registry.h"
 #include "Components.h"
-
 #include "UIButtonFunctions.h"
 
 void LoadLevel(int level)
@@ -32,7 +31,7 @@ void LoadLevel(int level)
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
-	stateManager.scenes[stateManager.activeLevelScene].m_active = true;
+	//stateManager.scenes[stateManager.activeLevelScene].m_active = true;
 	
 	switch (level)
 	{
@@ -45,7 +44,7 @@ void LoadLevel(int level)
 	case 7: LoadLevel4(); break;
 	default: 
 		//UnloadEntities(true);//Reset game
-		UnloadEntities(ENT_PERSIST_PLAYER);//Reset game
+		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}

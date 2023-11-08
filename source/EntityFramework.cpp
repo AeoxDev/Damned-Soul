@@ -9,7 +9,7 @@
 size_t Registry::GetEntityCount()
 {
 	//Since destroying an entity doesn't technically remove it (rather it stores its index into the availableEntitySlots-vector for future insertions) 
-	//this is the "real" entity count
+	//this is the "real" entity count. Don't think we need this I kinda just made it if we want to check to see how many "active" entities currently exist
 	return entities.size() - availableEntitySlots.size();
 }
 
@@ -34,7 +34,7 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 
 void Registry::DestroyEntity(EntityID id)
 {
-	EntityID nullID = CreateEntityId(-1, true, ENT_PERSIST_BASIC);
+	EntityID nullID = CreateEntityId(id.index, true, ENT_PERSIST_LOWEST);
 
 	entities[GetEntityIndex(id)].id = nullID;
 	entities[GetEntityIndex(id)].components.reset();
@@ -46,35 +46,35 @@ int compCount = 0;
 
 void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 {
-
-	if (stateManager.player.index != -1)
+	//Reset player specific variables that we know we want to reset between gamestates
+	if (EntityGlobals::IsEntityValid(stateManager.player))
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-		if (player != nullptr)
+		if (player != nullptr && destructionTier >= 0) 
 		{
-			player->killingSpree = 0;
-			player->killThreshold = 0;
+			player->killingSpree = 0; 
+			player->killThreshold = 0; 
 			player->portalCreated = false;
 		}
-		
 	}
 
-
+	//Release memory from relevant components
 	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
 	{
-		ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
-		ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		if (entity.persistentTier <= destructionTier)
+		{
+			ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
+			ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
+		}
 	}
 
 	for (auto entity : View<ModelSkeletonComponent>(registry))
 	{
-
 		if (entity.persistentTier <= destructionTier)
 		{
 			ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
 			ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		}
-		
+		}	
 	}
 
 	for (auto entity : View<UIPlayerSoulsComponent>(registry))
@@ -84,18 +84,7 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			UIPlayerSoulsComponent* ps = registry.GetComponent<UIPlayerSoulsComponent>(entity);
 			ps->image.Release();
 		}
-	
 	}
-
-	/*for (auto entity : View<UIGameLevelComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIGameLevelComponent* ps = registry.GetComponent<UIGameLevelComponent>(entity);
-			ps->image.Release();
-		}
-		
-	}*/
 
 	for (auto entity : View<UIPlayerRelicsComponent>(registry))
 	{
@@ -180,16 +169,22 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
-		ReleaseTimedEvents(entity);
+		if(destructionTier != ENT_PERSIST_PAUSE)
+			ReleaseTimedEvents(entity);
 	}
 
-	Light::FreeLight();
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
+	
 	for (auto entity : View<SoundComponent>(registry))
 	{
-		SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-		if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
-			sound->Unload();
+			SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+			if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+			{
+				sound->Unload();
+			}
 		}
 	}
 
@@ -199,19 +194,19 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		{
 			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
 			audioEngine->Destroy();
-
 		}
 	}
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
+		//Get the current entity we're looking at in the registry
 		EntityID check = registry.entities.at(i).id;
-		if (check.index != -1)
-		{
-			if (check.persistentTier <= destructionTier)
-				registry.DestroyEntity(check);
 
+		//Destroy the entity if it isn't already destroyed and its persistency tier isn't greater than the destruction tier
+		if (check.isDestroyed == false && check.persistentTier <= destructionTier)
+		{
+			registry.DestroyEntity(check);
 		}
 	}
 }

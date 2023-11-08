@@ -42,6 +42,6 @@ namespace Light
 	void SetupLight();
 	void UpdateLight();
 	void FreeLight();
-
+	void SetGammaCorrection(const float& gammaCorrection);
 	
 }

@@ -1,10 +1,11 @@
 Texture2D diffuseTex : register(t0);
 Texture2D normalTex : register(t1);
 Texture2D emissionTex : register(t2);
+Texture2D depthTexture : register(t3);
 
 SamplerState WrapSampler : register(s0);
 
-#define LIGHT_COMPONENT_ARRAY_LIMIT 32
+#define LIGHT_COMPONENT_ARRAY_LIMIT 64
 
 struct LightComponent
 {
@@ -21,7 +22,7 @@ cbuffer LightComponentShaderBuffer : register(b2)
 {
     int firstLight; //First light in array
     int lastLight; //Last light in array
-    float padding1;
+    float gammaCorrection;//Gamma correction
     float padding2;
     float4 dirLightColor;
     float4 dirLightDirection;
@@ -73,6 +74,12 @@ struct PS_IN
 
 float4 main(PS_IN input) : SV_TARGET
 {
+    
+    if (depthTexture.Load(input.position.xyz).w >= input.position.w + 0.0001f)
+    {
+        clip(-1.0f);
+    }
+  
     float4 materialAmbient = { 0.02f, 0.02f, 0.02f, 1.0f }; //temp before material buffer
     float4 materialDiffuse = { 0.2f, 0.2f, 0.2f, 1.0f };
     float4 materialSpecular = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -182,8 +189,8 @@ float4 main(PS_IN input) : SV_TARGET
     addOnColor = saturate((addOnColor+/* diffuse+*/ diffuseDir + diffusePoint + diffuseSpot) * image.xyz); //Add ambient, diffuse and specular lights
     addOnColor = saturate(addOnColor + pointSpecular + spotSpecular + dirSpecular); //not multiply to put on top and not affect color of image
     addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
-    #define GAMMA_CORRECTION 1.25f
-    return pow(float4(abs(addOnColor).rgb, image.a), GAMMA_CORRECTION);
+    //#define GAMMA_CORRECTION 1.25f
+    return pow(float4(abs(addOnColor).rgb, image.a), gammaCorrection);
     //return float4(addOnColor, 1);
     
 	//return diffuseTex.Sample(WrapSampler, input.uv)/*.xyzw*/;

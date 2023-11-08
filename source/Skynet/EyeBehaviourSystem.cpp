@@ -33,8 +33,8 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 		magnitude = 0.001f;
 	}
 
-	eyeTransformComponent->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
-	eyeTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
+	eyeTransformComponent->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
 bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
@@ -46,7 +46,7 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 	ANIM_BRANCHLESS(enemyAnim);
 
 	//impose timer so they cannot run and hit at the same time also not do a million damage per sec
-	if (ec->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	if (ec->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
 		ec->attackTimer = 0;
 		ec->attackStunDurationCounter = 0;
@@ -119,8 +119,8 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	}
 	dirX /= magnitude;
 	dirZ /= magnitude;
-	etc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
-	etc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
+	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
 	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 }
@@ -173,8 +173,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
 
 
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
+	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
 bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = enemy pos, B = player pos, tolerance = 
@@ -200,7 +200,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//while charging disable hitboxes
 		SetHitboxIsMoveable(eID, 0, false);
 		SetHitboxIsMoveable(eID, 1, false);
-		enemyStats->knockback = 2.0f;
+		enemyStats->SetKnockbackMultiplier(2.0f);
 		//direction from the enemy towards the player
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
 		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
@@ -249,19 +249,20 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		float scalar = dirX * eyeComponent->changeDirX + dirZ * eyeComponent->changeDirZ;
 
 		//If charging scalar point direction > 0.0, charge
-		if (scalar > 0)
+		if (scalar > 0 && eyeComponent->chargeTimer < 3.0f)
 		{
+			eyeComponent->chargeTimer += GetDeltaTime();
 			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 30.0f);
 
-			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->moveSpeed * 6.f * GetDeltaTime();
-			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->moveSpeed * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
 
 			SetHitboxActive(eID, enemComp->attackHitBoxID, true);
 			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, true);
 		}
 		else //else charge is finished
 		{
-			enemyStats->knockback = 1.0f;
+			enemyStats->SetKnockbackMultiplier(1.0f);
 			//reenable hitboxes
 			SetHitboxIsMoveable(eID, 0, true);
 			SetHitboxIsMoveable(eID, 1, true);
@@ -291,27 +292,55 @@ bool EyeBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enemComp = nullptr;
-
-	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
-	{
-		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-		playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	}
+	//Find available entity
+	
 	
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
+		
+		SetLightColor(enemyEntity, 0.3f, 0.3f, 0.3f);
 		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
 		eyeTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+		AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+		//Find a player to kill.
+		if (enemComp->lastPlayer.index == -1)
+		{
+			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+			{
+				if (enemyEntity.index == playerEntity.index)
+				{
+					continue;
+				}
 
+				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+				playerStats = registry.GetComponent< StatComponent>(playerEntity);
+				enemComp->lastPlayer = playerEntity;
+				if (rand() % 2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			playerComponent = registry.GetComponent<PlayerComponent>(enemComp->lastPlayer);
+			playerTransformCompenent = registry.GetComponent<TransformComponent>(enemComp->lastPlayer);
+			playerStats = registry.GetComponent< StatComponent>(enemComp->lastPlayer);
+			if (playerComponent == nullptr)
+			{
+				enemComp->lastPlayer.index = -1;
+			}
+		}
+		
 
 		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
 			// Get animation component
-			AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+			
 
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			eyeComponent->attackTimer += GetDeltaTime();
@@ -328,7 +357,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
-			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->attackSpeed && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->GetDamage() && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				if (!eyeComponent->chargeAttackSoundPlaying)
@@ -336,6 +365,7 @@ bool EyeBehaviourSystem::Update()
 					eyeComponent->chargeAttackSoundPlaying = true;
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
 					sfx->Play(Eye_Attack, Channel_Base);
+					eyeComponent->chargeTimer = 0.0f;
 				}
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp);
 
@@ -354,8 +384,15 @@ bool EyeBehaviourSystem::Update()
 			}
 			else // idle
 			{
+				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
+		}
+		//Idle if there are no players on screen.
+		else if (enemyStats->GetHealth() > 0.0f)
+		{
+			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
+			IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 		}
 	}
 

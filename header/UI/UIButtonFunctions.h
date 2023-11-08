@@ -1,19 +1,19 @@
 #pragma once
 
-#include "RelicFunctions.h"
+#include "Relics/RelicFunctions.h"
 #include "MemLib/ML_Vector.hpp"
 
-enum temprelicslist
-{
-	DemonBonemarrow,
-	FlameWeapon,
-	SoulPower,
-	DemonHeart,
-	FrostFire,
-	SoulHealth,
-	SpeedyLittleDevil,
-	LightningGod
-};
+//enum temprelicslist
+//{
+//	DemonBonemarrow,
+//	FlameWeapon,
+//	SoulPower,
+//	DemonHeart,
+//	FrostFire,
+//	SoulHealth,
+//	SpeedyLittleDevil,
+//	LightningGod
+//};
 
 namespace UIFunc
 {
@@ -25,6 +25,12 @@ namespace UIFunc
 
 	// Quit the game from the start menu
 	void MainMenu_Quit(void* args);
+
+	// Resume game from pause state
+	void PauseState_ResumeGame(void* args);
+
+	// Return to main menu from pause state
+	void PauseState_MainMenu(void* args);
 
 	// Go back from the settings menu to the main menu
 	void Settings_Back(void* args);

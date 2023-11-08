@@ -11,6 +11,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 {	
 	//Get relevant components
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	//If this is not the player, no need to remove controller
 	if (playerComp == nullptr)
 	{
@@ -30,6 +31,8 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, false);
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 		anim->aAnimTimeFactor = 5.f;
+
+		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
 		//SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
 	}
 }
@@ -45,6 +48,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	//Hitstop fixer
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	transform->offsetX = 0.0f;
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	//Get relevant components
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	//If this is not the player, return. No controlling enemies >:(
@@ -63,6 +67,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
+		stats->hazardModifier = stats->baseHazardModifier;
 	}
 
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -82,7 +87,7 @@ void PlayerAttackSound(EntityID& entity, const int& index)
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
-{
+{;
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
@@ -99,9 +104,14 @@ void PlayerAttack(EntityID& entity, const int& index)
 
 	//Make the players' attack hitbox active during the second half of the attack animation
 	if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
+	{
 		SetPlayerAttackHitboxInactive(entity, index);
+	}
+		
 	else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
+	{
 		SetPlayerAttackHitboxActive(entity, index);
+	}
 }
 
 void PlayerDashSound(EntityID& entity, const int& index)
@@ -132,6 +142,6 @@ void PlayerDash(EntityID& entity, const int& index)
 	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 	
 	//Move player quickly in the relevant direction
-	transform->positionX += dac->x * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();
-	transform->positionZ += dac->z * (stat->moveSpeed * dac->dashModifier) * GetDeltaTime();
+	transform->positionX += dac->x * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
+	transform->positionZ += dac->z * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
 }

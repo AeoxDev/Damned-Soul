@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "MemLib/MemLib.hpp"
-#include "D3D11Helper.h"
+#include "D3D11Helper\D3D11Helper.h"
 #include "SDLHandler.h"
 #include <DirectXMath.h>
 #include "PointOfInterestComponent.h"

@@ -147,19 +147,20 @@ bool UIHealthSystem::Update()
 bool UIPlayerSoulsSystem::Update()
 {
     EntityID playerUI;
+
     for (auto entity : View<UIHealthComponent, UIPlayerSoulsComponent>(registry))
         playerUI = entity;
 
-    for (auto entity : View<PlayerComponent>(registry))
+    if (stateManager.player.index != -1 && playerUI.index != -1)
     {
         auto uiElement = registry.GetComponent<UIPlayerSoulsComponent>(playerUI);
-        auto player = registry.GetComponent<PlayerComponent>(entity);
+        auto player = registry.GetComponent<PlayerComponent>(stateManager.player);
         uiElement->value = player->GetSouls();
 
-		ML_String valueAsString = ("Souls: " + std::to_string(uiElement->value)).c_str();
-		SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
-	}
-
+        ML_String valueAsString = ("Souls: " + std::to_string(uiElement->value)).c_str();
+        SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
+    }
+       
 	return true;
 }
 
@@ -299,9 +300,9 @@ bool UIShopSystem::Update()
     {
         auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
 
-        ML_String playerInfo = ("Damage: " + std::to_string((int)stats->damage) + 
-            "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
-            "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
+        ML_String playerInfo = ("Damage: " + std::to_string((int)stats->GetDamage()) + 
+            "\nMove Speed: " + std::to_string((int)stats->GetSpeed()) +
+            "\nAttack Speed: " + std::to_string((int)stats->GetAttackSpeed())).c_str(); // Warning gets to stay for now
 
 
         DSFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,

@@ -40,15 +40,15 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	relicFlavorImage.m_UiComponent.SetVisibility(false);
 	relicFlavorImage.m_UiComponent.SetScale({ 1.2f, 1.0f });
 
-	UIText relicName, relicDesc, shopPrice;
+	UIText m_relicName, relicDesc, shopPrice;
 	ML_String name = "No Relic";
 	ML_String desc = "Emptiness all around us";
 
-	relicName.Setup(name);
+	m_relicName.Setup(name);
 	relicDesc.Setup(desc);
 	shopPrice.Setup("");
 
-	relicName.m_UiComponent.SetVisibility(false);
+	m_relicName.m_UiComponent.SetVisibility(false);
 	relicDesc.m_UiComponent.SetVisibility(false);
 	relicDescImage.m_UiComponent.SetVisibility(false);
 
@@ -67,9 +67,9 @@ void CreateShopEntity(const UIShopComponent& shop, int positionMultiplier)
 	relicWindowC->m_priceText.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.1f), spritePixelCoords.y - 0.1f });
 	
 	relicFlavorImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
-	relicName.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
+	m_relicName.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 1.5f), spritePixelCoords.y + 0.1f });
 
-	UIRelicComponent* relicComp = registry.AddComponent<UIRelicComponent>(relicWindow, relicImage, relicFlavorImage, relicName, relicDescImage, relicDesc);
+	UIRelicComponent* relicComp = registry.AddComponent<UIRelicComponent>(relicWindow, relicImage, relicFlavorImage, m_relicName, relicDescImage, relicDesc);
 
 	UIButton* buyRelic = registry.AddComponent<UIButton>(relicButtonBuy);
 	buyRelic->Setup("TempBuy.png", "Dollar.png", "", UIFunc::Shop_BuyRelic);
@@ -126,4 +126,5 @@ void UIShopComponent::Setup()
 	bool* ignore = {};
 
 	UIFunc::Shop_ReRollRelic(ignore);
+	RedrawUI();
 }

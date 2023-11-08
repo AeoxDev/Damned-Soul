@@ -6,6 +6,7 @@
 #include "UIRenderer.h"
 #include "CollisionFunctions.h" //AttackCollision
 #include "Model.h"
+#include "Levels\LevelHelper.h"
 
 //void EnemyExclusion(EntityID& entity)
 //{
@@ -15,7 +16,6 @@
 
 void PlayDeathAnimation(EntityID& entity, const int& index)
 {
-	//implement later, goddamn TA
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
 	RemoveHitbox(entity, 2);
@@ -34,9 +34,20 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 		anim->aAnimIdx = 0;
 		anim->aAnimTime = GetTimedEventElapsedTime(entity, index);
 	}
+	ParticleComponent* pc = registry.GetComponent<ParticleComponent>(entity);
+	if (pc != nullptr)
+	{
+		pc->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
 
 	//Temp: Remove the light if dog dies during its flamethrower attack
 	RemoveLight(entity);
+	EnemyComponent* enmComp = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxActive(entity, enmComp->specialHitBoxID, false);
+	SetHitboxCanDealDamage(entity, enmComp->specialHitBoxID, false);
+
+
 }
 
 void CreateMini(const EntityID& original, const float offsetValue)
@@ -51,9 +62,9 @@ void CreateMini(const EntityID& original, const float offsetValue)
 
 	//Set stats of new boss based on original
 	float bossHP = bossStats->GetMaxHealth() / 2.f;
-	float bossSpeed = bossStats->moveSpeed;
-	float bossDamage = bossStats->damage / 2.f;
-	float bossAttackSpeed = bossStats->attackSpeed;
+	float bossSpeed = bossStats->GetSpeed();
+	float bossDamage = bossStats->GetDamage() / 2.f;
+	float bossAttackSpeed = bossStats->GetAttackSpeed();
 	registry.AddComponent<StatComponent>(newMini, bossHP, bossSpeed, bossDamage, bossAttackSpeed);
 
 	//Set transform
@@ -273,12 +284,76 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
 	if (toAppend != nullptr)
+	{
 		ReleaseModel(toAppend->model);
+		registry.RemoveComponent<ModelBonelessComponent>(entity);
+	}
 
 
 	auto toAppend2 = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (toAppend2 != nullptr)
+	{
 		ReleaseModel(toAppend2->model);
-		
+		registry.RemoveComponent<ModelSkeletonComponent>(entity);
+	}
+	SoundComponent* s = registry.GetComponent<SoundComponent>(entity);
+	if (s != nullptr)
+	{
+		s->Unload();
+	}
+
+	TimedEventComponent* timed = registry.GetComponent<TimedEventComponent>(entity);
+	if (timed != nullptr)
+	{
+		ReleaseTimedEvents(entity);
+	}
+
 	registry.DestroyEntity(entity);
+}
+
+void SpawnMainMenuEnemy(EntityID& entity, const int& index)
+{
+	int condition = GetTimedEventCondition(entity, index);
+	switch (condition)
+	{
+	case invalidType:
+		break;
+	case hellhound:
+		RandomPlayerEnemy(hellhound);
+		break;
+	case skeleton:
+		RandomPlayerEnemy(skeleton);
+		break;
+	case eye:
+		RandomPlayerEnemy(eye);
+		break;
+	case tempBoss:
+		RandomPlayerEnemy(tempBoss);
+		break;
+	default:
+		break;
+	}
+}
+
+void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
+{
+	int rarity = 0;
+	EnemyType type = skeleton;
+	rarity = rand() % 4;
+	if (rarity == 0)
+	{
+		type = hellhound;
+	}
+	rarity = rand() % 8;
+	if (rarity == 0)
+	{
+		type = eye;
+	}
+	rarity = rand() % 4096;
+	if (rarity == 0)
+	{
+		type = tempBoss;
+	}
+	float time = (float)(rand() % 8);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }

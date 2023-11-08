@@ -5,11 +5,18 @@
 #include "Components.h"
 #include "Input.h"
 #include "EventFunctions.h"
+#include "States\StateManager.h"
 
 bool ControllerSystem::Update()
 {
+	//Controller for player during play
+	
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
+		if (gameSpeed < 0.00001f)
+		{
+			break;
+		}
 		//Get the relevant components from the entity
 		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -77,8 +84,8 @@ bool ControllerSystem::Update()
 			}
 			controller->goalZ /= len;
 			controller->goalX /= len;
-			transform->positionZ += controller->goalZ * stat->moveSpeed * GetDeltaTime();
-			transform->positionX += controller->goalX * stat->moveSpeed * GetDeltaTime();
+			transform->positionZ += controller->goalZ * stat->GetSpeed() * GetDeltaTime();
+			transform->positionX += controller->goalX * stat->GetSpeed() * GetDeltaTime();
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 		}
@@ -126,6 +133,28 @@ bool ControllerSystem::Update()
 			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
 		}
+#ifdef _DEBUG
+		if (keyState[SCANCODE_G] == pressed) {
+			StatComponent* pStats = registry.GetComponent<StatComponent>(stateManager.player);
+			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+			HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
+			hitbox->circleHitbox[2].radius = 10000000.0f;
+			if (pStats->hazardModifier > -100.0f)
+			{
+				transform->mass += 100.0f;
+				player->killingSpree = 10000;
+				player->UpdateSouls(1000000);
+				hitbox->circleHitbox[2].radius += 10000000.0f;
+			}
+			else
+			{
+				transform->mass -= 100.0f;
+				hitbox->circleHitbox[2].radius -= 10000000.0f;
+			}
+		}
+#endif // _DEBUG
+
 	}
+	//Loop for player during other places
 	return true;
 }

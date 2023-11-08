@@ -5,6 +5,8 @@
 #include "UI/UIRenderer.h"
 #include <random>
 #include "Skynet\BehaviourHelper.h"
+#include "ParticleComponent.h"
+#include "Particles.h"
 
 // input true on stuff you want to reset
 void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
@@ -36,13 +38,13 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 	animComp->aAnim = ANIMATION_ATTACK;
 	animComp->aAnimIdx = 0;
 	//Elliot: Change in calculations for attack timer:
-	animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->attackSpeed);
+	animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 	ANIM_BRANCHLESS(animComp);
 	
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	if (hc->attackTimer >= enemyStats->attackSpeed) // yes, we can indeed attack. 
+	if (hc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
-		enemyStats->knockback = 8.0f;
+		enemyStats->SetKnockbackMultiplier(8.0f);
 		SetHitboxActive(ent, enmComp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(ent, enmComp->attackHitBoxID, true);
 		
@@ -120,8 +122,8 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBeha
 		dirX /= magnitude;
 		dirZ /= magnitude;
 	}
-	htc->positionX += dirX * enemyStats->moveSpeed * GetDeltaTime();
-	htc->positionZ += dirZ * enemyStats->moveSpeed * GetDeltaTime();
+	htc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	htc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	hc->goalDirectionX = ptc->positionX - htc->positionX;
 	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
 }
@@ -153,13 +155,13 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	{
 		speedMultiplier = 2.f;
 	}
-	hellhoundTransformComponent->positionX += dirX * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += dirZ * enemyStats->moveSpeed * speedMultiplier * GetDeltaTime();
+	hellhoundTransformComponent->positionX += dirX * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	hellhoundTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
 }
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
-	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
 	ANIM_BRANCHLESS(enemyAnim);
@@ -182,8 +184,8 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
 
-	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();
+	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
@@ -220,7 +222,7 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 
 	dx /= magnitude;
 	dz /= magnitude;
-	
+
 
 	float targetX = htc->positionX + dx * hc->offsetForward;
 	float targetZ = htc->positionZ +  dz  * hc->offsetForward;
@@ -235,13 +237,11 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 	orthoZ /= magnitude;
 
 	hc->shootingSideTarget1X = targetX + orthoX * hc->offsetSide;
-	hc->shootingSideTarget1Z = targetZ  + orthoZ * hc->offsetSide;
-	hc->shootingSideTarget2X = targetX  - orthoX * hc->offsetSide;
+	hc->shootingSideTarget1Z = targetZ + orthoZ * hc->offsetSide;
+	hc->shootingSideTarget2X = targetX - orthoX * hc->offsetSide;
 	hc->shootingSideTarget2Z = targetZ - orthoZ * hc->offsetSide;
 	hc->shootingStartX = htc->positionX;
 	hc->shootingStartZ = htc->positionZ;
-
-	
 }
 
 bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float p3X, float p3Z, float playerX, float playerZ)
@@ -275,6 +275,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		0.0f, 1.0f, -0.25f,
 		hc->currentShootingAttackRange + 1.0f, 1.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);
+
 	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
 	float  cornersX[3] = {0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
@@ -283,6 +284,18 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);//Reset hitbox
 	SetHitboxActive(dog, enemy->specialHitBoxID, true);
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, true);
+
+	if (registry.GetComponent<ParticleComponent>(dog) == nullptr)
+	{
+		registry.AddComponent<ParticleComponent>(dog, 1.0f, 0.0f, 0.5f,
+			0.0f, 2.5f, 3.0f, 0.0f,
+			cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], FLAMETHROWER);
+	}
+	else
+	{
+		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
+		Particles::UpdateMetadata(pc->metadataSlot, cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2]);
+	}
 
 	//if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
 	//{
@@ -312,9 +325,16 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		hc->currentShootingAttackRange = 1.f;
 		SetHitboxActive(dog, enemy->specialHitBoxID, false);
 		SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);
-		//TEEEEEMP
-		RemoveLight(dog);
+		//Recreate light again
+		CreatePointLight(dog, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 		hc->shootingTimer = 0.0f;
+
+		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
+		if (pc!= nullptr)
+		{
+			pc->Release();
+			registry.RemoveComponent<ParticleComponent>(dog);
+		}
 		
 	}
 }
@@ -345,8 +365,8 @@ void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, S
 	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
 	SmoothRotation(htc, newGoalX, newGoalZ, 35.f);
 
-	htc->positionX += hc->cowardDirectionX * enemyStats->moveSpeed * GetDeltaTime();
-	htc->positionZ += hc->cowardDirectionZ * enemyStats->moveSpeed * GetDeltaTime();
+	htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
+	htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
 
 	hc->cowardCounter += GetDeltaTime();
 
@@ -370,12 +390,13 @@ bool HellhoundBehaviourSystem::Update()
 	EnemyComponent* enmComp = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
 
-	for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
-	{
-		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-		playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	}
+	//for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+	//{
+	//	playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+	//	playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+	//	playerStats = registry.GetComponent< StatComponent>(playerEntity);
+	//}
+
 
 	// FOR TESTING
 	/*int i = 0; 
@@ -401,7 +422,38 @@ bool HellhoundBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
-
+		//Find a player to kill.
+		if (enmComp->lastPlayer.index == -1)
+		{
+			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+			{
+				if (enemyEntity.index == playerEntity.index)
+				{
+					continue;
+				}
+				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+				playerStats = registry.GetComponent< StatComponent>(playerEntity);
+				enmComp->lastPlayer = playerEntity;
+				if (rand() % 2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			playerComponent = registry.GetComponent<PlayerComponent>(enmComp->lastPlayer);
+			playerTransformCompenent = registry.GetComponent<TransformComponent>(enmComp->lastPlayer);
+			playerStats = registry.GetComponent< StatComponent>(enmComp->lastPlayer);
+			if (playerComponent == nullptr)
+			{
+				for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+				{
+					enmComp->lastPlayer.index = -1;
+				}
+			}
+		}
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyAnim != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
@@ -412,12 +464,12 @@ bool HellhoundBehaviourSystem::Update()
 
 			if (hellhoundComponent->retreat)
 			{
-				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
 				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
+
 				hellhoundComponent->shootingCounter += GetDeltaTime();
 				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingChargeUpTime) // have we charged long enough?
 				{
@@ -436,7 +488,7 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (hellhoundComponent->attackStunDurationCounter <= hellhoundComponent->attackStunDuration)
 			{
-				enemyStats->knockback = 1.0f;
+				enemyStats->SetKnockbackMultiplier(1.0f);
 				enemyAnim->aAnim = ANIMATION_ATTACK;
 				enemyAnim->aAnimIdx = 2;
 				enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
@@ -482,9 +534,17 @@ bool HellhoundBehaviourSystem::Update()
 			else // idle
 			{
 				ResetHellhoundVariables(hellhoundComponent, true, true);
+				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 			}
 		}
+		//Idle if there are no players on screen.
+		else if (enemyStats->GetHealth() > 0.0f)
+		{
+			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
+			IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
+		}
+
 	}
 	return true;
 }

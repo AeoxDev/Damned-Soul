@@ -55,9 +55,18 @@ void ResetColor(EntityID& entity, const int& index)
 	float frequency = 10.0f; //Higher frequency = faster flashing lights
 	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
+	{
 		skelel->colorAdditiveRed = 0.0f;
+		skelel->colorAdditiveGreen = 0.0f;
+		skelel->colorAdditiveBlue = 0.0f;
+
+	}
 	if (bonel)
+	{
 		bonel->colorAdditiveRed = 0.0f;
+		bonel->colorAdditiveGreen = 0.0f;
+		bonel->colorAdditiveBlue = 0.0f;
+	}
 
 }
 

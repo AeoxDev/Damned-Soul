@@ -2,7 +2,6 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Components.h"
-#include "Particles.h"
 #include "EventFunctions.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
@@ -10,14 +9,13 @@
 #include "DeltaTime.h"
 #include "Model.h"
 #include "UIComponents.h"
-
+#include "States\StateManager.h"
 #include "UIRenderer.h"
 
 void LoadLevel2()
 {
 	EntityID stage = registry.CreateEntity();
 	EntityID playerUi = registry.CreateEntity();
-	EntityID particle = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -54,6 +52,7 @@ void LoadLevel2()
 	stageModel->colorMultiplicativeGreen = greenMult;
 	stageModel->colorMultiplicativeBlue = blueMult;
 	stageModel->colorAdditiveRed = redAdd;
+	stageModel->gammaCorrection = 0.9f;
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -71,7 +70,6 @@ void LoadLevel2()
 
 	//registry.AddComponent<ControllerComponent>(player);
 
-	registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
@@ -94,7 +92,7 @@ void LoadLevel2()
 	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
 
-	RenderGeometryIndependentCollision(stage);
+	
 
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
@@ -121,14 +119,32 @@ void LoadLevel2()
 			{
 				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard1 = CreateSquareStaticHazard("LavaPlaceholder.mdl", randX, 0.1f, randZ, randScaleX, 0.1f, randScaleZ,
-					-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-					3.0f, (float)rand(),
-					redAdd, greenAdd, blueAdd,
-					redMult, greenMult, blueMult);
+				EntityID hazard = registry.CreateEntity();
+				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+				hazardModel->colorAdditiveRed = redAdd;
+				hazardModel->colorAdditiveGreen = greenAdd;
+				hazardModel->colorAdditiveBlue = blueAdd;
+				hazardModel->colorMultiplicativeRed = redMult;
+				hazardModel->colorMultiplicativeGreen = greenMult;
+				hazardModel->colorMultiplicativeBlue = blueMult;
+				hazardModel->gammaCorrection = 1.5f;
+
+				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+				hazardTransform->positionX = randX;
+				hazardTransform->positionY = 0.1f;
+				hazardTransform->positionZ = randZ;
+				hazardTransform->scaleX = randScaleX;
+				hazardTransform->scaleY = 0.1f;
+				hazardTransform->scaleZ = randScaleZ;
+				hazardTransform->facingX = cosf((float)rand());
+				hazardTransform->facingZ = sinf((float)rand());
+				AddStaticHazard(hazard, HAZARD_LAVA);
 
 				succeded = true;
 			}
 		}
 	}
+	RenderGeometryIndependentCollision(stage);
+
+	stateManager.stage = stage;
 }

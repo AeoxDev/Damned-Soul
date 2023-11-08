@@ -2,11 +2,11 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Components.h"
-#include "Particles.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
 #include "Model.h"
 #include "UIComponents.h"
+#include "States\StateManager.h"
 
 void LoadLevel4()
 {
@@ -15,7 +15,6 @@ void LoadLevel4()
 	EntityID playerUi = registry.CreateEntity();
 	//EntityID skeleton = registry.CreateEntity();
 	//EntityID skeleton2 = registry.CreateEntity();
-	EntityID particle = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
 
 	//Player
@@ -35,12 +34,8 @@ void LoadLevel4()
 	stc->scaleZ = 1.0f;
 
 
-	ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 10.f, 5.f, 2.f, 1.f, 1.f, 1.f, SMOKE);
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
-
-	//ParticleComponent* particComp = registry.AddComponent<ParticleComponent>(particle, renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
-	////particComp->Setup(renderStates, Particles::RenderSlot, 5.f, 5.f, 2.f, 0.f, 0.f, 0.f, SMOKE);
 
 	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
 	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
@@ -58,4 +53,11 @@ void LoadLevel4()
 
 	RenderGeometryIndependentCollision(stage);
 
+
+	EntityID mouse = registry.CreateEntity();
+	registry.AddComponent<TransformComponent>(mouse);
+	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
+	mousePointOfInterset->mode = POI_MOUSE;
+
+	stateManager.stage = stage;
 }

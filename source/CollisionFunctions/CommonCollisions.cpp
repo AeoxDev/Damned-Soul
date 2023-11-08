@@ -6,10 +6,11 @@
 #include "UIRenderer.h"
 #include <assert.h>
 #include "UIRenderer.h"
-#include "RelicFunctions.h"
-#include "Relics\RelicFuncInputTypes.h"
+#include "Relics/RelicFunctions.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
+
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -120,7 +121,7 @@ void HardCollision(OnCollisionParameters& params)
 }
 
 //Check if attacker is static hazard and defender can hit static hazard.
-void StaticHazardAttackCollision(OnCollisionParameters& params)
+void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 {
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
@@ -165,6 +166,33 @@ void StaticHazardAttackCollision(OnCollisionParameters& params)
 	*/
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
+	if (enemy != nullptr)
+	{
+		enemy->lastPlayer = params.entity1;
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+		switch (enemy->type)
+		{
+		case EnemyType::hellhound:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::eye:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::skeleton:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
+			break;
+		}
+	}
 	if (params.entity2.index == stateManager.player.index)
 	{
 		//Screen shaking
@@ -265,6 +293,7 @@ void AttackCollision(OnCollisionParameters& params)
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
 	if (enemy != nullptr)
 	{
+		enemy->lastPlayer = params.entity1;
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
 		switch (enemy->type)
 		{
@@ -297,7 +326,7 @@ void AttackCollision(OnCollisionParameters& params)
 	int indexSpeedControl1 = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
 	int indexSpeedControl2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
 	//Squash both entities for extra effect
-	float squashKnockbackFactor = 1.0f + stat1->knockback * 0.1f;
+	float squashKnockbackFactor = 1.0f + stat1->GetKnockback() * 0.1f;
 	AddSquashStretch(params.entity2, Constant, 1.15f * squashKnockbackFactor, 1.1f, 0.75f);
 	int squashStretch2 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 	AddSquashStretch(params.entity1, Constant, 1.1f, 1.1f, 0.9f);
@@ -305,8 +334,8 @@ void AttackCollision(OnCollisionParameters& params)
 	//Knockback mechanic
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->knockback * params.normal1X / transform1->mass, stat2->knockback * params.normal1Z / transform1->mass);
-	AddKnockBack(params.entity2, stat1->knockback * params.normal2X / transform1->mass, stat1->knockback * params.normal2Z / transform1->mass);
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform1->mass, stat1->GetKnockback() * params.normal2Z / transform1->mass);
 	//Take damage and blinking
 	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
 	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now

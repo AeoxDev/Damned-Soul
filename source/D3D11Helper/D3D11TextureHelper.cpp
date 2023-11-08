@@ -1,8 +1,8 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <dxgi.h>
-#include "D3D11Helper.h"
-#include "D3D11Graphics.h"
+#include "D3D11Helper/D3D11Helper.h"
+#include "D3D11Helper/D3D11Graphics.h"
 #include "STB_Helper.h"
 #include "Hashing.h"
 #include <assert.h>
@@ -127,6 +127,34 @@ bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
 
+	return true;
+}
+
+bool UnsetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot)
+{
+	ID3D11ShaderResourceView* nullTexture = nullptr;
+	switch (shader)
+	{
+	case BIND_VERTEX:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_HULL:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_DOMAIN:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_GEOMETRY:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_PIXEL:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	default:
+		assert("Corrupt or incorrent Shader Type to bind!"[0] == "ERROR"[0]);
+		return false;
+		break; // Yes, this break is unnessecary, but it looks nice
+	}
 	return true;
 }
 
