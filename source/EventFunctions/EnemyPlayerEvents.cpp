@@ -2,10 +2,12 @@
 #include "Components.h"
 #include "Registry.h"
 #include "Relics/RelicFunctions.h"
-#include "Relics/RelicFuncInputTypes.h" //Why isn't this included by RelicFunctions? Hermaaaaaaaaan
+#include "Relics\Utility\RelicFuncInputTypes.h" //Why isn't this included by RelicFunctions? Hermaaaaaaaaan
 #include "DeltaTime.h"
 #include "Levels/LevelHelper.h"
 #include "UIRenderer.h"
+#include "States\StateManager.h"
+#include <cmath>
 #include "CombatFunctions.h"
 //#include <cmath> //sin
 
@@ -23,6 +25,7 @@ void BeginHit(EntityID& entity, const int& index)
 	//ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
+
 
 	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	////Deal regular damage as well as on-hit damage from potential relics
@@ -119,6 +122,14 @@ void HazardBeginHit(EntityID& entity, const int& index)
 			break;
 		}
 	}
+	else
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		if (player != nullptr)
+		{
+			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Base);
+		}
+	}
 
 	//Get relevant components
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
@@ -166,4 +177,51 @@ void HazardEndHit(EntityID& entity, const int& index)
 		skelel->colorAdditiveRed = 0.0f;
 	if (bonel)
 		bonel->colorAdditiveRed = 0.0f;
+}
+
+void StaticHazardDamage(EntityID& entity, const int& index)
+{
+	int condition = GetTimedEventCondition(entity, index);
+	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+	int cameraShake = 0;
+	int color = 0;
+	switch (condition)
+	{
+	case HAZARD_LAVA:
+		//if (duck relic, skip)
+		if (stat->hazardModifier == 0.0f)
+		{
+			return;
+		}
+		if (entity.index == stateManager.player.index)
+		{
+			cameraShake = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, ShakeCamera, HAZARD_LAVA_UPDATE_TIME, ResetCameraOffset, 0, 1);
+		}
+		stat->ApplyDamage(HAZARD_LAVA_DAMAGE * stat->hazardModifier, entity.index == stateManager.player.index);
+		color = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, LavaBlinkColor, HAZARD_LAVA_UPDATE_TIME, ResetColor); //No special condition for now
+		break;
+	default:
+		break;
+	}
+}
+
+void LavaBlinkColor(EntityID& entity, const int& index)
+{
+	//Flash color red repeatedly
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	float frequency = 16.0f; //Higher frequency = faster flashing lights
+	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	if (skelel)
+	{
+		skelel->colorAdditiveRed = cosineWave;
+		skelel->colorAdditiveGreen = 0.2f * cosineWave;
+	}
+		
+	if (bonel)
+	{
+		bonel->colorAdditiveRed = cosineWave;
+		bonel->colorAdditiveGreen = 0.2f * cosineWave;
+	}
+		
 }

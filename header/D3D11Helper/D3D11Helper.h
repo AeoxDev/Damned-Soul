@@ -93,6 +93,8 @@ TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFla
 
 // Set a material
 bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot);
+// Set a material
+bool UnsetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot);
 // Release for a single texture, make sure you dont accidently release a texture that is being used by an RTV, SRV or UAV
 void ReleaseTX(const TX_IDX idx);
 

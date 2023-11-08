@@ -9,7 +9,7 @@
 #include "DeltaTime.h"
 #include "Model.h"
 #include "UIComponents.h"
-
+#include "States\StateManager.h"
 #include "UIRenderer.h"
 
 void LoadLevel3()
@@ -76,13 +76,13 @@ void LoadLevel3()
 	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
 
-	RenderGeometryIndependentCollision(stage);
+	
 
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-
+	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 	CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -103,13 +103,31 @@ void LoadLevel3()
 			{
 				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard1 = CreateSquareStaticHazard("LavaPlaceholder.mdl", randX, 0.1f, randZ, randScaleX, 0.1f, randScaleZ,
-					-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-										3.0f, (float)rand(),
-					redAdd - 0.1f, greenAdd - 0.1f, blueAdd +0.5f,
-					redMult * 0.8f, greenMult * 0.8f, blueMult * 1.5f);
+				EntityID hazard = registry.CreateEntity();
+				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+				hazardModel->colorAdditiveRed = redAdd;
+				hazardModel->colorAdditiveGreen = greenAdd;
+				hazardModel->colorAdditiveBlue = blueAdd;
+				hazardModel->colorMultiplicativeRed = redMult;
+				hazardModel->colorMultiplicativeGreen = greenMult;
+				hazardModel->colorMultiplicativeBlue = blueMult;
+				hazardModel->gammaCorrection = 1.5f;
+				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+				hazardTransform->positionX = randX;
+				hazardTransform->positionY = 0.1f;
+				hazardTransform->positionZ = randZ;
+				hazardTransform->scaleX = randScaleX;
+				hazardTransform->scaleY = 0.1f;
+				hazardTransform->scaleZ = randScaleZ;
+				hazardTransform->facingX = cosf((float)rand());
+				hazardTransform->facingZ = sinf((float)rand());
+				AddStaticHazard(hazard, HAZARD_LAVA);
+
 				succeded = true;
 			}
 		}
 	}
+	RenderGeometryIndependentCollision(stage);
+
+	stateManager.stage = stage;
 }

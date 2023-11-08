@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "UIRenderer.h"
 #include "Relics/RelicFunctions.h"
-#include "Relics\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
 
@@ -121,7 +121,7 @@ void HardCollision(OnCollisionParameters& params)
 }
 
 //Check if attacker is static hazard and defender can hit static hazard.
-void StaticHazardAttackCollision(OnCollisionParameters& params)
+void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 {
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
@@ -263,32 +263,7 @@ void AttackCollision(OnCollisionParameters& params)
 	*/
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy != nullptr)
-	{
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case EnemyType::hellhound:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::eye:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Eye_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::skeleton:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
-			}
-			break;
-		}
-	}
+
 	//Camera Shake
 	int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
 	//Hitstop, pause both animations for extra effect
@@ -312,6 +287,44 @@ void AttackCollision(OnCollisionParameters& params)
 	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
 	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
+
+	//Play hurt sound
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
+	if (enemy != nullptr)
+	{
+		enemy->lastPlayer = params.entity1;
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+		switch (enemy->type)
+		{
+		case EnemyType::hellhound:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::eye:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::skeleton:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
+			break;
+		}
+	}
+	else
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(params.entity2);
+		if (player != nullptr)
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+			sfx->Play(Player_Hurt, Channel_Base);
+		}
+	}
 	
 	//Redraw UI (player healthbar) since someone will have taken damage at this point. 
 	//If RedrawUI() is bad to call it's probably good to try and make sure this only happens if player is the one who got attacked

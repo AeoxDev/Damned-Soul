@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Input.h"
 #include "EventFunctions.h"
+#include "States\StateManager.h"
 
 bool ControllerSystem::Update()
 {
@@ -132,6 +133,27 @@ bool ControllerSystem::Update()
 			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
 		}
+#ifdef _DEBUG
+		if (keyState[SCANCODE_G] == pressed) {
+			StatComponent* pStats = registry.GetComponent<StatComponent>(stateManager.player);
+			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+			HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
+			hitbox->circleHitbox[2].radius = 10000000.0f;
+			if (pStats->hazardModifier > -100.0f)
+			{
+				transform->mass += 100.0f;
+				player->killingSpree = 10000;
+				player->UpdateSouls(1000000);
+				hitbox->circleHitbox[2].radius += 10000000.0f;
+			}
+			else
+			{
+				transform->mass -= 100.0f;
+				hitbox->circleHitbox[2].radius -= 10000000.0f;
+			}
+		}
+#endif // _DEBUG
+
 	}
 	//Loop for player during other places
 	return true;

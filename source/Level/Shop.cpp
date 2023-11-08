@@ -6,7 +6,9 @@
 #include "Levels\LevelHelper.h"
 #include "States/StateManager.h"
 #include "UIButtonFunctions.h"
+#include "UIRenderer.h"
 #include "UIComponents.h"
+#include "Model.h"
 #include "States/StateEnums.h"
 
 void CreateUIRelics(UIComponent& uiComp, UIRelicWindowComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)

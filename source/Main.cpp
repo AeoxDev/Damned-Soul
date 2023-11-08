@@ -10,11 +10,13 @@
 //#define TEST3000
 
 #ifdef TEST3000
+#define SIMULATED_FRAMES 1
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
+#include "Level.h"
 #endif // TEST
 
 
-void UpdateDebugWindowTitle(std::string& title);
+void UpdateDebugWindowTitle(std::string& title, std::string extra);
 
 int main(int argc, char* args[])
 {
@@ -37,29 +39,41 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
-		UIFunc::LoadNextLevel(nullptr, i);
+		UIFunc::LoadNextLevel(nullptr);
+		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
+		{
+			CountDeltaTime();
+
+			//Show the amount of reloads we've done up in the window title. No real reason
+			UpdateDebugWindowTitle(title, " load: " + std::to_string(i) + " / 3000");
+			stateManager.Update();
+
+			stateManager.EndFrame();
+
+			MemLib::pdefrag();
+		}
+		
+	}
+	//Simulate main menu for 3000 frames
+	gameSpeed = 24.0f;
+	LoadLevel(666);//Load the menu
+	for (size_t i = 0; i < 3000; i++)
+	{
 		CountDeltaTime();
-
-		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
-
-		//Show the amount of reloads we've done up in the window title. No real reason
-		numReloads = i;
-		SetWindowTitle(title + std::to_string(numReloads));
-		stateManager.Update();//Lastly do the cpu work
-
+		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / 3000");
+		stateManager.Update();
 		stateManager.EndFrame();
-
 		MemLib::pdefrag();
 	}
+	gameSpeed = 1.0f;
+	LoadLevel(666);//Reload the menu
 #endif // TEST3000
-
-
 
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
 		
-		UpdateDebugWindowTitle(title);//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
+		UpdateDebugWindowTitle(title, "");//Update: CPU work. Do the CPU work after GPU calls for optimal parallelism
 		
 		stateManager.Update();//Lastly do the cpu work
 
@@ -73,18 +87,19 @@ int main(int argc, char* args[])
 	return 0;
 }
 
-void UpdateDebugWindowTitle(std::string& title)
+void UpdateDebugWindowTitle(std::string& title, std::string extra)
 {
 //#ifdef _DEBUG
 	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
 	{
 		return;
 	}
+	SetWindowTitle(title + extra);
 	if (NewSecond())
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps) ";
 		//title+="";//Add more debugging information here, updates every second.
-		SetWindowTitle(title);
+		SetWindowTitle(title + extra);
 	}
 //#endif // _DEBUG Debugging purposes, not compiled in release
 }

@@ -6,12 +6,28 @@
 #include "UI/UIRenderer.h"
 #include <random>
 
+
+
+
+
+
 #define SKELETON_ATTACK_HITBOX 2
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, 
+	TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp, float goalDirectionX, float goalDirectionZ, bool path)
 {
-	skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
-	skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+	if (path)
+	{
+		skeletonComponent->goalDirectionX = goalDirectionX;
+		skeletonComponent->goalDirectionZ = goalDirectionZ;
+	}
+	else
+	{
+		skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
+		skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+	}
+	//
+	 //
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
@@ -33,9 +49,10 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
 {
+
 	skeletonComponent->timeCounter += GetDeltaTime();
 
-	animComp->aAnim = ANIMATION_IDLE;
+	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
@@ -100,23 +117,62 @@ bool SkeletonBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
+	EnemyComponent* enmComp = nullptr;
 
-	for (auto playerEntity : View<PlayerComponent, TransformComponent, StatComponent>(registry))
-	{
-		playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-		playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-		playerStats = registry.GetComponent< StatComponent>(playerEntity);
-	}
+	bool updateGridOnce = true;
+	PathfindingMap valueGrid;
 
-	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
+	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
 		skeletonComponent = registry.GetComponent<SkeletonBehaviour>(enemyEntity);
 		skeletonTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+		//Find a player to kill.
+		if (enmComp->lastPlayer.index == -1)
+		{
+			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+			{
+				if (enemyEntity.index == playerEntity.index)
+				{
+					continue;
+				}
+				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+				playerStats = registry.GetComponent< StatComponent>(playerEntity);
+				enmComp->lastPlayer = playerEntity;
+				if (rand() % 2)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			playerComponent = registry.GetComponent<PlayerComponent>(enmComp->lastPlayer);
+			playerTransformCompenent = registry.GetComponent<TransformComponent>(enmComp->lastPlayer);
+			playerStats = registry.GetComponent< StatComponent>(enmComp->lastPlayer);
+			if (playerComponent == nullptr)
+			{
+				for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+				{
+					if (enemyEntity.index == playerEntity.index)
+					{
+						continue;
+					}
+					enmComp->lastPlayer.index = -1;
+				}
+			}
+		}
 
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
+			ML_Vector<Node> finalPath;
+			skeletonComponent->updatePathCounter += GetDeltaTime();
+#ifdef PATH_FINDING_VISUALIZER
+			skeletonComponent->testUpdateTimer += GetDeltaTime();
+#endif // TEST
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
@@ -126,6 +182,8 @@ bool SkeletonBehaviourSystem::Update()
 				//Elliot: When finished, reset attack timer and hitbox
 				skeletonComponent->attackTimer = 0.0f;
 				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
+				//Turn yellow for opening:
+				
 				continue;
 			}
 			else//Elliot: Turn off attack hitbox to not make player rage.
@@ -136,18 +194,117 @@ bool SkeletonBehaviourSystem::Update()
 
 
 			//Elliot: If in attack, keep attacking even if player is outside
-			if (distance < 2.5f || skeletonComponent->attackTimer > 0.0f)
+			if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f)
 			{
 				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
 			}
 			else if (distance < 50.f) //hunting distance
 			{
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
+				
+#ifdef PATH_FINDING_VISUALIZER
+				TransformComponent* doggoT;
+				for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent, StatComponent>(registry))
+				{
+					doggoT = registry.GetComponent<TransformComponent>(enemyEntity);
+				}
+
+#endif // TEST
+				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
+				{
+					skeletonComponent->updatePathCounter = 0;
+					if (playerComponent != nullptr && updateGridOnce)
+					{
+						updateGridOnce = false;
+						valueGrid = CalculateGlobalMapValuesSkeleton(playerTransformCompenent);
+						if (valueGrid.cost[0][0] == -69.f)
+						{
+							updateGridOnce = true;
+							continue;
+						}
+					}
+						
+					finalPath = CalculateAStarPath(valueGrid, skeletonTransformComponent, playerTransformCompenent);
+#ifdef PATH_FINDING_VISUALIZER
+					skeletonComponent->coolVec.clear();
+					skeletonComponent->counterForTest = 0;
+#endif // TEST
+					if (finalPath.size() > 2)
+					{
+						skeletonComponent->fx = finalPath[0].fx;
+						skeletonComponent->fz = finalPath[0].fz;
+						skeletonComponent->followPath = true;
+					}
+					
+#ifdef PATH_FINDING_VISUALIZER
+					for (int p = 0; p < finalPath.size(); p++)
+					{
+						finalPath[p].fx = skeletonComponent->fx;
+						finalPath[p].fz = skeletonComponent->fz;
+						skeletonComponent->coolVec.push_back((float)finalPath[p].x);
+						skeletonComponent->coolVec.push_back((float)finalPath[p].z);
+					}
+#endif // TEST
+					// goal (next node) - current
+					if (finalPath.size() > 2 && skeletonComponent->followPath)
+					{
+						skeletonComponent->dirX = finalPath[1].x - finalPath[0].x;
+						skeletonComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
+						skeletonComponent->dir2X = finalPath[2].x - finalPath[1].x;
+						skeletonComponent->dir2Z = -(finalPath[2].z - finalPath[1].z);
+						skeletonComponent->followPath = true;
+					}
+					else
+					{
+ 						skeletonComponent->followPath = false;
+					}
+				}   
+#ifdef PATH_FINDING_VISUALIZER
+				else if(skeletonComponent->counterForTest + 1 < skeletonComponent->coolVec.size() && (skeletonComponent->testUpdateTimer >= skeletonComponent->testUpdateLimit))
+				{
+					skeletonComponent->testUpdateTimer = 0.f;
+					Coordinate2D gridOnPos;
+					GridPosition coorde;
+					
+					coorde.x = skeletonComponent->coolVec[skeletonComponent->counterForTest];
+					coorde.z = skeletonComponent->coolVec[skeletonComponent->counterForTest + 1];
+					GeometryIndependentComponent* ggg = registry.GetComponent<GeometryIndependentComponent>(playerComponent->mapID); //just need GIcomp
+
+
+					coorde.fx = skeletonComponent->fx;
+					coorde.fz = skeletonComponent->fz;
+
+					gridOnPos = GridOnPosition(coorde, ggg, true);
+					doggoT->positionX = gridOnPos.x;
+					doggoT->positionZ = gridOnPos.z;
+
+
+					skeletonComponent->counterForTest += 2;
+				}
+#endif // TEST
+				
+				if (skeletonComponent->followPath == true && skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit / 2.f)
+				{
+					skeletonComponent->dirX = skeletonComponent->dir2X;
+					skeletonComponent->dirZ = skeletonComponent->dir2Z;
+				}
+				
+				if (distance < skeletonComponent->meleeDistance * 2.f) // dont follow path, go melee
+				{
+					skeletonComponent->followPath = false;
+				} 
+				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
 			}
 			else // idle
 			{
+				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
+		}
+		//Idle if there are no players on screen.
+		else  if (enemyStats->GetHealth() > 0.0f)
+		{
+			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
+			IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 		}
 	}
 

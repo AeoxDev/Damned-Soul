@@ -42,5 +42,5 @@ void SetLightAngle(const EntityID& entity, const float& cone);//Angle in degrees
 
 void RemoveLight(EntityID& entity);
 
-void OffsetPosition(EntityID& entity, const float& x, const float& y, const float& z);
+void OffsetPosition(EntityID& entity, const float& x, const float& y, const float& z, const float& fx, const float& fy, const float& fz);
 void OffsetFacing(EntityID& entity, const float& x, const float& y, const float& z);

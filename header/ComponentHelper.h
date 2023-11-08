@@ -50,6 +50,12 @@ public:
 	// for death animation
 	bool performingDeathAnimation = false;
 
+	//Hazards
+	float baseHazardModifier = 1.0f;
+	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
+	bool baseCanWalkOnCrack = false;//onCrack
+	bool canWalkOnCrack = false;//If the entity can walk on cracks or not.
+
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
 	{/* m_baseMoveSpeed = m_moveSpeed; */}
 
@@ -60,6 +66,9 @@ public:
 	bool IsModified() const;
 	// Set all stat bonuses to zero
 	void ZeroBonusStats();
+	
+
+	
 
 // Defensive Stats
 	// Get max health
@@ -70,8 +79,17 @@ public:
 	float GetHealthFraction() const;
 	// Update the entity's bonus health
 	void UpdateBonusHealth(const float delta);
-	// Update current health
-	float UpdateHealth(const float delta, const bool hitByEnemy = false);
+
+	// Limit current health to max health
+	float CapHealth();
+	// Update current health while not triggering triggered effects (aside from updating UI)
+	// This should NOT normally be called anywhere without very good reason, use ApplyDamage or ApplyHealing instead
+	// Negative values becomes damage, positive values becomes healing
+	float StealthilyModifyHealth(const float delta);
+	// Apply damage
+	float ApplyDamage(const float damage, const bool hitByEnemy = false);
+	// Apply healing
+	float ApplyHealing(const float healing, const bool hitByEnemy = false);
 
 // Speed
 	// Get the current speed
@@ -113,6 +131,8 @@ public:
 	int killThreshold = 0;
 	bool portalCreated = false;
 
+	
+
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses
@@ -151,6 +171,7 @@ struct CollisionParamsComponent
 //
 struct EnemyComponent
 {
+	EntityID lastPlayer = {-1, false, ENT_PERSIST_LOWEST};//The last player to hit the enemy
 	int soulCount = 0;
 	int attackHitBoxID = -1;
 	int specialHitBoxID = -1;

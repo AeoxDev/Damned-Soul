@@ -156,52 +156,78 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
 
-	registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
+	StatComponent* stat = registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
 	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
 
-	
+	ModelSkeletonComponent* model = nullptr;
 
 	if (eType == EnemyType::hellhound)
 	{
-		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::hellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::skeleton)
 	{
-		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHSkeleton.mdl"));
+		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
+		//model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHSkeleton.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<SkeletonBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 0.9f, EnemyType::skeleton);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
+		
 	}
 	else if (eType == EnemyType::eye)
 	{
-		registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->baseCanWalkOnCrack = true;
+		stat->canWalkOnCrack = true;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, EnemyType::eye, false);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(EYE);
-		player->killThreshold++;
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
+		stat->hazardModifier = 0.0f;
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
+		mod->gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
-		player->killThreshold += 15;
+		if (player)
+		{
+			player->killThreshold+=15;
+		}
 	}
-
+	if (model != nullptr)
+	{
+		model->gammaCorrection = 1.5f;
+	}
+	CreatePointLight(entity, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 	return entity;
 }
 
@@ -210,7 +236,11 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//Create player
 	stateManager.player = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
-	registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+	model->colorMultiplicativeRed = 1.25f;
+	model->colorMultiplicativeGreen = 1.25f;
+	model->colorMultiplicativeBlue = 1.25f;
+	model->gammaCorrection = 1.5f;
 	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
 
 	//stateManager.player Sounds
@@ -230,6 +260,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	registry.AddComponent<PointOfInterestComponent>(stateManager.player, poic);
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
+	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)
@@ -252,7 +283,11 @@ void ReloadPlayerNonGlobals()
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{
-		registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+		modelLoaded->colorMultiplicativeRed = 1.25f;
+		modelLoaded->colorMultiplicativeGreen = 1.25f;
+		modelLoaded->colorMultiplicativeBlue = 1.25f;
+		modelLoaded->gammaCorrection = 1.5f;
 	}
 	AnimationComponent* animationLoaded = registry.GetComponent<AnimationComponent>(stateManager.player);
 	if (animationLoaded == nullptr)
@@ -287,4 +322,13 @@ void ReloadPlayerNonGlobals()
 	MouseComponentAddComponent(stateManager.player);
 
 	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
+	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+}
+
+EntityID RandomPlayerEnemy(EnemyType enemyType) {
+	EntityID enemy = SetupEnemy(enemyType, (float)(rand() % 100) - 50.0f, 0.f, (float)(rand() % 100) - 50.0f);
+	SetHitboxIsPlayer(enemy, 1, true);
+	registry.AddComponent<PlayerComponent>(enemy);
+	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
+	return enemy;
 }

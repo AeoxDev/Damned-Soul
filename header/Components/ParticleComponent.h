@@ -1,8 +1,5 @@
 #pragma once
-#include "GameRenderer.h"
-#include "Particles.h"
-#include "EntityFramework.h"
-#include "Registry.h"
+#include "EntityID.h"
 
 enum ComputeShaders
 {

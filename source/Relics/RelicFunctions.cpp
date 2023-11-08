@@ -1,5 +1,5 @@
-#include "Relics/RelicFunctions.h"
-#include "Relics/RelicInternalHelper.h"
+#include "Relics\RelicFunctions.h"
+#include "Relics\Utility\RelicInternalHelper.h"
 // Include MemLib
 #include "MemLib\MemLib.hpp"
 // Used to contain the different function vectors
@@ -9,25 +9,28 @@
 
 // Include all relics
 	/*Offense*/
-#include "Relics\DemonBonemarrow.h"
-#include "Relics\FlameWeapon.h"
-#include "Relics\SoulPower.h"
-#include "Relics\LifeSteal.h"
-#include "Relics\AdvancedFighting.h"
+#include "Relics\Offensive\DemonBonemarrow.h"
+#include "Relics\Offensive\FlameWeapon.h"
+#include "Relics\Offensive\SoulPower.h"
+#include "Relics\Offensive\LifeSteal.h"
+#include "Relics\Offensive\AdvancedFighting.h"
 	/*Defense*/
-#include "Relics\DemonHeart.h"
-#include "Relics\FrostFire.h"
-#include "Relics\SoulHealth.h"
-#include "Relics\DemonSkin.h"
-#include "Relics\SpikedSkin.h"
+#include "Relics\Defensive\Hearts\DemonHeart.h"
+#include "Relics\Defensive\Hearts\CorruptedHeart.h"
+#include "Relics\Defensive\Hearts\MoltenHeart.h"
+#include "Relics\Defensive\Hearts\MummifiedHeart.h"
+#include "Relics\Defensive\FrostFire.h"
+#include "Relics\Defensive\SoulHealth.h"
+#include "Relics\Defensive\DemonSkin.h"
+#include "Relics\Defensive\SpikedSkin.h"
 	/*Gadget*/
-#include "Relics\SpeedyLittleDevil.h"
-#include "Relics\LightningGod.h"
-#include "Relics\Reckless.h"
-#include "Relics\SoulSpeed.h"
+#include "Relics\Gadget\SpeedyLittleDevil.h"
+#include "Relics\Gadget\LightningGod.h"
+#include "Relics\Gadget\Reckless.h"
+#include "Relics\Gadget\SoulSpeed.h"
 // End of include all relics
 
-#include "Relics\ML_RelicArray.h"
+#include "Relics\Utility\ML_RelicArray.h"
 #include "MemLib\ML_Vector.hpp"
 
 #include <random>
@@ -51,7 +54,7 @@ void _validateRelicFunctions()
 		_RelicFunctions->emplace((RELIC_FUNCTION_TYPE)i, ML_Vector<VECTOR_FUNCTION_TYPE>());
 	}
 
-	std::srand(time(NULL));
+	std::srand((unsigned)time(NULL));
 };
 
 // Master list of relics, used to keep track of all relics that exist
@@ -120,10 +123,34 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Demon Heart",
 				/*Filepath*/	"RelicIcons\\Demon_Heart",
-				/*Description*/	"Increases your Maximum Health by 75 when obtained.",
-				/*Price*/		10,
+				/*Description*/	"Increases your Maximum Health by 25",
+				/*Price*/		6,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Corrupted Heart",
+				/*Filepath*/	"RelicIcons\\Corrupted_Heart",
+				/*Description*/	"Increases your Maximum Health by 40",
+				/*Price*/		9,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	CORRUPTED_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Molten Heart",
+				/*Filepath*/	"RelicIcons\\Molten_Heart",
+				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained.",
+				/*Price*/		7,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	MOLTEN_HEART::Initialize
+			),
+			RelicData(
+				/*Name*/		"Mummified Heart",
+				/*Filepath*/	"RelicIcons\\Mummified_Heart",
+				/*Description*/	"Increases your Maximum Health by 15",
+				/*Price*/		3,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	MUMMIFIED_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Frost Fire",
@@ -169,7 +196,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Lightning God",
 				/*Filepath*/	"RelicIcons\\Lightning_God",
 				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
-				/*Price*/		1,
+				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	LIGHTNING_GOD::Initialize
 			),

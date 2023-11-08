@@ -1,7 +1,8 @@
 #include "Components.h"
 #include "Relics/RelicFunctions.h"
-#include "Relics/RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 #include "UIRenderer.h"
+#include "States\StateManager.h"
 
 void StatComponent::MarkAsModified()
 {
@@ -38,56 +39,102 @@ float StatComponent::GetHealthFraction() const
 	return this->m_currentHealth / GetMaxHealth();
 }
 
-float StatComponent::UpdateHealth(const float delta, const bool hitByEnemy)
+float StatComponent::CapHealth()
 {
-	// If damage is being delt, apply the damage
-	if (delta < 0)
+	float maxHp = GetMaxHealth();
+	bool contained = m_currentHealth < maxHp;
+
+	// Branchless limit
+	m_currentHealth = (m_currentHealth * contained) + (maxHp * !contained);
+	// Return current health
+	return m_currentHealth;
+}
+
+float StatComponent::StealthilyModifyHealth(const float delta)
+{
+	//// If damage is being delt, apply the damage
+	//if (delta < 0)
+	//{
+	//	// Damage is affected by damage reduction
+	//	m_currentHealth += delta;
+	//}
+	//// If healing is being applied, increase current health and then cap it at maximum health
+	//else if (0 < delta && m_currentHealth < GetMaxHealth())
+	//{
+	//	m_currentHealth += delta;
+	//	m_currentHealth = m_currentHealth < GetMaxHealth() ? m_currentHealth : GetMaxHealth();
+	//}
+	//// Else, do nothing, only return
+	//else
+	//{
+	//	return m_currentHealth;
+	//}
+
+	//// Some sort of health mod happened, do the health mod relics
+	//auto hpUpdate = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_TAKEN);
+	//RelicInput::OnHealthUpdate hpUpdateData =
+	//{
+	//	/*Adress Of StatComp*/	this,
+	//	/*Delta Health*/		delta
+	//};
+	//for (uint32_t i = 0; i < hpUpdate.size(); ++i)
+	//{
+	//	hpUpdate[i](&hpUpdateData);
+	//}
+	//RedrawUI();
+	//// Return the new current health
+	//return m_currentHealth;
+
+	m_currentHealth += delta;
+	CapHealth();
+	RedrawUI();
+
+	// Return current health
+	return m_currentHealth;
+}
+
+float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
+{
+	if (0 < damage)
 	{
-		// Damage is affected by damage reduction
-		m_currentHealth += delta;
-		if (hitByEnemy)
+		// Apply damage as a negative delta
+		StealthilyModifyHealth(-damage);
+
+		// Apply on damage taken effects
+		RelicInput::OnHealthUpdate hpUpdateData =
 		{
-			//Play hurt sound
-			for (auto entity : View<PlayerComponent>(registry))
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-				if (m_currentHealth <= 0)
-				{
-					sfx->Play(Player_Death, Channel_Base);
-				}
-				else
-				{
-					sfx->Play(Player_Hurt, Channel_Base);
-				}
-			}
-		}
-	}
-	// If healing is being applied, increase current health and then cap it at maximum health
-	else if (0 < delta && m_currentHealth < GetMaxHealth())
-	{
-		m_currentHealth += delta;
-		m_currentHealth = m_currentHealth < GetMaxHealth() ? m_currentHealth : GetMaxHealth();
-	}
-	// Else, do nothing, only return
-	else
-	{
-		return m_currentHealth;
+			/*Adress Of StatComp*/	this,
+			/*Delta Health*/		damage
+		};
+		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_TAKEN))
+			func(&hpUpdateData);
 	}
 
-	// Some sort of health mod happened, do the health mod relics
-	auto hpUpdate = Relics::GetFunctionsOfType(Relics::FUNC_ON_HEALTH_MODIFIED);
-	RelicInput::OnHealthUpdate hpUpdateData =
+	// Return current health
+	// Can potentially return negative
+	return GetHealth();
+}
+
+float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
+{
+	if (0 < healing && m_currentHealth < GetMaxHealth())
 	{
-		/*Delta Health*/		delta,
-		/*Adress Of StatComp*/	this
-	};
-	for (uint32_t i = 0; i < hpUpdate.size(); ++i)
-	{
-		hpUpdate[i](&hpUpdateData);
+		// Apply healing as a positive delta
+		StealthilyModifyHealth(+healing);
+
+		// Apply on healing applied effects
+		RelicInput::OnHealthUpdate hpUpdateData =
+		{
+			/*Adress Of StatComp*/	this,
+			/*Delta Health*/		healing
+		};
+		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_HEALING_TAKEN))
+			func(&hpUpdateData);
 	}
-	RedrawUI();
-	// Return the new current health
-	return m_currentHealth;
+
+	// Return current health
+	// Can potentially return greater than max, but StatCalcSystem does limit current health to max health when calculating stats later
+	return GetHealth();
 }
 
 void StatComponent::UpdateBonusHealth(const float delta)

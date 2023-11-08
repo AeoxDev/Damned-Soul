@@ -13,6 +13,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "DeltaTime.h"
+#include "RenderDepthPass.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -131,7 +132,7 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystemGPU());
 
 	// Render/GPU
-	systems.push_back(new UIRenderSystem());
+	
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new RenderSystem());
 	//systems[2]->timeCap = 1.f / 60.f;
@@ -176,7 +177,8 @@ int StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
 	systems.push_back(new UIShopSystem());
-
+	//Lastly redraw the 2D UI
+	systems.push_back(new UIRenderSystem());//Render in 2D. Does not use 3d pipeline
 	return 0;
 }
 
@@ -259,6 +261,7 @@ void StateManager::UnloadAll()
 	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
+	ReleaseDepthPass();
 	EndDirectX();
 }
 
