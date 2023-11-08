@@ -50,14 +50,13 @@ void Particles::InitializeParticles()
 		particles[i].rotationZ = 0.f;
 		particles[i].rgb = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 		particles[i].size = 0.f;
-	}
+		particles[i].patterns= DirectX::XMFLOAT4(-1.0f, -1.0f, -1.0f,-1.0f);
 
+	}
 
 	m_readWriteBuffer->inputUAV = CreateUnorderedAccessViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, BIND_UNORDERED_ACCESS, NONE);
 	m_readWriteBuffer->outputUAV = CreateUnorderedAccessViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, BIND_UNORDERED_ACCESS, NONE);
 	MemLib::spop(); // for particles
-
-
 
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
@@ -106,8 +105,6 @@ ParticleMetadataBuffer* Particles::GetData()
 //Array with base rotations
 
 //Transform update: Loop to update metatdata with transform and base pos/rotations.
-
-
 
 void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 {
@@ -167,15 +164,24 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	if(data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	if (data->metadata[metaDataSlot].pattern == 0)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
-		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
 
-		//SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
+		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+
+		SetSamplerState(sampler, 2); //Set sampler
+
+	}
+	else if(data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	{
+
+		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
+		
 		SetSamplerState(sampler, 2); //Set sampler
 	}
 	else
 	{
+		
 		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
 		SetSamplerState(sampler, 2); //Set sampler
 	}

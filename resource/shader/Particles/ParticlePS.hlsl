@@ -1,54 +1,88 @@
 Texture2D flipBookTex : register(t2);
 SamplerState WrapSampler : register(s2);
 
+
 struct GS_OUT
 {
     float4 position : SV_POSITION;
     float4 rgb : RGB;
     float2 uv : UV;
     float time : TIME;
+    float4 patterns : PATTERNS;
 };
 
 float4 main(GS_OUT input) : SV_TARGET
 {
     int counter = 0;
-    float differ = 0.0f;
     float time = 0.0f;
+    int pattern = (int)input.patterns.x;
+    time = (int)input.time;
     
-    //float4 image = (0.0f, 0.0f, 0.0f, 0.0f);
-    //float4 image = flipBookTex.Sample(WrapSampler, input.uv); //texturImage 
-    
-    //pos = timeInSeconds;
-    counter = input.time;
-    
-    if ((int)differ != (int)time)
+    if (input.time >= (time + 0.25) && input.time < (time + 0.50))
     {
-        counter++;
-        
-        //image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
+        counter = 1;
     }
-    
+    else if (input.time >= (time + 0.50) && input.time < (time + 0.75))
+    {
+        counter = 2;
+    }
+    else if (input.time >= (time + 0.75) && input.time < (time + 0.99))
+    {
+        counter = 3;
+    }
+    else if (input.time >= (time + 0.99) || input.time < (time + 0.24))
+    {
+        counter = 4;
+    }
+  
+   
     float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
     //Animation
     
     //4x4 sections, Top Row
-    if (counter == 1)
+    if (pattern == 0) //patterns = 0(SMOKE)
     {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
+        if (counter == 1)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
+        }
+        else if (counter == 2)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
+        }
+        else if (counter == 3)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4));
+        }
+        else if (counter == 4)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
+            counter = 0;
+        }
     }
-    else if (counter == 2)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 3)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 4)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
-        counter = 0;
-    }
+    
+    //if (pattern < 1) //patterns = 0(SMOKE)
+    //{
+    //    if (counter == 1)
+    //    {
+    //        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
+    //    }
+    //    else if (counter == 2)
+    //    {
+    //        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
+    //    }
+    //    else if (counter == 3)
+    //    {
+    //        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4));
+    //    }
+    //    else if (counter == 4)
+    //    {
+    //        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
+    //        counter = 0;
+    //    }
+    //}
+   
+    
     //X=1,Y=1
     //float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
     //X=2,Y=1

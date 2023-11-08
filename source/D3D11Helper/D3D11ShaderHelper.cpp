@@ -92,7 +92,7 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	};
 	Layout screenLayout = { UIInputDesc, ARRAYSIZE(UIInputDesc) };
 
-	D3D11_INPUT_ELEMENT_DESC ParticleInputDesc[6] =
+	D3D11_INPUT_ELEMENT_DESC ParticleInputDesc[7] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TIME", 0, DXGI_FORMAT_R32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -100,6 +100,7 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 		{"ROTATIONZ", 0, DXGI_FORMAT_R32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"RGB", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"SIZE", 0, DXGI_FORMAT_R32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"PATTERNS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 	Layout particleLayout = { ParticleInputDesc, ARRAYSIZE(ParticleInputDesc) };
 

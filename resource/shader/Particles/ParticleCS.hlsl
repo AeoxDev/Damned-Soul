@@ -19,6 +19,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         if (meta[blockID.y].pattern == 0)
         {                
             SmokeMovement(DTid, blockID);
+
         }
         // 1 = ARCH
         if (meta[blockID.y].pattern == 1)
@@ -106,7 +107,10 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
         particle.position.x = particle.position.x - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
 
     particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime/* + psuedoRand*/) * dt;
-
+    
+    particle.patterns.x = 0; //is currently used to define pattern in PS-Shader for flipAnimations, patterns.x (free slots on y,z,w values)
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    
     particle.rgb.r = 0.0f;
     particle.rgb.g = 0.0f;
     particle.rgb.b = 1.0f;
@@ -123,6 +127,10 @@ void ArchMovement(in uint3 DTid, in uint3 blockID)
     float time = DTid.x; // * (end - start) / float(end); FIX THIS FELIX PLEASE,
     float coefficient = 0.5; //for parabolic path, change as you see fit
     particle.position.y = meta[index].startPosition.y + coefficient * time * time;
+    
+    particle.patterns.x = 1; //is currently used to define pattern in PS-Shader for flipAnimations, patterns.x (free slots on y,z,w values)
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    
     //____________________________________________________________________
     //test.position = test.position;
     outputParticleData[DTid.x] = particle;
@@ -139,6 +147,10 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
     float distance = length(particle.position - meta[index].startPosition);
     
     particle.position += directionRandom * explosionSpeed * distance;
+    
+    particle.patterns.x = 3; //is currently used to define pattern in PS-Shader for flipAnimations
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    
     //____________________________________________________________________
     //test.position = test.position;
     outputParticleData[DTid.x] = particle;
@@ -234,8 +246,9 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     //else
     //    particle.position.y = particle.position.y + ((particle.time * particle.velocity.y) * dt) * -1.f;
     
-   
-
+    particle.patterns.x = 3; //is currently used to define pattern in PS-Shader for flipAnimations
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    
     outputParticleData[index] = particle;
 }
 
@@ -248,6 +261,10 @@ void ImplosionMovement(in uint3 DTid, in uint3 blockID)
     float3 direction = normalize(float3(0.f, 0.f, 0.f) - particle.position); // FIX THIS FELIX PLEASE, WE NEED TO ADD IMPLPSION POINT
     float implosionSpeed = 8.0f; //adjust as you see fit
     particle.position += direction * implosionSpeed;
+    
+    particle.patterns.x = 4/*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    
     //____________________________________________________________________
     //test.position = test.position;
     outputParticleData[DTid.x] = particle;
@@ -275,6 +292,10 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
     {
         particle.position = meta[index].startPosition;
     }
+    
+    particle.patterns.x = 5/*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    
     //____________________________________________________________________
     //test.position = test.position;
     outputParticleData[DTid.x] = particle;
@@ -302,6 +323,9 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = posy;
     particle.position.x = (2*alpha + beta + 2*gamma);
     particle.position.z = (alpha + 2*beta - gamma);
+    
+    particle.patterns.x = 7/*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
     
     outputParticleData[index] = particle;
 }

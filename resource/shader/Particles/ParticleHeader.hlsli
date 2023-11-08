@@ -10,6 +10,7 @@ struct Input
     float rotationZ;
     float3 rgb; // Red Green Blue
     float size;
+    float4 patterns;
 };
 
 struct metadata

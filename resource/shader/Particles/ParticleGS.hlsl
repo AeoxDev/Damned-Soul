@@ -13,6 +13,7 @@ struct GS_IN
     float rotationZ : ROTATIONZ;
     float size : SIZE;
     float time : TIME;
+    float4 patterns : PATTERNS;
 };
 
 struct GS_OUT
@@ -21,6 +22,7 @@ struct GS_OUT
     float4 rgb : RGB;
     float2 uv : UV;
     float time : TIME;
+    float4 patterns : PATTERNS;
 };
 
 [maxvertexcount(6)]
@@ -87,6 +89,7 @@ void main(
         retappend.rgb = inval[0].rgb;
         retappend.uv = uvCord[i];
         retappend.time = inval[0].time;
+        retappend.patterns = inval[0].patterns;
 
         retval.Append(retappend);
 
