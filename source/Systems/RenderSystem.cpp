@@ -71,8 +71,8 @@ bool ShadowSystem::Update()
 	DirectX::XMFLOAT3 cameraLookAt;
 	DirectX::XMStoreFloat3(&cameraLookAt, cameraV);
 	Camera::ToggleProjection();
-	Camera::SetPosition(cameraLookAt.x + -dir.x * 64.f, cameraLookAt.y + -dir.y * 64.f, cameraLookAt.z + -dir.z * 64.f, false);//Set this to center of stage offset upwards
-	Camera::SetLookAt(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z);//Set to center of stage
+	Camera::SetPosition(cameraLookAt.x + -dir.x * 64.f, cameraLookAt.y + -dir.y * 64.f, cameraLookAt.z + -dir.z * 64.f + 16.0f, false);//Set this to center of stage offset upwards
+	Camera::SetLookAt(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z + 16.0f);//Set to center of stage
 	Camera::SetUp(0.0f, 1.0f, 0.0f);
 	Camera::SetWidth(160.0f);//Set width (x) of orthogonal based on stage
 	Camera::SetHeight(160.0f);//Set height (z) of orthogonal based on stage
