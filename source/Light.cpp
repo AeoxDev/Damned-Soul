@@ -359,6 +359,11 @@ int CreatePointLight(EntityID& entity, float colorRed, float colorGreen, float c
 {
     RemoveLight(entity);
     int slot = PopSlotStack();
+    if (slot >= LIGHT_COMPONENT_ARRAY_LIMIT || slot < 0)
+    {
+        return -1;
+    }
+
     lightShaderBuffer.lights[slot].type = LightType::pointLight;
     lightShaderBuffer.lights[slot].lightColor.x = colorRed;
     lightShaderBuffer.lights[slot].lightColor.y = colorGreen;
