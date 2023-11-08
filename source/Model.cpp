@@ -11,6 +11,7 @@
 #include "DeltaTime.h"
 
 #include <filesystem>
+#include <cstring>
 
 #define SANE_MODEL_BONELESS_NUMBER (1'234'567'890 | 0b0)
 #define SANE_MODEL_BONES_NUMBER (1'234'567'890 | 0b1)
@@ -148,8 +149,16 @@ const MODEL_TYPE Model::Load(const char* filename)
 		Material& mat = ((Material*)(&(m_data->m_data[m_data->m_numSubMeshes * sizeof(SubMesh)])))[i];
 		// Load colors
 		mat.albedoIdx = LoadTexture(mat.albedo);
-		// Load normal map
-		mat.normalIdx = LoadTexture(mat.normal);
+		if (0 == std::strcmp(mat.albedo, mat.normal))
+		{
+			// Load normal map
+			mat.normalIdx = LoadTexture("\\Default_Normal.png");
+		}
+		else
+		{
+			// Load normal map
+			mat.normalIdx = LoadTexture(mat.normal);
+		}
 		// Load glow map
 		mat.glowIdx = LoadTexture(mat.glow);
 	}
@@ -222,8 +231,7 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 
 		// Set material and draw
 		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
-		//SetTexture(currentMaterial.normalIdx, BIND_PIXEL, 1); // Commented away for the time being, until we have default textures or the actual textures
-		//SetTexture(currentMaterial.glowIdx, BIND_PIXEL, 2); // Commented away for the time being, until we have default textures or the actual textures
+		SetTexture(currentMaterial.normalIdx, BIND_PIXEL, 1);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 	}
 }
