@@ -97,7 +97,7 @@ bool UIPlayerSoulsSystem::Update()
 
 		souls->value = currentSouls;
 
-		uiElement->m_Text.SetText(("Souls: " + std::to_string((int)souls->value)).c_str(), uiElement->m_Text.baseUI.GetBounds());
+		uiElement->m_Text.SetText(("Souls: " + std::to_string(souls->value)).c_str(), uiElement->m_Text.baseUI.GetBounds());
 		uiElement->m_Text.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(),
 			uiElement->m_BaseImage.baseUI.GetRotation(), true, uiElement->m_BaseImage.baseUI.GetOpacity());
 	}

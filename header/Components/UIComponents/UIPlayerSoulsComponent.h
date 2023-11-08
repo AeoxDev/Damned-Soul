@@ -2,5 +2,5 @@
 
 struct UIPlayerSoulsComponent
 {
-	float value = -1.0f;
+	int value = -1.0f;
 };
