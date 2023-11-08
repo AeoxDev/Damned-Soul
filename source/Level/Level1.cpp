@@ -100,4 +100,6 @@ void LoadLevel1()
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 
 	stateManager.stage = stage;
+
+	SetInPlay(true);
 }

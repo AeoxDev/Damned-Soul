@@ -136,4 +136,5 @@ void LoadLevel2()
 	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
+	SetInPlay(true);
 }

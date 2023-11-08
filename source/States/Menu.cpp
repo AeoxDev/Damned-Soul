@@ -48,13 +48,13 @@ void Menu::Setup()
 	char ltexture[] = "3-1L.png";
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, ltexture, emptyTexture);*/
-
+	stateManager.player = registry.CreateEntity();
+	registry.AddComponent<PlayerComponent>(stateManager.player);
 
 	stateManager.activeLevel = 0;
 	AddTimedEventComponentStart(stage, 2.0f, LoopSpawnMainMenuEnemy, skeleton, 1);
 	EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
 	SetHitboxIsPlayer(enemy, 1, true);
-	registry.AddComponent<PlayerComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
 
 	//Randomize enemies on screen max 6 of each'

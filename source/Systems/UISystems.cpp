@@ -68,7 +68,7 @@ bool UIHealthSystem::Update()
 
 		health->value = currentHealth;
 		healthScale = uiElement->m_BaseImage.baseUI.GetScale();
-		int healthBoundsRight = uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
+		int healthBoundsRight = (int)uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
 
 		uiElement->m_Images[0].baseUI.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
 

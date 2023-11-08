@@ -49,4 +49,5 @@ void LoadLevel4()
 	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 
 	stateManager.stage = stage;
+	SetInPlay(true);
 }

@@ -197,10 +197,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\CombatFunctions.cpp" />
-    <ClCompile Include="source\Relics\AdvancedFighting.cpp" />
-    <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
-    <ClCompile Include="source\UI\UIElement.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
+    <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
+    <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
@@ -313,10 +312,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI\UI.cpp" />
-    <ClCompile Include="source\UI\UIButton.cpp" />
-    <ClCompile Include="source\UI\UIComponent.cpp" />
-    <ClCompile Include="source\UI\UIImage.cpp" />
-    <ClCompile Include="source\UI\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>

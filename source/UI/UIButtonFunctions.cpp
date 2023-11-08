@@ -17,8 +17,6 @@
 
 void UIFunc::LoadNextLevel(void* args, int a)
 {
-	SetInShop(true);
-	SetInMainMenu(false);
 	UnloadEntities();
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
@@ -266,7 +264,7 @@ void UIFunc::BuyRelic(void* args, int index)
 			{
 				relicWindow->shopSelections[i] = shopState::BOUGHT;
 				uiElement->m_Images[i + 2].SetImage("Buy");
-				player->UpdateSouls(relicWindow->shopRelics[i]->m_price);
+				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 				break;
 			}
 		}

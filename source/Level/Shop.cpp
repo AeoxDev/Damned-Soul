@@ -152,29 +152,18 @@ void LoadShop()
 	OnClickComponent* uiNextLevelOnClick = registry.AddComponent<OnClickComponent>(shopNextLevel);
 	OnHoverComponent* uiNextLevelOnHover = registry.AddComponent<OnHoverComponent>(shopNextLevel);
 
+	uiNextLevelOnClick->Setup(uiNextLevel->m_BaseImage.baseUI.GetPixelCoords(), uiNextLevel->m_BaseImage.baseUI.GetBounds(), UIFunc::LoadNextLevel);
+
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
 	uiImpText->Setup("TempRelicHolder", "Hello There", { -0.2f, -0.1f }, { 2.0f, 2.0f });
 	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
 
 	UIShopImpWindowComponent* uiImpTextWindow = registry.AddComponent<UIShopImpWindowComponent>(impText);
-
+	SetInShop(true);
 }
 
 void ReloadShop()
 {
-	/*EntityID playerUi = registry.CreateEntity();
-
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
-	pcUiHpC->text.Setup("");
-
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
-	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup("");
-
-	bool* ignore = {};
-	UIFunc::Shop_ReRollRelic(ignore);
-	SetInShop(true);*/
+	
 }
 
