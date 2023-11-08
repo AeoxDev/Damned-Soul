@@ -2,6 +2,7 @@
 #include "MemLib\ML_Array.hpp"
 #include "MemLib\MemLib.hpp"
 #include "States\StateManager.h"
+#include "Registry.h"
 
 PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransform)
 {
@@ -144,7 +145,7 @@ bool IsCellValid(int x, int z)
 
 float CalculateEuclideanDistance(int x, int z, Node goal)
 {
-	float dist = (sqrt((x - goal.x) * (x - goal.x)+ (z - goal.z) * (z - goal.z)));
+	float dist = (sqrtf((x - goal.x) * (x - goal.x)+ (z - goal.z) * (z - goal.z)));
 	return dist;
 }
 
@@ -248,7 +249,7 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent
 		GridPosition currPos; //= *openList.begin();
 		float cheapest = FLT_MAX;
 		int index = 0;
-		for (int i = 0; i < openList.size(); i++)
+		for (unsigned i = 0; i < openList.size(); i++)
 		{
 			if (nodeMap[openList[i].x][openList[i].z].f < cheapest)
 			{

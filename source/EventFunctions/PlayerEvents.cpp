@@ -87,7 +87,7 @@ void PlayerAttackSound(EntityID& entity, const int& index)
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
-{
+{;
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 
@@ -104,9 +104,14 @@ void PlayerAttack(EntityID& entity, const int& index)
 
 	//Make the players' attack hitbox active during the second half of the attack animation
 	if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
+	{
 		SetPlayerAttackHitboxInactive(entity, index);
+	}
+		
 	else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
+	{
 		SetPlayerAttackHitboxActive(entity, index);
+	}
 }
 
 void PlayerDashSound(EntityID& entity, const int& index)

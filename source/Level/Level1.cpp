@@ -44,6 +44,7 @@ void LoadLevel1()
 	stageModel->colorMultiplicativeRed = 0.75f;
 	stageModel->colorMultiplicativeGreen = 0.75f;
 	stageModel->colorMultiplicativeBlue = 0.75f;
+	stageModel->gammaCorrection = 0.9f;
 	//stageModel->colorAdditiveRed = 0.1f;
 	
 	// Stage (Default)

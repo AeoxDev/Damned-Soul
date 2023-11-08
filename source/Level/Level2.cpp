@@ -52,6 +52,7 @@ void LoadLevel2()
 	stageModel->colorMultiplicativeGreen = greenMult;
 	stageModel->colorMultiplicativeBlue = blueMult;
 	stageModel->colorAdditiveRed = redAdd;
+	stageModel->gammaCorrection = 0.9f;
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -126,6 +127,7 @@ void LoadLevel2()
 				hazardModel->colorMultiplicativeRed = redMult;
 				hazardModel->colorMultiplicativeGreen = greenMult;
 				hazardModel->colorMultiplicativeBlue = blueMult;
+				hazardModel->gammaCorrection = 1.5f;
 
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;

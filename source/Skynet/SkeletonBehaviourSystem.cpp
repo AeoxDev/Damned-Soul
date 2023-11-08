@@ -182,6 +182,8 @@ bool SkeletonBehaviourSystem::Update()
 				//Elliot: When finished, reset attack timer and hitbox
 				skeletonComponent->attackTimer = 0.0f;
 				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
+				//Turn yellow for opening:
+				
 				continue;
 			}
 			else//Elliot: Turn off attack hitbox to not make player rage.
@@ -198,6 +200,7 @@ bool SkeletonBehaviourSystem::Update()
 			}
 			else if (distance < 50.f) //hunting distance
 			{
+				
 #ifdef PATH_FINDING_VISUALIZER
 				TransformComponent* doggoT;
 				for (auto enemyEntity : View<HellhoundBehaviour, TransformComponent, StatComponent>(registry))

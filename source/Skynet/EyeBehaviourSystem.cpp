@@ -298,7 +298,7 @@ bool EyeBehaviourSystem::Update()
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
 		
-		
+		SetLightColor(enemyEntity, 0.3f, 0.3f, 0.3f);
 		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
 		eyeTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
 		enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
