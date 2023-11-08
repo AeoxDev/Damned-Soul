@@ -70,6 +70,7 @@ Model::~Model()
 
 const MODEL_TYPE Model::Load(const char* filename)
 {
+	std::strcpy(m_name, filename);
 	ML_String name = "Models\\Mdl\\";
 	name.append(filename);
 
@@ -135,8 +136,9 @@ const MODEL_TYPE Model::Load(const char* filename)
 			m_animations[animType][can[1] - '0'].Load(entry.path().string().c_str());
 		}
 
-		// Create the animation buffer
-		m_animationBuffer = CreateStructuredBuffer(m_data->GetBoneMatrices(), sizeof(DirectX::XMMATRIX), m_data->m_numBones, m_animationBufferSRV);
+		// Create the animation buffers
+		m_animationVertexBuffer = CreateStructuredBuffer(m_data->GetBoneMatrices(), sizeof(DirectX::XMMATRIX), m_data->m_numBones, m_animationVertexBufferSRV);
+		m_animationNormalBuffer = CreateStructuredBuffer(m_data->GetBoneMatrices(), sizeof(DirectX::XMMATRIX), m_data->m_numBones, m_animationNormalBufferSRV);
 	}
 		
 	m_indexBuffer = CreateIndexBuffer(m_data->GetIndices(), sizeof(uint32_t), m_data->m_numIndices);
@@ -170,10 +172,12 @@ const MODEL_TYPE Model::Load(const char* filename)
 
 void Model::Free()
 {
-	if (m_animationBuffer != -1)
+	if (m_animationVertexBuffer != -1)
 	{
-		DeleteD3D11Buffer(m_animationBuffer);
-		DeleteD3D11SRV(m_animationBufferSRV);
+		DeleteD3D11Buffer(m_animationVertexBuffer);
+		DeleteD3D11SRV(m_animationVertexBufferSRV);
+		DeleteD3D11Buffer(m_animationNormalBuffer);
+		DeleteD3D11SRV(m_animationNormalBufferSRV);
 	}
 	DeleteD3D11Buffer(m_vertexBuffer);
 	DeleteD3D11Buffer(m_indexBuffer);
@@ -193,10 +197,12 @@ bool Model::SetMaterialActive() const
 	return false;
 }
 
-DirectX::XMMATRIX* Model::GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
+AnimationFrame Model::GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
 {
 	if (m_animations.contains(aType) && aIdx < m_animations[aType].size())
 	{
+		AnimationFrame frame = m_animations[aType][aIdx].GetFrame(aTime);
+
 		return m_animations[aType][aIdx].GetFrame(aTime);
 	}
 
@@ -210,10 +216,13 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 	// That would sort of explain some of the wonky stuff happening
 
 	// Try to get the initial animation frame
-	if (m_animationBuffer != -1)
+	if (m_animationVertexBuffer != -1)
 	{
-		UpdateStructuredBuffer(m_animationBuffer, GetAnimation(aType, aIdx, aTime));
-		SetShaderResourceView(m_animationBufferSRV, BIND_VERTEX, 0);
+		AnimationFrame frame = GetAnimation(aType, aIdx, aTime);
+		UpdateStructuredBuffer(m_animationVertexBuffer, frame.vertex);
+		SetShaderResourceView(m_animationVertexBufferSRV, BIND_VERTEX, 0);
+		UpdateStructuredBuffer(m_animationNormalBuffer, frame.normal);
+		SetShaderResourceView(m_animationNormalBufferSRV, BIND_VERTEX, 1);
 	}
 
 	// Set as slot 0, for the time being

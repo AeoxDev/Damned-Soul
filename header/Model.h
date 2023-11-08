@@ -89,6 +89,7 @@ private:
 
 public:
 	//PoolPointer<ModelBoneless> m_modelData;
+	char m_name[128];
 	PoolPointer<modelGenericData> m_data;
 	ML_Map<char, ML_Vector<Animation>> m_animations;
 
@@ -96,8 +97,10 @@ public:
 	VB_IDX m_vertexBuffer = -1;
 	IB_IDX m_indexBuffer = -1;
 	CB_IDX m_materialBuffer = -1;
-	SB_IDX m_animationBuffer = -1;
-	SRV_IDX m_animationBufferSRV = -1;
+	SB_IDX m_animationVertexBuffer = -1;
+	SRV_IDX m_animationVertexBufferSRV = -1;
+	SB_IDX m_animationNormalBuffer = -1;
+	SRV_IDX m_animationNormalBufferSRV = -1;
 	uint16_t m_refCount = 0;
 	
 	
@@ -109,7 +112,7 @@ public:
 
 	bool SetMaterialActive() const;
 
-	DirectX::XMMATRIX* GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime);
+	AnimationFrame GetAnimation(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime);
 
 	// Render all the model's submeshes one after another
 	void RenderAllSubmeshes(const ANIMATION_TYPE aType = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f);
