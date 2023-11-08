@@ -13,6 +13,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "DeltaTime.h"
+#include "RenderDepthPass.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -133,6 +134,8 @@ int StateManager::Setup()
 	// Render/GPU
 	
 	systems.push_back(new ParticleSystemCPU());
+	
+	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
@@ -260,6 +263,7 @@ void StateManager::UnloadAll()
 	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
+	ReleaseDepthPass();
 	EndDirectX();
 }
 

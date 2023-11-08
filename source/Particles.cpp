@@ -6,6 +6,7 @@
 #include "SDLHandler.h"
 #include "Camera.h"
 #include "DeltaTime.h"
+#include "Registry.h"
 
 PoolPointer<ParticleInputOutput> Particles::m_readWriteBuffer;
 PoolPointer<ParticleMetadataBuffer> data;

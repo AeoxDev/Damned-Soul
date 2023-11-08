@@ -138,13 +138,29 @@ bool UpdateConstantBuffer(const CB_IDX idx, const void* data)
 	return true;
 }
 
+struct WorldMatrixStruct
+{
+	DirectX::XMMATRIX world;
+	DirectX::XMMATRIX inverseTrans;
+
+	WorldMatrixStruct() = default;
+
+	WorldMatrixStruct(const void* data)
+	{
+		std::memcpy(&world, data, sizeof(DirectX::XMMATRIX));
+		inverseTrans = world;
+		//inverseTrans = DirectX::XMMatrixTranspose(inverseTrans);
+		//inverseTrans = DirectX::XMMatrixInverse(nullptr, inverseTrans);
+	}
+};
+
 void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
 	static CB_IDX idx = -1;
 	if (idx == -1)
 	{
-		DirectX::XMMATRIX emptyWorld;
-		idx = CreateConstantBuffer(&emptyWorld, sizeof(emptyWorld));
+		WorldMatrixStruct emptyWorld;
+		idx = CreateConstantBuffer(&emptyWorld, sizeof(WorldMatrixStruct));
 		SetConstantBuffer(idx, bindto, slot);
 	}
 		
@@ -155,8 +171,11 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, 
 	HRESULT hr = d3d11Data->deviceContext->Map(bfrHolder->buff_map[idx], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	assert(SUCCEEDED(hr));
 
+	// Set the temp struct
+	WorldMatrixStruct temp(data);
 	// Copy the new data to the buffer
-	memcpy(mappedResource.pData, data, bfrHolder->size[idx]);
+	memcpy(mappedResource.pData, &temp, bfrHolder->size[idx]);
+
 	// Unmap the resource
 	d3d11Data->deviceContext->Unmap(bfrHolder->buff_map[idx], 0);
 }

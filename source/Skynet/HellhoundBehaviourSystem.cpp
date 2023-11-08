@@ -6,6 +6,7 @@
 #include <random>
 #include "Skynet\BehaviourHelper.h"
 #include "ParticleComponent.h"
+#include "Particles.h"
 
 // input true on stuff you want to reset
 void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
@@ -324,8 +325,8 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		hc->currentShootingAttackRange = 1.f;
 		SetHitboxActive(dog, enemy->specialHitBoxID, false);
 		SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);
-		//TEEEEEMP
-		RemoveLight(dog);
+		//Recreate light again
+		CreatePointLight(dog, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 		hc->shootingTimer = 0.0f;
 
 		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
@@ -463,12 +464,12 @@ bool HellhoundBehaviourSystem::Update()
 
 			if (hellhoundComponent->retreat)
 			{
-				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
 				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
+
 				hellhoundComponent->shootingCounter += GetDeltaTime();
 				if (hellhoundComponent->shootingCounter >= hellhoundComponent->shootingChargeUpTime) // have we charged long enough?
 				{

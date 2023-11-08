@@ -51,7 +51,7 @@ void Menu::Setup()
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.84f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.08f;
-	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+	SetDirectionLight(1.2f, 1.1f, 1.0f, -1.0f, -4.0f, 2.0f);
 
 	/*char ctexture[] = "3-1C.png";
 	char ltexture[] = "3-1L.png";
@@ -157,7 +157,7 @@ void Menu::Setup()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-
+				hazardModel->gammaCorrection = 1.5f;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
 				hazardTransform->positionY = 0.1f;

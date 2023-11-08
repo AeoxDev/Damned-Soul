@@ -28,6 +28,8 @@ int CreateSpotLight(EntityID& entity, float colorRed, float colorGreen, float co
 float3 GetLightPosition(const EntityID& entity);
 float3 GetLightColor(const EntityID& entity);
 float3 GetLightDirection(const EntityID& entity);
+//Get the directional light direction
+float3 GetLightDirection();
 float GetLightRange(const EntityID& entity);
 float GetLightFallofFactor(const EntityID& entity);
 float GetLightAngle(const EntityID& entity);
@@ -42,5 +44,5 @@ void SetLightAngle(const EntityID& entity, const float& cone);//Angle in degrees
 
 void RemoveLight(EntityID& entity);
 
-void OffsetPosition(EntityID& entity, const float& x, const float& y, const float& z);
+void OffsetPosition(EntityID& entity, const float& x, const float& y, const float& z, const float& fx, const float& fy, const float& fz);
 void OffsetFacing(EntityID& entity, const float& x, const float& y, const float& z);

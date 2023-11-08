@@ -52,6 +52,7 @@ void LoadLevel2()
 	stageModel->colorMultiplicativeGreen = greenMult;
 	stageModel->colorMultiplicativeBlue = blueMult;
 	stageModel->colorAdditiveRed = redAdd;
+	stageModel->gammaCorrection = 0.9f;
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -97,7 +98,7 @@ void LoadLevel2()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-
+	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 	CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -126,6 +127,7 @@ void LoadLevel2()
 				hazardModel->colorMultiplicativeRed = redMult;
 				hazardModel->colorMultiplicativeGreen = greenMult;
 				hazardModel->colorMultiplicativeBlue = blueMult;
+				hazardModel->gammaCorrection = 1.5f;
 
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;

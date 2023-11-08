@@ -26,6 +26,7 @@ void BeginHit(EntityID& entity, const int& index)
 
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
+
 	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	////Deal regular damage as well as on-hit damage from potential relics
 
@@ -119,6 +120,14 @@ void HazardBeginHit(EntityID& entity, const int& index)
 				sfx->Play(Skeleton_Hurt, Channel_Base);
 			}
 			break;
+		}
+	}
+	else
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		if (player != nullptr)
+		{
+			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Base);
 		}
 	}
 

@@ -92,7 +92,7 @@ void LoadLevel3()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-
+	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 	CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -121,7 +121,7 @@ void LoadLevel3()
 				hazardModel->colorMultiplicativeRed = redMult;
 				hazardModel->colorMultiplicativeGreen = greenMult;
 				hazardModel->colorMultiplicativeBlue = blueMult;
-
+				hazardModel->gammaCorrection = 1.5f;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
 				hazardTransform->positionY = 0.1f;

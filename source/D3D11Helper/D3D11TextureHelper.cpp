@@ -24,8 +24,8 @@ TX_IDX LoadTexture(const char* name)
 			return key;
 		}
 	}
-	txHolder->img_map.emplace(currentIdx, Image());
-	Image& img = txHolder->img_map[currentIdx];
+	//txHolder->img_map.emplace(currentIdx, Image());
+	Image/*&*/ img;// = txHolder->img_map[currentIdx];
 	bool l = img.load(name);
 	assert(l == true);
 
@@ -65,6 +65,8 @@ TX_IDX LoadTexture(const char* name)
 	// Set the hash last thing you do
 	txHolder->hash_map.emplace(currentIdx, hash);
 	
+	img.Release();
+
 	return currentIdx;
 }
 
@@ -127,6 +129,34 @@ bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t
 		break; // Yes, this break is unnessecary, but it looks nice
 	}
 
+	return true;
+}
+
+bool UnsetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot)
+{
+	ID3D11ShaderResourceView* nullTexture = nullptr;
+	switch (shader)
+	{
+	case BIND_VERTEX:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_HULL:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_DOMAIN:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_GEOMETRY:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	case BIND_PIXEL:
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &nullTexture);
+		break;
+	default:
+		assert("Corrupt or incorrent Shader Type to bind!"[0] == "ERROR"[0]);
+		return false;
+		break; // Yes, this break is unnessecary, but it looks nice
+	}
 	return true;
 }
 
@@ -218,11 +248,11 @@ bool DeleteD3D11Texture(const TX_IDX idx)
 		txHolder->tx_map[idx]->Release();
 		txHolder->tx_map.erase(idx);
 	}
-	if (txHolder->img_map.contains(idx))
-	{
-		txHolder->img_map[idx].Release();
-		txHolder->img_map.erase(idx);
-	}
+	//if (txHolder->img_map.contains(idx))
+	//{
+	//	txHolder->img_map[idx].Release();
+	//	txHolder->img_map.erase(idx);
+	//}
 	if (txHolder->hash_map.contains(idx))
 	{
 		txHolder->hash_map.erase(idx);

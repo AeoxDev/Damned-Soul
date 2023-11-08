@@ -38,7 +38,6 @@ void SettingsState::Setup()
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.12f;
-	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
 }
 
 void SettingsState::Input()

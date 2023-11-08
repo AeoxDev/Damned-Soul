@@ -5,7 +5,10 @@
 void _RelicParticleDespawn(EntityID& entity, const int& index)
 {
 	auto particles = registry.GetComponent<ParticleComponent>(entity);
-	particles->Release();
+	if (particles != nullptr)
+	{
+		particles->Release();
+	}
 	ReleaseTimedEvents(entity);
 	registry.DestroyEntity(entity);
 }

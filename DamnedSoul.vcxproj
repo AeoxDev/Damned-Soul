@@ -215,6 +215,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Utility\RelicParticleHelper.cpp" />
     <ClCompile Include="source\Relics\Gadget\SoulSpeed.cpp" />
     <ClCompile Include="source\Relics\Defensive\SpikedSkin.cpp" />
+    <ClCompile Include="source\RenderDepthPass.cpp" />
     <ClCompile Include="source\Skynet\Pathfinding.cpp" />
     <ClCompile Include="source\Systems\ParticleSystem.cpp" />
     <ClCompile Include="source\Systems\StatCalcSystem.cpp" />
@@ -311,6 +312,22 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resource\shader\DepthPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="resource\shader\NormalMappingGS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="resource\shader\Particles\ParticleGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -376,6 +393,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="resource\shader\GICollisionPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="resource\shader\ShadowMapPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -523,6 +546,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Gadget\SoulSpeed.h" />
     <ClInclude Include="header\Relics\Gadget\SpeedyLittleDevil.h" />
     <ClInclude Include="header\Relics\Defensive\SpikedSkin.h" />
+    <ClInclude Include="header\RenderDepthPass.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
@@ -572,6 +596,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
     <None Include="lib\SDL2\lib\x64\SDL2.dll" />
+    <None Include="resource\shader\RenderPipelineHeader.hlsli" />
     <None Include="resource\shader\Particles\ParticleHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
