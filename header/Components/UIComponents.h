@@ -9,6 +9,6 @@
 #include "UIComponents/UIHealthComponent.h"
 #include "UIComponents/UIPlayerSoulsComponent.h"
 #include "UIComponents/UIRelicWindowComponent.h"
-#include "UIComponents/UIShopImpWindowComponent.h"
+#include "UIComponents/UIShopImpComponents.h"
 #include "UIComponents/UIGameLevelComponent.h"
 #include "UIComponents/UIRerollComponent.h"

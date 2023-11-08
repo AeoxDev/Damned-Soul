@@ -48,7 +48,7 @@ bool UIRenderSystem::Update()
 
 bool UIHealthSystem::Update()
 {
-	DSFLOAT2 healthScale = {};
+	DSFLOAT2 healthScale = {0,0};
 	int healthBoundsRight = 0;
 	float percentageHealth = 0.0f, currentHealth = 0.0f;
 
@@ -107,166 +107,142 @@ bool UIPlayerSoulsSystem::Update()
 
 bool UIRelicsSystem::Update()
 {
-  //  for (auto entity : View<UIPlayerRelicsComponent>(registry))
-  //  {
-  //      auto uiElement = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-
-		//uiElement->baseImage.m_UiComponent.SetScale(uiElement->scale);
-		//uiElement->baseImage.m_UiComponent.SetPosition(uiElement->position);
-
-		//if (uiElement->relics.size() == 0)
-		//	return true;
-
-		//DSFLOAT2 spritePositionOffset = { uiElement->baseImage.m_UiComponent.m_CurrentBounds.right/ (uiElement->baseImage.m_UiComponent.m_CurrentBounds.right / 40.0f) ,
-		//										uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom /(uiElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 40.0f)};
-
-		//DSFLOAT2 startingSpritePosition = { abs(uiElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
-		//							   abs(uiElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-		//DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-		//								-1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
-
-		//if (uiElement->relicIndex == uiElement->relics.size() - 1)
-		//{
-		//	uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetScale({ 1.0f , 1.0f });
-
-		//	/*if (uiElement->relicIndex % 3 == 0 && uiElement->relicIndex != 0)
-		//	{
-		//		uiElement->gridPosition.y++;
-		//		uiElement->gridPosition.x = 0;
-		//	}*/
-
-  //          uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
-  //          uiElement->relics[uiElement->relicIndex].flavorTitle.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y + 1.25f)) });
-  //          uiElement->relics[uiElement->relicIndex].flavorTitleImage.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * (uiElement->gridPosition.y) + 1.25f) });
-
-		//	uiElement->relics[uiElement->relicIndex].sprite.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * uiElement->gridPosition.x), spritePixelCoords.y - (0.15f * uiElement->gridPosition.y) });
-		//	uiElement->relicIndex++;
-		//	uiElement->gridPosition.x++;
-
-		//	RedrawUI();
-		//} 
-
-		//for (uint32_t i = 0; i < uiElement->relics.size(); i++)
-		//{
-		//	if (uiElement->relics[i].sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
-		//	{
-
-  //              uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(true);
-  //              uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(true);
-  //              //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(true);
-
-  //              if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible() && uiElement->relics[i].doRedraw)
-  //              {
-  //                  RedrawUI();
-  //                  uiElement->relics[i].doRedraw = false;
-  //              }
-
-  //          }
-  //          else
-  //          {
-  //              if (uiElement->relics[i].flavorTitleImage.m_UiComponent.IsVisible())
-  //              {
-  //                  RedrawUI();
-  //                  uiElement->relics[i].flavorTitleImage.m_UiComponent.SetVisibility(false);
-  //                  uiElement->relics[i].flavorTitle.m_UiComponent.SetVisibility(false);
-  //                  //uiElement->relics[i].flavorDesc.m_UiComponent.SetVisibility(false);
-  //                  uiElement->relics[i].doRedraw = true;
-  //              }
-
-
-  //          }
-  //      }
-  //  }
-
-  //  for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
-  //  {
-  //      auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-  //      auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
-
-  //      if (uiRelic->sprite.m_UiComponent.Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) }))
-  //      {
-  //          uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(true);
-  //          uiRelic->flavorTitle.m_UiComponent.SetVisibility(true);
-  //          uiRelic->flavorDescImage.m_UiComponent.SetVisibility(true);
-  //          uiRelic->flavorDesc.m_UiComponent.SetVisibility(true);
-
-  //          if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible() && uiRelic->doRedraw)
-  //          {
-  //              RedrawUI();
-  //              uiRelic->doRedraw = false;
-  //          }
-  //      }
-  //      else
-  //      {
-  //          if (uiRelic->flavorTitleImage.m_UiComponent.IsVisible())
-  //          {
-  //              RedrawUI();
-  //              uiRelic->flavorTitleImage.m_UiComponent.SetVisibility(false);
-  //              uiRelic->flavorTitle.m_UiComponent.SetVisibility(false);
-  //              uiRelic->flavorDescImage.m_UiComponent.SetVisibility(false);
-  //              uiRelic->flavorDesc.m_UiComponent.SetVisibility(false);
-  //              uiRelic->doRedraw = true;
-  //          }
-
-
-  //      }
-  //  }
 
     return true;
 }
 
-//bool UIGameLevelSystem::Update()
-//{
-//	for (auto entity : View<UIGameLevelComponent>(registry))
-//	{
-//		auto uiElement = registry.GetComponent<UIGameLevelComponent>(entity);
-//
-//        ML_String valueAsString = std::to_string(uiElement->value).c_str();
-//        SetTextAndImageProperties(valueAsString, uiElement->text, uiElement->image, uiElement->scale, uiElement->position);
-//    }
-//    return true;
-//}
-
 bool UIShopSystem::Update()
 {
-    //StatComponent* stats = nullptr;
-    //PlayerComponent* player = nullptr;
+	if (!(currentStates & State::InShop))
+	{
+		for (auto entity : View<UIShopImpComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(false);
+			}
 
-    //for (auto entity : View<PlayerComponent, StatComponent>(registry))
-    //{
-    //    stats = registry.GetComponent<StatComponent>(entity);
-    //    player = registry.GetComponent<PlayerComponent>(entity);
-    //}
+			uiElement->m_Text.baseUI.SetVisibility(false);
+		}
 
-    //for (auto entity : View<UIShopComponent>(registry))
-    //{
-    //    auto uiShopElement = registry.GetComponent<UIShopComponent>(entity);
+		for (auto entity : View<UIShopTitleImpComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 
-    //    ML_String playerInfo = ("Damage: " + std::to_string((int)stats->damage) + 
-    //        "\nMove Speed: " + std::to_string((int)stats->moveSpeed) +
-    //        "\nAttack Speed: " + std::to_string((int)stats->attackSpeed)).c_str(); // Warning gets to stay for now
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(false);
+			}
 
+			uiElement->m_Text.baseUI.SetVisibility(false);
+		}
 
-    //    DSFLOAT2 spritePositionOffset = { uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.right / 32.0f) ,
-    //                                           uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / (uiShopElement->baseImage.m_UiComponent.m_CurrentBounds.bottom / 32.0f) };
+		for (auto entity : View<UIRelicWindowComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
-    //    DSFLOAT2 startingSpritePosition = { abs(uiShopElement->baseImage.m_UiComponent.GetPosition().x + spritePositionOffset.x) ,
-    //                                   abs(uiShopElement->baseImage.m_UiComponent.GetPosition().y + spritePositionOffset.y) };
-    //    DSFLOAT2 spritePixelCoords = { (startingSpritePosition.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-    //                                    -1 * ((startingSpritePosition.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
-    //    
-    //    uiShopElement->playerInfo.UpdateText(playerInfo);
-    //    uiShopElement->playerInfo.m_UiComponent.SetPosition({ spritePixelCoords.x + (0.1f * 2), spritePixelCoords.y - (0.1f * 2) });
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(false);
+			}
 
-    //}
+			uiElement->m_Text.baseUI.SetVisibility(false);
+		}
 
-    //for (auto entity : View<UIShopRelicWindowComponent, UIRelicComponent>(registry))
-    //{
-    //    auto uiElement = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-    //    auto uiRelic = registry.GetComponent<UIRelicComponent>(entity);
+		for (auto entity : View<UIRerollComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
-    //    uiElement->m_priceText.UpdateText(("Soul Cost: " + std::to_string(uiRelic->price)).c_str());
-    //}
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(false);
+			}
+
+			uiElement->m_Text.baseUI.SetVisibility(false);
+		}
+
+		for (auto entity : View<UIShopButtonComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->m_BaseImage.baseUI.SetVisibility(false);
+
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(false);
+			}
+
+			uiElement->m_Text.baseUI.SetVisibility(false);
+		}
+	}
+	else
+	{
+		for (auto entity : View<UIShopImpComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(true);
+			}
+
+			uiElement->m_Text.baseUI.SetVisibility(true);
+		}
+
+		for (auto entity : View<UIShopTitleImpComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(true);
+			}
+
+			uiElement->m_Text.baseUI.SetVisibility(true);
+		}
+
+		for (auto entity : View<UIRelicWindowComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->m_BaseImage.baseUI.SetVisibility(true);
+
+			for (UINT32 i = 0; i < uiElement->m_Images.size() - (uiElement->m_Images.size() / 2); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(true);
+			}
+
+			uiElement->m_Text.baseUI.SetVisibility(true);
+		}
+
+		for (auto entity : View<UIRerollComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->m_BaseImage.baseUI.SetVisibility(true);
+
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(true);
+			}
+
+			uiElement->m_Text.baseUI.SetVisibility(true);
+		}
+
+		for (auto entity : View<UIShopButtonComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->m_BaseImage.baseUI.SetVisibility(true);
+
+			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
+			{
+				uiElement->m_Images[i].baseUI.SetVisibility(true);
+			}
+
+			uiElement->m_Text.baseUI.SetVisibility(true);
+		}
+	}
 
     return true;
 }

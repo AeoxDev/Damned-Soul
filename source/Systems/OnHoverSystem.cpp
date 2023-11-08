@@ -15,8 +15,8 @@ bool OnHoverSystem::Update()
 {
 	for (auto entity : View<OnHoverComponent, UIComponent>(registry))
 	{
-		auto comp = registry.GetComponent<OnHoverComponent>(entity);
-		auto uiElement = registry.GetComponent<UIComponent>(entity);
+		OnHoverComponent* comp = registry.GetComponent<OnHoverComponent>(entity);
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 
 		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 

@@ -347,7 +347,9 @@ void UIFunc::RerollRelic(void* args, int index)
 			}
 
 			player->UpdateSouls(0);
-			uiReroll->locked = true;
+
+			if (index != -1)
+				uiReroll->locked = true;
 		}
 	}
 
@@ -382,25 +384,31 @@ void UIFunc::HoverImage(void* args, int index, bool hover)
 	ML_String hoverFileName = "";
 	if (uiElement->m_Images.size() == 0)
 	{
-		fileName = uiElement->m_BaseImage.m_fileName;
-		hoverFileName = fileName;
-		hoverFileName.append("Hover");
+		if (uiElement->m_BaseImage.baseUI.GetVisibility())
+		{
+			fileName = uiElement->m_BaseImage.m_fileName;
+			hoverFileName = fileName;
+			hoverFileName.append("Hover");
 
-		if (hover)
-			uiElement->m_BaseImage.SetImage(hoverFileName.c_str(), true);
-		else
-			uiElement->m_BaseImage.SetImage(fileName.c_str(), true);
+			if (hover)
+				uiElement->m_BaseImage.SetImage(hoverFileName.c_str(), true);
+			else
+				uiElement->m_BaseImage.SetImage(fileName.c_str(), true);
+		}
 	}
 	else
 	{
-		fileName = uiElement->m_Images[index].m_fileName;
-		hoverFileName = fileName;
-		hoverFileName.append("Hover");
+		if (uiElement->m_Images[index].baseUI.GetVisibility())
+		{
+			fileName = uiElement->m_Images[index].m_fileName;
+			hoverFileName = fileName;
+			hoverFileName.append("Hover");
 
-		if (hover)
-			uiElement->m_Images[index].SetImage(hoverFileName.c_str(), true);
-		else
-			uiElement->m_Images[index].SetImage(fileName.c_str(), true);
+			if (hover)
+				uiElement->m_Images[index].SetImage(hoverFileName.c_str(), true);
+			else
+				uiElement->m_Images[index].SetImage(fileName.c_str(), true);
+		}
 	}
 }
 
@@ -409,8 +417,11 @@ void UIFunc::HoverRelic(void* args, int index, bool hover)
 	UIComponent* uiElement = (UIComponent*)args;
 	UIRelicWindowComponent* relicWindow = nullptr;
 
+	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+		return;
+
 	UIComponent* uiImpElement = nullptr;
-	UIShopImpWindowComponent* uiImpText = nullptr;
+	UIShopImpComponent* uiImpText = nullptr;
 
 	for (auto entity : View<UIRelicWindowComponent>(registry))
 	{
@@ -423,10 +434,10 @@ void UIFunc::HoverRelic(void* args, int index, bool hover)
 
 	}
 
-	for (auto entity : View<UIShopImpWindowComponent>(registry))
+	for (auto entity : View<UIShopImpComponent>(registry))
 	{
 		uiImpElement = registry.GetComponent<UIComponent>(entity);
-		uiImpText = registry.GetComponent<UIShopImpWindowComponent>(entity);
+		uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 	}
 
 	int imageIndex = uiElement->m_Images.size() - (2 - index);

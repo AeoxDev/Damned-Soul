@@ -25,4 +25,10 @@ struct UIRelicWindowComponent
 		shopSelections[1] = AVALIABLE;
 	};
 
+	void Release()
+	{
+		shopRelics.~ML_Array();
+		shopSelections.~ML_Array();
+	};
+
 };

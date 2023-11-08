@@ -87,12 +87,30 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
-	for (auto entity : View<UIShopImpWindowComponent>(registry))
+	for (auto entity : View<UIRelicWindowComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
 		{
-			UIShopImpWindowComponent* imp = registry.GetComponent<UIShopImpWindowComponent>(entity);
-			
+			UIRelicWindowComponent* shop = registry.GetComponent<UIRelicWindowComponent>(entity);
+			shop->Release();
+		}
+	}
+
+	for (auto entity : View<UIShopImpComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			UIShopImpComponent* imp = registry.GetComponent<UIShopImpComponent>(entity);
+			imp->Release();
+		}
+	}
+
+	for (auto entity : View<UIShopTitleImpComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			UIShopTitleImpComponent* imp = registry.GetComponent<UIShopTitleImpComponent>(entity);
+			imp->name.~ML_String();
 		}
 	}
 

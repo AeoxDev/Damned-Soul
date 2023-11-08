@@ -47,33 +47,41 @@ void SettingsState::Input()
 void SettingsState::SetupButtons()
 {
 
-	ML_Array<ML_String, 5> texts;
-	texts[0] = "\n1280x720";
-	texts[1] = "\n1600x900";
-	texts[2] = "\n1920x1080";
-	texts[3] = "\nFullscreen";
-	texts[4] = "\nBack";
+	const char const texts[5][32] =
+	{
+		"\n1280x720",
+		"\n1600x900",
+		"\n1920x1080",
+		"\nFullscreen",
+		"\nBack"
+	};
 
-	ML_Array<DSFLOAT2, 5> positions;
-	positions[0] = { -0.375f, 0.2f };
-	positions[1] = { -0.125f, 0.2f };
-	positions[2] = { 0.125f, 0.2f };
-	positions[3] = { 0.375f, 0.2f };
-	positions[4] = { -0.81f, -0.8f };
+	const DSFLOAT2 const positions[5] =
+	{
+		{ -0.375f, 0.2f },
+		{ -0.125f, 0.2f },	
+		{ 0.125f, 0.2f },
+		{ 0.375f, 0.2f },
+		{ -0.81f, -0.8f }
+	};
 
-	ML_Array<DSFLOAT2, 5> scales;
-	scales[0] = { 0.6f, 0.6f };
-	scales[1] = { 0.6f, 0.6f };
-	scales[2] = { 0.6f, 0.6f };
-	scales[3] = { 0.6f, 0.6f };
-	scales[4] = { 0.5f, 0.6f };
+	const DSFLOAT2 const scales[5] =
+	{
+		{ 0.6f, 0.6f },
+		{ 0.6f, 0.6f },
+		{ 0.6f, 0.6f },
+		{ 0.6f, 0.6f },
+		{ 0.5f, 0.6f }
+	};
 
-	ML_Array<void(*)(void*, int), 5> functions;
-	functions[0] = UIFunc::Settings_LowRes;
-	functions[1] = UIFunc::Settings_MediumRes;
-	functions[2] = UIFunc::Settings_HighRes;
-	functions[3] = UIFunc::Settings_Fullscreen;
-	functions[4] = UIFunc::Settings_Back;
+	void(* const functions[5])(void*, int) =
+	{
+		UIFunc::Settings_LowRes,
+		UIFunc::Settings_MediumRes,
+		UIFunc::Settings_HighRes,
+		UIFunc::Settings_Fullscreen,
+		UIFunc::Settings_Back
+	};
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -82,7 +90,7 @@ void SettingsState::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i].c_str(), positions[i], scales[i]);
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
