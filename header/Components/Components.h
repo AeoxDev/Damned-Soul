@@ -31,3 +31,4 @@
 
 //Misc Combat Components
 #include "DamageOverTimeComponent.h"
+#include "ProjectileComponent.h"

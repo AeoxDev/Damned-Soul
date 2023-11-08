@@ -39,13 +39,12 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 
 bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
-	// Regular attack?
-	enemyAnim->aAnim = ANIMATION_ATTACK;
+	enemyAnim->aAnim = ANIMATION_ATTACK; //change anim to "spit"/shoot anim
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
-	//impose timer so they cannot run and hit at the same time also not do a million damage per sec
+	//impose timer so they cannot run and hit at the same time
 	if (ec->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
 		ec->attackTimer = 0;
@@ -61,30 +60,17 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 			magnitude = 0.001f;
 		}
 
-		float orthoX = -dz;
-		float orthoZ = dx;
-
 		dx /= magnitude;
 		dz /= magnitude;
 
-		float targetX = etc->positionX + dx * 10.0f;
-		float targetZ = etc->positionZ + dz * 10.0f;
-
-		ec->facingX = targetX;
-		ec->facingZ = targetZ;
-
-		//SmoothRotation(etc, ec->facingX, ec->facingZ);
+		EntityID bullet = CreateProjectile(etc, dx, dz);
 		
-
-		//SHOOOT
-
-		//playerStats->health -= enemyStats->damage;
-		//RedrawUI();
-
+		ec->attackTimer += GetDeltaTime();
 		return true;
 	}
 	else
 	{
+		ec->attackTimer += GetDeltaTime();
 		return false;
 	}
 }
@@ -194,8 +180,17 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	{
 		enemyAnim->aAnimTime = 0;
 
+		//reset value and calculate new breakpoint
+		eyeComponent->attackTimer = 0;
 		eyeComponent->specialCounter = 0;
 		eyeComponent->charging = true;
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// Define a uniform distribution for the range [-1.0, 1.0]
+		std::uniform_real_distribution<float> distribution(2.0f, 5.0f);
+		eyeComponent->specialBreakpoint = distribution(gen);
+
 
 		//while charging disable hitboxes
 		SetHitboxIsMoveable(eID, 0, false);
@@ -339,11 +334,8 @@ bool EyeBehaviourSystem::Update()
 
 		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
-			// Get animation component
-			
-
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			eyeComponent->attackTimer += GetDeltaTime();
+			
 			eyeComponent->attackStunDurationCounter += GetDeltaTime();
 			if (eyeComponent->attackStunDurationCounter <= eyeComponent->attackStunDuration)
 			{
@@ -357,7 +349,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
-			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->GetDamage() && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || (eyeComponent->specialCounter >= eyeComponent->specialBreakpoint && eyeComponent->attackTimer >= enemyStats->GetAttackSpeed())) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				if (!eyeComponent->chargeAttackSoundPlaying)
@@ -372,15 +364,8 @@ bool EyeBehaviourSystem::Update()
 			}
 			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
-				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
-				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
-				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
-				
-				//TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
-				//if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
-				//{
-				//	eyeComponent->specialCounter++;
-				//}
+				if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
+					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
 			}
 			else // idle
 			{

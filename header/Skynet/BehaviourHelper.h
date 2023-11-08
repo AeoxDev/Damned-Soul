@@ -32,3 +32,5 @@ float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z);
 PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransform);
 
 ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
+
+EntityID& CreateProjectile(TransformComponent* origin, float directionX, float directionZ);

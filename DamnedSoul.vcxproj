@@ -217,6 +217,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\SpikedSkin.cpp" />
     <ClCompile Include="source\RenderDepthPass.cpp" />
     <ClCompile Include="source\Skynet\Pathfinding.cpp" />
+    <ClCompile Include="source\Skynet\Projectile.cpp" />
+    <ClCompile Include="source\Skynet\ProjectileSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystem.cpp" />
     <ClCompile Include="source\Systems\StatCalcSystem.cpp" />
     <ClCompile Include="source\UIShopComponent.cpp" />
@@ -469,6 +471,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\ProjectileComponent.h" />
     <ClInclude Include="header\Components\SquashStretchComponent.h" />
     <ClInclude Include="header\Components\ShopComponent.h" />
     <ClInclude Include="header\Components\StaticHazardComponent.h" />
