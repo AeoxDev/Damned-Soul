@@ -2,6 +2,7 @@ Texture2D diffuseTex : register(t0);
 Texture2D normalTex : register(t1);
 Texture2D emissionTex : register(t2);
 Texture2D depthTexture : register(t3);
+Texture2D shadowTexture : register(t4);
 
 SamplerState WrapSampler : register(s0);
 
@@ -17,6 +18,16 @@ struct LightComponent
     float4 lightDirection;
     float4 lightPosition;
 };
+
+cbuffer CameraBuffer : register(b1)
+{
+    float4 cameraPosition;
+    matrix view;
+    matrix projection;
+    matrix shadowView;
+    matrix shadowProjection;
+}
+
 
 cbuffer LightComponentShaderBuffer : register(b2)
 {
@@ -62,6 +73,7 @@ struct PS_IN
     float2 uv : UV;
     float4 camToWorldObject : CAM; // normalized 
     float4 world : WORLD;
+    float2 depth : DEPTH;
 };
 
 //struct PS_OUT
@@ -92,10 +104,6 @@ float4 main(PS_IN input) : SV_TARGET
     float3 diffuse = materialDiffuse.xyz; //Sum of all diffuse lights
     float3 specular = materialSpecular.xyz; //Sum of all specular lights
     
-        ///xxxx DirectionalLight xxxx///
-    float3 diffuseDir = { 0.0f, 0.0f, 0.0f };
-    float3 dirReflection = { 0.0f, 0.0f, 0.0f };
-    float3 dirSpecular = { 0.0f, 0.0f, 0.0f };
     
         ///xxxx PointLight xxxx///
     float3 diffusePoint = { 0.0f, 0.0f, 0.0f };
@@ -107,21 +115,48 @@ float4 main(PS_IN input) : SV_TARGET
     float3 spotReflection = { 0.0f, 0.0f, 0.0f };
     float3 spotSpecular = { 0.0f, 0.0f, 0.0f };
     
+    //Only do directional if not in shadow
+    //Shadowmapping
+    //Take world and move it to shadow texture
+    float4 worldToTexture = float4(input.world.x, input.world.y, input.world.z, input.world.w);
+    //float4 lastRow = shadowProjection._41_42_43_44;
+    //lastRow = lastRow;
+    worldToTexture = mul(worldToTexture, shadowView);
+    worldToTexture = mul(worldToTexture, shadowProjection);
+    worldToTexture.xyz /= worldToTexture.w;
+    float depth = worldToTexture.z;
+
+    //Convert to UV (0 to 1)
+    float2 samplePos = float2((worldToTexture.x * 0.5f) + 0.5f, (-worldToTexture.y * 0.5f) + 0.5f);
+   
+       
+        ///xxxx DirectionalLight xxxx///
+    float3 diffuseDir = { 0.0f, 0.0f, 0.0f };
+    float3 dirReflection = { 0.0f, 0.0f, 0.0f };
+    float3 dirSpecular = { 0.0f, 0.0f, 0.0f };
     ///xxxx DirectionalLight xxxx///
-    float3 invertedDirLightDirection = -dirLightDirection.xyz; //rätt?
-    float dirLightIntesity = saturate(dot(input.normal.xyz, invertedDirLightDirection));
-    
-    if (dirLightIntesity > 0.0f)
+
+    //Shadow map is 1024
+    int2 loadPos = (int) (1024.0f * samplePos.xy);
+    float shadowDepth = shadowTexture.Sample(WrapSampler, samplePos.xy).x;
+    //float shadowDepth = shadowTexture.Load(int3(loadPos.x, loadPos.y, 0.0f));
+    if (depth < shadowDepth + 0.004f || shadowDepth == 0.0f) //Closer when 0
     {
+        float3 invertedDirLightDirection = -dirLightDirection.xyz; //rätt?
+        float dirLightIntesity = saturate(dot(input.normal.xyz, invertedDirLightDirection));
+        if (dirLightIntesity > 0.0f)
+        {
 
-        diffuseDir += (dirLightColor * dirLightIntesity).rgb;
-        saturate(diffuseDir);
+            diffuseDir += (dirLightColor * dirLightIntesity).rgb;
+            saturate(diffuseDir);
 
-        dirReflection = normalize(2 * dirLightIntesity * input.normal.xyz - invertedDirLightDirection);
-        dirSpecular = dirLightColor.xyz;
-        dirSpecular *= pow(saturate(dot(dirReflection * materialSpecular.xyz, input.camToWorldObject.xyz)), materialShininess.x);
-        specular += dirSpecular;
+            dirReflection = normalize(2 * dirLightIntesity * input.normal.xyz - invertedDirLightDirection);
+            dirSpecular = dirLightColor.xyz;
+            dirSpecular *= pow(saturate(dot(dirReflection * materialSpecular.xyz, input.camToWorldObject.xyz)), materialShininess.x);
+            specular += dirSpecular;
+        }
     }
+   
     for (int i = 0; i < LIGHT_COMPONENT_ARRAY_LIMIT; i++)
     {
         if (lights[i].type != 0)

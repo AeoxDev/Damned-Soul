@@ -39,6 +39,7 @@ struct VS_OUT //VS_OUT needs to be exaxtly the same in all vertexshaders
     float2 uv : UV;
     float4 camToWorldObject : CAM; // normalized 
     float4 world : WORLD;
+    float2 depth : DEPTH;
 };
 
 VS_OUT main(VS_INPUTS pos)
@@ -63,7 +64,8 @@ VS_OUT main(VS_INPUTS pos)
     retval.camToWorldObject = normalize(cameraPosition - retval.position); //använder världs position innan camera perspective
     retval.position = mul(retval.position, view);
     retval.position = mul(retval.position, projection);
-
+    retval.depth.x = retval.position.z;
+    retval.depth.y = retval.position.w;
 	return retval;
 }
 

@@ -24,6 +24,7 @@ struct VS_OUT
     float2 uv : UV;
     float4 camToWorldObject : CAM; // normalized 
     float4 world : WORLD;
+    float2 depth : DEPTH;
 };
 
 VS_OUT main(VS_INPUTS pos)
@@ -44,5 +45,7 @@ VS_OUT main(VS_INPUTS pos)
     output.position = mul(output.position, view);
     output.position = mul(output.position, projection);
 	
+    output.depth.x = output.position.z;
+    output.depth.y = output.position.w;
     return output;
 }

@@ -135,6 +135,9 @@ int SetupGameRenderer()
 	char depthShader[] = "DepthPixel.cso";
 	CreateDepthPassPixelShader(depthShader);
 	CreateDepthPass();
+
+	//CreateShadowMap(512, 512);
+	CreateShadowMap(1536, 1536);
 	return currentSize++;
 }
 

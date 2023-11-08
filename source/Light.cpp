@@ -520,6 +520,12 @@ float3 GetLightDirection(const EntityID& entity)
     lightOffsets[light->slot].lightDirectionOffset.z };
     return toReturn;
 }
+
+float3 GetLightDirection()
+{
+    float3 toReturn = { lightShaderBuffer.dirLightDirection.x, lightShaderBuffer.dirLightDirection.y , lightShaderBuffer.dirLightDirection.z };
+    return toReturn;
+}
 float GetLightRange(const EntityID& entity)
 {
     LightComponent* light = registry.GetComponent<LightComponent>(entity);
