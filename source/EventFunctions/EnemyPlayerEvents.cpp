@@ -122,6 +122,14 @@ void HazardBeginHit(EntityID& entity, const int& index)
 			break;
 		}
 	}
+	else
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		if (player != nullptr)
+		{
+			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Base);
+		}
+	}
 
 	//Get relevant components
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);

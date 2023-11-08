@@ -20,6 +20,8 @@ enum ImpVoice {}; //Add all text later
 
 enum Type {MENU, MUSIC, AMBIENCE, PLAYER, EYE, HELLHOUND, SKELETON, IMP, BOSS};
 
+enum ChannelGroup {MASTER_GROUP, SFX_GROUP, MUSIC_GROUP, VOICE_GROUP};
+
 struct SoundComponent
 {
 	bool playSound[CHANNEL_LIMIT] = { false, false };
@@ -34,14 +36,27 @@ struct SoundComponent
 	void Unload();
 };
 
+struct Volume
+{
+	float volume = 1.0f;
+	int group = MASTER_GROUP;
+
+	Volume(float vol = 1.0f, int gr = MASTER_GROUP)
+	{
+		this->volume = vol;
+		this->group = gr;
+	}
+};
+
 struct AudioEngineComponent
 {
 	FMOD_RESULT result = FMOD_OK;
 	FMOD::System* system = nullptr;
 	ML_Vector<FMOD::Sound*> sounds;
 	ML_Vector<FMOD::Channel*> channels;
+	ML_Vector<FMOD::ChannelGroup*> groups;
 	ML_Vector<int> freeChannels;
-	ML_Vector<float> volumes;
+	ML_Vector<Volume> volumes;
 	void Setup(int& ID);
 	void AddChannel();
 	void HandleSound();
