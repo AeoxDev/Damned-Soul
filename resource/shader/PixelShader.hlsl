@@ -85,6 +85,8 @@ float4 main(GS_OUT input) : SV_TARGET
     }
     
     // Calculate normal based on normal map combined with true normal
+    
+    [unroll]
     for (int i = 0; i < 3; ++i)
     {
         input.tbn[i] = normalize(input.tbn[i]);

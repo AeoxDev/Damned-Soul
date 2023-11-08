@@ -45,22 +45,23 @@ float Animation::GetTimestamp(const uint32_t frameIdx)
 	return 0;
 }
 
-DirectX::XMMATRIX* Animation::GetFrame(const float& time/*, uint32_t& numberOfBones*/)
+AnimationFrame Animation::GetFrame(const float& time)
 {
-	// Assignment inside if statement is on purpose!
-	if (/*numberOfBones = */m_data->m_boneCount)
+	AnimationFrame retVal;
+
+	if (m_data->m_boneCount)
 	{
 		uint32_t i;
 		// Find the most appropriate frame
 		for (i = 0; (i < m_data->m_frameCount - 1) && GetTimestamp(i) < time; ++i) {}
 
-		// return the pointer to the frame data
-		return (((DirectX::XMMATRIX*)&((float*)m_data->m_data)[m_data->m_frameCount]) + i * m_data->m_boneCount);
-		//dsMatrix* temp = &(m_data->bones[i][0]);
-		//return temp;
-
+		// Vertex bone transformations
+		retVal.vertex = (((DirectX::XMMATRIX*)&((float*)m_data->m_data)[m_data->m_frameCount]) + i * m_data->m_boneCount);
+		// Normal bone transformations
+		retVal.normal = (((DirectX::XMMATRIX*)&((float*)m_data->m_data)[m_data->m_frameCount]) + (i * m_data->m_boneCount) + (m_data->m_boneCount * m_data->m_frameCount));
 	}
-	return nullptr;
+
+	return retVal;
 }
 
 Animation::~Animation()
