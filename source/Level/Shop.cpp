@@ -5,12 +5,11 @@
 #include "Particles.h"
 #include "Levels\LevelHelper.h"
 #include "States/StateManager.h"
-#include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
 #include "UIComponents.h"
 #include "States/StateEnums.h"
 
-void CreateUIRelics(UIComponent& uiComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
+void CreateUIRelics(UIComponent& uiComp, UIRelicWindowComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
 {
 	ML_Array<float, 2> xPos;
 	xPos[0] = pos.x - 0.05f;
@@ -20,6 +19,7 @@ void CreateUIRelics(UIComponent& uiComp, const Relics::RELIC_TYPE& type, DSFLOAT
 	{
 		const RelicData* relic = Relics::PickRandomRelic(type);
 		uiComp.AddImage(relic->m_filePath, { xPos[i], pos.y - 0.025f }, { 1.5f, 1.5f }, false);
+		uiRelicComp.shopRelics[i] = relic;
 	}
 
 	uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
@@ -54,7 +54,9 @@ void CreateRelicWindows()
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 		uiElement->Setup("TempRelicFlavorHolder", texts[i].c_str(), positions[i]);
 
-		CreateUIRelics(*uiElement, type[i], positions[i]);
+		UIRelicWindowComponent* uiRelicWindow = registry.AddComponent<UIRelicWindowComponent>(relicWindow);
+
+		CreateUIRelics(*uiElement, *uiRelicWindow, type[i], positions[i]);
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
@@ -65,7 +67,6 @@ void CreateRelicWindows()
 		uiOnHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverRelic);
 		uiOnHover->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverRelic);
 
-		UIRelicWindowComponent* uiRelicWindow = registry.AddComponent<UIRelicWindowComponent>(relicWindow);
 	}
 
 };
@@ -90,11 +91,11 @@ void CreateSingleWindows()
 	imageName[2] = "Lock";
 	imageName[3] = "Buy";
 
-	ML_Array<void(*)(void*, int, bool), 4> functions;
-	functions[0] = UIFunc::HoverImage;
-	functions[1] = UIFunc::HoverImage;
-	functions[2] = UIFunc::HoverImage;
-	functions[3] = UIFunc::HoverImage;
+	ML_Array<void(*)(void*, int), 4> functions;
+	functions[0] = UIFunc::HealPlayer;
+	functions[1] = UIFunc::RerollRelic;
+	functions[2] = UIFunc::LockRelic;
+	functions[3] = UIFunc::BuyRelic;
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -104,9 +105,13 @@ void CreateSingleWindows()
 		uiElement->Setup("", texts[i].c_str(), positions[i]);
 		uiElement->AddImage(imageName[i].c_str(), { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
 
+		if (i == 1)
+			UIRerollComponent* uiReroll = registry.AddComponent<UIRerollComponent>(relicWindow);
+
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 
+		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
 		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
 	}
 }
@@ -146,8 +151,10 @@ void LoadShop()
 	OnHoverComponent* uiNextLevelOnHover = registry.AddComponent<OnHoverComponent>(shopNextLevel);
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("TempRelicHolder", "", { -0.2f, -0.1f }, { 2.0f, 2.0f });
+	uiImpText->Setup("TempRelicHolder", "Hello There", { -0.2f, -0.1f }, { 2.0f, 2.0f });
 	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
+
+	UIShopImpWindowComponent* uiImpTextWindow = registry.AddComponent<UIShopImpWindowComponent>(impText);
 
 }
 

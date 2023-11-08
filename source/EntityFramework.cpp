@@ -87,6 +87,15 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
+	for (auto entity : View<UIShopImpWindowComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			UIShopImpWindowComponent* imp = registry.GetComponent<UIShopImpWindowComponent>(entity);
+			
+		}
+	}
+
 	for (auto entity : View<OnClickComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)

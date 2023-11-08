@@ -474,17 +474,16 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIRerollComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopImpWindowComponent.h" />
-    <ClInclude Include="header\UI\UIElement.h">
+    <ClInclude Include="header\Components\UIComponents\UIComponent.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRelicWindowComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopComponent.h" />
     <ClInclude Include="header\EnemyType.h" />
     <ClInclude Include="header\EntityCreation.h" />
     <ClInclude Include="header\EntityID.h" />
@@ -559,10 +558,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
-    <ClInclude Include="header\UI\UIButton.h" />
-    <ClInclude Include="header\UI\UIComponent.h" />
-    <ClInclude Include="header\UI\UIImage.h" />
-    <ClInclude Include="header\UI\UIText.h" />
     <ClInclude Include="header\States\StateManager.h" />
     <ClInclude Include="header\States\Game.h" />
     <ClInclude Include="header\States\Menu.h" />

@@ -2,7 +2,6 @@
 #include "MemLib\ML_ComponentMap.hpp"
 #include <stdexcept>
 #include <algorithm>
-#include "UIButton.h"
 
 #define BIT_64 (sizeof(size_t))
 #define PAIR_SIZE (m_tSize + BIT_64)

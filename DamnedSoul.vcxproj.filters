@@ -202,9 +202,6 @@
     <ClCompile Include="source\Systems\StateSwitcherSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\UIShopComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Relics\DemonBonemarrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -363,10 +360,6 @@
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
-    <ClInclude Include="header\UI\UIButton.h" />
-    <ClInclude Include="header\UI\UIComponent.h" />
-    <ClInclude Include="header\UI\UIImage.h" />
-    <ClInclude Include="header\UI\UIText.h" />
     <ClInclude Include="lib\STB_Image\stb_image.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="header\MemLib\ML_Array.hpp" />
@@ -420,9 +413,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h">
@@ -483,12 +473,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Levels\LevelLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIShopComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Skynet\EyeBehaviour.h">
@@ -566,10 +550,7 @@
     <ClInclude Include="header\Components\OnClickComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\UI\UIElement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIHoverComponent.h">
+    <ClInclude Include="header\Components\UIComponents\UIComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\EnemyType.h">
@@ -611,10 +592,16 @@
     <ClInclude Include="header\CombatFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIButtonComponent.h">
+    <ClInclude Include="header\Components\OnHoverComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Components\OnHoverComponent.h">
+    <ClInclude Include="header\Components\UIComponents\UIShopImpWindowComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIRelicWindowComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Components\UIComponents\UIRerollComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

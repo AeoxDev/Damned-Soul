@@ -11,7 +11,6 @@
 #include "Model.h"
 #include "UIComponents.h"
 #include "States\StateManager.h"
-#include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
 
 void LoadLevel1()

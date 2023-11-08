@@ -4,7 +4,7 @@
 
 struct UIShopImpWindowComponent
 {
-	ML_String title;
+	ML_String name;
 	ML_String description;
-	ML_Vector<ML_String> subdescriptions;
+	uint8_t price;
 };

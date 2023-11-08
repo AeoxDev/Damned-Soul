@@ -3,18 +3,6 @@
 #include "Relics/RelicFunctions.h"
 #include "MemLib/ML_Vector.hpp"
 
-//enum temprelicslist
-//{
-//	DemonBonemarrow,
-//	FlameWeapon,
-//	SoulPower,
-//	DemonHeart,
-//	FrostFire,
-//	SoulHealth,
-//	SpeedyLittleDevil,
-//	LightningGod
-//};
-
 namespace UIFunc
 {
 	// Start the next level
@@ -47,17 +35,18 @@ namespace UIFunc
 	// Change to fullscreen from settings
 	void Settings_Fullscreen(void* args, int a);
 
-	// Buy a relic in shop
 	void SelectRelic(void* args, int index);
 
+	void BuyRelic(void* args, int index);
+
 	// Lock a relic in shop
-	void Shop_LockRelic(void* args, int index);
+	void LockRelic(void* args, int index);
 
 	// Re-roll a relic in shop
-	void Shop_ReRollRelic(void* args, int index);
+	void RerollRelic(void* args, int index);
 
 	// Heal the player
-	void Shop_Heal(void* args, int index);
+	void HealPlayer(void* args, int index);
 
 	void HoverImage(void* args, int index, bool hover);
 

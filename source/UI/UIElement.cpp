@@ -1,4 +1,4 @@
-#include "UIElement.h"
+#include "UIComponents/UIComponent.h"
 
 #include "SDLHandler.h"
 

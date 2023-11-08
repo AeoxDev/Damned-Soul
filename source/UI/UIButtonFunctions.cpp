@@ -31,8 +31,8 @@ void UIFunc::LoadNextLevel(void* args, int a)
 		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
 	}
 
-	//LoadLevel(++stateManager.activeLevel);
-	LoadLevel(2);
+	LoadLevel(++stateManager.activeLevel);
+	//LoadLevel(2);
 }
 
 void UIFunc::MainMenu_Settings(void* args, int a)
@@ -185,6 +185,22 @@ void UIFunc::SelectRelic(void* args, int index)
 {
 	UIComponent* uiElement = (UIComponent*)args;
 
+	int inverseIndex = 0;
+	ML_Array<int, 2> imageIndexes;
+
+	if (index == 0)
+	{
+		inverseIndex = 1;
+		imageIndexes[0] = uiElement->m_Images.size() - 2;
+		imageIndexes[1] = uiElement->m_Images.size() - 1;
+	}
+	else
+	{
+		inverseIndex = 0;
+		imageIndexes[0] = uiElement->m_Images.size() - 1;
+		imageIndexes[1] = uiElement->m_Images.size() - 2;
+	}
+
 	for (auto entity : View<UIRelicWindowComponent>(registry))
 	{
 		UIComponent* otherUI = registry.GetComponent<UIComponent>(entity);
@@ -197,39 +213,26 @@ void UIFunc::SelectRelic(void* args, int index)
 				if (otherWindow->shopSelections[i] == shopState::SELECTED)
 				{
 					otherWindow->shopSelections[i] = shopState::AVALIABLE;
+
+					otherUI->m_Images[otherUI->m_Images.size() - (2 - i)].SetImage("RelicIcons\\HoverRelic");
+					otherUI->m_Images[otherUI->m_Images.size() - (2 - i)].baseUI.SetVisibility(false);
 				}
 			}
-
-			otherUI->m_Images[otherUI->m_Images.size() - 2].SetImage("RelicIcons\\HoverRelic");
-			otherUI->m_Images[otherUI->m_Images.size() - 2].baseUI.SetVisibility(false);
-
-			otherUI->m_Images[otherUI->m_Images.size() - 1].SetImage("RelicIcons\\HoverRelic");
-			otherUI->m_Images[otherUI->m_Images.size() - 1].baseUI.SetVisibility(false);
 
 			continue;
 		}
 
 		UIRelicWindowComponent* uiWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
 
-		if (index == 0)
-		{
-			uiElement->m_Images[uiElement->m_Images.size() - 2].SetImage("RelicIcons\\SelectedRelic");
-			uiElement->m_Images[uiElement->m_Images.size() - 2].baseUI.SetVisibility(true);
+		uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\SelectedRelic");
+		uiElement->m_Images[imageIndexes[0]].baseUI.SetVisibility(true);
 
-			uiElement->m_Images[uiElement->m_Images.size() - 1].SetImage("RelicIcons\\HoverRelic");
-			uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.SetVisibility(false);
-			uiWindow->shopSelections[index + 1] = shopState::AVALIABLE;
-		}
-		else if (index == 1)
+		if (uiWindow->shopSelections[inverseIndex] != shopState::LOCKED && uiWindow->shopSelections[inverseIndex] != shopState::BOUGHT)
 		{
-			uiElement->m_Images[uiElement->m_Images.size() - 1].SetImage("RelicIcons\\SelectedRelic");
-			uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.SetVisibility(true);
-
-			uiElement->m_Images[uiElement->m_Images.size() - 2].SetImage("RelicIcons\\HoverRelic");
-			uiElement->m_Images[uiElement->m_Images.size() - 2].baseUI.SetVisibility(false);
-			uiWindow->shopSelections[index - 1] = shopState::AVALIABLE;
+			uiElement->m_Images[imageIndexes[1]].SetImage("RelicIcons\\HoverRelic");
+			uiElement->m_Images[imageIndexes[1]].baseUI.SetVisibility(false);
+			uiWindow->shopSelections[inverseIndex] = shopState::AVALIABLE;
 		}
-		
 
 		if (uiWindow->shopSelections[index] == shopState::AVALIABLE)
 		{
@@ -237,35 +240,123 @@ void UIFunc::SelectRelic(void* args, int index)
 		}
 		else if (uiWindow->shopSelections[index] == shopState::SELECTED)
 		{
-			if (index == 0)
-			{
-				uiElement->m_Images[uiElement->m_Images.size() - 2].SetImage("RelicIcons\\HoverRelic");
-
-			}
-			else if (index == 1)
-			{
-				uiElement->m_Images[uiElement->m_Images.size() - 1].SetImage("RelicIcons\\HoverRelic");
-
-			}
+			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\HoverRelic");
 			uiWindow->shopSelections[index] = shopState::AVALIABLE;
 		}
-
 	}
 
 	RedrawUI();
 }
 
-void UIFunc::Shop_LockRelic(void* args, int index)
+void UIFunc::BuyRelic(void* args, int index)
 {
+	PlayerComponent* player = nullptr;
 
+	for (auto entity : View<PlayerComponent>(registry))
+		player = registry.GetComponent<PlayerComponent>(entity);
+
+	for (auto entity : View<UIRelicWindowComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIRelicWindowComponent* relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (relicWindow->shopSelections[i] == shopState::SELECTED)
+			{
+				relicWindow->shopSelections[i] = shopState::BOUGHT;
+				uiElement->m_Images[i + 2].SetImage("Buy");
+				player->UpdateSouls(relicWindow->shopRelics[i]->m_price);
+				break;
+			}
+		}
+	}
+
+	RedrawUI();
 }
 
-void UIFunc::Shop_ReRollRelic(void* args, int index)
+void UIFunc::LockRelic(void* args, int index)
 {
+	PlayerComponent* player = nullptr;
 
+	for (auto entity : View<PlayerComponent>(registry))
+		player = registry.GetComponent<PlayerComponent>(entity);
+
+	if (player->GetSouls() > 0)
+	{
+		for (auto entity : View<UIRelicWindowComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			UIRelicWindowComponent* relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+
+			for (int i = 0; i < 2; i++)
+			{
+				if (relicWindow->shopSelections[i] == shopState::SELECTED)
+				{
+					relicWindow->shopSelections[i] = shopState::LOCKED;
+					uiElement->m_Images[i + 2].SetImage("RelicIcons\\LockedRelic");
+					player->UpdateSouls(0);
+					break;
+				}
+			}
+		}
+		
+	}
+
+	RedrawUI();
 }
 
-void UIFunc::Shop_Heal(void* args, int index)
+void UIFunc::RerollRelic(void* args, int index)
+{
+	UIComponent* uiElement = (UIComponent*)args;
+	UIRerollComponent* uiReroll = nullptr;
+
+	PlayerComponent* player = nullptr;
+
+	for (auto entity : View<PlayerComponent>(registry))
+		player = registry.GetComponent<PlayerComponent>(entity);
+
+	for (auto entity : View<UIRerollComponent>(registry))
+		uiReroll = registry.GetComponent<UIRerollComponent>(entity);
+
+	if (!uiReroll->locked)
+	{
+		if (player->GetSouls() > 0)
+		{
+			for (auto entity : View<UIRelicWindowComponent>(registry))
+			{
+				UIComponent* uiRelic = registry.GetComponent<UIComponent>(entity);
+				UIRelicWindowComponent* relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+
+				for (int i = 0; i < 2; i++)
+				{
+					if (relicWindow->shopSelections[i] == shopState::BOUGHT)
+						continue;
+
+					if (relicWindow->shopSelections[i] == shopState::LOCKED)
+					{
+						relicWindow->shopSelections[i] = shopState::AVALIABLE;
+						uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
+						uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
+
+						continue;
+					}
+
+					const RelicData* relic = Relics::PickRandomRelic(Relics::RELIC_UNTYPED);
+					uiRelic->m_Images[i].SetImage(relic->m_filePath);
+					relicWindow->shopRelics[i] = relic;
+				}
+			}
+
+			player->UpdateSouls(0);
+			uiReroll->locked = true;
+		}
+	}
+
+	RedrawUI();
+}
+
+void UIFunc::HealPlayer(void* args, int index)
 {
 	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 	{
@@ -318,7 +409,10 @@ void UIFunc::HoverImage(void* args, int index, bool hover)
 void UIFunc::HoverRelic(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
-	UIRelicWindowComponent* otherWindow = nullptr;
+	UIRelicWindowComponent* relicWindow = nullptr;
+
+	UIComponent* uiImpElement = nullptr;
+	UIShopImpWindowComponent* uiImpText = nullptr;
 
 	for (auto entity : View<UIRelicWindowComponent>(registry))
 	{
@@ -327,37 +421,40 @@ void UIFunc::HoverRelic(void* args, int index, bool hover)
 		if (uiElement != otherUI)
 			continue;
 
-		otherWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+		relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
 
 	}
 
-	if (otherWindow->shopSelections[index] != shopState::SELECTED && otherWindow->shopSelections[index] != shopState::BOUGHT)
+	for (auto entity : View<UIShopImpWindowComponent>(registry))
 	{
-		if (index == 0)
-		{
-			if (hover)
-			{
-				uiElement->m_Images[uiElement->m_Images.size() - 2].baseUI.SetVisibility(true);
-				uiElement->m_Images[uiElement->m_Images.size() - 2].baseUI.SetPosition(uiElement->m_Images[index].baseUI.GetPosition());
-			}
-			else
-			{
-				uiElement->m_Images[uiElement->m_Images.size() - 2].baseUI.SetVisibility(false);
-			}
-		}
-		else if (index == 1)
-		{
-			if (hover)
-			{
-				uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.SetVisibility(true);
-				uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.SetPosition(uiElement->m_Images[index].baseUI.GetPosition());
-			}
-			else
-			{
-				uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.SetVisibility(false);
-			}
-		}
-		
+		uiImpElement = registry.GetComponent<UIComponent>(entity);
+		uiImpText = registry.GetComponent<UIShopImpWindowComponent>(entity);
 	}
-	
+
+	int imageIndex = uiElement->m_Images.size() - (2 - index);
+
+	if (hover)
+	{
+		uiElement->m_Images[imageIndex].baseUI.SetVisibility(true);
+		uiElement->m_Images[imageIndex].baseUI.SetPosition(uiElement->m_Images[index].baseUI.GetPosition());
+
+		uiImpText->name = relicWindow->shopRelics[index]->m_relicName;
+		uiImpText->description = relicWindow->shopRelics[index]->m_description;
+		uiImpText->price = relicWindow->shopRelics[index]->m_price;
+
+		ML_String relicText = uiImpText->name;
+		relicText.append("\nPrice: ");
+		relicText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
+		relicText.append(uiImpText->description);
+
+		uiImpElement->m_Text.SetText(relicText.c_str(), uiImpElement->m_Text.baseUI.GetBounds());
+	}
+	else
+	{
+		if (relicWindow->shopSelections[index] == shopState::AVALIABLE)
+		{
+			uiElement->m_Images[imageIndex].baseUI.SetVisibility(false);
+		}
+	}
+
 }

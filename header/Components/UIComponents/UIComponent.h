@@ -52,7 +52,6 @@ struct UIText
 	void Draw();
 };
 
-
 struct UIImage
 {
 	UIBase baseUI;

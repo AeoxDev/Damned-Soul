@@ -1,5 +1,4 @@
 #pragma once
-#include "UIElement.h"
 
 struct UIPlayerSoulsComponent
 {
