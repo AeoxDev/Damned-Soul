@@ -87,7 +87,7 @@ void Particles::UpdateMetadata(int metadataSlot, float v0x, float v0z, float v1x
 {
 	data->metadata[metadataSlot].positionInfo.y = v0x; data->metadata[metadataSlot].positionInfo.z = v0z;
 	data->metadata[metadataSlot].morePositionInfo.x = v1x; 	data->metadata[metadataSlot].morePositionInfo.y = v1z;
-	data->metadata[metadataSlot].morePositionInfo.z = v2x; data->metadata[metadataSlot].morePositionInfo.w = v2z;
+	//data->metadata[metadataSlot].morePositionInfo.z = v2x; data->metadata[metadataSlot].morePositionInfo.w = v2z;
 }
 
 ParticleMetadataBuffer* Particles::GetData()
@@ -161,6 +161,24 @@ void Particles::FinishParticlePass()
 	UnsetRasterizerState();
 }
 
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+
+	data->metadata[metadataSlot].start = 0;
+
+	if (metadataSlot > 0)
+		data->metadata[metadataSlot].start = data->metadata[metadataSlot - 1].end + 1;
+	
+	data->metadata[metadataSlot].end = data->metadata[metadataSlot].start + amount;
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
+	data->metadata[metadataSlot].pattern = pattern;
+}
+
 // -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
 {
@@ -201,7 +219,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].rotationY = rotationY;
 	data->metadata[metadataSlot].positionInfo.x = 0.0f;
 	data->metadata[metadataSlot].positionInfo.y = v0X; data->metadata[metadataSlot].positionInfo.z = v0Z;
-	data->metadata[metadataSlot].morePositionInfo.x = v1X; data->metadata[metadataSlot].morePositionInfo.y = v1Z; data->metadata[metadataSlot].morePositionInfo.z = v2X;  data->metadata[metadataSlot].morePositionInfo.w = v2Z;
+	data->metadata[metadataSlot].morePositionInfo.x = v1X; data->metadata[metadataSlot].morePositionInfo.y = v1Z; //data->metadata[metadataSlot].morePositionInfo.z = v2X;  data->metadata[metadataSlot].morePositionInfo.w = v2Z;
 
 	data->metadata[metadataSlot].positionInfo.x = -99.f;
 

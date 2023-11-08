@@ -21,6 +21,7 @@ struct ParticleComponent
 	// Finds the index of the metadata for this component
 	int FindSlot();
 
+	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern);
 	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
 
 	// Overload for FlameThrower

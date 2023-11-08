@@ -1,8 +1,52 @@
 #pragma once
 #include <DirectXMath.h>
 #include "MemLib/PoolPointer.hpp"
+#include "MemLib\ML_Vector.hpp"
 #include "ParticleComponent.h"
 #include "GameRenderer.h"
+#include "D3D11Helper\IDX_Types.h"
+
+//struct LogicalBuffer final {
+//	uint8_t* data = nullptr;
+//	size_t dataSize = 0;
+//	size_t dataFormatStride = 0;
+//	size_t physicalAddress = 0;
+//	uint32_t slot = -1;
+//};
+//
+//struct PhysicalBuffer final {
+//	//CB_IDX* physicalBuffer = nullptr; ITS IN SRV IDX
+//	SRV_IDX* physicalBufferView = nullptr;
+//	size_t physicalDataSize = 0;
+//	bool isDirty = false;
+//
+//	typedef ML_Vector<LogicalBuffer*> PageArray;
+//	PageArray allPages;
+//	PhysicalBuffer() = default;
+//	inline ~PhysicalBuffer()
+//	{
+//		/*if (physicalBuffer != nullptr)
+//			physicalBuffer->Release();
+//		if (physicalBufferView != nullptr)
+//			physicalBufferView->Release();*/
+//	}
+//	void Allocate(LogicalBuffer* logicalBuffer);
+//	void Release(LogicalBuffer* logicalBuffer);
+//	void RebuildPages(); // very expensive operation
+//};
+//
+//void PhysicalBuffer::Allocate(LogicalBuffer* logicalBuffer)
+//{ 
+//	allPages.push_back(logicalBuffer); 
+//	isDirty = true; 
+//} 
+//void PhysicalBuffer::Release(LogicalBuffer* logicalBuffer)
+//{ 
+//	allPages.erase(logicalBuffer->slot); 
+//	isDirty = true;
+//}
+//
+
 
 #define PARTICLE_METADATA_LIMIT 256
 #define THREADS_PER_GROUP 256
@@ -28,6 +72,7 @@ struct Particle
 
 struct ParticleMetadata
 {
+	int start, end;
 	float life = 0.f;// Time a paritcle is allowed to live, if < 0.0, no calcs
 	float maxRange = 10.f; // How long particle is allowed to go 
 	float size = 1.f; // Size of particle
@@ -38,7 +83,7 @@ struct ParticleMetadata
 	float deltaTime = 0;
 	float rotationY = 0;
 	DirectX::XMFLOAT3 positionInfo{ 0.f, 0.f, 0.f };
-	DirectX::XMFLOAT4 morePositionInfo{ 0.f, 0.f, 0.f, 0.f };
+	DirectX::XMFLOAT2 morePositionInfo{ 0.f, 0.f};
 
 };
 
