@@ -4,6 +4,7 @@
 #include "States\StateManager.h"
 #include "Registry.h"
 
+
 PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransform)
 {
 	GITexture* mapGrid = giTexture;
@@ -145,9 +146,11 @@ bool IsCellValid(int x, int z)
 
 float CalculateEuclideanDistance(int x, int z, Node goal)
 {
-	float dist = (sqrtf((x - goal.x) * (x - goal.x)+ (z - goal.z) * (z - goal.z)));
+	float dist = (sqrtf((float)(x - goal.x) * (float)(x - goal.x)+ (float)(z - goal.z) * (float)(z - goal.z)));
 	return dist;
 }
+
+
 
 Node CreateNewNode(PathfindingMap gridValues, int x, int z, Node parent)
 {
@@ -167,7 +170,6 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 	
 
 	Node tempNode = endNode;
-	Coordinate2D coord;
 
 	while (tempNode.g != 0)
 	{
@@ -244,25 +246,63 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent
 	tempPush.z = start.z;
 	openList.push_back(tempPush);
 
+	float secondCheapest = -1;
+	float secondIndex = -1;
+
+	float cheapest = FLT_MAX;
+	int index = 0;
+	int oldNodeAmount = 0;
+
 	while (!openList.size() == 0 ) //this is where A* starts
 	{
 		GridPosition currPos; //= *openList.begin();
-		float cheapest = FLT_MAX;
-		int index = 0;
-		for (unsigned i = 0; i < openList.size(); i++)
+		if (secondIndex != -1)
+		{
+			index = secondIndex;
+			cheapest = secondCheapest;
+			secondCheapest = -1;
+			secondIndex = -1;
+			currPos = openList[index];
+		}
+		else
+		{
+			cheapest = FLT_MAX;
+			index = 0;
+			oldNodeAmount = 0;
+		}
+		
+
+		for (int i = openList.size() - 1; i > oldNodeAmount - 1; i--)
 		{
 			if (nodeMap[openList[i].x][openList[i].z].f < cheapest)
 			{
+
+				if (secondCheapest != -1 && openList.size() > 1)
+				{
+					secondCheapest = cheapest;
+					if (i < index && i != 0)//remove from list to alter order
+					{
+						secondIndex = index - 1;
+					}
+					else
+					{
+						secondIndex = index;
+					}
+				}
+
 				cheapest = nodeMap[openList[i].x][openList[i].z].f;
 				currPos = openList[i];
 				index = i;
+
+				
 			}
 		}
 
 		Node currentNode = nodeMap[currPos.x][currPos.z];
-		 
 		openList.erase(index);
-	
+		
+		oldNodeAmount = openList.size();
+
 		closedList[currentNode.x][currentNode.z] = true;
 		/*
 		Generating all the 8 successor of this cell
@@ -323,6 +363,7 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent
 					}
 				}
 			}
+			
 		}
 
 
@@ -600,6 +641,10 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent
 				}
 			}
 		}
+
+
+
+		
 
 	} // END OF WHILE LOOP 
 
