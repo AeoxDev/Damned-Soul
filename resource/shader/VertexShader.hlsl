@@ -17,5 +17,7 @@ VS_OUT main(VS_INPUTS pos)
     output.position = mul(output.position, view);
     output.position = mul(output.position, projection);
 	
+    output.depth.x = output.position.z;
+    output.depth.y = output.position.w;
     return output;
 }

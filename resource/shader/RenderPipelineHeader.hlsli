@@ -13,6 +13,8 @@ cbuffer CameraBuffer : register(b1)
     float4 cameraPosition;
     matrix view;
     matrix projection;
+    matrix shadowView;
+    matrix shadowProjection;
 }
 
 struct VS_INPUTS
@@ -29,6 +31,7 @@ struct VS_OUT //VS_OUT needs to be exaxtly the same in all vertexshaders
     float2 uv : UV;
     float4 camToWorldObject : CAM; // normalized 
     float4 world : WORLD;
+    float2 depth : DEPTH;
 };
 
 struct GS_OUT

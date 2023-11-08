@@ -31,7 +31,8 @@ VS_OUT main(VS_INPUTS_SKELETON pos)
     retval.camToWorldObject = normalize(cameraPosition - retval.position); //använder världs position innan camera perspective
     retval.position = mul(retval.position, view);
     retval.position = mul(retval.position, projection);
-
+    retval.depth.x = retval.position.z;
+    retval.depth.y = retval.position.w;
 	return retval;
 }
 
