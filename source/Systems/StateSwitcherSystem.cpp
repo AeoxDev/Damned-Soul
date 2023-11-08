@@ -19,6 +19,7 @@ bool StateSwitcherSystem::Update()
 		{
 			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay)
 			{
+				registry.GetComponent<SoundComponent>(stateManager.player)->Play(Player_Death, Channel_Base);
 				stateManager.GetCurrentLevel().GameOver();
 			}
 		}
