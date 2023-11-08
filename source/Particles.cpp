@@ -8,7 +8,9 @@
 #include "DeltaTime.h"
 #include "Registry.h"
 
-PoolPointer<ParticleInputOutput> Particles::m_readWriteBuffer;
+PoolPointer<ParticleInputOutput> Particles::m_readBuffer;
+PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
+
 PoolPointer<ParticleMetadataBuffer> data;
 
 int Particles::RenderSlot;
@@ -18,17 +20,21 @@ CS_IDX setToZeroCS = -1;
 
 void Particles::SwitchInputOutput()
 {
-	UAV_IDX tempInput = m_readWriteBuffer->inputUAV;
-	UAV_IDX tempOutput = m_readWriteBuffer->outputUAV;
+	SRV_IDX readSRV = m_readBuffer->SRV;
+	UAV_IDX readUAV = m_readBuffer->UAV;
+	
+	m_readBuffer->SRV = m_writeBuffer->SRV;
+	m_readBuffer->UAV = m_writeBuffer->UAV;
 
-	m_readWriteBuffer->outputUAV = tempInput;
-	m_readWriteBuffer->inputUAV = tempOutput;
+	m_writeBuffer->SRV = readSRV;
+	m_writeBuffer->UAV = readUAV;
 }
 
 void Particles::InitializeParticles()
 {
 	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));
-	m_readWriteBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
+	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
 
 	Particle* particles;
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
@@ -45,9 +51,13 @@ void Particles::InitializeParticles()
 		particles[i].size = 0.f;
 	}
 
+	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
+	m_readBuffer->SRV = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, NONE);
+	m_writeBuffer->SRV = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, resourceFlags, NONE);
 
-	m_readWriteBuffer->inputUAV = CreateUnorderedAccessViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, BIND_UNORDERED_ACCESS, NONE);
-	m_readWriteBuffer->outputUAV = CreateUnorderedAccessViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, BIND_UNORDERED_ACCESS, NONE);
+	m_readBuffer->UAV = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_readBuffer->SRV);
+	m_writeBuffer->UAV = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_writeBuffer->SRV);
+
 	MemLib::spop(); // for particles
 
 
@@ -73,7 +83,8 @@ void Particles::InitializeParticles()
 void Particles::ReleaseParticles()
 {
 	MemLib::pfree(data);
-	MemLib::pfree(m_readWriteBuffer);
+	MemLib::pfree(m_readBuffer);
+	MemLib::pfree(m_writeBuffer);
 }
 
 void Particles::UpdateMetadata(int metadataSlot, float x, float y, float z)
@@ -95,45 +106,42 @@ ParticleMetadataBuffer* Particles::GetData()
 	return data;
 }
 
-//Create an array with base positions
-//Array with base rotations
-
-//Transform update: Loop to update metatdata with transform and base pos/rotations.
-
-
+ParticleMetadata Particles::GetMetadataAtIndex(int metadataSlot)
+{
+	return data->metadata[metadataSlot];
+}
 
 void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 {
 	SwitchInputOutput();
 
 	data->metadata[0].deltaTime = GetDeltaTime();
-	//if (data->metadata[pc->metadataSlot].pattern == FLAMETHROWER)
-	//{
-	//	data->metadata[pc->metadataSlot].life = ;
-	//		data->metadata[pc->metadataSlot].spawnPos = ;
-	//}
-
 
 	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
 
 	SetComputeShader(renderStates[RenderSlot].computeShader);
 	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_COMPUTE, 0);
-	SetUnorderedAcessView(m_readWriteBuffer->inputUAV, 0);
-	SetUnorderedAcessView(m_readWriteBuffer->outputUAV, 1);
+	SetShaderResourceView(m_readBuffer->SRV, BIND_COMPUTE, 0);
+	SetUnorderedAcessView(m_writeBuffer->UAV, 0);
 }
 
 void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 {
+	UnsetShaderResourceView(BIND_COMPUTE, 0);
 	UnsetUnorderedAcessView(0);
-	UnsetUnorderedAcessView(1);
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
 
-	CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_readWriteBuffer->outputUAV);
+	//CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_readWriteBuffer->outputUAV);
 }
 
 void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 {
+	// - NEW - //
+	//UnsetVertexBuffer();
+	//UnsetIndexBuffer();
+	// - //
+
 	SetTopology(POINTLIST);
 
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
@@ -142,7 +150,11 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
 
-	SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
+	// - NEW - //
+	SetShaderResourceView(m_writeBuffer->SRV, BIND_VERTEX, 2);
+	UnsetVertexBuffer();
+	//SetVertexBuffer(renderStates[RenderSlot].vertexBuffer);
+	// - //
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
 }
@@ -157,7 +169,11 @@ void Particles::FinishParticlePass()
 	UnsetGeometryShader();
 	UnsetPixelShader();
 
+	// - NEW - //
+	UnsetShaderResourceView(BIND_VERTEX, 2);
 	//UnsetVertexBuffer();
+	// - //
+
 	UnsetRasterizerState();
 }
 
@@ -197,8 +213,8 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 	// Prepare dispatch
 	SetComputeShader(setToZeroCS);
-	SetUnorderedAcessView(Particles::m_readWriteBuffer->inputUAV, 0);
-	SetUnorderedAcessView(Particles::m_readWriteBuffer->outputUAV, 1);
+	SetUnorderedAcessView(Particles::m_readBuffer->UAV, 0);
+	SetUnorderedAcessView(Particles::m_writeBuffer->UAV, 1);
 
 	// Reset the time values of the particles to a glorious zero
 	Dispatch(1, metadataSlot + 1, 1); //x * y * z

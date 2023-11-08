@@ -56,8 +56,8 @@
 //Slot [0] will always be read and slot [1] will always be write
 struct ParticleInputOutput
 {
-	UAV_IDX inputUAV;
-	UAV_IDX outputUAV;
+	SRV_IDX SRV;
+	UAV_IDX UAV;
 };
 
 struct Particle
@@ -72,17 +72,19 @@ struct Particle
 
 struct ParticleMetadata
 {
-	int start, end;
+	int start = -1; 
+	int end = -1;
 	float life = 0.f;// Time a paritcle is allowed to live, if < 0.0, no calcs
 	float maxRange = 10.f; // How long particle is allowed to go 
+	DirectX::XMFLOAT3 spawnPos{ 0.f, 0.f, 0.f };
 	float size = 1.f; // Size of particle
+	DirectX::XMFLOAT3 positionInfo{ 0.f, 0.f, 0.f };
 	int pattern = 0; // The movement pattern of the particle
 
-	DirectX::XMFLOAT3 spawnPos{ 0.f, 0.f, 0.f };
+
 
 	float deltaTime = 0;
 	float rotationY = 0;
-	DirectX::XMFLOAT3 positionInfo{ 0.f, 0.f, 0.f };
 	DirectX::XMFLOAT2 morePositionInfo{ 0.f, 0.f};
 
 };
@@ -96,7 +98,8 @@ namespace Particles
 {
 	extern int RenderSlot;
 
-	extern PoolPointer<ParticleInputOutput> m_readWriteBuffer;
+	extern PoolPointer<ParticleInputOutput> m_readBuffer;
+	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
 
 
 	void SwitchInputOutput();
@@ -107,6 +110,7 @@ namespace Particles
 	// Overload for flamethrower triangles
 	void UpdateMetadata(int metadataSlot, float v0x, float v0z, float v1x, float v1z, float v2x, float v2z);
 	ParticleMetadataBuffer* GetData();
+	ParticleMetadata GetMetadataAtIndex(int metadataSlot);
 
 	//Calls for D3D11Helper to set the compute shader and the resources it requires
 	void PrepareParticleCompute(RenderSetupComponent renderStates[8]);

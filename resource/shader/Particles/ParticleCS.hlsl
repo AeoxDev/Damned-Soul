@@ -1,5 +1,8 @@
 #include "ParticleHeader.hlsli"
 
+StructuredBuffer<Input> readParticleData : register(t0);
+
+
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
 inline void ArchMovement(in uint3 DTid, in uint3 blockID);
 inline void ExplosionMovement(in uint3 DTid, in uint3 blockID);
@@ -63,6 +66,14 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
 {
     // -- SAME FOR ALL FUNCTIONS -- //
     int index = DTid.x + blockID.y * NUM_THREADS;
+    
+    // - NEW - //
+    int amount = meta[blockID.y].end - meta[blockID.y].start;
+    index = meta[blockID.y].start + DTid.x;
+    if (index > meta[blockID.y].end)
+        return;
+    // - //
+    
     Input particle = inputParticleData[index];
     
     float dt = meta[0].deltaTime;
@@ -167,13 +178,13 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     // THEESE WEIRD VARIABLES ARE MEANT TO BE WEIRD, THEY HOLD VALUES
     float2 v0 = float2(meta[blockID.y].positionInfo.y, meta[blockID.y].positionInfo.z);
     float2 v1 = float2(meta[blockID.y].morePositionInfo.x, meta[blockID.y].morePositionInfo.y);
-    float2 v2 = float2(meta[blockID.y].morePositionInfo.z, meta[blockID.y].morePositionInfo.w);
+    //float2 v2 = float2(meta[blockID.y].morePositionInfo.z, meta[blockID.y].morePositionInfo.w);
     
-    float2 legOne = v1 - v0;
-    float2 legTwo = v2 - v0;
+    //float2 legOne = v1 - v0;
+    //float2 legTwo = v2 - v0;
     
-    float2 middlePoint = (v2 - v1) / 2;
-    float2 middleVector = middlePoint - v0;
+    //float2 middlePoint = (v2 - v1) / 2;
+    //float2 middleVector = middlePoint - v0;
     
     
     
@@ -181,28 +192,28 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     //float2 dirVec = normalize(middlePoint - v0);
     
     
-    float2 v0ToParticle = particle.position.xz - v0;
+    //float2 v0ToParticle = particle.position.xz - v0;
     
     
-    float alpha = acos(dot(legOne, middleVector) / (length(legOne) * length(middleVector))) * 0.25f;
-    float beta = ((alpha * 2 * ((float) DTid.x / NUM_THREADS))) - alpha + PI*0.5f;
+    //float alpha = acos(dot(legOne, middleVector) / (length(legOne) * length(middleVector))) * 0.25f;
+    //float beta = ((alpha * 2 * ((float) DTid.x / NUM_THREADS))) - alpha + PI*0.5f;
 
     
     
-    if (length(v0ToParticle) < length(middleVector))
-    {
-        particle.position.x = particle.position.x + cos(beta) * particle.velocity.x * dt * meta[OneHundo_TwoFiveFive].deltaTime;
-        particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
-        particle.position.z = particle.position.z + sin(beta) * particle.velocity.z * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+    //if (length(v0ToParticle) < length(middleVector))
+    //{
+    //    particle.position.x = particle.position.x + cos(beta) * particle.velocity.x * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+    //    particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
+    //    particle.position.z = particle.position.z + sin(beta) * particle.velocity.z * dt * meta[OneHundo_TwoFiveFive].deltaTime;
 
-    }
-    else
-    {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    //}
+    //else
+    //{
+    //    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
 
-        particle.position = startPosition;
-        particle.time = 0.f;
-    }
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
 
     
     

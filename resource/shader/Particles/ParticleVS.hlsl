@@ -15,7 +15,7 @@ struct VS_IN
 };
 
 struct VS_OUT
-{
+{ 
     float4 position : SV_POSITION;
     float4 worldPosition : POSITION;
     float4 rgb : RGB;
@@ -23,8 +23,12 @@ struct VS_OUT
     float size : SIZE;
 };
 
-VS_OUT main(VS_IN inval)
+StructuredBuffer<VS_IN> particles : register(t2);
+
+
+VS_OUT main(/*VS_IN inval*/ uint vertexID : SV_VertexID)
 {
+    VS_IN inval = particles[vertexID];
     VS_OUT retval;
     
     retval.position = float4(inval.position, 1.f);
