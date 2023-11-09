@@ -7,6 +7,7 @@
 // Used to contain the functions of each type
 #include "MemLib\ML_Vector.hpp"
 
+
 // Include all relics
 	/*Offense*/
 #include "Relics\Offensive\DemonBonemarrow.h"
@@ -32,6 +33,9 @@
 
 #include "Relics\Utility\ML_RelicArray.h"
 #include "MemLib\ML_Vector.hpp"
+
+// For active level
+#include "States\StateManager.h"
 
 #include <random>
 #include <time.h>
@@ -261,25 +265,88 @@ void Relics::ResetRelics()
 	}
 }
 
+#define CLAMP_SUB(a, b) (a < b ? 0 : a - b)
+
 const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 {
 	_validateMasterRelicList();
 
-	if (type == RELIC_UNTYPED && (*RemainingRelicList).size())
+	// The return value
+	// Default to useless rock!
+	const RelicData* retVal = &DefaultRelicRock;
+
+	// If a specific type was requested and there are remaining relics
+	if (type && (*RemainingRelicList).size())
+	{
+		// The potential relics matching the criteria
+		ML_Map<uint32_t, const RelicData*> possibleSelection;
+		// The current total weight
+		uint32_t currentTotalWeight = 0;
+
+		for (uint32_t i = 0; i < (*RemainingRelicList).size() && type /*should also be typed*/; /*++i*/)
+		{
+			const RelicData* currentRelic = (*RemainingRelicList)[i];
+
+			// If the relic is a match for the selected type, add it to the possible selections
+			if (currentRelic->m_typeFlag & type) {
+				// Set weight inversely by price and add level (cheaper relics more common early on)
+				// After a fairly large number of levels, this weight system will give everything an equal chance
+				currentTotalWeight += CLAMP_SUB(5, CLAMP_SUB(currentRelic->m_price, stateManager.activeLevel)) + stateManager.activeLevel;
+				// Emplace with the combined weights of previous selection possibilities
+				possibleSelection.emplace(currentTotalWeight, currentRelic);
+				// Erase current, no need to increment
+				(*RemainingRelicList).erase(i);
+			}
+			// None picked, increment
+			else {
+				++i;
+			}
+		}
+
+		// Randomly selected index from the possible selection
+		uint32_t randomlySelected = 1 + (std::rand() % currentTotalWeight);
+		// -1 means none have been selected yet
+		int64_t randomlySelectedKey = -1;
+
+		// Set return value and remove from the possible selections
+		for (auto& [key, val] : possibleSelection)
+		{
+			// If the key is less than or equal to the the selection, set values
+			// Also set if nothing has been chosen yet
+			if (key <= randomlySelected  || -1 == randomlySelectedKey)
+			{
+				retVal = val;
+				randomlySelectedKey = key;
+			}
+			// Else, break out of the loop, the chosen one has been found!
+			else
+			{
+				break;
+			}
+		}
+		possibleSelection.erase(randomlySelectedKey);
+
+		// Return the relics that weren't picked
+		for (auto& [key, val] : possibleSelection) {
+			(*RemainingRelicList).push_back(val);
+		}
+	}
+	// Otherwise, just select a random one (given one exists)
+	else if ((*RemainingRelicList).size())
 	{
 		uint32_t randomlySelected = std::rand() % (*RemainingRelicList).size();
-		const RelicData* retVal = (*RemainingRelicList)[randomlySelected];
+		retVal = (*RemainingRelicList)[randomlySelected];
 		(*RemainingRelicList).erase(randomlySelected);
-		return retVal;
 	}
 
-	return &DefaultRelicRock;
+
+	return retVal;
 }
 
-const RelicData* Relics::PickNamedRelic(const char* name)
-{
-	return &DefaultRelicRock;
-}
+//const RelicData* Relics::PickNamedRelic(const char* name)
+//{
+//	return &DefaultRelicRock;
+//}
 
 bool Relics::PutBackRelic(const RelicData* relic)
 {

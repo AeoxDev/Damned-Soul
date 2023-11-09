@@ -66,7 +66,7 @@ private:
 	TX_IDX										_nextIdx = 0; // How many textures are currently loaded
 public:
 	ML_Map<TX_IDX, uint64_t>					hash_map; // Used to check if Texture has already been loaded
-	ML_Map<TX_IDX, Image>						img_map; // Unnessecary?
+	//ML_Map<TX_IDX, Image>						img_map; // Unnessecary?
 	ML_Map<TX_IDX, ID3D11Texture2D*>			tx_map; // Used to store the Textures, Unnessecary?
 	ML_Map<TX_IDX, ID3D11ShaderResourceView*>	srv_map; // Ysed to store the Shader Resource Views for the textures
 

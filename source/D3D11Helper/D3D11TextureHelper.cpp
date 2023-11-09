@@ -24,8 +24,8 @@ TX_IDX LoadTexture(const char* name)
 			return key;
 		}
 	}
-	txHolder->img_map.emplace(currentIdx, Image());
-	Image& img = txHolder->img_map[currentIdx];
+	//txHolder->img_map.emplace(currentIdx, Image());
+	Image/*&*/ img;// = txHolder->img_map[currentIdx];
 	bool l = img.load(name);
 	assert(l == true);
 
@@ -65,6 +65,8 @@ TX_IDX LoadTexture(const char* name)
 	// Set the hash last thing you do
 	txHolder->hash_map.emplace(currentIdx, hash);
 	
+	img.Release();
+
 	return currentIdx;
 }
 
@@ -246,11 +248,11 @@ bool DeleteD3D11Texture(const TX_IDX idx)
 		txHolder->tx_map[idx]->Release();
 		txHolder->tx_map.erase(idx);
 	}
-	if (txHolder->img_map.contains(idx))
-	{
-		txHolder->img_map[idx].Release();
-		txHolder->img_map.erase(idx);
-	}
+	//if (txHolder->img_map.contains(idx))
+	//{
+	//	txHolder->img_map[idx].Release();
+	//	txHolder->img_map.erase(idx);
+	//}
 	if (txHolder->hash_map.contains(idx))
 	{
 		txHolder->hash_map.erase(idx);
