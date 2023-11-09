@@ -19,6 +19,18 @@ private:
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
 	uint32_t m_capacity;
 
+	void validate_this()
+	{
+		assert(this);
+		if (m_data.IsNullptr())
+		{
+			uint32_t temp = m_capacity;
+			m_capacity = 0;
+			m_len = 0;
+			reserve(32);
+		}
+	}
+
 public:
 	char* begin() const
 	{
@@ -132,6 +144,8 @@ public:
 	// Push an item into the back of the vector, returns the index of that item
 	const ML_String& append(const ML_String& other)
 	{
+		validate_this();
+
 		uint32_t newLen = m_len + other.m_len;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
 		while (m_capacity <= newLen)
@@ -149,6 +163,8 @@ public:
 	// Push an item into the back of the vector, returns the index of that item
 	const ML_String& append(const char* other)
 	{
+		validate_this();
+
 		uint32_t otherLen = (uint32_t)(std::strlen(other) + 1);
 		uint32_t newLen = m_len + otherLen - 1;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
@@ -167,6 +183,8 @@ public:
 	// Append an integer type number
 	const ML_String& append(const long int& number)
 	{
+		validate_this();
+
 		// Should be enough to cover every concievable number
 		char* temp = (char*)MemLib::spush(64);
 		std::to_chars(temp, temp + 64, number);
@@ -178,6 +196,8 @@ public:
 	// Append a float type number
 	const ML_String& append(const double& number)
 	{
+		validate_this();
+
 		// Should be enough to cover every concievable number
 		char* temp = (char*)MemLib::spush(64);
 		std::to_chars(temp, temp + 64, number);
@@ -204,6 +224,8 @@ public:
 
 	ML_String& operator=(const ML_String& other)
 	{
+		validate_this();
+
 		// Update length
 		m_len = other.m_len;
 		m_capacity = other.m_capacity;

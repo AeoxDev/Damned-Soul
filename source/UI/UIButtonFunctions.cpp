@@ -222,8 +222,11 @@ void UIFunc::SelectRelic(void* args, int index)
 
 		UIRelicWindowComponent* uiWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
 
-		uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\SelectedRelic");
-		uiElement->m_Images[imageIndexes[0]].baseUI.SetVisibility(true);
+		if (uiWindow->shopSelections[index] != shopState::LOCKED && uiWindow->shopSelections[index] != shopState::BOUGHT)
+		{
+			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\SelectedRelic");
+			uiElement->m_Images[imageIndexes[0]].baseUI.SetVisibility(true);
+		}
 
 		if (uiWindow->shopSelections[inverseIndex] != shopState::LOCKED && uiWindow->shopSelections[inverseIndex] != shopState::BOUGHT)
 		{
@@ -317,6 +320,9 @@ void UIFunc::RerollRelic(void* args, int index)
 	for (auto entity : View<UIRerollComponent>(registry))
 		uiReroll = registry.GetComponent<UIRerollComponent>(entity);
 
+	if (index == -1)
+		uiReroll->locked = false;
+
 	if (!uiReroll->locked)
 	{
 		if (player->GetSouls() > 0)
@@ -329,9 +335,16 @@ void UIFunc::RerollRelic(void* args, int index)
 				for (int i = 0; i < 2; i++)
 				{
 					if (relicWindow->shopSelections[i] == shopState::BOUGHT)
-						continue;
+					{
+						if (index != -1)
+							continue;
+						
+						relicWindow->shopSelections[i] = shopState::AVALIABLE;
+						uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
+						uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
+					}
 
-					if (relicWindow->shopSelections[i] == shopState::LOCKED)
+					if (relicWindow->shopSelections[i] == shopState::LOCKED || relicWindow->shopSelections[i] == shopState::SELECTED)
 					{
 						relicWindow->shopSelections[i] = shopState::AVALIABLE;
 						uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");

@@ -17,12 +17,12 @@ bool OnClickSystem::Update()
 	{
 		auto comp = registry.GetComponent<OnClickComponent>(entity);
 		auto uiElement = registry.GetComponent<UIComponent>(entity);
-
-		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 		
-		if (index > -1)
+		if (mouseButtonPressed[MouseButton::left] == released)
 		{
-			if (mouseButtonPressed[MouseButton::left] == released)
+			int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
+
+			if (index > -1)
 			{
 				//Set which sound to play
 				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
@@ -40,6 +40,24 @@ bool OnClickSystem::Update()
 
 				comp->onClick(uiElement, comp->index);
 				return true;
+			}
+		}
+		else if (mouseButtonPressed[MouseButton::right] == released)
+		{
+			int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
+
+			if (index > -1)
+			{
+				
+			}
+		}
+		else if (mouseButtonPressed[MouseButton::middle] == released)
+		{
+			int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
+
+			if (index > -1)
+			{
+				
 			}
 		}
 	}
