@@ -14,6 +14,10 @@ class RenderSystem : public System
 {
 	bool Update();
 };
+class ShadowSystem : public System
+{
+	bool Update();
+};
 class ButtonSystem : public System
 {
 	bool Update();

@@ -27,6 +27,8 @@ namespace Camera
 
 	void AdjustFOV(const float radians);
 
+	void SaveToShadowMapCamera();
+
 	const DirectX::XMVECTOR GetPosition();
 	const DirectX::XMVECTOR GetLookAt();
 	const DirectX::XMVECTOR GetUp();
