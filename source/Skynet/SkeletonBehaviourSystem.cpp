@@ -102,8 +102,8 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
 		sfx->Play(Skeleton_Attack, Channel_Base);
 		RedrawUI();
-		sc->attackTimer = 0;
-		sc->attackStunDurationCounter = 0;
+		sc->attackTimer = 0.f;
+		sc->attackStunDurationCounter = 0.f;
 	}
 }
 
@@ -212,7 +212,7 @@ bool SkeletonBehaviourSystem::Update()
 #endif // TEST
 				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
 				{
-					skeletonComponent->updatePathCounter = 0;
+					skeletonComponent->updatePathCounter = 0.f;
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
@@ -248,10 +248,10 @@ bool SkeletonBehaviourSystem::Update()
 					// goal (next node) - current
 					if (finalPath.size() > 2 && skeletonComponent->followPath)
 					{
-						skeletonComponent->dirX = finalPath[1].x - finalPath[0].x;
-						skeletonComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
-						skeletonComponent->dir2X = finalPath[2].x - finalPath[1].x;
-						skeletonComponent->dir2Z = -(finalPath[2].z - finalPath[1].z);
+						skeletonComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+						skeletonComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
+						skeletonComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+						skeletonComponent->dir2Z = -(float)(finalPath[2].z - (float)finalPath[1].z);
 						skeletonComponent->followPath = true;
 					}
 					else
