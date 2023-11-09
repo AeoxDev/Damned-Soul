@@ -59,7 +59,7 @@ void LoadLevel4()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+	SetDirectionLight(1.2f, 1.1f, 1.0f, -0.4f, -2.0f, 1.0f);
 
 	stateManager.stage = stage;
 }
