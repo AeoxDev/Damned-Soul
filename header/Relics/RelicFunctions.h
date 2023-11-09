@@ -51,10 +51,16 @@ namespace Relics
 
 	enum RELIC_TYPE
 	{
+		// Default value, picks a fully random relic in PickRandomRelics
 		RELIC_UNTYPED = 0x0,
+		// Offense relics, picks a weighted offense relic in PickRandomRelics
 		RELIC_OFFENSE = 0x1,
+		// Defense relics, picks a weighted offense relic in PickRandomRelics
 		RELIC_DEFENSE = 0x2,
-		RELIC_GADGET = 0x4
+		// Gadget relics, picks a weighted offense relic in PickRandomRelics
+		RELIC_GADGET = 0x4,
+		// Relic of any type, differs from RELIC_UNTYPED in that it fetches weighted relics via PickRandomRelics
+		RELIC_ANY = RELIC_OFFENSE | RELIC_DEFENSE | RELIC_GADGET
 	};
 
 	// Get all active relic functions of a given type
@@ -67,10 +73,11 @@ namespace Relics
 
 	// Gets a random relic of the selected type
 	// Untyped returns completely ranodm, while specific types returns that type
+	// Specified types returns relics weighted by their costs (giving priority to cheap relics early on)
 	const RelicData* PickRandomRelic(const RELIC_TYPE& type);
 
-	// Get a specific relic by its name
-	const RelicData* PickNamedRelic(const char* name);
+	//// Get a specific relic by its name
+	//const RelicData* PickNamedRelic(const char* name);
 
 	// Puts a relic back into the pool of relics
 	bool PutBackRelic(const RelicData* relic);
