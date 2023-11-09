@@ -11,6 +11,7 @@
 #include "RenderDepthPass.h"
 
 RenderSetupComponent renderStates[8];
+SMP_IDX shadowClampSamlper;
 int currentSize = 0;
 int backBufferRenderSlot;
 
@@ -137,9 +138,11 @@ int SetupGameRenderer()
 	char depthShader[] = "DepthPixel.cso";
 	CreateDepthPassPixelShader(depthShader);
 	CreateDepthPass();
-
+	shadowClampSamlper = CreateShadowClampSamplerState();
+	SetSamplerState(shadowClampSamlper, 1);
 	//CreateShadowMap(512, 512);
 	CreateShadowMap(1536, 1536);
+
 	return currentSize++;
 }
 

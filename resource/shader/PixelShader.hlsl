@@ -7,6 +7,7 @@ Texture2D depthTexture : register(t3);
 Texture2D shadowTexture : register(t4);
 
 SamplerState WrapSampler : register(s0);
+SamplerState ShadowClampSampler : register(s1);
 
 #define LIGHT_COMPONENT_ARRAY_LIMIT 64
 
@@ -140,7 +141,7 @@ float4 main(GS_OUT input) : SV_TARGET
 
     //Shadow map is 1024
     int2 loadPos = (int) (1024.0f * samplePos.xy);
-    float shadowDepth = shadowTexture.Sample(WrapSampler, samplePos.xy).x;
+    float shadowDepth = shadowTexture.Sample(ShadowClampSampler, samplePos.xy).x;
     //float shadowDepth = shadowTexture.Load(int3(loadPos.x, loadPos.y, 0.0f));
     if (depth < shadowDepth + 0.004f || shadowDepth == 0.0f) //Closer when 0
     {
