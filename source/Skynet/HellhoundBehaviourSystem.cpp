@@ -405,6 +405,7 @@ bool HellhoundBehaviourSystem::Update()
 	AnimationComponent* enemyAnim = nullptr;
 
 	bool updateGridOnce = true;
+
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));//(PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
 	//*valueGrid = PathfindingMap();
 
@@ -478,6 +479,7 @@ bool HellhoundBehaviourSystem::Update()
 			ML_Vector<Node> finalPath;
 			hellhoundComponent->updatePathCounter += GetDeltaTime();
 
+
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
 			hellhoundComponent->shootingCooldownCounter += GetDeltaTime();
@@ -498,8 +500,9 @@ bool HellhoundBehaviourSystem::Update()
 							continue;
 						}
 					}
-					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent);
+
 					
+					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent);
 					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, &tran);
 					
 
@@ -527,7 +530,7 @@ bool HellhoundBehaviourSystem::Update()
 				}
 
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
-				//TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
+				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{

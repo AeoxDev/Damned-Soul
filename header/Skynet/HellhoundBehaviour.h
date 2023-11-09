@@ -54,7 +54,6 @@ struct HellhoundBehaviour
 	bool flameSoundsStartedPlaying = false;
 	
 
-
 	// COWARD VARIABLES
 	const float cowardDuration = 2.f; // How long the dog will run away
 	float cowardCounter = 0.f;
@@ -67,11 +66,14 @@ struct HellhoundBehaviour
 	bool isWating = false; // kind of dumb, but needed for checks
 
 
+
 	
 
 	//how often pathfinding
 	float updatePathCounter = 1.8f;
 	float updatePathLimit = 0.5f;
+
+
 
 	//pathfinding
 	float dirX = 0.f;

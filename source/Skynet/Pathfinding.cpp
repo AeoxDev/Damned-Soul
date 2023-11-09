@@ -207,7 +207,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 	GridPosition playerPos = PositionOnGrid(GIcomponent, temporaryTransform, true); // grid position
 
 	int x = 0, z = 0;
-	float distance = 1.f;
+	float distance = 17.f;
 	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
 	while (distance > 15.f && distance < 30.f)
