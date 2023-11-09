@@ -138,12 +138,11 @@ int StateManager::Setup()
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
 
-	systems.push_back(new UIRenderSystem());
-
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 
+	systems.push_back(new UIRenderSystem());
 
 	
 	//Input based CPU 
