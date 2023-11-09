@@ -15,6 +15,8 @@
 
 #include <random>
 
+#define SIZEOF_ARR(arr) (sizeof(arr)/sizeof(arr[0]))
+
 void UIFunc::LoadNextLevel(void* args, int a)
 {
 	UnloadEntities();
@@ -206,7 +208,7 @@ void UIFunc::SelectRelic(void* args, int index)
 		if (uiElement != otherUI)
 		{
 			UIRelicWindowComponent* otherWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
-			for (uint32_t i = 0; i < otherWindow->shopSelections.size(); i++)
+			for (uint32_t i = 0; i < SIZEOF_ARR(otherWindow->shopSelections); i++)
 			{
 				if (otherWindow->shopSelections[i] == shopState::SELECTED)
 				{
@@ -266,7 +268,9 @@ void UIFunc::BuyRelic(void* args, int index)
 			if (relicWindow->shopSelections[i] == shopState::SELECTED)
 			{
 				relicWindow->shopSelections[i] = shopState::BOUGHT;
+				
 				uiElement->m_Images[i + 2].SetImage("Buy");
+				relicWindow->shopRelics[i]->m_function(&stateManager.player);
 				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 				break;
 			}
@@ -334,6 +338,7 @@ void UIFunc::RerollRelic(void* args, int index)
 
 				for (int i = 0; i < 2; i++)
 				{
+					bool ignore = false;
 					if (relicWindow->shopSelections[i] == shopState::BOUGHT)
 					{
 						if (index != -1)
@@ -342,6 +347,7 @@ void UIFunc::RerollRelic(void* args, int index)
 						relicWindow->shopSelections[i] = shopState::AVALIABLE;
 						uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
 						uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
+						ignore = true;
 					}
 
 					if (relicWindow->shopSelections[i] == shopState::LOCKED || relicWindow->shopSelections[i] == shopState::SELECTED)
@@ -353,6 +359,12 @@ void UIFunc::RerollRelic(void* args, int index)
 						continue;
 					}
 
+					if (!ignore)
+					{
+						relicWindow->shopSelections[i] = shopState::AVALIABLE;
+						Relics::PutBackRelic(relicWindow->shopRelics[i]);
+					}
+					
 					const RelicData* relic = Relics::PickRandomRelic(Relics::RELIC_UNTYPED);
 					uiRelic->m_Images[i].SetImage(relic->m_filePath);
 					relicWindow->shopRelics[i] = relic;
@@ -367,6 +379,11 @@ void UIFunc::RerollRelic(void* args, int index)
 	}
 
 	RedrawUI();
+}
+
+void UIFunc::EmptyFunction(void* args, int index)
+{
+
 }
 
 void UIFunc::HealPlayer(void* args, int index)
@@ -393,35 +410,34 @@ void UIFunc::HealPlayer(void* args, int index)
 void UIFunc::HoverImage(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
-	ML_String fileName = "";
-	ML_String hoverFileName = "";
+	char fileName[RELIC_DATA_PATH_SIZE] = "";
+	char hoverFileName[RELIC_DATA_PATH_SIZE] = "";
 	if (uiElement->m_Images.size() == 0)
 	{
 		if (uiElement->m_BaseImage.baseUI.GetVisibility())
 		{
-			fileName = uiElement->m_BaseImage.m_fileName;
-			hoverFileName = fileName;
-			hoverFileName.append("Hover");
+			std::strcpy(fileName, uiElement->m_BaseImage.m_fileName.c_str());
+			std::strcpy(hoverFileName, fileName);
+			std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
+			//hoverFileName.append("Hover");
 
 			if (hover)
-				uiElement->m_BaseImage.SetImage(hoverFileName.c_str(), true);
+				uiElement->m_BaseImage.SetImage(hoverFileName/*.c_str()*/, true);
 			else
-				uiElement->m_BaseImage.SetImage(fileName.c_str(), true);
+				uiElement->m_BaseImage.SetImage(fileName/*.c_str()*/, true);
 		}
 	}
-	else
+	else if (uiElement->m_Images[index].baseUI.GetVisibility())
 	{
-		if (uiElement->m_Images[index].baseUI.GetVisibility())
-		{
-			fileName = uiElement->m_Images[index].m_fileName;
-			hoverFileName = fileName;
-			hoverFileName.append("Hover");
+		std::strcpy(fileName, uiElement->m_Images[index].m_fileName.c_str());
+		std::strcpy(hoverFileName, fileName);
+		std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
 
-			if (hover)
-				uiElement->m_Images[index].SetImage(hoverFileName.c_str(), true);
-			else
-				uiElement->m_Images[index].SetImage(fileName.c_str(), true);
-		}
+		if (hover)
+			uiElement->m_Images[index].SetImage(hoverFileName, true);
+		else
+			uiElement->m_Images[index].SetImage(fileName, true);
+		
 	}
 }
 

@@ -16,19 +16,13 @@ enum shopState
 
 struct UIRelicWindowComponent
 {
-	ML_Array<shopState, 2> shopSelections;
-	ML_Array<const RelicData*, 2> shopRelics;
+	shopState shopSelections[2] = {};
+	const RelicData* shopRelics[2] = {};
 
 	UIRelicWindowComponent()
 	{
 		shopSelections[0] = AVALIABLE;
 		shopSelections[1] = AVALIABLE;
-	};
-
-	void Release()
-	{
-		shopRelics.~ML_Array();
-		shopSelections.~ML_Array();
 	};
 
 };

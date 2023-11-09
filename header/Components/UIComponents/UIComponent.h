@@ -10,17 +10,17 @@ struct ID2D1Bitmap;
 
 struct UIBase
 {
-	DSBOUNDS m_CurrentBounds;
-	DSBOUNDS m_OriginalBounds;
+	DSBOUNDS m_CurrentBounds = { 0.0f, 0.0f, 0.0f, 0.0f };
+	DSBOUNDS m_OriginalBounds = { 0.0f, 0.0f, 0.0f, 0.0f };
 	D2D1::Matrix3x2F m_Transform;
 
-	DSFLOAT2 m_Position;
-	DSFLOAT2 m_PixelCoords;
-	DSFLOAT2 m_Scale;
-	float m_Rotation;
+	DSFLOAT2 m_Position = {0.0f , 0.0f};
+	DSFLOAT2 m_PixelCoords = { 0.0f , 0.0f };
+	DSFLOAT2 m_Scale = { 1.0f , 1.0f };
+	float m_Rotation = 0.0f;
 
-	bool m_Visibility;
-	float m_Opacity;
+	bool m_Visibility = true;
+	float m_Opacity = 1.0f;
 
 	void Setup(DSFLOAT2 position = { 0.0f, 0.0f }, DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 

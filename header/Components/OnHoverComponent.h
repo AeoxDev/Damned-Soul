@@ -13,7 +13,7 @@ struct OnHoverComponent
 	bool redrawUI = true;
 	bool hasBeenDrawn = false;
 
-	void(*onHover)(void*, int, bool);
+	void(*onHover)(void*, int, bool) = nullptr;
 
 	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int, bool))
 	{

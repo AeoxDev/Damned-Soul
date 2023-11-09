@@ -8,7 +8,7 @@ struct OnClickComponent
 
 	int index = -1;
 
-	void(*onClick)(void*, int);
+	void(*onClick)(void*, int) = nullptr;
 
 	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int))
 	{

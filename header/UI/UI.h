@@ -60,15 +60,3 @@ struct DSBOUNDS
 	float right;
 	float bottom;
 };
-
-//struct DSFLOATMATRIX3X2
-//{
-//	float m11;
-//	float m12;
-//	float m21;
-//	float m22;
-//	float m31;
-//	float m32;
-//
-//
-//};

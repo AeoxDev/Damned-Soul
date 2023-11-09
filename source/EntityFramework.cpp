@@ -87,15 +87,6 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
-	for (auto entity : View<UIRelicWindowComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIRelicWindowComponent* shop = registry.GetComponent<UIRelicWindowComponent>(entity);
-			shop->Release();
-		}
-	}
-
 	for (auto entity : View<UIShopImpComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
