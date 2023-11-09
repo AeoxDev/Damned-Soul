@@ -5,7 +5,7 @@
 #include "Registry.h"
 
 
-PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransform)
+void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform)
 {
 	GITexture* mapGrid = giTexture;
 
@@ -32,12 +32,12 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransf
 	// 1 = walkable
 	// 2+ = lava
 
-	PathfindingMap returnMap;
+	//PathfindingMap returnMap;
 	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
 	{
 		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
 		{
-			returnMap.cost[i][j] = 0;
+			map->cost[i][j] = 0;
 		}
 	}
 
@@ -53,44 +53,44 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransf
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
 			{
 				//not walkable, bad number
-				returnMap.cost[x][z] += 10000;
+				map->cost[x][z] += 10000;
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
-				returnMap.cost[x][z] += 1;
+				map->cost[x][z] += 1;
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_LAVA) // is the floor lava?
 			{
 				if (onLava) //treat as ground to save time. optimize shit
 				{
-					returnMap.cost[x][z] += 1;
+					map->cost[x][z] += 1;
 				}
 				else
 				{
-					returnMap.cost[x][z] += lavaPunish; // this is original lava
+					map->cost[x][z] += lavaPunish; // this is original lava
 
 					//RIght column
 					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x + 1][z + 1] += lavaPunish / 2;
+						map->cost[x + 1][z + 1] += lavaPunish / 2;
 					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x + 1][z] += lavaPunish / 2;
+						map->cost[x + 1][z] += lavaPunish / 2;
 					if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
-						returnMap.cost[x + 1][z - 1] += lavaPunish / 2;
+						map->cost[x + 1][z - 1] += lavaPunish / 2;
 
 					//Middle column
 					if (z > 0)
-						returnMap.cost[x][z - 1] += lavaPunish / 2;
+						map->cost[x][z - 1] += lavaPunish / 2;
 					if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x][z + 1] += lavaPunish / 2;
+						map->cost[x][z + 1] += lavaPunish / 2;
 
 					//Left column
 
 					if (x > 0 && z > 0)
-						returnMap.cost[x - 1][z - 1] += lavaPunish / 2;
+						map->cost[x - 1][z - 1] += lavaPunish / 2;
 					if (x > 0)
-						returnMap.cost[x - 1][z] += lavaPunish / 2;
+						map->cost[x - 1][z] += lavaPunish / 2;
 					if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
-						returnMap.cost[x - 1][z + 1] += lavaPunish / 2;
+						map->cost[x - 1][z + 1] += lavaPunish / 2;
 				}
 
 			}
@@ -109,17 +109,18 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransf
 
 		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 		{
-			returnMap.cost[pos.x][pos.z] += 6;
+			map->cost[pos.x][pos.z] += 6;
 		}
 		else
 		{
-			returnMap.cost[0][0] = -69.f;
-			return returnMap;
+			map->cost[0][0] = -69.f;
+			//MemLib::spop();
+			return;// returnMap;
 		}
 	}
 
-	
-	return returnMap;
+	//MemLib::spop();
+	//return returnMap;
 }
 
 
@@ -129,7 +130,7 @@ float CalculateEuclideanDistance(int x, int z, Node goal)
 	return dist;
 }
 
-PathfindingMap CalculateGlobalMapValuesHellhound()
+void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 {
 	GITexture* mapGrid = giTexture;
 
@@ -143,12 +144,11 @@ PathfindingMap CalculateGlobalMapValuesHellhound()
 	// 1 = walkable
 	// 2+ = lava
 
-	PathfindingMap returnMap;
 	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
 	{
 		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
 		{
-			returnMap.cost[i][j] = 0;
+			map->cost[i][j] = 0;
 		}
 	}
 
@@ -164,11 +164,11 @@ PathfindingMap CalculateGlobalMapValuesHellhound()
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
 			{
 				//not walkable, bad number
-				returnMap.cost[x][z] += 10000;
+				map->cost[x][z] += 10000;
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
-				returnMap.cost[x][z] += 1;
+				map->cost[x][z] += 1;
 			}
 			// hound does not care about lava
 		}
@@ -186,23 +186,25 @@ PathfindingMap CalculateGlobalMapValuesHellhound()
 
 		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 		{
-			returnMap.cost[pos.x][pos.z] += 6;
+			map->cost[pos.x][pos.z] += 6;
 		}
 		else
 		{
-			returnMap.cost[0][0] = -69.f;
-			return returnMap;
+			map->cost[0][0] = -69.f;
+			return;// returnMap;
 		}
 	}
 
 
-	return returnMap;
+	//return returnMap;
 }
 
-TransformComponent* FindRetreatTile(PathfindingMap gridValues, TransformComponent* playerTransform)
+TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform)
 {
+	
+
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
-	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, true); // grid position
+	GridPosition playerPos = PositionOnGrid(GIcomponent, temporaryTransform, true); // grid position
 
 	int x = 0, z = 0;
 	float distance = 1.f;
@@ -216,7 +218,7 @@ TransformComponent* FindRetreatTile(PathfindingMap gridValues, TransformComponen
 			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 
-			if (gridValues.cost[x][z] < 10000)
+			if (gridValues->cost[x][z] < 10000)
 			{
 				//is legal tile
 				legal = true;
@@ -234,9 +236,9 @@ TransformComponent* FindRetreatTile(PathfindingMap gridValues, TransformComponen
 	temp.fx = 0.f;
 	temp.fz = 0.f;
 	Coordinate2D retreatCoord = GridOnPosition(temp, GIcomponent, true);
-	TransformComponent* retreatPosition = playerTransform;
-	retreatPosition->positionX = retreatCoord.x;
-	retreatPosition->positionZ = retreatCoord.z;
+	TransformComponent retreatPosition;
+	retreatPosition.positionX = retreatCoord.x;
+	retreatPosition.positionZ = retreatCoord.z;
 
 	return retreatPosition;
 }
@@ -253,9 +255,9 @@ bool AreWeThereYet(int x, int z, Node goal)
 
 bool IsCellValid(int x, int z)
 {
-	if (x >= 0 && x <= GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+	if (x >= 0 && x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 	{
-		if (z >= 0 && z <= GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+		if (z >= 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 		{
 			return true;
 		}
@@ -266,12 +268,12 @@ bool IsCellValid(int x, int z)
 
 
 
-Node CreateNewNode(PathfindingMap gridValues, int x, int z, Node parent)
+Node CreateNewNode(PathfindingMap* gridValues, int x, int z, Node parent)
 {
 	Node returnNode;
 	returnNode.x = x;
 	returnNode.z = z;
-	returnNode.g = gridValues.cost[x][z];
+	returnNode.g = gridValues->cost[x][z];
 	returnNode.parentX = parent.x;
 	returnNode.parentZ = parent.z;
 	return returnNode;
@@ -303,7 +305,7 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 }
 
 
-ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform)
+ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform)
 {
 	Node start; 
 	Node goal;
@@ -333,7 +335,7 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			nodeMap[x][z].f = FLT_MAX;
-			nodeMap[x][z].g = gridValues.cost[x][z];
+			nodeMap[x][z].g = gridValues->cost[x][z];
 			nodeMap[x][z].h = FLT_MAX;
 			nodeMap[x][z].parentX = -1;
 			nodeMap[x][z].parentZ = -1;

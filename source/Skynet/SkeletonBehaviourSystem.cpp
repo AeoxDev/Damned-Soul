@@ -120,7 +120,8 @@ bool SkeletonBehaviourSystem::Update()
 	EnemyComponent* enmComp = nullptr;
 
 	bool updateGridOnce = true;
-	PathfindingMap valueGrid;
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));// (PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
+	//*valueGrid = PathfindingMap();
 
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
@@ -215,8 +216,8 @@ bool SkeletonBehaviourSystem::Update()
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						valueGrid = CalculateGlobalMapValuesSkeleton(playerTransformCompenent);
-						if (valueGrid.cost[0][0] == -69.f)
+						CalculateGlobalMapValuesSkeleton(valueGrid, playerTransformCompenent);
+						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
 							continue;
@@ -308,6 +309,8 @@ bool SkeletonBehaviourSystem::Update()
 		}
 	}
 
-
+	// Pop the stack
+	//MemLib::spop;
+	free(valueGrid);
 	return true;
 }

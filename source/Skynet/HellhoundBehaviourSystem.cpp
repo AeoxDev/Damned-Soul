@@ -405,7 +405,8 @@ bool HellhoundBehaviourSystem::Update()
 	AnimationComponent* enemyAnim = nullptr;
 
 	bool updateGridOnce = true;
-	PathfindingMap valueGrid;
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));//(PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
+	//*valueGrid = PathfindingMap();
 
 	//for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	//{
@@ -490,28 +491,23 @@ bool HellhoundBehaviourSystem::Update()
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						valueGrid = CalculateGlobalMapValuesHellhound();
-						if (valueGrid.cost[0][0] == -69.f)
+						CalculateGlobalMapValuesHellhound(valueGrid);
+						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
 							continue;
 						}
 					}
+					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent);
 					
+					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, &tran);
 					
-					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, FindRetreatTile(valueGrid, playerTransformCompenent));
-					
-
-					if (finalPath.size() > 2)
-					{
-						hellhoundComponent->fx = finalPath[0].fx;
-						hellhoundComponent->fz = finalPath[0].fz;
-						hellhoundComponent->followPath = true;
-					}
 
 					// goal (next node) - current
 					if (finalPath.size() > 2 && hellhoundComponent->followPath)
 					{
+						hellhoundComponent->fx = finalPath[0].fx;
+						hellhoundComponent->fz = finalPath[0].fz;
 						hellhoundComponent->dirX = finalPath[1].x - finalPath[0].x;
 						hellhoundComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
 						hellhoundComponent->dir2X = finalPath[2].x - finalPath[1].x;
@@ -531,7 +527,7 @@ bool HellhoundBehaviourSystem::Update()
 				}
 
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
-				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
+				//TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
@@ -600,8 +596,8 @@ bool HellhoundBehaviourSystem::Update()
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						valueGrid = CalculateGlobalMapValuesHellhound();
-						if (valueGrid.cost[0][0] == -69.f)
+						CalculateGlobalMapValuesHellhound(valueGrid);
+						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
 							continue;
@@ -661,5 +657,9 @@ bool HellhoundBehaviourSystem::Update()
 		}
 
 	}
+
+	// pop the value map
+	//MemLib::spop();
+	free(valueGrid);
 	return true;
 }
