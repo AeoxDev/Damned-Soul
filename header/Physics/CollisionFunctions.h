@@ -12,6 +12,7 @@ void NoCollision(OnCollisionParameters& params);
 void SoftCollision(OnCollisionParameters& params);
 void HardCollision(OnCollisionParameters& params);
 
+void DashCollision(OnCollisionParameters& params);
 void AttackCollision(OnCollisionParameters& params);
 void HellhoundBreathAttackCollision(OnCollisionParameters& params);
 

@@ -201,6 +201,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
+    <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
     <ClCompile Include="source\Relics\RelicData.cpp" />
     <ClCompile Include="source\Relics\Utility\RelicFuncInputTypes.cpp" />
     <ClCompile Include="source\Components\StaticHazardComponent.cpp" />
@@ -527,6 +528,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MummifiedHeart.h" />
+    <ClInclude Include="header\Relics\Offensive\DashAttack.h" />
     <ClInclude Include="header\Relics\Offensive\LifeSteal.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />

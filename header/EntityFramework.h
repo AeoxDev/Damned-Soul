@@ -209,6 +209,8 @@ private:
 		return id.isDestroyed;
 	}
 
+	void ReleaseComponentResources(EntityID id);
+
 	//Private member variables
 	std::vector<ML_ComponentMap> componentMaps;
 };

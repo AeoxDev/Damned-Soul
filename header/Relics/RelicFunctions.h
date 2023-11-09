@@ -45,6 +45,10 @@ namespace Relics
 		// arguments: foo(void)
 		FUNC_ON_LEVEL_SWITCH,
 
+		// Called when entity dashes
+		//arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
+		FUNC_ON_DASH,
+
 		// Used to iterate, not to give functionality to relics
 		FUNC_END_OF_TYPES
 	};

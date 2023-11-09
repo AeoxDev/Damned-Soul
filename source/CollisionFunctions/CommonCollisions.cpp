@@ -63,7 +63,6 @@ void SoftCollision(OnCollisionParameters& params)
 
 	//transform2->positionX += dirX * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
 	//transform2->positionZ += dirZ * GetDeltaTime() * SOFT_COLLISION_FACTOR * massRatio;//Push of by
-	
 }
 
 void HardCollision(OnCollisionParameters& params)
@@ -118,6 +117,14 @@ void HardCollision(OnCollisionParameters& params)
 
 	//transform2->positionX += dirX;//Push of by
 	//transform2->positionZ += dirZ;//Push of by
+
+	//Since this function is only ever called when hard-collision occurs, it's *probably* safe to assume I can call the dash attack relic func here :)))
+	if (hitbox1->convexFlags->canDealDamage || hitbox1->circularFlags->canDealDamage)
+	{
+		AddTimedEventComponentStartContinuousEnd(params.entity1, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
+	}
+	//if (hitbox2->convexFlags->canDealDamage || hitbox2->circularFlags->canDealDamage)
+	//	AddTimedEventComponentStartContinuousEnd(params.entity1, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
 }
 
 //Check if attacker is static hazard and defender can hit static hazard.
@@ -191,6 +198,72 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	}
 }
 
+void DashCollision(OnCollisionParameters& params)
+{
+	//Get the components of the attacker (only stats for dealing damage)
+	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+
+	//Get the components of the attackee (stats for taking damage and transform for knockback)
+	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
+
+	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
+	//Realistically we can skip this part since the player will be the only entity with a dash hitbox but buhhh
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	int counter = 0;
+	int counter2 = 0;
+	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
+	{
+		//Check if possible to deal damage
+		if (hitbox1->circularFlags[params.hitboxID1].canDealDamage)
+		{
+			counter++;
+		}
+	}
+	else //For convex hitboxes
+	{
+		if (hitbox1->convexFlags[params.hitboxID1 - SAME_TYPE_HITBOX_LIMIT].canDealDamage)
+		{
+			counter++;
+		}
+	}
+
+	//Do the same as the above but for the attackee, but returning out of here if the hitbox doesn't have the "canTakeDamage" flag set
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (params.hitboxID2 < SAME_TYPE_HITBOX_LIMIT)//For circular
+	{
+		//Check if possible to deal damage
+		if (hitbox2->circularFlags[params.hitboxID2].canTakeDamage)
+		{
+			counter2++;
+		}
+	}
+	else //For convex hitboxes
+	{
+		if (hitbox2->convexFlags[params.hitboxID2 - SAME_TYPE_HITBOX_LIMIT].canTakeDamage)
+		{
+			counter2++;
+		}
+	}
+
+	//if nothing is hit, get out!
+	if (counter == 0 || counter2 == 0)
+	{
+		return;
+	}
+
+	//Check if hitbox already dealt damage
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (hitbox1->hitTracker[i].active && hitbox1->hitTracker[i].entity.index == params.entity2.index)
+		{
+			return;
+		}
+	}
+
+	//OKAY SO NOW WE DO THE THING WHERE WE DEAL DAMAGE TO AN ENEMY WHEN WE DASH, BUT I IMPLEMENT THIS TOMORROW
+}
+
 void AttackCollision(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
@@ -198,7 +271,6 @@ void AttackCollision(OnCollisionParameters& params)
 
 	//Get the components of the attackee (stats for taking damage and transform for knockback)
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
-
 
 	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
