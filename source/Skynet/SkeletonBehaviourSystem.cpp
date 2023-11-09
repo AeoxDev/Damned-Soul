@@ -56,28 +56,46 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	animComp->aAnimIdx = 0;
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
-
-	if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
+	bool okayDirection = false;
+	while (!okayDirection)
 	{
-		skeletonComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		skeletonComponent->goalDirectionX = randomX;
-		skeletonComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		skeletonComponent->updateInterval = randomInterval(gen);
+		if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
+		{
+			skeletonComponent->timeCounter = 0.f;
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			// Define a uniform distribution for the range [-1.0, 1.0]
+			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+			float randomX = distribution(gen);
+			float randomZ = distribution(gen);
+			skeletonComponent->goalDirectionX = randomX;
+			skeletonComponent->goalDirectionZ = randomZ;
+			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+			skeletonComponent->updateInterval = randomInterval(gen);
+		}
+
+		SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
+		float oldX = skeletonTransformComponent->positionX;
+		float oldZ = skeletonTransformComponent->positionZ;
+		float bias = 1.f;
+
+		skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
+
+		if ((skeletonTransformComponent->positionX >= oldX + bias || skeletonTransformComponent->positionZ >= oldZ + bias) && skeletonTransformComponent->positionX <= oldX - bias || skeletonTransformComponent->positionZ <= oldZ - bias)
+		{
+			//not good direction
+			skeletonTransformComponent->positionX = oldX;
+			skeletonTransformComponent->positionZ = oldZ;
+			skeletonComponent->timeCounter = skeletonComponent->updateInterval + 1.f;
+		}
+		else
+		{
+			// good direction
+			okayDirection = true;
+		}
+
 	}
-
-	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
-
-
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
-
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {

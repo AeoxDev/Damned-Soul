@@ -181,25 +181,47 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	ANIM_BRANCHLESS(enemyAnim);
 
 	hellhoundComponent->timeCounter += GetDeltaTime();
-	if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
+
+	bool okayDirection = false;
+	while (!okayDirection)
 	{
-		hellhoundComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		hellhoundComponent->goalDirectionX = randomX;
-		hellhoundComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		hellhoundComponent->updateInterval = randomInterval(gen);
+		if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
+		{
+			hellhoundComponent->timeCounter = 0.f;
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			// Define a uniform distribution for the range [-1.0, 1.0]
+			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+			float randomX = distribution(gen);
+			float randomZ = distribution(gen);
+			hellhoundComponent->goalDirectionX = randomX;
+			hellhoundComponent->goalDirectionZ = randomZ;
+			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+			hellhoundComponent->updateInterval = randomInterval(gen);
+		}
+
+		SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
+		float oldX = hellhoundTransformComponent->positionX;
+		float oldZ = hellhoundTransformComponent->positionZ;
+		float bias = 1.f;
+
+
+		hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+		hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+
+		if ((hellhoundTransformComponent->positionX >= oldX + bias || hellhoundTransformComponent->positionZ >= oldZ + bias) && hellhoundTransformComponent->positionX <= oldX - bias || hellhoundTransformComponent->positionZ <= oldZ - bias)
+		{
+			//not good direction
+			hellhoundTransformComponent->positionX = oldX;
+			hellhoundTransformComponent->positionZ = oldZ;
+			hellhoundComponent->timeCounter = hellhoundComponent->updateInterval + 1.f;
+		}
+		else
+		{
+			// good direction
+			okayDirection = true;
+		}
 	}
-
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
-
-	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
