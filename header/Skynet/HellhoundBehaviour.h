@@ -12,15 +12,21 @@ struct HellhoundBehaviour
 	float isBehindCounter = 0.f;
 	float giveUpChaseCounter = 0.f;
 	bool charge = false;
+
+
 	
 
-
+	bool wantsToShoot = false;
+	bool hasMadeADecision = false;
 
 
 	// MELEE VARIABLES
 	float attackTimer = 0.f; //used as counter
 	float attackStunDurationCounter = 0.8f;
 	const float attackStunDuration = 0.8f;
+
+	float chargePrepareDurationCounter = 0.0f;
+	const float chargePrepareDuration = 0.5f;
 
 	float meleeDistance = 3.5f;
 
