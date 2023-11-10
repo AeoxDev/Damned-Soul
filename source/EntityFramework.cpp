@@ -110,21 +110,6 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	//TODO: Pass in persistency thing so we can check to see if it's NOT equal to ENT_PERSIST_PAUSE when unloading sound components
 	if (destructionTier != ENT_PERSIST_PAUSE)
 		ReleaseTimedEvents(id);
-
-	/*if (destructionTier != ENT_PERSIST_PAUSE)
-		ReleaseTimedEvents(id);*/
-
-	/*if (destructionTier != ENT_PERSIST_PAUSE)
-		Light::FreeLight();*/
-
-	/*if (destructionTier != ENT_PERSIST_PAUSE)
-	{
-		SoundComponent* sound = registry.GetComponent<SoundComponent>(id);
-		if (sound && registry.GetComponent<AudioEngineComponent>(id) == nullptr)
-		{
-			sound->Unload();
-		}
-	}*/
 	
 }
 
