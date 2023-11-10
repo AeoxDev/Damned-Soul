@@ -39,16 +39,41 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 
 bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
-	enemyAnim->aAnim = ANIMATION_ATTACK; //change anim to "spit"/shoot anim
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
-	ANIM_BRANCHLESS(enemyAnim);
-
-	//impose timer so they cannot run and hit at the same time
-	if (ec->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
+	//if you just attacked go back to circle behaviour
+	if (ec->attackTimer < enemyStats->GetAttackSpeed())
 	{
+		ec->attackTimer += GetDeltaTime();
+		return false;
+	}
+	//rotate eye in order to shoot at the player
+	else if (ec->aimTimer < ec->aimDuration)
+	{
+		ec->goalDirectionX = ptc->positionX - etc->positionX;
+		ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
+		float magnitude = sqrt(ec->goalDirectionX * ec->goalDirectionX + ec->goalDirectionZ * ec->goalDirectionZ);
+		if (magnitude < 0.001f)
+		{
+			magnitude = 0.001f;
+		}
+		ec->goalDirectionX /= magnitude;
+		ec->goalDirectionZ /= magnitude;
+
+
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+		ec->aimTimer += GetDeltaTime();
+		ec->attackTimer += GetDeltaTime();
+		return true;
+	}
+	else // yes, we can indeed attack. 
+	{
+		enemyAnim->aAnim = ANIMATION_ATTACK; //change anim to "spit"/shoot anim
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(enemyAnim);
+
 		ec->attackTimer = 0;
 		ec->attackStunDurationCounter = 0;
+		ec->aimTimer = 0;
 		ec->specialCounter++; //increase the special counter for special attack
 
 		//set direction for attack
@@ -59,19 +84,11 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 		{
 			magnitude = 0.001f;
 		}
-
 		dx /= magnitude;
 		dz /= magnitude;
 
-		EntityID bullet = CreateProjectile(etc, dx, dz);
-		
-		ec->attackTimer += GetDeltaTime();
+		CreateProjectile(etc, dx, dz);
 		return true;
-	}
-	else
-	{
-		ec->attackTimer += GetDeltaTime();
-		return false;
 	}
 }
 
@@ -274,8 +291,6 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 }
 
-//static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
-
 bool EyeBehaviourSystem::Update()
 {
 	//First find the skynet component
@@ -364,7 +379,7 @@ bool EyeBehaviourSystem::Update()
 			}
 			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
-				if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
+				if (!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
 					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
 			}
 			else // idle
