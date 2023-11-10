@@ -13,6 +13,9 @@ namespace Combat
 	// Calculate damage (applying relics and such), but do NOT apply it
 	float CalculateDamage(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, const uint64_t& source);
 
+	//Works like hit interaction, but happens specifically when we dash into an enemy rather than hitting them
+	void DashHitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats);
+
 	// Damage an entity and apply a damage flash. No relics are applied.
 	void HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage);
 

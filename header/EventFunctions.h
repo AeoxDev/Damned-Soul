@@ -8,6 +8,9 @@ void BeginHit(EntityID& entity, const int& index);
 void MiddleHit(EntityID& entity, const int& index);
 void EndHit(EntityID& entity, const int& index);
 
+//AAAA
+void DashBeginHit(EntityID& entity, const int& index);
+
 //Hellhound breath hazard
 void HazardBeginHit(EntityID& entity, const int& index);
 void HazardEndHit(EntityID& entity, const int& index);

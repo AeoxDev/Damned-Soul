@@ -70,3 +70,34 @@ void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attac
 	// Provide a flat hit, mostly just so that we can edit all sources at the same time
 	Combat::HitFlat(defender, defenderStats, finalDamage);
 }
+
+void Combat::DashHitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
+{
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(defender);
+	//Deal regular damage as well as on-hit damage from potential relics
+
+	// Calculate damage
+	// Some values can start with default
+	RelicInput::OnDamageCalculation funcInput;
+	funcInput.attacker = attacker;
+	funcInput.defender = defender;
+	funcInput.damage = attackerStats->GetDamage();
+	funcInput.cap = defenderStats->GetHealth();
+
+	//Calculate damage modifications from relics
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
+		func(&funcInput);
+
+	//Halve the damage since we're dashing
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH))
+		func(&funcInput);
+
+	//Calculate things that happen when damage is being applied (Reflect damage, lifesteal, etc..)
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
+		func(&funcInput);
+
+	float finalDamage = funcInput.CollapseDamage();
+
+	// Provide a flat hit, mostly just so that we can edit all sources at the same time
+	Combat::HitFlat(defender, defenderStats, finalDamage);
+}
