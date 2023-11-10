@@ -17,7 +17,7 @@
 #include "Relics\Offensive\FlameWeapon.h"
 //#include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\DashAttack.h"
-//#include "Relics\Offensive\AdrenalineRush.h"
+#include "Relics\Offensive\AdrenalineRush.h"
 #include "Relics\Offensive\ThrillSeeker.h"
 //#include "Relics\Offensive\PowerStrike.h"
 
@@ -140,6 +140,14 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DASH_ATTACK::Initialize
+			),
+			RelicData(
+				/*Name*/		"Adrenaline Rush",
+				/*Filepath*/	"RelicIcons\\Adrenaline_Rush.png",
+				/*Description*/	"You attack twice as fast for 1 second after being hit",
+				/*Price*/		10,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	ADRENALINE_RUSH::Initialize
 			),
 			RelicData(
 				/*Name*/		"Thrill Seeker",
