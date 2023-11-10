@@ -112,14 +112,7 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	if (destructionTier != ENT_PERSIST_PAUSE)
 		ReleaseTimedEvents(id);
 
-	if (destructionTier != ENT_PERSIST_PAUSE)
-	{
-		SoundComponent* sound = registry.GetComponent<SoundComponent>(id);
-		if (sound && registry.GetComponent<AudioEngineComponent>(id) == nullptr)
-		{
-			sound->Unload();
-		}
-	}
+	
 	
 }
 
@@ -152,20 +145,6 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
-	//Destroy entity resets component bitmasks
-	for (int i = 0; i < registry.entities.size(); i++)
-	{
-		//Get the current entity we're looking at in the registry
-		EntityID check = registry.entities.at(i).id;
-
-		//Destroy the entity if it isn't already destroyed and its persistency tier isn't greater than the destruction tier
-		if (check.isDestroyed == false && check.persistentTier <= destructionTier)
-		{
-			registry.DestroyEntity(check, destructionTier);
-		}
-	}
-
-	//1 sound component manages to get through
 	for (auto entity : View<SoundComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
@@ -190,5 +169,27 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 	}
 
 	if (destructionTier != ENT_PERSIST_PAUSE)
+	{
+		for (auto entity : View<TimedEventComponent>(registry))
+		{
+			ReleaseTimedEvents(entity);
+		}
+	}
+
+	if (destructionTier != ENT_PERSIST_PAUSE)
 		Light::FreeLight();
+
+	//Destroy entity resets component bitmasks
+	for (int i = 0; i < registry.entities.size(); i++)
+	{
+		//Get the current entity we're looking at in the registry
+		EntityID check = registry.entities.at(i).id;
+
+		//Destroy the entity if it isn't already destroyed and its persistency tier isn't greater than the destruction tier
+		if (check.isDestroyed == false && check.persistentTier <= destructionTier)
+		{
+			registry.DestroyEntity(check, destructionTier);
+		}
+	}
+	
 }
