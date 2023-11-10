@@ -854,7 +854,6 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, dID);
 	SetHitboxCanTakeDamage(entity, dID, false);
 	SetHitboxCanDealDamage(entity, dID, false);
-
 }
 
 bool HitboxCanHitGI(EntityID& entity)
