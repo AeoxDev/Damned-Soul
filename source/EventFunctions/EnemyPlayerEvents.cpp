@@ -21,30 +21,24 @@ void BeginHit(EntityID& entity, const int& index)
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 
-	//ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
-	//ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
+	//Disable damage taken until EndHit
+	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+}
 
-	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-	////Deal regular damage as well as on-hit damage from potential relics
+void DashBeginHit(EntityID& entity, const int& index)
+{
+	//Get relevant components
+	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
+	
+	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
+	StatComponent* defenderStats = registry.GetComponent<StatComponent>(cpc->params.entity2);
 
-	//// Calculate damage
-	//float calculatedDamage = attackerStats->CalculateDamageDealt(stats);
-
-	//stats->UpdateHealth(-calculatedDamage, player != nullptr);
-	//auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY);
-	//RedrawUI();
-	//RelicInput::OnHitInput funcInput
-	//{
-	//	cpc->params.entity1,
-	//	entity
-	//};
-	//for (uint32_t i = 0; i < funcVector.size(); ++i)
-	//{
-	//	funcVector[i](&funcInput);
-	//}
+	//Apply the damage
+	//Combat::HitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
+	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
+	//Combat::HitFlat(entity, defenderStats, attackerStats->GetDamage() * 0.5f);
 
 	//Disable damage taken until EndHit
 	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
@@ -54,7 +48,6 @@ void MiddleHit(EntityID& entity, const int& index)
 {
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-
 	
 	//Take knockback
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
@@ -65,15 +58,6 @@ void MiddleHit(EntityID& entity, const int& index)
 		CancelTimedEvent(entity, index);
 		return;
 	}
-
-	/*StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
-	if (cpc && transform)
-	{
-		float knockbackFactor = KNOCKBACK_FACTOR / (0.1f + transform->mass * GetTimedEventElapsedTime(entity, index));
-		knockbackFactor *= knockbackFactor;
-		transform->positionX += cpc->params.normal1X * GetDeltaTime() * knockbackFactor;
-		transform->positionZ += cpc->params.normal1Z * GetDeltaTime() * knockbackFactor;
-	}*/
 }
 
 void EndHit(EntityID& entity, const int& index)
@@ -142,24 +126,6 @@ void HazardBeginHit(EntityID& entity, const int& index)
 
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
-	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-
-	//// Calculate damage
-	//float calculatedDamage = attackerStats->CalculateDamageDealt(stats);
-
-	////Deal regular damage as well as on-hit damage from potential relics
-	//stats->UpdateHealth(-calculatedDamage, player != nullptr);
-	//auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY);
-	//RelicInput::OnHitInput funcInput
-	//{
-	//	cpc->params.entity1,
-	//	entity
-	//};
-	//for (uint32_t i = 0; i < funcVector.size(); ++i)
-	//{
-	//	funcVector[i](&funcInput);
-	//}
-
 	//Become red
 	if (skelel)
 		skelel->colorAdditiveRed = 1.0f;
@@ -168,7 +134,6 @@ void HazardBeginHit(EntityID& entity, const int& index)
 }
 void HazardEndHit(EntityID& entity, const int& index)
 {
-
 	//Make sure we're back to our regular color
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
@@ -223,5 +188,4 @@ void LavaBlinkColor(EntityID& entity, const int& index)
 		bonel->colorAdditiveRed = cosineWave;
 		bonel->colorAdditiveGreen = 0.2f * cosineWave;
 	}
-		
 }
