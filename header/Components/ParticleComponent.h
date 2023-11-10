@@ -25,7 +25,8 @@ struct ParticleComponent
 	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
 
 	// Overload for FlameThrower
-	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float v0X, float v0Z, float v1X, float v1Z, float v2X, float v2Z,  ComputeShaders pattern);
+	// Flamethrower does not use max max distance therefore we store one of the triangles vertices x-position there.
+	ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern);
 	~ParticleComponent();
 
 

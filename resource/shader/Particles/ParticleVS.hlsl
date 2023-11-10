@@ -5,13 +5,12 @@ cbuffer WorldMatrix : register(b0)
 
 struct VS_IN
 {
-    float3 position : POSITION;
-    float time : TIME;
-    float3 velocity : VELOCITY;
-    float rotationZ : ROTATIONZ;
-    float3 rgb : RGB; // Red Green Blue
-    float size : SIZE;
-
+    float3 position;
+    float time;
+    float3 velocity;
+    float rotationZ;
+    float3 rgb; // Red Green Blue
+    float size;
 };
 
 struct VS_OUT
@@ -26,9 +25,10 @@ struct VS_OUT
 StructuredBuffer<VS_IN> particles : register(t2);
 
 
-VS_OUT main(/*VS_IN inval*/ uint vertexID : SV_VertexID)
+VS_OUT main(uint vertexID : SV_VertexID)
 {
     VS_IN inval = particles[vertexID];
+    //inval = particles[instanceID];
     VS_OUT retval;
     
     retval.position = float4(inval.position, 1.f);

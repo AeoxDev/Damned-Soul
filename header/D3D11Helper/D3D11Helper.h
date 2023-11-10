@@ -122,6 +122,8 @@ void ReleasePS(const PS_IDX idx);
 VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout = LAYOUT_DESC::SKELETAL);
 // Set a new vertex (and accompanying input layout) shader by index
 bool SetVertexShader(const VS_IDX idx);
+// Overload for when input layout is null
+bool SetVertexShader(const VS_IDX idx, bool particle);
 // Set vertex shader to NULL
 void UnsetVertexShader();
 // Release for a single vertex shader

@@ -3,6 +3,7 @@
 #include "D3D11Helper\D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "GameRenderer.h"
+#include <assert.h>
 
 PS_IDX depthPassShader;
 

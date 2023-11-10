@@ -25,9 +25,8 @@ bool ParticleSystemCPU::Update()
 
 		if (pComp->metadataSlot >= 0)
 		{
-
-
-			RenderOffset(Particles::GetMetadataAtIndex(pComp->metadataSlot).start, Particles::GetMetadataAtIndex(pComp->metadataSlot).end);
+			//RenderIndexed(32);
+			RenderOffset(Particles::GetMetadataAtIndex(pComp->metadataSlot).end, Particles::GetMetadataAtIndex(pComp->metadataSlot).start);
 		}
 	}
 	Particles::FinishParticlePass();

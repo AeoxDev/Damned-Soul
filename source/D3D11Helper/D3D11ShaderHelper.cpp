@@ -13,6 +13,7 @@ ID3D11VertexShader* vrtShader_NULL = nullptr;
 ID3D11PixelShader* pixShader_NULL = nullptr;
 ID3D11ComputeShader* comShader_NULL = nullptr;
 ID3D11GeometryShader* geoShader_NULL = nullptr;
+ID3D11InputLayout* inputLayout_NULL = nullptr;
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
@@ -166,6 +167,17 @@ bool SetVertexShader(const VS_IDX idx)
 
 	d3d11Data->deviceContext->VSSetShader(vrtHolder->vs_map[idx], nullptr, 0);
 	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_map[idx]);
+	return true;
+}
+
+bool SetVertexShader(const VS_IDX idx, bool particle)
+{
+	assert(true == vrtHolder->vs_map.contains(idx));
+
+	assert(idx >= 0);
+
+	d3d11Data->deviceContext->VSSetShader(vrtHolder->vs_map[idx], nullptr, 0);
+	d3d11Data->deviceContext->IASetInputLayout(inputLayout_NULL);
 	return true;
 }
 

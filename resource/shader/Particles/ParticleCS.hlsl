@@ -16,6 +16,20 @@ bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 {
+    // - NEW - //
+    int amount = meta[blockID.y].end - meta[blockID.y].start;
+    int index = meta[blockID.y].start + DTid.x;
+    //if (index > meta[blockID.y].end)
+    //    return;
+    // - //
+    
+    Input particle = readParticleData[index];
+    
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
+    particle.position = float3(0.f, 0.f, 0.f);
+    
     if (meta[blockID.y].life > 0)
     {
         // 0 = SMOKE
@@ -74,7 +88,7 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
         return;
     // - //
     
-    Input particle = inputParticleData[index];
+    Input particle = readParticleData[index];
     
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
@@ -125,7 +139,7 @@ void ArchMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = inputParticleData[DTid.x];
+    Input particle = readParticleData[DTid.x];
     //____________________________________________________________________
     float time = DTid.x; // * (end - start) / float(end); FIX THIS FELIX PLEASE,
     float coefficient = 0.5; //for parabolic path, change as you see fit
@@ -139,7 +153,7 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = inputParticleData[DTid.x];
+    Input particle = readParticleData[DTid.x];
     //____________________________________________________________________
     float3 directionRandom = normalize(float3((DTid.x % 100) / 100.0f - 0.5f, (DTid.x % 57) / 57.0f - 0.5f, (DTid.x % 83) / 83.0f - 0.5f));
     float explosionSpeed = 8.0f; //adjust as you see fit
@@ -155,7 +169,7 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
     // -- SAME FOR ALL FUNCTIONS -- //
     int index = DTid.x + blockID.y * NUM_THREADS;
-    Input particle = inputParticleData[index];
+    Input particle = readParticleData[index];
     
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
@@ -250,7 +264,7 @@ void ImplosionMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = inputParticleData[DTid.x];
+    Input particle = readParticleData[DTid.x];
     //____________________________________________________________________
     float3 direction = normalize(float3(0.f, 0.f, 0.f) - particle.position); // FIX THIS FELIX PLEASE, WE NEED TO ADD IMPLPSION POINT
     float implosionSpeed = 8.0f; //adjust as you see fit
@@ -264,7 +278,7 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = inputParticleData[DTid.x];
+    Input particle = readParticleData[DTid.x];
     //____________________________________________________________________
     float speedOfRain = 4.0f; //adjust as you see fit
     float scatterAmount = 4.0f; // adjust as you see fit
@@ -289,7 +303,7 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
 {
 // -- SAME FOR ALL FUNCTIONS -- //
     uint index = (DTid.x + blockID.y * NUM_THREADS);
-    Input particle = inputParticleData[index];
+    Input particle = readParticleData[index];
     
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;

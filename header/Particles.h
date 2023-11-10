@@ -81,8 +81,6 @@ struct ParticleMetadata
 	DirectX::XMFLOAT3 positionInfo{ 0.f, 0.f, 0.f };
 	int pattern = 0; // The movement pattern of the particle
 
-
-
 	float deltaTime = 0;
 	float rotationY = 0;
 	DirectX::XMFLOAT2 morePositionInfo{ 0.f, 0.f};

@@ -1,6 +1,6 @@
 #ifndef PARTICLE_HEADER
 #define PARTICLE_HEADER
-#define NUM_THREADS 256
+#define NUM_THREADS 32
 
 struct Input
 {
