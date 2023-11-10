@@ -36,7 +36,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
 		for (auto& func : funcs)
 		{
-			SetHitboxCanDealDamage(entity, 0, true); //Hardhitbox
+			SetHitboxCanDealDamage(entity, 3, true); //Dash hitbox
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -77,7 +77,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
-		SetHitboxCanDealDamage(entity, 0, false); //Hardhitbox
+		SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
 		stats->hazardModifier = stats->baseHazardModifier;
 	}
 

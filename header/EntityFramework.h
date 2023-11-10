@@ -127,7 +127,7 @@ public:
 	EntityID CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier = ENT_PERSIST_LOWEST);
 
 	//Destroys the entity with the specified ID
-	void DestroyEntity(EntityID id);
+	void DestroyEntity(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier = ENT_PERSIST_LOWEST);
 
 	//Add a component T along with potential arguments to the entity with the specified ID
 	template<typename T, typename ...Args>
@@ -209,7 +209,7 @@ private:
 		return id.isDestroyed;
 	}
 
-	void ReleaseComponentResources(EntityID id);
+	void ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier);
 
 	//Private member variables
 	std::vector<ML_ComponentMap> componentMaps;

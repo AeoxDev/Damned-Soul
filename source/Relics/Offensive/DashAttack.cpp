@@ -23,20 +23,16 @@ void DASH_ATTACK::Initialize(void* input)
 
 void DASH_ATTACK::DealDamageWhenDashing(void* data)
 {
-	//Build a damage-calculation struct (by passing in the stat components of the entities involved?? where does that happen tho)
+	//Build a damage-calculation struct
 	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
 	// Check if it is the right entity that is attacking
 	if (DASH_ATTACK::_OWNER.index != input->attacker.index)
 		return;
 
-	//Get attacker stats for the damage we'll be dealing, defender stats for the one who'll get it
-	StatComponent* attackerStats = registry.GetComponent<StatComponent>(input->attacker);
-	StatComponent* defenderStats = registry.GetComponent<StatComponent>(input->defender);
-
-	//Calculate damage
-	float damage = ((input->damage + input->flatAdd) * input->incMult) * DASH_ATTACK_DAMAGE_MULTIPLIER;
-
-	//Apply the damage
-	Combat::HitFlat(input->defender, defenderStats, damage);
+	//Halve our damage in calculations when we do the dash relic thing
+	if (input->attacker.index == DASH_ATTACK::_OWNER.index)
+	{
+		input->incMult *= DASH_ATTACK_DAMAGE_MULTIPLIER;
+	}
 }

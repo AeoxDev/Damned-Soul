@@ -36,7 +36,8 @@ void DashBeginHit(EntityID& entity, const int& index)
 	StatComponent* defenderStats = registry.GetComponent<StatComponent>(cpc->params.entity2);
 
 	//Apply the damage
-	Combat::HitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
+	//Combat::HitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
+	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
 	//Combat::HitFlat(entity, defenderStats, attackerStats->GetDamage() * 0.5f);
 
 	//Disable damage taken until EndHit

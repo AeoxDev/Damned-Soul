@@ -847,13 +847,13 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 
 	//dID = 3
-	int dID = CreateHitbox(entity, radius * 1.25, 0.0f, 0.0f);
+	int dID = CreateHitbox(entity, radius * 2.0f, 0.0f, 0.0f);
 	SetCollisionEvent(entity, dID, DashCollision);
 	SetHitboxIsPlayer(entity, dID);
 	SetHitboxHitEnemy(entity, dID);
-	SetHitboxActive(entity, dID, false);
+	SetHitboxActive(entity, dID);
 	SetHitboxCanTakeDamage(entity, dID, false);
-	SetHitboxCanDealDamage(entity, dID, true);
+	SetHitboxCanDealDamage(entity, dID, false);
 
 }
 

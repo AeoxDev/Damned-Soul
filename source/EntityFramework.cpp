@@ -32,7 +32,7 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 	return entities.back().id;
 }
 
-void Registry::ReleaseComponentResources(EntityID id)
+void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier)
 {
 	//Boneless model
 	ModelBonelessComponent* boneless = registry.GetComponent<ModelBonelessComponent>(id);
@@ -107,44 +107,54 @@ void Registry::ReleaseComponentResources(EntityID id)
 	if(p)
 		p->pointList.~ML_Vector();
 
-	////Sound (Only get released if the audio engine has been destroyed prior)
-	//SoundComponent* sound = registry.GetComponent<SoundComponent>(id);
-	//if (sound)
-	//{
-	//	if (registry.GetComponent<AudioEngineComponent>(id) == nullptr)
-	//	{
-	//		sound->Unload();
-	//	}
-	//}
-
-	////Audio Engine
-	//AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(id);
-	//if(audioEngine)
-	//	audioEngine->Destroy();
-
 	//TODO: Pass in persistency thing so we can check to see if it's NOT equal to ENT_PERSIST_PAUSE when unloading sound components
 
-	SoundComponent* sound = registry.GetComponent<SoundComponent>(id);
-	if (sound)
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		ReleaseTimedEvents(id);
+
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
+
+	if (destructionTier != ENT_PERSIST_PAUSE)
 	{
-		auto audioEngine = registry.GetComponent<AudioEngineComponent>(id);
-		if (audioEngine == nullptr)
-			sound->Unload();
-		else
+		SoundComponent* sound = registry.GetComponent<SoundComponent>(id);
+		if (sound && registry.GetComponent<AudioEngineComponent>(id) == nullptr)
 		{
 			sound->Unload();
-			audioEngine->Destroy();
 		}
 	}
+
+	/*
+	for (auto entity : View<TimedEventComponent>(registry))
+	{
+		if(destructionTier != ENT_PERSIST_PAUSE)
+			ReleaseTimedEvents(entity);
+	}
+
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
+	
+	for (auto entity : View<SoundComponent>(registry))
+	{
+		if (destructionTier != ENT_PERSIST_PAUSE)
+		{
+			SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+			if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+			{
+				sound->Unload();
+			}
+		}
+	}
+	*/
 	
 }
 
-void Registry::DestroyEntity(EntityID id) //pass in ENTITY_PERSISTENCY_TIER destructionTier
+void Registry::DestroyEntity(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier)
 {
 	EntityID nullID = CreateEntityId(id.index, true, ENT_PERSIST_LOWEST);
 
 	//Check to see if the entity has any components that need to have d3d11 stuff released before destroying
-	ReleaseComponentResources(id);
+	ReleaseComponentResources(id, destructionTier);
 
 	entities[GetEntityIndex(id)].id = nullID;
 	entities[GetEntityIndex(id)].components.reset();
@@ -277,16 +287,8 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 	//	}
 	//}
 
-	for (auto entity : View<TimedEventComponent>(registry))
-	{
-		if(destructionTier != ENT_PERSIST_PAUSE)
-			ReleaseTimedEvents(entity);
-	}
-
-	if (destructionTier != ENT_PERSIST_PAUSE)
-		Light::FreeLight();
-	
-	/*for (auto entity : View<SoundComponent>(registry))
+	/*
+	for (auto entity : View<SoundComponent>(registry))
 	{
 		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
@@ -297,15 +299,7 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			}
 		}
 	}
-
-	for (auto entity : View<AudioEngineComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
-			audioEngine->Destroy();
-		}
-	}*/
+	*/
 
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
@@ -316,7 +310,31 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		//Destroy the entity if it isn't already destroyed and its persistency tier isn't greater than the destruction tier
 		if (check.isDestroyed == false && check.persistentTier <= destructionTier)
 		{
-			registry.DestroyEntity(check);
+			registry.DestroyEntity(check, destructionTier);
+		}
+	}
+
+	//1 sound component manages to get through
+	for (auto entity : View<SoundComponent>(registry))
+	{
+		if (destructionTier != ENT_PERSIST_PAUSE)
+		{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+				sound->Unload();
+		}
+	}
+
+	//If the audio engine is the last entity with a sound component, kill
+	for (auto entity : View<AudioEngineComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			if (sound)
+				sound->Unload();
+			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
+			audioEngine->Destroy();
 		}
 	}
 }

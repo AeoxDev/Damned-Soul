@@ -117,14 +117,6 @@ void HardCollision(OnCollisionParameters& params)
 
 	//transform2->positionX += dirX;//Push of by
 	//transform2->positionZ += dirZ;//Push of by
-
-	//Since this function is only ever called when hard-collision occurs, it's *probably* safe to assume I can call the dash attack relic func here :)))
-	if (hitbox1->convexFlags->canDealDamage || hitbox1->circularFlags->canDealDamage)
-	{
-		AddTimedEventComponentStartContinuousEnd(params.entity1, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
-	}
-	//if (hitbox2->convexFlags->canDealDamage || hitbox2->circularFlags->canDealDamage)
-	//	AddTimedEventComponentStartContinuousEnd(params.entity1, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
 }
 
 //Check if attacker is static hazard and defender can hit static hazard.
@@ -198,7 +190,7 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	}
 }
 
-void DashCollision(OnCollisionParameters& params)
+bool IsDamageCollisionValid(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
@@ -209,6 +201,7 @@ void DashCollision(OnCollisionParameters& params)
 	//Get the hitbox of the attacker and check if it's circular or convex, return out of here if the hitbox doesn't have the "canDealDamage" flag set
 	//Realistically we can skip this part since the player will be the only entity with a dash hitbox but buhhh
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+
 	int counter = 0;
 	int counter2 = 0;
 	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
@@ -248,7 +241,7 @@ void DashCollision(OnCollisionParameters& params)
 	//if nothing is hit, get out!
 	if (counter == 0 || counter2 == 0)
 	{
-		return;
+		return false;
 	}
 
 	//Check if hitbox already dealt damage
@@ -257,15 +250,117 @@ void DashCollision(OnCollisionParameters& params)
 		//If already in hit tracker: no proc
 		if (hitbox1->hitTracker[i].active && hitbox1->hitTracker[i].entity.index == params.entity2.index)
 		{
-			return;
+			return false;
 		}
 	}
 
-	//OKAY SO NOW WE DO THE THING WHERE WE DEAL DAMAGE TO AN ENEMY WHEN WE DASH, BUT I IMPLEMENT THIS TOMORROW
+	//We made it
+	return true;
+}
+
+void DashCollision(OnCollisionParameters& params)
+{
+	if (IsDamageCollisionValid(params) == false)
+	{
+		return;
+	}
+
+	//Get relevant components
+	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
+
+	//Run timed events for on-hit:
+	//Camera shake
+	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+
+	//Hitstop, pause both animations for extra effect
+	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
+
+	//Freeze both entities as they hit eachother for extra effect
+	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
+
+	//Squash both entities for extra effect
+	float squashKnockbackFactor = 1.0f + stat1->GetKnockback() * 0.1f;
+	AddSquashStretch(params.entity2, Constant, 1.15f * squashKnockbackFactor, 1.1f, 0.75f);
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+	AddSquashStretch(params.entity1, Constant, 1.1f, 1.1f, 0.9f);
+	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
+
+	//Knockback
+	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform1->mass, stat1->GetKnockback() * params.normal2Z / transform1->mass);
+
+	//Take damage and blinking
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+
+	//Play hurt sound
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
+	if (enemy != nullptr)
+	{
+		enemy->lastPlayer = params.entity1;
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+		switch (enemy->type)
+		{
+		case EnemyType::hellhound:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::eye:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Base);
+			}
+			break;
+		case EnemyType::skeleton:
+			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Base);
+			}
+			break;
+		}
+	}
+	else
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(params.entity2);
+		if (player != nullptr)
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
+			sfx->Play(Player_Hurt, Channel_Base);
+		}
+	}
+
+	//Redraw UI (player healthbar) since someone will have taken damage at this point. 
+	RedrawUI();
+
+	//Lastly set for hitboxTracker[]
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (!hitbox1->hitTracker[i].active)
+		{
+			hitbox1->hitTracker[i].active = true;
+			hitbox1->hitTracker[i].entity = params.entity2;
+			return;
+		}
+	}
 }
 
 void AttackCollision(OnCollisionParameters& params)
 {
+	if (IsDamageCollisionValid(params) == false)
+	{
+		return;
+	}
+
+	/*
 	//Get the components of the attacker (only stats for dealing damage)
  	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 
@@ -326,6 +421,7 @@ void AttackCollision(OnCollisionParameters& params)
 			return;
 		}
 	}
+	*/
 
 	/*
 	Get hit, 3-step process
@@ -333,6 +429,10 @@ void AttackCollision(OnCollisionParameters& params)
 	2. Continuous: Flash color using hue-shift, knockback depending on where we got attacked from
 	3. End: Enable being able to take damage again, and maybe for safety reasons make sure our hue-shift is back to normal
 	*/
+	//Get the components we still need after the check
+	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
+	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
 	CollisionParamsComponent* eventParams = registry.AddComponent<CollisionParamsComponent>(params.entity2, params);
 	//AddTimedEventComponentStart(params.entity2, params.entity2, 0.0f, nullptr);
 
@@ -356,7 +456,7 @@ void AttackCollision(OnCollisionParameters& params)
 	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
 	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform1->mass, stat1->GetKnockback() * params.normal2Z / transform1->mass);
 	//Take damage and blinking
-	int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
+	//int index3 = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, BlinkColor, FREEZE_TIME + 0.2f, ResetColor); //No special condition for now
 	int index4 = AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 	//stat2->UpdateHealth(-stat1->damage);
 
