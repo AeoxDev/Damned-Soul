@@ -21,7 +21,7 @@ struct StateManager
 	std::vector<System*> systems;
 	int activeLevel = -1;
 	int activeLevelScene = -1;//Current loaded level scene in array
-	GameScene scenes[3];
+	GameScene scenes[3] = {};
 	Menu menu;
 	SettingsState settings;
 	PauseState pause;

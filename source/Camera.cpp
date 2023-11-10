@@ -39,6 +39,8 @@ struct CameraConstantBuffer
 	DirectX::XMFLOAT4 m_cameraPosition;
 	DirectX::XMFLOAT4X4 m_viewMatrix;
 	DirectX::XMFLOAT4X4 m_projectionMatrix;
+	DirectX::XMFLOAT4X4 m_shadowViewMatrix;
+	DirectX::XMFLOAT4X4 m_shadowProjectionMatrix;
 };
 
 PoolPointer<CameraStruct> GameCamera;
@@ -151,6 +153,15 @@ void Camera::AdjustRotation(const float x, const float y, const float z)
 void Camera::AdjustFOV(const float radians)
 {
 	GameCamera->m_FOV += radians;
+}
+
+void Camera::SaveToShadowMapCamera()
+{
+	DirectX::XMMATRIX transposed = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&GameCamera->m_view));
+	DirectX::XMStoreFloat4x4(&BufferData->m_shadowViewMatrix, transposed);
+
+	transposed = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&GameCamera->m_orthographic));
+	DirectX::XMStoreFloat4x4(&BufferData->m_shadowProjectionMatrix, transposed);
 }
 
 const DirectX::XMVECTOR Camera::GetPosition()

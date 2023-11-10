@@ -94,6 +94,8 @@ int SetupGameRenderer()
 	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("TestSkelVS.cso", LAYOUT_DESC::SKELETAL);
 	Light::SetupLight();
 	SetVertexShader(renderStates[currentSize].vertexShaders[0]);////////
+
+	renderStates[currentSize].geometryShader = LoadGeometryShader("NormalMappingGS.cso");
 	//Light::CreateLight(1);
 	//Light::CreateLight(2);
 	//Light::CreateLight(3);
@@ -135,6 +137,9 @@ int SetupGameRenderer()
 	char depthShader[] = "DepthPixel.cso";
 	CreateDepthPassPixelShader(depthShader);
 	CreateDepthPass();
+
+	//CreateShadowMap(512, 512);
+	CreateShadowMap(1536, 1536);
 	return currentSize++;
 }
 

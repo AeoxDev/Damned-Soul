@@ -154,9 +154,9 @@ void EndDirectX()
 	comHolder->cs_map.clear();
 
 	// Release all textures and associated resources
-	for (auto& [key, val] : txHolder->img_map)
-		val.Release(); // Is not a pointer
-	txHolder->img_map.clear();
+	//for (auto& [key, val] : txHolder->img_map)
+	//	val.Release(); // Is not a pointer
+	//txHolder->img_map.clear();
 
 	for (auto& [key, val] : txHolder->srv_map)
 	{

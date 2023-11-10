@@ -134,6 +134,8 @@ int StateManager::Setup()
 	// Render/GPU
 	
 	systems.push_back(new ParticleSystemCPU());
+	
+	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
