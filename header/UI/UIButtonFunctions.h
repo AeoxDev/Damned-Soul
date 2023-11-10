@@ -45,7 +45,9 @@ namespace UIFunc
 	// Re-roll a relic in shop
 	void RerollRelic(void* args, int index);
 
-	void EmptyFunction(void* args, int index);
+	void EmptyOnClick(void* args, int index);
+
+	void EmptyOnHover(void* args, int index, bool hover);
 
 	// Heal the player
 	void HealPlayer(void* args, int index);

@@ -74,9 +74,11 @@ void CreateRelicWindows()
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 
+		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::EmptyOnClick);
 		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::SelectRelic);
 		uiOnClick->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::SelectRelic);
 
+		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::EmptyOnHover);
 		uiOnHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverRelic);
 		uiOnHover->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverRelic);
 
@@ -134,7 +136,7 @@ void CreateSingleWindows()
 		UIFunc::RerollRelic,
 		UIFunc::LockRelic,
 		UIFunc::BuyRelic,
-		UIFunc::EmptyFunction,
+		UIFunc::EmptyOnClick,
 		UIFunc::LoadNextLevel
 	};
 
@@ -157,11 +159,15 @@ void CreateSingleWindows()
 
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
-		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 
-		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
+		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::EmptyOnClick);
+		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i]);
+
 		if (i != 5)
+		{
+			OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 			uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+		}
 	}
 }
 

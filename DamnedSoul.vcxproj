@@ -619,6 +619,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <Natvis Include="resource\NatVis\mlrelic_vis.natvis" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
   </ItemGroup>

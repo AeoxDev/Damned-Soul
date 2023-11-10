@@ -24,11 +24,23 @@ bool OnClickSystem::Update()
 
 			if (index > -1)
 			{
+
+				if (index == 0) //baseimage intersect
+				{
+					if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+						continue;
+				}
+				else if (index > 0) //images intersect, higher number = later added image
+				{
+					if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
+						continue;
+				}
+
 				//Set which sound to play
 				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 				if (sound != nullptr)
 				{
-					if (comp->onClick == UIFunc::LoadNextLevel)	
+					if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
 					{
 						sound->Play(Button_Start, Channel_Base);
 					}
@@ -38,7 +50,7 @@ bool OnClickSystem::Update()
 					}
 				}
 
-				comp->onClick(uiElement, comp->index);
+				comp->onClickFunctions[comp->index](uiElement, comp->index);
 				return true;
 			}
 		}

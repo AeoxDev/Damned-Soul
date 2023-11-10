@@ -3,35 +3,37 @@
 
 #include "MemLib/ML_Vector.hpp"
 
+#include <vector>
+
 struct OnHoverComponent
 {
-	ML_Vector<DSFLOAT2> positions;
-	ML_Vector<DSBOUNDS> bounds;
+	std::vector<DSFLOAT2> positions;
+	std::vector<DSBOUNDS> bounds;
 
-	int index = -1;
+	int index = 0;
+	int oldIndex = 0;
 
-	bool redrawUI = true;
-	bool hasBeenDrawn = false;
+	std::vector<int> redrawUIChecks;
+	std::vector<int> hasBeenDrawnChecks;
 
-	void(*onHover)(void*, int, bool) = nullptr;
+	std::vector<void(*)(void*, int, bool)> onHoverFunctions;
 
 	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int, bool))
 	{
-		AddElement(pos, bnds);
-		onHover = func;
-	};
-
-	void AddElement(DSFLOAT2 pos, DSBOUNDS bnds)
-	{
 		positions.push_back(pos);
 		bounds.push_back(bnds);
+
+		onHoverFunctions.push_back(func);
+
+		redrawUIChecks.push_back(1);
+		hasBeenDrawnChecks.push_back(0);
 	};
 
-	//Returns -1 for no intersect, positive number for first index that interacted, 
+	//Returns -1 for no intersect, positive number for newest interactable.
 	int Intersect(DSINT2 mousePosition)
 	{
 		int retval = -1;
-		for (uint32_t i = 0; i < positions.size(); i++)
+		for (uint32_t i = positions.size(); i --> 0;)
 		{
 			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
@@ -47,7 +49,12 @@ struct OnHoverComponent
 
 	void Release()
 	{
-		positions.~ML_Vector();
-		bounds.~ML_Vector();
+		positions.~vector();
+		bounds.~vector();
+
+		onHoverFunctions.~vector();
+
+		redrawUIChecks.~vector();
+		hasBeenDrawnChecks.~vector();
 	};
 };

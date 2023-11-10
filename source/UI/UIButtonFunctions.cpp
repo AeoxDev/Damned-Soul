@@ -186,9 +186,9 @@ void UIFunc::SelectRelic(void* args, int index)
 	UIComponent* uiElement = (UIComponent*)args;
 
 	int inverseIndex = 0;
-	ML_Array<int, 2> imageIndexes;
+	int imageIndexes[2];
 
-	if (index == 0)
+	if (index == 1)
 	{
 		inverseIndex = 1;
 		imageIndexes[0] = uiElement->m_Images.size() - 2;
@@ -224,7 +224,7 @@ void UIFunc::SelectRelic(void* args, int index)
 
 		UIRelicWindowComponent* uiWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
 
-		if (uiWindow->shopSelections[index] != shopState::LOCKED && uiWindow->shopSelections[index] != shopState::BOUGHT)
+		if (uiWindow->shopSelections[index - 1] != shopState::LOCKED && uiWindow->shopSelections[index - 1] != shopState::BOUGHT)
 		{
 			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\SelectedRelic");
 			uiElement->m_Images[imageIndexes[0]].baseUI.SetVisibility(true);
@@ -237,14 +237,14 @@ void UIFunc::SelectRelic(void* args, int index)
 			uiWindow->shopSelections[inverseIndex] = shopState::AVALIABLE;
 		}
 
-		if (uiWindow->shopSelections[index] == shopState::AVALIABLE)
+		if (uiWindow->shopSelections[index - 1] == shopState::AVALIABLE)
 		{
-			uiWindow->shopSelections[index] = shopState::SELECTED;
+			uiWindow->shopSelections[index - 1] = shopState::SELECTED;
 		}
-		else if (uiWindow->shopSelections[index] == shopState::SELECTED)
+		else if (uiWindow->shopSelections[index - 1] == shopState::SELECTED)
 		{
 			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\HoverRelic");
-			uiWindow->shopSelections[index] = shopState::AVALIABLE;
+			uiWindow->shopSelections[index - 1] = shopState::AVALIABLE;
 		}
 	}
 
@@ -271,6 +271,7 @@ void UIFunc::BuyRelic(void* args, int index)
 				
 				uiElement->m_Images[i + 2].SetImage("Buy");
 				relicWindow->shopRelics[i]->m_function(&stateManager.player);
+
 				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 				break;
 			}
@@ -381,7 +382,12 @@ void UIFunc::RerollRelic(void* args, int index)
 	RedrawUI();
 }
 
-void UIFunc::EmptyFunction(void* args, int index)
+void UIFunc::EmptyOnClick(void* args, int index)
+{
+
+}
+
+void UIFunc::EmptyOnHover(void* args, int index, bool hover)
 {
 
 }
@@ -460,7 +466,7 @@ void UIFunc::HoverRelic(void* args, int index, bool hover)
 			continue;
 
 		relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
-
+		
 	}
 
 	for (auto entity : View<UIShopImpComponent>(registry))
@@ -469,27 +475,34 @@ void UIFunc::HoverRelic(void* args, int index, bool hover)
 		uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 	}
 
-	int imageIndex = uiElement->m_Images.size() - (2 - index);
+	int imageIndex = uiElement->m_Images.size() - (2 - index + 1);
 
 	if (hover)
 	{
 		uiElement->m_Images[imageIndex].baseUI.SetVisibility(true);
-		uiElement->m_Images[imageIndex].baseUI.SetPosition(uiElement->m_Images[index].baseUI.GetPosition());
+		uiElement->m_Images[imageIndex].baseUI.SetPosition(uiElement->m_Images[index - 1].baseUI.GetPosition());
 
-		uiImpText->name = relicWindow->shopRelics[index]->m_relicName;
-		uiImpText->description = relicWindow->shopRelics[index]->m_description;
-		uiImpText->price = relicWindow->shopRelics[index]->m_price;
+		uiImpText->name = relicWindow->shopRelics[index - 1]->m_relicName;
+		uiImpText->description = relicWindow->shopRelics[index - 1]->m_description;
+		uiImpText->price = relicWindow->shopRelics[index - 1]->m_price;
 
-		ML_String relicText = uiImpText->name;
-		relicText.append("\nPrice: ");
-		relicText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
-		relicText.append(uiImpText->description);
+		char relicText[RELIC_DATA_DESC_SIZE] = "";
 
-		uiImpElement->m_Text.SetText(relicText.c_str(), uiImpElement->m_Text.baseUI.GetBounds());
+		std::strcpy(relicText, uiImpText->name.c_str());
+		std::strcpy(relicText + std::strlen(relicText), "\nPrice: ");
+		std::strcpy(relicText + std::strlen(relicText), (std::to_string(uiImpText->price) + " Souls\n").c_str());
+		std::strcpy(relicText + std::strlen(relicText), uiImpText->description.c_str());
+
+		//ML_String relicText = uiImpText->name;
+		//relicText.append("\nPrice: ");
+		//relicText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
+		//relicText.append(uiImpText->description);
+
+		uiImpElement->m_Text.SetText(relicText, uiImpElement->m_Text.baseUI.GetBounds());
 	}
 	else
 	{
-		if (relicWindow->shopSelections[index] == shopState::AVALIABLE)
+		if (relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
 		{
 			uiElement->m_Images[imageIndex].baseUI.SetVisibility(false);
 		}
