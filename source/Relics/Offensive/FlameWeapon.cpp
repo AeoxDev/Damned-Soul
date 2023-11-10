@@ -34,10 +34,10 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 	StatComponent* defenderStats = registry.GetComponent<StatComponent>(input->defender);
 
 	DamageOverTimeComponent newDoT
-	{
-		/*Duration*/	FLAME_WEAPON_DOT_DURATION,
-		/*DPS*/			(FLAME_WEAPON_BASE_DAMAGE + (FLAME_WEAPON_DOT_FRACTION * input->CollapseDamage())) / FLAME_WEAPON_DOT_DURATION
-	};
+	(
+		(FLAME_WEAPON_BASE_DAMAGE + (FLAME_WEAPON_DOT_FRACTION * input->CollapseDamage())) / FLAME_WEAPON_DOT_DURATION,
+		FLAME_WEAPON_DOT_DURATION
+	);
 	DamageOverTimeComponent* EnemyDoT = registry.GetComponent<DamageOverTimeComponent>(input->defender);
 	if (nullptr == EnemyDoT || EnemyDoT->LessThan(newDoT))
 	{
