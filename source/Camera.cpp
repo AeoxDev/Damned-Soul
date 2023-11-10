@@ -54,9 +54,16 @@ float offsetZ = 0.0f;
 
 void Camera::SetPosition(const float x, const float y, const float z, const bool includeOffset)
 {
+
 	GameCamera->m_position.x = x + (includeOffset * CAMERA_OFFSET_X) + offsetX;
-	GameCamera->m_position.y = y + (includeOffset * CAMERA_OFFSET_Y) + offsetY;
-	GameCamera->m_position.z = z + (includeOffset * CAMERA_OFFSET_Z) + offsetZ;
+
+	float xRotYy = cos(GameCamera->m_rotation.x);
+	float xRotYz = sin(GameCamera->m_rotation.x);
+	float xRotZz = cos(GameCamera->m_rotation.x);
+	float xRotZy = sin(GameCamera->m_rotation.x);
+
+	GameCamera->m_position.y = y + includeOffset * (CAMERA_OFFSET_Y * xRotYy + CAMERA_OFFSET_Z * xRotYz) + offsetY;
+	GameCamera->m_position.z = z + includeOffset * (xRotZz * CAMERA_OFFSET_Z + CAMERA_OFFSET_X * xRotZy) + offsetZ;
 
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
@@ -146,6 +153,15 @@ void Camera::AdjustUp(const float x, const float y, const float z)
 void Camera::AdjustRotation(const float x, const float y, const float z)
 {
 	GameCamera->m_rotation.x += x;
+	if (GameCamera->m_rotation.x > 0.6f)
+	{
+		GameCamera->m_rotation.x = 0.6f;
+	}
+	if (GameCamera->m_rotation.x < -1.4f)
+	{
+		GameCamera->m_rotation.x = -1.4f;
+	}
+	
 	GameCamera->m_rotation.y += y;
 	GameCamera->m_rotation.z += z;
 }
