@@ -29,31 +29,15 @@ void LoadLevel1()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 5.0f, 1, 0.0f, 0.0, -1.0f);
-	// -- Test -- //
-	EntityID particles = registry.CreateEntity();
-
-	TransformComponent transform;
-
-	transform.mass = 1.f;
-	transform.facingX = 1.0f; transform.facingY = 0.0f; transform.facingZ = 1.0f;
-	transform.positionX = 0.0f; transform.positionY = 0.0f; transform.positionZ = 0.0f;
-	transform.scaleX = 1.0f; transform.scaleY = 1.0f; transform.scaleZ = 1.0f;
-	
-	registry.AddComponent<TransformComponent>(particles, transform);
-	registry.AddComponent<ParticleComponent>(particles, 3.f, 5.f, 0.5f, 0.f, 0.f, 1.f, 15, SMOKE);
-	registry.AddComponent<ParticleComponent>(particles, 3.f, 5.f, 0.5f, 0.f, 0.f, 1.f, 15, SMOKE);
-	// -- //
 
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	//SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
-	//SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
-	//SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
-	//SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
-	//SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
-	//SetupEnemy(EnemyType::eye, -0.f, 0.f, 25.f);
-	// 
-	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
+	SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
+	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
+	SetupEnemy(EnemyType::eye, -0.f, 0.f, 25.f);
 	//5 souls total
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));

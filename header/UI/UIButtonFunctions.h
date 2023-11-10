@@ -20,6 +20,8 @@ namespace UIFunc
 	// Start the next level
 	void LoadNextLevel(void* args);
 
+	void LoadParticleLevel(void* args);
+
 	// Go from start menu to settings
 	void MainMenu_Settings(void* args);
 

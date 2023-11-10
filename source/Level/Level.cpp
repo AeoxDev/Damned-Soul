@@ -42,6 +42,7 @@ void LoadLevel(int level)
 	case 5: LoadLevel3(); break;
 	case 6: LoadShop(); break;
 	case 7: LoadLevel4(); break;
+	//case 8: LoadParticleLevel(); break;
 	default: 
 		//UnloadEntities(true);//Reset game
 		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game

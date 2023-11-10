@@ -3,6 +3,12 @@ cbuffer WorldMatrix : register(b0)
     matrix world;
 }
 
+
+cbuffer metadataBuffer : register(b2)
+{
+    int start;
+};
+
 struct VS_IN
 {
     float3 position;
@@ -27,7 +33,7 @@ StructuredBuffer<VS_IN> particles : register(t2);
 
 VS_OUT main(uint vertexID : SV_VertexID)
 {
-    VS_IN inval = particles[vertexID];
+    VS_IN inval = particles[vertexID + start];
     //inval = particles[instanceID];
     VS_OUT retval;
     

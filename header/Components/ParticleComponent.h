@@ -22,7 +22,6 @@ struct ParticleComponent
 	int FindSlot();
 
 	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern);
-	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern);
 
 	// Overload for FlameThrower
 	// Flamethrower does not use max max distance therefore we store one of the triangles vertices x-position there.

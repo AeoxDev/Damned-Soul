@@ -31,7 +31,27 @@ void UIFunc::LoadNextLevel(void* args)
 		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
 	}
 
+
 	LoadLevel(++stateManager.activeLevel);
+}
+
+void UIFunc::LoadParticleLevel(void* args)
+{
+	SetInPlay(true);
+	SetInMainMenu(false);
+	UnloadEntities();
+	for (auto entity : View<AudioEngineComponent>(registry))
+	{
+		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+		backgroundMusic->Stop();
+		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+		audioJungle->HandleSound();
+		backgroundMusic->Play(Music_StageCalm, Channel_Base);
+		//audioJungle->HandleSound();
+		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
+	}
+
+	LoadLevel(8);
 }
 
 void UIFunc::MainMenu_Settings(void* args)

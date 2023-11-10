@@ -197,6 +197,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\CombatFunctions.cpp" />
+    <ClCompile Include="source\Level\ParticleLevel.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />

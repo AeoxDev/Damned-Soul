@@ -7,7 +7,7 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000
+#define TEST3000
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
@@ -52,8 +52,23 @@ int main(int argc, char* args[])
 
 			MemLib::pdefrag();
 		}
-		
 	}
+	//for (unsigned int i = 0; i < 3000; ++i) // THIS IS GONA BECOME PARTICLE TESTER
+	//{
+	//	UIFunc::LoadParticleLevel(nullptr);
+	//	for (size_t j = 0; j < SIMULATED_FRAMES; j++)
+	//	{
+	//		CountDeltaTime();
+
+	//		//Show the amount of reloads we've done up in the window title. No real reason
+	//		UpdateDebugWindowTitle(title, " load: " + std::to_string(i) + " / 3000");
+	//		stateManager.Update();
+
+	//		stateManager.EndFrame();
+
+	//		MemLib::pdefrag();
+	//	}
+	//}
 	//Simulate main menu for 3000 frames
 	gameSpeed = 24.0f;
 	LoadLevel(666);//Load the menu

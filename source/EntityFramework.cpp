@@ -167,6 +167,15 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
+	for (auto entity : View<ParticleComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
+			pComp->Release();
+		}
+	}
+
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
 		if(destructionTier != ENT_PERSIST_PAUSE)
