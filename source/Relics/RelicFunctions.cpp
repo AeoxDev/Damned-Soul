@@ -11,10 +11,17 @@
 // Include all relics
 	/*Offense*/
 #include "Relics\Offensive\DemonBonemarrow.h"
-#include "Relics\Offensive\FlameWeapon.h"
-#include "Relics\Offensive\SoulPower.h"
 #include "Relics\Offensive\LifeSteal.h"
 #include "Relics\Offensive\AdvancedFighting.h"
+#include "Relics\Offensive\SoulPower.h"
+#include "Relics\Offensive\FlameWeapon.h"
+//#include "Relics\Offensive\ExplodingWeapon.h"
+#include "Relics\Offensive\DashAttack.h"
+//#include "Relics\Offensive\AdrenalineRush.h"
+#include "Relics\Offensive\ThrillSeeker.h"
+//#include "Relics\Offensive\PowerStrike.h"
+
+
 	/*Defense*/
 #include "Relics\Defensive\Hearts\DemonHeart.h"
 #include "Relics\Defensive\Hearts\CorruptedHeart.h"
@@ -84,10 +91,12 @@ void _validateMasterRelicList()
 	if (0 == MasterRelicList.m_size)
 	{
 		ML_RelicArray MasterInitializer {
+
+			//OFFENSIVE RELICS
 			RelicData(
 				/*Name*/		"Demon Bonemarrow",
 				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
-				/*Description*/	"Increases your Damage by 15 when obtained.",
+				/*Description*/	"Increases your Damage by 15 when obtained",
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DEMON_BONEMARROW::Initialize
@@ -95,7 +104,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Flame Weapon",
 				/*Filepath*/	"RelicIcons\\Flame_Weapon.png",
-				/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
+				/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds",
 				/*Price*/		3,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	FLAME_WEAPON::Initialize
@@ -125,6 +134,26 @@ void _validateMasterRelicList()
 				/*Function*/	ADVANCED_FIGHTING::Initialize
 			),
 			RelicData(
+				/*Name*/		"Dash Attack",
+				/*Filepath*/	"RelicIcons\\Dash_Attack.png",
+				/*Description*/	"Deals 50% of your damage when dashing through an enemy",
+				/*Price*/		5,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	DASH_ATTACK::Initialize
+			),
+			RelicData(
+				/*Name*/		"Thrill Seeker",
+				/*Filepath*/	"RelicIcons\\Thrill_Seeker.png",
+				/*Description*/	"For every % hp lost, gain % damage",
+				/*Price*/		10,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	THRILL_SEEKER::Initialize
+			),
+			//ENDOF: OFFENSIVE RELICS
+
+
+			//DEFENSIVE RELICS
+			RelicData(
 				/*Name*/		"Demon Heart",
 				/*Filepath*/	"RelicIcons\\Demon_Heart.png",
 				/*Description*/	"Increases your Maximum Health by 25",
@@ -143,7 +172,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Molten Heart",
 				/*Filepath*/	"RelicIcons\\Molten_Heart.png",
-				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained.",
+				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
 				/*Price*/		7,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	MOLTEN_HEART::Initialize
@@ -167,7 +196,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Soul Health",
 				/*Filepath*/	"RelicIcons\\Soul_Health.png",
-				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess.",
+				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SOUL_HEALTH::Initialize
@@ -188,6 +217,10 @@ void _validateMasterRelicList()
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SPIKED_SKIN::Initialize
 			),
+			//ENDOF: DEFENSIVE RELICS
+
+
+			//GADGET RELICS
 			RelicData(
 				/*Name*/		"Speedy Little Devil",
 				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
@@ -220,7 +253,7 @@ void _validateMasterRelicList()
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SOUL_SPEED::Initialize
 			),
-
+			//ENDOF: GADGET RELICS
 		};
 		// Copy over
 		std::memcpy(&MasterRelicList, &MasterInitializer, sizeof(ML_RelicArray));
