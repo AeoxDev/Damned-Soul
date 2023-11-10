@@ -28,63 +28,74 @@ void AudioEngineComponent::Setup(int& ID)
 	//Load all sounds to use in the game
 	FMOD::Sound* toAdd = nullptr;
 	this->sounds.clear();
-	for (int i = 0; i < 21; i++) //Change 1 to however many sounds you want to have in the game.
+	for (int i = 0; i < 26; i++) //Change 1 to however many sounds you want to have in the game.
 	{
 		this->sounds.push_back(toAdd);
 	}
+	int i = 0;
 
 	//Menu
-	this->system->createSound("SFX/Menu/MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[0]);
+	this->system->createSound("SFX/Menu/MouseHoverButton.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(1.0f, SFX_GROUP));
-	this->system->createSound("SFX/Menu/MenuButtonPress.mp3", FMOD_DEFAULT, 0, &this->sounds[1]);
+	this->system->createSound("SFX/Menu/MenuButtonPress.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(1.0f, SFX_GROUP));
-	this->system->createSound("SFX/Menu/StartGameClick.mp3", FMOD_DEFAULT, 0, &this->sounds[2]);
+	this->system->createSound("SFX/Menu/StartGameClick.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(1.0f, SFX_GROUP));
 
 	//Music
-	this->system->createSound("SFX/Music/TitleTheme.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[3]);
+	this->system->createSound("SFX/Music/TitleTheme.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
-	this->system->createSound("SFX/Music/StageCalm.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[4]);
+	this->system->createSound("SFX/Music/LavaCave.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
-	this->system->createSound("SFX/Music/PatrickPlankton.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[5]);
+	this->system->createSound("SFX/Music/Shop.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.5f, MUSIC_GROUP));
+	this->system->createSound("SFX/Music/Ice.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
+	this->system->createSound("SFX/Music/PatrickPlankton.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
+	this->system->createSound("SFX/Music/CaveAmbience.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(1.0f, MUSIC_GROUP));
+	this->system->createSound("SFX/Music/LavaAmbience.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.75f, MUSIC_GROUP));
+	this->system->createSound("SFX/Music/BlizzardAmbience.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.15f, MUSIC_GROUP));
 
 	//Player
-	this->system->createSound("SFX/Player/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[6]);
+	this->system->createSound("SFX/Player/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.15f, SFX_GROUP));
-	this->system->createSound("SFX/Player/Dash.mp3", FMOD_DEFAULT, 0, &this->sounds[7]);
+	this->system->createSound("SFX/Player/Dash.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.1f, SFX_GROUP));
-	this->system->createSound("SFX/Player/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[8]);
+	this->system->createSound("SFX/Player/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.1f, SFX_GROUP));
-	this->system->createSound("SFX/Player/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[9]);
+	this->system->createSound("SFX/Player/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 
 	//Eye
-	this->system->createSound("SFX/Enemy/Eye/Shoot.mp3", FMOD_DEFAULT, 0, &this->sounds[10]);
+	this->system->createSound("SFX/Enemy/Eye/Shoot.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Eye/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[11]);
+	this->system->createSound("SFX/Enemy/Eye/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Eye/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[12]);
+	this->system->createSound("SFX/Enemy/Eye/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 
 	//Hellhound
-	this->system->createSound("SFX/Enemy/Hellhound/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[13]);
+	this->system->createSound("SFX/Enemy/Hellhound/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Hellhound/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[14]);
+	this->system->createSound("SFX/Enemy/Hellhound/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Hellhound/Inhale.mp3", FMOD_DEFAULT, 0, &this->sounds[15]);
+	this->system->createSound("SFX/Enemy/Hellhound/Inhale.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Hellhound/Flamethrower.mp3", FMOD_DEFAULT, 0, &this->sounds[16]);
+	this->system->createSound("SFX/Enemy/Hellhound/Flamethrower.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Hellhound/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[17]);
+	this->system->createSound("SFX/Enemy/Hellhound/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 
 	//Skeleton
-	this->system->createSound("SFX/Enemy/Skeleton/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[18]);
+	this->system->createSound("SFX/Enemy/Skeleton/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Skeleton/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[19]);
+	this->system->createSound("SFX/Enemy/Skeleton/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
-	this->system->createSound("SFX/Enemy/Skeleton/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[20]);
+	this->system->createSound("SFX/Enemy/Skeleton/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 }
 
@@ -163,7 +174,7 @@ void AudioEngineComponent::Destroy()
 	{
 		this->sounds[i]->release();
 	}
-	for (int i = 3; i <= 0; i--)
+	for (int i = 3; i >= 0; i--)
 	{
 		this->groups[i]->stop();
 		this->groups[i]->release();
@@ -207,48 +218,48 @@ void SoundComponent::Load(const int EntityType)
 		break;
 	case MENU:
 		//Push back all indices for the menu sounds into soundIndices
-		this->soundIndices[0].push_back(0);
-		this->soundIndices[0].push_back(1);
-		this->soundIndices[0].push_back(2);
+		this->soundIndices[0].push_back((int)MENU1);
+		this->soundIndices[0].push_back((int)MENU2);
+		this->soundIndices[0].push_back((int)MENU3);
 		break;
 	case MUSIC:
 		//Push back all indices for the music sounds into soundIndices
-		this->soundIndices[0].push_back(3);
-		this->soundIndices[0].push_back(4);
-		this->soundIndices[0].push_back(5);
-		this->soundIndices[1].push_back(3);
-		this->soundIndices[1].push_back(4);
-		this->soundIndices[1].push_back(5);
-		break;
-	case AMBIENCE:
-		//Push back all indices for the ambience sounds into soundIndices
+		this->soundIndices[0].push_back((int)MUSIC1);
+		this->soundIndices[0].push_back((int)MUSIC2);
+		this->soundIndices[0].push_back((int)MUSIC3);
+		this->soundIndices[0].push_back((int)MUSIC4);
+		this->soundIndices[0].push_back((int)MUSIC5);
+		this->soundIndices[1].push_back((int)AMBIENCE1);
+		this->soundIndices[1].push_back((int)AMBIENCE2);
+		this->soundIndices[1].push_back((int)AMBIENCE3);
+		this->soundIndices[1].push_back((int)MUSIC5); //Remove this later
 		break;
 	case PLAYER:
 		//Push back all indices for the player sounds into soundIndices
-		this->soundIndices[0].push_back(6);
-		this->soundIndices[0].push_back(7);
-		this->soundIndices[0].push_back(8);
-		this->soundIndices[0].push_back(9);
+		this->soundIndices[0].push_back((int)PLAYER1);
+		this->soundIndices[0].push_back((int)PLAYER2);
+		this->soundIndices[0].push_back((int)PLAYER3);
+		this->soundIndices[0].push_back((int)PLAYER4);
 		break;
 	case EYE:
 		//Push back all indices for the eye sounds into soundIndices
-		this->soundIndices[0].push_back(10);
-		this->soundIndices[0].push_back(11);
-		this->soundIndices[0].push_back(12);
+		this->soundIndices[0].push_back((int)EYE1);
+		this->soundIndices[0].push_back((int)EYE2);
+		this->soundIndices[0].push_back((int)EYE3);
 		break;
 	case HELLHOUND:
 		//Push back all indices for the hellhound sounds into soundIndices
-		this->soundIndices[0].push_back(13);
-		this->soundIndices[0].push_back(14);
-		this->soundIndices[0].push_back(15);
-		this->soundIndices[0].push_back(16);
-		this->soundIndices[0].push_back(17);
+		this->soundIndices[0].push_back((int)HELLHOUND1);
+		this->soundIndices[0].push_back((int)HELLHOUND2);
+		this->soundIndices[0].push_back((int)HELLHOUND3);
+		this->soundIndices[0].push_back((int)HELLHOUND4);
+		this->soundIndices[0].push_back((int)HELLHOUND5);
 		break;
 	case SKELETON:
 		//Push back all indices for the skeleton sounds into soundIndices
-		this->soundIndices[0].push_back(18);
-		this->soundIndices[0].push_back(19);
-		this->soundIndices[0].push_back(20);
+		this->soundIndices[0].push_back((int)SKELETON1);
+		this->soundIndices[0].push_back((int)SKELETON2);
+		this->soundIndices[0].push_back((int)SKELETON3);
 		break;
 	case IMP:
 		//Push back all indices for the imp sounds into soundIndices
