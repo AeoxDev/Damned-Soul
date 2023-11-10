@@ -14,7 +14,7 @@ struct VS_IN
 };
 
 struct VS_OUT
-{ 
+{
     float4 position : SV_POSITION;
     float4 worldPosition : POSITION;
     float4 rgb : RGB;

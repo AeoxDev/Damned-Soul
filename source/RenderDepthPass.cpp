@@ -59,13 +59,13 @@ void SetDepthPassTexture(bool forRendering)
 		float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		d3d11Data->deviceContext->ClearRenderTargetView(depthPassRTV, color);
 		d3d11Data->deviceContext->OMSetRenderTargets(1, &depthPassRTV, dsvHolder->dsv_map[renderStates[backBufferRenderSlot].depthStencilView]);
-		
+
 	}
 	else
 	{
 		d3d11Data->deviceContext->PSSetShaderResources(3, 1, &depthPassSRV);
 	}
-	
+
 }
 
 void UnsetDepthPassTexture(bool forRendering)

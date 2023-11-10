@@ -279,7 +279,7 @@ void SetTopology(TOPOLOGY topology);
 //Release
 bool DeleteD3D11Texture(const TX_IDX idx);
 bool DeleteD3D11RenderTargetView(const RTV_IDX idx);
-bool DeleteD3D11PixelShader(const PS_IDX idx); 
+bool DeleteD3D11PixelShader(const PS_IDX idx);
 bool DeleteD3D11VertexShader(const VS_IDX idx);
 bool DeleteD3D11DepthStencilView(const DSV_IDX idx);
 bool DeleteD3D11RasterizerState(const RS_IDX idx);

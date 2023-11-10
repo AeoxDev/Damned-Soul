@@ -34,7 +34,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
     {
         // 0 = SMOKE
         if (meta[blockID.y].pattern == 0)
-        {                
+        {
             SmokeMovement(DTid, blockID);
         }
         // 1 = ARCH
@@ -319,8 +319,8 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     float gamma = pow(sin(6 * sqrt(5) * idxFraction + 9 * timeFraction), 3); // Root(5)
     
     particle.position.y = posy;
-    particle.position.x = (2*alpha + beta + 2*gamma);
-    particle.position.z = (alpha + 2*beta - gamma);
+    particle.position.x = (2 * alpha + beta + 2 * gamma);
+    particle.position.z = (alpha + 2 * beta - gamma);
     
     outputParticleData[index] = particle;
 }

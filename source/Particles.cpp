@@ -23,7 +23,7 @@ void Particles::SwitchInputOutput()
 {
 	SRV_IDX readSRV = m_readBuffer->SRV;
 	UAV_IDX readUAV = m_readBuffer->UAV;
-	
+
 	m_readBuffer->SRV = m_writeBuffer->SRV;
 	m_readBuffer->UAV = m_writeBuffer->UAV;
 
@@ -211,7 +211,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 			data->metadata[metadataSlot].start = i - (amount - 1);
 			data->metadata[metadataSlot].end = amount - 1;
 
-			std::copy(std::begin(), std::begin(unoccupiedParticles + data->metadata[metadataSlot].end), metadataSlot);
+			std::fill(unoccupiedParticles + data->metadata[metadataSlot].start, std::begin(unoccupiedParticles + data->metadata[metadataSlot].end), metadataSlot);
 			break;
 		}
 	}
@@ -219,7 +219,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	//// TODO: WHAT HAPPENS IF 0 BECOMES INACTIVE?
 	//if (metadataSlot > 0)
 	//	data->metadata[metadataSlot].start = data->metadata[metadataSlot - 1].end + 1;
-	
+
 	data->metadata[metadataSlot].end = data->metadata[metadataSlot].start + amount;
 
 	data->metadata[metadataSlot].life = seconds;
@@ -317,6 +317,9 @@ void ParticleComponent::Release()
 	std::copy(unoccupiedParticles + data->metadata[metadataSlot].start, unoccupiedParticles + data->metadata[metadataSlot].end, -1);
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+	std::fill(unoccupiedParticles + data->metadata[metadataSlot].start, std::begin(unoccupiedParticles + data->metadata[metadataSlot].end), -1);
+
 
 	metadataSlot = -1;
 }
