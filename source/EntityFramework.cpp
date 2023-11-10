@@ -113,9 +113,6 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 		ReleaseTimedEvents(id);
 
 	if (destructionTier != ENT_PERSIST_PAUSE)
-		Light::FreeLight();
-
-	if (destructionTier != ENT_PERSIST_PAUSE)
 	{
 		SoundComponent* sound = registry.GetComponent<SoundComponent>(id);
 		if (sound && registry.GetComponent<AudioEngineComponent>(id) == nullptr)
@@ -171,7 +168,7 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 	//1 sound component manages to get through
 	for (auto entity : View<SoundComponent>(registry))
 	{
-		if (destructionTier != ENT_PERSIST_PAUSE)
+		if (entity.persistentTier <= destructionTier)
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
 			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
@@ -191,4 +188,7 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			audioEngine->Destroy();
 		}
 	}
+
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
 }
