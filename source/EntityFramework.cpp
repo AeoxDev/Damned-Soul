@@ -45,12 +45,30 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	if (skeleton)
 		ReleaseModel(skeleton->model);
 
-
+	//OnClick
+	OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(id);
+	if (onClick)
+		onClick->Release();
+	
+	//OnHover
+	OnHoverComponent* onHover = registry.GetComponent<OnHoverComponent>(id);
+	if (onHover)
+		onHover->Release();
 	
 	//UIComponent
-	UIComponent* c = registry.GetComponent<UIComponent>(id);
-	if(c)
-		c->Release();
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
+	if(uiElement)
+		uiElement->Release();
+
+	//Imp Text
+	UIShopImpComponent* imp1 = registry.GetComponent<UIShopImpComponent>(id);
+	if (imp1)
+		imp1->Release();
+
+	//Shop Title
+	UIShopTitleImpComponent* imp2 = registry.GetComponent<UIShopTitleImpComponent>(id);
+	if (imp2)
+		imp2->name.~ML_String();
 
 	//Proximity Hitbox
 	ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(id);

@@ -5,6 +5,8 @@
 #include <wincodec.h>
 #include <d2d1.h>
 
+#include <assert.h>
+
 void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 {
 	if (bitmap)

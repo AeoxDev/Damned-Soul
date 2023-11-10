@@ -198,13 +198,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
+    <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
+    <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
-    <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
-    <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
     <ClCompile Include="source\Relics\RelicData.cpp" />
     <ClCompile Include="source\Relics\Utility\RelicFuncInputTypes.cpp" />
     <ClCompile Include="source\Components\StaticHazardComponent.cpp" />
@@ -405,6 +405,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </FxCompile>
     <FxCompile Include="resource\shader\ShadowMapPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="resource\shader\TestPS.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
@@ -534,9 +535,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MummifiedHeart.h" />
-    <ClInclude Include="header\Relics\Offensive\DashAttack.h" />
     <ClInclude Include="header\Relics\Offensive\LifeSteal.h" />
-    <ClInclude Include="header\Relics\Offensive\ThrillSeeker.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />
     <ClInclude Include="header\Relics\Gadget\Reckless.h" />
