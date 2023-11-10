@@ -108,21 +108,23 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 		p->pointList.~ML_Vector();
 
 	//TODO: Pass in persistency thing so we can check to see if it's NOT equal to ENT_PERSIST_PAUSE when unloading sound components
-
 	if (destructionTier != ENT_PERSIST_PAUSE)
 		ReleaseTimedEvents(id);
 
-	if (destructionTier != ENT_PERSIST_PAUSE)
-		Light::FreeLight();
+	/*if (destructionTier != ENT_PERSIST_PAUSE)
+		ReleaseTimedEvents(id);*/
 
-	if (destructionTier != ENT_PERSIST_PAUSE)
+	/*if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();*/
+
+	/*if (destructionTier != ENT_PERSIST_PAUSE)
 	{
 		SoundComponent* sound = registry.GetComponent<SoundComponent>(id);
 		if (sound && registry.GetComponent<AudioEngineComponent>(id) == nullptr)
 		{
 			sound->Unload();
 		}
-	}
+	}*/
 	
 }
 
@@ -155,20 +157,15 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
-	//Destroy entity resets component bitmasks
-	for (int i = 0; i < registry.entities.size(); i++)
-	{
-		//Get the current entity we're looking at in the registry
-		EntityID check = registry.entities.at(i).id;
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
 
-		//Destroy the entity if it isn't already destroyed and its persistency tier isn't greater than the destruction tier
-		if (check.isDestroyed == false && check.persistentTier <= destructionTier)
-		{
-			registry.DestroyEntity(check, destructionTier);
-		}
+	for (auto entity : View<TimedEventComponent>(registry))
+	{
+		if (destructionTier != ENT_PERSIST_PAUSE)
+			ReleaseTimedEvents(entity);
 	}
 
-	//1 sound component manages to get through
 	for (auto entity : View<SoundComponent>(registry))
 	{
 		if (destructionTier != ENT_PERSIST_PAUSE)
@@ -189,6 +186,19 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 				sound->Unload();
 			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
 			audioEngine->Destroy();
+		}
+	}
+
+	//Destroy entity resets component bitmasks
+	for (int i = 0; i < registry.entities.size(); i++)
+	{
+		//Get the current entity we're looking at in the registry
+		EntityID check = registry.entities.at(i).id;
+
+		//Destroy the entity if it isn't already destroyed and its persistency tier isn't greater than the destruction tier
+		if (check.isDestroyed == false && check.persistentTier <= destructionTier)
+		{
+			registry.DestroyEntity(check, destructionTier);
 		}
 	}
 }
