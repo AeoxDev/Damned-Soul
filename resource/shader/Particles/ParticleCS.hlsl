@@ -158,6 +158,7 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
 
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
+    float directionRandom = normalize(float((DTid.x % 83) / 83.0f - 0.5f));
     // -- SAME FOR ALL FUNCTIONS -- //
     int index = DTid.x + blockID.y * NUM_THREADS;
     Input particle = inputParticleData[index];
@@ -208,7 +209,9 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     if (length(v0ToParticle) < length(middleVector))
     {
         particle.position.x = particle.position.x + cos(beta) * particle.velocity.x * dt * meta[OneHundo_TwoFiveFive].deltaTime;
-        particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
+        
+        particle.position.y = particle.position.y + directionRandom * dt / meta[OneHundo_TwoFiveFive].deltaTime; // +(((float) DTid.x - 127) / 128) * dt;
+        
         particle.position.z = particle.position.z + sin(beta) * particle.velocity.z * dt * meta[OneHundo_TwoFiveFive].deltaTime;
 
     }
@@ -247,7 +250,7 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     //    particle.position.y = particle.position.y + ((particle.time * particle.velocity.y) * dt) * -1.f;
     
     particle.patterns.x = 3; //is currently used to define pattern in PS-Shader for flipAnimations
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+      // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
     
     outputParticleData[index] = particle;
 }
@@ -323,6 +326,10 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = posy;
     particle.position.x = (2*alpha + beta + 2*gamma);
     particle.position.z = (alpha + 2*beta - gamma);
+    
+    particle.rgb.r = 0.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 1.0f;
     
     particle.patterns.x = 7/*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
     // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING

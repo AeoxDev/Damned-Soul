@@ -192,11 +192,11 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 {	
 	hc->isShooting = true;
 	//Temp: Create SMALL spotlight when dog prepares to flame
-	
-	CreateSpotLight(dog, 8.0f, 4.0f, 1.0f,
-		0.0f, 1.0f, -0.25f,
-		hc->offsetForward + 1.0f, 1.0f,
-		0.0f, 0.0f, -1.0f, 33.0f);
+	CreatePointLight(dog, 6.0f, 2.0f, 0.1f, 0.0f, 1.5f, -5.0f, 3.0f, 29.0f);
+	//CreateSpotLight(dog, 8.0f, 4.0f, 1.0f,
+	//	0.0f, 1.0f, -0.25f,
+	//	hc->offsetForward + 1.0f, 1.0f,
+	//	0.0f, 0.0f, -1.0f, 33.0f);
 	hc->currentShootingAttackRange = 1.f;
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(dog);
 	sfx->Play(Hellhound_Inhale, Channel_Base);
@@ -271,10 +271,12 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	hc->shootingTimer += GetDeltaTime();
 	//Temp: Create BIG spotlight when dog flame
 		//Temp: Create point light to indicate that we're going to do flamethrower
+	
 	CreateSpotLight(dog, 10.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, -0.25f,
 		hc->currentShootingAttackRange + 1.0f, 1.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);
+
 
 	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
@@ -288,14 +290,17 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	if (registry.GetComponent<ParticleComponent>(dog) == nullptr)
 	{
 		registry.AddComponent<ParticleComponent>(dog, 50.0f, 0.0f, 0.5f,
-			0.0f, 2.5f, 3.0f, 0.0f,
+			0.0f, 1.5f, 3.0f, 0.0f,
 			cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], FLAMETHROWER);
+
 	}
 	else
 	{
 		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
 		Particles::UpdateMetadata(pc->metadataSlot, cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2]);
 	}
+
+
 
 	//if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
 	//{

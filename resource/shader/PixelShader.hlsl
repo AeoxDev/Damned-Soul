@@ -87,9 +87,9 @@ float4 main(GS_OUT input) : SV_TARGET
     // Calculate normal based on normal map combined with true normal
     
     [unroll]
-    for (int i = 0; i < 3; ++i)
+    for (int j = 0; j < 3; ++j)
     {
-        input.tbn[i] = normalize(input.tbn[i]);
+        input.tbn[j] = normalize(input.tbn[j]);
     }
     // No need to multiply by two when normalizing sicne the relative sizes are the same?
     float3 trueNormal = mul((normalTex.Sample(WrapSampler, input.base.uv).xyz * 2.f) - 1.f, input.tbn);
@@ -106,7 +106,6 @@ float4 main(GS_OUT input) : SV_TARGET
     float3 diffuse = materialDiffuse.xyz; //Sum of all diffuse lights
     float3 specular = materialSpecular.xyz; //Sum of all specular lights
     
-    
         ///xxxx PointLight xxxx///
     float3 diffusePoint = { 0.0f, 0.0f, 0.0f };
     float3 pointReflection = { 0.0f, 0.0f, 0.0f };
@@ -116,6 +115,11 @@ float4 main(GS_OUT input) : SV_TARGET
     float3 diffuseSpot = { 0.0f, 0.0f, 0.0f };
     float3 spotReflection = { 0.0f, 0.0f, 0.0f };
     float3 spotSpecular = { 0.0f, 0.0f, 0.0f };
+    
+         ///xxxx DirectionalLight xxxx///
+    float3 diffuseDir = { 0.0f, 0.0f, 0.0f };
+    float3 dirReflection = { 0.0f, 0.0f, 0.0f };
+    float3 dirSpecular = { 0.0f, 0.0f, 0.0f };
     
     //Only do directional if not in shadow
     //Shadowmapping
@@ -132,10 +136,7 @@ float4 main(GS_OUT input) : SV_TARGET
     float2 samplePos = float2((worldToTexture.x * 0.5f) + 0.5f, (-worldToTexture.y * 0.5f) + 0.5f);
    
        
-        ///xxxx DirectionalLight xxxx///
-    float3 diffuseDir = { 0.0f, 0.0f, 0.0f };
-    float3 dirReflection = { 0.0f, 0.0f, 0.0f };
-    float3 dirSpecular = { 0.0f, 0.0f, 0.0f };
+
     ///xxxx DirectionalLight xxxx///
 
     //Shadow map is 1024
@@ -204,6 +205,7 @@ float4 main(GS_OUT input) : SV_TARGET
                         float attenuation =
                         1.f + lights[i].fallofFactor * (distanceToSpotLight / lights[i].lightRange) * (distanceToSpotLight / lights[i].lightRange);
                         diffuseSpot += spotLightIntesity * lights[i].lightColor.xyz / attenuation; // * saturate(1 - distanceToSpotLight / spotLightRange); //add on light/material 
+                       
                         saturate(diffuseSpot);
             
                         spotReflection = normalize(2 * spotLightIntesity * trueNormal - pixelToSpotLightVector.xyz);
@@ -214,18 +216,16 @@ float4 main(GS_OUT input) : SV_TARGET
                     }
                 }
             }
-
         }
-
     }
     
     
     //Need to add Gamma correction
     addOnColor = saturate((addOnColor+/* diffuse+*/ diffuseDir + diffusePoint + diffuseSpot) * image.xyz); //Add ambient, diffuse and specular lights
     addOnColor = saturate(addOnColor + pointSpecular + spotSpecular + dirSpecular); //not multiply to put on top and not affect color of image
-    //addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
-    #define GAMMA_CORRECTION 1.25f
-    //return pow(float4(abs(addOnColor).rgb, image.a), GAMMA_CORRECTION);
+    addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb;
+    #define GAMMA_CORRECTION 1.15f/*1.25f*/
+    return pow(float4(abs(addOnColor).rgb, image.a), GAMMA_CORRECTION);
     return float4(addOnColor, image.a);
     
 	//return diffuseTex.Sample(WrapSampler, input.uv)/*.xyzw*/;

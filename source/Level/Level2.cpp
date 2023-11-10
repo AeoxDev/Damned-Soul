@@ -43,16 +43,16 @@ void LoadLevel2()
 	float redAdd = 0.1f;
 	float greenAdd = 0.0f;
 	float blueAdd = 0.0f;
-	float redMult = 1.4f;
-	float greenMult = 1.2f;
-	float blueMult = 0.8f;
+	float redMult = 1.2f;
+	float greenMult = 1.0f;
+	float blueMult = 0.6f;
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	stageModel->colorMultiplicativeRed = redMult;
 	stageModel->colorMultiplicativeGreen = greenMult;
 	stageModel->colorMultiplicativeBlue = blueMult;
 	stageModel->colorAdditiveRed = redAdd;
-	stageModel->gammaCorrection = 0.9f;
+	/*stageModel->gammaCorrection = 0.9f;*/
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -92,7 +92,6 @@ void LoadLevel2()
 	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
 
-	
 
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
@@ -117,8 +116,8 @@ void LoadLevel2()
 			float randZ = (float)(rand() % 100) - 50.0f;
 			if (randX * randX + randZ * randZ > 80)
 			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleX = 10.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleZ = 10.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
 				hazardModel->colorAdditiveRed = redAdd;
@@ -127,7 +126,7 @@ void LoadLevel2()
 				hazardModel->colorMultiplicativeRed = redMult;
 				hazardModel->colorMultiplicativeGreen = greenMult;
 				hazardModel->colorMultiplicativeBlue = blueMult;
-				hazardModel->gammaCorrection = 1.5f;
+				/*hazardModel->gammaCorrection = 1.5f;*/
 
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;

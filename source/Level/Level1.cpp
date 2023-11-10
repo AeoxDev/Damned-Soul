@@ -42,9 +42,9 @@ void LoadLevel1()
 	//5 souls total
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 0.75f;
-	stageModel->colorMultiplicativeGreen = 0.75f;
-	stageModel->colorMultiplicativeBlue = 0.75f;
+	stageModel->colorMultiplicativeRed = 0.85f;
+	stageModel->colorMultiplicativeGreen = 0.85f;
+	stageModel->colorMultiplicativeBlue = 0.85f;
 	stageModel->gammaCorrection = 0.9f;
 	//stageModel->colorAdditiveRed = 0.1f;
 	
@@ -79,15 +79,12 @@ void LoadLevel1()
 	RenderGeometryIndependentCollision(stage);
 	
 	//Finally set the collision boxes
-
-	
-
 	
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	registry.AddComponent<ParticleComponent>(stage, 6, 50, 2, 0, 5, 20, SMOKE);//(entity,float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(stage, 10, 20, 20, 0, 0, -30, SMOKE);//(entity, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
 	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);

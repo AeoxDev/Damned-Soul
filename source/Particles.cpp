@@ -17,7 +17,8 @@ int Particles::RenderSlot;
 CS_IDX setToZeroCS = -1;
 
 TX_IDX flipBookTexture = -1; /// create holder for texture
-TX_IDX flipBookTextureTwo = -1; /// create holder for texture
+TX_IDX textureParticle = -1; /// create holder for texture
+TX_IDX noTextureParticle = -1; /// create holder for texture
 SMP_IDX sampler = -1; //create holder for sampler
 
 void Particles::SwitchInputOutput()
@@ -37,9 +38,9 @@ void Particles::InitializeParticles()
 	Particle* particles;
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
 
-	flipBookTexture = LoadTexture("\\LavaPlaceholderAlpha.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
-	/*flipBookTextureTwo = LoadTexture("\\DefaultParticle.png");*/
-	flipBookTextureTwo = LoadTexture("\\Test.png");
+	flipBookTexture = LoadTexture("\\Sprite.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
+	textureParticle = LoadTexture("\\LavaPlaceholderAlpha.png");
+	noTextureParticle = LoadTexture("\\DefaultParticle.png");
 
 	sampler = CreateSamplerState(); //created sampler resource
 
@@ -168,7 +169,7 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 	if (data->metadata[metaDataSlot].pattern == 0)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 
-		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
 
 		SetSamplerState(sampler, 2); //Set sampler
 
@@ -176,14 +177,14 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 	else if(data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 
-		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
+		SetTexture(textureParticle, BIND_PIXEL, 2); //Set texture
 		
 		SetSamplerState(sampler, 2); //Set sampler
 	}
 	else
 	{
 		
-		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+		SetTexture(noTextureParticle, BIND_PIXEL, 2); //Set texture
 		SetSamplerState(sampler, 2); //Set sampler
 	}
 	

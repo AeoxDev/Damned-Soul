@@ -13,7 +13,7 @@ struct GS_OUT
 
 float4 main(GS_OUT input) : SV_TARGET
 {
-    int counter = 0;
+    int counter = 1;
     float time = 0.0f;
     int pattern = (int)input.patterns.x;
     time = (int)input.time;
@@ -30,17 +30,18 @@ float4 main(GS_OUT input) : SV_TARGET
     {
         counter = 3;
     }
-    else if (input.time >= (time + 0.99) || input.time < (time + 0.24))
+    else if (input.time >= (time + 0.99) || input.time < (time + 0.249))
     {
         counter = 4;
     }
   
-   
-    float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
+    
     //Animation
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
     
     //4x4 sections, Top Row
-    if (pattern == 0) //patterns = 0(SMOKE)
+    if (pattern == 0) //4x4 sections, Top Row  //patterns = //test 0(SMOKE)
     {
         if (counter == 1)
         {
@@ -57,74 +58,116 @@ float4 main(GS_OUT input) : SV_TARGET
         else if (counter == 4)
         {
             image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
+            counter = 1;
+        }
+    }
+    else if (pattern == 1) //4x4 sections, Second Row //patterns = test 1(ARCH)
+    {
+        if (counter == 1)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.25 + input.uv.y / 4));
+        }
+        else if (counter == 2)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.25 + input.uv.y / 4));
+        }
+        else if (counter == 3)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.25 + input.uv.y / 4));
+        }
+        else if (counter == 4)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.25 + input.uv.y / 4));
             counter = 0;
         }
     }
-    
-    //if (pattern < 1) //patterns = 0(SMOKE)
-    //{
-    //    if (counter == 1)
-    //    {
-    //        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-    //    }
-    //    else if (counter == 2)
-    //    {
-    //        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
-    //    }
-    //    else if (counter == 3)
-    //    {
-    //        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4));
-    //    }
-    //    else if (counter == 4)
-    //    {
-    //        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
-    //        counter = 0;
-    //    }
-    //}
+    else if (pattern == 2) //4x4 sections, Second Row //patterns = test 2(EXPLOSION)
+    {
+        if (counter == 1)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.5 + input.uv.y / 4));
+        }
+        else if (counter == 2)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.5 + input.uv.y / 4));
+        }
+        else if (counter == 3)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.5 + input.uv.y / 4));
+        }
+        else if (counter == 4)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.5 + input.uv.y / 4));
+            counter = 0;
+        }
+    }
+    else if (pattern == 3) //4x4 sections, Second Row //patterns = test 2(EXPLOSION)
+    {
+        if (counter == 1)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.75 + input.uv.y / 4));
+        }
+        else if (counter == 2)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.75 + input.uv.y / 4));
+        }
+        else if (counter == 3)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.75 + input.uv.y / 4));
+        }
+        else if (counter == 4)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.75 + input.uv.y / 4));
+            counter = 0;
+        }
+    }
+    else
+    {
+        image = flipBookTex.Sample(WrapSampler, input.uv);
+    }
    
     
-    //X=1,Y=1
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-    //X=2,Y=1
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
-    //X=3,Y=1
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4)); 
-    //X=4,Y=1
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4)); 
+    ////X=1,Y=1
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
+    ////X=2,Y=1
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
+    ////X=3,Y=1
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4)); 
+    ////X=4,Y=1
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4)); 
     
-    //4x4 sections, Second Row
+    ////4x4 sections, Second Row
     
-    //X=1,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.25 + input.uv.y / 4));
-    //X=2,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.25 +  input.uv.y / 4));
-    //X=3,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.25 +  input.uv.y / 4));
-    //X=4,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.25 + input.uv.y / 4)); 
+    ////X=1,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.25 + input.uv.y / 4));
+    ////X=2,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.25 +  input.uv.y / 4));
+    ////X=3,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.25 +  input.uv.y / 4));
+    ////X=4,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.25 + input.uv.y / 4)); 
     
-    //4x4 sections, Third Row
+    ////4x4 sections, Third Row
     
-    //X=1,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.5 + input.uv.y / 4));
-    //X=2,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.5 +  input.uv.y / 4));
-    //X=3,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.5 +  input.uv.y / 4));
-    //X=4,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.5 + input.uv.y / 4));
+    ////X=1,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.5 + input.uv.y / 4));
+    ////X=2,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.5 +  input.uv.y / 4));
+    ////X=3,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.5 +  input.uv.y / 4));
+    ////X=4,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.5 + input.uv.y / 4));
     
-    //4x4 sections, Forth Row
+    ////4x4 sections, Forth Row
     
-    //X=1,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.75 + input.uv.y / 4));
-    //X=2,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.75 +  input.uv.y / 4));
-    //X=3,Y=2
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.75 +  input.uv.y / 4));
-    //X=4,Y=2
-   
-    //float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.75 + input.uv.y / 4));
+    ////X=1,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.75 + input.uv.y / 4));
+    ////X=2,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.75 +  input.uv.y / 4));
+    ////X=3,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.75 +  input.uv.y / 4));
+    ////X=4,Y=2
+    ////float4 image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.75 + input.uv.y / 4));
     
     clip(image.a - 0.1f);
     
