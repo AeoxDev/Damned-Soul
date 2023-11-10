@@ -108,11 +108,8 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 		p->pointList.~ML_Vector();
 
 	//TODO: Pass in persistency thing so we can check to see if it's NOT equal to ENT_PERSIST_PAUSE when unloading sound components
-
 	if (destructionTier != ENT_PERSIST_PAUSE)
 		ReleaseTimedEvents(id);
-
-	
 	
 }
 
@@ -145,9 +142,18 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
+
+	for (auto entity : View<TimedEventComponent>(registry))
+	{
+		if (destructionTier != ENT_PERSIST_PAUSE)
+			ReleaseTimedEvents(entity);
+	}
+
 	for (auto entity : View<SoundComponent>(registry))
 	{
-		if (entity.persistentTier <= destructionTier)
+		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
 			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
@@ -168,17 +174,6 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
-	if (destructionTier != ENT_PERSIST_PAUSE)
-	{
-		for (auto entity : View<TimedEventComponent>(registry))
-		{
-			ReleaseTimedEvents(entity);
-		}
-	}
-
-	if (destructionTier != ENT_PERSIST_PAUSE)
-		Light::FreeLight();
-
 	//Destroy entity resets component bitmasks
 	for (int i = 0; i < registry.entities.size(); i++)
 	{
@@ -191,5 +186,4 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			registry.DestroyEntity(check, destructionTier);
 		}
 	}
-	
 }
