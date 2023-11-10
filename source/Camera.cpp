@@ -200,6 +200,11 @@ const DirectX::XMVECTOR Camera::GetRotation()
 	return DirectX::XMVECTOR{ GameCamera->m_rotation.x, GameCamera->m_rotation.y, GameCamera->m_rotation.z, 0.0f };
 }
 
+const float Camera::GetRotationX()
+{
+	return GameCamera->m_rotation.x;
+}
+
 const DirectX::XMMATRIX Camera::GetView()
 {
 	return DirectX::XMLoadFloat4x4(&GameCamera->m_view);
