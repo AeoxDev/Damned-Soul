@@ -18,7 +18,7 @@
 //#include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\DashAttack.h"
 //#include "Relics\Offensive\AdrenalineRush.h"
-//#include "Relics\Offensive\ThrillSeeker.h"
+#include "Relics\Offensive\ThrillSeeker.h"
 //#include "Relics\Offensive\PowerStrike.h"
 
 
@@ -140,6 +140,14 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DASH_ATTACK::Initialize
+			),
+			RelicData(
+				/*Name*/		"Thrill Seeker",
+				/*Filepath*/	"RelicIcons\\Thrill_Seeker.png",
+				/*Description*/	"For every % hp lost, gain % damage",
+				/*Price*/		10,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	THRILL_SEEKER::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 
