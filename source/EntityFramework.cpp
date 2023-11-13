@@ -60,16 +60,6 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	if(uiElement)
 		uiElement->Release();
 
-	//Imp Text
-	UIShopImpComponent* imp1 = registry.GetComponent<UIShopImpComponent>(id);
-	if (imp1)
-		imp1->Release();
-
-	//Shop Title
-	UIShopTitleImpComponent* imp2 = registry.GetComponent<UIShopTitleImpComponent>(id);
-	if (imp2)
-		imp2->name.~ML_String();
-
 	//Proximity Hitbox
 	ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(id);
 	if(p)

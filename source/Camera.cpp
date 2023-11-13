@@ -59,10 +59,10 @@ void Camera::SetPosition(const float x, const float y, const float z, const bool
 
 	GameCamera->m_position.x = x + (includeOffset * CAMERA_OFFSET_X) + offsetX;
 
-	float xRotYy = cos(GameCamera->m_rotation.x);
-	float xRotYz = sin(GameCamera->m_rotation.x);
-	float xRotZz = cos(GameCamera->m_rotation.x);
-	float xRotZy = sin(GameCamera->m_rotation.x);
+	float xRotYy = (float)cos(GameCamera->m_rotation.x);
+	float xRotYz = (float)sin(GameCamera->m_rotation.x);
+	float xRotZz = (float)cos(GameCamera->m_rotation.x);
+	float xRotZy = (float)sin(GameCamera->m_rotation.x);
 
 	GameCamera->m_position.y = y + includeOffset * (CAMERA_OFFSET_Y * xRotYy + CAMERA_OFFSET_Z * xRotYz) + offsetY;
 	GameCamera->m_position.z = z + includeOffset * (xRotZz * CAMERA_OFFSET_Z + CAMERA_OFFSET_X * xRotZy) + offsetZ;

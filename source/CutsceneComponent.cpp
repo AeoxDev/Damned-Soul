@@ -21,9 +21,9 @@ void MainMenuIntroCutscene(EntityID& entity, const int& index)
 	//Zoom from 0 to to camera offset
 	CutsceneComponent* cutscene = registry.AddComponent<CutsceneComponent>(entity);
 	
-	float posRandX = (rand() % 64) * 0.5f - 32.0f;
+	float posRandX = (rand() % 128) * 0.5f - 64.0f;
 	float posRandY = (rand() % 256) * 0.2f;
-	float posRandZ = (rand() % 64) * 0.5f - 32.0f;
+	float posRandZ = (rand() % 128) * 0.5f - 64.0f;
 	
 	
 
@@ -34,20 +34,20 @@ void MainMenuIntroCutscene(EntityID& entity, const int& index)
 	cutscene->startPositionX = posRandX;
 	cutscene->startPositionY = posRandY + 0.7f * CAMERA_OFFSET_Y;
 	cutscene->startPositionZ = posRandZ;
-	posRandX = (rand() % 64) * 0.5f - 32.0f;
-	posRandZ = (rand() % 64) * 0.5f - 32.0f;
+	posRandX = (rand() % 128) * 0.5f - 64.0f;
+	posRandZ = (rand() % 128) * 0.5f - 64.0f;
 	cutscene->goalPositionX = posRandX;
 	cutscene->goalPositionY = 1.2f + CAMERA_OFFSET_Y;
 	cutscene->goalPositionZ = posRandZ;
-	float randX = (rand() % 64) * 0.5f - 32.0f;
+	float randX = (rand() % 128) * 0.5f - 64.0f;
 	float randY = 0.0f;
-	float randZ = (rand() % 64) * 0.5f - 32.0f;
+	float randZ = (rand() % 128) * 0.5f - 64.0f;
 	cutscene->goalLookAtX = randX;
 	cutscene->goalLookAtY = randY;
 	cutscene->goalLookAtZ = randZ;
 	cutscene->mode = (CutsceneMode)(CutsceneMode::Cutscene_Linear | CutsceneMode::Transition_Position | Transition_LookAt);
-	float randTime = (float)(rand() % 32) + 4.0f;
-	float randTime2 = (float)(rand() % 32) + 4.0f;
+	float randTime = (float)(rand() % 32) + 8.0f;
+	float randTime2 = (float)(rand() % 32) + 8.0f;
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, randTime, EndCutscene, 0, 1);
 	AddTimedEventComponentStart(entity,randTime + (randTime2 * ((float)(rand()%2))), MainMenuIntroCutscene, 0, 2);
 }

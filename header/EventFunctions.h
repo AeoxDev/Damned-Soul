@@ -26,6 +26,7 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
 //END
 void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
+void PlayerResetAnimFactor(EntityID& entity, const int& index);
 
 //CONTINUOUS
 void PlayerAttackSound(EntityID& entity, const int& index);
@@ -79,3 +80,6 @@ void BeginCutscene(EntityID& entity, const int& index);
 void CutsceneTransition(EntityID& entity, const int& index);
 void EndCutscene(EntityID& entity, const int& index);
 void MainMenuIntroCutscene(EntityID& entity, const int& index);
+
+void BeginDestroyProjectile(EntityID& entity, const int& index); 
+void EndDestroyProjectile(EntityID& entity, const int& index);

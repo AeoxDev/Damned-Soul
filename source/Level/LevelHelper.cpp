@@ -96,7 +96,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			attackSpeed = 5.f;
+			attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{

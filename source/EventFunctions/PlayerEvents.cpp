@@ -91,10 +91,25 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 }
 
+void PlayerResetAnimFactor(EntityID& entity, const int& index)
+{
+	//Smile
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	anim->aAnimTimeFactor = 1.f;
+}
+
 void PlayerAttackSound(EntityID& entity, const int& index)
 {
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+
+	if (!sfx || !anim || !stats)
+		return;
+
 	sfx->Play(Player_Attack, Channel_Base);
+	anim->aAnimTimeFactor = stats->GetAttackSpeed();
+	anim->aAnimTime = 0.0f;
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
@@ -109,8 +124,6 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	// Branchless reset
-	anim->aAnimTime += (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
 	float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack animation
