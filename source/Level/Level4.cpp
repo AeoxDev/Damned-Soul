@@ -12,7 +12,6 @@ void LoadLevel4()
 {
 	//EntityID dog = registry.CreateEntity();
 	EntityID stage = registry.CreateEntity();
-	EntityID playerUi = registry.CreateEntity();
 	//EntityID skeleton = registry.CreateEntity();
 	//EntityID skeleton2 = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
@@ -37,19 +36,7 @@ void LoadLevel4()
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
-	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->text.Setup("");
 
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
-	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup("");
-
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.9f, 0.9f), DSFLOAT2(1.0f, 1.0f), 4);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
 
 	RenderGeometryIndependentCollision(stage);
 
@@ -59,7 +46,8 @@ void LoadLevel4()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
 
 	stateManager.stage = stage;
+	SetInPlay(true);
 }

@@ -309,15 +309,17 @@ void ReloadPlayerNonGlobals()
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
 	{
-		registry.AddComponent<ControllerComponent>(stateManager.player);
+		controller = registry.AddComponent<ControllerComponent>(stateManager.player);
 	}
+	controller->enabled = 1;
 	PointOfInterestComponent* cameraPoint = registry.GetComponent<PointOfInterestComponent>(stateManager.player);
 	if (cameraPoint == nullptr)
 	{
 		cameraPoint = registry.AddComponent<PointOfInterestComponent>(stateManager.player);
 		cameraPoint->weight = 10.0f;
 	}
-	
+	ReleaseTimedEvents(stateManager.player);
+	registry.GetComponent<TimedEventComponent>(stateManager.player);
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
 
