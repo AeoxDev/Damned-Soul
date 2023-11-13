@@ -36,8 +36,9 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 
 	//Stats needed in order to deal damage
 	//Health, Speed, Damage, attackSpeed
-	StatComponent* stats = registry.AddComponent<StatComponent>(bullet, 1.0f, 40.0f, 5.0f, 0.0f);
+	StatComponent* stats = registry.AddComponent<StatComponent>(bullet, 1.0f, 30.0f, 15.0f, 0.0f);
 	stats->baseHazardModifier = 0.0f;
+	stats->hazardModifier = 0.0f;
 	
 	//Setup Bullet hitbox
 	SetupProjectileCollisionBox(bullet, 1.0f);

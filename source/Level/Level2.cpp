@@ -30,7 +30,7 @@ void LoadLevel2()
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
 	SetupEnemy(EnemyType::skeleton, 0.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::hellhound, -20.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::hellhound, 30.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::hellhound, -50.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::hellhound, -20.f, 0.f, 0.f);
