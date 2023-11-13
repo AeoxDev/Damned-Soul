@@ -34,6 +34,7 @@
 #include "Relics\Defensive\UndeadFortitude.h"
 #include "Relics\Defensive\PainMirror.h"
 #include "Relics\Defensive\GoldenDuck.h"
+#include "Relics\Defensive\BackShield.h"
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
 #include "Relics\Gadget\LightningGod.h"
@@ -243,6 +244,14 @@ void _validateMasterRelicList()
 				/*Price*/		8,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	GOLDEN_DUCK::Initialize
+			),
+			RelicData(
+				/*Name*/		"Back Shield",
+				/*Filepath*/	"RelicIcons\\Shield",
+				/*Description*/	"Up to once every 2 seconds, you nullify the next attack when struck from behind",
+				/*Price*/		8,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	BACK_SHIELD::Initialize
 			),
 			//ENDOF: DEFENSIVE RELICS
 
