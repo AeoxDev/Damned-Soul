@@ -7,6 +7,8 @@
 #include "CollisionFunctions.h" //AttackCollision
 #include "Backend/Collision.h" //Off the deep end
 
+#include "Relics/RelicFunctions.h"
+
 void PlayerLoseControl(EntityID& entity, const int& index)
 {	
 	//Get relevant components
@@ -28,7 +30,15 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 	//If we're dashing, we make player invincible
 	if (condition == CONDITION_DASH)
 	{
+		//Set player soft hitbox to no longer take damage, but it'll deal damage if you have the Dash Attack relic
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, false);
+
+		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
+		for (auto& func : funcs)
+		{
+			SetHitboxCanDealDamage(entity, 3, true); //Dash hitbox
+		}
+
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 		anim->aAnimTimeFactor = 5.f;
 
@@ -67,6 +77,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
+		SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
 		stats->hazardModifier = stats->baseHazardModifier;
 	}
 
@@ -80,10 +91,25 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 }
 
+void PlayerResetAnimFactor(EntityID& entity, const int& index)
+{
+	//Smile
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	anim->aAnimTimeFactor = 1.f;
+}
+
 void PlayerAttackSound(EntityID& entity, const int& index)
 {
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+
+	if (!sfx || !anim || !stats)
+		return;
+
 	sfx->Play(Player_Attack, Channel_Base);
+	anim->aAnimTimeFactor = stats->GetAttackSpeed();
+	anim->aAnimTime = 0.0f;
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
@@ -98,8 +124,6 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	// Branchless reset
-	anim->aAnimTime += (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
 	float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack animation

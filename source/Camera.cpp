@@ -39,6 +39,8 @@ struct CameraConstantBuffer
 	DirectX::XMFLOAT4 m_cameraPosition;
 	DirectX::XMFLOAT4X4 m_viewMatrix;
 	DirectX::XMFLOAT4X4 m_projectionMatrix;
+	DirectX::XMFLOAT4X4 m_shadowViewMatrix;
+	DirectX::XMFLOAT4X4 m_shadowProjectionMatrix;
 };
 
 PoolPointer<CameraStruct> GameCamera;
@@ -52,9 +54,16 @@ float offsetZ = 0.0f;
 
 void Camera::SetPosition(const float x, const float y, const float z, const bool includeOffset)
 {
+
 	GameCamera->m_position.x = x + (includeOffset * CAMERA_OFFSET_X) + offsetX;
-	GameCamera->m_position.y = y + (includeOffset * CAMERA_OFFSET_Y) + offsetY;
-	GameCamera->m_position.z = z + (includeOffset * CAMERA_OFFSET_Z) + offsetZ;
+
+	float xRotYy = cos(GameCamera->m_rotation.x);
+	float xRotYz = sin(GameCamera->m_rotation.x);
+	float xRotZz = cos(GameCamera->m_rotation.x);
+	float xRotZy = sin(GameCamera->m_rotation.x);
+
+	GameCamera->m_position.y = y + includeOffset * (CAMERA_OFFSET_Y * xRotYy + CAMERA_OFFSET_Z * xRotYz) + offsetY;
+	GameCamera->m_position.z = z + includeOffset * (xRotZz * CAMERA_OFFSET_Z + CAMERA_OFFSET_X * xRotZy) + offsetZ;
 
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
@@ -144,6 +153,15 @@ void Camera::AdjustUp(const float x, const float y, const float z)
 void Camera::AdjustRotation(const float x, const float y, const float z)
 {
 	GameCamera->m_rotation.x += x;
+	if (GameCamera->m_rotation.x > 0.6f)
+	{
+		GameCamera->m_rotation.x = 0.6f;
+	}
+	if (GameCamera->m_rotation.x < -1.4f)
+	{
+		GameCamera->m_rotation.x = -1.4f;
+	}
+	
 	GameCamera->m_rotation.y += y;
 	GameCamera->m_rotation.z += z;
 }
@@ -151,6 +169,15 @@ void Camera::AdjustRotation(const float x, const float y, const float z)
 void Camera::AdjustFOV(const float radians)
 {
 	GameCamera->m_FOV += radians;
+}
+
+void Camera::SaveToShadowMapCamera()
+{
+	DirectX::XMMATRIX transposed = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&GameCamera->m_view));
+	DirectX::XMStoreFloat4x4(&BufferData->m_shadowViewMatrix, transposed);
+
+	transposed = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&GameCamera->m_orthographic));
+	DirectX::XMStoreFloat4x4(&BufferData->m_shadowProjectionMatrix, transposed);
 }
 
 const DirectX::XMVECTOR Camera::GetPosition()
@@ -171,6 +198,11 @@ const DirectX::XMVECTOR Camera::GetUp()
 const DirectX::XMVECTOR Camera::GetRotation()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_rotation.x, GameCamera->m_rotation.y, GameCamera->m_rotation.z, 0.0f };
+}
+
+const float Camera::GetRotationX()
+{
+	return GameCamera->m_rotation.x;
 }
 
 const DirectX::XMMATRIX Camera::GetView()

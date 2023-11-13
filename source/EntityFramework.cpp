@@ -19,6 +19,7 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 	//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id
 	if (!availableEntitySlots.empty())
 	{
+		
 		int newIndex = availableEntitySlots.back();
 		availableEntitySlots.pop_back();
 
@@ -32,9 +33,60 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 	return entities.back().id;
 }
 
-void Registry::DestroyEntity(EntityID id)
+void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier)
+{
+	//Boneless model
+	ModelBonelessComponent* boneless = registry.GetComponent<ModelBonelessComponent>(id);
+	if (boneless)
+		ReleaseModel(boneless->model);
+
+	//Skeleton model
+	ModelSkeletonComponent* skeleton = registry.GetComponent<ModelSkeletonComponent>(id);
+	if (skeleton)
+		ReleaseModel(skeleton->model);
+
+	//OnClick
+	OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(id);
+	if (onClick)
+		onClick->Release();
+	
+	//OnHover
+	OnHoverComponent* onHover = registry.GetComponent<OnHoverComponent>(id);
+	if (onHover)
+		onHover->Release();
+	
+	//UIComponent
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
+	if(uiElement)
+		uiElement->Release();
+
+	//Imp Text
+	UIShopImpComponent* imp1 = registry.GetComponent<UIShopImpComponent>(id);
+	if (imp1)
+		imp1->Release();
+
+	//Shop Title
+	UIShopTitleImpComponent* imp2 = registry.GetComponent<UIShopTitleImpComponent>(id);
+	if (imp2)
+		imp2->name.~ML_String();
+
+	//Proximity Hitbox
+	ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(id);
+	if(p)
+		p->pointList.~ML_Vector();
+
+	//TODO: Pass in persistency thing so we can check to see if it's NOT equal to ENT_PERSIST_PAUSE when unloading sound components
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		ReleaseTimedEvents(id);
+	
+}
+
+void Registry::DestroyEntity(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier)
 {
 	EntityID nullID = CreateEntityId(id.index, true, ENT_PERSIST_LOWEST);
+
+	//Check to see if the entity has any components that need to have d3d11 stuff released before destroying
+	ReleaseComponentResources(id, destructionTier);
 
 	entities[GetEntityIndex(id)].id = nullID;
 	entities[GetEntityIndex(id)].components.reset();
@@ -58,114 +110,8 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		}
 	}
 
-	//Release memory from relevant components
-	for (auto entity : View<ModelBonelessComponent>(registry)) //So this gives us a view, or a mini-registry, containing every entity that has a ModelComponent
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			ModelBonelessComponent* dogCo = registry.GetComponent<ModelBonelessComponent>(entity);
-			ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		}
-	}
-
-	for (auto entity : View<ModelSkeletonComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			ModelSkeletonComponent* dogCo = registry.GetComponent<ModelSkeletonComponent>(entity);
-			ReleaseModel(dogCo->model); // Decrement and potentially release via refcount
-		}	
-	}
-
-	for (auto entity : View<UIPlayerSoulsComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIPlayerSoulsComponent* ps = registry.GetComponent<UIPlayerSoulsComponent>(entity);
-			ps->image.Release();
-		}
-	}
-
-	for (auto entity : View<UIPlayerRelicsComponent>(registry))
-	{
-		UIPlayerRelicsComponent* r = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-		r->baseImage.Release();
-
-		for (uint32_t i = 0; i < r->relics.size(); i++)
-		{
-			r->relics[i].sprite.Release();
-			r->relics[i].flavorTitleImage.Release();
-			r->relics[i].flavorDescImage.Release();
-		}
-
-		r->relics.~ML_Vector();
-	}
-
-	for (auto entity : View<UIHealthComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(entity);
-			ph->backgroundImage.Release();
-			ph->healthImage.Release();
-		}
-	}
-
-	for (auto entity : View<UIButton>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIButton* b = registry.GetComponent<UIButton>(entity);
-			b->Release();
-		}
-	}
-
-	for (auto entity : View<UIShopComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIShopComponent* sh = registry.GetComponent<UIShopComponent>(entity);
-			sh->baseImage.Release();
-		}
-	}
-
-	for (auto entity : View<UIShopRelicWindowComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIShopRelicWindowComponent* sh = registry.GetComponent<UIShopRelicWindowComponent>(entity);
-			sh->m_baseImage.Release();
-		}
-	}
-
-	for (auto entity : View<UIRelicComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIRelicComponent* sh = registry.GetComponent<UIRelicComponent>(entity);
-			sh->sprite.Release();
-			sh->flavorTitleImage.Release();
-			sh->flavorDescImage.Release();
-		}
-	}
-
-	for (auto entity : View<UIImage>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			UIImage* i = registry.GetComponent<UIImage>(entity);
-			i->Release();
-		}
-	}
-
-	for (auto entity : View<ProximityHitboxComponent>(registry))
-	{
-		if (entity.persistentTier <= destructionTier)
-		{
-			ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(entity);
-			p->pointList.~ML_Vector();
-		}
-	}
+	if (destructionTier != ENT_PERSIST_PAUSE)
+		Light::FreeLight();
 
 	for (auto entity : View<ParticleComponent>(registry))
 	{
@@ -178,29 +124,28 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
-		if(destructionTier != ENT_PERSIST_PAUSE)
+		if (destructionTier != ENT_PERSIST_PAUSE)
 			ReleaseTimedEvents(entity);
 	}
 
-	if (destructionTier != ENT_PERSIST_PAUSE)
-		Light::FreeLight();
-	
 	for (auto entity : View<SoundComponent>(registry))
 	{
 		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
-			SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-			if (auto audioEngine = registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
-			{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
 				sound->Unload();
-			}
 		}
 	}
 
+	//If the audio engine is the last entity with a sound component, kill
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		if (entity.persistentTier <= destructionTier)
 		{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			if (sound)
+				sound->Unload();
 			AudioEngineComponent* audioEngine = registry.GetComponent<AudioEngineComponent>(entity);
 			audioEngine->Destroy();
 		}
@@ -215,7 +160,15 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		//Destroy the entity if it isn't already destroyed and its persistency tier isn't greater than the destruction tier
 		if (check.isDestroyed == false && check.persistentTier <= destructionTier)
 		{
-			registry.DestroyEntity(check);
+			registry.DestroyEntity(check, destructionTier);
 		}
 	}
+
+	//Since UI can't depth-check, its entities need to be in numerical order, but availableEntitySlots is in ascending order and pops from the back
+	registry.SortAvailableEntitySlotsVector();
+}
+
+void Registry::SortAvailableEntitySlotsVector()
+{
+	std::sort(availableEntitySlots.begin(), availableEntitySlots.end(), std::greater<int>());
 }

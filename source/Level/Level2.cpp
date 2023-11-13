@@ -15,7 +15,6 @@
 void LoadLevel2()
 {
 	EntityID stage = registry.CreateEntity();
-	EntityID playerUi = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -74,16 +73,6 @@ void LoadLevel2()
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
 
-
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
-	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->text.Setup("");
-
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
-	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup("");
-
 	//Thing in the top right corner showing what level we're on
 	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 2);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
@@ -98,7 +87,7 @@ void LoadLevel2()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-
+	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
 	CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -147,4 +136,5 @@ void LoadLevel2()
 	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
+	SetInPlay(true);
 }

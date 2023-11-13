@@ -7,13 +7,21 @@
 // Used to contain the functions of each type
 #include "MemLib\ML_Vector.hpp"
 
+
 // Include all relics
 	/*Offense*/
 #include "Relics\Offensive\DemonBonemarrow.h"
-#include "Relics\Offensive\FlameWeapon.h"
-#include "Relics\Offensive\SoulPower.h"
 #include "Relics\Offensive\LifeSteal.h"
 #include "Relics\Offensive\AdvancedFighting.h"
+#include "Relics\Offensive\SoulPower.h"
+#include "Relics\Offensive\FlameWeapon.h"
+//#include "Relics\Offensive\ExplodingWeapon.h"
+#include "Relics\Offensive\DashAttack.h"
+#include "Relics\Offensive\AdrenalineRush.h"
+#include "Relics\Offensive\ThrillSeeker.h"
+//#include "Relics\Offensive\PowerStrike.h"
+
+
 	/*Defense*/
 #include "Relics\Defensive\Hearts\DemonHeart.h"
 #include "Relics\Defensive\Hearts\CorruptedHeart.h"
@@ -32,6 +40,9 @@
 
 #include "Relics\Utility\ML_RelicArray.h"
 #include "MemLib\ML_Vector.hpp"
+
+// For active level
+#include "States\StateManager.h"
 
 #include <random>
 #include <time.h>
@@ -68,7 +79,7 @@ ML_Vector<const RelicData*>* RemainingRelicList = nullptr;
 void doNothing(void* nothing) { return; }
 RelicData DefaultRelicRock(
 	/*Name*/		"Useless Rock",
-	/*Filepath*/	"RelicIcons\\DefaultStone_Relic.png",
+	/*Filepath*/	"RelicIcons\\DefaultStone_Relic",
 	/*Description*/	"Somewhat shiny? It is advertised to do SOMETHING but it seems to be just a pebble...",
 	/*Price*/		1,
 	/*Type*/		RELIC_UNTYPED,
@@ -80,9 +91,11 @@ void _validateMasterRelicList()
 	if (0 == MasterRelicList.m_size)
 	{
 		ML_RelicArray MasterInitializer {
+
+			//OFFENSIVE RELICS
 			RelicData(
 				/*Name*/		"Demon Bonemarrow",
-				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow.png",
+				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
 				/*Description*/	"Increases your Damage by 15 when obtained.",
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
@@ -90,7 +103,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Flame Weapon",
-				/*Filepath*/	"RelicIcons\\Flame_Weapon.png",
+				/*Filepath*/	"RelicIcons\\Flame_Weapon",
 				/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
 				/*Price*/		3,
 				/*Type*/		RELIC_OFFENSE,
@@ -98,7 +111,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Soul Power",
-				/*Filepath*/	"RelicIcons\\Soul_Power.png",
+				/*Filepath*/	"RelicIcons\\Soul_Power",
 				/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess",
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
@@ -106,7 +119,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Life Steal",
-				/*Filepath*/	"RelicIcons\\Life_Steal.png",
+				/*Filepath*/	"RelicIcons\\Life_Steal",
 				/*Description*/	"You heal for 15% of the damage you deal",
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
@@ -114,15 +127,43 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Advanced Fighting",
-				/*Filepath*/	"RelicIcons\\Advanced_Fighting.png",
+				/*Filepath*/	"RelicIcons\\Advanced_Fighting",
 				/*Description*/	"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	ADVANCED_FIGHTING::Initialize
 			),
 			RelicData(
+				/*Name*/		"Dash Attack",
+				/*Filepath*/	"RelicIcons\\Dash_Attack",
+				/*Description*/	"Deals 50% of your damage when dashing through an enemy",
+				/*Price*/		5,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	DASH_ATTACK::Initialize
+			),
+			RelicData(
+				/*Name*/		"Adrenaline Rush",
+				/*Filepath*/	"RelicIcons\\Adrenaline_Rush",
+				/*Description*/	"You attack twice as fast for 1 second after being hit",
+				/*Price*/		10,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	ADRENALINE_RUSH::Initialize
+			),
+			RelicData(
+				/*Name*/		"Thrill Seeker",
+				/*Filepath*/	"RelicIcons\\Thrill_Seeker",
+				/*Description*/	"For every % hp lost, gain % damage",
+				/*Price*/		10,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	THRILL_SEEKER::Initialize
+			),
+			//ENDOF: OFFENSIVE RELICS
+
+
+			//DEFENSIVE RELICS
+			RelicData(
 				/*Name*/		"Demon Heart",
-				/*Filepath*/	"RelicIcons\\Demon_Heart.png",
+				/*Filepath*/	"RelicIcons\\Demon_Heart",
 				/*Description*/	"Increases your Maximum Health by 25",
 				/*Price*/		6,
 				/*Type*/		RELIC_DEFENSE,
@@ -130,7 +171,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Corrupted Heart",
-				/*Filepath*/	"RelicIcons\\Corrupted_Heart.png",
+				/*Filepath*/	"RelicIcons\\Corrupted_Heart",
 				/*Description*/	"Increases your Maximum Health by 40",
 				/*Price*/		9,
 				/*Type*/		RELIC_DEFENSE,
@@ -138,15 +179,15 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Molten Heart",
-				/*Filepath*/	"RelicIcons\\Molten_Heart.png",
-				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained.",
+				/*Filepath*/	"RelicIcons\\Molten_Heart",
+				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
 				/*Price*/		7,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	MOLTEN_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Mummified Heart",
-				/*Filepath*/	"RelicIcons\\Mummified_Heart.png",
+				/*Filepath*/	"RelicIcons\\Mummified_Heart",
 				/*Description*/	"Increases your Maximum Health by 15",
 				/*Price*/		3,
 				/*Type*/		RELIC_DEFENSE,
@@ -154,7 +195,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Frost Fire",
-				/*Filepath*/	"RelicIcons\\Frost_Fire.png",
+				/*Filepath*/	"RelicIcons\\Frost_Fire",
 				/*Description*/	"Once per level when you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and permanently slow them by 20%",
 				/*Price*/		3,
 				/*Type*/		RELIC_DEFENSE,
@@ -162,15 +203,15 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Soul Health",
-				/*Filepath*/	"RelicIcons\\Soul_Health.png",
-				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess.",
+				/*Filepath*/	"RelicIcons\\Soul_Health",
+				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SOUL_HEALTH::Initialize
 			),
 			RelicData(
 				/*Name*/		"Demon Skin",
-				/*Filepath*/	"RelicIcons\\Demon_Skin.png",
+				/*Filepath*/	"RelicIcons\\Demon_Skin",
 				/*Description*/	"Reduces the damage you take by 20%",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
@@ -178,15 +219,19 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Spiked Skin",
-				/*Filepath*/	"RelicIcons\\Spiked_Skin.png",
+				/*Filepath*/	"RelicIcons\\Spiked_Skin",
 				/*Description*/	"Whenever an enemy strikes you, it takes 15% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SPIKED_SKIN::Initialize
 			),
+			//ENDOF: DEFENSIVE RELICS
+
+
+			//GADGET RELICS
 			RelicData(
 				/*Name*/		"Speedy Little Devil",
-				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil.png",
+				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil",
 				/*Description*/	"Increases your Movespeed by 4 when obtained",
 				/*Price*/		3,
 				/*Type*/		RELIC_GADGET,
@@ -194,7 +239,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Lightning God",
-				/*Filepath*/	"RelicIcons\\Lightning_God.png",
+				/*Filepath*/	"RelicIcons\\Lightning_God",
 				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
@@ -202,7 +247,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Reckless",
-				/*Filepath*/	"RelicIcons\\Reckless.png",
+				/*Filepath*/	"RelicIcons\\Reckless",
 				/*Description*/	"You deal 50% more damage, but also take double damage",
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
@@ -210,13 +255,13 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Soul Speed",
-				/*Filepath*/	"RelicIcons\\Soul_Speed.png",
+				/*Filepath*/	"RelicIcons\\Soul_Speed",
 				/*Description*/	"You gain a bonus to your speed equal to your souls",
 				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SOUL_SPEED::Initialize
 			),
-
+			//ENDOF: GADGET RELICS
 		};
 		// Copy over
 		std::memcpy(&MasterRelicList, &MasterInitializer, sizeof(ML_RelicArray));
@@ -261,25 +306,88 @@ void Relics::ResetRelics()
 	}
 }
 
+#define CLAMP_SUB(a, b) (a < b ? 0 : a - b)
+
 const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 {
 	_validateMasterRelicList();
 
-	if (type == RELIC_UNTYPED && (*RemainingRelicList).size())
+	// The return value
+	// Default to useless rock!
+	const RelicData* retVal = &DefaultRelicRock;
+
+	// If a specific type was requested and there are remaining relics
+	if (type && (*RemainingRelicList).size())
+	{
+		// The potential relics matching the criteria
+		ML_Map<uint32_t, const RelicData*> possibleSelection;
+		// The current total weight
+		uint32_t currentTotalWeight = 0;
+
+		for (uint32_t i = 0; i < (*RemainingRelicList).size() && type /*should also be typed*/; /*++i*/)
+		{
+			const RelicData* currentRelic = (*RemainingRelicList)[i];
+
+			// If the relic is a match for the selected type, add it to the possible selections
+			if (currentRelic->m_typeFlag & type) {
+				// Set weight inversely by price and add level (cheaper relics more common early on)
+				// After a fairly large number of levels, this weight system will give everything an equal chance
+				currentTotalWeight += CLAMP_SUB(5, CLAMP_SUB(currentRelic->m_price, stateManager.activeLevel)) + stateManager.activeLevel;
+				// Emplace with the combined weights of previous selection possibilities
+				possibleSelection.emplace(currentTotalWeight, currentRelic);
+				// Erase current, no need to increment
+				(*RemainingRelicList).erase(i);
+			}
+			// None picked, increment
+			else {
+				++i;
+			}
+		}
+
+		// Randomly selected index from the possible selection
+		uint32_t randomlySelected = 1 + (std::rand() % currentTotalWeight);
+		// -1 means none have been selected yet
+		int64_t randomlySelectedKey = -1;
+
+		// Set return value and remove from the possible selections
+		for (auto& [key, val] : possibleSelection)
+		{
+			// If the key is less than or equal to the the selection, set values
+			// Also set if nothing has been chosen yet
+			if (key <= randomlySelected  || -1 == randomlySelectedKey)
+			{
+				retVal = val;
+				randomlySelectedKey = key;
+			}
+			// Else, break out of the loop, the chosen one has been found!
+			else
+			{
+				break;
+			}
+		}
+		possibleSelection.erase(randomlySelectedKey);
+
+		// Return the relics that weren't picked
+		for (auto& [key, val] : possibleSelection) {
+			(*RemainingRelicList).push_back(val);
+		}
+	}
+	// Otherwise, just select a random one (given one exists)
+	else if ((*RemainingRelicList).size())
 	{
 		uint32_t randomlySelected = std::rand() % (*RemainingRelicList).size();
-		const RelicData* retVal = (*RemainingRelicList)[randomlySelected];
+		retVal = (*RemainingRelicList)[randomlySelected];
 		(*RemainingRelicList).erase(randomlySelected);
-		return retVal;
 	}
 
-	return &DefaultRelicRock;
+
+	return retVal;
 }
 
-const RelicData* Relics::PickNamedRelic(const char* name)
-{
-	return &DefaultRelicRock;
-}
+//const RelicData* Relics::PickNamedRelic(const char* name)
+//{
+//	return &DefaultRelicRock;
+//}
 
 bool Relics::PutBackRelic(const RelicData* relic)
 {

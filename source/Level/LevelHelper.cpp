@@ -96,7 +96,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			attackSpeed = 5.f;
+			attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
@@ -179,7 +179,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::skeleton)
 	{
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHSkeleton.mdl"));
+		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
+		//model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHSkeleton.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<SkeletonBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 0.9f, EnemyType::skeleton);
@@ -308,15 +309,17 @@ void ReloadPlayerNonGlobals()
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
 	{
-		registry.AddComponent<ControllerComponent>(stateManager.player);
+		controller = registry.AddComponent<ControllerComponent>(stateManager.player);
 	}
+	controller->enabled = 1;
 	PointOfInterestComponent* cameraPoint = registry.GetComponent<PointOfInterestComponent>(stateManager.player);
 	if (cameraPoint == nullptr)
 	{
 		cameraPoint = registry.AddComponent<PointOfInterestComponent>(stateManager.player);
 		cameraPoint->weight = 10.0f;
 	}
-	
+	ReleaseTimedEvents(stateManager.player);
+	registry.GetComponent<TimedEventComponent>(stateManager.player);
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
 

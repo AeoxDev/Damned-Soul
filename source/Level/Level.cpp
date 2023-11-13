@@ -11,6 +11,8 @@
 void LoadLevel(int level)
 {
 	//Reset UI and camera in case camera was in weird position before.
+	SetInPlay(false);
+	SetInShop(false);
 
 	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
 	for (uint32_t i = 0; i < relics.size(); ++i)
@@ -20,31 +22,26 @@ void LoadLevel(int level)
 
 	RedrawUI();
 	Camera::ResetCamera();
-	SetInShop(false);
 	stateManager.scenes[0].Unload();
 	stateManager.scenes[1].Unload();
 	stateManager.scenes[2].Unload();
-
-	SetInShop(false);
 	
 	for (auto entity : View<ControllerComponent>(registry))
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
-	//stateManager.scenes[stateManager.activeLevelScene].m_active = true;
 	
 	switch (level)
 	{
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;
-	case 4: LoadShop(); break;
+	case 4: ReloadShop(); break;
 	case 5: LoadLevel3(); break;
-	case 6: LoadShop(); break;
+	case 6: ReloadShop(); break;
 	case 7: LoadLevel4(); break;
 	//case 8: LoadParticleLevel(); break;
 	default: 
-		//UnloadEntities(true);//Reset game
 		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;

@@ -39,7 +39,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < 3000; ++i)
 	{
-		UIFunc::LoadNextLevel(nullptr);
+		UIFunc::LoadNextLevel(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();

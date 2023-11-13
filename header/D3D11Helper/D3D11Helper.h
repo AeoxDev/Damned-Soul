@@ -101,6 +101,7 @@ void ReleaseTX(const TX_IDX idx);
 
 // Create a Sampler
 SMP_IDX CreateSamplerState();
+SMP_IDX CreateShadowClampSamplerState();
 // Set a sampler (currently only binds to the pixel shader
 void SetSamplerState(const SMP_IDX idx, uint8_t slot);
 // Set sampler state at paramter slot to NULL

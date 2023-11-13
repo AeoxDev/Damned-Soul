@@ -57,22 +57,6 @@ float StatComponent::StealthilyModifyHealth(const float delta)
 	//{
 	//	// Damage is affected by damage reduction
 	//	m_currentHealth += delta;
-	//	if (hitByEnemy)
-	//	{
-	//		//Play hurt sound
-	//		for (auto entity : View<PlayerComponent>(registry))
-	//		{
-	//			SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-	//			if (m_currentHealth <= 0)
-	//			{
-	//				sfx->Play(Player_Death, Channel_Base);
-	//			}
-	//			else
-	//			{
-	//				sfx->Play(Player_Hurt, Channel_Base);
-	//			}
-	//		}
-	//	}
 	//}
 	//// If healing is being applied, increase current health and then cap it at maximum health
 	//else if (0 < delta && m_currentHealth < GetMaxHealth())
@@ -113,27 +97,6 @@ float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
 {
 	if (0 < damage)
 	{
-		if (hitByEnemy)
-		{
-			//Play hurt sound
-			StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
-			if (stats == this)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
-				if (sfx)
-				{
-					if (this->GetHealth() <= 0)
-					{
-						sfx->Play(Player_Death, Channel_Base);
-					}
-					else
-					{
-						sfx->Play(Player_Hurt, Channel_Base);
-					}
-				}
-			}
-		}
-
 		// Apply damage as a negative delta
 		StealthilyModifyHealth(-damage);
 

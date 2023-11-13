@@ -2,11 +2,11 @@
 #include "Hashing.h"
 #include <cstring>
 
-RelicData::RelicData(const char name[32], const char path[96], const char desc[359], const uint8_t price, const uint64_t types, void (*init)(void*))
+RelicData::RelicData(const char name[RELIC_DATA_NAME_SIZE], const char path[RELIC_DATA_PATH_SIZE], const char desc[RELIC_DATA_DESC_SIZE], const uint8_t price, const uint64_t types, void (*init)(void*))
 {
-	std::memcpy(m_relicName, name, 32);
-	std::memcpy(m_filePath, path, 96);
-	std::memcpy(m_description, desc, 359);
+	std::memcpy(m_relicName, name, RELIC_DATA_NAME_SIZE);
+	std::memcpy(m_filePath, path, RELIC_DATA_PATH_SIZE);
+	std::memcpy(m_description, desc, RELIC_DATA_DESC_SIZE);
 	m_price = price;
 	m_typeFlag = types;
 	m_function = init;

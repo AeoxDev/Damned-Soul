@@ -58,12 +58,61 @@ void Render()
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->aAnimTime);
 	}
 }
+bool ShadowSystem::Update()
+{
+	//First set camera based on directional light
+	DirectX::XMVECTOR previousPos = Camera::GetPosition();
+	DirectX::XMVECTOR previousLookAt = Camera::GetLookAt();
+	DirectX::XMVECTOR previousUp = Camera::GetUp();
+	DirectX::XMFLOAT3 vData;
+	
+	float3 dir = GetLightDirection();
+	DirectX::XMVECTOR cameraV = Camera::GetLookAt(); 
+	DirectX::XMFLOAT3 cameraLookAt;
+	DirectX::XMStoreFloat3(&cameraLookAt, cameraV);
+	Camera::ToggleProjection();
+	float dist = 80.0f;
+	Camera::SetPosition(cameraLookAt.x + -dir.x * dist, cameraLookAt.y + -dir.y * dist, cameraLookAt.z + -dir.z * dist + 16.0f, false);//Set this to center of stage offset upwards
+	Camera::SetLookAt(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z + 16.0f);//Set to center of stage
+	Camera::SetUp(0.0f, 1.0f, 0.0f);
+	Camera::SetWidth(640.0f * Camera::GetFOV());//Set width (x) of orthogonal based on stage
+	Camera::SetHeight(640.0f * Camera::GetFOV());//Set height (z) of orthogonal based on stage
+	Camera::SetOrthographicDepth(256.0f);
+	Camera::UpdateView();
+	Camera::UpdateProjection();
+	Camera::SaveToShadowMapCamera();
+	int16_t cameraIdx = Camera::GetCameraBufferIndex();
+	
+	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 1);
+	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
 
+	//Shadow mapping: render geometry
+	SetTopology(TRIANGLELIST);
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
+	SetShadowmap(true);
+	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
+	
+	Render();
+
+	//Return the camera
+	Camera::ToggleProjection();
+	DirectX::XMStoreFloat3(&vData, previousPos);
+	Camera::SetPosition(vData.x, vData.y, vData.z, false);//Set this to center of stage offset upwards
+	DirectX::XMStoreFloat3(&vData, previousLookAt);
+	Camera::SetLookAt(vData.x, vData.y, vData.z);//Set to center of stage
+	DirectX::XMStoreFloat3(&vData, previousUp);
+	Camera::SetUp(vData.x, vData.y, vData.z);
+	Camera::UpdateView();
+	Camera::UpdateProjection();
+	SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	return true;
+}
 bool RenderSystem::Update()
 {
+	
 	//Forward+ depth pass
 	SetTopology(TRIANGLELIST);
-
+	
 	SetDepthPassTexture(true);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(GetDepthPassPixelShader());
@@ -72,7 +121,7 @@ bool RenderSystem::Update()
 	ClearBackBuffer();
 	// Render UI
 	RenderUI();
-
+	
 	//Render Lightpass
 
 	//Set shaders here.
@@ -81,10 +130,17 @@ bool RenderSystem::Update()
 	SetConstantBuffer(Light::GetLightBufferIndex(), BIND_PIXEL, 2);
 	Light::UpdateLight();
 	SetDepthPassTexture(false);
+	SetShadowmap(false);
 
 
+	// Set Geometry Shader used for normalmapping
+	SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+	// Render
 	Render();
+	// Unset geometry shader
+	UnsetGeometryShader();
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
+	UnsetShadowmap(false);
 	return true;
 }

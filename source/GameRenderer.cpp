@@ -11,6 +11,7 @@
 #include "RenderDepthPass.h"
 
 RenderSetupComponent renderStates[8];
+SMP_IDX shadowClampSamlper;
 int currentSize = 0;
 int backBufferRenderSlot;
 
@@ -94,6 +95,8 @@ int SetupGameRenderer()
 	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("TestSkelVS.cso", LAYOUT_DESC::SKELETAL);
 	Light::SetupLight();
 	SetVertexShader(renderStates[currentSize].vertexShaders[0]);////////
+
+	renderStates[currentSize].geometryShader = LoadGeometryShader("NormalMappingGS.cso");
 	//Light::CreateLight(1);
 	//Light::CreateLight(2);
 	//Light::CreateLight(3);
@@ -135,6 +138,11 @@ int SetupGameRenderer()
 	char depthShader[] = "DepthPixel.cso";
 	CreateDepthPassPixelShader(depthShader);
 	CreateDepthPass();
+	shadowClampSamlper = CreateShadowClampSamplerState();
+	SetSamplerState(shadowClampSamlper, 1);
+	//CreateShadowMap(512, 512);
+	CreateShadowMap(2048, 2048);
+
 	return currentSize++;
 }
 

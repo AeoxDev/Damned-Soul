@@ -134,15 +134,20 @@ int StateManager::Setup()
 	// Render/GPU
 	
 	systems.push_back(new ParticleSystemCPU());
+	
+	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
+
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 
+	systems.push_back(new UIRenderSystem());
 
 	
-	//Input based CPU
-	systems.push_back(new ButtonSystem());
+	//Input based CPU 
+	systems.push_back(new OnClickSystem());
+	systems.push_back(new OnHoverSystem());
 
 	// Stat Calculatoins
 	systems.push_back(new StatCalcSystem()); // Should be before behaviours and controllers so that the correct stats are applied
@@ -153,6 +158,7 @@ int StateManager::Setup()
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
+	systems.push_back(new ProjectileSystem());
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
@@ -176,8 +182,7 @@ int StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
 	systems.push_back(new UIShopSystem());
-	//Lastly redraw the 2D UI
-	systems.push_back(new UIRenderSystem());//Render in 2D. Does not use 3d pipeline
+
 	return 0;
 }
 
@@ -230,7 +235,6 @@ void StateManager::Input()
 		scenes[activeLevelScene % 2 == 1].Input(true);
 	}
 }
-
 
 void StateManager::Update()
 {

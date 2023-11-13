@@ -12,7 +12,11 @@ void NoCollision(OnCollisionParameters& params);
 void SoftCollision(OnCollisionParameters& params);
 void HardCollision(OnCollisionParameters& params);
 
+//Damage Collisions
+bool IsDamageCollisionValid(OnCollisionParameters& params);
+void DashCollision(OnCollisionParameters& params);
 void AttackCollision(OnCollisionParameters& params);
+void ProjectileAttackCollision(OnCollisionParameters& params);
 void HellhoundBreathAttackCollision(OnCollisionParameters& params);
 
 void LoadNextLevel(OnCollisionParameters& params);

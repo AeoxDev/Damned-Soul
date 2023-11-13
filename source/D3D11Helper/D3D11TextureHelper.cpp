@@ -24,8 +24,8 @@ TX_IDX LoadTexture(const char* name)
 			return key;
 		}
 	}
-	txHolder->img_map.emplace(currentIdx, Image());
-	Image& img = txHolder->img_map[currentIdx];
+	//txHolder->img_map.emplace(currentIdx, Image());
+	Image/*&*/ img;// = txHolder->img_map[currentIdx];
 	bool l = img.load(name);
 	assert(l == true);
 
@@ -65,6 +65,8 @@ TX_IDX LoadTexture(const char* name)
 	// Set the hash last thing you do
 	txHolder->hash_map.emplace(currentIdx, hash);
 	
+	img.Release();
+
 	return currentIdx;
 }
 
@@ -215,6 +217,29 @@ SMP_IDX CreateSamplerState()
 	return currentIdx;
 }
 
+SMP_IDX CreateShadowClampSamplerState()
+{
+	uint8_t currentIdx = smpHolder->NextIdx();
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 4;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	ID3D11SamplerState* tempSamp = 0;
+	HRESULT hr = d3d11Data->device->CreateSamplerState(&samplerDesc, &tempSamp);
+	assert(!FAILED(hr));
+	smpHolder->smp_map.emplace(currentIdx, tempSamp);
+
+	return currentIdx;
+}
+
 void SetSamplerState(const SMP_IDX idx, uint8_t slot)
 {
 	d3d11Data->deviceContext->PSSetSamplers(slot, 1, &(smpHolder->smp_map[idx]));
@@ -246,11 +271,11 @@ bool DeleteD3D11Texture(const TX_IDX idx)
 		txHolder->tx_map[idx]->Release();
 		txHolder->tx_map.erase(idx);
 	}
-	if (txHolder->img_map.contains(idx))
-	{
-		txHolder->img_map[idx].Release();
-		txHolder->img_map.erase(idx);
-	}
+	//if (txHolder->img_map.contains(idx))
+	//{
+	//	txHolder->img_map[idx].Release();
+	//	txHolder->img_map.erase(idx);
+	//}
 	if (txHolder->hash_map.contains(idx))
 	{
 		txHolder->hash_map.erase(idx);

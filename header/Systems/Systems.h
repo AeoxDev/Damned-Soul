@@ -14,7 +14,15 @@ class RenderSystem : public System
 {
 	bool Update();
 };
-class ButtonSystem : public System
+class ShadowSystem : public System
+{
+	bool Update();
+};
+class OnClickSystem : public System
+{
+	bool Update();
+};
+class OnHoverSystem : public System
 {
 	bool Update();
 };
@@ -55,10 +63,6 @@ class UIRelicsSystem : public System
 {
 	bool Update();
 };
-//class UIGameLevelSystem : public System
-//{
-//	bool Update();
-//};
 class UIShopSystem : public System
 {
 	bool Update();
@@ -126,6 +130,10 @@ class StateSwitcherSystem : public System
 	bool Update();
 };
 
+class ProjectileSystem : public System
+{
+	bool Update();
+};
 //System implementation that'll pretty much need to be worked into the scene class and not fuck up the rest of the project
 //Order of operations in the main update loop is essentially:
 //1. Do general window events

@@ -11,7 +11,6 @@
 #include "Model.h"
 #include "UIComponents.h"
 #include "States\StateManager.h"
-#include "UI/UIButton.h"
 #include "UIButtonFunctions.h"
 
 
@@ -19,8 +18,10 @@ void LoadLevel1()
 {
 	
 	EntityID stage = registry.CreateEntity();
+
+	EntityID playerHealth = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	EntityID playerSouls = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	
-	EntityID playerUi = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -28,17 +29,17 @@ void LoadLevel1()
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
-	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 5.0f, 1, 0.0f, 0.0, -1.0f);
-
-
+	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
 	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
 	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
-	SetupEnemy(EnemyType::eye, -0.f, 0.f, 25.f);
+
+	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
 	//5 souls total
+
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	stageModel->colorMultiplicativeRed = 0.75f;
@@ -56,14 +57,14 @@ void LoadLevel1()
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, emptyTexture, emptyTexture);*/
 
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
-	pcUiHpC->text.Setup("");
+	UIComponent* ui1 = registry.AddComponent<UIComponent>(playerHealth);
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(playerHealth);
+	ui1->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
+	ui1->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
 
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
-	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup("");
+	UIComponent* ui2 = registry.AddComponent<UIComponent>(playerSouls);
+	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(playerSouls);
+	ui2->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.6f));
 
 	//Thing in the top right corner showing what level we're on
 	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 1);
@@ -87,7 +88,7 @@ void LoadLevel1()
 	mousePointOfInterset->mode = POI_MOUSE;
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
-	
+	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
 	CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
@@ -98,4 +99,6 @@ void LoadLevel1()
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 
 	stateManager.stage = stage;
+
+	SetInPlay(true);
 }

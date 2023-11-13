@@ -8,6 +8,9 @@ void BeginHit(EntityID& entity, const int& index);
 void MiddleHit(EntityID& entity, const int& index);
 void EndHit(EntityID& entity, const int& index);
 
+//AAAA
+void DashBeginHit(EntityID& entity, const int& index);
+
 //Hellhound breath hazard
 void HazardBeginHit(EntityID& entity, const int& index);
 void HazardEndHit(EntityID& entity, const int& index);
@@ -23,6 +26,7 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
 //END
 void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
+void PlayerResetAnimFactor(EntityID& entity, const int& index);
 
 //CONTINUOUS
 void PlayerAttackSound(EntityID& entity, const int& index);
@@ -68,3 +72,6 @@ void ResetCameraOffset(EntityID& entity, const int& index);
 void SpawnMainMenuEnemy(EntityID& entity, const int& index);
 //Main menu loop for spawning random enemies
 void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);
+
+void BeginDestroyProjectile(EntityID& entity, const int& index); 
+void EndDestroyProjectile(EntityID& entity, const int& index);
