@@ -35,8 +35,8 @@ bool ControllerSystem::Update()
 
 		//Default the animation to idle, subject to be changed based off of user input
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-		ANIM_BRANCHLESS(anim);
+		/*anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(anim);*/
 
 
 		/*MOVEMENT INPUT*/
@@ -95,7 +95,7 @@ bool ControllerSystem::Update()
 		{
 			anim->aAnim = ANIMATION_IDLE;
 			anim->aAnimIdx = 0;
-			ANIM_BRANCHLESS(anim);
+			
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			
 		}
@@ -130,8 +130,9 @@ bool ControllerSystem::Update()
 		if (mouseButtonPressed[0] == pressed)
 		{
 			
+			StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
 			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
-			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f / playerStats->GetAttackSpeed(), PlayerResetAnimFactor); //Esketit xd
 		}
 #ifdef _DEBUG
 		if (keyState[SCANCODE_G] == pressed) {
@@ -153,6 +154,10 @@ bool ControllerSystem::Update()
 			}
 		}
 #endif // _DEBUG
+
+		//Update animation at the end of user input
+		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(anim);
 
 	}
 	//Loop for player during other places
