@@ -29,7 +29,12 @@ struct Node // to save path
 
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z);
 //void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 5.1f);
-PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransform);
+void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform);
+void CalculateGlobalMapValuesHellhound(PathfindingMap* map);
+
+TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* tempTransform);
+
+ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
 ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
