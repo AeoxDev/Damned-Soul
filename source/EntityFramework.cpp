@@ -19,6 +19,7 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 	//If there's space in the freeEntities-vector, we use the version number stored in there. Otherwise we simply create a new id
 	if (!availableEntitySlots.empty())
 	{
+		
 		int newIndex = availableEntitySlots.back();
 		availableEntitySlots.pop_back();
 
@@ -44,63 +45,30 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	if (skeleton)
 		ReleaseModel(skeleton->model);
 
-	//UI Souls
-	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(id);
-	if (souls)
-		souls->image.Release();
-
-	//UI Player Relics
-	UIPlayerRelicsComponent* pr = registry.GetComponent<UIPlayerRelicsComponent>(id);
-	if (pr)
-	{
-		pr->baseImage.Release();
-
-		for (uint32_t i = 0; i < pr->relics.size(); i++)
-		{
-			pr->relics[i].sprite.Release();
-			pr->relics[i].flavorTitleImage.Release();
-			pr->relics[i].flavorDescImage.Release();
-		}
-
-		pr->relics.~ML_Vector();
-	}
-
-	//UI Health
-	UIHealthComponent* ph = registry.GetComponent<UIHealthComponent>(id);
-	if (ph)
-	{
-		ph->backgroundImage.Release();
-		ph->healthImage.Release();
-	}
-
-	//UI Button
-	UIButton* b = registry.GetComponent<UIButton>(id);
-	if(b)
-		b->Release();
-
-	//UI Shop
-	UIShopComponent* sh = registry.GetComponent<UIShopComponent>(id);
-	if(sh)
-		sh->baseImage.Release();
-
-	//UI Shop Relic Window
-	UIShopRelicWindowComponent* shrw = registry.GetComponent<UIShopRelicWindowComponent>(id);
-	if(shrw)
-		shrw->m_baseImage.Release();
-
-	//UI Relics
-	UIRelicComponent* r = registry.GetComponent<UIRelicComponent>(id);
-	if (r)
-	{
-		r->sprite.Release();
-		r->flavorTitleImage.Release();
-		r->flavorDescImage.Release();
-	}
+	//OnClick
+	OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(id);
+	if (onClick)
+		onClick->Release();
 	
-	//UI Image
-	UIImage* i = registry.GetComponent<UIImage>(id);
-	if(i)
-		i->Release();
+	//OnHover
+	OnHoverComponent* onHover = registry.GetComponent<OnHoverComponent>(id);
+	if (onHover)
+		onHover->Release();
+	
+	//UIComponent
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
+	if(uiElement)
+		uiElement->Release();
+
+	//Imp Text
+	UIShopImpComponent* imp1 = registry.GetComponent<UIShopImpComponent>(id);
+	if (imp1)
+		imp1->Release();
+
+	//Shop Title
+	UIShopTitleImpComponent* imp2 = registry.GetComponent<UIShopTitleImpComponent>(id);
+	if (imp2)
+		imp2->name.~ML_String();
 
 	//Proximity Hitbox
 	ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(id);
@@ -186,4 +154,12 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 			registry.DestroyEntity(check, destructionTier);
 		}
 	}
+
+	//Since UI can't depth-check, its entities need to be in numerical order, but availableEntitySlots is in ascending order and pops from the back
+	registry.SortAvailableEntitySlotsVector();
+}
+
+void Registry::SortAvailableEntitySlotsVector()
+{
+	std::sort(availableEntitySlots.begin(), availableEntitySlots.end(), std::greater<int>());
 }

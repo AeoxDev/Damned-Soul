@@ -15,7 +15,6 @@
 void LoadLevel2()
 {
 	EntityID stage = registry.CreateEntity();
-	EntityID playerUi = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -73,16 +72,6 @@ void LoadLevel2()
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
-
-
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	pcUiHpC->backgroundImage.Setup("ExMenu/EmptyHealth.png");
-	pcUiHpC->healthImage.Setup("ExMenu/FullHealth.png");
-	pcUiHpC->text.Setup("");
-
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
-	pcUiSC->image.Setup("ExMenu/EmptyHealth.png");
-	pcUiSC->text.Setup("");
 
 	//Thing in the top right corner showing what level we're on
 	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 2);
@@ -147,4 +136,5 @@ void LoadLevel2()
 	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
+	SetInPlay(true);
 }

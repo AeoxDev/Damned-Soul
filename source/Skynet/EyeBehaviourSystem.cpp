@@ -37,19 +37,43 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 	eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
-bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
+bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
-	// Regular attack?
-	enemyAnim->aAnim = ANIMATION_ATTACK;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
-	ANIM_BRANCHLESS(enemyAnim);
-
-	//impose timer so they cannot run and hit at the same time also not do a million damage per sec
-	if (ec->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
+	//if you just attacked go back to circle behaviour
+	if (ec->attackTimer < enemyStats->GetAttackSpeed())
 	{
+		ec->attackTimer += GetDeltaTime();
+		return false;
+	}
+	//rotate eye in order to shoot at the player
+	else if (ec->aimTimer < ec->aimDuration)
+	{
+		ec->goalDirectionX = ptc->positionX - etc->positionX;
+		ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
+		float magnitude = sqrt(ec->goalDirectionX * ec->goalDirectionX + ec->goalDirectionZ * ec->goalDirectionZ);
+		if (magnitude < 0.001f)
+		{
+			magnitude = 0.001f;
+		}
+		ec->goalDirectionX /= magnitude;
+		ec->goalDirectionZ /= magnitude;
+
+
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+		ec->aimTimer += GetDeltaTime();
+		ec->attackTimer += GetDeltaTime();
+		return true;
+	}
+	else // yes, we can indeed attack. 
+	{
+		enemyAnim->aAnim = ANIMATION_ATTACK; //change anim to "spit"/shoot anim
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(enemyAnim);
+
 		ec->attackTimer = 0;
 		ec->attackStunDurationCounter = 0;
+		ec->aimTimer = 0;
 		ec->specialCounter++; //increase the special counter for special attack
 
 		//set direction for attack
@@ -60,32 +84,11 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 		{
 			magnitude = 0.001f;
 		}
-
-		float orthoX = -dz;
-		float orthoZ = dx;
-
 		dx /= magnitude;
 		dz /= magnitude;
 
-		float targetX = etc->positionX + dx * 10.0f;
-		float targetZ = etc->positionZ + dz * 10.0f;
-
-		ec->facingX = targetX;
-		ec->facingZ = targetZ;
-
-		//SmoothRotation(etc, ec->facingX, ec->facingZ);
-		
-
-		//SHOOOT
-
-		//playerStats->health -= enemyStats->damage;
-		//RedrawUI();
-
+		CreateProjectile(entity, dx, dz);
 		return true;
-	}
-	else
-	{
-		return false;
 	}
 }
 
@@ -177,15 +180,6 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
-bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = enemy pos, B = player pos, tolerance = 
-{
-	if (aX < bX + tolerance && aX > bX - tolerance &&
-		aZ < bZ + tolerance && aZ > bZ - tolerance)
-		return true;
-	else
-		return false;
-}
-
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp)
 {
 	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(eID);
@@ -194,8 +188,17 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	{
 		enemyAnim->aAnimTime = 0;
 
+		//reset value and calculate new breakpoint
+		eyeComponent->attackTimer = 0;
 		eyeComponent->specialCounter = 0;
 		eyeComponent->charging = true;
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// Define a uniform distribution for the range [-1.0, 1.0]
+		std::uniform_real_distribution<float> distribution(2.0f, 5.0f);
+		eyeComponent->specialBreakpoint = (int)distribution(gen);
+
 
 		//while charging disable hitboxes
 		SetHitboxIsMoveable(eID, 0, false);
@@ -279,8 +282,6 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 }
 
-//static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
-
 bool EyeBehaviourSystem::Update()
 {
 	//First find the skynet component
@@ -339,11 +340,8 @@ bool EyeBehaviourSystem::Update()
 
 		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
-			// Get animation component
-			
-
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			eyeComponent->attackTimer += GetDeltaTime();
+			
 			eyeComponent->attackStunDurationCounter += GetDeltaTime();
 			if (eyeComponent->attackStunDurationCounter <= eyeComponent->attackStunDuration)
 			{
@@ -357,7 +355,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
-			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->GetDamage() && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || (eyeComponent->specialCounter >= eyeComponent->specialBreakpoint && eyeComponent->attackTimer >= enemyStats->GetAttackSpeed())) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				if (!eyeComponent->chargeAttackSoundPlaying)
@@ -372,15 +370,8 @@ bool EyeBehaviourSystem::Update()
 			}
 			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
-				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
-				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
-				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
-				
-				//TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
-				//if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
-				//{
-				//	eyeComponent->specialCounter++;
-				//}
+				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
+					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
 			}
 			else // idle
 			{

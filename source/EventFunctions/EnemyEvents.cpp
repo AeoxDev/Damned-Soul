@@ -357,3 +357,21 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	float time = (float)(rand() % 8);
 	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }
+
+void BeginDestroyProjectile(EntityID& entity, const int& index)
+{
+	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
+	if (model != nullptr)
+	{
+		ReleaseModel(model->model);
+	}
+	registry.RemoveComponent<ModelBonelessComponent>(entity);
+
+	RemoveHitbox(entity, 0);
+	RemoveHitbox(entity, 1);
+}
+
+void EndDestroyProjectile(EntityID& entity, const int& index)
+{
+	registry.DestroyEntity(entity);
+}

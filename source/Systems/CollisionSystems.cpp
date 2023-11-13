@@ -29,11 +29,18 @@ bool GeometryIndependentSystem::Update()
 			{
 				int r = PixelValueOnPosition(geoCo,p);
 				int takeDamage = 0;
+				ProjectileComponent* proj = nullptr;
+
 				switch (r)
 				{
 				case 0:
 					p->positionX = 0.f;
 					p->positionZ = 0.f;
+					proj = registry.GetComponent<ProjectileComponent>(entity);
+					if (proj != nullptr)
+					{
+						registry.DestroyEntity(entity);
+					}
 					break;
 				case 1:
 					//Footstep sound here?
