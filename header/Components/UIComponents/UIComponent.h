@@ -67,13 +67,16 @@ struct UIImage
 struct UIComponent
 {
 	UIImage m_BaseImage;
+	UIText m_BaseText;
 	ML_Vector<UIImage> m_Images;
-	UIText m_Text;
+	ML_Vector<UIText> m_Texts;
 
 	void Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
 	void AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
+
+	void AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f });
 
 	void Release();
 };

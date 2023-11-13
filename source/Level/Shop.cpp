@@ -152,6 +152,9 @@ void CreateSingleWindows()
 
 		uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
 
+		if (i == 5)
+			uiElement->m_BaseImage.baseUI.SetVisibility(false);
+
 		if (i == 1)
 			registry.AddComponent<UIRerollComponent>(relicWindow);
 		else
@@ -188,7 +191,7 @@ void LoadShop()
 	CreateSingleWindows();
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("TempRelicHolder", "Hello There", { 0.3f, -0.1f }, { 2.0f, 2.0f });
+	uiImpText->Setup("TempRelicHolder", "\n\nHello There", { 0.3f, 0.1f }, { 2.0f, 2.0f });
 	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopImpComponent>(impText);

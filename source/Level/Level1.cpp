@@ -18,10 +18,6 @@ void LoadLevel1()
 {
 	
 	EntityID stage = registry.CreateEntity();
-
-	EntityID playerHealth = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	EntityID playerSouls = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -57,32 +53,10 @@ void LoadLevel1()
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, emptyTexture, emptyTexture);*/
 
-	UIComponent* ui1 = registry.AddComponent<UIComponent>(playerHealth);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(playerHealth);
-	ui1->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
-	ui1->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
-
-	UIComponent* ui2 = registry.AddComponent<UIComponent>(playerSouls);
-	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(playerSouls);
-	ui2->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.6f));
-
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 1);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
-
-	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
 	RenderGeometryIndependentCollision(stage);
 	
 	//Finally set the collision boxes
 
-	
-
-	
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
