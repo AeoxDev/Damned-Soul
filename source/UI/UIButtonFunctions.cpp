@@ -422,20 +422,19 @@ void UIFunc::HoverImage(void* args, int index, bool hover)
 	{
 		if (uiElement->m_BaseImage.baseUI.GetVisibility())
 		{
-			std::strcpy(fileName, uiElement->m_BaseImage.m_fileName.c_str());
+			std::strcpy(fileName, uiElement->m_BaseImage.m_fileName);
 			std::strcpy(hoverFileName, fileName);
 			std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
-			//hoverFileName.append("Hover");
 
 			if (hover)
-				uiElement->m_BaseImage.SetImage(hoverFileName/*.c_str()*/, true);
+				uiElement->m_BaseImage.SetImage(hoverFileName, true);
 			else
-				uiElement->m_BaseImage.SetImage(fileName/*.c_str()*/, true);
+				uiElement->m_BaseImage.SetImage(fileName, true);
 		}
 	}
 	else if (uiElement->m_Images[index].baseUI.GetVisibility())
 	{
-		std::strcpy(fileName, uiElement->m_Images[index].m_fileName.c_str());
+		std::strcpy(fileName, uiElement->m_Images[index].m_fileName);
 		std::strcpy(hoverFileName, fileName);
 		std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
 
@@ -482,21 +481,16 @@ void UIFunc::HoverRelic(void* args, int index, bool hover)
 		uiElement->m_Images[imageIndex].baseUI.SetVisibility(true);
 		uiElement->m_Images[imageIndex].baseUI.SetPosition(uiElement->m_Images[index - 1].baseUI.GetPosition());
 
-		uiImpText->name = relicWindow->shopRelics[index - 1]->m_relicName;
-		uiImpText->description = relicWindow->shopRelics[index - 1]->m_description;
+		uiImpText->name = _strdup(relicWindow->shopRelics[index - 1]->m_relicName);
+		uiImpText->description = _strdup(relicWindow->shopRelics[index - 1]->m_description);
 		uiImpText->price = relicWindow->shopRelics[index - 1]->m_price;
 
 		char relicText[RELIC_DATA_DESC_SIZE] = "";
 
-		std::strcpy(relicText, uiImpText->name.c_str());
+		std::strcpy(relicText, uiImpText->name);
 		std::strcpy(relicText + std::strlen(relicText), "\nPrice: ");
 		std::strcpy(relicText + std::strlen(relicText), (std::to_string(uiImpText->price) + " Souls\n").c_str());
-		std::strcpy(relicText + std::strlen(relicText), uiImpText->description.c_str());
-
-		//ML_String relicText = uiImpText->name;
-		//relicText.append("\nPrice: ");
-		//relicText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
-		//relicText.append(uiImpText->description);
+		std::strcpy(relicText + std::strlen(relicText), uiImpText->description);
 
 		uiImpElement->m_Text.SetText(relicText, uiImpElement->m_Text.baseUI.GetBounds());
 	}

@@ -214,7 +214,7 @@ ParticleComponent::~ParticleComponent()
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = -1.f;	data->metadata[metadataSlot].spawnPos.y = -1.f;	data->metadata[metadataSlot].spawnPos.z = -1.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -240,7 +240,7 @@ void ParticleComponent::Release()
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -253,7 +253,7 @@ void ParticleComponent::RemoveParticles(EntityID& entity)
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 

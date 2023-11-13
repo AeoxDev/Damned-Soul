@@ -26,13 +26,13 @@ struct OnClickComponent
 	int Intersect(DSINT2 mousePosition)
 	{
 		int retval = -1;
-		for (uint32_t i = positions.size(); i-- > 0;)
+		for (size_t i = positions.size(); i-- > 0;)
 		{
 			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
 			{
-				retval = i;
-				index = i;
+				retval = (int)i;
+				index = (int)i;
 				break;
 			}
 		}
