@@ -325,7 +325,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	{
 		registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
 			0.0f, 2.5f, 3.0f, 0.0f,
-			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 3000, FLAMETHROWER);
+			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, FLAMETHROWER);
 	}
 	else
 	{

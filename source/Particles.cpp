@@ -110,9 +110,9 @@ void Particles::UpdateMetadata(int metadataSlot, float x, float y, float z)
 
 void Particles::UpdateMetadata(int metadataSlot, float v0x, float v0z, float v1x, float v1z, float v2x, float v2z)
 {
-	data->metadata[metadataSlot].positionInfo.y = v0x; data->metadata[metadataSlot].positionInfo.z = v0z;
-	data->metadata[metadataSlot].morePositionInfo.x = v1x; 	data->metadata[metadataSlot].morePositionInfo.y = v1z;
-	//data->metadata[metadataSlot].morePositionInfo.z = v2x; data->metadata[metadataSlot].morePositionInfo.w = v2z;
+	data->metadata[metadataSlot].maxRange = v0x;
+	data->metadata[metadataSlot].positionInfo.x = v0z; data->metadata[metadataSlot].positionInfo.y = v1x; data->metadata[metadataSlot].positionInfo.z = v1z;
+	data->metadata[metadataSlot].morePositionInfo.x = v2x; data->metadata[metadataSlot].morePositionInfo.y = v2z; 
 }
 
 ParticleMetadataBuffer* Particles::GetData()
@@ -145,8 +145,6 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 	UnsetUnorderedAcessView(1);
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
-
-	//CopyToVertexBuffer(renderStates[RenderSlot].vertexBuffer, m_readWriteBuffer->outputUAV);
 }
 
 void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
