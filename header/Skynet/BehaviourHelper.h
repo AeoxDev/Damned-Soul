@@ -36,3 +36,6 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 
 ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
+ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
+
+void CreateProjectile(EntityID entity, float directionX, float directionZ);
