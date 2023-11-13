@@ -196,7 +196,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\CutsceneComponent.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
+    <ClCompile Include="source\EventFunctions\CutsceneFunctions.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
@@ -483,6 +485,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\CombatFunctions.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
+    <ClInclude Include="header\Components\CutsceneComponent.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
     <ClInclude Include="header\Components\InputComponent.h" />
     <ClInclude Include="header\Components\KnockBackComponent.h" />

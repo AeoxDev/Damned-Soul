@@ -166,6 +166,8 @@ void Menu::Setup()
 	}
 	RenderGeometryIndependentCollision(stage);
 	stateManager.stage = stage;
+	Camera::SetCutsceneMode(false);
+	AddTimedEventComponentStart(stage, (8.0f + (float)(rand() % 32))* (float)(rand() % 2), MainMenuIntroCutscene);
 }
 
 void Menu::Input()
