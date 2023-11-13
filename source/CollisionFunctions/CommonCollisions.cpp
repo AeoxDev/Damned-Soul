@@ -419,7 +419,7 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
 	
-	AddTimedEventComponentStartEnd(params.entity1, 0.0f, BeginDestroyProjectile, 1.0f, EndDestroyProjectile);
+	AddTimedEventComponentStartEnd(params.entity1, 0.0f, BeginDestroyProjectile, 1.0f, EndDestroyProjectile, 0, 2);
 }
 
 void LoadNextLevel(OnCollisionParameters& params)

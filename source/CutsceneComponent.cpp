@@ -32,16 +32,28 @@ void MainMenuIntroCutscene(EntityID& entity, const int& index)
 	cutscene->startLookAtY = 0.0f;
 	cutscene->startLookAtZ = pointZ;
 	cutscene->startPositionX = posRandX;
-	cutscene->startPositionY = posRandY + 0.7f * CAMERA_OFFSET_Y;
+	cutscene->startPositionY = posRandY + 0.1f * CAMERA_OFFSET_Y;
 	cutscene->startPositionZ = posRandZ;
 	posRandX = (rand() % 128) * 0.5f - 64.0f;
 	posRandZ = (rand() % 128) * 0.5f - 64.0f;
+	
 	cutscene->goalPositionX = posRandX;
 	cutscene->goalPositionY = 1.2f + CAMERA_OFFSET_Y;
 	cutscene->goalPositionZ = posRandZ;
 	float randX = (rand() % 128) * 0.5f - 64.0f;
 	float randY = 0.0f;
 	float randZ = (rand() % 128) * 0.5f - 64.0f;
+	for (auto enemy : View<EnemyComponent, TransformComponent>(registry))
+	{
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(enemy);
+		randX = transform->positionX;
+		randZ = transform->positionZ;
+		if (rand() % 4)
+		{
+			break;
+		}
+
+	}
 	cutscene->goalLookAtX = randX;
 	cutscene->goalLookAtY = randY;
 	cutscene->goalLookAtZ = randZ;

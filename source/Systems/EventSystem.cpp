@@ -46,7 +46,6 @@ int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
 bool EventSystem::Update()
 {
 	//Make sure continuous events aren't updating while the game is paused
-	float dt = GetDeltaTime();
 	if (gameSpeed == 0.0f)
 		return true;
 

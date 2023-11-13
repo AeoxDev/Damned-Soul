@@ -1,6 +1,7 @@
 #include "Skynet/BehaviourHelper.h"
 #include "Registry.h"
 #include "Model.h"
+#include "EventFunctions.h"
 
 void CreateProjectile(EntityID entity, float directionX, float directionZ)
 {
@@ -18,9 +19,12 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 		TransformComponent transform;
 		transform.mass = 1.0f;
 		//Direction
-		transform.facingX = directionX + (float)(rand() % 8) * 0.1f;
+		transform.facingX = directionX + ((float)(rand() % 8) * 0.1f - 0.35f);
 		transform.facingY = 0;
-		transform.facingZ = directionZ + (float)(rand() % 8) * 0.1f;
+		transform.facingZ = directionZ + ((float)(rand() % 8) * 0.1f - 0.35f);
+		float dist = sqrtf((transform.facingX * transform.facingX) + (transform.facingZ * transform.facingZ));
+		transform.facingX /= dist;
+		transform.facingZ /= dist;
 
 		//Position
 		transform.positionX = origin->positionX;
@@ -46,6 +50,8 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 
 		//Setup Bullet hitbox
 		SetupProjectileCollisionBox(bullet, 1.0f);
+		AddTimedEventComponentStartEnd(bullet, 6.0f, BeginDestroyProjectile, 7.0f, EndDestroyProjectile, 0, 2);
+
 	}
 	
 }
