@@ -56,28 +56,46 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	animComp->aAnimIdx = 0;
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
-
-	if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
+	bool okayDirection = false;
+	while (!okayDirection)
 	{
-		skeletonComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		skeletonComponent->goalDirectionX = randomX;
-		skeletonComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		skeletonComponent->updateInterval = randomInterval(gen);
+		if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
+		{
+			skeletonComponent->timeCounter = 0.f;
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			// Define a uniform distribution for the range [-1.0, 1.0]
+			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+			float randomX = distribution(gen);
+			float randomZ = distribution(gen);
+			skeletonComponent->goalDirectionX = randomX;
+			skeletonComponent->goalDirectionZ = randomZ;
+			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+			skeletonComponent->updateInterval = randomInterval(gen);
+		}
+
+		SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
+		float oldX = skeletonTransformComponent->positionX;
+		float oldZ = skeletonTransformComponent->positionZ;
+		float bias = 1.f;
+
+		skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
+
+		if ((skeletonTransformComponent->positionX >= oldX + bias || skeletonTransformComponent->positionZ >= oldZ + bias) && skeletonTransformComponent->positionX <= oldX - bias || skeletonTransformComponent->positionZ <= oldZ - bias)
+		{
+			//not good direction
+			skeletonTransformComponent->positionX = oldX;
+			skeletonTransformComponent->positionZ = oldZ;
+			skeletonComponent->timeCounter = skeletonComponent->updateInterval + 1.f;
+		}
+		else
+		{
+			// good direction
+			okayDirection = true;
+		}
+
 	}
-
-	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
-
-
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
-
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
@@ -102,8 +120,8 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
 		sfx->Play(Skeleton_Attack, Channel_Base);
 		RedrawUI();
-		sc->attackTimer = 0;
-		sc->attackStunDurationCounter = 0;
+		sc->attackTimer = 0.f;
+		sc->attackStunDurationCounter = 0.f;
 	}
 }
 
@@ -120,7 +138,8 @@ bool SkeletonBehaviourSystem::Update()
 	EnemyComponent* enmComp = nullptr;
 
 	bool updateGridOnce = true;
-	PathfindingMap valueGrid;
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));// (PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
+	//*valueGrid = PathfindingMap();
 
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
@@ -211,12 +230,12 @@ bool SkeletonBehaviourSystem::Update()
 #endif // TEST
 				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
 				{
-					skeletonComponent->updatePathCounter = 0;
+					skeletonComponent->updatePathCounter = 0.f;
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						valueGrid = CalculateGlobalMapValuesSkeleton(playerTransformCompenent);
-						if (valueGrid.cost[0][0] == -69.f)
+						CalculateGlobalMapValuesSkeleton(valueGrid, playerTransformCompenent);
+						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
 							continue;
@@ -247,10 +266,10 @@ bool SkeletonBehaviourSystem::Update()
 					// goal (next node) - current
 					if (finalPath.size() > 2 && skeletonComponent->followPath)
 					{
-						skeletonComponent->dirX = finalPath[1].x - finalPath[0].x;
-						skeletonComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
-						skeletonComponent->dir2X = finalPath[2].x - finalPath[1].x;
-						skeletonComponent->dir2Z = -(finalPath[2].z - finalPath[1].z);
+						skeletonComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+						skeletonComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
+						skeletonComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+						skeletonComponent->dir2Z = -(float)(finalPath[2].z - (float)finalPath[1].z);
 						skeletonComponent->followPath = true;
 					}
 					else
@@ -308,6 +327,8 @@ bool SkeletonBehaviourSystem::Update()
 		}
 	}
 
-
+	// Pop the stack
+	//MemLib::spop;
+	free(valueGrid);
 	return true;
 }
