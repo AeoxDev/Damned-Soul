@@ -549,7 +549,7 @@ bool HellhoundBehaviourSystem::Update()
 
 			if (hellhoundComponent->retreat)
 			{
-				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit)
+				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit * 3.f)
 				{
 					hellhoundComponent->updatePathCounter = 0;
 					if (playerComponent != nullptr && updateGridOnce)

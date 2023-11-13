@@ -227,13 +227,13 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 	
 
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
-	GridPosition playerPos = PositionOnGrid(GIcomponent, temporaryTransform, true); // grid position
+	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, true); // grid position
 
 	int x = 0, z = 0;
-	float distance = 17.f;
+	float distance = 1.f;
 	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
-	while (distance > 15.f && distance < 30.f)
+	while (!(distance > 20.f && distance < 40.f))
 	{
 		bool legal = false;
 		while (!legal)
@@ -249,7 +249,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistance(playerPos.x, playerPos.z, returnNode);
+		distance = CalculateEuclideanDistance(aiPos.x, aiPos.z, returnNode);
 	}
 	
 	
