@@ -8,11 +8,7 @@
 #include "Model.h"
 #include "Levels\LevelHelper.h"
 
-#ifdef DEBUG_HP
-
 #include "UIComponents.h"
-
-#endif
 
 
 //void EnemyExclusion(EntityID& entity)
