@@ -282,7 +282,7 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform1->mass, stat1->GetKnockback() * params.normal2Z / transform1->mass);
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
 }
 
 void PlayHitSound(OnCollisionParameters& params)
