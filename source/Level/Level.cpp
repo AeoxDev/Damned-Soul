@@ -30,7 +30,7 @@ void LoadLevel(int level)
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
-	
+	Camera::SetCutsceneMode(false);
 	switch (level)
 	{
 	case 1:	LoadLevel1(); break;

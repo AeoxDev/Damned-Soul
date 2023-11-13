@@ -425,7 +425,7 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 void LoadNextLevel(OnCollisionParameters& params)
 {
 	//next level is shop so we set the paramaters in statemanager as so
-	if (params.entity1.index == stateManager.player.index)
+	if (params.entity2.index == stateManager.player.index)
 	{
 		SetInPlay(false);
 		SetInShop(true);

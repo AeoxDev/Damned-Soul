@@ -28,10 +28,10 @@ void LoadLevel3()
 	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
 	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
+	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, 50.f);
 	SetupEnemy(EnemyType::hellhound, -35.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::hellhound, 15.f, 0.f, -45.f);

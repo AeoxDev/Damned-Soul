@@ -14,7 +14,6 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 	//Transform
 	TransformComponent transform;
 	transform.mass = 1.0f;
-	
 	//Direction
 	transform.facingX = directionX; 
 	transform.facingY = 0;
@@ -37,8 +36,8 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 
 	//Stats needed in order to deal damage
 	//Health, Speed, Damage, attackSpeed
-	registry.AddComponent<StatComponent>(bullet, 1.0f, 40.0f, 5.0f, 0.0f);
-
+	StatComponent* stats = registry.AddComponent<StatComponent>(bullet, 1.0f, 40.0f, 5.0f, 0.0f);
+	stats->baseHazardModifier = 0.0f;
 	
 	//Setup Bullet hitbox
 	SetupProjectileCollisionBox(bullet, 1.0f);
