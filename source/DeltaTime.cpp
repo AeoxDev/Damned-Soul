@@ -1,6 +1,8 @@
 #include "DeltaTime.h"
+#include "UIRenderer.h"
 #include "Relics/RelicFunctions.h"
 #include <chrono>
+
 
 #define DELTACAP 1.f / 30.f
 
@@ -11,9 +13,27 @@ float lastFPS = 0.0f;
 float average;
 float deltaTime;
 
+float runTime = 0.0f;
+bool paused = true;
+
+void SetPaused(bool state)
+{
+	paused = state;
+}
+
+void ResetRunTime()
+{
+	runTime = 0.0f;
+}
+
 const float& GetDeltaTime()
 {
 	return deltaTime;
+}
+
+const float& GetRunTime()
+{
+	return runTime;
 }
 
 void CountDeltaTime()
@@ -31,9 +51,15 @@ void CountDeltaTime()
 	{
 		deltaTime = DELTACAP;
 	}
+	
 	secondTime += deltaTime;
+	
+	if (!paused)
+		runTime += deltaTime;
+	
 	deltaTime *= gameSpeed;
 	fps+=1.0f;
+
 
 	// For now only, should be moved to a better place later
 	auto timeUpdateRelics = Relics::GetFunctionsOfType(Relics::FUNC_ON_FRAME_UPDATE);
@@ -51,6 +77,7 @@ bool NewSecond()
 		lastFPS = fps;
 		fps = 0;
 		secondTime -= 1.0f;
+		RedrawUI();
 		return true;
 	}
 	return false;

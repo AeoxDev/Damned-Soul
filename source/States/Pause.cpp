@@ -30,6 +30,9 @@ void PauseState::Input()
 		{
 			SetInPause(false);
 			SetInShop(true);
+
+			SetPaused(false);
+
 			RedrawUI();
 			ResetInput();
 
@@ -39,6 +42,9 @@ void PauseState::Input()
 		{
 			SetInPause(false);
 			SetInPlay(true);
+
+			SetPaused(false);
+
 			RedrawUI();
 			gameSpeed = 1.0f;
 			ResetInput();

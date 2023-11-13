@@ -19,6 +19,7 @@ void LoadLevel1()
 	
 	EntityID stage = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
+	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
@@ -69,6 +70,12 @@ void LoadLevel1()
 	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.0f, 0.8f));
+	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+
+	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);
 
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 

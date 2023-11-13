@@ -28,6 +28,8 @@ void Menu::Setup()
 	SetupText();
 	Camera::ResetCamera();
 
+	ResetRunTime();
+
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
 	
@@ -199,7 +201,7 @@ void Menu::SetupButtons()
 
 	void(* const functions[3])(void*, int) =
 	{
-		UIFunc::LoadNextLevel,
+		UIFunc::MainMenu_Start,
 		UIFunc::MainMenu_Settings,
 		UIFunc::MainMenu_Quit
 	};

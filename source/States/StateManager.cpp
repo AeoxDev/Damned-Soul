@@ -181,6 +181,7 @@ int StateManager::Setup()
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
+	systems.push_back(new UIRunTime());
 	systems.push_back(new UIShopSystem());
 
 	return 0;
