@@ -96,7 +96,7 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 			}
 		}
 	}
-	
+	float enemyPunish = 6.f;
 	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
 	{
 		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
@@ -109,7 +109,30 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 
 		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 		{
-			map->cost[pos.x][pos.z] += 6;
+			map->cost[pos.x][pos.z] += enemyPunish;
+
+			//RIght column
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x + 1][pos.z + 1] += enemyPunish / 2;
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x + 1][pos.z] += enemyPunish / 2;
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && pos.z > 0)
+				map->cost[pos.x + 1][pos.z - 1] += enemyPunish / 2;
+
+			//Middle column
+			if (pos.z > 0)
+				map->cost[pos.x][pos.z - 1] += enemyPunish / 2;
+			if (pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x][pos.z + 1] += enemyPunish / 2;
+
+			//Left column
+
+			if (pos.x > 0 && pos.z > 0)
+				map->cost[pos.x - 1][pos.z - 1] += enemyPunish / 2;
+			if (pos.x > 0)
+				map->cost[pos.x - 1][pos.z] += enemyPunish / 2;
+			if (pos.x > 0 && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x - 1][pos.z + 1] += enemyPunish / 2;
 		}
 		else
 		{
