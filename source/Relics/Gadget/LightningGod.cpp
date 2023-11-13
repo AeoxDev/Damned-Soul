@@ -23,7 +23,7 @@ void LIGHTNING_GOD::Initialize(void* input)
 
 void _LG_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION, 0, 0.15f, 0, 0, 0, LIGHTNING);
+	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f, LIGHTNING);
 }
 
 void LIGHTNING_GOD::OnUpdate(void* data)

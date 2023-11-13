@@ -573,10 +573,10 @@ bool HellhoundBehaviourSystem::Update()
 					{
 						hellhoundComponent->fx = finalPath[0].fx;
 						hellhoundComponent->fz = finalPath[0].fz;
-						hellhoundComponent->dirX = finalPath[1].x - finalPath[0].x;
-						hellhoundComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
-						hellhoundComponent->dir2X = finalPath[2].x - finalPath[1].x;
-						hellhoundComponent->dir2Z = -(finalPath[2].z - finalPath[1].z);
+						hellhoundComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+						hellhoundComponent->dirZ = (float)-(finalPath[1].z - (float)finalPath[0].z);
+						hellhoundComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+						hellhoundComponent->dir2Z = (float)-(finalPath[2].z - (float)finalPath[1].z);
 						hellhoundComponent->followPath = true;
 					}
 					else

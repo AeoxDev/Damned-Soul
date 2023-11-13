@@ -45,7 +45,7 @@ struct UIBase
 struct UIText
 {
 	UIBase baseUI;
-	ML_String m_Text;
+	char* m_Text;
 
 	void SetText(const char* text, DSBOUNDS bounds);
 
@@ -56,7 +56,7 @@ struct UIImage
 {
 	UIBase baseUI;
 
-	ML_String m_fileName;
+	char* m_fileName;
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
 	void SetImage(const char* filepath, bool ignoreRename = false);
