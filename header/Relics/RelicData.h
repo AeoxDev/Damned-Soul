@@ -1,14 +1,19 @@
 #pragma once
 #include <cinttypes>
 
+#define RELIC_DATA_NAME_SIZE (32)
+#define RELIC_DATA_PATH_SIZE (96)
+#define RELIC_DATA_DESC_SIZE (359)
+
+
 struct RelicData
 {
 	// The name of the relic
-	char m_relicName[32] = "_NAME";
+	char m_relicName[RELIC_DATA_NAME_SIZE] = "_NAME";
 	// The filepath to the relics' icon
-	char m_filePath[96] = "_FILEPATH";
+	char m_filePath[RELIC_DATA_PATH_SIZE] = "_FILEPATH";
 	// The description of the relic
-	char m_description[359] = "_DESCRIPTION";
+	char m_description[RELIC_DATA_DESC_SIZE] = "_DESCRIPTION";
 	// The price of the relic
 	uint8_t m_price = 255;
 	// The type(s) of the relic
@@ -20,7 +25,7 @@ struct RelicData
 	void (*m_function)(void*) = nullptr;
 
 	RelicData() = default;
-	RelicData(const char name[32], const char path[96], const char desc[359], const uint8_t price, const uint64_t types, void (*init)(void*));
+	RelicData(const char name[RELIC_DATA_NAME_SIZE], const char path[RELIC_DATA_PATH_SIZE], const char desc[RELIC_DATA_DESC_SIZE], const uint8_t price, const uint64_t types, void (*init)(void*));
 	//RelicData(const RelicData& other);
 };
 

@@ -138,18 +138,18 @@ bool ControllerSystem::Update()
 			StatComponent* pStats = registry.GetComponent<StatComponent>(stateManager.player);
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
-			hitbox->circleHitbox[2].radius = 10000000.0f;
+			hitbox->circleHitbox[2].radius = 100.0f;
 			if (pStats->hazardModifier > -100.0f)
 			{
 				transform->mass += 100.0f;
 				player->killingSpree = 10000;
 				player->UpdateSouls(1000000);
-				hitbox->circleHitbox[2].radius += 10000000.0f;
+				hitbox->circleHitbox[2].radius += 100.0f;
 			}
 			else
 			{
 				transform->mass -= 100.0f;
-				hitbox->circleHitbox[2].radius -= 10000000.0f;
+				hitbox->circleHitbox[2].radius -= 100.0f;
 			}
 		}
 #endif // _DEBUG

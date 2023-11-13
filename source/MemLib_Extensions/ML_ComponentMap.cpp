@@ -2,7 +2,6 @@
 #include "MemLib\ML_ComponentMap.hpp"
 #include <stdexcept>
 #include <algorithm>
-#include "UIButton.h"
 
 #define BIT_64 (sizeof(size_t))
 #define PAIR_SIZE (m_tSize + BIT_64)
@@ -25,12 +24,6 @@ void swapData(void* first, void* second, const size_t pairSize)
 	// Copy temp to second
 	std::memcpy(second, temp, pairSize);
 }
-
-struct VIS_BOY
-{
-	size_t key;
-	UIButton model;
-};
 
 // Specialized quick sort implementation.
 // We know that all maps will begin at size 0, and that only one elment, at most, will ever be removed or added at the time.
@@ -75,10 +68,6 @@ void sortData(char* data, const uint32_t count, const size_t pairSize)
 	sortData(less, lessCount, pairSize);
 	// Recursive for the greater partition
 	sortData(more, moreCount, pairSize);
-
-	VIS_BOY& visualization1 = ((VIS_BOY*)data)[0];
-	VIS_BOY& visualization2 = ((VIS_BOY*)data)[1];
-	VIS_BOY& visualization3 = ((VIS_BOY*)data)[2];
 
 	// Copy less
 	std::memcpy(data, less, pairSize * lessCount);
