@@ -31,6 +31,9 @@
 #include "Relics\Defensive\SoulHealth.h"
 #include "Relics\Defensive\DemonSkin.h"
 #include "Relics\Defensive\SpikedSkin.h"
+#include "Relics\Defensive\UndeadFortitude.h"
+#include "Relics\Defensive\PainMirror.h"
+#include "Relics\Defensive\GoldenDuck.h"
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
 #include "Relics\Gadget\LightningGod.h"
@@ -216,6 +219,30 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SPIKED_SKIN::Initialize
+			),
+			RelicData(
+				/*Name*/		"Undead Fortitude",
+				/*Filepath*/	"RelicIcons\\Undead_Fortitude",
+				/*Description*/	"Reduces the damage you take by 10%-40%, based on how low your current health is",
+				/*Price*/		5,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	UNDEAD_FORTITUDE::Initialize
+			),
+			RelicData(
+				/*Name*/		"Pain Mirror",
+				/*Filepath*/	"RelicIcons\\Empty_Relic",
+				/*Description*/	"Whenever an enemy strikes you, it takes 30% of the damage it would deal (before reduction) as irresistable damage",
+				/*Price*/		10,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	PAIN_MIRROR::Initialize
+			),
+			RelicData(
+				/*Name*/		"Golden Duck",
+				/*Filepath*/	"RelicIcons\\Golden_Duck",
+				/*Description*/	"You are immune to up to 3 seconds of exposure to damaging hazards. Recharges while not in use",
+				/*Price*/		8,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	GOLDEN_DUCK::Initialize
 			),
 			//ENDOF: DEFENSIVE RELICS
 

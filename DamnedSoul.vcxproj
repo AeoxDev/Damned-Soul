@@ -198,6 +198,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DamageOverTimeComponent.cpp" />
+    <ClCompile Include="source\Relics\Defensive\GoldenDuck.cpp" />
+    <ClCompile Include="source\Relics\Defensive\PainMirror.cpp" />
+    <ClCompile Include="source\Relics\Defensive\UndeadFortitude.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
@@ -531,6 +534,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
+    <ClInclude Include="header\Relics\Defensive\GoldenDuck.h" />
+    <ClInclude Include="header\Relics\Defensive\PainMirror.h" />
+    <ClInclude Include="header\Relics\Defensive\UndeadFortitude.h" />
     <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h" />
     <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h" />
