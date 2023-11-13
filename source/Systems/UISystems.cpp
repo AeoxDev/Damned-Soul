@@ -14,7 +14,7 @@
 #include "States/StateManager.h"
 #include "States/StateEnums.h"
 
-//#define DEBUGHP
+//#define DEBUG_HP
 
 bool uiUpdated = true;
 
@@ -79,7 +79,7 @@ bool UIHealthSystem::Update()
 		}
 		else
 		{
-#ifdef DEBUGHP
+#ifdef DEBUG_HP
 			TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 
 			uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.9f - (counter * 0.15f)));
