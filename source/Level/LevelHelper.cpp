@@ -34,6 +34,14 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 3.f;
 		}
+		else if (eType == EnemyType::lucifer)
+		{
+			mass = 50.f;
+		}
+		else if (eType == EnemyType::frozen1)
+		{
+			mass = 500.f;
+		}
 	}
 	if (health == 6969.f)
 	{
@@ -52,6 +60,14 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::skeleton)
 		{
 			health = 100.f;
+		}
+		else if (eType == EnemyType::lucifer)
+		{
+			health = 300.f;
+		}
+		else if (eType == EnemyType::frozen1)
+		{
+			health = 200.f;
 		}
 	}
 	if (moveSpeed == 6969.f)
@@ -72,6 +88,14 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 10.f;
 		}
+		else if (eType == EnemyType::lucifer)
+		{
+			moveSpeed = 10.f;
+		}
+		else if (eType == EnemyType::frozen1)
+		{
+			moveSpeed = 0.1f;
+		}
 	}
 	if (damage == 6969.f)
 	{
@@ -90,6 +114,14 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::skeleton)
 		{
 			damage = 5.f;
+		}
+		else if (eType == EnemyType::lucifer)
+		{
+			damage = 15.f;
+		}
+		else if (eType == EnemyType::frozen1)
+		{
+			damage = 0.f;
 		}
 	}
 	if (attackSpeed == 6969.f)
@@ -110,24 +142,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.5f;
 		}
-	}
-	if (soulWorth == 6969.f)
-	{
-		if (eType == EnemyType::eye)
+		else if (eType == EnemyType::lucifer)
 		{
-			soulWorth = 2;
+			attackSpeed = 0.5f;
 		}
-		else if (eType == EnemyType::hellhound)
+		else if (eType == EnemyType::frozen1)
 		{
-			soulWorth = 3;
-		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			soulWorth = 4;
-		}
-		else if (eType == EnemyType::skeleton)
-		{
-			soulWorth = 1;
+			attackSpeed = 100.f;
 		}
 	}
 	if (soulWorth == 6969.f)
@@ -147,6 +168,14 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::skeleton)
 		{
 			soulWorth = 1;
+		}
+		else if (eType == EnemyType::lucifer)
+		{
+			soulWorth = 5;
+		}
+		else if (eType == EnemyType::frozen1)
+		{
+			soulWorth = 0;
 		}
 	}
 
@@ -222,6 +251,31 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold+=15;
 		}
+	}
+	else if (eType == EnemyType::lucifer)
+	{
+		stat->hazardModifier = 0.0f;
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		mod->gammaCorrection = 1.5f;
+		AnimationComponent* anim = registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<LuciferBehaviour>(entity, 0, 0);
+		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
+		if (player)
+		{
+			player->killThreshold++;
+		}
+	}
+	else if (eType == EnemyType::frozen1)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<FrozenBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::frozen1);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(HELLHOUND);
 	}
 	if (model != nullptr)
 	{

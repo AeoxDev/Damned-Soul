@@ -6,5 +6,7 @@ enum EnemyType
 	hellhound,
 	skeleton,
 	eye,
-	tempBoss
+	tempBoss,
+	lucifer,
+	frozen1
 };
