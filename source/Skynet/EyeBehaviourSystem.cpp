@@ -37,7 +37,7 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 	eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
-bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
+bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
 	//if you just attacked go back to circle behaviour
 	if (ec->attackTimer < enemyStats->GetAttackSpeed())
@@ -87,7 +87,7 @@ bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviou
 		dx /= magnitude;
 		dz /= magnitude;
 
-		CreateProjectile(etc, dx, dz);
+		CreateProjectile(entity, dx, dz);
 		return true;
 	}
 }
@@ -180,15 +180,6 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
-bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = enemy pos, B = player pos, tolerance = 
-{
-	if (aX < bX + tolerance && aX > bX - tolerance &&
-		aZ < bZ + tolerance && aZ > bZ - tolerance)
-		return true;
-	else
-		return false;
-}
-
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp)
 {
 	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(eID);
@@ -206,7 +197,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		std::mt19937 gen(rd());
 		// Define a uniform distribution for the range [-1.0, 1.0]
 		std::uniform_real_distribution<float> distribution(2.0f, 5.0f);
-		eyeComponent->specialBreakpoint = distribution(gen);
+		eyeComponent->specialBreakpoint = (int)distribution(gen);
 
 
 		//while charging disable hitboxes
@@ -379,7 +370,7 @@ bool EyeBehaviourSystem::Update()
 			}
 			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
-				if (!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
+				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
 					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
 			}
 			else // idle

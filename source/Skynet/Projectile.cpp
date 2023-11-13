@@ -2,23 +2,23 @@
 #include "Registry.h"
 #include "Model.h"
 
-#define PI 3.14159265
-
-EntityID& CreateProjectile(TransformComponent* origin, float directionX, float directionZ)
+void CreateProjectile(EntityID entity, float directionX, float directionZ)
 {
 	EntityID bullet = registry.CreateEntity();
 
 	//Model of the bullet
 	registry.AddComponent<ModelBonelessComponent>(bullet, LoadModel("AcidPlaceholder.mdl"));
 
+	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
+
 	//Transform
 	TransformComponent transform;
 	transform.mass = 1.0f;
 	
 	//Direction
-	transform.facingX = origin->facingX; 
+	transform.facingX = directionX; 
 	transform.facingY = 0;
-	transform.facingZ = origin->facingZ;
+	transform.facingZ = directionZ;
 	
 	//Position
 	transform.positionX = origin->positionX; 
@@ -33,16 +33,13 @@ EntityID& CreateProjectile(TransformComponent* origin, float directionX, float d
 
 	registry.AddComponent<TransformComponent>(bullet, transform);
 
-	registry.AddComponent<ProjectileComponent>(bullet, 0);
+	registry.AddComponent<ProjectileComponent>(bullet, 0, entity);
 
 	//Stats needed in order to deal damage
 	//Health, Speed, Damage, attackSpeed
-	registry.AddComponent<StatComponent>(bullet, 1.0f, 20.0f, 5.0f, 0.0f);
+	registry.AddComponent<StatComponent>(bullet, 1.0f, 40.0f, 5.0f, 0.0f);
 
 	
-
 	//Setup Bullet hitbox
 	SetupProjectileCollisionBox(bullet, 1.0f);
-
-	return bullet;
 }

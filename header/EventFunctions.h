@@ -71,3 +71,6 @@ void ResetCameraOffset(EntityID& entity, const int& index);
 void SpawnMainMenuEnemy(EntityID& entity, const int& index);
 //Main menu loop for spawning random enemies
 void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);
+
+void BeginDestroyProjectile(EntityID& entity, const int& index); 
+void EndDestroyProjectile(EntityID& entity, const int& index);

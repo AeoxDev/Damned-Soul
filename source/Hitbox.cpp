@@ -791,19 +791,17 @@ void SetupProjectileCollisionBox(EntityID& entity, float radius)
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
 	int hID = CreateHitbox(entity, radius * 0.5f, 0.f, 0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
-	SetHitboxIsEnemy(entity, hID);
 	SetHitboxHitPlayer(entity, hID);
 	SetHitboxActive(entity, hID);
-	SetHitboxHitWall(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
-	SetCollisionEvent(entity, sID, SoftCollision);
-	SetHitboxIsEnemy(entity, sID);
+	SetCollisionEvent(entity, sID, ProjectileAttackCollision);
 	SetHitboxHitPlayer(entity, sID);
 	SetHitboxActive(entity, sID);
 	//SetHitboxCanTakeDamage(entity, sID);
 
-	SetHitboxCanDealDamage(entity, sID);
+	SetHitboxCanDealDamage(entity, sID, true);
 }
 
 bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID)

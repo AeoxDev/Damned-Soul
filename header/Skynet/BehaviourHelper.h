@@ -33,4 +33,4 @@ PathfindingMap CalculateGlobalMapValuesSkeleton(TransformComponent* playerTransf
 
 ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
-EntityID& CreateProjectile(TransformComponent* origin, float directionX, float directionZ);
+void CreateProjectile(EntityID entity, float directionX, float directionZ);
