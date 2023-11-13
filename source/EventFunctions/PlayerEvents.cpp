@@ -109,6 +109,7 @@ void PlayerAttackSound(EntityID& entity, const int& index)
 
 	sfx->Play(Player_Attack, Channel_Base);
 	anim->aAnimTimeFactor = stats->GetAttackSpeed();
+	anim->aAnimTime = 0.0f;
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
@@ -123,9 +124,6 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	// Branchless reset
-	//ANIM_BRANCHLESS(anim);
-	//anim->aAnimTime += (float)(1.0f < anim->aAnimTime) * int(anim->aAnimTime);
 	float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack animation
