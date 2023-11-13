@@ -1,5 +1,7 @@
 #pragma once
 
+//#define DEBUG_HP
+
 //Interaction
 #include "OnHoverComponent.h"
 #include "OnClickComponent.h"

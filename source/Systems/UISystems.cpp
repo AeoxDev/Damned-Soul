@@ -14,8 +14,6 @@
 #include "States/StateManager.h"
 #include "States/StateEnums.h"
 
-//#define DEBUG_HP
-
 bool uiUpdated = true;
 
 void RedrawUI()

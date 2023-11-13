@@ -160,11 +160,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	StatComponent* stat = registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
 	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
 
+#ifdef DEBUG_HP
 	// UI
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(entity);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(newMini);
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+#endif
 
 	//Model
 
