@@ -162,8 +162,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 #ifdef DEBUG_HP
 	// UI
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(newMini);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(entity);
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
