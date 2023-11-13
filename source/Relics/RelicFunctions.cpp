@@ -143,7 +143,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Adrenaline Rush",
-				/*Filepath*/	"RelicIcons\\Adrenaline_Rush.png",
+				/*Filepath*/	"RelicIcons\\Adrenaline_Rush",
 				/*Description*/	"You attack twice as fast for 1 second after being hit",
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
