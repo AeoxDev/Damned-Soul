@@ -18,7 +18,11 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
-class ButtonSystem : public System
+class OnClickSystem : public System
+{
+	bool Update();
+};
+class OnHoverSystem : public System
 {
 	bool Update();
 };
@@ -59,10 +63,6 @@ class UIRelicsSystem : public System
 {
 	bool Update();
 };
-//class UIGameLevelSystem : public System
-//{
-//	bool Update();
-//};
 class UIShopSystem : public System
 {
 	bool Update();

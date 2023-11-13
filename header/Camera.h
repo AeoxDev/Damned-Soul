@@ -33,6 +33,7 @@ namespace Camera
 	const DirectX::XMVECTOR GetLookAt();
 	const DirectX::XMVECTOR GetUp();
 	const DirectX::XMVECTOR GetRotation();
+	const float GetRotationX();
 	float GetFOV();
 
 	const DirectX::XMMATRIX GetView();

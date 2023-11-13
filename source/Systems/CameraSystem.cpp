@@ -17,6 +17,20 @@ bool PointOfInterestSystem::Update()
 	if (gameSpeed == 0.0f)
 		return true;
 
+	//DEBUG Controls
+#ifdef _DEBUG
+	if (keyInput[SCANCODE_UP] == down)
+	{
+		Camera::AdjustRotation(-1.0f * GetDeltaTime(), 0.0f, 0.0f);
+	}
+	if (keyInput[SCANCODE_DOWN] == down)
+	{
+		Camera::AdjustRotation(1.0f * GetDeltaTime(), 0.0f, 0.0f);
+	}
+#endif // _DEBUG
+
+	
+
 	PointOfInterestComponent* poiCo = nullptr;
 	TransformComponent* tCo = nullptr;
 	DirectX::XMVECTOR lookVector = Camera::GetLookAt();

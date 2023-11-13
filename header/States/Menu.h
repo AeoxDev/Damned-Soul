@@ -4,13 +4,10 @@
 
 struct Menu
 {
-	bool m_active = false;
 
 	void Setup();
 
 	void Input();
-	void Update();
-	void ComputeShaders();
 
 	void SetupButtons();
 	void SetupImages();

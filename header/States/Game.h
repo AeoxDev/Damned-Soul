@@ -2,6 +2,7 @@
 
 struct GameScene
 {
+
 	void Input(bool isShop = false);
 	void Update();
 	void ComputeShaders();
