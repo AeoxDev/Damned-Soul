@@ -39,19 +39,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			health = 60.f;
+			health = 15.f;//60.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			health = 150.f;
+			health = 35.f;//150.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 400.f;
+			health = 100;//400.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			health = 100.f;
+			health = 25.f; //100.f;
 		}
 	}
 	if (moveSpeed == 6969.f)
@@ -77,11 +77,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			damage = 10.f;
+			damage = 12.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			damage = 10.f;
+			damage = 12.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -89,7 +89,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			damage = 5.f;
+			damage = 8.f;
 		}
 	}
 	if (attackSpeed == 6969.f)

@@ -24,14 +24,14 @@ void StatComponent::ZeroBonusStats()
 	m_bonusKnockback = 0;
 }
 
-float StatComponent::GetHealth() const
+int64_t StatComponent::GetHealth() const
 {
-	return this->m_currentHealth;
+	return ceil(this->m_currentHealth);
 }
 
-float StatComponent::GetMaxHealth() const
+int64_t StatComponent::GetMaxHealth() const
 {
-	return m_baseHealth + m_bonusHealth;
+	return ceil(m_baseHealth + m_bonusHealth);
 }
 
 float StatComponent::GetHealthFraction() const

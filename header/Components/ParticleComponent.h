@@ -10,7 +10,8 @@ enum ComputeShaders
 	IMPLOSION = 4,
 	RAIN = 5,
 	SINUS = 6,
-	LIGHTNING = 7
+	LIGHTNING = 7,
+	CIRCLE_FIELD = 8
 };
 
 struct ParticleComponent
@@ -25,6 +26,10 @@ struct ParticleComponent
 
 	// Overload for FlameThrower
 	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float rotationY, float v0X, float v0Z, float v1X, float v1Z, float v2X, float v2Z,  ComputeShaders pattern);
+	
+	// Overload for Spiral Field
+	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float effectRadius, ComputeShaders pattern);
+
 	~ParticleComponent();
 
 
