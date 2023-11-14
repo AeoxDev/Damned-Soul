@@ -8,9 +8,11 @@ struct EyeBehaviour
 	float attackTimer = 0.f;
 	float attackStunDurationCounter = 0.f;
 	float attackStunDuration = 2.0f;
+	float chargeTimer = 0.0f;
+	float aimTimer = 0.0f;
+	float aimDuration = 0.4f;
 	float facingX = 0.0f;
 	float facingZ = 0.0f;
-	float chargeTimer = 0.0f;
 	float targetX = 0.0f;
 	float targetZ = 0.0f;
 	float changeDirX = 0.0f;
@@ -18,7 +20,7 @@ struct EyeBehaviour
 
 
 	int specialCounter = 0;		//how many attacks since last special
-	int specialBreakpoint = 5;	//how many attacks are needed for next special
+	int specialBreakpoint = 4;	//how many attacks are needed for next special
 
 	bool clockwiseCircle = true;
 	bool circleBehaviour = false;

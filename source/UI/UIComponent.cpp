@@ -156,12 +156,14 @@ float UIBase::GetOpacity() const
 
 void UIText::SetText(const char* text, DSBOUNDS bounds)
 {
-	m_Text = text;
+	m_Text = _strdup(text);
 
 	//ui.GetTextFormat(). doesnt give me the functions send help
 
+	ML_String s = m_Text;
+
 	if (bounds.right == 0)
-		baseUI.m_OriginalBounds = { 0, 0, 20.0f * m_Text.length(), 25.0f };
+		baseUI.m_OriginalBounds = { 0, 0, 20.0f * s.length(), 25.0f};
 	else
 		baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
 }
@@ -175,7 +177,8 @@ void UIText::Draw()
 		D2D1_RECT_F tempBounds;
 
 		SetBounds(tempBounds, baseUI.m_CurrentBounds);
-		std::wstring textAsWString(m_Text.begin(), m_Text.end());
+		ML_String s = m_Text;
+		std::wstring textAsWString(s.begin(), s.end());
 		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), ui.GetTextFormat(), tempBounds, ui.GetBrush());
 	}
 }
@@ -187,7 +190,7 @@ void UIImage::SetImage(const char* filepath, bool ignoreRename)
 		SetupImage(filepath, m_Bitmap);
 
 		if (!ignoreRename)
-			m_fileName = filepath;
+			m_fileName = _strdup(filepath);
 
 		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
 	}
@@ -223,11 +226,11 @@ void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT
 
 	if (text != "")
 	{
-		m_Text.SetText(text, m_BaseImage.baseUI.GetOriginalBounds());
-		m_Text.baseUI.Setup(position, scale, rotation, visibility, opacity);
+		m_BaseText.SetText(text, m_BaseImage.baseUI.GetOriginalBounds());
+		m_BaseText.baseUI.Setup(position, scale, rotation, visibility, opacity);
 	}
 	else
-		m_Text.baseUI.SetVisibility(false);
+		m_BaseText.baseUI.SetVisibility(false);
 }
 
 void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale, bool translateText)
@@ -241,12 +244,25 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 
 	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale);
 
-	if (translateText)
+	if (translateText && m_BaseText.baseUI.GetVisibility())
 	{
-		m_Text.SetText(m_Text.m_Text.c_str(), m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds());
-		m_Text.baseUI.SetScale(m_Text.baseUI.GetScale());
-		m_Text.baseUI.SetPosition(m_Text.baseUI.GetPosition());
+		m_BaseText.SetText(m_BaseText.m_Text, m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds());
+		m_BaseText.baseUI.SetScale(m_BaseText.baseUI.GetScale());
+		m_BaseText.baseUI.SetPosition(m_BaseText.baseUI.GetPosition());
 	}
+}
+
+void UIComponent::AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale)
+{
+	m_Texts.push_back();
+
+	m_Texts[m_Texts.size() - 1].baseUI.Setup(position, scale);
+	
+	m_Texts[m_Texts.size() - 1].SetText(text, textBounds);
+
+	m_Texts[m_Texts.size() - 1].SetText(m_Texts[m_Texts.size() - 1].m_Text, textBounds);
+	m_Texts[m_Texts.size() - 1].baseUI.SetScale(m_Texts[m_Texts.size() - 1].baseUI.GetScale());
+	m_Texts[m_Texts.size() - 1].baseUI.SetPosition(m_Texts[m_Texts.size() - 1].baseUI.GetPosition());
 }
 
 void UIComponent::Release()
@@ -255,7 +271,6 @@ void UIComponent::Release()
 	{
 		m_BaseImage.m_Bitmap->Release();
 		m_BaseImage.m_Bitmap = nullptr;
-		m_BaseImage.m_fileName.~ML_String();
 	}
 
 	for (UIImage image : m_Images)
@@ -264,10 +279,9 @@ void UIComponent::Release()
 		{
 			image.m_Bitmap->Release();
 			image.m_Bitmap = nullptr;
-			image.m_fileName.~ML_String();
 		}
 	}
 
-	m_Text.m_Text.~ML_String();
+	m_Texts.~ML_Vector();
 	m_Images.~ML_Vector();
 }

@@ -8,6 +8,9 @@
 #include "Model.h"
 #include "Levels\LevelHelper.h"
 
+#include "UIComponents.h"
+
+
 //void EnemyExclusion(EntityID& entity)
 //{
 //	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -98,7 +101,13 @@ void CreateMini(const EntityID& original, const float offsetValue)
 	registry.AddComponent<EnemyComponent>(newMini, 2, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("PHBoss.mdl"));
 
-	
+#ifdef DEBUG_HP
+	// UI
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(newMini);
+	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+#endif
 
 	////Set hitbox
 	//float newScaleHitBox = 0.9f;
@@ -356,4 +365,22 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	}
 	float time = (float)(rand() % 8);
 	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+}
+
+void BeginDestroyProjectile(EntityID& entity, const int& index)
+{
+	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
+	if (model != nullptr)
+	{
+		ReleaseModel(model->model);
+	}
+	registry.RemoveComponent<ModelBonelessComponent>(entity);
+
+	RemoveHitbox(entity, 0);
+	RemoveHitbox(entity, 1);
+}
+
+void EndDestroyProjectile(EntityID& entity, const int& index)
+{
+	registry.DestroyEntity(entity);
 }

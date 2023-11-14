@@ -142,8 +142,8 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 
+	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
-
 	
 	//Input based CPU 
 	systems.push_back(new OnClickSystem());
@@ -158,6 +158,7 @@ int StateManager::Setup()
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
+	systems.push_back(new ProjectileSystem());
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
@@ -180,6 +181,7 @@ int StateManager::Setup()
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
+	
 	systems.push_back(new UIShopSystem());
 
 	return 0;

@@ -8,6 +8,9 @@ namespace UIFunc
 	// Start the next level
 	void LoadNextLevel(void* args, int a);
 
+	// Go from start menu to play
+	void MainMenu_Start(void* args, int a);
+
 	// Go from start menu to settings
 	void MainMenu_Settings(void* args, int a);
 

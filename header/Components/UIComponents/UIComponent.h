@@ -45,7 +45,7 @@ struct UIBase
 struct UIText
 {
 	UIBase baseUI;
-	ML_String m_Text;
+	char* m_Text;
 
 	void SetText(const char* text, DSBOUNDS bounds);
 
@@ -56,7 +56,7 @@ struct UIImage
 {
 	UIBase baseUI;
 
-	ML_String m_fileName;
+	char* m_fileName;
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
 	void SetImage(const char* filepath, bool ignoreRename = false);
@@ -67,13 +67,16 @@ struct UIImage
 struct UIComponent
 {
 	UIImage m_BaseImage;
+	UIText m_BaseText;
 	ML_Vector<UIImage> m_Images;
-	UIText m_Text;
+	ML_Vector<UIText> m_Texts;
 
 	void Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
 	void AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
+
+	void AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f });
 
 	void Release();
 };

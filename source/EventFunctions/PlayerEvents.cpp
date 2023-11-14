@@ -91,10 +91,40 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 }
 
-void PlayerAttackSound(EntityID& entity, const int& index)
+void PlayerEndAttack(EntityID& entity, const int& index)
+{
+	//Smile
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	anim->aAnimTimeFactor = 1.f;
+
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+	player->timeSinceLastAttack = 0.0f;
+	player->isAttacking = false;
+}
+
+void PlayerBeginAttack(EntityID& entity, const int& index)
 {
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
+	if (!sfx || !anim || !stats || !aac || !player)
+		return;
+
 	sfx->Play(Player_Attack, Channel_Base);
+
+	//Animations have 1 second default duration and as such we scale the speed of the animation here so it fits the duration we pass in
+	//Duration * X = 1.0f
+	//1.0f / Duration = X
+	float speedDiff = stats->GetAttackSpeed() / aac->duration;
+
+	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
+	anim->aAnimTimeFactor = speedDiff; //Cracked
+	anim->aAnimTime = 0.0f;
+
+	player->isAttacking = true;
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
@@ -109,8 +139,6 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	// Branchless reset
-	anim->aAnimTime += (float)(1 < anim->aAnimTime) * int(anim->aAnimTime);
 	float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack animation
@@ -146,11 +174,11 @@ void PlayerDash(EntityID& entity, const int& index)
 
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_WALK;
-	anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
 	anim->aAnimIdx = 1;
 
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
-	anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
+	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 	
 	//Move player quickly in the relevant direction
 	transform->positionX += dac->x * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
