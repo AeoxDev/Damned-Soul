@@ -222,7 +222,7 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	//return returnMap;
 }
 
-TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform)
+TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange)
 {
 	
 
@@ -233,7 +233,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 	float distance = 1.f;
 	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
-	while (!(distance > 20.f && distance < 40.f))
+	while (!(distance > minRange && distance < maxRange))
 	{
 		bool legal = false;
 		while (!legal)

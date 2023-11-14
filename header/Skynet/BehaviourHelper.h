@@ -32,7 +32,7 @@ float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z);
 void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform);
 void CalculateGlobalMapValuesHellhound(PathfindingMap* map);
 
-TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* tempTransform);
+TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* tempTransform, float minRange, float maxRange);
 
 ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
