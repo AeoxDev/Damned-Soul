@@ -11,8 +11,8 @@ struct LuciferBehaviour
 
 
 
-	float spawnCounter = 10.f;
-	float spawnTiming = 15.f;
+	float specialCounter = 2.f;
+	float specialTiming = 10.f;
 
 
 	//how often pathfinding
@@ -31,7 +31,10 @@ struct LuciferBehaviour
 	float fx = 0.f;
 	float fz = 0.f;
 
-
+	//special attacks variables
+	bool nextSpecialIsSpawn = false;
+	bool isChargeCharge = false;
+	bool isJumpJump = false;
 
 
 	// MELEE VARIABLES
@@ -40,4 +43,7 @@ struct LuciferBehaviour
 	const float attackStunDuration = 1.5f;
 	float meleeDistance = 3.5f;
 	int attackHitboxID = 2;
+
+
+	
 };

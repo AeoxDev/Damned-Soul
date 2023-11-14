@@ -137,9 +137,25 @@ bool LuciferBehaviourSystem::Update()
 		{
 			ML_Vector<Node> finalPath;
 			luciferComponent->updatePathCounter += GetDeltaTime();
-			luciferComponent->spawnCounter += GetDeltaTime();
+			if(luciferComponent->isChargeCharge == false && luciferComponent->isJumpJump == false)
+				luciferComponent->specialCounter += GetDeltaTime();
 			float distance = Calculate2dDistance(luciferTransformComponent->positionX, luciferTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			luciferComponent->attackStunDurationCounter += GetDeltaTime();
+
+			if (luciferComponent->isJumpJump)
+			{
+
+			}
+			else if (luciferComponent->isChargeCharge)
+			{
+				// runs towards the player dealing
+				// damage if player is close.
+				// Ends after 10 seconds or
+				// if taken enough damage
+
+				// first we find a target, then we dash
+
+			}
 
 			if (luciferComponent->attackStunDurationCounter <= luciferComponent->attackStunDuration)
 			{
@@ -157,12 +173,10 @@ bool LuciferBehaviourSystem::Update()
 				SetHitboxCanDealDamage(enemyEntity, luciferComponent->attackHitboxID, false);
 			}
 
-
-
-			if (luciferComponent->spawnCounter >= luciferComponent->spawnTiming) // SPAWN ENEMIES
+			if (luciferComponent->nextSpecialIsSpawn) // SPAWN ENEMIES
 			{
+				luciferComponent->nextSpecialIsSpawn = false;
 				//spawn an ice enemy
-				luciferComponent->spawnCounter = 0.f;
 				int levelOfDamage = 0;
 
 				if (enemyStats->GetHealth() > enemyStats->GetMaxHealth() / 3.f * 2.f) //least hurt, little power
@@ -183,6 +197,28 @@ bool LuciferBehaviourSystem::Update()
 					TransformComponent tran = FindRetreatTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
 					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ); 
 				}
+			}
+			else if (luciferComponent->specialCounter >= luciferComponent->specialTiming)
+			{
+				luciferComponent->specialCounter = 0.f;
+				luciferComponent->nextSpecialIsSpawn = true;
+				int whichAttack = rand() % 2; // 0 or 1
+				if (whichAttack == 0) //  charge run
+				{
+					luciferComponent->isChargeCharge = true;
+					// runs towards the player dealing
+					// damage if player is close.
+					// Ends after 10 seconds or
+					// if taken enough damage
+				}
+				else // jump jump
+				{
+					luciferComponent->isJumpJump = true;
+					// jumps out of the playspace and lands
+					// in a safe spot close to the player and 
+					// sends out a large shockwave 
+				}
+				//after either one of these, the boss goes into a daze and then summons enemies!
 			}
 			else if (distance < luciferComponent->meleeDistance || luciferComponent->attackTimer > 0.0f) // melee attack
 			{
