@@ -8,5 +8,7 @@ enum EnemyType
 	eye,
 	tempBoss,
 	lucifer,
-	frozen1
+	frozenHellhound, 
+	frozenImp, 
+	frozenEye
 };

@@ -15,6 +15,9 @@ struct ModelBonelessComponent
 	//int model;
 	//Add more stuff for models
 	//int texture;
+
+	float baseColorMultiplicativeRed = 1.0f, baseColorMultiplicativeGreen = 1.0f, baseColorMultiplicativeBlue = 1.0f;
+	float baseColorAdditiveRed = 0.0f, baseColorAdditiveGreen = 0.0f, baseColorAdditiveBlue = 0.0f;
 };
 
 struct ModelSkeletonComponent
@@ -25,4 +28,8 @@ struct ModelSkeletonComponent
 	float colorAdditiveRed = 0.0f, colorAdditiveGreen = 0.0f, colorAdditiveBlue = 0.0f;
 	//Gamma correction per model.
 	float gammaCorrection = 1.0f;
+
+	//base values for hue (hue hue hue hue)
+	float baseColorMultiplicativeRed = 1.0f, baseColorMultiplicativeGreen = 1.0f, baseColorMultiplicativeBlue = 1.0f;
+	float baseColorAdditiveRed = 0.0f, baseColorAdditiveGreen = 0.0f, baseColorAdditiveBlue = 0.0f;
 };

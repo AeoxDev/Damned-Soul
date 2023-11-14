@@ -99,7 +99,7 @@ bool LuciferBehaviourSystem::Update()
 				{
 					int xPos = rand() % 60 - 30;
 					int zPos = rand() % 60 - 30;
-					SetupEnemy(EnemyType::frozen1, (float)xPos, 0.f, (float)zPos);
+					SetupEnemy(EnemyType::frozenHellhound, (float)xPos, 0.f, (float)zPos);
 				}
 			}
 

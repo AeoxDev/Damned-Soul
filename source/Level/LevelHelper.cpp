@@ -38,7 +38,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 50.f;
 		}
-		else if (eType == EnemyType::frozen1)
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
 			mass = 500.f;
 		}
@@ -65,7 +65,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 300.f;
 		}
-		else if (eType == EnemyType::frozen1)
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
 			health = 200.f;
 		}
@@ -92,7 +92,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 10.f;
 		}
-		else if (eType == EnemyType::frozen1)
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
 			moveSpeed = 0.1f;
 		}
@@ -119,7 +119,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 15.f;
 		}
-		else if (eType == EnemyType::frozen1)
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
 			damage = 0.f;
 		}
@@ -146,7 +146,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.5f;
 		}
-		else if (eType == EnemyType::frozen1)
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
 			attackSpeed = 100.f;
 		}
@@ -173,7 +173,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 5;
 		}
-		else if (eType == EnemyType::frozen1)
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
 			soulWorth = 0;
 		}
@@ -265,16 +265,42 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 	}
-	else if (eType == EnemyType::frozen1)
+	else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 	{
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		model->colorMultiplicativeRed = 0.4f;
+		model->colorMultiplicativeBlue = 0.4f;
+		model->colorMultiplicativeGreen = 0.4f;
+		model->colorAdditiveRed = 0.4f;
+		model->colorAdditiveBlue = 0.8f;
+		model->colorAdditiveGreen = 0.4f;
+
+		model->baseColorMultiplicativeRed = 0.4f;
+		model->baseColorMultiplicativeBlue = 0.4f;
+		model->baseColorMultiplicativeGreen = 0.4f;
+		model->baseColorAdditiveRed = 0.4f;
+		model->baseColorAdditiveGreen = 0.4f;
+		model->baseColorAdditiveBlue = 0.8f;
+
 		registry.AddComponent<AnimationComponent>(entity);
-		registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::frozen1);
+		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::frozenHellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		if (eType == EnemyType::frozenHellhound)
+		{
+			behev->type = EnemyType::frozenHellhound;
+		}
+		else if (eType == EnemyType::frozenImp)
+		{
+			behev->type = EnemyType::frozenImp; 
+		}
+		if (eType == EnemyType::frozenEye)
+		{
+			behev->type = EnemyType::frozenEye;
+		}
 		scp->Load(HELLHOUND);
 	}
 	if (model != nullptr)

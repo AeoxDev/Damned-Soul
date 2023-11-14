@@ -202,7 +202,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
-    <ClCompile Include="source\Skynet\LuciferBehaviour.cpp" />
+    <ClCompile Include="source\Skynet\LuciferBehaviourSystem.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
