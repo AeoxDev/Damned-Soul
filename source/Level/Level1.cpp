@@ -26,14 +26,14 @@ void LoadLevel1()
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
-	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
-	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
+	CreatePlayer(0.0f, 0.0f, 0.0f, 5.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
+	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
+	/*SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
 	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
 	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
-
+	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);*/
+	SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
 	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
 	//5 souls total
 
@@ -72,7 +72,7 @@ void LoadLevel1()
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.0f, 0.8f));
+	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);

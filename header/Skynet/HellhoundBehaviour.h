@@ -96,4 +96,9 @@ struct HellhoundBehaviour
 	float fz = 0.f;
 
 
+
+	//charge variables
+	float chargeTimeLimit = 3.f;
+	float chargeCounter = 0.f;
+
 };

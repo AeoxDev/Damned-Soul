@@ -33,7 +33,7 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 void CalculateGlobalMapValuesHellhound(PathfindingMap* map);
 void CalculateGlobalMapValuesImp(PathfindingMap* map);
 
-TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* tempTransform);
+TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* tempTransform, float minRange, float maxRange);
 
 ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 

@@ -28,7 +28,8 @@
 #include "Skynet\HellhoundBehaviour.h"
 #include "Skynet\EyeBehaviour.h"
 #include "Skynet\TempBossBehaviour.h"
-#include "Skynet\ImpBehaviour.h"
+#include "Skynet\LuciferBehaviour.h"
+#include "Skynet\FrozenBehaviour.h"
 
 //Misc Combat Components
 #include "DamageOverTimeComponent.h"

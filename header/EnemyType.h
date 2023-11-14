@@ -9,4 +9,8 @@ enum EnemyType
 	imp,
 	minotaur,
 	tempBoss,
+	lucifer,
+	frozenHellhound, 
+	frozenImp, 
+	frozenEye
 };

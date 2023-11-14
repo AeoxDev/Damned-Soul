@@ -38,6 +38,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			mass = 1.f;
+		else if (eType == EnemyType::lucifer)
+		{
+			mass = 50.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			mass = 500.f;
 		}
 	}
 	if (health == 6969.f)
@@ -61,6 +68,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			health = 20.f;
+		else if (eType == EnemyType::lucifer)
+		{
+			health = 300.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			health = 200.f;
 		}
 	}
 	if (moveSpeed == 6969.f)
@@ -84,6 +98,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			moveSpeed = 1.f;
+		else if (eType == EnemyType::lucifer)
+		{
+			moveSpeed = 10.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			moveSpeed = 0.1f;
 		}
 	}
 	if (damage == 6969.f)
@@ -107,6 +128,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			damage = 10.f;
+		else if (eType == EnemyType::lucifer)
+		{
+			damage = 15.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			damage = 0.f;
 		}
 	}
 	if (attackSpeed == 6969.f)
@@ -130,6 +158,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			attackSpeed = 0.8f;
+		else if (eType == EnemyType::lucifer)
+		{
+			attackSpeed = 0.5f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			attackSpeed = 100.f;
 		}
 	}
 	if (soulWorth == 6969.f)
@@ -153,6 +188,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			soulWorth = 3;
+		else if (eType == EnemyType::lucifer)
+		{
+			soulWorth = 5;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			soulWorth = 0;
 		}
 	}
 	if (eType == EnemyType::tempBoss)
@@ -258,10 +300,56 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(IMP);
+	else if (eType == EnemyType::lucifer)
+	{
+		stat->hazardModifier = 0.0f;
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		mod->gammaCorrection = 1.5f;
+		AnimationComponent* anim = registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<LuciferBehaviour>(entity, 0, 0);
+		SetupEnemyCollisionBox(entity, 1.2f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
 			player->killThreshold++;
 		}
+	}
+	else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		model->colorMultiplicativeRed = 0.4f;
+		model->colorMultiplicativeBlue = 0.4f;
+		model->colorMultiplicativeGreen = 0.4f;
+		model->colorAdditiveRed = 0.4f;
+		model->colorAdditiveBlue = 0.8f;
+		model->colorAdditiveGreen = 0.4f;
+
+		model->baseColorMultiplicativeRed = 0.4f;
+		model->baseColorMultiplicativeBlue = 0.4f;
+		model->baseColorMultiplicativeGreen = 0.4f;
+		model->baseColorAdditiveRed = 0.4f;
+		model->baseColorAdditiveGreen = 0.4f;
+		model->baseColorAdditiveBlue = 0.8f;
+
+		registry.AddComponent<AnimationComponent>(entity);
+		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::frozenHellhound);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		if (eType == EnemyType::frozenHellhound)
+		{
+			behev->type = EnemyType::frozenHellhound;
+		}
+		else if (eType == EnemyType::frozenImp)
+		{
+			behev->type = EnemyType::frozenImp; 
+		}
+		if (eType == EnemyType::frozenEye)
+		{
+			behev->type = EnemyType::frozenEye;
+		}
+		scp->Load(HELLHOUND);
 	}
 	if (model != nullptr)
 	{

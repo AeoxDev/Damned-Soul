@@ -281,6 +281,8 @@ void SplitBoss(EntityID& entity, const int& index)
 
 void RemoveEnemy(EntityID& entity, const int& index)
 {
+
+
 	// Eat them souls
 	for (auto player : View<PlayerComponent>(registry))
 	{
