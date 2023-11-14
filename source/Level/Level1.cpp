@@ -13,7 +13,6 @@
 #include "States\StateManager.h"
 #include "UIButtonFunctions.h"
 
-
 void LoadLevel1()
 {
 	
@@ -72,7 +71,7 @@ void LoadLevel1()
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.0f, 0.8f));
+	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);

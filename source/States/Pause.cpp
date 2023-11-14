@@ -93,11 +93,9 @@ void PauseState::SetupButtons()
 
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
 
-		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
-		buttonSound->Load(MENU);
 	}
 
 }

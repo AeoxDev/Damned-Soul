@@ -92,6 +92,7 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 //#ifdef _DEBUG
 	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
 	{
+		NewSecond();
 		return;
 	}
 	SetWindowTitle(title + extra);
