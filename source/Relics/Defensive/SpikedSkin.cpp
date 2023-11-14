@@ -35,7 +35,7 @@ void SPIKED_SKIN::Retaliation(void* data)
 	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
 	// Check if it is the right entity that is attacking
-	if (SPIKED_SKIN::_OWNER.index != input->defender.index)
+	if (SPIKED_SKIN::_OWNER.index != input->defender.index || input->attacker.index < 0)
 		return;
 
 	// The person who's fist hurts a lot
