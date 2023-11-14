@@ -1,7 +1,9 @@
 #pragma once
 #include "ComponentHelper.h"
-#include "PointOfInterestComponent.h"
 #include "Audio.h"
+//Camera
+#include "PointOfInterestComponent.h"
+#include "CutsceneComponent.h"
 
 // Renderable Components
 #include "ModelComponent.h"

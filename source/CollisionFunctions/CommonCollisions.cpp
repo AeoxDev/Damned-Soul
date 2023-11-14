@@ -419,15 +419,19 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
 	
-	AddTimedEventComponentStartEnd(params.entity1, 0.0f, BeginDestroyProjectile, 1.0f, EndDestroyProjectile);
+	AddTimedEventComponentStartEnd(params.entity1, 0.0f, BeginDestroyProjectile, 1.0f, EndDestroyProjectile, 0, 2);
 }
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
 	//next level is shop so we set the paramaters in statemanager as so
-	SetInPlay(false);
-	SetInShop(true);
+	if (params.entity2.index == stateManager.player.index)
+	{
+		SetInPlay(false);
+		SetInShop(true);
+
+		LoadLevel(++stateManager.activeLevel);
+	}
 	
-	LoadLevel(++stateManager.activeLevel);
 }
 

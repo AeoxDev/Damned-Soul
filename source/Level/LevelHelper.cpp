@@ -258,8 +258,11 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->colorMultiplicativeGreen = 1.25f;
 	model->colorMultiplicativeBlue = 1.25f;
 	model->gammaCorrection = 1.5f;
-	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
-
+	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+	animation->aAnim = ANIMATION_IDLE;
+	animation->aAnimTime = 0.5f;
+	animation->aAnimIdx = 0;
+	animation->aAnimTimeFactor = 1.0f;
 	//stateManager.player Sounds
 	LoadPlayerSounds();
 

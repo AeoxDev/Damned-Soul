@@ -37,7 +37,10 @@ void PAIN_MIRROR::Retaliation(void* data)
 	// Check if it is the right entity that is attacking
 	if (PAIN_MIRROR::_OWNER.index != input->defender.index)
 		return;
-
+	if (input->attacker.index == -1)//Static hazard
+	{
+		return;
+	}
 	// The person who's fist hurts a lot
 	StatComponent* owMyFistHurts = registry.GetComponent<StatComponent>(input->attacker);
 
