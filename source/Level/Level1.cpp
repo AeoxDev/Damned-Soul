@@ -18,19 +18,16 @@ void LoadLevel1()
 {
 	
 	EntityID stage = registry.CreateEntity();
-
-	EntityID playerHealth = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	EntityID playerSouls = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	
 	EntityID mouse = registry.CreateEntity();
+	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
-	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
-	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
+	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
+	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
 	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
 	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
@@ -57,32 +54,10 @@ void LoadLevel1()
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, emptyTexture, emptyTexture);*/
 
-	UIComponent* ui1 = registry.AddComponent<UIComponent>(playerHealth);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(playerHealth);
-	ui1->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
-	ui1->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
-
-	UIComponent* ui2 = registry.AddComponent<UIComponent>(playerSouls);
-	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(playerSouls);
-	ui2->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.6f));
-
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 1);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*RelicHolderComponent* pRhc = registry.AddComponent<RelicHolderComponent>(player, "Relic Holder");
-
-	UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
 	RenderGeometryIndependentCollision(stage);
 	
 	//Finally set the collision boxes
 
-	
-
-	
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
@@ -95,6 +70,12 @@ void LoadLevel1()
 	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.0f, 0.8f));
+	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+
+	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);
 
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 

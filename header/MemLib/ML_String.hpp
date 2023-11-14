@@ -5,10 +5,6 @@
 #include <stdexcept>
 
 
-//#ifndef ML_ZeroMemory
-//#define ML_ZeroMemory(dest, len) memset((dest), 0, (len))
-//#endif
-
 struct ML_String
 {
 private:
@@ -18,18 +14,6 @@ private:
 	uint32_t m_len;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
 	uint32_t m_capacity;
-
-	//void validate_this()
-	//{
-	//	assert(this);
-	//	if (m_data.IsNullptr())
-	//	{
-	//		uint32_t temp = m_capacity;
-	//		m_capacity = 0;
-	//		m_len = 0;
-	//		reserve(32);
-	//	}
-	//}
 
 public:
 	char* begin() const

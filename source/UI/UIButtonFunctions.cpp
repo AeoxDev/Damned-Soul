@@ -26,13 +26,31 @@ void UIFunc::LoadNextLevel(void* args, int a)
 		backgroundMusic->Stop();
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
-		backgroundMusic->Play(Music_StageCalm, Channel_Base);
+		backgroundMusic->Play(Music_Hot, Channel_Base);
 		//audioJungle->HandleSound();
-		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
+		//backgroundMusic->Play(Ambience_Blizzard, Channel_Extra); //Add when we got separate ambient load functions for each level.
 	}
 
 	LoadLevel(++stateManager.activeLevel);
 	//LoadLevel(2);
+}
+
+void UIFunc::MainMenu_Start(void* args, int a)
+{
+	UnloadEntities();
+	for (auto entity : View<AudioEngineComponent>(registry))
+	{
+		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+		backgroundMusic->Stop();
+		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+		audioJungle->HandleSound();
+		backgroundMusic->Play(Music_Hot, Channel_Base);
+		//audioJungle->HandleSound();
+		//backgroundMusic->Play(Ambience_Cave, Channel_Extra); Add back when music for combat is good and can fade from one to another.
+	}
+
+	LoadLevel(++stateManager.activeLevel);
+	SetPaused(false);
 }
 
 void UIFunc::MainMenu_Settings(void* args, int a)
@@ -55,6 +73,9 @@ void UIFunc::PauseState_ResumeGame(void* args, int a)
 	{
 		SetInPause(false);
 		SetInShop(true);
+
+		SetPaused(false);
+
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
@@ -65,6 +86,9 @@ void UIFunc::PauseState_ResumeGame(void* args, int a)
 	{
 		SetInPause(false);
 		SetInPlay(true);
+
+		SetPaused(false);
+
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
@@ -341,30 +365,21 @@ void UIFunc::RerollRelic(void* args, int index)
 				{
 					bool ignore = false;
 					if (relicWindow->shopSelections[i] == shopState::BOUGHT)
-					{
-						if (index != -1)
-							continue;
-						
-						relicWindow->shopSelections[i] = shopState::AVALIABLE;
-						uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
-						uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
 						ignore = true;
-					}
 
-					if (relicWindow->shopSelections[i] == shopState::LOCKED || relicWindow->shopSelections[i] == shopState::SELECTED)
+					uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
+					uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
+
+					if (relicWindow->shopSelections[i] == shopState::LOCKED)
 					{
 						relicWindow->shopSelections[i] = shopState::AVALIABLE;
-						uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
-						uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
-
 						continue;
 					}
 
 					if (!ignore)
-					{
-						relicWindow->shopSelections[i] = shopState::AVALIABLE;
 						Relics::PutBackRelic(relicWindow->shopRelics[i]);
-					}
+
+					relicWindow->shopSelections[i] = shopState::AVALIABLE;
 					
 					const RelicData* relic = Relics::PickRandomRelic(Relics::RELIC_UNTYPED);
 					uiRelic->m_Images[i].SetImage(relic->m_filePath);
@@ -487,19 +502,17 @@ void UIFunc::HoverRelic(void* args, int index, bool hover)
 
 		char relicText[RELIC_DATA_DESC_SIZE] = "";
 
-		std::strcpy(relicText, uiImpText->name);
+		std::strcpy(relicText, "\n\n");
+		std::strcpy(relicText + std::strlen(relicText), uiImpText->name);
 		std::strcpy(relicText + std::strlen(relicText), "\nPrice: ");
 		std::strcpy(relicText + std::strlen(relicText), (std::to_string(uiImpText->price) + " Souls\n").c_str());
 		std::strcpy(relicText + std::strlen(relicText), uiImpText->description);
 
-		uiImpElement->m_Text.SetText(relicText, uiImpElement->m_Text.baseUI.GetBounds());
+		uiImpElement->m_BaseText.SetText(relicText, uiImpElement->m_BaseText.baseUI.GetBounds());
 	}
-	else
+	else if (!hover && relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
 	{
-		if (relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
-		{
-			uiElement->m_Images[imageIndex].baseUI.SetVisibility(false);
-		}
+		uiElement->m_Images[imageIndex].baseUI.SetVisibility(false);
 	}
 
 }

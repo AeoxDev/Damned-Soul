@@ -21,7 +21,7 @@ void LoadLevel4()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
-	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 0.5f, 4, 4.f, 4.f, 4.f);
+	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss/*, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 0.5f, 4, 4.f, 4.f, 4.f*/);
 	Stage4IntroScene(tempBoss, 0);
 	registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
