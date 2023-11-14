@@ -4,8 +4,8 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_POWER_SOUL_FACTOR_PLAYER (1.f)
-#define SOUL_POWER_SOUL_FACTOR_ENEMY (10.f)
+#define SOUL_POWER_SOUL_FACTOR_PLAYER (0.01f)
+#define SOUL_POWER_SOUL_FACTOR_ENEMY (.2f)
 
 EntityID SOUL_POWER::_OWNER;
 
@@ -37,12 +37,12 @@ void SOUL_POWER::ModifyStrength(void* data)
 		if (player)
 		{
 			// Increase health based on souls
-			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_PLAYER * player->GetSouls());
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_PLAYER * player->GetSouls() * stats->GetBaseDamage());
 		}
 		else
 		{
 			EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(SOUL_POWER::_OWNER);
-			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_ENEMY * enemy->soulCount);
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_ENEMY * enemy->soulCount * stats->GetBaseDamage());
 		}
 	}
 }

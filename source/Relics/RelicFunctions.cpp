@@ -102,8 +102,8 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Demon Bonemarrow",
 				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
-				/*Description*/	"Increases your Damage by 15 when obtained.",
-				/*Price*/		10,
+				/*Description*/	"Increases your Strength by 25",
+				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DEMON_BONEMARROW::Initialize
 			),
@@ -118,8 +118,8 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Soul Power",
 				/*Filepath*/	"RelicIcons\\Soul_Power",
-				/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess",
-				/*Price*/		5,
+				/*Description*/	"You gain 1 Strength for every soul in your posession",
+				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	SOUL_POWER::Initialize
 			),
@@ -171,7 +171,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Demon Heart",
 				/*Filepath*/	"RelicIcons\\Demon_Heart",
 				/*Description*/	"Increases your Maximum Health by 25",
-				/*Price*/		6,
+				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_HEART::Initialize
 			),
@@ -179,7 +179,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Corrupted Heart",
 				/*Filepath*/	"RelicIcons\\Corrupted_Heart",
 				/*Description*/	"Increases your Maximum Health by 40",
-				/*Price*/		9,
+				/*Price*/		8,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	CORRUPTED_HEART::Initialize
 			),
@@ -187,7 +187,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Molten Heart",
 				/*Filepath*/	"RelicIcons\\Molten_Heart",
 				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
-				/*Price*/		7,
+				/*Price*/		6,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	MOLTEN_HEART::Initialize
 			),
@@ -211,7 +211,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Soul Health",
 				/*Filepath*/	"RelicIcons\\Soul_Health",
 				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
-				/*Price*/		5,
+				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SOUL_HEALTH::Initialize
 			),
@@ -227,7 +227,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Spiked Skin",
 				/*Filepath*/	"RelicIcons\\Spiked_Skin",
 				/*Description*/	"Whenever an enemy strikes you, it takes 100% of the damage it would deal (before reduction) as irresistable damage",
-				/*Price*/		5,
+				/*Price*/		3,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SPIKED_SKIN::Initialize
 			),
@@ -235,7 +235,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Undead Fortitude",
 				/*Filepath*/	"RelicIcons\\Undead_Fortitude",
 				/*Description*/	"Reduces the damage you take by 10%-40%, based on how low your current health is",
-				/*Price*/		5,
+				/*Price*/		6,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	UNDEAD_FORTITUDE::Initialize
 			),
@@ -294,7 +294,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Lightning God",
 				/*Filepath*/	"RelicIcons\\Lightning_God",
-				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
+				/*Description*/	"Every three seconds, a random enemy is marked for the next three seconds. If a marked enemy is dealt damage by you, it takes an additional 10 damage",
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	LIGHTNING_GOD::Initialize

@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_BONEMARROW_STRENGTH_INCREASE 15
+#define DEMON_BONEMARROW_STRENGTH_INCREASE (.25f)
 
 EntityID DEMON_BONEMARROW::_OWNER;
 
@@ -33,6 +33,6 @@ void DEMON_BONEMARROW::IncreasePlayerStrength(void* data)
 		// Get stats
 		StatComponent* stats = (StatComponent*)input->adressOfStatComonent;
 		// Increase damage
-		stats->UpdateBonusDamage(+DEMON_BONEMARROW_STRENGTH_INCREASE);
+		stats->UpdateBonusDamage(DEMON_BONEMARROW_STRENGTH_INCREASE * stats->GetBaseDamage());
 	}
 }
