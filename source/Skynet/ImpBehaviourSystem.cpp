@@ -183,13 +183,16 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 
 	SmoothRotation(impTransformComponent, impComponent->goalDirectionX, impComponent->goalDirectionZ, 30.f);
 
-
 	impTransformComponent->positionX += impTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	impTransformComponent->positionZ += impTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
 
-void RepositionBehaviour();
+void RepositionBehaviour()
+{
+
+}
+
 bool ImpBehaviourSystem::Update()
 {
 	//First find the skynet component
@@ -201,9 +204,12 @@ bool ImpBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enemComp = nullptr;
+
+	bool hasUpdatedMap = false;
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
+
+
 	//Find available entity
-
-
 	for (auto enemyEntity : View<ImpBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
 
@@ -265,7 +271,14 @@ bool ImpBehaviourSystem::Update()
 			}
 			else if (impComponent->specialCounter >= impComponent->specialBreakpoint) //if special is ready teleport
 			{
+				
 				impComponent->specialCounter = 0;
+				if (hasUpdatedMap == false)
+				{
+					hasUpdatedMap = true;
+					CalculateGlobalMapValuesHellhound(valueGrid);
+				}
+
 				RepositionBehaviour();
 			}
 			else if (distance <= 45.0f + impComponent->circleBehaviour) // circle player & attack when possible (WIP)
@@ -286,7 +299,8 @@ bool ImpBehaviourSystem::Update()
 			IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim);
 		}
 	}
-
+	
+	free(valueGrid);
 
 	return true;
 }
