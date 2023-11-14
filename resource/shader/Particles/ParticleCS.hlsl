@@ -4,7 +4,7 @@ StructuredBuffer<Input> readParticleData : register(t0);
 
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID, in int One_OneHundo, in int OneHundo_TwoFiveFive);
-inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID, int One_OneHundo, int OneHundo_TwoFiveFive);
+inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID, in int One_OneHundo, in int OneHundo_TwoFiveFive);
 inline void RainMovement(in uint3 DTid, in uint3 blockID, in int One_OneHundo, in int OneHundo_TwoFiveFive);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 
@@ -74,7 +74,7 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID, in int One_OneHundo, 
 {
     int amount = meta[blockID.y].end - meta[blockID.y].start;
     int threadStart = ((amount * DTid.x) / NUM_THREADS) + meta[blockID.y].start;
-    int threadEnd = ((amount + (DTid.x + 1)) / NUM_THREADS) + meta[blockID.y].start;
+    int threadEnd = ((amount + (DTid.x + 1)) / NUM_THREADS) + threadStart;
     
     float dt = meta[0].deltaTime;
     
