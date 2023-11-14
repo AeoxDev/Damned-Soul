@@ -14,14 +14,7 @@ bool TransformSystem::Update()
 		tc->lastPositionY = tc->positionY;
 		tc->lastPositionZ = tc->positionZ;
 	}
-	for (auto entity : View<TransformComponent, LightComponent>(registry))
-	{
-		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
-		//LightComponent* light = registry.GetComponent<LightComponent>(entity);
-		//Use the offset from light.
-		OffsetPosition(entity, transform->positionX, transform->positionY, transform->positionZ, transform->facingX, transform->facingY, transform->facingZ);
-		OffsetFacing(entity, transform->facingX, transform->facingY, transform->facingZ);
-	}
+
 	//for (auto entity : View<TransformComponent, ParticleComponent>(registry))
 	//{
 	//	TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
