@@ -785,6 +785,25 @@ void SetupLavaCollisionBox(EntityID& entity, float radius)
 	SetHitboxCanDealDamage(entity, staticID, false);
 }
 
+void SetupProjectileCollisionBox(EntityID& entity, float radius)
+{
+	AddHitboxComponent(entity);
+	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
+	int hID = CreateHitbox(entity, radius * 0.5f, 0.f, 0.f);
+	SetCollisionEvent(entity, hID, HardCollision);
+	SetHitboxHitPlayer(entity, hID);
+	SetHitboxActive(entity, hID);
+	SetHitboxIsMoveable(entity, hID);
+
+	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
+	SetCollisionEvent(entity, sID, ProjectileAttackCollision);
+	SetHitboxHitPlayer(entity, sID);
+	SetHitboxActive(entity, sID);
+	//SetHitboxCanTakeDamage(entity, sID);
+
+	SetHitboxCanDealDamage(entity, sID, true);
+}
+
 bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
@@ -844,6 +863,14 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxActive(entity, playerComp->attackHitboxID);
 	SetHitboxCanTakeDamage(entity, playerComp->attackHitboxID, false);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
+
+	//dID = 3
+	int dID = CreateHitbox(entity, radius * 2.0f, 0.0f, 0.0f);
+	SetCollisionEvent(entity, dID, DashCollision);
+	SetHitboxHitEnemy(entity, dID);
+	SetHitboxActive(entity, dID);
+	SetHitboxCanTakeDamage(entity, dID, false);
+	SetHitboxCanDealDamage(entity, dID, false);
 }
 
 bool HitboxCanHitGI(EntityID& entity)

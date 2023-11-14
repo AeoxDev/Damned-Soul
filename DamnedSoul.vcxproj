@@ -197,7 +197,20 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\CombatFunctions.cpp" />
+    <ClCompile Include="source\Components\DamageOverTimeComponent.cpp" />
+    <ClCompile Include="source\Components\TransformComponent.cpp" />
+    <ClCompile Include="source\Relics\Defensive\BackShield.cpp" />
+    <ClCompile Include="source\Relics\Defensive\GoldenDuck.cpp" />
+    <ClCompile Include="source\Relics\Defensive\LastStand.cpp" />
+    <ClCompile Include="source\Relics\Defensive\PainMirror.cpp" />
+    <ClCompile Include="source\Relics\Defensive\SecondWind.cpp" />
+    <ClCompile Include="source\Relics\Defensive\UndeadFortitude.cpp" />
+    <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
+    <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
+    <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
+    <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
+    <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
@@ -207,7 +220,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EventFunctions\AnimationFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\FeedbackFunctions.cpp" />
     <ClCompile Include="source\EventFunctions\StatFunctions.cpp" />
-    <ClCompile Include="source\Level\Level4.cpp" />
+    <ClCompile Include="source\Level\Level4.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\Level\Shop.cpp" />
     <ClCompile Include="source\Relics\Defensive\DemonSkin.cpp" />
     <ClCompile Include="source\Relics\Offensive\LifeSteal.cpp" />
@@ -217,9 +232,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\SpikedSkin.cpp" />
     <ClCompile Include="source\RenderDepthPass.cpp" />
     <ClCompile Include="source\Skynet\Pathfinding.cpp" />
+    <ClCompile Include="source\Skynet\Projectile.cpp" />
+    <ClCompile Include="source\Skynet\ProjectileSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystem.cpp" />
     <ClCompile Include="source\Systems\StatCalcSystem.cpp" />
-    <ClCompile Include="source\UIShopComponent.cpp" />
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\ComponentHelper.cpp" />
     <ClCompile Include="source\Components\KnockBackComponent.cpp" />
@@ -234,12 +250,16 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EventFunctions\StaticHazardEvents.cpp" />
     <ClCompile Include="source\Hashing.cpp" />
     <ClCompile Include="source\EventFunctions\RandomPosition.cpp" />
-    <ClCompile Include="source\Level\Level3.cpp" />
+    <ClCompile Include="source\Level\Level3.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\Level\LevelHelper.cpp" />
     <ClCompile Include="source\MemLib_Extensions\ML_ComponentMap.cpp" />
     <ClCompile Include="source\Level\Level.cpp" />
     <ClCompile Include="source\Level\Level1.cpp" />
-    <ClCompile Include="source\Level\Level2.cpp" />
+    <ClCompile Include="source\Level\Level2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\ModelComponent.cpp" />
     <ClCompile Include="source\MouseComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
@@ -267,7 +287,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\ProximityCollision.cpp" />
     <ClCompile Include="source\Systems\AudioSystem.cpp" />
-    <ClCompile Include="source\Systems\ButtonSystem.cpp" />
+    <ClCompile Include="source\Systems\OnClickSystem.cpp" />
     <ClCompile Include="source\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
@@ -305,10 +325,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\SDLHandler.cpp" />
     <ClCompile Include="source\UI\UI.cpp" />
-    <ClCompile Include="source\UI\UIButton.cpp" />
-    <ClCompile Include="source\UI\UIComponent.cpp" />
-    <ClCompile Include="source\UI\UIImage.cpp" />
-    <ClCompile Include="source\UI\UIText.cpp" />
     <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -398,6 +414,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\ShadowMapPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\TestPS.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
@@ -479,8 +499,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\ProjectileComponent.h" />
+    <ClInclude Include="header\Components\OnClickComponent.h" />
+    <ClInclude Include="header\Components\OnHoverComponent.h" />
     <ClInclude Include="header\Components\SquashStretchComponent.h" />
-    <ClInclude Include="header\Components\ShopComponent.h" />
     <ClInclude Include="header\Components\StaticHazardComponent.h" />
     <ClInclude Include="header\Components\UIComponents.h" />
     <ClInclude Include="header\Components\HitboxComponent.h" />
@@ -489,13 +511,17 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIRerollComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIRunTimeComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />
+    <ClInclude Include="header\Components\UIComponents\UIComponent.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIHealthComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIRelicComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIRelicWindowComponent.h" />
     <ClInclude Include="header\EnemyType.h" />
     <ClInclude Include="header\EntityCreation.h" />
     <ClInclude Include="header\EntityID.h" />
@@ -517,11 +543,20 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Physics\ProximityHitboxEditor.h" />
     <ClInclude Include="header\PoolUtility.hpp" />
     <ClInclude Include="header\Registry.h" />
+    <ClInclude Include="header\Relics\Defensive\BackShield.h" />
+    <ClInclude Include="header\Relics\Defensive\GoldenDuck.h" />
+    <ClInclude Include="header\Relics\Defensive\LastStand.h" />
+    <ClInclude Include="header\Relics\Defensive\PainMirror.h" />
+    <ClInclude Include="header\Relics\Defensive\SecondWind.h" />
+    <ClInclude Include="header\Relics\Defensive\UndeadFortitude.h" />
+    <ClInclude Include="header\Relics\Offensive\AdrenalineRush.h" />
     <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h" />
     <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MummifiedHeart.h" />
+    <ClInclude Include="header\Relics\Offensive\DashAttack.h" />
     <ClInclude Include="header\Relics\Offensive\LifeSteal.h" />
+    <ClInclude Include="header\Relics\Offensive\ThrillSeeker.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />
     <ClInclude Include="header\Relics\Gadget\Reckless.h" />
@@ -574,10 +609,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Particles.h" />
     <ClInclude Include="header\SDLHandler.h" />
     <ClInclude Include="header\UI\UI.h" />
-    <ClInclude Include="header\UI\UIButton.h" />
-    <ClInclude Include="header\UI\UIComponent.h" />
-    <ClInclude Include="header\UI\UIImage.h" />
-    <ClInclude Include="header\UI\UIText.h" />
     <ClInclude Include="header\States\StateManager.h" />
     <ClInclude Include="header\States\Game.h" />
     <ClInclude Include="header\States\Menu.h" />
@@ -612,6 +643,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <Natvis Include="resource\NatVis\mlrelic_vis.natvis" />
     <Natvis Include="resource\NatVis\mlv_vis.natvis" />
     <Natvis Include="resource\NatVis\model_vis.natvis" />
   </ItemGroup>

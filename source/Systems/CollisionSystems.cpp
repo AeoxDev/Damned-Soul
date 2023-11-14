@@ -5,7 +5,27 @@
 #include "Components.h"
 #include "Input.h"
 #include "EventFunctions.h"
+#include "CombatFunctions.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 
+
+void HazardDamageHelper(EntityID& victim, const float DPS)
+{
+
+	auto defenderStats = registry.GetComponent<StatComponent>(victim);
+
+	if (0.001f < defenderStats->hazardModifier)
+	{
+		DamageOverTimeComponent dotComp(DPS * defenderStats->hazardModifier, 1.f);
+
+		float finalDamage = Combat::CalculateDamage(&dotComp, victim, RelicInput::DMG::DOT_HAZARD) * GetDeltaTime();
+
+		if (0.0001f < finalDamage)
+		{
+			Combat::HitFlat(victim, defenderStats, finalDamage);
+		}
+	}
+}
 
 bool GeometryIndependentSystem::Update()
 {
@@ -29,17 +49,25 @@ bool GeometryIndependentSystem::Update()
 			{
 				int r = PixelValueOnPosition(geoCo,p);
 				int takeDamage = 0;
+				ProjectileComponent* proj = nullptr;
+
 				switch (r)
 				{
 				case 0:
 					p->positionX = 0.f;
 					p->positionZ = 0.f;
+					proj = registry.GetComponent<ProjectileComponent>(entity);
+					if (proj != nullptr)
+					{
+						registry.DestroyEntity(entity);
+					}
 					break;
 				case 1:
 					//Footstep sound here?
 					break;
 				case HAZARD_LAVA:
-					takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+					HazardDamageHelper(entity, 25.f);
+					//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
 					break;
 				case HAZARD_CRACK:
 					if (!stat->canWalkOnCrack)

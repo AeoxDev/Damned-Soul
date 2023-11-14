@@ -72,9 +72,9 @@ public:
 
 // Defensive Stats
 	// Get max health
-	float GetMaxHealth() const;
+	int64_t GetMaxHealth() const;
 	// Get current health
-	float GetHealth() const;
+	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
 	// Update the entity's bonus health
@@ -131,6 +131,11 @@ public:
 	int killThreshold = 0;
 	bool portalCreated = false;
 
+	//New additions because of player attack chains
+	float timeSinceLastAttack = -1.0f;
+	unsigned int attackChainIndex = 0;
+	bool isAttacking = false;
+
 	
 
 	// Update the number of souls in the player's possession
@@ -162,6 +167,11 @@ struct DashArgumentComponent
 	DashArgumentComponent(float x, float z, float dashModifier, float arc = 0.0f) : x(x), z(z), dashModifier(dashModifier) {}
 };
 
+struct AttackArgumentComponent
+{
+	float duration = 0.0f;
+};
+
 struct CollisionParamsComponent
 {
 	OnCollisionParameters params;
@@ -178,88 +188,3 @@ struct EnemyComponent
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
-
-//
-//#define MAX_RELICS 8
-//struct RelicHolderComponent
-//{
-//#define MAX_LENGTH 16
-//
-//	char name[MAX_LENGTH] = "Default Name";
-//	std::bitset<MAX_RELICS> relicBitset; //I have become bitset enjoyer
-//
-//	RelicHolderComponent(const char name_in[MAX_LENGTH])
-//	{
-//		std::memcpy(name, name_in, MAX_LENGTH);
-//	}
-//
-//	struct RelicArray
-//	{
-//		RelicArray(size_t relicSize)
-//		{
-//			this->relicSize = relicSize;
-//			this->data = new char[relicSize];
-//		}
-//
-//		inline void* get()
-//		{
-//			return data;
-//		}
-//
-//		~RelicArray()
-//		{
-//			delete[] data;
-//		}
-//
-//		char* data = nullptr;
-//
-//	private:
-//		size_t relicSize = 0;
-//	};
-//
-//	//Any time GetId() is called on a new type of relic, relicCount gets incremented, which results in the ID number for every component type being unique
-//	int relicCount = 0;
-//	template <typename T>
-//	int GetId()
-//	{
-//		static int id = relicCount++;
-//		return id;
-//	}
-//
-//	template<typename T>
-//	void AddRelic()
-//	{
-//		//Ehe
-//		int id = GetId<T>();
-//
-//		//Create relic and cast to RelicArray data
-//		T* relicPointer = new (relics->get()) T();
-//
-//		//Set the component bitset of the entity at "id" to match the component we're passing in
-//		relicBitset.set(id);
-//	}
-//
-//	template<typename T>
-//	T* GetRelic()
-//	{
-//		int id = GetId<T>(); //Since GetId is being called on a type T that it's been called on before, the id won't be incremented. It's brilliant honestly
-//
-//		if (!relicBitset.test(id)) //Test to see if we have the relic before we try returning it
-//			return nullptr;
-//
-//		//Get relic by casting RelicArray data back to the relic struct (but pointer)
-//		T* relicPointer = (T*)(relics->get());
-//
-//		return relicPointer;
-//	}
-//
-//	template<typename T>
-//	void RemoveRelic()
-//	{
-//		int id = GetId<T>();
-//		relicBitset.reset(id);
-//	}
-//
-//private:
-//	RelicArray* relics = new RelicArray(sizeof(DamageRelic)); //Since all relics are the same size, this is fine
-//};

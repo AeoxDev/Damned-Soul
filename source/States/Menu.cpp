@@ -19,8 +19,6 @@
 
 void Menu::Setup()
 {
-	m_active = true;
-	
 	// Clear relics when entering the main menu
 	Relics::ResetRelics();
 
@@ -29,13 +27,8 @@ void Menu::Setup()
 	SetupButtons();
 	SetupText();
 	Camera::ResetCamera();
-	
-	stateManager.player = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
-	//Temp stuff for ui to not crash because saving between levels is not fully implemented
-	EntityID playerUi = registry.CreateEntity();
-	UIHealthComponent* pcUiHpC = registry.AddComponent<UIHealthComponent>(playerUi, DSFLOAT2(-0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f));
-	UIPlayerSoulsComponent* pcUiSC = registry.AddComponent<UIPlayerSoulsComponent>(playerUi, DSFLOAT2(-0.8f, 0.6f), DSFLOAT2(1.0f, 1.0f));
+	ResetRunTime();
 
 	//Setup stage to rotate around
 	EntityID stage = registry.CreateEntity();
@@ -51,19 +44,19 @@ void Menu::Setup()
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.84f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.08f;
-	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
 
 	/*char ctexture[] = "3-1C.png";
 	char ltexture[] = "3-1L.png";
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, ltexture, emptyTexture);*/
-
+	stateManager.player = registry.CreateEntity();
+	registry.AddComponent<PlayerComponent>(stateManager.player);
 
 	stateManager.activeLevel = 0;
 	AddTimedEventComponentStart(stage, 2.0f, LoopSpawnMainMenuEnemy, skeleton, 1);
 	EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
 	SetHitboxIsPlayer(enemy, 1, true);
-	registry.AddComponent<PlayerComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
 
 	//Randomize enemies on screen max 6 of each'
@@ -184,29 +177,47 @@ void Menu::Input()
 
 void Menu::SetupButtons()
 {
-	//Start Button
-	{
-		auto button = registry.CreateEntity();
-		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Start", UIFunc::LoadNextLevel, { -0.81f, -0.28f }, {0.7f, 0.6f} );
-		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
-		buttonSound->Load(MENU);
-	}
 
-	//Settings Button
+	const char const texts[3][32] =
 	{
-		auto button = registry.CreateEntity();
-		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Settings", UIFunc::MainMenu_Settings, { -0.81f,  -0.54f }, {0.7f, 0.6f} );
-		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
-		buttonSound->Load(MENU);
-	}
+		"\nStart",
+		"\nSettings",
+		"\nQuit"
+	};
+	
+	const DSFLOAT2 const positions[3] =
+	{
+		{ -0.81f, -0.28f },
+		{ -0.81f,  -0.54f },
+		{ -0.81f, -0.8f }
+	};
 
-	//Exit Button
+	const DSFLOAT2 const scales[3] =
+	{
+		{ 0.7f, 0.6f },
+		{ 0.7f, 0.6f },
+		{ 0.7f, 0.6f }
+	};
+
+	void(* const functions[3])(void*, int) =
+	{
+		UIFunc::MainMenu_Start,
+		UIFunc::MainMenu_Settings,
+		UIFunc::MainMenu_Quit
+	};
+
+	for (int i = 0; i < 3; i++)
 	{
 		auto button = registry.CreateEntity();
-		UIButton* comp = registry.AddComponent<UIButton>(button);
-		comp->Setup("Exmenu/ButtonBackground.png", "Exmenu/ButtonBackgroundHover.png", "Quit", UIFunc::MainMenu_Quit, { -0.81f, -0.8f }, {0.7f, 0.6f} );
+		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
+		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);
 	}
@@ -216,8 +227,8 @@ void Menu::SetupImages()
 {
 	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
-	auto tc = registry.AddComponent<UIImage>(title);
-	tc->Setup("ExMenu/DamnedTitle3.png", { 0.0f, 0.20f }, { 1.0f, 1.0f});
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
+	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });
 }
 
 void Menu::SetupText()
@@ -227,12 +238,6 @@ void Menu::SetupText()
 
 void Menu::Unload()
 {
-	// If this state is not active, simply skip the unload
-	if (false == m_active)
-		return;
-	m_active = false; // Set active to false
-
 	UnloadEntities();
-
 	ClearUI();
 }

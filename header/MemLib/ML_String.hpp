@@ -5,10 +5,6 @@
 #include <stdexcept>
 
 
-#ifndef ML_ZeroMemory
-#define ML_ZeroMemory(dest, len) memset((dest), 0, (len))
-#endif
-
 struct ML_String
 {
 private:
@@ -132,6 +128,8 @@ public:
 	// Push an item into the back of the vector, returns the index of that item
 	const ML_String& append(const ML_String& other)
 	{
+		//validate_this();
+
 		uint32_t newLen = m_len + other.m_len;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
 		while (m_capacity <= newLen)
@@ -139,7 +137,8 @@ public:
 
 		// Set data at location
 		std::memcpy(&m_data[m_len], &(*other), other.m_len);
-		ML_ZeroMemory(&m_data[newLen], m_capacity - newLen);
+		m_data[newLen] = '\0';
+		//ML_ZeroMemory(&m_data[newLen], m_capacity - newLen);
 
 		// Set new length and return the object
 		m_len = newLen;
@@ -149,6 +148,8 @@ public:
 	// Push an item into the back of the vector, returns the index of that item
 	const ML_String& append(const char* other)
 	{
+		//validate_this();
+
 		uint32_t otherLen = (uint32_t)(std::strlen(other) + 1);
 		uint32_t newLen = m_len + otherLen - 1;
 		// if the capacity of the vector is less than the size of the vector, reserve a larger chunk of memory
@@ -157,7 +158,8 @@ public:
 
 		// Set data at location
 		std::memcpy(&m_data[m_len], other, otherLen);
-		ML_ZeroMemory(&m_data[newLen], m_capacity - newLen);
+		m_data[newLen] = '\0';
+		//ML_ZeroMemory(&m_data[newLen], m_capacity - newLen);
 
 		// Set new length and return the object
 		m_len = newLen;
@@ -167,6 +169,8 @@ public:
 	// Append an integer type number
 	const ML_String& append(const long int& number)
 	{
+		//validate_this();
+
 		// Should be enough to cover every concievable number
 		char* temp = (char*)MemLib::spush(64);
 		std::to_chars(temp, temp + 64, number);
@@ -178,6 +182,8 @@ public:
 	// Append a float type number
 	const ML_String& append(const double& number)
 	{
+		//validate_this();
+
 		// Should be enough to cover every concievable number
 		char* temp = (char*)MemLib::spush(64);
 		std::to_chars(temp, temp + 64, number);
@@ -204,6 +210,8 @@ public:
 
 	ML_String& operator=(const ML_String& other)
 	{
+		//validate_this();
+
 		// Update length
 		m_len = other.m_len;
 		m_capacity = other.m_capacity;
@@ -213,7 +221,8 @@ public:
 
 		// Deep copy data
 		std::memcpy(m_data, other.m_data, m_len);
-		ML_ZeroMemory(&(m_data[m_len]), m_capacity - m_len);
+		m_data[m_len] = '\0';
+		//ML_ZeroMemory(&(m_data[m_len]), m_capacity - m_len);
 
 		return *this;
 	}

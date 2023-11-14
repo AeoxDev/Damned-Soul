@@ -5,7 +5,7 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 
-#define SPIKED_SKIN_RETURN_FRACTION (0.15f)
+#define SPIKED_SKIN_RETURN_FRACTION (1.f)
 #define SPIKED_SKIN_RETURN_FLAT (0.f)
 
 EntityID SPIKED_SKIN::_OWNER;

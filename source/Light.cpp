@@ -359,6 +359,11 @@ int CreatePointLight(EntityID& entity, float colorRed, float colorGreen, float c
 {
     RemoveLight(entity);
     int slot = PopSlotStack();
+    if (slot >= LIGHT_COMPONENT_ARRAY_LIMIT || slot < 0)
+    {
+        return -1;
+    }
+
     lightShaderBuffer.lights[slot].type = LightType::pointLight;
     lightShaderBuffer.lights[slot].lightColor.x = colorRed;
     lightShaderBuffer.lights[slot].lightColor.y = colorGreen;
@@ -518,6 +523,12 @@ float3 GetLightDirection(const EntityID& entity)
     float3 toReturn = { lightOffsets[light->slot].lightDirectionOffset.x,
     lightOffsets[light->slot].lightDirectionOffset.y,
     lightOffsets[light->slot].lightDirectionOffset.z };
+    return toReturn;
+}
+
+float3 GetLightDirection()
+{
+    float3 toReturn = { lightShaderBuffer.dirLightDirection.x, lightShaderBuffer.dirLightDirection.y , lightShaderBuffer.dirLightDirection.z };
     return toReturn;
 }
 float GetLightRange(const EntityID& entity)

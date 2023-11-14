@@ -27,17 +27,11 @@ bool ControllerSystem::Update()
 			break;
 
 		//Store variables for checking to see how far the entity has moved, these are relevant to the camera
-		//transform->lastPositionZ = transform->positionZ;
-		//transform->lastPositionX = transform->positionX;
 		controller->goalX = 0.0f;
 		controller->goalZ = 0.0f;
-		//End of: Camera System thing
 
 		//Default the animation to idle, subject to be changed based off of user input
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-		ANIM_BRANCHLESS(anim);
-
 
 		/*MOVEMENT INPUT*/
 		bool moving = false;
@@ -95,7 +89,7 @@ bool ControllerSystem::Update()
 		{
 			anim->aAnim = ANIMATION_IDLE;
 			anim->aAnimIdx = 0;
-			ANIM_BRANCHLESS(anim);
+			
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			
 		}
@@ -122,37 +116,82 @@ bool ControllerSystem::Update()
 				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
 				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
 				break;
-
 			}
 		}
 
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
-		if (mouseButtonPressed[0] == pressed)
+		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
+		//Need: Variable storing time between inputs. If an attack happens within a certain time after another, the next attack in the chain. So also need a variable 
+		//keeping track of which attack in the chain we did last
+		//PlayerComponent now stores these two values
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		
+		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
+		if(player->isAttacking == false)
+			player->timeSinceLastAttack += GetDeltaTime();
+
+		//Half a second is what I consider to be a reasonable window of time for you to decide if you're going to continue the attack chain
+		if (player->timeSinceLastAttack > 0.5f)
 		{
-			
+			player->attackChainIndex = 0;
+			player->timeSinceLastAttack = 0.0f;
+		}
+
+		//Schwing
+		if (mouseButtonPressed[0] == pressed && player->isAttacking == false)
+		{
+			StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
+			float attackDuration = 5.0f;
+
+			//Todo (if we get more weapons): Let there be some WeaponComponent that has its own attack chains and animation timings so it doesn't get hard-coded here
+			if (player->attackChainIndex == 0) //First attack in the chain
+			{
+				player->attackChainIndex = 1;
+				attackDuration = 0.6f;
+			}
+			else //
+			{
+				if (player->attackChainIndex == 1) //Second attack in the chain
+				{
+					player->attackChainIndex = 2;
+					attackDuration = 0.4f;
+				}
+				else //Third and final attack in the chain, resets attackChainIndex
+				{
+					player->attackChainIndex = 0;
+					attackDuration = 0.8f;
+				}
+				
+			}
+			attackDuration /= playerStats->GetAttackSpeed(); //Speed up the attack animation based on attack speed
+			registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
-			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerAttackSound, PlayerAttack, 1.0f, nullptr);
+			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack); //Esketit xd
 		}
 #ifdef _DEBUG
 		if (keyState[SCANCODE_G] == pressed) {
 			StatComponent* pStats = registry.GetComponent<StatComponent>(stateManager.player);
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
-			hitbox->circleHitbox[2].radius = 10000000.0f;
+			hitbox->circleHitbox[2].radius = 100.0f;
 			if (pStats->hazardModifier > -100.0f)
 			{
 				transform->mass += 100.0f;
 				player->killingSpree = 10000;
 				player->UpdateSouls(1000000);
-				hitbox->circleHitbox[2].radius += 10000000.0f;
+				hitbox->circleHitbox[2].radius += 100.0f;
 			}
 			else
 			{
 				transform->mass -= 100.0f;
-				hitbox->circleHitbox[2].radius -= 10000000.0f;
+				hitbox->circleHitbox[2].radius -= 100.0f;
 			}
 		}
 #endif // _DEBUG
+
+		//Update animation at the end of user input
+		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(anim);
 
 	}
 	//Loop for player during other places

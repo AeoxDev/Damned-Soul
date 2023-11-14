@@ -23,7 +23,55 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	Combat::DamageFlash(defender, damage);
 }
 
-void Combat::HitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
+float Combat::CalculateDamage(const DamageOverTimeComponent* dot, EntityID& defender, const uint64_t& source)
+{
+	RelicInput::OnDamageCalculation funcInput;
+	funcInput.defender = defender;
+	funcInput.damage = dot->GetDPS();
+	funcInput.cap = 99999999; // No real cap for DPS
+	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
+
+	// Apply on damage calc functions
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
+		func(&funcInput);
+
+	// Apply on damage final
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
+		func(&funcInput);
+
+	return funcInput.CollapseDamage();
+}
+
+float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, const uint64_t& source)
+{
+	RelicInput::OnDamageCalculation funcInput;
+	funcInput.attacker = attacker;
+	funcInput.defender = defender;
+	funcInput.damage = attackerStats->GetDamage();
+	funcInput.cap = defenderStats->GetHealth();
+	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
+
+	// Apply on damage calc functions
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
+		func(&funcInput);
+
+	// Apply on damage final
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
+		func(&funcInput);
+
+	return funcInput.CollapseDamage();
+}
+
+void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
+{
+	// Calculate damage
+	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
+
+	// Provide a flat hit, mostly just so that we can edit all sources at the same time
+	Combat::HitFlat(defender, defenderStats, finalDamage);
+}
+
+void Combat::DashHitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
 {
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(defender);
 	//Deal regular damage as well as on-hit damage from potential relics
@@ -36,11 +84,15 @@ void Combat::HitInteraction(EntityID& attacker, StatComponent* attackerStats, En
 	funcInput.damage = attackerStats->GetDamage();
 	funcInput.cap = defenderStats->GetHealth();
 
-	// Apply on damage calc functions
+	//Calculate damage modifications from relics
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
 		func(&funcInput);
 
-	// Apply on damage final
+	//Halve the damage since we're dashing
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH))
+		func(&funcInput);
+
+	//Calculate things that happen when damage is being applied (Reflect damage, lifesteal, etc..)
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
 		func(&funcInput);
 

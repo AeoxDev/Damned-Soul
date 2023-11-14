@@ -3,6 +3,13 @@
 #include "MemLib\PoolPointer.hpp"
 #include <DirectXMath.h>
 #include "AnimationType.h"
+
+struct AnimationFrame
+{
+	DirectX::XMMATRIX* vertex = nullptr;
+	DirectX::XMMATRIX* normal = nullptr;
+};
+
 struct Animation
 {
 private:
@@ -33,7 +40,7 @@ public:
 	float GetTimestamp(const uint32_t frameIdx);
 
 	// Get a frame from a time
-	DirectX::XMMATRIX* GetFrame(const float& time/*, uint32_t& numberOfBones*/);
+	AnimationFrame GetFrame(const float& time);
 
 	~Animation();
 };

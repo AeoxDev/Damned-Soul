@@ -1,6 +1,5 @@
 #pragma once
 
-
 struct ID2D1Factory;
 struct ID2D1RenderTarget;
 struct IDWriteFactory;
@@ -21,7 +20,7 @@ struct UI
 	IDWriteTextFormat* m_TextFormat = nullptr;			//Describes the font and paragraph properties used to format text, and it describes locale information.
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;		//Another brush with a diffrent color, might remake in order to more eaisly make more brushes later if needed :)
-	int RenderSlot;
+	int RenderSlot = -1;
 
 	void BeginFrame();
 	void EndFrame();
@@ -52,4 +51,12 @@ struct DSINT2
 {
 	int x;
 	int y;
+};
+
+struct DSBOUNDS
+{
+	float left;
+	float top;
+	float right;
+	float bottom;
 };
