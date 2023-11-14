@@ -168,6 +168,13 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	if (hellhoundComponent->charge)
 	{
 		speedMultiplier = 2.f;
+		hellhoundComponent->chargeCounter += GetDeltaTime();
+		if (hellhoundComponent->chargeCounter >= hellhoundComponent->chargeTimeLimit)
+		{
+			hellhoundComponent->hasMadeADecision = false;
+			hellhoundComponent->charge = false;
+			hellhoundComponent->chargeCounter = 0.f;
+		}
 	}
 	hellhoundTransformComponent->positionX += dirX * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
 	hellhoundTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
