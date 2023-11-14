@@ -137,8 +137,8 @@ bool ControllerSystem::Update()
 			player->timeSinceLastAttack = 0.0f;
 		}
 
-		//Schwing
-		if (mouseButtonPressed[0] == pressed && player->isAttacking == false)
+		//Schwing (Now with 50% less carpal tunnel)
+		if (mouseButtonDown[0] == down && player->isAttacking == false) //Previously: mouseButtonPressed[0] == pressed
 		{
 			StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
 			float attackDuration = 5.0f;

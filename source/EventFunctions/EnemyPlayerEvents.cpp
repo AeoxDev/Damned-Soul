@@ -23,8 +23,11 @@ void BeginHit(EntityID& entity, const int& index)
 
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
-	//Disable damage taken until EndHit
-	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+	//Disable damage taken until EndHit if we're the player (enemy i-frames make faster attacks useless)
+	if(registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+
+	//I want to play a sound that's just a straight-up *smack* for better hit feedback
 }
 
 void DashBeginHit(EntityID& entity, const int& index)
@@ -62,8 +65,9 @@ void MiddleHit(EntityID& entity, const int& index)
 
 void EndHit(EntityID& entity, const int& index)
 {
-	//Enable damage taken again
-	SetHitboxCanTakeDamage(entity, 1, true);
+	//Enable damage taken again for the player
+	if (registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		SetHitboxCanTakeDamage(entity, 1, true);
 
 	//Make sure we're back to our regular color
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
