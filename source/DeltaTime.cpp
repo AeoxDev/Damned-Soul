@@ -10,10 +10,16 @@ float fps = 0.f;
 float lastFPS = 0.0f;
 float average;
 float deltaTime;
+float frameTime;
 
 const float& GetDeltaTime()
 {
 	return deltaTime;
+}
+
+float GetFrameTime()
+{
+	return frameTime;
 }
 
 void CountDeltaTime()
@@ -32,6 +38,7 @@ void CountDeltaTime()
 		deltaTime = DELTACAP;
 	}
 	secondTime += deltaTime;
+	frameTime = deltaTime;
 	deltaTime *= gameSpeed;
 	fps+=1.0f;
 

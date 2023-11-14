@@ -80,6 +80,13 @@ void BeginCutscene(EntityID& entity, const int& index);
 void CutsceneTransition(EntityID& entity, const int& index);
 void EndCutscene(EntityID& entity, const int& index);
 void MainMenuIntroCutscene(EntityID& entity, const int& index);
+void Stage1IntroScene(EntityID& entity, const int& index);
+void Stage2IntroScene(EntityID& entity, const int& index);
+void Stage3IntroScene(EntityID& entity, const int& index);
+void Stage4IntroScene(EntityID& entity, const int& index);
 
 void BeginDestroyProjectile(EntityID& entity, const int& index); 
 void EndDestroyProjectile(EntityID& entity, const int& index);
+
+//Game speed
+void SetGameSpeedDefault(EntityID& entity, const int& index);

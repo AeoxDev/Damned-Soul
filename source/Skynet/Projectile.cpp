@@ -5,7 +5,7 @@
 
 void CreateProjectile(EntityID entity, float directionX, float directionZ)
 {
-	int nrProjectiles = 2 + rand() % 4;
+	int nrProjectiles = 1;//Get number of projectiles from component?
 	for (size_t i = 0; i < nrProjectiles; i++)
 	{
 		EntityID bullet = registry.CreateEntity();
@@ -19,9 +19,9 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 		TransformComponent transform;
 		transform.mass = 1.0f;
 		//Direction
-		transform.facingX = directionX + ((float)(rand() % 8) * 0.1f - 0.35f);
+		transform.facingX = directionX + (((float)(rand() % 8) * 0.1f - 0.35f) * (float)(nrProjectiles > 1));
 		transform.facingY = 0;
-		transform.facingZ = directionZ + ((float)(rand() % 8) * 0.1f - 0.35f);
+		transform.facingZ = directionZ + (((float)(rand() % 8) * 0.1f - 0.35f) * (float)(nrProjectiles > 1));
 		float dist = sqrtf((transform.facingX * transform.facingX) + (transform.facingZ * transform.facingZ));
 		transform.facingX /= dist;
 		transform.facingZ /= dist;

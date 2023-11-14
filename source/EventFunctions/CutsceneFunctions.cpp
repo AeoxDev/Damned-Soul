@@ -4,7 +4,7 @@
 #include "Registry.h"
 #include "Camera.h"
 #include <assert.h>
-
+#include "DeltaTime.h"
 
 void CutsceneCreateLinearTransition(EntityID& entity, const int& index)
 {
@@ -80,3 +80,8 @@ void CutsceneTransition(EntityID& entity, const int& index)
 	
 }
 
+void SetGameSpeedDefault(EntityID& entity, const int& index)
+{
+	gameSpeed = 1.0f;
+	TimedEventIgnoreGamespeed(false);
+}

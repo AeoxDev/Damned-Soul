@@ -6,11 +6,68 @@
 #include "Input.h"
 #include "EventFunctions.h"
 #include "States\StateManager.h"
+#include "Camera.h"
 
 bool ControllerSystem::Update()
 {
 	//Controller for player during play
+	if ((keyState[SCANCODE_SPACE] == pressed || keyState[SCANCODE_W] == pressed
+		|| keyState[SCANCODE_A] == pressed || keyState[SCANCODE_S] == pressed
+		|| keyState[SCANCODE_D] == pressed || mouseButtonPressed[MouseButton::left] == pressed
+		|| mouseButtonPressed[MouseButton::right] == pressed))
+	{
+		if (!(currentStates & InMainMenu) && Camera::InCutscene())
+		{
+			for (auto entity : View<TimedEventComponent>(registry))
+			{
+				ReleaseTimedEvents(entity);
+			}
+			AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+			AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+			
+		}
+		if ((currentStates & InMainMenu) == true)
+		{
+			ReleaseTimedEvents(stateManager.stage);
+			
+			AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+			if (keyState[SCANCODE_SPACE] == pressed)
+			{
+				AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
+				Camera::SetCutsceneMode(false);
+			}
+			else
+			{
+				AddTimedEventComponentStart(stateManager.stage, 0.0f, MainMenuIntroCutscene, 0, 8);
+			}
+		}
+	}
+#ifdef _DEBUG
+	if (keyInput[SCANCODE_LCTRL] == down && (currentStates & InMainMenu) == true)
+	{
+		if (keyState[SCANCODE_1] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, skeleton, 256);
+		}
+		else if (keyState[SCANCODE_2] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, hellhound, 256);
+		}
+		else if (keyState[SCANCODE_3] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+		}
+		else if (keyState[SCANCODE_4] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
+		}
+	}
+#endif // _DEBUG
+
 	
+
+	
+
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
 		if (gameSpeed < 0.00001f)

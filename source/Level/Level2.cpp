@@ -35,8 +35,9 @@ void LoadLevel2()
 	SetupEnemy(EnemyType::hellhound, -50.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::hellhound, -20.f, 0.f, 0.f);
 	SetupEnemy(EnemyType::hellhound, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::hellhound, 0.f, 0.f, -5.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, 0.f, 0.f, -5.f);
 	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, -45.f);
+	Stage2IntroScene(cutsceneEnemy, 0);
 	//13 souls + 5 souls level 1 = 18 souls total
 
 	float redAdd = 0.1f;

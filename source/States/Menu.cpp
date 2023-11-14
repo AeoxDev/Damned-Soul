@@ -21,7 +21,7 @@ void Menu::Setup()
 {
 	// Clear relics when entering the main menu
 	Relics::ResetRelics();
-
+	SetInMainMenu(true);
 	RedrawUI();
 	SetupImages();
 	SetupButtons();
@@ -238,6 +238,7 @@ void Menu::SetupText()
 
 void Menu::Unload()
 {
+	SetInMainMenu(false);
 	UnloadEntities();
 	ClearUI();
 }

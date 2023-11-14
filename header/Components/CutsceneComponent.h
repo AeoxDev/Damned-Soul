@@ -22,3 +22,4 @@ struct CutsceneComponent
 	float goalLookAtX, goalLookAtY, goalLookAtZ;
 };
 
+void CutsceneNPCIntro1NoText(EntityID& entity);

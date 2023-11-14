@@ -13,7 +13,7 @@ void LoadLevel(int level)
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);
 	SetInShop(false);
-
+	SetInMainMenu(false);
 	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
 	for (uint32_t i = 0; i < relics.size(); ++i)
 	{
