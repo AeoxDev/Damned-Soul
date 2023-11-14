@@ -100,6 +100,10 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	player->timeSinceLastAttack = 0.0f;
 	player->isAttacking = false;
+	player->currentCharge = 0.0f;
+
+
+	registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
 }
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
@@ -122,7 +126,7 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 
 	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
 	anim->aAnimTimeFactor = speedDiff; //Cracked
-	anim->aAnimTime = 0.0f;
+	anim->aAnimTime = 0.0f; //reset animation
 
 	player->isAttacking = true;
 }

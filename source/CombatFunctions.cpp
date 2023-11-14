@@ -23,7 +23,7 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	Combat::DamageFlash(defender, damage);
 }
 
-void Combat::HitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
+void Combat::HitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, bool isCharged)
 {
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(defender);
 	//Deal regular damage as well as on-hit damage from potential relics
@@ -45,6 +45,14 @@ void Combat::HitInteraction(EntityID& attacker, StatComponent* attackerStats, En
 		func(&funcInput);
 
 	float finalDamage = funcInput.CollapseDamage();
+
+	if (isCharged)
+	{
+		//Babirusa
+		auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(attacker);
+		if (charge)
+			finalDamage *= charge->multiplier;
+	}
 
 	// Provide a flat hit, mostly just so that we can edit all sources at the same time
 	Combat::HitFlat(defender, defenderStats, finalDamage);

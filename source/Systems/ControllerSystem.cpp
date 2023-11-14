@@ -165,9 +165,29 @@ bool ControllerSystem::Update()
 			}
 			attackDuration /= playerStats->GetAttackSpeed(); //Speed up the attack animation based on attack speed
 			registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
-			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
+			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack); //Esketit xd
 		}
+		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge)
+		{
+			player->currentCharge += GetDeltaTime();
+			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
+				player->currentCharge = player->maxCharge;
+			//Play some sound, do some animation, indicate that we're charging the bigboy move
+		}
+		else //If you're not holding down any mouse button, see if we have any heavy-attack charge
+		{
+			if (player->currentCharge > 0.0f)
+			{
+				//it's time
+				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
+				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
+				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
+				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack);
+			}
+		}
+
 #ifdef _DEBUG
 		if (keyState[SCANCODE_G] == pressed) {
 			StatComponent* pStats = registry.GetComponent<StatComponent>(stateManager.player);
