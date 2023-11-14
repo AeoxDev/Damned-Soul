@@ -291,6 +291,7 @@ bool UIShopSystem::Update()
     return true;
 }
 
+
 bool UIRunTime::Update()
 {
 
@@ -299,9 +300,9 @@ bool UIRunTime::Update()
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UIRunTimeComponent* runTime = registry.GetComponent<UIRunTimeComponent>(entity);
 
-		runTime->value = GetRunTime();
-		
-		uiElement->m_BaseText.SetText(("Time: " + std::to_string((int)runTime->value)).c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+		runTime->value = GetSeconds();
+
+		uiElement->m_BaseText.SetText(("Time: " + std::to_string(runTime->value)).c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 	return true;
 }

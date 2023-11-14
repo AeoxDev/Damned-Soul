@@ -2,5 +2,5 @@
 
 struct UIRunTimeComponent
 {
-	float value = -1.0f;
+	int value = -1;
 };

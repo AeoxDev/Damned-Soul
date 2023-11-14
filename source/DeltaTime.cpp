@@ -13,7 +13,8 @@ float lastFPS = 0.0f;
 float average;
 float deltaTime;
 
-float runTime = 0.0f;
+double runTime = 0.0;
+int seconds = 0;
 bool paused = true;
 
 void SetPaused(bool state)
@@ -23,7 +24,8 @@ void SetPaused(bool state)
 
 void ResetRunTime()
 {
-	runTime = 0.0f;
+	runTime = 0.0;
+	seconds = 0;
 }
 
 const float& GetDeltaTime()
@@ -31,9 +33,14 @@ const float& GetDeltaTime()
 	return deltaTime;
 }
 
-const float& GetRunTime()
+const double& GetRunTime()
 {
 	return runTime;
+}
+
+const int& GetSeconds()
+{
+	return seconds;
 }
 
 void CountDeltaTime()
@@ -55,7 +62,7 @@ void CountDeltaTime()
 	secondTime += deltaTime;
 	
 	if (!paused)
-		runTime += deltaTime;
+		runTime += (double)deltaTime;
 	
 	deltaTime *= gameSpeed;
 	fps+=1.0f;
@@ -77,7 +84,13 @@ bool NewSecond()
 		lastFPS = fps;
 		fps = 0;
 		secondTime -= 1.0f;
-		RedrawUI();
+
+		if (!paused)
+		{
+			seconds += 1;
+			RedrawUI();
+		}
+		
 		return true;
 	}
 	return false;
