@@ -13,12 +13,12 @@
 
 void UndrawHoverInteractable(OnHoverComponent& comp, UIComponent& uiElement, int index)
 {
-	if (comp.hasBeenDrawnChecks[index] == true)
+	if (comp.hasBeenDrawnChecks[index] == 1)
 	{
 		RedrawUI();
 		comp.onHoverFunctions[index](&uiElement, index, false);
-		comp.hasBeenDrawnChecks[index] = false;
-		comp.redrawUIChecks[index] = true;
+		comp.hasBeenDrawnChecks[index] = 0;
+		comp.redrawUIChecks[index] = 1;
 	}
 };
 
@@ -36,14 +36,14 @@ bool OnHoverSystem::Update()
 		{
 			if (index == -1) //mouse moved to no image
 			{
-				if (comp->hasBeenDrawnChecks[comp->index] == true)
+				if (comp->hasBeenDrawnChecks[comp->index] == 1)
 				{
 					UndrawHoverInteractable(*comp, *uiElement, comp->index);
 				}
 			}
 			else if (index > -1) //mouse moved to another image
 			{
-				if (comp->hasBeenDrawnChecks[comp->oldIndex] == true)
+				if (comp->hasBeenDrawnChecks[comp->oldIndex] == 1)
 				{
 					UndrawHoverInteractable(*comp, *uiElement, comp->oldIndex);
 				}
@@ -68,15 +68,15 @@ bool OnHoverSystem::Update()
 			}
 
 
-			if (comp->hasBeenDrawnChecks[comp->index] == false && comp->redrawUIChecks[comp->index] == true)
+			if (comp->hasBeenDrawnChecks[comp->index] == 0 && comp->redrawUIChecks[comp->index] == 1)
 			{
 				//Set which sound to play
 				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 				if (sound != nullptr) sound->Play(Button_Hover, Channel_Base);
 
 				RedrawUI();
-				comp->redrawUIChecks[comp->index] = false;
-				comp->hasBeenDrawnChecks[comp->index] = true;
+				comp->redrawUIChecks[comp->index] = 0;
+				comp->hasBeenDrawnChecks[comp->index] = 1;
 				comp->onHoverFunctions[comp->index](uiElement, index, true);
 			}
 		}

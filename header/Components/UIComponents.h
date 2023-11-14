@@ -1,5 +1,7 @@
 #pragma once
 
+//#define DEBUG_HP
+
 //Interaction
 #include "OnHoverComponent.h"
 #include "OnClickComponent.h"
@@ -12,3 +14,4 @@
 #include "UIComponents/UIShopImpComponents.h"
 #include "UIComponents/UIGameLevelComponent.h"
 #include "UIComponents/UIRerollComponent.h"
+#include "UIComponents/UIRunTimeComponent.h"

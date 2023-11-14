@@ -397,10 +397,10 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponen
 		GridPosition currPos; //= *openList.begin();
 		if (secondIndex != -1)
 		{
-			index = secondIndex;
+			index = (int)secondIndex;
 			cheapest = secondCheapest;
-			secondCheapest = -1;
-			secondIndex = -1;
+			secondCheapest = -1.0f;
+			secondIndex = -1.0f;
 			currPos = openList[index];
 		}
 		else
@@ -421,11 +421,11 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponen
 					secondCheapest = cheapest;
 					if (i < index && i != 0)//remove from list to alter order
 					{
-						secondIndex = index - 1;
+						secondIndex = (float)index - 1.0f;
 					}
 					else
 					{
-						secondIndex = index;
+						secondIndex = (float)index;
 					}
 				}
 

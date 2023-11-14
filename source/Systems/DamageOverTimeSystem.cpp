@@ -3,6 +3,8 @@
 #include "Registry.h"
 #include "DeltaTime.h"
 #include "Components.h"
+#include "CombatFunctions.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 
 bool DamageOverTimeSystem::Update()
 {
@@ -12,15 +14,19 @@ bool DamageOverTimeSystem::Update()
 	{
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 		DamageOverTimeComponent* DoT = registry.GetComponent<DamageOverTimeComponent>(entity);
-		float dt = GetDeltaTime();
-		float& remainingTime = DoT->remainingTime;
-		// Check if the remaining time is larget than DT and get the shorter time
-		float effectiveTime = dt < remainingTime ? dt : remainingTime;
-		remainingTime -= dt;
 
-		stats->ApplyDamage(effectiveTime * DoT->damagePerSecond);
+		// Calculate effectiv DPS
+		// There is no real source entity in this case
+		float effectiveDPS = Combat::CalculateDamage(DoT, entity, RelicInput::DMG::DOT);
 
-		if (remainingTime <= 0.f)
+		// Get the remaining time of the dot
+		float remainingTime = DoT->GetTime();
+
+		// Flat hit using the damage and time calculated
+		Combat::HitFlat(entity, stats, remainingTime * effectiveDPS);
+
+		// Count down the DoT's time and remove it if it is done
+		if (DoT->Advance())
 			registry.RemoveComponent<DamageOverTimeComponent>(entity);
 	}
 

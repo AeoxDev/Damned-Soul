@@ -208,13 +208,41 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 }
 
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float fieldRadius, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
+	data->metadata[metadataSlot].pattern = pattern;
+	data->metadata[metadataSlot].morePositionInfo.x = fieldRadius;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+	if (-1 == setToZeroCS)
+		setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
+
+	// Prepare dispatch
+	SetComputeShader(setToZeroCS);
+	SetUnorderedAcessView(Particles::m_readWriteBuffer->inputUAV, 0);
+	SetUnorderedAcessView(Particles::m_readWriteBuffer->outputUAV, 1);
+
+	// Reset the time values of the particles to a glorious zero
+	Dispatch(1, metadataSlot + 1, 1); //x * y * z
+
+	// Call the finish function, no need to reinvent the wheel for this one
+	Particles::FinishParticleCompute(renderStates);
+}
+
 ParticleComponent::~ParticleComponent()
 {
 	data->metadata[metadataSlot].life = -1.f;
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = -1.f;	data->metadata[metadataSlot].spawnPos.y = -1.f;	data->metadata[metadataSlot].spawnPos.z = -1.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -240,7 +268,7 @@ void ParticleComponent::Release()
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -253,7 +281,7 @@ void ParticleComponent::RemoveParticles(EntityID& entity)
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 

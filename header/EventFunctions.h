@@ -22,14 +22,14 @@ void LavaBlinkColor(EntityID& entity, const int& index);
 //START
 void PlayerLoseControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
+void PlayerBeginAttack(EntityID& entity, const int& index);
 
 //END
 void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
-void PlayerResetAnimFactor(EntityID& entity, const int& index);
+void PlayerEndAttack(EntityID& entity, const int& index);
 
 //CONTINUOUS
-void PlayerAttackSound(EntityID& entity, const int& index);
 void PlayerAttack(EntityID& entity, const int& index);
 void PlayerDashSound(EntityID& entity, const int& index);
 void PlayerDash(EntityID& entity, const int& index);

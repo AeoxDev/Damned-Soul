@@ -7,6 +7,7 @@ inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
 inline void ImplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void RainMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
+inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
 
 bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
 
@@ -54,6 +55,11 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         if (meta[blockID.y].pattern == 7)
         {
             LightningMovement(DTid, blockID);
+        }
+        // 8 = CIRCLE_FIELD
+        if (meta[blockID.y].pattern == 8)
+        {
+            SpiralFieldMovement(DTid, blockID);
         }
     }
 
@@ -279,14 +285,15 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
 // -- SAME FOR ALL FUNCTIONS -- //
     uint index = (DTid.x + blockID.y * NUM_THREADS);
     Input particle = inputParticleData[index];
+    uint localIndex = index % 256;
     
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
     particle.size = meta[blockID.y].size;
     
     
-    float posy = (index % 256) * 0.2f; // 51 / 255
-    float idxFraction = (index % 256) / 255.f;
+    float posy = localIndex * 0.2f; // 51 / 255
+    float idxFraction = localIndex / 255.f;
     float timeFraction = PI * (1 - (particle.time / meta[blockID.y].life));
     
     float alpha = pow(sin(2 * PI * idxFraction + timeFraction), 3); // Pi
@@ -296,6 +303,33 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = posy;
     particle.position.x = (2*alpha + beta + 2*gamma);
     particle.position.z = (alpha + 2*beta - gamma);
+    
+    outputParticleData[index] = particle;
+}
+
+void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
+{
+// -- SAME FOR ALL FUNCTIONS -- //
+    uint index = (DTid.x + blockID.y * NUM_THREADS);
+    Input particle = inputParticleData[index];
+    uint localIndex = index % 256;
+    
+    
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    
+    float indexValue = sqrt((10 + localIndex) / 265.f);
+    float timeValue = (particle.time / meta[blockID.y].life);
+    // "Uneven" circlings with a bit over 8 laps
+    float piFraction = ((indexValue) * PI * 50.f) + timeValue * timeValue;
+    // Expanding outwards
+    float radius = meta[blockID.y].morePositionInfo.x * indexValue * sqrt(timeValue);
+    
+    particle.size = meta[blockID.y].size * /*sqrt*/(1 - timeValue);
+    
+    particle.position.x = cos(piFraction) * radius;
+    particle.position.y = timeValue * indexValue;
+    particle.position.z = sin(piFraction) * radius;
     
     outputParticleData[index] = particle;
 }
