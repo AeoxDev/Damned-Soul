@@ -142,8 +142,8 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 
+	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
-
 	
 	//Input based CPU 
 	systems.push_back(new OnClickSystem());
@@ -182,6 +182,7 @@ int StateManager::Setup()
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UIRelicsSystem());
+	
 	systems.push_back(new UIShopSystem());
 
 	return 0;

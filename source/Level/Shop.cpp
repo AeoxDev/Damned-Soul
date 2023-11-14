@@ -181,7 +181,7 @@ void LoadShop()
 	EntityID impText = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("TempShopTitle", "Lil Devils Shop", { SHOP_POSITION_X, 0.8f });
+	uiTitle->Setup("TempShopTitle", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.8f });
 	uiTitle->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);

@@ -290,3 +290,19 @@ bool UIShopSystem::Update()
 
     return true;
 }
+
+
+bool UIRunTime::Update()
+{
+
+	for (auto entity : View<UIRunTimeComponent, UIComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIRunTimeComponent* runTime = registry.GetComponent<UIRunTimeComponent>(entity);
+
+		runTime->value = GetSeconds();
+
+		uiElement->m_BaseText.SetText(("Time: " + std::to_string(runTime->value)).c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+	}
+	return true;
+}

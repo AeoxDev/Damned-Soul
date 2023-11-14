@@ -31,6 +31,12 @@
 #include "Relics\Defensive\SoulHealth.h"
 #include "Relics\Defensive\DemonSkin.h"
 #include "Relics\Defensive\SpikedSkin.h"
+#include "Relics\Defensive\UndeadFortitude.h"
+#include "Relics\Defensive\PainMirror.h"
+#include "Relics\Defensive\GoldenDuck.h"
+#include "Relics\Defensive\BackShield.h"
+#include "Relics\Defensive\SecondWind.h"
+#include "Relics\Defensive\LastStand.h"
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
 #include "Relics\Gadget\LightningGod.h"
@@ -196,7 +202,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Frost Fire",
 				/*Filepath*/	"RelicIcons\\Frost_Fire",
-				/*Description*/	"Once per level when you are hit by an attack and your remaining Health is less than half your Maximum Health, knock all enemies back and permanently slow them by 20%",
+				/*Description*/	"Every few seconds, send out a shockwave that knocks back [[and damages?]] nearby enemies",
 				/*Price*/		3,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	FROST_FIRE::Initialize
@@ -220,10 +226,58 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Spiked Skin",
 				/*Filepath*/	"RelicIcons\\Spiked_Skin",
-				/*Description*/	"Whenever an enemy strikes you, it takes 15% of the damage it would deal (before reduction) as irresistable damage",
+				/*Description*/	"Whenever an enemy strikes you, it takes 100% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SPIKED_SKIN::Initialize
+			),
+			RelicData(
+				/*Name*/		"Undead Fortitude",
+				/*Filepath*/	"RelicIcons\\Undead_Fortitude",
+				/*Description*/	"Reduces the damage you take by 10%-40%, based on how low your current health is",
+				/*Price*/		5,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	UNDEAD_FORTITUDE::Initialize
+			),
+			RelicData(
+				/*Name*/		"Pain Mirror",
+				/*Filepath*/	"RelicIcons\\Empty_Relic",
+				/*Description*/	"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
+				/*Price*/		8,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	PAIN_MIRROR::Initialize
+			),
+			RelicData(
+				/*Name*/		"Golden Duck",
+				/*Filepath*/	"RelicIcons\\Golden_Duck",
+				/*Description*/	"You are immune to up to 3 seconds of exposure to damaging hazards. Recharges while not in use",
+				/*Price*/		8,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	GOLDEN_DUCK::Initialize
+			),
+			RelicData(
+				/*Name*/		"Back Shield",
+				/*Filepath*/	"RelicIcons\\Shield",
+				/*Description*/	"Up to once every 2 seconds, you nullify the next attack when struck from behind",
+				/*Price*/		8,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	BACK_SHIELD::Initialize
+			),
+			RelicData(
+				/*Name*/		"Second Wind",
+				/*Filepath*/	"RelicIcons\\Second_Wind",
+				/*Description*/	"The first time that you would die while holding this relic, your remaining hit points are instead set to 25% of your hit point maximum",
+				/*Price*/		10,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	SECOND_WIND::Initialize
+			),
+			RelicData(
+				/*Name*/		"Last Stand",
+				/*Filepath*/	"RelicIcons\\Last_Stand",
+				/*Description*/	"While below 50% health, you block 50% of damage taken from attacks up to once every 2 seconds",
+				/*Price*/		6,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	LAST_STAND::Initialize
 			),
 			//ENDOF: DEFENSIVE RELICS
 

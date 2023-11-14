@@ -21,11 +21,11 @@ namespace Relics
 		//arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
 		FUNC_ON_DAMAGE_CALC,
 
-		// Called when an enemy is hit by a weapon attack
+		// Called when an entity is dealt damage (before damage is applied
 		// arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
 		FUNC_ON_DAMAGE_APPLY,
 
-		// Called when damaged (damage healing is applied)
+		// Called when damaged (after damage is applied)
 		// arguments: foo(TargetStats, hpDelta)
 		FUNC_ON_DAMAGE_TAKEN,
 

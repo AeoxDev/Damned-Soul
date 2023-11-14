@@ -14,3 +14,4 @@
 #include "UIComponents/UIShopImpComponents.h"
 #include "UIComponents/UIGameLevelComponent.h"
 #include "UIComponents/UIRerollComponent.h"
+#include "UIComponents/UIRunTimeComponent.h"

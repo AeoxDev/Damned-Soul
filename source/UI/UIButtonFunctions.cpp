@@ -26,13 +26,31 @@ void UIFunc::LoadNextLevel(void* args, int a)
 		backgroundMusic->Stop();
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
-		backgroundMusic->Play(Music_StageCalm, Channel_Base);
+		backgroundMusic->Play(Music_Hot, Channel_Base);
 		//audioJungle->HandleSound();
-		//backgroundMusic->Play(Music_StageCombat, Channel_Extra); Add back when music for combat is good and can fade from one to another.
+		//backgroundMusic->Play(Ambience_Blizzard, Channel_Extra); //Add when we got separate ambient load functions for each level.
 	}
 
 	LoadLevel(++stateManager.activeLevel);
 	//LoadLevel(2);
+}
+
+void UIFunc::MainMenu_Start(void* args, int a)
+{
+	UnloadEntities();
+	for (auto entity : View<AudioEngineComponent>(registry))
+	{
+		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+		backgroundMusic->Stop();
+		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+		audioJungle->HandleSound();
+		backgroundMusic->Play(Music_Hot, Channel_Base);
+		//audioJungle->HandleSound();
+		//backgroundMusic->Play(Ambience_Cave, Channel_Extra); Add back when music for combat is good and can fade from one to another.
+	}
+
+	LoadLevel(++stateManager.activeLevel);
+	SetPaused(false);
 }
 
 void UIFunc::MainMenu_Settings(void* args, int a)
@@ -55,6 +73,9 @@ void UIFunc::PauseState_ResumeGame(void* args, int a)
 	{
 		SetInPause(false);
 		SetInShop(true);
+
+		SetPaused(false);
+
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
@@ -65,6 +86,9 @@ void UIFunc::PauseState_ResumeGame(void* args, int a)
 	{
 		SetInPause(false);
 		SetInPlay(true);
+
+		SetPaused(false);
+
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();

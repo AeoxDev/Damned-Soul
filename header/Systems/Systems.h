@@ -67,6 +67,10 @@ class UIShopSystem : public System
 {
 	bool Update();
 };
+class UIRunTime : public System
+{
+	bool Update();
+};
 
 class PointOfInterestSystem : public System
 {
