@@ -139,18 +139,27 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	float adjustedTime = powf(anim->aAnimTime, .5f);
+	//float adjustedTime = powf(anim->aAnimTime, .5f);
 
-	//Make the players' attack hitbox active during the second half of the attack animation
-	if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
+	//Make the players' attack hitbox active during the second half of the attack (between half up until eight tenths)
+	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
+	if (anim->aAnimTime >= aac->duration * 0.9f)
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
-		
-	else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
+	else if (anim->aAnimTime >= aac->duration * 0.5f)
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 	}
+	//if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
+	//{
+	//	SetPlayerAttackHitboxInactive(entity, index);
+	//}
+	//	
+	//else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
+	//{
+	//	SetPlayerAttackHitboxActive(entity, index);
+	//}
 }
 
 void PlayerDashSound(EntityID& entity, const int& index)
