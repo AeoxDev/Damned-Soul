@@ -7,8 +7,8 @@
 #include "D3D11Helper\IDX_Types.h"
 
 #define PARTICLE_METADATA_LIMIT 256
-#define THREADS_PER_GROUP 256
-#define MAX_PARTICLES PARTICLE_METADATA_LIMIT*THREADS_PER_GROUP
+#define THREADS_PER_GROUP 32
+#define MAX_PARTICLES PARTICLE_METADATA_LIMIT*256
 
 //The UAV is needed to write to the buffer, the SRV is needed to read while simoutanisly allowing for caching
 //Slot [0] will always be read and slot [1] will always be write

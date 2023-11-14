@@ -36,11 +36,10 @@ void LoadLevel1()
 	//SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
 	//SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
 	//SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
-	SetupEnemy(EnemyType::hellhound, -40.f, 0.f, 35.f);
-
-	registry.AddComponent<ParticleComponent>(stage, 3.f, 5.f, 0.5f, 0.f, 0.f, 0.f, 2048, SMOKE);
-
-	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
+	
+	
+	//SetupEnemy(EnemyType::hellhound, -40.f, 0.f, 35.f);
+	registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, 2000, SMOKE);
 	//5 souls total
 
 

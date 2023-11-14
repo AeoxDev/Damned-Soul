@@ -16,6 +16,11 @@ enum ComputeShaders
 struct ParticleComponent
 {
 	int metadataSlot = -1;
+	int groupsRequiered = -1;
+	// If this is false constant buffer has not been reset
+	bool bufferReset = false;
+	// If this is false the particles in the buffer has not been reset
+	bool vertexReset = false;
 
 	// -- Functions defined in Particles.cpp --//
 	// Finds the index of the metadata for this component
@@ -32,6 +37,8 @@ struct ParticleComponent
 	//void SetupFlamethrower(float seconds, float radius, float size, float x, float y, float z);
 	void Release();
 	void RemoveParticles(EntityID& entity);
+	void ResetBuffer();
+	void ResetVertex();
 
 };
 

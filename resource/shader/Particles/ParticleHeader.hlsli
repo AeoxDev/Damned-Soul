@@ -10,6 +10,7 @@ struct Input
     float rotationZ;
     float3 rgb; // Red Green Blue
     float size;
+    //float padding;
 };
 
 struct metadata
@@ -39,6 +40,5 @@ cbuffer metadataBuffer : register(b0)
 
 static const float PI = 3.14159265f;
 
-RWStructuredBuffer<Input> inputParticleData : register(u0);
-RWStructuredBuffer<Input> outputParticleData : register(u1);
+RWStructuredBuffer<Input> outputParticleData : register(u0);
 #endif
