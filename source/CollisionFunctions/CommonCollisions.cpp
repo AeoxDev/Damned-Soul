@@ -395,6 +395,33 @@ void AttackCollision(OnCollisionParameters& params)
 	}
 }
 
+void ProjectileAttackCollision(OnCollisionParameters& params)
+{
+	ProjectileComponent* projectile = registry.GetComponent<ProjectileComponent>(params.entity1);
+	if (projectile != nullptr)
+	{
+		if (params.entity2.index == projectile->parentID.index)
+		{
+			return;
+		}
+	}
+
+	//Apply hit-feedback like camera shake, hitstop and knockback
+	ApplyHitFeedbackEffects(params);
+
+	//Deal damage to the defender and make their model flash red
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+
+	//Play entity hurt sounds
+	PlayHitSound(params);
+
+	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
+	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
+		RedrawUI();
+	
+	AddTimedEventComponentStartEnd(params.entity1, 0.0f, BeginDestroyProjectile, 1.0f, EndDestroyProjectile);
+}
+
 void LoadNextLevel(OnCollisionParameters& params)
 {
 	//next level is shop so we set the paramaters in statemanager as so

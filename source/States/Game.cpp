@@ -42,7 +42,9 @@ void GameScene::Input(bool isShop)
 		{
 			SetInPause(true);
 			SetInPlay(false);
-			
+
+			SetPaused(true);
+
 			gameSpeed = 0.0f;
 			ResetInput();
 			stateManager.pause.Setup();

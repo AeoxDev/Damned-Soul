@@ -13,7 +13,10 @@ struct OnHoverComponent
 	int index = 0;
 	int oldIndex = 0;
 
+	//container of bool doesnt exit, 0 = false, 1 = true
 	std::vector<int> redrawUIChecks;
+
+	//container of bool doesnt exit, 0 = false, 1 = true
 	std::vector<int> hasBeenDrawnChecks;
 
 	std::vector<void(*)(void*, int, bool)> onHoverFunctions;
@@ -33,13 +36,13 @@ struct OnHoverComponent
 	int Intersect(DSINT2 mousePosition)
 	{
 		int retval = -1;
-		for (uint32_t i = positions.size(); i --> 0;)
+		for (size_t i = positions.size(); i --> 0;)
 		{
 			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
 			{
-				retval = i;
-				index = i;
+				retval = (int)i;
+				index = (int)i;
 				break;
 			}
 		}

@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "EventFunctions.h"
 #include "States\StateManager.h"
+#include "UIComponents.h"
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
@@ -96,7 +97,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			attackSpeed = 5.f;
+			attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
@@ -158,6 +159,16 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 	StatComponent* stat = registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
 	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
+
+#ifdef DEBUG_HP
+	// UI
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(entity);
+	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+#endif
+
+	//Model
 
 	ModelSkeletonComponent* model = nullptr;
 
@@ -261,6 +272,17 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+
+	// UI
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
+	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
+	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
+	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
+	uiElement->AddText("",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
+	
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
+	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
+
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)

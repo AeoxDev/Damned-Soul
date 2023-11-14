@@ -205,6 +205,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\PainMirror.cpp" />
     <ClCompile Include="source\Relics\Defensive\SecondWind.cpp" />
     <ClCompile Include="source\Relics\Defensive\UndeadFortitude.cpp" />
+    <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
@@ -231,6 +232,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\SpikedSkin.cpp" />
     <ClCompile Include="source\RenderDepthPass.cpp" />
     <ClCompile Include="source\Skynet\Pathfinding.cpp" />
+    <ClCompile Include="source\Skynet\Projectile.cpp" />
+    <ClCompile Include="source\Skynet\ProjectileSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystem.cpp" />
     <ClCompile Include="source\Systems\StatCalcSystem.cpp" />
     <ClCompile Include="source\Animation.cpp" />
@@ -496,6 +499,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\ProjectileComponent.h" />
     <ClInclude Include="header\Components\OnClickComponent.h" />
     <ClInclude Include="header\Components\OnHoverComponent.h" />
     <ClInclude Include="header\Components\SquashStretchComponent.h" />
@@ -508,6 +512,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRerollComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIRunTimeComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIComponent.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -544,6 +549,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\PainMirror.h" />
     <ClInclude Include="header\Relics\Defensive\SecondWind.h" />
     <ClInclude Include="header\Relics\Defensive\UndeadFortitude.h" />
+    <ClInclude Include="header\Relics\Offensive\AdrenalineRush.h" />
     <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h" />
     <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h" />
