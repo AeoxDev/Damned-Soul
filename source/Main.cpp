@@ -7,10 +7,11 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000 //Hermano 3000
+#define TEST3000 //Hermano 3000
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
+#define MAIN_MENU_FRAMES_TEST 6000
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 #include "Level.h"
 #endif // TEST
@@ -55,12 +56,12 @@ int main(int argc, char* args[])
 		
 	}
 	//Simulate main menu for 3000 frames
-	gameSpeed = 24.0f;
+	gameSpeed = 36.0f;
 	LoadLevel(666);//Load the menu
-	for (size_t i = 0; i < 3000; i++)
+	for (size_t i = 0; i < MAIN_MENU_FRAMES_TEST; i++)
 	{
 		CountDeltaTime();
-		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / 3000");
+		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / " + std::to_string(MAIN_MENU_FRAMES_TEST));
 		stateManager.Update();
 		stateManager.EndFrame();
 		MemLib::pdefrag();
