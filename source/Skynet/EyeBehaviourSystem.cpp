@@ -195,7 +195,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
+		// Define a uniform distribution for the range [2.0, 5.0]
 		std::uniform_real_distribution<float> distribution(2.0f, 5.0f);
 		eyeComponent->specialBreakpoint = (int)distribution(gen);
 

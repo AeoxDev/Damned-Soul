@@ -38,6 +38,7 @@ void LoadLevel3()
 	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
 	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::imp, -50.f, 1.f, 25.f);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	float redAdd = 0.0f;

@@ -7,7 +7,28 @@
 #include <random>
 
 
-void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* impComponent, TransformComponent* impTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformComponent* ptc, PathfindingMap* valueGrid)
+{
+	//Reset teleport counter
+	ic->specialCounter = 0;
+
+	//Calculate new teleport breakpoint
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	// Define a uniform distribution for the range [1.0, 5.0]
+	std::uniform_real_distribution<float> distribution(1.0f, 5.0f);
+	ic->specialBreakpoint = (int)distribution(gen);
+
+	//Teleport
+	float minRange = 20.0f;
+	float maxRange = 40.0f;
+
+	TransformComponent newTransform = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
+	itc->positionX = newTransform.positionX;
+	itc->positionZ = newTransform.positionZ;
+}
+
+void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
 	// Regular walk
 	enemyAnim->aAnim = ANIMATION_WALK;
@@ -15,53 +36,70 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 	enemyAnim->aAnimTime += GetDeltaTime();
 	ANIM_BRANCHLESS(enemyAnim);
 
-	//calculate the direction away from the player
-	impComponent->goalDirectionX = -(playerTransformCompenent->positionX - impTransformComponent->positionX);
-	impComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - impTransformComponent->positionZ);
-	float magnitude = sqrt(impComponent->goalDirectionX * impComponent->goalDirectionX + impComponent->goalDirectionZ * impComponent->goalDirectionZ);
-	if (magnitude < 0.001f)
+	ic->chaseCounter += GetDeltaTime();
+	//if the player has chased the imp for too long, teleport away
+	if (ic->chaseCounter >= ic->chaseTimer)
 	{
-		magnitude = 0.001f;
-	}
-	impComponent->goalDirectionX /= magnitude;
-	impComponent->goalDirectionZ /= magnitude;
-	SmoothRotation(impTransformComponent, impComponent->goalDirectionX, impComponent->goalDirectionZ, 30.f);
-	float dirX = impTransformComponent->facingX, dirZ = impTransformComponent->facingZ;
-	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	if (magnitude < 0.001f)
-	{
-		magnitude = 0.001f;
-	}
+		ic->chaseCounter = 0.0f;
+		
+		if (hasUpdatedMap == false)
+		{
+			hasUpdatedMap = true;
+			CalculateGlobalMapValuesHellhound(valueGrid);
+		}
 
-	impTransformComponent->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	impTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
-}
-
-bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, ImpBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
-{
-	//if you just attacked go back to circle behaviour
-	if (ec->attackTimer < enemyStats->GetAttackSpeed())
-	{
-		ec->attackTimer += GetDeltaTime();
-		return false;
+		RepositionBehaviour(ic, itc, playerTransformCompenent, valueGrid);
 	}
-	//rotate imp in order to shoot at the player
-	else if (ec->aimTimer < ec->aimDuration)
+	else
 	{
-		ec->goalDirectionX = ptc->positionX - etc->positionX;
-		ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
-		float magnitude = sqrt(ec->goalDirectionX * ec->goalDirectionX + ec->goalDirectionZ * ec->goalDirectionZ);
+		//calculate the direction away from the player
+		ic->goalDirectionX = -(playerTransformCompenent->positionX - itc->positionX);
+		ic->goalDirectionZ = -(playerTransformCompenent->positionZ - itc->positionZ);
+		float magnitude = sqrt(ic->goalDirectionX * ic->goalDirectionX + ic->goalDirectionZ * ic->goalDirectionZ);
 		if (magnitude < 0.001f)
 		{
 			magnitude = 0.001f;
 		}
-		ec->goalDirectionX /= magnitude;
-		ec->goalDirectionZ /= magnitude;
+		ic->goalDirectionX /= magnitude;
+		ic->goalDirectionZ /= magnitude;
+		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
+		float dirX = itc->facingX, dirZ = itc->facingZ;
+		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+		if (magnitude < 0.001f)
+		{
+			magnitude = 0.001f;
+		}
+
+		itc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+		itc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+	}
+}
+
+bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, ImpBehaviour*& ic, TransformComponent*& itc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
+{
+	//if you just attacked go back to circle behaviour
+	if (ic->attackTimer < enemyStats->GetAttackSpeed())
+	{
+		ic->attackTimer += GetDeltaTime();
+		return false;
+	}
+	//rotate imp in order to shoot at the player
+	else if (ic->aimTimer < ic->aimDuration)
+	{
+		ic->goalDirectionX = ptc->positionX - itc->positionX;
+		ic->goalDirectionZ = ptc->positionZ - itc->positionZ;
+		float magnitude = sqrt(ic->goalDirectionX * ic->goalDirectionX + ic->goalDirectionZ * ic->goalDirectionZ);
+		if (magnitude < 0.001f)
+		{
+			magnitude = 0.001f;
+		}
+		ic->goalDirectionX /= magnitude;
+		ic->goalDirectionZ /= magnitude;
 
 
-		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
-		ec->aimTimer += GetDeltaTime();
-		ec->attackTimer += GetDeltaTime();
+		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
+		ic->aimTimer += GetDeltaTime();
+		ic->attackTimer += GetDeltaTime();
 		return true;
 	}
 	else // yes, we can indeed attack. 
@@ -71,14 +109,14 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 		ANIM_BRANCHLESS(enemyAnim);
 
-		ec->attackTimer = 0;
-		ec->attackStunDurationCounter = 0;
-		ec->aimTimer = 0;
-		ec->specialCounter++; //increase the special counter for special attack
+		ic->attackTimer = 0;
+		ic->attackStunDurationCounter = 0;
+		ic->aimTimer = 0;
+		ic->specialCounter++; //increase the special counter for special attack
 
 		//set direction for attack
-		float dx = (ptc->positionX - etc->positionX);
-		float dz = (ptc->positionZ - etc->positionZ);
+		float dx = (ptc->positionX - itc->positionX);
+		float dz = (ptc->positionZ - itc->positionZ);
 
 		//normalize initial direction
 		float magnitude = sqrt(dx * dx + dz * dz);
@@ -117,6 +155,10 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		dx /= magnitude;
 		dz /= magnitude;
 
+		ic->goalDirectionX = dx;
+		ic->goalDirectionZ = dz;
+
+		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
 		CreateProjectile(entity, dx, dz);
 		return true;
 	}
@@ -158,39 +200,27 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, ImpBehaviour*
 	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* impComponent, TransformComponent* impTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
+	//idle just do animation
 	enemyAnim->aAnim = ANIMATION_IDLE;
 	enemyAnim->aAnimIdx = 0;
 	enemyAnim->aAnimTime += GetDeltaTime();
 	ANIM_BRANCHLESS(enemyAnim);
 
-	impComponent->timeCounter += GetDeltaTime();
-	if (impComponent->timeCounter >= impComponent->updateInterval)
+	ic->idleCounter += GetDeltaTime();
+	if (ic->idleCounter >= ic->idleTimer)
 	{
-		impComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		impComponent->goalDirectionX = randomX;
-		impComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		impComponent->updateInterval = randomInterval(gen);
+		ic->idleCounter = 0.0f;
+
+		if (hasUpdatedMap == false)
+		{
+			hasUpdatedMap = true;
+			CalculateGlobalMapValuesHellhound(valueGrid);
+		}
+
+		RepositionBehaviour(ic, itc, itc, valueGrid);
 	}
-
-	SmoothRotation(impTransformComponent, impComponent->goalDirectionX, impComponent->goalDirectionZ, 30.f);
-
-	impTransformComponent->positionX += impTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-	impTransformComponent->positionZ += impTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-}
-
-
-void RepositionBehaviour()
-{
-
 }
 
 bool ImpBehaviourSystem::Update()
@@ -265,38 +295,36 @@ bool ImpBehaviourSystem::Update()
 				enemyAnim->aAnimTime += GetDeltaTime() * .7f;
 				ANIM_BRANCHLESS(enemyAnim);
 			}
-			else if (distance < 25.0f && !impComponent->charging) // try to retreat to a safe distance if not charging
+			else if (distance < 15.0f && !impComponent->charging) // try to retreat to a safe distance if not charging
 			{
-				RetreatBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim);
+				RetreatBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 			else if (impComponent->specialCounter >= impComponent->specialBreakpoint) //if special is ready teleport
 			{
-				
-				impComponent->specialCounter = 0;
 				if (hasUpdatedMap == false)
 				{
 					hasUpdatedMap = true;
 					CalculateGlobalMapValuesHellhound(valueGrid);
 				}
 
-				RepositionBehaviour();
+				RepositionBehaviour(impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
 			}
-			else if (distance <= 45.0f + impComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (distance <= 50.0f + impComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, playerStats, enemyAnim))
-					CircleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, playerStats, enemyAnim);
+					IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 			else // idle
 			{
 				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 		}
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 		}
 	}
 	

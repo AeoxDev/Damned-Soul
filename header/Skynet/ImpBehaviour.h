@@ -2,13 +2,14 @@
 
 struct ImpBehaviour
 {
-	float updateInterval = 0.2f;
-	float timeCounter = 0.f;
+	float chaseTimer = 2.5f;
+	float chaseCounter = 0.f; 
+	float idleTimer = 4.0f;
+	float idleCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	float attackTimer = 0.f;
 	float attackStunDurationCounter = 0.f;
 	float attackStunDuration = 2.0f;
-	float chargeTimer = 0.0f;
 	float aimTimer = 0.0f;
 	float aimDuration = 0.4f;
 	float facingX = 0.0f;
@@ -21,5 +22,4 @@ struct ImpBehaviour
 	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
 	bool dealtDamage = false;
-	bool chargeAttackSoundPlaying = false;
 };

@@ -27,10 +27,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 6.f;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			mass = 50.f;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			mass = 3.f;
@@ -38,6 +34,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			mass = 1.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			mass = 50.f;
+		}
 		else if (eType == EnemyType::lucifer)
 		{
 			mass = 50.f;
@@ -57,10 +58,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 35.f;//150.f;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			health = 100;//400.f;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			health = 25.f; //100.f;
@@ -68,6 +65,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			health = 20.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			health = 100;//400.f;
+		}
 		else if (eType == EnemyType::lucifer)
 		{
 			health = 300.f;
@@ -87,17 +89,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 15.f;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			moveSpeed = 10.f;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			moveSpeed = 10.f;
 		}
 		else if (eType == EnemyType::imp)
 		{
-			moveSpeed = 1.f;
+			moveSpeed = 3.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			moveSpeed = 10.f;
+		}
 		else if (eType == EnemyType::lucifer)
 		{
 			moveSpeed = 10.f;
@@ -117,10 +120,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 12.f;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			damage = 20.f;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			damage = 8.f;
@@ -128,6 +127,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			damage = 10.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			damage = 20.f;
+		}
 		else if (eType == EnemyType::lucifer)
 		{
 			damage = 15.f;
@@ -147,10 +151,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.1f;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			attackSpeed = 0.5f;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			attackSpeed = 0.5f;
@@ -158,6 +158,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			attackSpeed = 0.8f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			attackSpeed = 0.5f;
+		}
 		else if (eType == EnemyType::lucifer)
 		{
 			attackSpeed = 0.5f;
@@ -177,10 +182,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 3;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			soulWorth = 4;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			soulWorth = 1;
@@ -188,6 +189,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			soulWorth = 3;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			soulWorth = 4;
+		}
 		else if (eType == EnemyType::lucifer)
 		{
 			soulWorth = 5;
@@ -275,18 +281,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 	}
-	else if (eType == EnemyType::tempBoss)
-	{
-		stat->hazardModifier = 0.0f;
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
-		mod->gammaCorrection = 1.5f;
-		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
-		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
-		if (player)
-		{
-			player->killThreshold+=15;
-		}
-	}
 	else if (eType == EnemyType::imp)
 	{
 		stat->hazardModifier = 0.0f;
@@ -300,6 +294,40 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(IMP);
+
+		// REMOVE ONCE WE HAVE THE IMP MODEL
+		model->colorMultiplicativeRed = 0.2f;
+		model->colorMultiplicativeBlue = 0.2f;
+		model->colorMultiplicativeGreen = 0.2f;
+		model->colorAdditiveRed = 0.8f;
+		model->colorAdditiveBlue = 0.4f;
+		model->colorAdditiveGreen = 0.8f;
+
+		model->baseColorMultiplicativeRed = 0.2f;
+		model->baseColorMultiplicativeBlue = 0.2f;
+		model->baseColorMultiplicativeGreen = 0.2f;
+		model->baseColorAdditiveRed = 0.8f;
+		model->baseColorAdditiveBlue = 0.4f;
+		model->baseColorAdditiveGreen = 0.8f;
+
+
+		if (player)
+		{
+			player->killThreshold += 1;
+		}
+	}
+	else if (eType == EnemyType::tempBoss)
+	{
+		stat->hazardModifier = 0.0f;
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
+		mod->gammaCorrection = 1.5f;
+		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
+		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
+		if (player)
+		{
+			player->killThreshold+=15;
+		}
+	}
 	else if (eType == EnemyType::lucifer)
 	{
 		stat->hazardModifier = 0.0f;
