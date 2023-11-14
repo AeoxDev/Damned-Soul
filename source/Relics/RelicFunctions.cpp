@@ -102,7 +102,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Demon Bonemarrow",
 				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
-				/*Description*/	"Increases your Strength by 25",
+				/*Description*/	DEMON_BONEMARROW::Description(),
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DEMON_BONEMARROW::Initialize
@@ -110,7 +110,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Flame Weapon",
 				/*Filepath*/	"RelicIcons\\Flame_Weapon",
-				/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
+				/*Description*/	FLAME_WEAPON::Description(),//"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
 				/*Price*/		3,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	FLAME_WEAPON::Initialize
