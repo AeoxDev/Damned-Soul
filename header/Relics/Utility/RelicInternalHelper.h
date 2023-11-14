@@ -22,7 +22,7 @@ extern ML_Map<RELIC_FUNCTION_TYPE, ML_Vector<VECTOR_FUNCTION_TYPE>>* _RelicFunct
 // Validate relics
 void _validateRelicFunctions();
 
-#define PERCENT(f) (long int(f*100))
+#define PERCENT(f) (long int((f)*100))
 
 // Calls MarkAsModified, UpdateBonusHealth, and StealthilyModifyHealth
 // These need to be called for relics like the hearts, which raise max hp and current hp simultaneously

@@ -12,11 +12,21 @@ EntityID LIGHTNING_GOD::_OWNER;
 EntityID _LG_Victim;
 
 #define LIGHTNING_GOD_COOLDOWN_SECONDS (3.0f)
-#define LIGHTNING_GOD_DAMAGE_FLAT (10.f)
+#define LIGHTNING_GOD_DAMAGE_FLAT (15.f)
 #define LIGHTNING_GOD_SFX_DURATION_SMALL (0.25f)
 #define LIGHTNING_GOD_SFX_SIZE_SMALL (0.125f)
 #define LIGHTNING_GOD_SFX_DURATION_BIG (0.6f)
 #define LIGHTNING_GOD_SFX_SIZE_BIG (0.275f)
+
+const char* LIGHTNING_GOD::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "Marks an enemy for %.1lf seconds every %.1lf seconds. Striking a marked enemy causes the attack to deal an additional %.0lf damage",
+		LIGHTNING_GOD_COOLDOWN_SECONDS,
+		LIGHTNING_GOD_COOLDOWN_SECONDS,
+		LIGHTNING_GOD_DAMAGE_FLAT);
+	return temp;
+}
 
 void LIGHTNING_GOD::Initialize(void* input)
 {

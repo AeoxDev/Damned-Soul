@@ -8,16 +8,12 @@
 
 EntityID CORRUPTED_HEART::_OWNER;
 
-//char* CORRUPTED_HEART::GetDescription()
-//{
-//	static ML_String desc;
-//	if (0 == desc.length())
-//	{
-//		// Fill in the description
-//		desc.append("Increases your Maximum Health by ");
-//		desc.append(CORRUPTED_HEART_HEALTH_INCREASE);
-//	}
-//}
+const char* CORRUPTED_HEART::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "Increases your health by %ld", CORRUPTED_HEART_HEALTH_INCREASE);
+	return temp;
+}
 
 void CORRUPTED_HEART::Initialize(void* input)
 {

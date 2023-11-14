@@ -8,6 +8,14 @@
 
 EntityID DEMON_SKIN::_OWNER;
 
+const char* DEMON_SKIN::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "Reduces the damage you take by %ld%%",
+		100 - PERCENT(DEMON_SKIN_DAMAGE_MULTIPLIER));
+	return temp;
+}
+
 void DEMON_SKIN::Initialize(void* input)
 {
 	// Set owner

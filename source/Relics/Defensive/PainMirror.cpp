@@ -6,9 +6,16 @@
 #include "CombatFunctions.h"
 
 #define PAIN_MIRROR_RETURN_FRACTION (1.50f)
-#define PAIN_MIRROR_RETURN_FLAT (0.f)
 
 EntityID PAIN_MIRROR::_OWNER;
+
+const char* PAIN_MIRROR::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "Whenever you are dealt damage by an enemy attack, that enemy also takes %ld%% of the damage it deals (before applying damage reduction)",
+		PERCENT(PAIN_MIRROR_RETURN_FRACTION));
+	return temp;
+}
 
 void PAIN_MIRROR::Initialize(void* input)
 {
@@ -35,7 +42,7 @@ void PAIN_MIRROR::Retaliation(void* data)
 	StatComponent* owMyFistHurts = registry.GetComponent<StatComponent>(input->attacker);
 
 	// The damage
-	float damage = ((input->damage + input->flatAdd) * input->incMult) * PAIN_MIRROR_RETURN_FRACTION + PAIN_MIRROR_RETURN_FLAT;
+	float damage = ((input->damage + input->flatAdd) * input->incMult) * PAIN_MIRROR_RETURN_FRACTION;
 
 	// Apply the damage
 	// Also causes static hazards to flash

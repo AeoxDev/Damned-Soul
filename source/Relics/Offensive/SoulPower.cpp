@@ -9,6 +9,13 @@
 
 EntityID SOUL_POWER::_OWNER;
 
+const char* SOUL_POWER::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "You gain %ld Strength for every soul in your possession", PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER));
+	return temp;
+}
+
 void SOUL_POWER::Initialize(void* input)
 {
 	// Set owner

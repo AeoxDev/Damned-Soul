@@ -9,6 +9,15 @@
 
 EntityID RECKLESS::_OWNER;
 
+const char* RECKLESS::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "You deal %ld%% more damage, but take %ld%% more damage",
+		PERCENT(RECKLESS_DAMAGE_DEALT_MULT),
+		PERCENT(RECKLESS_DAMAGE_TAKEN_MULT));
+	return temp;
+}
+
 // Call to set active for a specific entity (usually player)
 void RECKLESS::Initialize(void* input)
 {
