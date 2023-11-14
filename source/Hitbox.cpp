@@ -737,6 +737,14 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 		break;
 
+	case EnemyType::imp:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.0f, 0.f, radius * 1.0f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+		break;
+
 	case EnemyType::hellhound:
 		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.0f, 0.f, radius * -2.0f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);

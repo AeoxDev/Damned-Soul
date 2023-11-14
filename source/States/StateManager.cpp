@@ -162,6 +162,7 @@ int StateManager::Setup()
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
+	systems.push_back(new ImpBehaviourSystem());
 	systems.push_back(new TransformSystem()); //Must be before controller
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new EventSystem());//Must be after controller system for correct animations

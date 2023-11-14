@@ -35,6 +35,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 3.f;
 		}
+		else if (eType == EnemyType::imp)
+		{
+			mass = 1.f;
+		}
 	}
 	if (health == 6969.f)
 	{
@@ -53,6 +57,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::skeleton)
 		{
 			health = 100.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			health = 20.f;
 		}
 	}
 	if (moveSpeed == 6969.f)
@@ -73,6 +81,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 10.f;
 		}
+		else if (eType == EnemyType::imp)
+		{
+			moveSpeed = 1.f;
+		}
 	}
 	if (damage == 6969.f)
 	{
@@ -91,6 +103,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::skeleton)
 		{
 			damage = 5.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			damage = 10.f;
 		}
 	}
 	if (attackSpeed == 6969.f)
@@ -111,24 +127,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.5f;
 		}
-	}
-	if (soulWorth == 6969.f)
-	{
-		if (eType == EnemyType::eye)
+		else if (eType == EnemyType::imp)
 		{
-			soulWorth = 2;
-		}
-		else if (eType == EnemyType::hellhound)
-		{
-			soulWorth = 3;
-		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			soulWorth = 4;
-		}
-		else if (eType == EnemyType::skeleton)
-		{
-			soulWorth = 1;
+			attackSpeed = 0.8f;
 		}
 	}
 	if (soulWorth == 6969.f)
@@ -148,6 +149,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::skeleton)
 		{
 			soulWorth = 1;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			soulWorth = 3;
 		}
 	}
 
@@ -232,6 +237,24 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (player)
 		{
 			player->killThreshold+=15;
+		}
+	}
+	else if (eType == EnemyType::imp)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->baseCanWalkOnCrack = true;
+		stat->canWalkOnCrack = true;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<ImpBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.f, EnemyType::imp, false);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(IMP);
+		if (player)
+		{
+			player->killThreshold++;
 		}
 	}
 	if (model != nullptr)
