@@ -2,6 +2,7 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Components.h"
+#include "Particles.h"
 #include "EventFunctions.h"
 #include "CollisionFunctions.h"
 #include "Levels\LevelHelper.h"
@@ -10,10 +11,11 @@
 #include "Model.h"
 #include "UIComponents.h"
 #include "States\StateManager.h"
-#include "UIRenderer.h"
+#include "UIButtonFunctions.h"
 
-void LoadLevel2()
+void LoadLevel5()
 {
+	//This is the eye stage. Lots of acid in a grey environment.
 	EntityID stage = registry.CreateEntity();
 
 	EntityID mouse = registry.CreateEntity();
@@ -38,14 +40,16 @@ void LoadLevel2()
 	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
 	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
 	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
+	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
-	float redAdd = 0.1f;
-	float greenAdd = 0.0f;
+	float redAdd = 0.0f;
+	float greenAdd = 0.1f;
 	float blueAdd = 0.0f;
-	float redMult = 1.2f;
-	float greenMult = 1.0f;
+	float redMult = 1.0f;
+	float greenMult = 1.1f;
 	float blueMult = 1.0f;
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
@@ -84,14 +88,16 @@ void LoadLevel2()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	float redLight = 0.35f;
+	float redLight = 0.2f;
+	float greenLight = 0.05f;
+	float blueLight = 0.05f;
 
-	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
-	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, redLight, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, redLight, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	SetDirectionLight(1.0f, 1.1f, 1.0f, -1.6f, -2.0f, 1.0f);
+	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 	//Add static hazards on the where player does not spawn

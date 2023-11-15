@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "Registry.h"
 #include "Particles.h"
+#include "DeltaTime.h"
 
 bool TransformSystem::Update()
 {
@@ -13,6 +14,8 @@ bool TransformSystem::Update()
 		tc->lastPositionX = tc->positionX;
 		tc->lastPositionY = tc->positionY;
 		tc->lastPositionZ = tc->positionZ;
+		tc->positionX += tc->currentSpeedX * GetDeltaTime();
+		tc->positionZ += tc->currentSpeedZ * GetDeltaTime();
 	}
 
 	//for (auto entity : View<TransformComponent, ParticleComponent>(registry))

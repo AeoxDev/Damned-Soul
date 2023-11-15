@@ -43,6 +43,7 @@ bool GeometryIndependentSystem::Update()
 			TransformComponent* p = registry.GetComponent<TransformComponent>(entity);
 			HitboxComponent* h = registry.GetComponent<HitboxComponent>(entity);
 			StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 			//We have found a player component with a transform
 			//Now take position and translate to pixel on texture and check if stage, if not, reset pos for now
 			if (HitboxCanHitGI(entity))
@@ -64,8 +65,16 @@ bool GeometryIndependentSystem::Update()
 					break;
 				case 1:
 					//Footstep sound here?
+					stat->m_acceleration = stat->m_baseAcceleration;
 					break;
 				case HAZARD_LAVA:
+					if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+					{
+						anim->aAnimTimeFactor = stat->lavaAnimFactor;
+						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
+					}
+					stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
+
 					HazardDamageHelper(entity, 25.f);
 					//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
 					break;
@@ -77,7 +86,23 @@ bool GeometryIndependentSystem::Update()
 						p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
 						p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
 					}
-					
+					break;
+				case HAZARD_ICE:
+					//ICE:
+					if (true)
+					{
+
+					}
+					if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+					{
+						anim->aAnimTimeFactor = stat->iceAnimFactor;
+						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
+					}
+					stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
+
+					//HazardDamageHelper(entity, 25.f);
+					//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+					break;
 				default:
 					break;
 				}

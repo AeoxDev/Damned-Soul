@@ -3,6 +3,7 @@
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
 #include <DirectXMath.h>
+#include "Registry.h"
 
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z)
 {
@@ -55,5 +56,29 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ, float rota
 		}
 		tc->facingX = cosf(angle);
 		tc->facingZ = sinf(angle);
+	}
+}
+
+void TransformDecelerate(EntityID& entity)
+{
+	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	transform->currentSpeedX -= stat->m_acceleration * transform->currentSpeedX * GetDeltaTime();
+	transform->currentSpeedZ -= stat->m_acceleration * transform->currentSpeedZ * GetDeltaTime();
+}
+
+void TransformAccelerate(EntityID& entity, float x, float z)
+{
+	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	
+	transform->currentSpeedX += stat->m_acceleration * x * stat->GetSpeed() * GetDeltaTime();
+	transform->currentSpeedZ += stat->m_acceleration * z * stat->GetSpeed() * GetDeltaTime();
+	float len = transform->currentSpeedX * transform->currentSpeedX + transform->currentSpeedZ * transform->currentSpeedZ;
+	if (len > (stat->GetSpeed() * stat->GetSpeed()))
+	{
+		len = sqrtf(len);
+		transform->currentSpeedX *= stat->GetSpeed() / len;//Get down to movementspeed instead.
+		transform->currentSpeedZ *= stat->GetSpeed() / len;
 	}
 }
