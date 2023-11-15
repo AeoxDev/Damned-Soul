@@ -32,6 +32,7 @@ struct CameraStruct
 	//If this is true, the camera will update the persepctive matrix on update call
 	//if it is false, the camera will update the orthographic matrix on call.
 	bool m_projectionType;
+	bool m_CutsceneMode = false;//True: Force the camera to do nothing, let others take over the camera.
 };
 
 struct CameraConstantBuffer
@@ -42,6 +43,7 @@ struct CameraConstantBuffer
 	DirectX::XMFLOAT4X4 m_shadowViewMatrix;
 	DirectX::XMFLOAT4X4 m_shadowProjectionMatrix;
 };
+
 
 PoolPointer<CameraStruct> GameCamera;
 PoolPointer<CameraConstantBuffer> BufferData;
@@ -185,9 +187,19 @@ const DirectX::XMVECTOR Camera::GetPosition()
 	return DirectX::XMVECTOR{ GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f };
 }
 
+const DirectX::XMFLOAT3 Camera::GetPositionFloat()
+{
+	return GameCamera->m_position;
+}
+
 const DirectX::XMVECTOR Camera::GetLookAt()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_lookAt.x, GameCamera->m_lookAt.y, GameCamera->m_lookAt.z, 1.0f };
+}
+
+const DirectX::XMFLOAT3 Camera::GetLookAtFloat()
+{
+	return GameCamera->m_lookAt;
 }
 
 const DirectX::XMVECTOR Camera::GetUp()
@@ -223,6 +235,16 @@ const DirectX::XMMATRIX Camera::GetPerspective()
 const DirectX::XMMATRIX Camera::GetOrthographic()
 {
 	return DirectX::XMLoadFloat4x4(&GameCamera->m_orthographic);
+}
+
+void Camera::SetCutsceneMode(bool inCutscene)
+{
+	GameCamera->m_CutsceneMode = inCutscene;
+}
+
+bool Camera::InCutscene()
+{
+	return GameCamera->m_CutsceneMode;
 }
 
 int16_t Camera::GetCameraBufferIndex()

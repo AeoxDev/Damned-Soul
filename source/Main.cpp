@@ -7,7 +7,7 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000
+//#define TEST3000 //Hermano 3000
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
@@ -68,7 +68,7 @@ int main(int argc, char* args[])
 	gameSpeed = 1.0f;
 	LoadLevel(666);//Reload the menu
 #endif // TEST3000
-
+	
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
@@ -90,11 +90,6 @@ int main(int argc, char* args[])
 void UpdateDebugWindowTitle(std::string& title, std::string extra)
 {
 //#ifdef _DEBUG
-	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
-	{
-		NewSecond();
-		return;
-	}
 	SetWindowTitle(title + extra);
 	if (NewSecond())
 	{

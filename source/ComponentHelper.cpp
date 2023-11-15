@@ -158,6 +158,11 @@ void StatComponent::SetSpeedMult(const float mult)
 	m_speedMult = mult;
 }
 
+float StatComponent::GetBaseDamage() const
+{
+	return m_baseDamage;
+}
+
 float StatComponent::GetDamage() const
 {
 	return m_baseDamage + m_bonusDamage;

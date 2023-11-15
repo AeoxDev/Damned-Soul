@@ -13,7 +13,7 @@ void LoadLevel(int level)
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);
 	SetInShop(false);
-
+	SetInMainMenu(false);
 	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
 	for (uint32_t i = 0; i < relics.size(); ++i)
 	{
@@ -28,7 +28,7 @@ void LoadLevel(int level)
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 
 	stateManager.activeLevelScene = (stateManager.activeLevelScene + 1) % 3;
-	
+	Camera::SetCutsceneMode(false);
 	switch (level)
 	{
 	case 1:	LoadLevel1(); break;

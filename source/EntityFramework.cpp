@@ -35,6 +35,11 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 
 void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier)
 {
+	LightComponent* light = registry.GetComponent<LightComponent>(id);
+	if (light)
+	{
+		RemoveLight(id);
+	}
 	//Boneless model
 	ModelBonelessComponent* boneless = registry.GetComponent<ModelBonelessComponent>(id);
 	if (boneless)
