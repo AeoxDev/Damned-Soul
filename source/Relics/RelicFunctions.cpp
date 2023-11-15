@@ -15,10 +15,10 @@
 #include "Relics\Offensive\AdvancedFighting.h"
 #include "Relics\Offensive\SoulPower.h"
 #include "Relics\Offensive\FlameWeapon.h"
-//#include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\DashAttack.h"
 #include "Relics\Offensive\AdrenalineRush.h"
 #include "Relics\Offensive\ThrillSeeker.h"
+#include "Relics\Offensive\ExplodingWeapon.h"
 //#include "Relics\Offensive\PowerStrike.h"
 
 
@@ -162,6 +162,14 @@ void _validateMasterRelicList()
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	THRILL_SEEKER::Initialize
+			),
+			RelicData(
+				/*Name*/		"Exploding Weapon",
+				/*Filepath*/	"RelicIcons\\Exploding_Weapon",
+				/*Description*/	EXPLODING_WEAPON::Description(),
+				/*Price*/		0,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	EXPLODING_WEAPON::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 

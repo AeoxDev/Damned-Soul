@@ -2,14 +2,14 @@
 #include "Registry.h"
 #include "Components.h"
 
-#define BASE_SPEED (30.f)
+#define BASE_SPEED (10.f)
 #define FRICTION_GROWTH_SPEED 5.0f
 
 KnockBackComponent::KnockBackComponent(const float x, const float z)
 {
 	this->m_velocity_x = x * BASE_SPEED;
 	this->m_velocity_z = z * BASE_SPEED;
-	friction = 0.0f;
+	friction = 1.0f;
 }
 
 void KnockBackComponent::Diminish(const float deltaTime)

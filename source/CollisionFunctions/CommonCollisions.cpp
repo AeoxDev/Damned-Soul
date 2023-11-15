@@ -10,6 +10,7 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
+#include <cmath>
 
 #define SOFT_COLLISION_FACTOR 0.5f
 
@@ -279,10 +280,22 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 
 	//Knockback
-	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
-	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
+
+	{
+		TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
+		TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+		float x = transform1->facingX;
+		float z = transform1->facingZ;
+		float lenFactor = 1.f / std::sqrtf(x * x + z * z);
+		float weightFactor = transform1->mass / transform2->mass;
+		float kbs = stat1->GetKnockback();
+		//CalculateKnockBackDirection(params.entity1, params.entity2, x, z);
+		//CalculateKnockBack(params.entity1, params.entity2, x, z);
+		x *= lenFactor;
+		z *= lenFactor;
+		AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * (x / weightFactor) * kbs, SELF_KNOCKBACK_FACTOR * (z / weightFactor) * kbs);
+		AddKnockBack(params.entity2, kbs * (x * -weightFactor), kbs * (z * -weightFactor));
+	}
 }
 
 void PlayHitSound(OnCollisionParameters& params)
@@ -380,6 +393,9 @@ void AttackCollision(OnCollisionParameters& params)
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
+
+	// Only hit the first enemy
+	SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
 
 	//Lastly set for hitboxTracker[]
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);

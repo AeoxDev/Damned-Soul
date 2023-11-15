@@ -137,6 +137,7 @@ public:
 	float timeSinceLastAttack = -1.0f;
 	unsigned int attackChainIndex = 0;
 	bool isAttacking = false;
+	bool hasActivatedHitbox = false;
 
 	
 

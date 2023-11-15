@@ -100,6 +100,7 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	//Smile
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	anim->aAnimTimeFactor = 1.f;
+	anim->aAnimTimePower = 1.f;
 
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	player->timeSinceLastAttack = 0.0f;
@@ -130,12 +131,15 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	anim->aAnimTime = 0.0f;
 
 	player->isAttacking = true;
+	player->hasActivatedHitbox = false;
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
 {;
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 
 	//Can't perform animation without the AnimationComponent, durr
 	if (!anim)
@@ -146,15 +150,47 @@ void PlayerAttack(EntityID& entity, const int& index)
 	anim->aAnimIdx = 0;
 	//float adjustedTime = powf(anim->aAnimTime, .5f);
 
+#define HITBOX_START_TIME (0.5f)
+#define HITBOX_END_TIME (0.8f)
+#define HITBOX_SCALE (2.f)
+
+	anim->aAnimTimePower = .5f;
+	float animTime = anim->GetTimeValue();
+
 	//Make the players' attack hitbox active during the second half of the attack animation
-	if (/*GetTimedEventElapsedTime(entity, index)*/anim->aAnimTime >= 0.8f)
+	if (/*GetTimedEventElapsedTime(entity, index)*/animTime >= HITBOX_END_TIME)
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
 		
-	else if (/*GetTimedEventElapsedTime(entity, index)*/anim->aAnimTime >= 0.5f)
+	else if (/*GetTimedEventElapsedTime(entity, index)*/animTime >= HITBOX_START_TIME && false == player->hasActivatedHitbox)
 	{
 		SetPlayerAttackHitboxActive(entity, index);
+		player->hasActivatedHitbox = true;
+	}
+	else
+	{
+		float softCollisionRadius = GetHitboxRadius(entity, 1);
+		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);
+		float width = (.2f + std::min(.4f, hitboxTime * 2)) * softCollisionRadius * HITBOX_SCALE;
+		float depth = (1.2f + std::min(1.f, hitboxTime * 2)) * softCollisionRadius * HITBOX_SCALE;
+		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
+
+
+		// Counter clockwise
+		// X
+		corners.cornersX[0] = -width;
+		corners.cornersX[1] = width;
+		corners.cornersX[2] = width;
+		corners.cornersX[3] = -width;
+		// Z
+		corners.cornersZ[0] = -2 * depth;
+		corners.cornersZ[1] = -2 * depth;
+		corners.cornersZ[2] = 0;
+		corners.cornersZ[3] = 0;
+
+		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
+		//SetHitboxRadius(entity, player->attackHitboxID, (anim->aAnimTime - 0.5f) * 5);
 	}
 }
 

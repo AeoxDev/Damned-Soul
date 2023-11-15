@@ -21,19 +21,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			mass = 1.f;
+			mass = 35.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			mass = 6.f;
+			mass = 80.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			mass = 50.f;
+			mass = 666.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			mass = 3.f;
+			mass = 30.f;
 		}
 	}
 	if (health == 6969.f)
