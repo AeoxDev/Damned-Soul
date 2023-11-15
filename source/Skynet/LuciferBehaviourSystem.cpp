@@ -8,7 +8,7 @@
 #include "ParticleComponent.h"
 #include "Particles.h"
 #include "Levels\LevelHelper.h"
-
+#include "EventFunctions.h"
 
 
 void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, LuciferBehaviour* lc, TransformComponent* ltc, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool move)
@@ -294,12 +294,15 @@ bool LuciferBehaviourSystem::Update()
 						//reset variables to beheaviour. No more jump, get dazed
 						luciferComponent->isJumpJump = false;
 						luciferComponent->isDazed = true;
-						//registry.AddComponent<EnemyComponent>(enemyEntity, 5, EnemyType::lucifer); // we removed "hitbox", time to add it back
 						SetHitboxActive(enemyEntity, 0, true);
 						SetHitboxActive(enemyEntity, 1, true);
 						SetHitboxActive(enemyEntity, 2, true);
 						luciferTransformComponent->positionY = 0.f;
 						luciferComponent->nextSpecialIsSpawn = true;
+
+
+						//shockwave here
+						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, 4.0f, BossShockwaveEnd, 0, 1);
 					}
 				}
 			}

@@ -276,7 +276,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		mod->gammaCorrection = 1.5f;
 		AnimationComponent* anim = registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<LuciferBehaviour>(entity, 0, 0);
-		SetupEnemyCollisionBox(entity, 1.2f * scaleX, EnemyType::tempBoss);
+		SetupEnemyCollisionBox(entity, 1.2f * scaleX, EnemyType::lucifer);
 		if (player)
 		{
 			player->killThreshold++;

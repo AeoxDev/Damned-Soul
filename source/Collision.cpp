@@ -435,3 +435,17 @@ float GetHitboxRadius(const EntityID& entity, int hitBoxID)
 	}
 	return 0;
 }
+
+float SetHitboxRadius(const EntityID& entity, int hitBoxID, float radius)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitBoxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circleHitbox[hitBoxID].radius = radius;
+	}
+	else
+	{
+		hitbox->convexHitbox[hitBoxID - SAME_TYPE_HITBOX_LIMIT].boundingRadius = radius;
+	}
+	return 0;
+}

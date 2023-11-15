@@ -395,6 +395,52 @@ void AttackCollision(OnCollisionParameters& params)
 	}
 }
 
+void ShockWaveAttackCollision(OnCollisionParameters& params)
+{
+	
+	//Return out of the function if the damage collision isn't valid (attacker needs to be able to deal damage, defender needs to be able to take damage, etc)
+	if (IsDamageCollisionValid(params) == false)
+	{
+		return;
+	}
+
+	//Check if within radius
+	//Get distance from center of circle.
+	float dist = sqrtf((params.pos1X - params.pos2X) * (params.pos1X - params.pos2X) + (params.pos1Z - params.pos2Z) * (params.pos1Z - params.pos2Z));
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(params.entity1);
+	float sectorWidth = 2.0f;
+	if (dist < hitbox->circleHitbox[params.hitboxID1].radius - sectorWidth)
+	{
+		return;
+	}
+
+	//Apply hit-feedback like camera shake, hitstop and knockback
+	ApplyHitFeedbackEffects(params);
+
+	//Deal damage to the defender and make their model flash red
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+
+	//Play entity hurt sounds
+	PlayHitSound(params);
+
+	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
+	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
+		RedrawUI();
+
+	//Lastly set for hitboxTracker[]
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (!hitbox1->hitTracker[i].active)
+		{
+			hitbox1->hitTracker[i].active = true;
+			hitbox1->hitTracker[i].entity = params.entity2;
+			return;
+		}
+	}
+}
+
 void ProjectileAttackCollision(OnCollisionParameters& params)
 {
 	ProjectileComponent* projectile = registry.GetComponent<ProjectileComponent>(params.entity1);
