@@ -26,6 +26,7 @@ struct StateManager
 	SettingsState settings;
 	PauseState pause;
 	EntityID player;
+	EntityID weapon;
 	EntityID stage;
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind

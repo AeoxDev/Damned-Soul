@@ -212,6 +212,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
+    <ClCompile Include="source\Systems\FollowerSystem.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
@@ -499,6 +500,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\CutsceneComponent.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
+    <ClInclude Include="header\Components\FollowerComponent.h" />
     <ClInclude Include="header\Components\InputComponent.h" />
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />

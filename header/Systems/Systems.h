@@ -80,7 +80,10 @@ class TransformSystem : public System
 {
 	bool Update();
 };
-
+class FollowerSystem : public System
+{
+	bool Update();
+};
 class ParticleSystemGPU : public System
 {
 	bool Update();

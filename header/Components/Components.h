@@ -11,6 +11,7 @@
 #include "LightComponent.h"
 // Special child belongs to both groups
 #include "TransformComponent.h"
+#include "FollowerComponent.h"
 #include "MouseComponent.h"
 // Physics Components
 #include "GeometryIndependentComponent.h"

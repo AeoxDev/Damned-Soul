@@ -68,7 +68,7 @@ Model::~Model()
 	//Free();
 }
 
-const MODEL_TYPE Model::Load(const char* filename)
+const MODEL_TYPE Model::  Load(const char* filename)
 {
 	std::strcpy(m_name, filename);
 	ML_String name = "Models\\Mdl\\";
