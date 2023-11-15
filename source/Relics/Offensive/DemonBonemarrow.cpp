@@ -3,7 +3,6 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
-#include "MemLib\ML_String.hpp"
 
 #define DEMON_BONEMARROW_STRENGTH_INCREASE (.25f)
 

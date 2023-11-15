@@ -287,13 +287,13 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		float x = transform1->facingX;
 		float z = transform1->facingZ;
 		float lenFactor = 1.f / std::sqrtf(x * x + z * z);
-		float weightFactor = transform1->mass / transform2->mass;
+		float weightFactor = sqrt(transform1->mass / transform2->mass);
 		float kbs = stat1->GetKnockback();
 		//CalculateKnockBackDirection(params.entity1, params.entity2, x, z);
 		//CalculateKnockBack(params.entity1, params.entity2, x, z);
 		x *= lenFactor;
 		z *= lenFactor;
-		AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * (x / weightFactor) * kbs, SELF_KNOCKBACK_FACTOR * (z / weightFactor) * kbs);
+		AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * (x / weightFactor), SELF_KNOCKBACK_FACTOR * (z / weightFactor));
 		AddKnockBack(params.entity2, kbs * (x * -weightFactor), kbs * (z * -weightFactor));
 	}
 }

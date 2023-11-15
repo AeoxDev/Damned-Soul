@@ -11,6 +11,8 @@
 // Include all relics
 	/*Offense*/
 #include "Relics\Offensive\DemonBonemarrow.h"
+#include "Relics\Offensive\MinotaurHorn.h"
+#include "Relics\Offensive\HoundFang.h"
 #include "Relics\Offensive\LifeSteal.h"
 #include "Relics\Offensive\AdvancedFighting.h"
 #include "Relics\Offensive\SoulPower.h"
@@ -106,6 +108,22 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DEMON_BONEMARROW::Initialize
+			),
+			RelicData(
+				/*Name*/		"Minotaur Horn Fragment",
+				/*Filepath*/	"RelicIcons\\Minotaur_Horn",
+				/*Description*/	MINOTAUR_HORN::Description(),
+				/*Price*/		6,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	MINOTAUR_HORN::Initialize
+			),
+			RelicData(
+				/*Name*/		"Hound Fang",
+				/*Filepath*/	"RelicIcons\\Hound_Fang",
+				/*Description*/	HOUND_FANG::Description(),
+				/*Price*/		6,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	HOUND_FANG::Initialize
 			),
 			RelicData(
 				/*Name*/		"Flame Weapon",

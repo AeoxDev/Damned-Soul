@@ -6,8 +6,8 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define EXPLODING_WEAPON_AOE_SIZE (7.5f)
-#define EXPLODING_WEAPON_SFX_DURATION (.2f)
+#define EXPLODING_WEAPON_AOE_SIZE (10.f)
+#define EXPLODING_WEAPON_SFX_DURATION (.15f)
 #define EXPLODING_WEAPON_DAMAGE_FRACTION (.5f)
 
 EntityID EXPLODING_WEAPON::_OWNER;
@@ -34,7 +34,7 @@ void EXPLODING_WEAPON::Initialize(void* input)
 
 void _EW_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, 0, 0.55f, 0, 0, 0, EXPLODING_WEAPON_AOE_SIZE, CIRCLE_FIELD);
+	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, 0, 1.f, 0, 0, 0, EXPLODING_WEAPON_AOE_SIZE, CIRCLE_FIELD);
 }
 
 

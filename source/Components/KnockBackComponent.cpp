@@ -2,7 +2,7 @@
 #include "Registry.h"
 #include "Components.h"
 
-#define BASE_SPEED (10.f)
+#define BASE_SPEED (12.f)
 #define FRICTION_GROWTH_SPEED 5.0f
 
 KnockBackComponent::KnockBackComponent(const float x, const float z)
