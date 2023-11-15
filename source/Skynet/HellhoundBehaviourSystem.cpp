@@ -148,7 +148,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	float speedMultiplier = 1.f;
 	if (hellhoundComponent->charge)
 	{
-		speedMultiplier = 2.f;
+		speedMultiplier = 1.5f;
 		hellhoundComponent->chargeCounter += GetDeltaTime();
 		if (hellhoundComponent->chargeCounter >= hellhoundComponent->chargeTimeLimit)
 		{
