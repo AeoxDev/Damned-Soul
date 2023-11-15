@@ -49,7 +49,6 @@ bool OnHoverSystem::Update()
 			}
 		}
 
-
 		if (index != -1)
 			comp->oldIndex = index;
 

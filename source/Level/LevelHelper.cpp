@@ -293,7 +293,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
 	
 	//Relics
-	uiElement->AddImage("TempRelicHolder10", DSFLOAT2(-0.85f, 0.1f));
+	uiElement->AddImage("TempRelicHolder10", DSFLOAT2(-0.85f, 0.0f));
 	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
@@ -332,7 +332,6 @@ void ReloadPlayerNonGlobals()
 		
 	}
 	animationLoaded->aAnimTimeFactor = 1.0f;
-	LoadPlayerSounds();
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);

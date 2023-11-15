@@ -96,6 +96,8 @@ void PauseState::SetupButtons()
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
 
+		SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
+		sound->Load(MENU);
 	}
 
 }
@@ -114,6 +116,15 @@ void PauseState::SetupText()
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(pause);
 	uiElement->Setup("TempShopTitle", "Game Paused", { 0.0f, 0.43f });
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+
+	uiElement->AddImage("TempRelicHolder", { 1.5f, 1.5f }, { 1.5f, 1.5f }, false);
+	uiElement->m_Images[0].baseUI.SetVisibility(false);
+
+	uiElement->AddText(" ", uiElement->m_Images[0].baseUI.GetBounds(), { 1.5f, 1.5f });
+	uiElement->m_Texts[0].baseUI.SetVisibility(false);
+
+	UIPauseRelicTextComponent* relicText = registry.AddComponent<UIPauseRelicTextComponent>(pause);
+
 }
 
 void PauseState::Unload(int unloadPersistent)

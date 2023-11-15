@@ -57,5 +57,7 @@ namespace UIFunc
 
 	void HoverImage(void* args, int index, bool hover);
 
-	void HoverRelic(void* args, int index, bool hover);
+	void HoverShopRelic(void* args, int index, bool hover);
+
+	void HoverPlayerRelic(void* args, int index, bool hover);
 }
