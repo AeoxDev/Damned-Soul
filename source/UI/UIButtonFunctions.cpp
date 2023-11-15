@@ -310,14 +310,14 @@ void UIFunc::BuyRelic(void* args, int index)
 					if (playerRelics->currentRelics < playerRelics->maxRelics)
 					{
 
-						if (playerRelics->gridPos.x > 2)
+						if (playerRelics->gridPos.x > 0)
 						{
 							playerRelics->gridPos.y++;
 							playerRelics->gridPos.x = 0;
 						}
 
-						playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(uiPixelCoords.x + (0.06f * playerRelics->gridPos.x),
-							uiPixelCoords.y - (0.1175f * playerRelics->gridPos.y)), DSFLOAT2(1.0f, 1.0f), false);
+						playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(playerUI->m_Images[2].baseUI.GetPosition().x /*+(0.06f * playerRelics->gridPos.x)*/,
+							uiPixelCoords.y - (0.12f * playerRelics->gridPos.y)), DSFLOAT2(1.5f, 1.5f), false);
 
 						playerHover->Setup(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
 							playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetBounds(), UIFunc::HoverPlayerRelic);
@@ -327,7 +327,6 @@ void UIFunc::BuyRelic(void* args, int index)
 						playerRelics->gridPos.x++;
 						playerRelics->currentRelics++;
 					}
-
 
 					player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 					break;
@@ -598,7 +597,7 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 		uiPauseText->name = _strdup(relicWindow->relics[index]->m_relicName);
 		uiPauseText->description = _strdup(relicWindow->relics[index]->m_description);
 
-		uiPauseElement->m_Images[0].baseUI.SetPosition({ uiElement->m_Images[3].baseUI.GetPosition().x + 0.4f, uiElement->m_Images[index + 3].baseUI.GetPosition().y });
+		uiPauseElement->m_Images[0].baseUI.SetPosition({ uiElement->m_Images[2].baseUI.GetPosition().x + 0.3f, uiElement->m_Images[2].baseUI.GetPosition().y });
 		uiPauseElement->m_Texts[0].baseUI.SetPosition(uiPauseElement->m_Images[0].baseUI.GetPosition());
 
 		uiPauseElement->m_Texts[0].SetText(relicText, uiPauseElement->m_BaseText.baseUI.GetBounds());

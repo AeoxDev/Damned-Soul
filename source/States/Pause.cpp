@@ -65,9 +65,9 @@ void PauseState::SetupButtons()
 
 	const DSFLOAT2 const positions[3] =
 	{
-		{ -0.81f, -0.28f },
-		{ -0.81f,  -0.54f },
-		{ -0.81f, -0.8f }
+		{ 0.0f, 0.275f },
+		{ 0.0f, 0.0f },
+		{ 0.0f, -0.275f }
 	};
 
 	const DSFLOAT2 const scales[3] =
@@ -105,16 +105,16 @@ void PauseState::SetupButtons()
 void PauseState::SetupImages()
 {
 	// Damned Soul Main Menu Title
-	auto title = registry.CreateEntity(ENT_PERSIST_PAUSE);
+	/*auto title = registry.CreateEntity(ENT_PERSIST_PAUSE);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });
+	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.6f });*/
 }
 
 void PauseState::SetupText()
 {
 	auto pause = registry.CreateEntity(ENT_PERSIST_PAUSE);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(pause);
-	uiElement->Setup("TempShopTitle", "Game Paused", { 0.0f, 0.43f });
+	uiElement->Setup("TempShopTitle", "Game Paused", { 0.0f, 0.6f });
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 	uiElement->AddImage("TempRelicHolder", { 1.5f, 1.5f }, { 1.5f, 1.5f }, false);
