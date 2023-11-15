@@ -64,10 +64,18 @@ void SetInPause(bool value)
 	if (value)
 	{
 		currentStates = (State)(currentStates | State::InPause);
+		TimedEventIgnoreGamespeed(false);
+		gameSpeed = 0.0f;
 	}
 	else
 	{
 		currentStates = (State)(currentStates & (~State::InPause));
+		if (Camera::InCutscene() == true)
+		{
+			TimedEventIgnoreGamespeed(true);
+			gameSpeed = 0.0f;
+		}
+		
 	}
 }
 void SetInSettings(bool value)

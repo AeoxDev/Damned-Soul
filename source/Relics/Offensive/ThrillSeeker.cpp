@@ -6,6 +6,29 @@
 
 EntityID THRILL_SEEKER::_OWNER;
 
+#define THRILL_SEEKER_RATIO (1.f)
+
+const char* THRILL_SEEKER::Description()
+{
+	float bonus, per;
+	if (1.f <= THRILL_SEEKER_RATIO)
+	{
+		per = 1.f;
+		bonus = THRILL_SEEKER_RATIO;
+	}
+	else
+	{
+		bonus = 1.f;
+		per = 1.f / THRILL_SEEKER_RATIO;
+	}
+
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "You deal %.1lf%% more damage for every %.1lf%% health you are missing",
+		bonus,
+		per);
+	return temp;
+}
+
 void THRILL_SEEKER::Initialize(void* input)
 {
 	// Set owner
@@ -27,6 +50,6 @@ void THRILL_SEEKER::DamageAmplifier(void* data)
 	{
 		// Increase the damage dealt in relation to health lost
 		StatComponent* attackerStats = registry.GetComponent<StatComponent>(input->attacker);
-		input->incMult *= 1.0f + (1.0f - attackerStats->GetHealthFraction());
+		input->incMult *= 1.0f + THRILL_SEEKER_RATIO * (1.0f - attackerStats->GetHealthFraction());
 	}
 }

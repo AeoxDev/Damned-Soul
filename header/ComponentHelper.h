@@ -100,6 +100,8 @@ public:
 	void SetSpeedMult(const float mult);
 
 // Offensive
+	// Get the base damage of the entity
+	float GetBaseDamage() const;
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage

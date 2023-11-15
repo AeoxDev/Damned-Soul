@@ -77,7 +77,11 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
-		SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
+		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
+		for (auto& func : funcs)
+		{
+			SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
+		}
 		stats->hazardModifier = stats->baseHazardModifier;
 	}
 
@@ -100,6 +104,7 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	player->timeSinceLastAttack = 0.0f;
 	player->isAttacking = false;
+	SetPlayerAttackHitboxInactive(entity, index);
 }
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
@@ -139,15 +144,15 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	float adjustedTime = powf(anim->aAnimTime, .5f);
+	//float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack animation
-	if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
+	if (/*GetTimedEventElapsedTime(entity, index)*/anim->aAnimTime >= 0.8f)
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
 		
-	else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
+	else if (/*GetTimedEventElapsedTime(entity, index)*/anim->aAnimTime >= 0.5f)
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 	}

@@ -14,7 +14,7 @@
 
 bool PointOfInterestSystem::Update()
 {
-	if (gameSpeed == 0.0f)
+	if (gameSpeed == 0.0f || Camera::InCutscene())
 		return true;
 
 	//DEBUG Controls

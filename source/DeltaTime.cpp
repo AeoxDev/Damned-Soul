@@ -1,6 +1,8 @@
 #include "DeltaTime.h"
 #include "UIRenderer.h"
 #include "Relics/RelicFunctions.h"
+#include "Camera.h"
+#include "States\StateManager.h"
 #include <chrono>
 
 
@@ -12,6 +14,7 @@ float fps = 0.f;
 float lastFPS = 0.0f;
 float average;
 float deltaTime;
+float frameTime;
 
 double runTime = 0.0;
 int seconds = 0;
@@ -43,6 +46,11 @@ const int& GetSeconds()
 	return seconds;
 }
 
+float GetFrameTime()
+{
+	return frameTime;
+}
+
 void CountDeltaTime()
 {
 	static std::chrono::steady_clock::time_point time;
@@ -60,6 +68,7 @@ void CountDeltaTime()
 	}
 	
 	secondTime += deltaTime;
+	frameTime = deltaTime;
 	
 	if (!paused)
 		runTime += (double)deltaTime;
@@ -85,7 +94,7 @@ bool NewSecond()
 		fps = 0;
 		secondTime -= 1.0f;
 
-		if (!paused)
+		if (!paused && !Camera::InCutscene() && !(currentStates & InMainMenu))
 		{
 			seconds += 1;
 			RedrawUI();

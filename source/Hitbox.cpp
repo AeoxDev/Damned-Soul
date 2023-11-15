@@ -10,7 +10,6 @@
 #include "GameRenderer.h"
 #include "Registry.h"
 #include "EntityFramework.h"
-
 #include "Skynet\BehaviourHelper.h"
 
 HitboxVisualizeVariables hvv;
@@ -810,6 +809,7 @@ void SetupProjectileCollisionBox(EntityID& entity, float radius)
 	//SetHitboxCanTakeDamage(entity, sID);
 
 	SetHitboxCanDealDamage(entity, sID, true);
+	
 }
 
 bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID)

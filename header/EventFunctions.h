@@ -73,5 +73,20 @@ void SpawnMainMenuEnemy(EntityID& entity, const int& index);
 //Main menu loop for spawning random enemies
 void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);
 
+//Creates a linear transition with end time as the full time.
+void CutsceneCreateLinearTransition(EntityID& entity, const int& index);
+//Do the given cutscene components arguments over time
+void BeginCutscene(EntityID& entity, const int& index);
+void CutsceneTransition(EntityID& entity, const int& index);
+void EndCutscene(EntityID& entity, const int& index);
+void MainMenuIntroCutscene(EntityID& entity, const int& index);
+void Stage1IntroScene(EntityID& entity, const int& index);
+void Stage2IntroScene(EntityID& entity, const int& index);
+void Stage3IntroScene(EntityID& entity, const int& index);
+void Stage4IntroScene(EntityID& entity, const int& index);
+
 void BeginDestroyProjectile(EntityID& entity, const int& index); 
 void EndDestroyProjectile(EntityID& entity, const int& index);
+
+//Game speed
+void SetGameSpeedDefault(EntityID& entity, const int& index);

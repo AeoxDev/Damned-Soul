@@ -8,6 +8,13 @@
 
 EntityID MUMMIFIED_HEART::_OWNER;
 
+const char* MUMMIFIED_HEART::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "Increases your health by %ld", MUMMIFIED_HEART_HEALTH_INCREASE);
+	return temp;
+}
+
 void MUMMIFIED_HEART::Initialize(void* input)
 {
 	// Set owner
