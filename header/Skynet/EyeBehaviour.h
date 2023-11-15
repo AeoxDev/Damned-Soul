@@ -25,6 +25,7 @@ struct EyeBehaviour
 	bool clockwiseCircle = true;
 	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
+	bool retreating = false; //bool to check if the eye is currently retreating
 	bool dealtDamage = false;
 	bool chargeAttackSoundPlaying = false;
 };
