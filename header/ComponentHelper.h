@@ -72,9 +72,9 @@ public:
 
 // Defensive Stats
 	// Get max health
-	float GetMaxHealth() const;
+	int64_t GetMaxHealth() const;
 	// Get current health
-	float GetHealth() const;
+	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
 	// Update the entity's bonus health
@@ -100,6 +100,8 @@ public:
 	void SetSpeedMult(const float mult);
 
 // Offensive
+	// Get the base damage of the entity
+	float GetBaseDamage() const;
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage

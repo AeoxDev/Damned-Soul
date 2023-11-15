@@ -20,6 +20,10 @@ void PauseState::Setup()
 	SetupImages();
 	SetupButtons();
 	SetupText();
+	if (Camera::InCutscene() == true)
+	{
+		TimedEventIgnoreGamespeed(false);
+	}
 }
 
 void PauseState::Input()
@@ -121,4 +125,9 @@ void PauseState::SetupText()
 void PauseState::Unload(int unloadPersistent)
 {
 	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
+	if (Camera::InCutscene() == true)
+	{
+		TimedEventIgnoreGamespeed(true);
+		gameSpeed = 0.0f;
+	}
 }

@@ -1,13 +1,15 @@
 #pragma once
 #include "EntityID.h"
 
-namespace ADVANCED_FIGHTING
+namespace UNDEAD_FORTITUDE
 {
 	extern EntityID _OWNER;
+
+	const char* Description();
 
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
-	// The Crit Chance function of Advanced Fighting
-	void CritChance(void* data);
+	// The Increase Damage Reduction function for Demon Skin
+	void DecreaseDamageTaken(void* data);
 }

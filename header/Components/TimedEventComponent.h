@@ -3,7 +3,7 @@
 //Condition 0 = no special condition for timed event functions
 #define CONDITION_DASH ((uint32_t)1)
 #define CONDITION_CHARGE ((uint32_t)2)
-//#define CONDITION_DAMAGE ((uint32_t)2)
+#define CONDITION_IGNORE_GAMESPEED_SLOWDOWN 100
 
 struct EntityID;
 struct TimedEventComponent;
@@ -30,3 +30,5 @@ float GetTimedEventElapsedTime(EntityID& entityID, const int& timedEventSlot);
 float GetTimedEventTotalTime(EntityID& entityID, const int& timedEventSlot);
 void CancelTimedEvent(EntityID& entityID, const int& timedEventSlot);
 void ReleaseTimedEvents(EntityID& entity);
+
+void TimedEventIgnoreGamespeed(bool ignore);

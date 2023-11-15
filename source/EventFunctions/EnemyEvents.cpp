@@ -348,7 +348,7 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 {
 	int rarity = 0;
 	EnemyType type = skeleton;
-	rarity = rand() % 4;
+	rarity = rand() % 8;
 	if (rarity == 0)
 	{
 		type = hellhound;
@@ -369,12 +369,17 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 
 void BeginDestroyProjectile(EntityID& entity, const int& index)
 {
+	if (entity.isDestroyed == true)
+	{
+		return;
+	}
 	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
 	if (model != nullptr)
 	{
 		ReleaseModel(model->model);
+		registry.RemoveComponent<ModelBonelessComponent>(entity);
 	}
-	registry.RemoveComponent<ModelBonelessComponent>(entity);
+	
 
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
@@ -382,5 +387,9 @@ void BeginDestroyProjectile(EntityID& entity, const int& index)
 
 void EndDestroyProjectile(EntityID& entity, const int& index)
 {
-	registry.DestroyEntity(entity);
+	if (entity.isDestroyed == true)
+	{
+		return;
+	}
+	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
 }

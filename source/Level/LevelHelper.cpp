@@ -40,19 +40,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			health = 60.f;
+			health = 15.f;//60.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			health = 150.f;
+			health = 35.f;//150.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 400.f;
+			health = 100;//400.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			health = 100.f;
+			health = 25.f; //100.f;
 		}
 	}
 	if (moveSpeed == 6969.f)
@@ -78,11 +78,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			damage = 10.f;
+			damage = 12.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			damage = 10.f;
+			damage = 12.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -90,7 +90,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			damage = 5.f;
+			damage = 8.f;
 		}
 	}
 	if (attackSpeed == 6969.f)
@@ -150,6 +150,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			soulWorth = 1;
 		}
 	}
+	if (eType == EnemyType::tempBoss)
+	{
+		scaleX *= 4;
+		scaleY *= 4;
+		scaleZ *= 4;
+	}
 
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
@@ -190,8 +196,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::skeleton)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
-		//model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHSkeleton.mdl"));
+		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<SkeletonBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 0.9f, EnemyType::skeleton);
@@ -252,8 +258,11 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->colorMultiplicativeGreen = 1.25f;
 	model->colorMultiplicativeBlue = 1.25f;
 	model->gammaCorrection = 1.5f;
-	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
-
+	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+	animation->aAnim = ANIMATION_IDLE;
+	animation->aAnimTime = 0.5f;
+	animation->aAnimIdx = 0;
+	animation->aAnimTimeFactor = 1.0f;
 	//stateManager.player Sounds
 	LoadPlayerSounds();
 

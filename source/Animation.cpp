@@ -1,4 +1,5 @@
 #include "Animation.hpp"
+#include "MemLib\MemLib.hpp"
 #include "MemLib\ML_String.hpp"
 #include <fstream>
 

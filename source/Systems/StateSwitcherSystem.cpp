@@ -66,11 +66,22 @@ bool StateSwitcherSystem::Update()
 				}
 				if (tempBossComp->deathCounter < 3) //spawn new mini russian doll skeleton
 				{
-					// start timed event for new little bossies
-					for (auto audioJungle : View<AudioEngineComponent>(registry)) //Remove this after playtest. It is just for the funnies.
+					if (tempBossComp->deathCounter == 0) //Remove this after playtest. It is just for the funnies.
 					{
-						registry.GetComponent<SoundComponent>(audioJungle)->Play(Music_StageCombat, Channel_Base);
+						for (auto audioJungle : View<AudioEngineComponent>(registry))
+						{
+							registry.GetComponent<SoundComponent>(audioJungle)->Play(Music_Boss, Channel_Base); //Change this later please
+						}
 					}
+					if (tempBossComp->deathCounter == 1) //Remove this after playtest. It is just for the funnies.
+					{
+						for (auto audioJungle : View<AudioEngineComponent>(registry))
+						{
+							registry.GetComponent<SoundComponent>(audioJungle)->Play(Music_Cold, Channel_Extra); //Change this later please
+						}
+					}
+
+					// start timed event for new little bossies
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);
 				}
 				else // le snap

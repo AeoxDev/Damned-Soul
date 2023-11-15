@@ -77,7 +77,11 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	if (condition == CONDITION_DASH)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
-		SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
+		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
+		for (auto& func : funcs)
+		{
+			SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
+		}
 		stats->hazardModifier = stats->baseHazardModifier;
 	}
 
@@ -104,6 +108,7 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 
 
 	registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
+	//SetPlayerAttackHitboxInactive(entity, index); //Gone from my branch but I don't dare delete or keep it because I don't remember why so here's a comment
 }
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
