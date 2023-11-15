@@ -11,4 +11,5 @@ extern  PS_IDX m_skyPS;
 void InitializeSky();
 void ReleaseSky();
 void SwitchCamera();
+void UpdateTransform();
 

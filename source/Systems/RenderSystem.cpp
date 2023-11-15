@@ -12,9 +12,6 @@
 #include "RenderDepthPass.h"
 #include "SkyPlane.h"
 
-// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
-#include "GameRenderer.h"
-
 void Render()
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
@@ -131,6 +128,7 @@ void RenderSkyPlane()
 		tc->offsetY = 0.0f;
 	}
 
+	UpdateTransform();
 
 	SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
 		tc->facingX, tc->facingY, -tc->facingZ,

@@ -39,7 +39,7 @@ cbuffer LightComponentShaderBuffer : register(b2)
 
 float4 main(VS_OUT input) : SV_TARGET
 {
-    return float4(0.0f, 1.0f, 0.0f, 1.0f); //diffuseTex.Sample(WrapSampler, input.uv);
+    return diffuseTex.Sample(WrapSampler, input.uv);
 
 }
    

@@ -20,16 +20,19 @@ void InitializeSky()
 
 	registry.AddComponent<ModelBonelessComponent>(m_skyPlane, LoadModel("BackgroundQuad.mdl"));
 	
-	TransformComponent tComp = { 0 }; // Initializing to zero might be dumb;
+	TransformComponent tComp;// = { 0 }; // Initializing to zero might be dumb;
 
 	DirectX::XMFLOAT3 camPos;
 	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
 	tComp.positionX = camPos.x;
-	tComp.positionY = camPos.y;
-	tComp.positionZ = camPos.z;
-	tComp.scaleX = 150.0f; tComp.scaleY = 150.0f; tComp.scaleZ = 150.0f;
-	//tComp.facingZ = -1.f;
-	//tComp.facingY = 0.5; 
+	tComp.positionY = camPos.y;// - 100.0f;
+	tComp.positionZ = camPos.z;// + 270.0f;
+	tComp.offsetY = -247.f;
+	tComp.offsetZ = 330.f;
+	tComp.scaleX = 4.0f;//tComp.scaleX = 2.3f;//1.93f; 
+	tComp.scaleY = 2.5f;//tComp.scaleY = 1.5f;//1.1f;
+	tComp.facingY = 0.75f;
+
 
 	registry.AddComponent<TransformComponent>(m_skyPlane, tComp);
 
@@ -54,5 +57,16 @@ void ReleaseSky()
 
 void SwitchCamera()
 {
+}
+
+void UpdateTransform()
+{
+	TransformComponent* tComp = registry.GetComponent<TransformComponent>(m_skyPlane);
+	DirectX::XMFLOAT3 camPos;
+	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
+	tComp->positionX = camPos.x * 0.9f;
+	tComp->positionY = camPos.y * 0.9f;// - 100.0f;
+	tComp->positionZ = camPos.z * 0.9f;// + 270.0f;
+
 }
 
