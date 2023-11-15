@@ -164,42 +164,6 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	}
 }
 
-void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, ImpBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, StatComponent* playerStats, AnimationComponent* enemyAnim)
-{
-	// Regular attack?
-	enemyAnim->aAnim = ANIMATION_WALK;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
-	ANIM_BRANCHLESS(enemyAnim);
-
-	float magnitude = 0.f;
-	float dirX = 0.f;
-	float dirZ = 0.f;
-
-	if (ec->clockwiseCircle) //clockwise
-	{
-		dirX = -ec->goalDirectionZ;
-		dirZ = ec->goalDirectionX;
-	}
-	else // counter clockwise
-	{
-		dirX = ec->goalDirectionZ;
-		dirZ = -ec->goalDirectionX;
-	}
-	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	SmoothRotation(etc, dirX, dirZ, 30.f);
-	if (magnitude < 0.001f)
-	{
-		magnitude = 0.001f;
-	}
-	dirX /= magnitude;
-	dirZ /= magnitude;
-	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
-	ec->goalDirectionX = ptc->positionX - etc->positionX;
-	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
-}
-
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
 	//idle just do animation
@@ -304,7 +268,7 @@ bool ImpBehaviourSystem::Update()
 				if (hasUpdatedMap == false)
 				{
 					hasUpdatedMap = true;
-					CalculateGlobalMapValuesHellhound(valueGrid);
+					CalculateGlobalMapValuesImp(valueGrid);
 				}
 
 				RepositionBehaviour(impComponent, impTransformComponent, playerTransformCompenent, valueGrid);

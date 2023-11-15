@@ -7,7 +7,7 @@
 #include <random>
 
 
-void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid)
 {
 	// Regular walk
 	enemyAnim->aAnim = ANIMATION_WALK;
@@ -15,26 +15,64 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 	enemyAnim->aAnimTime += GetDeltaTime();
 	ANIM_BRANCHLESS(enemyAnim);
 
-	//calculate the direction away from the player
-	eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
-	eyeComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - eyeTransformComponent->positionZ);
-	float magnitude = sqrt(eyeComponent->goalDirectionX * eyeComponent->goalDirectionX + eyeComponent->goalDirectionZ * eyeComponent->goalDirectionZ);
-	if (magnitude < 0.001f)
-	{
-		magnitude = 0.001f;
-	}
-	eyeComponent->goalDirectionX /= magnitude;
-	eyeComponent->goalDirectionZ /= magnitude;
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
-	float dirX = eyeTransformComponent->facingX, dirZ = eyeTransformComponent->facingZ;
-	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	if (magnitude < 0.001f)
-	{
-		magnitude = 0.001f;
-	}
+	float dirToNewTileX = 0.0f;
+	float dirToNewTileZ = 0.0f;
 
-	eyeTransformComponent->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+	if (!ec->retreating)
+	{
+		ec->retreating = true;
+		TransformComponent newTile = FindRetreatTile(valueGrid, ptc, 40.f, 50.f);
+
+		float dirToPlayerX = ptc->offsetX - etc->positionX;
+		float dirToPlayerZ = ptc->offsetZ - etc->positionZ;
+
+		float dirToNewTileX = newTile.positionX - etc->positionX;
+		float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+
+
+		while (dirToNewTileX * dirToPlayerX + dirToNewTileZ * dirToPlayerZ > 0.0f)
+		{
+			TransformComponent newTile = FindRetreatTile(valueGrid, ptc, 40.f, 50.f);
+
+			float dirToNewTileX = newTile.positionX - etc->positionX;
+			float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+		}
+		ec->goalDirectionX = dirToNewTileX;
+		ec->goalDirectionZ = dirToNewTileZ;
+
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+
+		etc->positionX += dirToNewTileX * enemyStats->GetSpeed() * GetDeltaTime();
+		etc->positionZ += dirToNewTileZ * enemyStats->GetSpeed() * GetDeltaTime();
+	}
+	else
+	{
+
+		etc->positionX += dirToNewTileX * enemyStats->GetSpeed() * GetDeltaTime();
+		etc->positionZ += dirToNewTileZ * enemyStats->GetSpeed() * GetDeltaTime();
+	}
+	////calculate the direction away from the player
+	//eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
+	//eyeComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - eyeTransformComponent->positionZ);
+
+	//float magnitude = sqrt(eyeComponent->goalDirectionX * eyeComponent->goalDirectionX + eyeComponent->goalDirectionZ * eyeComponent->goalDirectionZ);
+	//if (magnitude < 0.001f)
+	//{
+	//	magnitude = 0.001f;
+	//}
+	//eyeComponent->goalDirectionX /= magnitude;
+	//eyeComponent->goalDirectionZ /= magnitude;
+	//SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
+
+	//float dirX = eyeTransformComponent->facingX, dirZ = eyeTransformComponent->facingZ;
+	//magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+	//if (magnitude < 0.001f)
+	//{
+	//	magnitude = 0.001f;
+	//}
+
+	//eyeTransformComponent->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	//eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
 bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
@@ -293,9 +331,11 @@ bool EyeBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enemComp = nullptr;
+
+	bool hasUpdatedMap = false;
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
+	
 	//Find available entity
-	
-	
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
 		
@@ -353,7 +393,12 @@ bool EyeBehaviourSystem::Update()
 			}
 			else if (distance < 25.0f && !eyeComponent->charging) // Retreat to safe distance if not charging
 			{
-				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+				if (hasUpdatedMap == false)
+				{
+					hasUpdatedMap = true;
+					CalculateGlobalMapValuesImp(valueGrid);
+				}
+				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim, valueGrid);
 			}
 			else if (eyeComponent->charging || (eyeComponent->specialCounter >= eyeComponent->specialBreakpoint && eyeComponent->attackTimer >= enemyStats->GetAttackSpeed())) //if special is ready or is currently doing special
 			{
@@ -387,6 +432,7 @@ bool EyeBehaviourSystem::Update()
 		}
 	}
 
-	
+	free(valueGrid);
+
 	return true;
 }
