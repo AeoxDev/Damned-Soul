@@ -31,11 +31,13 @@ float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z);
 //void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 5.1f);
 void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform);
 void CalculateGlobalMapValuesHellhound(PathfindingMap* map);
+void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map);
 
 TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* tempTransform, float minRange, float maxRange);
 
+TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange);
+
 ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
-ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
 void CreateProjectile(EntityID entity, float directionX, float directionZ);

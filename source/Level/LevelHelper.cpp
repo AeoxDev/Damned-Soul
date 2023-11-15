@@ -39,7 +39,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 50.f;
 		}
-		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
 			mass = 500.f;
 		}
@@ -66,9 +66,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 300.f;
 		}
-		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
-			health = 200.f;
+			health = 1.f;
 		}
 	}
 	if (moveSpeed == 6969.f)
@@ -93,7 +93,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 10.f;
 		}
-		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
 			moveSpeed = 0.1f;
 		}
@@ -120,7 +120,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 15.f;
 		}
-		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
 			damage = 0.f;
 		}
@@ -145,9 +145,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			attackSpeed = 0.5f;
+			attackSpeed = 0.8f;
 		}
-		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
 			attackSpeed = 100.f;
 		}
@@ -174,7 +174,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 5;
 		}
-		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
 			soulWorth = 0;
 		}
@@ -282,7 +282,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 	}
-	else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
