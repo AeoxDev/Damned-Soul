@@ -24,11 +24,11 @@ void InitializeSky()
 
 	DirectX::XMFLOAT3 camPos;
 	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
-	//tComp.positionX = camPos.x;
-	//tComp.positionY = camPos.y;
-	//tComp.positionZ = camPos.z;
+	tComp.positionX = camPos.x;
+	tComp.positionY = camPos.y;
+	tComp.positionZ = camPos.z;
 	tComp.scaleX = 150.0f; tComp.scaleY = 150.0f; tComp.scaleZ = 150.0f;
-	tComp.facingZ = -1.f;
+	//tComp.facingZ = -1.f;
 	//tComp.facingY = 0.5; 
 
 	registry.AddComponent<TransformComponent>(m_skyPlane, tComp);

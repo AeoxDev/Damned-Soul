@@ -142,7 +142,7 @@ void RenderSkyPlane()
 	SetVertexShader(m_skyVS);
 	SetPixelShader(m_skyPS);
 	//SetRasterizerState(m_skyPlaneRasterizer);
-	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, m_skyPlaneDepth);
+	//SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, m_skyPlaneDepth);
 	LOADED_MODELS[mc->model].RenderAllSubmeshes();
 
 	//Camera::ToggleProjection();

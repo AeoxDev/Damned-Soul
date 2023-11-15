@@ -13,8 +13,8 @@ VS_OUT main(VS_INPUTS pos)
     output.world = mul(pos.position, world);
     output.camToWorldObject = normalize(cameraPosition - output.position); //uses world position before camera perspective calculations
     //output.normal = output.camToWorldObject;
-    matrix WVP = mul(world, view);
-    WVP = mul(WVP, projection);
+    //matrix WVP = mul(world, view);
+    matrix WVP = mul(view, projection);
     output.position = mul(pos.position, WVP);
     output.position.z = output.position.w;
 	
