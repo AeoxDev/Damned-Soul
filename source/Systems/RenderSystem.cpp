@@ -10,27 +10,35 @@
 #include "Light.h"
 #include "Model.h"
 #include "RenderDepthPass.h"
+#include "SkyPlane.h"
+
+// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+#include "GameRenderer.h"
 
 void Render()
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
-		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
-		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
-		Light::SetGammaCorrection(mc->gammaCorrection);
-		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
-			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
-		if (tc->offsetX != 0.0f)
+		//ARIAN SKREV DEN HÄR IF STATEMENTEN
+		if (entity.index != m_skyPlane.index)
 		{
-			tc->offsetY = 0.0f;
+			TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+			ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
+			Light::SetGammaCorrection(mc->gammaCorrection);
+			Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
+				mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+			if (tc->offsetX != 0.0f)
+			{
+				tc->offsetY = 0.0f;
+			}
+			SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+				tc->facingX, tc->facingY, -tc->facingZ,
+				tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+			LOADED_MODELS[mc->model].RenderAllSubmeshes();
 		}
-		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
-			tc->facingX, tc->facingY, -tc->facingZ,
-			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
-			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
-		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 	}
 
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
@@ -57,6 +65,8 @@ void Render()
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->aAnimTime);
 	}
+
+
 }
 bool ShadowSystem::Update()
 {
@@ -107,6 +117,38 @@ bool ShadowSystem::Update()
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	return true;
 }
+
+// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+void RenderSkyPlane()
+{
+	//Camera::ToggleProjection();
+	//Camera::UpdateProjection();
+
+	TransformComponent* tc = registry.GetComponent<TransformComponent>(m_skyPlane);
+	ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(m_skyPlane);
+	if (tc->offsetX != 0.0f)
+	{
+		tc->offsetY = 0.0f;
+	}
+
+
+	SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+		tc->facingX, tc->facingY, -tc->facingZ,
+		tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+		SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+	SetVertexShader(m_skyVS);
+	SetPixelShader(m_skyPS);
+	//SetRasterizerState(m_skyPlaneRasterizer);
+	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, m_skyPlaneDepth);
+	LOADED_MODELS[mc->model].RenderAllSubmeshes();
+
+	//Camera::ToggleProjection();
+	//Camera::UpdateProjection();
+}
+
 bool RenderSystem::Update()
 {
 	
@@ -139,6 +181,11 @@ bool RenderSystem::Update()
 	Render();
 	// Unset geometry shader
 	UnsetGeometryShader();
+
+	// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+	RenderSkyPlane();
+	
+
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
 	UnsetShadowmap(false);

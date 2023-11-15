@@ -16,7 +16,6 @@
 
 void LoadLevel1()
 {
-	
 	EntityID stage = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);

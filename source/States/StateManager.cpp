@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "SkyPlane.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -123,6 +124,7 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	InitializeSky();
 	//SetupTestHitbox();
 	RedrawUI();
 
