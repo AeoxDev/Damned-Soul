@@ -180,7 +180,7 @@ public:
 	T* GetComponent(EntityID id)
 	{
 		//Don't try to access entity that has already been destroyed
-		if (entities[GetEntityIndex(id)].id.isDestroyed)
+		if (id.index < 0 || entities[GetEntityIndex(id)].id.isDestroyed)
 			return nullptr;
 
 		//Get the unique ID of the component we're trying to add

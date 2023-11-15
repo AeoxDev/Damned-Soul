@@ -225,8 +225,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::skeleton)
 	{
-		registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
-		//model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHSkeleton.mdl"));
+		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<SkeletonBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 0.9f, EnemyType::skeleton);
@@ -338,8 +338,11 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->colorMultiplicativeGreen = 1.25f;
 	model->colorMultiplicativeBlue = 1.25f;
 	model->gammaCorrection = 1.5f;
-	registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
-
+	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+	animation->aAnim = ANIMATION_IDLE;
+	animation->aAnimTime = 0.5f;
+	animation->aAnimIdx = 0;
+	animation->aAnimTimeFactor = 1.0f;
 	//stateManager.player Sounds
 	LoadPlayerSounds();
 

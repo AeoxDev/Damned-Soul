@@ -4,9 +4,16 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define MOLTEN_HEART_VALUE 20
+#define MOLTEN_HEART_VALUE (20)
 
 EntityID MOLTEN_HEART::_OWNER;
+
+const char* MOLTEN_HEART::Description()
+{
+	char temp[RELIC_DATA_DESC_SIZE];
+	sprintf(temp, "Increases your health by %ld and heals you for %ld when obtained", MOLTEN_HEART_VALUE, MOLTEN_HEART_VALUE);
+	return temp;
+}
 
 void MOLTEN_HEART::Initialize(void* input)
 {
