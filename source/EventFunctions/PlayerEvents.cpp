@@ -9,6 +9,48 @@
 
 #include "Relics/RelicFunctions.h"
 
+/*
+* NOTES FROM TESTING
+* 
+* GRAPHICS:
+* Probably will become irrelevant when we have the player in here, but models are way too small right now
+* Could also probably use an outline on the character models to really set them apart from the background
+* Speaking of background, yep
+* 
+* GENERAL GAMEPLAY:
+* I think a major balancing issue is how we're really underpowered at the start, then balanced (depending on relic rng) at the next level, then overpowered after that
+* The best workaround I can think of is scaling enemies up with levels. Make them weaker at the start, and stronger over time. Breaking out *the graph* if anyone complains
+* So if we're going to scale enemies up, relics need to be better balanced so you don't get wrecked simply because you didn't get a good relic early
+* 
+* UI:
+* For the love of god, please give us damage numbers and enemy health bars so we can actually check the numbers and see what's stronger without just guessing
+* Also let me see what relics I own by either holding down tab or entering the pause menu thanks
+* And while we're on that topic, let's maybe take away the fact that the ESC-key ends the run if we use it in shop, while it pauses in-game xd
+* 
+* RELICS:
+* I can tell lifesteal has been nerfed (or more like our base damage has been) but it still reigns supreme
+* A huge issue is simply because we have a lot of relics that make us stronger as we go lower health, or we get hit, etc
+* Thus, we thrive off of rushing in blindly, taking hits, losing health, and getting really high numbers, which in turn leads to more life steal
+* Attack speed gained when getting hit is a bit ridiculous, want to tweak it to 1.5x instead of 2x, more precise numbers in the combat-section
+* 
+* The best workaround I can think of is scaling enemies up with levels. Make them weaker at the start, and stronger over time. Breaking out *the graph* if anyone complains
+* So if we're going to scale enemies up, relics need to be better balanced so you don't get wrecked simply because you didn't get a good relic early
+* 
+* AI:
+* Dogs need to stop chasing infinitely, unless we have some good way of actually negating the incoming damage (block, parry, big attack hitboxes that cancel their charge etc.)
+* Alternatively, if the new dog attack animation actually STOPS THEM briefly when they reach you, then perform the attack, we can actually time a dodge to get out of harm's way
+* Active hit frames of enemies (namely skeletons) after their attack animation finishes
+* 
+* FEEDBACK:
+* Make enemies light up before they attack, further clarifying that you're in danger
+* Add a hit-sound when we hit enemies separate from the sound they make when they take damage
+* 
+* COMBAT:
+* Attack timings need to be tweaked more, currently a 3-hit combo takes 1.8 seconds (0.6+0.4+0.8), which feels reasonable enough, but a little slow in my opinion
+* I'm thinking I tweak it to be more like 1.6 seconds (0.5+0.4+0.7 maybe?), and in turn making the relic-buffed version be 1.2 seconds (0.375+0.3+0.525)
+* Make dash have a cooldown, obviously. It's a quick and easy fix but I'm waiting until the dogs have a solid counter
+*/
+
 void PlayerLoseControl(EntityID& entity, const int& index)
 {	
 	//Get relevant components
@@ -106,9 +148,8 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	player->isAttacking = false;
 	player->currentCharge = 0.0f;
 
-
-	registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
-	//SetPlayerAttackHitboxInactive(entity, index); //Gone from my branch but I don't dare delete or keep it because I don't remember why so here's a comment
+	if(registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
+		registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
 }
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
@@ -148,27 +189,17 @@ void PlayerAttack(EntityID& entity, const int& index)
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
-	//float adjustedTime = powf(anim->aAnimTime, .5f);
 
 	//Make the players' attack hitbox active during the second half of the attack (between half up until eight tenths)
 	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
-	if (anim->aAnimTime >= aac->duration * 0.9f)
+	if (anim->aAnimTime >= 0.9f) //anim->aAnimTime >= aac->duration * 0.9f, redundant maybe since the gain of aAnimTime is scaled up depending on aac->duration
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
-	else if (anim->aAnimTime >= aac->duration * 0.5f)
+	else if (anim->aAnimTime >= 0.5f) //Same note as above
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 	}
-	//if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.8f)
-	//{
-	//	SetPlayerAttackHitboxInactive(entity, index);
-	//}
-	//	
-	//else if (/*GetTimedEventElapsedTime(entity, index)*/adjustedTime >= 0.5f)
-	//{
-	//	SetPlayerAttackHitboxActive(entity, index);
-	//}
 }
 
 void PlayerDashSound(EntityID& entity, const int& index)
