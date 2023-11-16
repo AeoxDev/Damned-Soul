@@ -16,11 +16,12 @@ EntityID LAST_STAND::_OWNER;
 
 const char* LAST_STAND::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "While below %ld%% health, you take %ld%% reduced damage from the first attack that would hit you every %.1lf seconds",
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "While below %ld%% health, you take %ld%% reduced damage from the first attack that would hit you every %.1lf seconds",
 		PERCENT(LAST_STAND_THRESHOLD),
 		PERCENT(1.f - LAST_STAND_MULTIPLIER),
 		LAST_STAND_COOLDOWN);
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

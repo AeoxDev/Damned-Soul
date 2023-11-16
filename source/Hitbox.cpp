@@ -857,20 +857,27 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, sID);
 	playerComp->softHitboxID = sID;
 
-	playerComp->attackHitboxID = CreateHitbox(entity, radius * 2.f, 0.f, -0.5f);
+	// Attack
+	//playerComp->attackHitboxID = CreateHitbox(entity, radius * 2.f, 0.f, -0.5f);
+	{
+		float cornersX[] = { -.1f,.1f,.1f,-.1f };
+		float cornersZ[] = { -.1f,-.1f,.1f,.1f };
+		int cornerCount = 4;
+		playerComp->attackHitboxID = CreateHitbox(entity, cornerCount, cornersX, cornersZ);
+	}
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
 	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
 	SetHitboxActive(entity, playerComp->attackHitboxID);
 	SetHitboxCanTakeDamage(entity, playerComp->attackHitboxID, false);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 
-	//dID = 3
-	int dID = CreateHitbox(entity, radius * 2.0f, 0.0f, 0.0f);
-	SetCollisionEvent(entity, dID, DashCollision);
-	SetHitboxHitEnemy(entity, dID);
-	SetHitboxActive(entity, dID);
-	SetHitboxCanTakeDamage(entity, dID, false);
-	SetHitboxCanDealDamage(entity, dID, false);
+	// Dash hitbox
+	playerComp->dashHitboxID = CreateHitbox(entity, radius * 2.0f, 0.0f, 0.0f);
+	SetCollisionEvent(entity, playerComp->dashHitboxID, DashCollision);
+	SetHitboxHitEnemy(entity, playerComp->dashHitboxID);
+	SetHitboxActive(entity, playerComp->dashHitboxID);
+	SetHitboxCanTakeDamage(entity, playerComp->dashHitboxID, false);
+	SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, false);
 }
 
 bool HitboxCanHitGI(EntityID& entity)
@@ -896,6 +903,21 @@ void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
 		hitbox->onConvexCollision[hitboxID- SAME_TYPE_HITBOX_LIMIT].CollisionFunction = (void(*)(OnCollisionParameters&))function;
 	}
 	
+}
+
+ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID)
+{
+	//Find hitbox
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		return { -1, nullptr, nullptr };
+	}
+	else
+	{
+		auto data = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT];
+		return { data.cornerAmount, data.cornerX, data.cornerZ };
+	}
 }
 
 void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[])

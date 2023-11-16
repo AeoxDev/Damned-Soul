@@ -62,7 +62,7 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	return funcInput.CollapseDamage();
 }
 
-void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
+void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, bool isCharged)
 {
 	if (attackerStats == nullptr || defenderStats == nullptr)
 	{
@@ -70,6 +70,14 @@ void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attac
 	}
 	// Calculate damage
 	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
+
+	if (isCharged)
+	{
+		//Babirusa
+		auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(attacker);
+		if (charge)
+			finalDamage *= charge->multiplier;
+	}
 
 	// Provide a flat hit, mostly just so that we can edit all sources at the same time
 	Combat::HitFlat(defender, defenderStats, finalDamage);
