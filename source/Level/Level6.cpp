@@ -102,7 +102,6 @@ void LoadLevel6()
 	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
-	srand((unsigned)(GetDeltaTime() * 100000.0f));
 	//Add static hazards on the where player does not spawn
 	int nrHazards = 8;
 	for (size_t i = 0; i < nrHazards; i++)

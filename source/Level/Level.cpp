@@ -7,9 +7,11 @@
 #include "Registry.h"
 #include "Components.h"
 #include "UIButtonFunctions.h"
+#include <time.h>
 
 void LoadLevel(int level)
 {
+	std::srand((unsigned)time(NULL));
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);
 	SetInShop(false);
@@ -46,7 +48,7 @@ void LoadLevel(int level)
 	{
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
-	case 3: LoadLevel6(); break;//Imp stage
+	case 3: LoadLevel2(); break;//Imp stage
 	case 4: ReloadShop(); break;
 	case 5: LoadLevel3(); break;//Doggie stage
 	case 6: ReloadShop(); break;

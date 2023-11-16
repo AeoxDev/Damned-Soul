@@ -7,7 +7,7 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000 //Hermano 3000
+#define TEST3000 //Hermano 3000
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
@@ -23,7 +23,7 @@ int main(int argc, char* args[])
 {
 	InitiateConfig();
 	MemLib::createMemoryManager();
-
+	
 	bool sdlLoaded = SetupWindow();
 	if (sdlLoaded == false)
 	{
