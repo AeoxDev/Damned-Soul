@@ -3,7 +3,6 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
-#include "MemLib\ML_String.hpp"
 
 #define DEMON_BONEMARROW_STRENGTH_INCREASE (.25f)
 
@@ -11,8 +10,9 @@ EntityID DEMON_BONEMARROW::_OWNER;
 
 const char* DEMON_BONEMARROW::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Increases your strength by %ld", PERCENT(DEMON_BONEMARROW_STRENGTH_INCREASE));
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Increases your strength by %ld", PERCENT(DEMON_BONEMARROW_STRENGTH_INCREASE));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

@@ -10,8 +10,10 @@ EntityID DEMON_HEART::_OWNER;
 
 const char* DEMON_HEART::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Increases your health by %ld", DEMON_HEART_HEALTH_INCREASE);
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Increases your health by %ld",
+		DEMON_HEART_HEALTH_INCREASE);
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

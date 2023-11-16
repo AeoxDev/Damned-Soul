@@ -21,19 +21,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			mass = 1.f;
+			mass = 35.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			mass = 6.f;
+			mass = 80.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			mass = 50.f;
+			mass = 666.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			mass = 3.f;
+			mass = 30.f;
 		}
 	}
 	if (health == 6969.f)
@@ -182,6 +182,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
@@ -216,6 +218,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->baseCanWalkOnCrack = true;
 		stat->canWalkOnCrack = true;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		stat->acidAccelFactor = 1.0f;
+		stat->acidAnimFactor = 1.0f;
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
@@ -336,6 +342,8 @@ void ReloadPlayerNonGlobals()
 		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
 		playerTransform->mass = 3.0f;
 	}
+	playerTransform->currentSpeedX = 0.0f;
+	playerTransform->currentSpeedZ = 0.0f;
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
@@ -356,6 +364,8 @@ void ReloadPlayerNonGlobals()
 
 	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	player->isAttacking = false;
 }
 
 EntityID RandomPlayerEnemy(EnemyType enemyType) {
