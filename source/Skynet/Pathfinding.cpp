@@ -265,7 +265,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 
 	int x = 0, z = 0;
 	float distance = 1.f;
-	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
 	while (!(distance > minRange && distance < maxRange))
 	{

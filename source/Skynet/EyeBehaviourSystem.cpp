@@ -15,28 +15,43 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 	enemyAnim->aAnimTime += GetDeltaTime();
 	ANIM_BRANCHLESS(enemyAnim);
 
-	float dirToNewTileX = 0.0f;
-	float dirToNewTileZ = 0.0f;
-
+	//using charge timer as a safetynet 
+	ec->chargeTimer += GetDeltaTime();
 	if (!ec->retreating)
 	{
 		ec->retreating = true;
-		TransformComponent newTile = FindRetreatTile(valueGrid, ptc, 40.f, 50.f);
+		float minRange = 20.0f;
+		float maxRange = 30.0f;
 
-		float dirToPlayerX = ptc->offsetX - etc->positionX;
-		float dirToPlayerZ = ptc->offsetZ - etc->positionZ;
+		TransformComponent newTile = FindRetreatTile(valueGrid, etc, 20.f, 30.f);
+
+		float dirToPlayerX = ptc->positionX - etc->positionX;
+		float dirToPlayerZ = ptc->positionZ - etc->positionZ;
+		Normalize(dirToPlayerX, dirToPlayerZ);
 
 		float dirToNewTileX = newTile.positionX - etc->positionX;
 		float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+		Normalize(dirToNewTileX, dirToNewTileZ);
 
-
-		while (dirToNewTileX * dirToPlayerX + dirToNewTileZ * dirToPlayerZ > 0.0f)
+		float dotX = dirToNewTileX * dirToPlayerX;
+		float dotZ = dirToNewTileZ * dirToPlayerZ;
+		int iterations = 0;
+		while ((dotX > 0.0f || dotZ > 0.0f) && iterations > 1000)
 		{
-			TransformComponent newTile = FindRetreatTile(valueGrid, ptc, 40.f, 50.f);
+			newTile = FindRetreatTile(valueGrid, etc, 20.f, 30.f);
 
 			float dirToNewTileX = newTile.positionX - etc->positionX;
 			float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+			Normalize(dirToNewTileX, dirToNewTileZ);
+
+			dotX = dirToNewTileX * dirToPlayerX;
+			dotZ = dirToNewTileZ * dirToPlayerZ;
+			iterations++;
 		}
+
+		ec->targetX = newTile.positionX;
+		ec->targetZ = newTile.positionZ;
+
 		ec->goalDirectionX = dirToNewTileX;
 		ec->goalDirectionZ = dirToNewTileZ;
 
@@ -45,12 +60,27 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 		etc->positionX += dirToNewTileX * enemyStats->GetSpeed() * GetDeltaTime();
 		etc->positionZ += dirToNewTileZ * enemyStats->GetSpeed() * GetDeltaTime();
 	}
-	else
+	else if(ec->chargeTimer < 1.5f)
 	{
-
-		etc->positionX += dirToNewTileX * enemyStats->GetSpeed() * GetDeltaTime();
-		etc->positionZ += dirToNewTileZ * enemyStats->GetSpeed() * GetDeltaTime();
+		auto dist = Calculate2dDistance(etc->positionX, etc->positionZ, ec->targetX, ec->targetZ);
+		if (dist > 1.0f)
+		{
+			SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+			etc->positionX += ec->goalDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
+			etc->positionZ += ec->goalDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
+		}
+		else
+		{
+			ec->retreating = false;
+			ec->chargeTimer = 0.0f;
+		}
 	}
+	else 
+	{
+		ec->retreating = false;
+		ec->chargeTimer = 0.0f;
+	}
+
 	////calculate the direction away from the player
 	//eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
 	//eyeComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - eyeTransformComponent->positionZ);
@@ -88,6 +118,7 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	{
 		ec->goalDirectionX = ptc->positionX - etc->positionX;
 		ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
+
 		float magnitude = sqrt(ec->goalDirectionX * ec->goalDirectionX + ec->goalDirectionZ * ec->goalDirectionZ);
 		if (magnitude < 0.001f)
 		{
@@ -95,7 +126,6 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		}
 		ec->goalDirectionX /= magnitude;
 		ec->goalDirectionZ /= magnitude;
-
 
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 		ec->aimTimer += GetDeltaTime();
@@ -117,13 +147,8 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		//set direction for attack
 		float dx = ptc->positionX - etc->positionX;
 		float dz = ptc->positionZ - etc->positionZ;
-		float magnitude = sqrt(dx * dx + dz * dz);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		dx /= magnitude;
-		dz /= magnitude;
+		
+		Normalize(dx, dz);
 
 		CreateProjectile(entity, dx, dz);
 		return true;
@@ -391,7 +416,7 @@ bool EyeBehaviourSystem::Update()
 				enemyAnim->aAnimTime += GetDeltaTime() * .7f;
 				ANIM_BRANCHLESS(enemyAnim);
 			}
-			else if (distance < 25.0f && !eyeComponent->charging) // Retreat to safe distance if not charging
+			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging) // Retreat to safe distance if not charging
 			{
 				if (hasUpdatedMap == false)
 				{
