@@ -23,7 +23,7 @@
 #include "Relics\Offensive\AdrenalineRush.h"
 #include "Relics\Offensive\ThrillSeeker.h"
 #include "Relics\Offensive\ExplodingWeapon.h"
-//#include "Relics\Offensive\PowerStrike.h"
+#include "Relics\Offensive\PowerStrike.h"
 
 
 	/*Defense*/
@@ -206,6 +206,14 @@ void _validateMasterRelicList()
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	EXPLODING_WEAPON::Initialize
+			),
+			RelicData(
+			/*Name*/		"Power Strike",
+			/*Filepath*/	"RelicIcons\\Power_Strike",
+			/*Description*/	POWER_STRIKE::Description(),
+			/*Price*/		10,
+			/*Type*/		RELIC_OFFENSE,
+			/*Function*/	POWER_STRIKE::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 
