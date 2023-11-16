@@ -117,6 +117,7 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	anim->aAnimTimeFactor = speedDiff; //Cracked
 	anim->aAnimTime = 0.0f; //reset animation
 
+	stats->SetSpeedMult(0.6f); //Move slower while attacking
 	player->isAttacking = true;
 }
 
@@ -175,6 +176,9 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 
 	if (registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
 		registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
+
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	stats->SetSpeedMult(1.0f); //Reset
 }
 
 void PlayerDash(EntityID& entity, const int& index)

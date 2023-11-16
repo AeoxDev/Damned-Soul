@@ -231,7 +231,7 @@ bool ControllerSystem::Update()
 		{
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)
-				stats->SetSpeedMult(0.1f);
+				stats->SetSpeedMult(0.2f);
 			player->currentCharge += GetDeltaTime();
 			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
 				player->currentCharge = player->maxCharge;

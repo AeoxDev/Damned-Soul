@@ -23,7 +23,6 @@ void BeginHit(EntityID& entity, const int& index)
 
 	//Charged attack extravaganza
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
-	//Store any specific condition in the timed event
 	uint32_t condition = GetTimedEventCondition(teComp, index);
 	
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats, condition == CONDITION_CHARGE);
@@ -44,9 +43,7 @@ void DashBeginHit(EntityID& entity, const int& index)
 	StatComponent* defenderStats = registry.GetComponent<StatComponent>(cpc->params.entity2);
 
 	//Apply the damage
-	//Combat::HitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
 	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
-	//Combat::HitFlat(entity, defenderStats, attackerStats->GetDamage() * 0.5f);
 
 	//Disable damage taken until EndHit
 	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
