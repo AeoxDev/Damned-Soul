@@ -431,6 +431,7 @@ bool EyeBehaviourSystem::Update()
 		eyeComponent->attackStunTimer += GetDeltaTime();
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 		ANIM_BRANCHLESS(enemyAnim);
+		TransformDecelerate(enemyEntity);
 	}
 
 	free(valueGrid);

@@ -185,6 +185,78 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	}
 }
 
+void HazardAttackCollision(OnCollisionParameters& params)
+{
+	StatComponent* stat = registry.GetComponent<StatComponent>(params.entity2);
+	StaticHazardComponent* hazard = registry.GetComponent<StaticHazardComponent>(params.entity1);
+
+	TransformComponent* p = registry.GetComponent<TransformComponent>(params.entity2);
+	HitboxComponent* h = registry.GetComponent<HitboxComponent>(params.entity2);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(params.entity2);
+	if (HitboxCanHitGI(params.entity2))
+	{
+		int r = hazard->type;//PixelValueOnPosition(geoCo, p);
+		int takeDamage = 0;
+		ProjectileComponent* proj = nullptr;
+
+		switch (r)
+		{
+		case 0:
+			p->positionX = 0.f;
+			p->positionZ = 0.f;
+			break;
+		case 1:
+			//Footstep sound here?
+			stat->m_acceleration = stat->m_baseAcceleration;
+			break;
+		case HAZARD_LAVA:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->lavaAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
+
+			HazardDamageHelper(params.entity2, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		case HAZARD_CRACK:
+			if (!stat->canWalkOnCrack)
+			{
+				//Detect edge
+				//Edge direction
+				p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
+				p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
+			}
+			break;
+		case HAZARD_ACID://Lava but more damage
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->acidAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
+
+			HazardDamageHelper(params.entity2, 50.f);
+			break;
+		case HAZARD_ICE:
+			//ICE:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->iceAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
+
+			//HazardDamageHelper(entity, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 bool IsDamageCollisionValid(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
@@ -280,27 +352,16 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 
 	//Knockback
-
-	{
-		TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
-		TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-		float x = transform1->facingX;
-		float z = transform1->facingZ;
-		float lenFactor = 1.f / std::sqrtf(x * x + z * z);
-		float weightFactor = sqrt(transform1->mass / transform2->mass);
-		float kbs = stat1->GetKnockback();
-		//CalculateKnockBackDirection(params.entity1, params.entity2, x, z);
-		//CalculateKnockBack(params.entity1, params.entity2, x, z);
-		x *= lenFactor;
-		z *= lenFactor;
-		AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * (x / weightFactor), SELF_KNOCKBACK_FACTOR * (z / weightFactor));
-		float chargedKnockback = 1.0f;
-		if (registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1) != nullptr)
-		{
-			chargedKnockback = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1)->multiplier * 1.5f; //Big knockback
-		}
-		AddKnockBack(params.entity2, kbs * chargedKnockback * (x * -weightFactor), kbs * chargedKnockback * (z * -weightFactor));
-	}
+	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
+	float frictionKnockbackFactor1 = 20.0f / stat1->m_acceleration;
+	float frictionKnockbackFactor2 = 20.0f / stat2->m_acceleration;
+	transform1->currentSpeedX -= frictionKnockbackFactor1 * SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X;
+	transform1->currentSpeedZ -= frictionKnockbackFactor1 * SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1Z;
+	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	transform2->currentSpeedX -= frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2X;
+	transform2->currentSpeedZ -= frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z;
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
 }
 
 void PlayHitSound(OnCollisionParameters& params)

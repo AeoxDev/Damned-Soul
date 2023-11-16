@@ -129,7 +129,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 //}
 
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
+void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
 {
 	if (path)
 	{
@@ -162,12 +162,10 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-
 	//speed set to 10.0f, use enemy component later
 	float speedMultiplier = 1.f;
 	if (hellhoundComponent->charge)
 	{
-		speedMultiplier = 2.f;
 		hellhoundComponent->chargeCounter += GetDeltaTime();
 		if (hellhoundComponent->chargeCounter >= hellhoundComponent->chargeTimeLimit)
 		{
@@ -175,12 +173,20 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 			hellhoundComponent->charge = false;
 			hellhoundComponent->chargeCounter = 0.f;
 		}
+		speedMultiplier = 2.5f; 
+		enemyStats->SetSpeedMult(2.5f);
+		if (enemyStats->m_acceleration == enemyStats->m_baseAcceleration)
+		{
+			enemyStats->m_acceleration = 4.0f;
+		}
+		
 	}
-	hellhoundTransformComponent->positionX += dirX * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	//hellhoundTransformComponent->positionX += dirX * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	//hellhoundTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	TransformAccelerate(enemy, dirX * speedMultiplier, dirZ * speedMultiplier);
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
@@ -213,9 +219,9 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		float bias = 1.f;
 
 
-		hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-		hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-
+		//hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+		//hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+		TransformAccelerate(enemy, hellhoundTransformComponent->facingX * 0.5f, hellhoundTransformComponent->facingZ * 0.5f);
 		if ((hellhoundTransformComponent->positionX >= oldX + bias || hellhoundTransformComponent->positionZ >= oldZ + bias) && hellhoundTransformComponent->positionX <= oldX - bias || hellhoundTransformComponent->positionZ <= oldZ - bias)
 		{
 			//not good direction
@@ -398,7 +404,7 @@ void SetInfiniteDirection(TransformComponent* htc, HellhoundBehaviour* hc)
 }
 
 
-void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
@@ -409,9 +415,10 @@ void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, S
 	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
 	SmoothRotation(htc, newGoalX, newGoalZ, 35.f);
 
-	htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
-	htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
-
+	//htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
+	//htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
+	enemyStats->SetSpeedMult(1.0f);
+	TransformAccelerate(enemy, hc->cowardDirectionX, hc->cowardDirectionZ);
 	hc->cowardCounter += GetDeltaTime();
 
 	if (hc->cowardCounter >= hc->cowardDuration) // have we been tactically retreating long enough?
@@ -510,6 +517,7 @@ bool HellhoundBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+		
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
 		{
@@ -599,7 +607,7 @@ bool HellhoundBehaviourSystem::Update()
 				}
 
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
-				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
+				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
@@ -661,7 +669,7 @@ bool HellhoundBehaviourSystem::Update()
 				hellhoundComponent->charge = true;
 				hellhoundComponent->chargePrepareDurationCounter += GetDeltaTime();
 				if(hellhoundComponent->chargePrepareDurationCounter >= hellhoundComponent->chargePrepareDuration) // to make it feel fair
-					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
+					ChaseBehaviour(enemyEntity,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 			}
 			else if (hellhoundComponent->hasMadeADecision && hellhoundComponent->wantsToShoot) // shoot
 			{
@@ -732,21 +740,22 @@ bool HellhoundBehaviourSystem::Update()
 				}
 
 				ResetHellhoundVariables(hellhoundComponent, /*true, */true);
-				ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
+				ChaseBehaviour(enemyEntity,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 			}
 			else // idle
 			{
 				ResetHellhoundVariables(hellhoundComponent, /*true,*/ true);
 				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 			}
 		}
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 		}
+		TransformDecelerate(enemyEntity);//Always decelerate
 
 	}
 

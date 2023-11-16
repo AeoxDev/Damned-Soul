@@ -195,6 +195,7 @@ bool TempBossBehaviourSystem::Update()
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 			IdleBehaviour(playerComponent, playerTransformCompenent, tempBossComponent, tempBossTransformComponent, enemyStats);
 		}
+		TransformDecelerate(enemyEntity);
 	}
 
 
