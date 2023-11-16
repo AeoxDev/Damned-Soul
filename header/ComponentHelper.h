@@ -129,6 +129,7 @@ private:
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
+	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
 	bool portalCreated = false;
