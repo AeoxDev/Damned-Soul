@@ -12,3 +12,5 @@ void LoadLevel6();//Minotaur stage, Ice
 void LoadLevel7();//Imp 2 + Hellhound 2, Ice
 void LoadLevel8();//Split 2 stage, Ice
 void LoadLevel9();//Final boss
+
+void LoadEyeChallenge();

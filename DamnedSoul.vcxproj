@@ -201,6 +201,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DamageOverTimeComponent.cpp" />
     <ClCompile Include="source\Components\TransformComponent.cpp" />
+    <ClCompile Include="source\Level\EyeChallenge.cpp" />
     <ClCompile Include="source\Level\Level5.cpp" />
     <ClCompile Include="source\Level\Level6.cpp" />
     <ClCompile Include="source\Level\Level7.cpp" />
@@ -224,6 +225,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Offensive\PowerStrike.cpp" />
     <ClCompile Include="source\Relics\Offensive\SoulEater.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
+    <ClCompile Include="source\States\Credits.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
@@ -527,6 +529,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPauseRelicTextComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRerollComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIRunTimeComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />
@@ -604,6 +608,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />
     <ClInclude Include="header\States\CleanupMacros.h" />
+    <ClInclude Include="header\States\Credits.h" />
     <ClInclude Include="header\States\Pause.h" />
     <ClInclude Include="header\Systems\Systems.h" />
     <ClInclude Include="header\UI\UIButtonFunctions.h" />

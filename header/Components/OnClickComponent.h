@@ -12,12 +12,17 @@ struct OnClickComponent
 
 	int index = 0;
 
+	//container of bool doesnt exist, 0 = pressed, 1 = released
+	std::vector<int> mouseStates;
+
 	std::vector<void(*)(void*, int)> onClickFunctions;
 
-	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int))
+	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, int state, void(*func)(void*, int))
 	{
 		positions.push_back(pos);
 		bounds.push_back(bnds);
+
+		mouseStates.push_back(state);
 
 		onClickFunctions.push_back(func);
 	};

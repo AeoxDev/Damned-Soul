@@ -13,9 +13,9 @@
 #include "States\StateManager.h"
 #include "UIButtonFunctions.h"
 
-void LoadLevel1()
+void LoadEyeChallenge()
 {
-	
+
 	EntityID stage = registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
@@ -25,13 +25,24 @@ void LoadLevel1()
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
-	CreatePlayer(0.0f, 0.0f, 0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
+	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
-	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
-	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -45.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::eye, 40.f, 0.f, -35.f);
+	SetupEnemy(EnemyType::eye, -30.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -20.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -46.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::eye, 41.f, 0.f, -35.f);
+	SetupEnemy(EnemyType::eye, -31.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -21.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -47.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::eye, 42.f, 0.f, -35.f);
+	SetupEnemy(EnemyType::eye, -32.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -22.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -48.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::eye, 43.f, 0.f, -35.f);
+	SetupEnemy(EnemyType::eye, -33.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -23.f, 0.f, 45.f);
 
 	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
 	//5 souls total
@@ -43,18 +54,18 @@ void LoadLevel1()
 	stageModel->colorMultiplicativeBlue = 0.75f;
 	stageModel->gammaCorrection = 0.9f;
 	//stageModel->colorAdditiveRed = 0.1f;
-	
+
 	// Stage (Default)
-	TransformComponent *stageTransform = registry.AddComponent<TransformComponent>(stage);
+	TransformComponent* stageTransform = registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");	
-	
+	phc->Load("default");
+
 	/*char ctexture[] = "1-1C.png";
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, emptyTexture, emptyTexture);*/
 
 	RenderGeometryIndependentCollision(stage);
-	
+
 	//Finally set the collision boxes
 
 	registry.AddComponent<TransformComponent>(mouse);
