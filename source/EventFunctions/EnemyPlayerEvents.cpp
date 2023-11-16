@@ -9,9 +9,6 @@
 #include "States\StateManager.h"
 #include <cmath>
 #include "CombatFunctions.h"
-//#include <cmath> //sin
-
-#define KNOCKBACK_FACTOR 0.3f
 
 void BeginHit(EntityID& entity, const int& index)
 {
@@ -21,10 +18,17 @@ void BeginHit(EntityID& entity, const int& index)
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 
-	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
+	//Charged attack extravaganza
+	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
+	uint32_t condition = GetTimedEventCondition(teComp, index);
+	
+	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats, condition == CONDITION_CHARGE);
 
-	//Disable damage taken until EndHit
-	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+	//Disable damage taken until EndHit if we're the player (enemy i-frames make faster attacks useless)
+	if(registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+
+	//I want to play a sound that's just a straight-up *smack* for better hit feedback
 }
 
 void DashBeginHit(EntityID& entity, const int& index)
@@ -36,9 +40,7 @@ void DashBeginHit(EntityID& entity, const int& index)
 	StatComponent* defenderStats = registry.GetComponent<StatComponent>(cpc->params.entity2);
 
 	//Apply the damage
-	//Combat::HitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
 	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
-	//Combat::HitFlat(entity, defenderStats, attackerStats->GetDamage() * 0.5f);
 
 	//Disable damage taken until EndHit
 	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
@@ -62,8 +64,9 @@ void MiddleHit(EntityID& entity, const int& index)
 
 void EndHit(EntityID& entity, const int& index)
 {
-	//Enable damage taken again
-	SetHitboxCanTakeDamage(entity, 1, true);
+	//Enable damage taken again for the player
+	if (registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		SetHitboxCanTakeDamage(entity, 1, true);
 
 	//Make sure we're back to our regular color
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);

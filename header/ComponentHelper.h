@@ -25,6 +25,7 @@ private:
 	float m_speedMult = 1.0f;
 
 
+
 //Weapon stats
 	// Damage
 	float m_baseDamage = 10.f;
@@ -46,7 +47,8 @@ private:
 	// If the entity has bonus stats, used to skip entities in the system
 	bool m_modifiedStats = false;
 public:
-
+	float m_acceleration = 1.0f;//How much of speed to gain over one second
+	float m_baseAcceleration = 1.0f;//How much of speed to gain over one second
 	// for death animation
 	bool performingDeathAnimation = false;
 
@@ -55,9 +57,19 @@ public:
 	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
 	bool baseCanWalkOnCrack = false;//onCrack
 	bool canWalkOnCrack = false;//If the entity can walk on cracks or not.
+	float iceAccelFactor = 0.08f;
+	float iceAnimFactor = 2.5f;
+	float lavaAccelFactor = 0.5f;
+	float lavaAnimFactor = 2.0f;
+	float acidAccelFactor = 0.3f;
+	float acidAnimFactor = 0.5f;
+
 
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
-	{/* m_baseMoveSpeed = m_moveSpeed; */}
+	{/* m_baseMoveSpeed = m_moveSpeed; */
+		m_baseAcceleration = ms;
+		m_acceleration = ms;
+	}
 
 // Metadata
 	// Mark the entity as being modified and having stat bonueses to calculate
@@ -129,6 +141,7 @@ private:
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
+	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
 	bool portalCreated = false;
@@ -137,8 +150,11 @@ public:
 	float timeSinceLastAttack = -1.0f;
 	unsigned int attackChainIndex = 0;
 	bool isAttacking = false;
+	bool hasActivatedHitbox = false;
 
-	
+	//New additions because of player heavy attacks
+	float currentCharge = 0.0f;
+	float maxCharge = 1.0f; 
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
@@ -172,6 +188,11 @@ struct DashArgumentComponent
 struct AttackArgumentComponent
 {
 	float duration = 0.0f;
+};
+
+struct ChargeAttackArgumentComponent
+{
+	float multiplier = 0.0f;
 };
 
 struct CollisionParamsComponent

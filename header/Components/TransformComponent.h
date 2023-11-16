@@ -1,4 +1,5 @@
 #pragma once
+#include "EntityID.h"
 
 struct TransformComponent
 {
@@ -15,8 +16,16 @@ struct TransformComponent
 	float offsetScaleX = 1.0f, offsetScaleY = 1.0f, offsetScaleZ = 1.0f;
 	//Mass
 	float mass = 1.0f;//Used for moveable collision (clipping collision)
+
+	//Force for ice hazard
+	float currentSpeedX = 0.0f, currentSpeedZ = 0.0f;
 };
 
 float DistanceBetweenTransforms(TransformComponent* f, TransformComponent* s);
 
 void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 10.1f);
+
+//This already takes statcomponent into account
+void TransformDecelerate(EntityID& entity);
+//This already takes statcomponent into account, x, z is direction.
+void TransformAccelerate(EntityID& entity, float x, float z);

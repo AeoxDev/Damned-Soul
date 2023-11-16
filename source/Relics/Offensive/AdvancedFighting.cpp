@@ -16,11 +16,12 @@ static uint8_t _AF_CurrentCritCharge = 0;
 
 const char* ADVANCED_FIGHTING::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "You gain %ld-%ld charges when you hit an enemy with an attack. At 100 charges, your next attack deals %ld%% damage", 
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You gain %ld-%ld charges when you hit an enemy with an attack. At 100 charges, your next attack deals %ld%% damage",
 		ADVANCED_FIGHTING_CHARGE_MIN,
 		ADVANCED_FIGHTING_CHARGE_MAX,
 		PERCENT(ADVANCED_FIGHTING_CRIT_DAMAGE));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

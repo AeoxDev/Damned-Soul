@@ -18,6 +18,7 @@ struct ModelBonelessComponent
 
 	float baseColorMultiplicativeRed = 1.0f, baseColorMultiplicativeGreen = 1.0f, baseColorMultiplicativeBlue = 1.0f;
 	float baseColorAdditiveRed = 0.0f, baseColorAdditiveGreen = 0.0f, baseColorAdditiveBlue = 0.0f;
+	bool castShadow = true;
 };
 
 struct ModelSkeletonComponent
