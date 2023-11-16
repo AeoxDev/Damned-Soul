@@ -78,14 +78,21 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
 		for (auto& func : funcs)
 		{
-			SetHitboxCanDealDamage(entity, 3, true); //Dash hitbox
+			SetHitboxActive(entity, playerComp->dashHitboxID);
+			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true); //Dash hitbox
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 		anim->aAnimTimeFactor = 5.f;
 
 		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
+
 		//SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
+		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
+		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 	}
 }
 
@@ -148,7 +155,8 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
 		for (auto& func : funcs)
 		{
-			SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
+			SetHitboxActive(entity, playerComp->dashHitboxID, false);
+			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, false); //Dash hitbox
 		}
 		stats->hazardModifier = stats->baseHazardModifier;
 	}
@@ -168,6 +176,7 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	//Smile
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	anim->aAnimTimeFactor = 1.f;
+	anim->aAnimTimePower = 1.f;
 
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	player->timeSinceLastAttack = 0.0f;
@@ -217,6 +226,8 @@ void PlayerAttack(EntityID& entity, const int& index)
 {;
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 
 	//Can't perform animation without the AnimationComponent, durr
 	if (!anim)
@@ -226,14 +237,79 @@ void PlayerAttack(EntityID& entity, const int& index)
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
 
-	//Make the players' attack hitbox active during the second half of the attack (between half up until eight tenths)
-	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
-	if (anim->aAnimTime >= 0.9f) //anim->aAnimTime >= aac->duration * 0.9f, redundant maybe since the gain of aAnimTime is scaled up depending on aac->duration
+#define HITBOX_START_TIME (0.5f)
+#define HITBOX_END_TIME (0.8f)
+#define HITBOX_SCALE (2.f)
+
+	anim->aAnimTimePower = .5f;
+	float animTime = anim->GetTimeValue();
+
+	//Make the players' attack hitbox active during the second half of the attack animation
+	if (/*GetTimedEventElapsedTime(entity, index)*/animTime >= HITBOX_END_TIME)
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
-	else if (anim->aAnimTime >= 0.5f) //Same note as above
+		
+	else if (/*GetTimedEventElapsedTime(entity, index)*/animTime >= HITBOX_START_TIME && false == player->hasActivatedHitbox)
 	{
 		SetPlayerAttackHitboxActive(entity, index);
+		player->hasActivatedHitbox = true;
 	}
+	else
+	{
+		float softCollisionRadius = GetHitboxRadius(entity, 1);
+		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);
+		float width = (.2f + std::min(.4f, hitboxTime * 2)) * softCollisionRadius * HITBOX_SCALE;
+		float depth = (1.2f + std::min(1.f, hitboxTime * 2)) * softCollisionRadius * HITBOX_SCALE;
+		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
+
+
+		// Counter clockwise
+		// X
+		corners.cornersX[0] = -width;
+		corners.cornersX[1] = width;
+		corners.cornersX[2] = width;
+		corners.cornersX[3] = -width;
+		// Z
+		corners.cornersZ[0] = -2 * depth;
+		corners.cornersZ[1] = -2 * depth;
+		corners.cornersZ[2] = 0;
+		corners.cornersZ[3] = 0;
+
+		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
+		//SetHitboxRadius(entity, player->attackHitboxID, (anim->aAnimTime - 0.5f) * 5);
+	}
+}
+
+void PlayerDashSound(EntityID& entity, const int& index)
+{
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	sfx->Play(Player_Dash, Channel_Base);
+}
+
+void PlayerDash(EntityID& entity, const int& index)
+{
+	//Get access to players relevant components
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
+	// Get animation
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+
+	//Invalid entity doesn't have the required components
+	if (!transform || !stat || !dac || !anim)
+		return;
+
+	//Perform attack animation, woo, loop using DT
+	anim->aAnim = ANIMATION_WALK;
+	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+	anim->aAnimIdx = 1;
+
+	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
+	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
+	
+	//Move player quickly in the relevant direction
+	//transform->currentSpeedX = dac->x * (stat->GetSpeed() * dac->dashModifier);// * GetDeltaTime();
+	//transform->currentSpeedZ = dac->z * (stat->GetSpeed() * dac->dashModifier);// *GetDeltaTime();
+	//transform->currentSpeedX
 }

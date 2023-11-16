@@ -13,9 +13,10 @@ EntityID SECOND_WIND::_OWNER;
 
 const char* SECOND_WIND::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "The first time that you would die while holding this relic, you instead revive with %ld%% of your hit point maximum",
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "The first time that you would die while holding this relic, you instead revive with %ld%% of your hit point maximum",
 		PERCENT(SECOND_WIND_REVIVE_FRACTION));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

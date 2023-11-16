@@ -64,6 +64,10 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 
 void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, bool isCharged)
 {
+	if (attackerStats == nullptr || defenderStats == nullptr)
+	{
+		return;
+	}
 	// Calculate damage
 	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
 

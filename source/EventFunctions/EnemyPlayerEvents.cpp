@@ -9,9 +9,6 @@
 #include "States\StateManager.h"
 #include <cmath>
 #include "CombatFunctions.h"
-//#include <cmath> //sin
-
-#define KNOCKBACK_FACTOR 0.3f
 
 void BeginHit(EntityID& entity, const int& index)
 {

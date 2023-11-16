@@ -11,14 +11,16 @@
 // Include all relics
 	/*Offense*/
 #include "Relics\Offensive\DemonBonemarrow.h"
+#include "Relics\Offensive\MinotaurHorn.h"
+#include "Relics\Offensive\HoundFang.h"
 #include "Relics\Offensive\LifeSteal.h"
 #include "Relics\Offensive\AdvancedFighting.h"
 #include "Relics\Offensive\SoulPower.h"
 #include "Relics\Offensive\FlameWeapon.h"
-//#include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\DashAttack.h"
 #include "Relics\Offensive\AdrenalineRush.h"
 #include "Relics\Offensive\ThrillSeeker.h"
+#include "Relics\Offensive\ExplodingWeapon.h"
 //#include "Relics\Offensive\PowerStrike.h"
 
 
@@ -108,6 +110,22 @@ void _validateMasterRelicList()
 				/*Function*/	DEMON_BONEMARROW::Initialize
 			),
 			RelicData(
+				/*Name*/		"Minotaur Horn Fragment",
+				/*Filepath*/	"RelicIcons\\Minotaur_Horn",
+				/*Description*/	MINOTAUR_HORN::Description(),
+				/*Price*/		6,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	MINOTAUR_HORN::Initialize
+			),
+			RelicData(
+				/*Name*/		"Hound Fang",
+				/*Filepath*/	"RelicIcons\\Hound_Fang",
+				/*Description*/	HOUND_FANG::Description(),
+				/*Price*/		6,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	HOUND_FANG::Initialize
+			),
+			RelicData(
 				/*Name*/		"Flame Weapon",
 				/*Filepath*/	"RelicIcons\\Flame_Weapon",
 				/*Description*/	FLAME_WEAPON::Description(),//"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
@@ -162,6 +180,14 @@ void _validateMasterRelicList()
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	THRILL_SEEKER::Initialize
+			),
+			RelicData(
+				/*Name*/		"Exploding Weapon",
+				/*Filepath*/	"RelicIcons\\Exploding_Weapon",
+				/*Description*/	EXPLODING_WEAPON::Description(),
+				/*Price*/		0,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	EXPLODING_WEAPON::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 
@@ -419,7 +445,7 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 				break;
 			}
 		}
-		possibleSelection.erase(randomlySelectedKey);
+		possibleSelection.erase((uint32_t)randomlySelectedKey);
 
 		// Return the relics that weren't picked
 		for (auto& [key, val] : possibleSelection) {

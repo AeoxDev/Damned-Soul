@@ -52,6 +52,14 @@ bool HitboxCanHitGI(EntityID& entity);
 
 void SetCollisionEvent(EntityID& entity, int hitboxID, void* function);
 
+struct ConvexReturnCorners
+{
+	int cornerCount;
+	float* cornersX;
+	float* cornersZ;
+};
+
+ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID);
 void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[]);
 
 //Reset the attack hitboxes tracker flags to allow rehit.
@@ -72,3 +80,4 @@ int CreateHitbox(EntityID& entity, int corners, float cornerPosX[], float corner
 void AddHitboxComponent(EntityID& entity);
 
 float GetHitboxRadius(const EntityID& entity, int hitBoxID);
+void SetHitboxRadius(const EntityID& entity, int hitBoxID, const float r);

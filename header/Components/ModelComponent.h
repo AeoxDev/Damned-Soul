@@ -15,6 +15,7 @@ struct ModelBonelessComponent
 	//int model;
 	//Add more stuff for models
 	//int texture;
+	bool castShadow = true;
 };
 
 struct ModelSkeletonComponent

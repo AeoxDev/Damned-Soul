@@ -135,11 +135,13 @@ bool ControllerSystem::Update()
 			}
 			controller->goalZ /= len;
 			controller->goalX /= len;
-			transform->positionZ += controller->goalZ * stat->GetSpeed() * GetDeltaTime();
-			transform->positionX += controller->goalX * stat->GetSpeed() * GetDeltaTime();
+	
+			TransformAccelerate(entity, controller->goalX, controller->goalZ);
+		
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 		}
+
 
 		//clamp moveTime to lower limit if not moving
 		else 
@@ -148,7 +150,7 @@ bool ControllerSystem::Update()
 			anim->aAnimIdx = 0;
 			
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
-			
+			TransformDecelerate(entity);
 		}
 
 		/*COMBAT INPUT*/
