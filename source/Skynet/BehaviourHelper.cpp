@@ -81,6 +81,4 @@ void TransformAccelerate(EntityID& entity, float x, float z)
 	}
 	transform->currentSpeedX += stat->m_acceleration * x * stat->GetSpeed() * GetDeltaTime();
 	transform->currentSpeedZ += stat->m_acceleration * z * stat->GetSpeed() * GetDeltaTime();
-	
-
 }
