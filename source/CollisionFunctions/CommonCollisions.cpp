@@ -294,7 +294,12 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		x *= lenFactor;
 		z *= lenFactor;
 		AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * (x / weightFactor), SELF_KNOCKBACK_FACTOR * (z / weightFactor));
-		AddKnockBack(params.entity2, kbs * (x * -weightFactor), kbs * (z * -weightFactor));
+		float chargedKnockback = 1.0f;
+		if (registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1) != nullptr)
+		{
+			chargedKnockback = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1)->multiplier * 1.5f; //Big knockback
+		}
+		AddKnockBack(params.entity2, kbs * chargedKnockback * (x * -weightFactor), kbs * chargedKnockback * (z * -weightFactor));
 	}
 }
 
@@ -385,7 +390,11 @@ void AttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
+	if (charge)
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
+	else
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
 
 	//Play entity hurt sounds
 	PlayHitSound(params);
@@ -395,7 +404,7 @@ void AttackCollision(OnCollisionParameters& params)
 		RedrawUI();
 
 	// Only hit the first enemy
-	SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
+	//SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
 
 	//Lastly set for hitboxTracker[]
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);

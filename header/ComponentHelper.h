@@ -152,7 +152,9 @@ public:
 	bool isAttacking = false;
 	bool hasActivatedHitbox = false;
 
-	
+	//New additions because of player heavy attacks
+	float currentCharge = 0.0f;
+	float maxCharge = 1.0f; 
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
@@ -186,6 +188,11 @@ struct DashArgumentComponent
 struct AttackArgumentComponent
 {
 	float duration = 0.0f;
+};
+
+struct ChargeAttackArgumentComponent
+{
+	float multiplier = 0.0f;
 };
 
 struct CollisionParamsComponent
