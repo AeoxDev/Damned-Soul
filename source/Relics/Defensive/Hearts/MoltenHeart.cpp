@@ -11,7 +11,9 @@ EntityID MOLTEN_HEART::_OWNER;
 const char* MOLTEN_HEART::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Increases your health by %ld and heals you for %ld when obtained", MOLTEN_HEART_VALUE, MOLTEN_HEART_VALUE);
+	sprintf_s(temp, "Increases your health by %ld and heals you for %ld when obtained",
+		MOLTEN_HEART_VALUE, 
+		MOLTEN_HEART_VALUE);
 	return temp;
 }
 

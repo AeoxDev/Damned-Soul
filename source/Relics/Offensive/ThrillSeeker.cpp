@@ -23,7 +23,7 @@ const char* THRILL_SEEKER::Description()
 	}
 
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "You deal %.1lf%% more damage for every %.1lf%% health you are missing",
+	sprintf_s(temp, "You deal %.1lf%% more damage for every %.1lf%% health you are missing",
 		bonus,
 		per);
 	return temp;

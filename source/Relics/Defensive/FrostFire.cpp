@@ -20,7 +20,7 @@ static float _Frost_Fire_Cooldown = FROST_FIRE_COOLDOWN;
 const char* FROST_FIRE::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Releases a shockwave every %.1lf seconds that deals %.0lf damage and knocks enemies back",
+	sprintf_s(temp, "Releases a shockwave every %.1lf seconds that deals %.0lf damage and knocks enemies back",
 		FROST_FIRE_COOLDOWN,
 		FROST_FIRE_DAMAGE_FLAT);
 	return temp;

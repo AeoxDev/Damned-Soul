@@ -11,7 +11,7 @@ EntityID DEMON_BONEMARROW::_OWNER;
 const char* DEMON_BONEMARROW::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Increases your strength by %ld", PERCENT(DEMON_BONEMARROW_STRENGTH_INCREASE));
+	sprintf_s(temp, "Increases your strength by %ld", PERCENT(DEMON_BONEMARROW_STRENGTH_INCREASE));
 	return temp;
 }
 

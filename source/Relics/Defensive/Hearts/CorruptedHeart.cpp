@@ -11,7 +11,8 @@ EntityID CORRUPTED_HEART::_OWNER;
 const char* CORRUPTED_HEART::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Increases your health by %ld", CORRUPTED_HEART_HEALTH_INCREASE);
+	sprintf_s(temp, "Increases your health by %ld",
+		CORRUPTED_HEART_HEALTH_INCREASE);
 	return temp;
 }
 

@@ -12,7 +12,7 @@ EntityID PAIN_MIRROR::_OWNER;
 const char* PAIN_MIRROR::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Whenever you are dealt damage by an enemy attack, that enemy also takes %ld%% of the damage it deals (before applying damage reduction)",
+	sprintf_s(temp, "Whenever you are dealt damage by an enemy attack, that enemy also takes %ld%% of the damage it deals (before applying damage reduction)",
 		PERCENT(PAIN_MIRROR_RETURN_FRACTION));
 	return temp;
 }

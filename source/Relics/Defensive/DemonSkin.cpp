@@ -11,7 +11,7 @@ EntityID DEMON_SKIN::_OWNER;
 const char* DEMON_SKIN::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Reduces the damage you take by %ld%%",
+	sprintf_s(temp, "Reduces the damage you take by %ld%%",
 		100 - PERCENT(DEMON_SKIN_DAMAGE_MULTIPLIER));
 	return temp;
 }

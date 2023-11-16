@@ -12,7 +12,7 @@ EntityID SPIKED_SKIN::_OWNER;
 const char* SPIKED_SKIN::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Whenever you are dealt damage by an enemy attack, that enemy also takes %ld%% of the damage it deals (before applying damage reduction)",
+	sprintf_s(temp, "Whenever you are dealt damage by an enemy attack, that enemy also takes %ld%% of the damage it deals (before applying damage reduction)",
 		PERCENT(SPIKED_SKIN_RETURN_FRACTION));
 	return temp;
 }

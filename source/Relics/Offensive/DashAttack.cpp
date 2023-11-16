@@ -12,7 +12,7 @@ EntityID DASH_ATTACK::_OWNER;
 const char* DASH_ATTACK::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Whenever you dash into or through an enemy, you hit them for %ld%% damage", PERCENT(DASH_ATTACK_DAMAGE_MULTIPLIER));
+	sprintf_s(temp, "Whenever you dash into or through an enemy, you hit them for %ld%% damage", PERCENT(DASH_ATTACK_DAMAGE_MULTIPLIER));
 	return temp;
 }
 

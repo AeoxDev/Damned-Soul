@@ -15,7 +15,7 @@ EntityID EXPLODING_WEAPON::_OWNER;
 const char* EXPLODING_WEAPON::Description()
 {
 	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Whenever you hit an enemy with an attack, enemies in a small area around that enemy also take %ld%% of that attack's damage as flat damage",
+	sprintf_s(temp, "Whenever you hit an enemy with an attack, enemies in a small area around that enemy also take %ld%% of that attack's damage as flat damage",
 		PERCENT(EXPLODING_WEAPON_DAMAGE_FRACTION));
 	return temp;
 }
