@@ -101,7 +101,7 @@ void LoadLevel3()
 
 	srand((unsigned)(GetDeltaTime() * 100000.0f));
 	//Add static hazards on the where player does not spawn
-	const int nrHazards = 8;
+	const int nrHazards = 6;
 	for (size_t i = 0; i < nrHazards; i++)
 	{
 		bool succeded = false;
@@ -111,8 +111,8 @@ void LoadLevel3()
 			float randZ = (float)(rand() % 100) - 50.0f;
 			if (randX * randX + randZ * randZ > 80)
 			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleX = 12.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleZ = 12.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
 				hazardModel->colorAdditiveRed = redAdd;
@@ -122,13 +122,14 @@ void LoadLevel3()
 				hazardModel->colorMultiplicativeGreen = greenMult;
 				hazardModel->colorMultiplicativeBlue = blueMult;
 				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->castShadow = false;
 
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.1f;
+				hazardTransform->positionY = 0.5f;
 				hazardTransform->positionZ = randZ;
 				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 0.1f;
+				hazardTransform->scaleY = 1.0f;
 				hazardTransform->scaleZ = randScaleZ;
 				hazardTransform->facingX = cosf((float)rand());
 				hazardTransform->facingZ = sinf((float)rand());

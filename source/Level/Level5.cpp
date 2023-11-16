@@ -115,23 +115,24 @@ void LoadLevel5()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->colorAdditiveRed = redAdd;
-				hazardModel->colorAdditiveGreen = greenAdd;
-				hazardModel->colorAdditiveBlue = blueAdd;
-				hazardModel->colorMultiplicativeRed = redMult;
-				hazardModel->colorMultiplicativeGreen = greenMult;
-				hazardModel->colorMultiplicativeBlue = blueMult;
+				hazardModel->colorAdditiveRed = 0.0f;
+				hazardModel->colorAdditiveGreen = 0.5f;
+				hazardModel->colorAdditiveBlue = 0.0f;
+				hazardModel->colorMultiplicativeRed = 0.2f;
+				hazardModel->colorMultiplicativeGreen = 1.2f;
+				hazardModel->colorMultiplicativeBlue = 0.2f;
 				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->castShadow = false;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.1f;
+				hazardTransform->positionY = 0.5f;
 				hazardTransform->positionZ = randZ;
 				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 0.1f;
+				hazardTransform->scaleY = 1.0f;
 				hazardTransform->scaleZ = randScaleZ;
 				hazardTransform->facingX = cosf((float)rand());
 				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_LAVA);
+				AddStaticHazard(hazard, HAZARD_ACID);
 
 				succeded = true;
 			}

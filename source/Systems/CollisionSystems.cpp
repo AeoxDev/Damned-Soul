@@ -7,6 +7,7 @@
 #include "EventFunctions.h"
 #include "CombatFunctions.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "States\StateManager.h"
 
 
 void HazardDamageHelper(EntityID& victim, const float DPS)
@@ -87,12 +88,18 @@ bool GeometryIndependentSystem::Update()
 						p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
 					}
 					break;
+				case HAZARD_ACID://Lava but more damage
+					if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+					{
+						anim->aAnimTimeFactor = stat->acidAnimFactor;
+						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
+					}
+					stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
+
+					HazardDamageHelper(entity, 50.f);
+					break;
 				case HAZARD_ICE:
 					//ICE:
-					if (true)
-					{
-
-					}
 					if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
 					{
 						anim->aAnimTimeFactor = stat->iceAnimFactor;

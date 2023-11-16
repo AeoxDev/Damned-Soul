@@ -116,12 +116,13 @@ void LoadLevel2()
 				hazardModel->colorMultiplicativeGreen = greenMult;
 				hazardModel->colorMultiplicativeBlue = blueMult;
 				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->castShadow = false;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.1f;
+				hazardTransform->positionY = 0.5f;
 				hazardTransform->positionZ = randZ;
 				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 0.1f;
+				hazardTransform->scaleY = 1.0f;
 				hazardTransform->scaleZ = randScaleZ;
 				hazardTransform->facingX = cosf((float)rand());
 				hazardTransform->facingZ = sinf((float)rand());

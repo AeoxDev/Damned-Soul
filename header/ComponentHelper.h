@@ -57,10 +57,12 @@ public:
 	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
 	bool baseCanWalkOnCrack = false;//onCrack
 	bool canWalkOnCrack = false;//If the entity can walk on cracks or not.
-	float iceAccelFactor = 0.1f;
-	float iceAnimFactor = 3.0f;
+	float iceAccelFactor = 0.08f;
+	float iceAnimFactor = 2.5f;
 	float lavaAccelFactor = 0.5f;
 	float lavaAnimFactor = 2.0f;
+	float acidAccelFactor = 0.3f;
+	float acidAnimFactor = 0.5f;
 
 
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)

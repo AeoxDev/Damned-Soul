@@ -25,7 +25,18 @@ void LoadLevel(int level)
 	stateManager.scenes[0].Unload();
 	stateManager.scenes[1].Unload();
 	stateManager.scenes[2].Unload();
-	
+	//Bugfix: Reset current speed to stop sliding during shop.
+	if (stateManager.player.index != -1)
+	{
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+		if (transform != nullptr)
+		{
+			transform->currentSpeedX = 0.0f;
+			transform->currentSpeedZ = 0.0f;
+		}
+		
+	}
+
 	for (auto entity : View<ControllerComponent>(registry))
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 
@@ -35,7 +46,7 @@ void LoadLevel(int level)
 	{
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
-	case 3: LoadLevel2(); break;//Imp stage
+	case 3: LoadLevel6(); break;//Imp stage
 	case 4: ReloadShop(); break;
 	case 5: LoadLevel3(); break;//Doggie stage
 	case 6: ReloadShop(); break;

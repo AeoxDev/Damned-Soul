@@ -50,7 +50,7 @@ void LoadLevel4()
 
 
 
-	RenderGeometryIndependentCollision(stage);
+	
 
 
 	EntityID mouse = registry.CreateEntity();
@@ -70,7 +70,45 @@ void LoadLevel4()
 	CreatePointLight(lightholderTwo, 0.38f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderThree, 0.38f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, 0.38f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	const int nrHazards = 4;
+	for (size_t i = 0; i < nrHazards; i++)
+	{
+		bool succeded = false;
+		while (!succeded)
+		{
+			float randX = (float)(rand() % 64) - 32.0f;
+			float randZ = (float)(rand() % 64) - 32.0f;
+			if (randX * randX + randZ * randZ > 80)
+			{
+				float randScaleX = 16.0f + (float)((rand() % 100) * 0.1f);
+				float randScaleZ = 16.0f + (float)((rand() % 100) * 0.1f);
+				EntityID hazard = registry.CreateEntity();
+				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+				hazardModel->colorAdditiveRed = redAdd;
+				hazardModel->colorAdditiveGreen = greenAdd;
+				hazardModel->colorAdditiveBlue = blueAdd;
+				hazardModel->colorMultiplicativeRed = redMult;
+				hazardModel->colorMultiplicativeGreen = greenMult;
+				hazardModel->colorMultiplicativeBlue = blueMult;
+				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->castShadow = false;
 
+				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+				hazardTransform->positionX = randX;
+				hazardTransform->positionY = 0.5f;
+				hazardTransform->positionZ = randZ;
+				hazardTransform->scaleX = randScaleX;
+				hazardTransform->scaleY = 1.0f;
+				hazardTransform->scaleZ = randScaleZ;
+				hazardTransform->facingX = cosf((float)rand());
+				hazardTransform->facingZ = sinf((float)rand());
+				AddStaticHazard(hazard, HAZARD_LAVA);
+
+				succeded = true;
+			}
+		}
+	}
 	stateManager.stage = stage;
+	RenderGeometryIndependentCollision(stage);
 	SetInPlay(true);
 }

@@ -220,6 +220,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->canWalkOnCrack = true;
 		stat->lavaAccelFactor = 1.0f;
 		stat->lavaAnimFactor = 1.0f;
+		stat->acidAccelFactor = 1.0f;
+		stat->acidAnimFactor = 1.0f;
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
