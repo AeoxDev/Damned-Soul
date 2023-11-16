@@ -95,6 +95,31 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, true);
 }
 
+void PlayerBeginAttack(EntityID& entity, const int& index)
+{
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
+	if (!sfx || !anim || !stats || !aac || !player)
+		return;
+
+	sfx->Play(Player_Attack, Channel_Base);
+
+	//Animations have 1 second default duration and as such we scale the speed of the animation here so it fits the duration we pass in
+	//Duration * X = 1.0f
+	//1.0f / Duration = X
+	float speedDiff = stats->GetAttackSpeed() / aac->duration;
+
+	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
+	anim->aAnimTimeFactor = speedDiff; //Cracked
+	anim->aAnimTime = 0.0f; //reset animation
+
+	player->isAttacking = true;
+}
+
 void PlayerRegainControl(EntityID& entity, const int& index)
 {
 	//Hitstop fixer
@@ -148,33 +173,40 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	player->isAttacking = false;
 	player->currentCharge = 0.0f;
 
-	if(registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
+	if (registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
 		registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
 }
 
-void PlayerBeginAttack(EntityID& entity, const int& index)
+void PlayerDash(EntityID& entity, const int& index)
 {
-	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	//Get access to players relevant components
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
+	// Get animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
-	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 
-	if (!sfx || !anim || !stats || !aac || !player)
+	//Invalid entity doesn't have the required components
+	if (!transform || !stat || !dac || !anim)
 		return;
 
-	sfx->Play(Player_Attack, Channel_Base);
+	//Perform attack animation, woo, loop using DT
+	anim->aAnim = ANIMATION_WALK;
+	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
+	anim->aAnimIdx = 1;
 
-	//Animations have 1 second default duration and as such we scale the speed of the animation here so it fits the duration we pass in
-	//Duration * X = 1.0f
-	//1.0f / Duration = X
-	float speedDiff = stats->GetAttackSpeed() / aac->duration;
+	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
+	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 
-	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
-	anim->aAnimTimeFactor = speedDiff; //Cracked
-	anim->aAnimTime = 0.0f; //reset animation
+	//Move player quickly in the relevant direction
+	transform->positionX += dac->x * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
+	transform->positionZ += dac->z * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
+}
 
-	player->isAttacking = true;
+void PlayerDashSound(EntityID& entity, const int& index)
+{
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	sfx->Play(Player_Dash, Channel_Base);
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
@@ -200,36 +232,4 @@ void PlayerAttack(EntityID& entity, const int& index)
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 	}
-}
-
-void PlayerDashSound(EntityID& entity, const int& index)
-{
-	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-	sfx->Play(Player_Dash, Channel_Base);
-}
-
-void PlayerDash(EntityID& entity, const int& index)
-{
-	//Get access to players relevant components
-	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
-	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
-	// Get animation
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-
-	//Invalid entity doesn't have the required components
-	if (!transform || !stat || !dac || !anim)
-		return;
-
-	//Perform attack animation, woo, loop using DT
-	anim->aAnim = ANIMATION_WALK;
-	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-	anim->aAnimIdx = 1;
-
-	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
-	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
-	
-	//Move player quickly in the relevant direction
-	transform->positionX += dac->x * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
-	transform->positionZ += dac->z * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
 }

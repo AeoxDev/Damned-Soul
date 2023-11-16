@@ -180,14 +180,14 @@ bool ControllerSystem::Update()
 		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
 		//Need: Variable storing time between inputs. If an attack happens within a certain time after another, the next attack in the chain. So also need a variable 
 		//keeping track of which attack in the chain we did last
-		//PlayerComponent now stores these two values
+		//PlayerComponent now stores these two values, so we need to get access to it early
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		
 		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
 		if(player->isAttacking == false)
 			player->timeSinceLastAttack += GetDeltaTime();
 
-		//Half a second is what I consider to be a reasonable window of time for you to decide if you're going to continue the attack chain
+		//Clamp and reset attack chain if more than half a second has passed
 		if (player->timeSinceLastAttack > 0.5f)
 		{
 			player->attackChainIndex = 0;
@@ -195,7 +195,7 @@ bool ControllerSystem::Update()
 		}
 
 		//Schwing (Now with 50% less carpal tunnel)
-		if (mouseButtonDown[0] == down && player->isAttacking == false) //Previously: mouseButtonPressed[0] == pressed
+		if (mouseButtonDown[0] == down && player->isAttacking == false)
 		{
 			StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
 			float attackDuration = 5.0f;
@@ -204,7 +204,8 @@ bool ControllerSystem::Update()
 			if (player->attackChainIndex == 0) //First attack in the chain
 			{
 				player->attackChainIndex = 1;
-				attackDuration = 0.6f;
+				attackDuration = 0.5f;
+				//attackDuration = 0.6f;
 			}
 			else //
 			{
@@ -216,7 +217,8 @@ bool ControllerSystem::Update()
 				else //Third and final attack in the chain, resets attackChainIndex
 				{
 					player->attackChainIndex = 0;
-					attackDuration = 0.8f;
+					attackDuration = 0.7f;
+					//attackDuration = 0.8f;
 				}
 				
 			}
@@ -227,6 +229,9 @@ bool ControllerSystem::Update()
 		}
 		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge)
 		{
+			auto stats = registry.GetComponent<StatComponent>(entity);
+			if (stats)
+				stats->SetSpeedMult(0.1f);
 			player->currentCharge += GetDeltaTime();
 			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
 				player->currentCharge = player->maxCharge;

@@ -281,8 +281,13 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	//Knockback
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, SELF_KNOCKBACK_FACTOR * stat2->GetKnockback() * params.normal1Z / transform1->mass);
+	float chargedKnockback = 1.0f;
+	if (registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1) != nullptr)
+	{
+		chargedKnockback = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1)->multiplier;
+	}
+	AddKnockBack(params.entity2, chargedKnockback * (stat1->GetKnockback() * params.normal2X / transform2->mass), chargedKnockback * (stat1->GetKnockback() * params.normal2Z / transform2->mass));
 }
 
 void PlayHitSound(OnCollisionParameters& params)
