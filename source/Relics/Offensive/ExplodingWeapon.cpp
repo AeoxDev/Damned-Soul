@@ -50,6 +50,7 @@ void EXPLODING_WEAPON::Explosion(void* data)
 	ParticleAtEntityLocation(input->defender, EXPLODING_WEAPON_SFX_DURATION, _EW_Particles_Begin);
 
 	TransformComponent* ownerTrans = registry.GetComponent<TransformComponent>(EXPLODING_WEAPON::_OWNER);
+	float explosionDamage = input->CollapseNoCap() * EXPLODING_WEAPON_DAMAGE_FRACTION;
 
 	for (auto entity : View<EnemyComponent>(registry))
 	{
@@ -59,7 +60,7 @@ void EXPLODING_WEAPON::Explosion(void* data)
 		if (entity.index != input->defender.index && DistanceBetweenTransforms(ownerTrans, otherTrans) < EXPLODING_WEAPON_AOE_SIZE)
 		{
 			// Flat damage
-			Combat::HitFlat(entity, registry.GetComponent<StatComponent>(entity), input->CollapseDamage() * EXPLODING_WEAPON_DAMAGE_FRACTION);
+			Combat::HitFlat(entity, registry.GetComponent<StatComponent>(entity), explosionDamage);
 		}
 	}
 }

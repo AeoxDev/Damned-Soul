@@ -22,7 +22,7 @@ void BeginHit(EntityID& entity, const int& index)
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 	uint32_t condition = GetTimedEventCondition(teComp, index);
 	
-	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats, condition == CONDITION_CHARGE);
+	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats/*, condition == CONDITION_CHARGE*/);
 
 	//Disable damage taken until EndHit if we're the player (enemy i-frames make faster attacks useless)
 	if(registry.GetComponent<PlayerComponent>(entity) != nullptr)

@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_BONEMARROW_STRENGTH_INCREASE (.25f)
+#define DEMON_BONEMARROW_STRENGTH_INCREASE (.4f)
 
 EntityID DEMON_BONEMARROW::_OWNER;
 
