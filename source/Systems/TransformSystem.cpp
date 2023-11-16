@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "Registry.h"
 #include "Particles.h"
+#include "DeltaTime.h"
 
 bool TransformSystem::Update()
 {
@@ -13,15 +14,10 @@ bool TransformSystem::Update()
 		tc->lastPositionX = tc->positionX;
 		tc->lastPositionY = tc->positionY;
 		tc->lastPositionZ = tc->positionZ;
+		tc->positionX += tc->currentSpeedX * GetDeltaTime();
+		tc->positionZ += tc->currentSpeedZ * GetDeltaTime();
 	}
-	for (auto entity : View<TransformComponent, LightComponent>(registry))
-	{
-		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
-		//LightComponent* light = registry.GetComponent<LightComponent>(entity);
-		//Use the offset from light.
-		OffsetPosition(entity, transform->positionX, transform->positionY, transform->positionZ, transform->facingX, transform->facingY, transform->facingZ);
-		OffsetFacing(entity, transform->facingX, transform->facingY, transform->facingZ);
-	}
+
 	//for (auto entity : View<TransformComponent, ParticleComponent>(registry))
 	//{
 	//	TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);

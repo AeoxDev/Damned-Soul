@@ -363,8 +363,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = tempBoss;
 	}
-	float time = (float)(rand() % 8);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	float time = 0.05f * (float)(rand() % 64);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }
 
 void BeginDestroyProjectile(EntityID& entity, const int& index)

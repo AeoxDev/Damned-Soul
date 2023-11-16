@@ -76,7 +76,6 @@ void LoadLevel1()
 
 	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);
 
-	srand((unsigned)(GetDeltaTime() * 100000.0f));
 
 	stateManager.stage = stage;
 
