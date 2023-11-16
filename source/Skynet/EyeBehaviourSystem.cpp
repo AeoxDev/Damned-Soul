@@ -129,7 +129,7 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		
 		Normalize(dx, dz);
 
-		CreateProjectile(entity, dx, dz);
+		CreateProjectile(entity, dx, dz, 1);
 		return true;
 	}
 }

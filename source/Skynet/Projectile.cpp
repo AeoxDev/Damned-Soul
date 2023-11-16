@@ -3,7 +3,7 @@
 #include "Model.h"
 #include "EventFunctions.h"
 
-void CreateProjectile(EntityID entity, float directionX, float directionZ)
+void CreateProjectile(EntityID entity, float directionX, float directionZ, int type)
 {
 	int nrProjectiles = 1;//Get number of projectiles from component?
 	for (size_t i = 0; i < nrProjectiles; i++)
@@ -39,7 +39,7 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 
 		registry.AddComponent<TransformComponent>(bullet, transform);
 
-		registry.AddComponent<ProjectileComponent>(bullet, 0, entity);
+		registry.AddComponent<ProjectileComponent>(bullet, type, entity);
 
 		//Stats needed in order to deal damage
 		//Health, Speed, Damage, attackSpeed
