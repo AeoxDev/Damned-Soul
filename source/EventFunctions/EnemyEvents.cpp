@@ -429,6 +429,9 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 
 void BeginDestroyProjectile(EntityID& entity, const int& index)
 {
+	EyeBehaviour* eyeBehev = nullptr;
+	eyeBehev = registry.GetComponent<EyeBehaviour>(entity);
+	
 	if (entity.isDestroyed == true)
 	{
 		return;
@@ -440,8 +443,8 @@ void BeginDestroyProjectile(EntityID& entity, const int& index)
 		registry.RemoveComponent<ModelBonelessComponent>(entity);
 	}
 	
-
-	CreateAcidHazard(entity, index);
+	if(eyeBehev != nullptr)
+		CreateAcidHazard(entity, index);
 
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
