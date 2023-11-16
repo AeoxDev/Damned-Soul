@@ -7,7 +7,6 @@
 #include "EventFunctions.h"
 #include <random>
 
-
 void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid)
 {
 	// Regular walk
@@ -81,29 +80,6 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 		ec->retreating = false;
 		ec->chargeTimer = 0.0f;
 	}
-
-	////calculate the direction away from the player
-	//eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
-	//eyeComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - eyeTransformComponent->positionZ);
-
-	//float magnitude = sqrt(eyeComponent->goalDirectionX * eyeComponent->goalDirectionX + eyeComponent->goalDirectionZ * eyeComponent->goalDirectionZ);
-	//if (magnitude < 0.001f)
-	//{
-	//	magnitude = 0.001f;
-	//}
-	//eyeComponent->goalDirectionX /= magnitude;
-	//eyeComponent->goalDirectionZ /= magnitude;
-	//SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
-
-	//float dirX = eyeTransformComponent->facingX, dirZ = eyeTransformComponent->facingZ;
-	//magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	//if (magnitude < 0.001f)
-	//{
-	//	magnitude = 0.001f;
-	//}
-
-	//eyeTransformComponent->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	//eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
 bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
@@ -120,13 +96,7 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ec->goalDirectionX = ptc->positionX - etc->positionX;
 		ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 
-		float magnitude = sqrt(ec->goalDirectionX * ec->goalDirectionX + ec->goalDirectionZ * ec->goalDirectionZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		ec->goalDirectionX /= magnitude;
-		ec->goalDirectionZ /= magnitude;
+		Normalize(ec->goalDirectionX, ec->goalDirectionZ);
 
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 		ec->aimTimer += GetDeltaTime();
@@ -178,14 +148,9 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 		dirX = ec->goalDirectionZ;
 		dirZ = -ec->goalDirectionX;
 	}
-	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	SmoothRotation(etc, dirX, dirZ, 30.f);
-	if (magnitude < 0.001f)
-	{
-		magnitude = 0.001f;
-	}
-	dirX /= magnitude;
-	dirZ /= magnitude;
+
+	Normalize(dirX, dirZ);
+
 	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
 	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
@@ -199,28 +164,6 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	enemyAnim->aAnimTime += GetDeltaTime();
 	ANIM_BRANCHLESS(enemyAnim);
 
-	/*eyeComponent->timeCounter += GetDeltaTime();
-	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
-	{
-		eyeComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-
-		std::uniform_real_distribution<float> distributionX(eyeTransformComponent->facingX - 0.3f, eyeTransformComponent->facingX + 0.3f);
-		std::uniform_real_distribution<float> distributionZ(eyeTransformComponent->facingZ - 0.3f, eyeTransformComponent->facingZ + 0.3f);
-		float randomX = distributionX(gen);
-		float randomZ = distributionZ(gen);
-		eyeComponent->goalDirectionX = randomX;
-		eyeComponent->goalDirectionZ = randomZ;
-
-		std::uniform_real_distribution<float> randomInterval(0.4f, 0.8f);
-		eyeComponent->updateInterval = randomInterval(gen);
-	}
-
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
-
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();*/
 	eyeComponent->timeCounter += GetDeltaTime();
 	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
 	{
@@ -290,14 +233,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
 		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
 
-		float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-
-		dirX /= magnitude;
-		dirZ /= magnitude;
+		Normalize(dirX, dirZ);
 
 		//target is the stopping point of the charge, a set distance behind the players position
 		eyeComponent->targetX = playerTransformCompenent->positionX + dirX * 10.0f;
@@ -334,13 +270,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		float dirX = (eyeComponent->targetX - eyeTransformComponent->positionX);
 		float dirZ = (eyeComponent->targetZ - eyeTransformComponent->positionZ);
 
-		float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		dirX /= magnitude;
-		dirZ /= magnitude;
+		Normalize(dirX, dirZ);
 
 		//scalar between the current direction and the original chagre direction
 		float scalar = dirX * eyeComponent->changeDirX + dirZ * eyeComponent->changeDirZ;
@@ -394,7 +324,6 @@ bool EyeBehaviourSystem::Update()
 	//Find available entity
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
-		
 		SetLightColor(enemyEntity, 0.3f, 0.3f, 0.3f);
 		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
 		eyeTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
