@@ -315,7 +315,7 @@ void UIFunc::BuyRelic(void* args, int index)
 					}
 
 					playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(playerUI->m_Images[2].baseUI.GetPosition().x /*+(0.06f * playerRelics->gridPos.x)*/,
-						uiPixelCoords.y - (0.12f * playerRelics->gridPos.y)), DSFLOAT2(1.5f, 1.5f), false);
+						uiPixelCoords.y - (0.12f * playerRelics->gridPos.y) - 0.02f), DSFLOAT2(1.5f, 1.5f), false);
 
 					playerHover->Setup(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
 						playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetBounds(), UIFunc::HoverPlayerRelic);

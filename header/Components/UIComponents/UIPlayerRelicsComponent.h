@@ -1,7 +1,7 @@
 #pragma once
 #include "Relics/RelicFunctions.h"
 
-#define MAX_DISPLAY_RELICS (7*3)
+#define MAX_DISPLAY_RELICS (9)
 
 struct UIPlayerRelicsComponent
 {
