@@ -184,6 +184,78 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	}
 }
 
+void HazardAttackCollision(OnCollisionParameters& params)
+{
+	StatComponent* stat = registry.GetComponent<StatComponent>(params.entity2);
+	StaticHazardComponent* hazard = registry.GetComponent<StaticHazardComponent>(params.entity1);
+
+	TransformComponent* p = registry.GetComponent<TransformComponent>(params.entity2);
+	HitboxComponent* h = registry.GetComponent<HitboxComponent>(params.entity2);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(params.entity2);
+	if (HitboxCanHitGI(params.entity2))
+	{
+		int r = hazard->type;//PixelValueOnPosition(geoCo, p);
+		int takeDamage = 0;
+		ProjectileComponent* proj = nullptr;
+
+		switch (r)
+		{
+		case 0:
+			p->positionX = 0.f;
+			p->positionZ = 0.f;
+			break;
+		case 1:
+			//Footstep sound here?
+			stat->m_acceleration = stat->m_baseAcceleration;
+			break;
+		case HAZARD_LAVA:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->lavaAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
+
+			HazardDamageHelper(params.entity2, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		case HAZARD_CRACK:
+			if (!stat->canWalkOnCrack)
+			{
+				//Detect edge
+				//Edge direction
+				p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
+				p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
+			}
+			break;
+		case HAZARD_ACID://Lava but more damage
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->acidAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
+
+			HazardDamageHelper(params.entity2, 50.f);
+			break;
+		case HAZARD_ICE:
+			//ICE:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->iceAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
+
+			//HazardDamageHelper(entity, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 bool IsDamageCollisionValid(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)

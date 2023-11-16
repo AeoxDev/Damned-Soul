@@ -21,7 +21,7 @@ struct StaticHazardComponent
 
 void AddStaticHazard(EntityID& entity, const StaticHazardType& type = HAZARD_LAVA);
 void AddStaticHazardTexture(EntityID& entity, char* crackTexture, char* lavaTexture, char* iceTexture);
-
+void HazardDamageHelper(EntityID& victim, const float DPS);
 //This needs to be in the same Entity as the stage for it to be seen by GI
 struct StaticHazardTextureComponent
 {
