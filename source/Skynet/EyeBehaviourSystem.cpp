@@ -10,11 +10,13 @@
 void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid)
 {
 	// Regular walk
-	enemyAnim->aAnim = ANIMATION_WALK;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
-	ANIM_BRANCHLESS(enemyAnim);
-
+	if (enemyAnim->aAnim != ANIMATION_WALK)
+	{
+		enemyAnim->aAnim = ANIMATION_WALK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
+	
 	//using charge timer as a safetynet 
 	ec->chargeTimer += GetDeltaTime();
 	if (!ec->retreating)
@@ -93,6 +95,13 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	//rotate eye in order to shoot at the player
 	else if (ec->aimTimer < ec->aimDuration)
 	{
+		if (enemyAnim->aAnim != ANIMATION_ATTACK)
+		{
+			enemyAnim->aAnim = ANIMATION_ATTACK;
+			enemyAnim->aAnimIdx = 1;
+			enemyAnim->aAnimTime = 0.0f;
+		}
+		
 		ec->goalDirectionX = ptc->positionX - etc->positionX;
 		ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 
@@ -105,15 +114,14 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	}
 	else // yes, we can indeed attack. 
 	{
-		enemyAnim->aAnim = ANIMATION_ATTACK; //change anim to "spit"/shoot anim
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
-		ANIM_BRANCHLESS(enemyAnim);
-
 		ec->attackTimer = 0;
-		ec->attackStunDurationCounter = 0;
 		ec->aimTimer = 0;
 		ec->specialCounter++; //increase the special counter for special attack
+		ec->attackStunTimer = 0;
+		
+		enemyAnim->aAnim = ANIMATION_IDLE;
+		enemyAnim->aAnimIdx = 1;
+		enemyAnim->aAnimTime = 0.0f;
 
 		//set direction for attack
 		float dx = ptc->positionX - etc->positionX;
@@ -128,11 +136,12 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 
 void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, StatComponent* playerStats, AnimationComponent* enemyAnim)
 {
-	// Regular attack?
-	enemyAnim->aAnim = ANIMATION_WALK;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
-	ANIM_BRANCHLESS(enemyAnim);
+	if (enemyAnim->aAnim != ANIMATION_WALK && enemyAnim->aAnimIdx != 0)
+	{
+		enemyAnim->aAnim = ANIMATION_WALK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
 
 	float magnitude = 0.f;
 	float dirX = 0.f;
@@ -155,14 +164,18 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
 	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
+
+	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 }
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
-	enemyAnim->aAnim = ANIMATION_IDLE;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
-	ANIM_BRANCHLESS(enemyAnim);
+	if (enemyAnim->aAnim != ANIMATION_IDLE)
+	{
+		enemyAnim->aAnim = ANIMATION_IDLE;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
 
 	eyeComponent->timeCounter += GetDeltaTime();
 	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
@@ -205,10 +218,8 @@ void ChargeColorFlash(EntityID& entity, const int& index)
 	}
 }
 
-void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp)
+void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp, AnimationComponent* enemyAnim)
 {
-	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(eID);
-
 	if (!eyeComponent->charging)
 	{
 		enemyAnim->aAnimTime = 0;
@@ -261,10 +272,12 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 	else 
 	{
-		// Regular attack?
-		enemyAnim->aAnim = ANIMATION_ATTACK;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime += GetDeltaTime();
+		if (enemyAnim->aAnim != ANIMATION_ATTACK)
+		{
+			enemyAnim->aAnim = ANIMATION_ATTACK;
+			enemyAnim->aAnimIdx = 0;
+			enemyAnim->aAnimTime = 0.0f;
+		}
 		
 		//calculate the current direction towards player
 		float dirX = (eyeComponent->targetX - eyeTransformComponent->positionX);
@@ -300,8 +313,12 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			eyeComponent->charging = false;
 			eyeComponent->chargeAttackSoundPlaying = false;
 			eyeComponent->attackTimer = 0;
-			eyeComponent->attackStunDurationCounter = 0;
+			eyeComponent->attackStunTimer = 0;
 			eyeComponent->dealtDamage = false;
+			
+			enemyAnim->aAnimTime = 0.0f;
+			enemyAnim->aAnim = ANIMATION_IDLE;
+			enemyAnim->aAnimIdx = 1;
 		}
 	}
 }
@@ -367,14 +384,9 @@ bool EyeBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
-			eyeComponent->attackStunDurationCounter += GetDeltaTime();
-			if (eyeComponent->attackStunDurationCounter <= eyeComponent->attackStunDuration)
+			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
 			{
-				// Regular attack?
-				enemyAnim->aAnim = ANIMATION_IDLE;
-				enemyAnim->aAnimIdx = 0;
-				enemyAnim->aAnimTime += GetDeltaTime() * .7f;
-				ANIM_BRANCHLESS(enemyAnim);
+				//do nothing
 			}
 			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging) // Retreat to safe distance if not charging
 			{
@@ -395,7 +407,7 @@ bool EyeBehaviourSystem::Update()
 					sfx->Play(Eye_Attack, Channel_Base);
 					eyeComponent->chargeTimer = 0.0f;
 				}
-				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp);
+				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp, enemyAnim);
 
 			}
 			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
@@ -415,6 +427,10 @@ bool EyeBehaviourSystem::Update()
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
 			IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 		}
+
+		eyeComponent->attackStunTimer += GetDeltaTime();
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(enemyAnim);
 	}
 
 	free(valueGrid);
