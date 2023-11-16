@@ -385,6 +385,7 @@ bool EyeBehaviourSystem::Update()
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
 			IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 		}
+		TransformDecelerate(enemyEntity);
 	}
 
 	
