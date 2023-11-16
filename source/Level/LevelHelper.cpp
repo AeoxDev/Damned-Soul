@@ -429,13 +429,21 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
+	
+	//Setup + Health
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
+
+	//Souls
 	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
 	uiElement->AddText("",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
-	
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
+	
+	//Relics
+	uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
+	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
 }
 
@@ -472,7 +480,6 @@ void ReloadPlayerNonGlobals()
 		
 	}
 	animationLoaded->aAnimTimeFactor = 1.0f;
-	LoadPlayerSounds();
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);

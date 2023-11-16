@@ -102,6 +102,18 @@ void SetInShop(bool value)
 		currentStates = (State)(currentStates & (~State::InShop));
 	}
 }
+void SetInCredits(bool value)
+{
+
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InCredits);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InCredits));
+	}
+}
 
 int StateManager::Setup()
 {
@@ -245,6 +257,10 @@ void StateManager::Input()
 	if (currentStates & State::InShop)
 	{
 		scenes[activeLevelScene % 2 == 1].Input(true);
+	}
+	if (currentStates & State::InCredits)
+	{
+		credits.Input();
 	}
 }
 
