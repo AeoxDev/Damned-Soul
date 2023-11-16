@@ -1,12 +1,20 @@
 #include "RenderPipelineHeader.hlsli"
 
+cbuffer level : register(b3)
+{
+    int level;
+}
+
 VS_OUT main(VS_INPUTS pos)
 {
     VS_OUT output = (VS_OUT)0;
 
     //output.position = pos.position;v 
     output.normal = normalize(pos.normal);
-    output.uv = pos.uv;
+    output.uv.x = pos.uv.x;
+    // 17 is the max amount of levels
+    // Taking into consideration 9 Levels and 8 Shops
+    output.uv.y = pos.uv.y + (1.f / 17.f) * level;
 	
     output.normal = normalize(mul(pos.normal, worldNormal)); //
 	

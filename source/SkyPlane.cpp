@@ -13,10 +13,11 @@ RS_IDX m_skyPlaneRasterizer;
 DSV_IDX m_skyPlaneDepth;
 VS_IDX m_skyVS;
 PS_IDX m_skyPS;
+CB_IDX m_skyConst;
 
 void InitializeSky()
 {
-	m_skyPlane = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	m_skyPlane = registry.CreateEntity(ENTITY_PERSISTENCY_TIER::ENT_PERSIST_GAME);
 
 	registry.AddComponent<ModelBonelessComponent>(m_skyPlane, LoadModel("BackgroundQuad.mdl"));
 	
@@ -33,6 +34,7 @@ void InitializeSky()
 	tComp.scaleY = 2.5f;//tComp.scaleY = 1.5f;//1.1f;
 	tComp.facingY = 0.75f;
 
+	m_skyConst = CreateConstantBuffer(sizeof(int));
 
 	registry.AddComponent<TransformComponent>(m_skyPlane, tComp);
 

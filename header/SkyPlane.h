@@ -7,6 +7,7 @@ extern  RS_IDX m_skyPlaneRasterizer;
 extern  DSV_IDX m_skyPlaneDepth;
 extern  VS_IDX m_skyVS;
 extern  PS_IDX m_skyPS;
+extern	CB_IDX m_skyConst;
 
 void InitializeSky();
 void ReleaseSky();

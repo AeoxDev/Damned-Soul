@@ -10,7 +10,10 @@
 #include "Light.h"
 #include "Model.h"
 #include "RenderDepthPass.h"
+
+// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
 #include "SkyPlane.h"
+#include "States/StateManager.h"
 
 void Render()
 {
@@ -121,6 +124,7 @@ void RenderSkyPlane()
 	//Camera::ToggleProjection();
 	//Camera::UpdateProjection();
 
+
 	TransformComponent* tc = registry.GetComponent<TransformComponent>(m_skyPlane);
 	ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(m_skyPlane);
 	if (tc->offsetX != 0.0f)
@@ -128,8 +132,16 @@ void RenderSkyPlane()
 		tc->offsetY = 0.0f;
 	}
 
+
+	int* level = (int*)MemLib::spush(sizeof(int));
+	*level = stateManager.activeLevel;
+
+	UpdateConstantBuffer(m_skyConst, (void*)level);
 	UpdateTransform();
 
+	MemLib::spop();
+
+	SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
 	SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
 		tc->facingX, tc->facingY, -tc->facingZ,
 		tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
@@ -143,6 +155,7 @@ void RenderSkyPlane()
 	//SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, m_skyPlaneDepth);
 	LOADED_MODELS[mc->model].RenderAllSubmeshes();
 
+	UnsetConstantBuffer(BIND_VERTEX, 3);
 	//Camera::ToggleProjection();
 	//Camera::UpdateProjection();
 }
