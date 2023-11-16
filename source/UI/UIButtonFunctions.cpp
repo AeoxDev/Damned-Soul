@@ -291,46 +291,43 @@ void UIFunc::BuyRelic(void* args, int index)
 		{
 			if (relicWindow->shopSelections[i] == shopState::SELECTED)
 			{
-				if (player->GetSouls() < 0)
+				if (player->GetSouls() < relicWindow->shopRelics[i]->m_price)
 					return;
 
-				if (player->GetSouls() >= relicWindow->shopRelics[i]->m_price)
+				relicWindow->shopSelections[i] = shopState::BOUGHT;
+
+				uiElement->m_Images[i + 2].SetImage("Buy");
+				relicWindow->shopRelics[i]->m_function(&stateManager.player);
+
+				DSFLOAT2 offsetUICoords = { abs(playerUI->m_Images[2].baseUI.GetPixelCoords().x + 32.0f) ,
+						   abs(playerUI->m_Images[2].baseUI.GetPixelCoords().y + 32.0f) };
+
+				DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+									-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+
+				if (playerRelics->currentRelics < playerRelics->maxRelics)
 				{
-					relicWindow->shopSelections[i] = shopState::BOUGHT;
 
-					uiElement->m_Images[i + 2].SetImage("Buy");
-					relicWindow->shopRelics[i]->m_function(&stateManager.player);
-
-					DSFLOAT2 offsetUICoords = { abs(playerUI->m_Images[2].baseUI.GetPixelCoords().x + 32.0f) ,
-							   abs(playerUI->m_Images[2].baseUI.GetPixelCoords().y + 32.0f) };
-
-					DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-										-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
-
-					if (playerRelics->currentRelics < playerRelics->maxRelics)
+					if (playerRelics->gridPos.x > 0)
 					{
-
-						if (playerRelics->gridPos.x > 0)
-						{
-							playerRelics->gridPos.y++;
-							playerRelics->gridPos.x = 0;
-						}
-
-						playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(playerUI->m_Images[2].baseUI.GetPosition().x /*+(0.06f * playerRelics->gridPos.x)*/,
-							uiPixelCoords.y - (0.12f * playerRelics->gridPos.y)), DSFLOAT2(1.5f, 1.5f), false);
-
-						playerHover->Setup(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
-							playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetBounds(), UIFunc::HoverPlayerRelic);
-
-						playerRelics->relics[playerRelics->currentRelics] = relicWindow->shopRelics[i];
-
-						playerRelics->gridPos.x++;
-						playerRelics->currentRelics++;
+						playerRelics->gridPos.y++;
+						playerRelics->gridPos.x = 0;
 					}
 
-					player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
-					break;
+					playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(playerUI->m_Images[2].baseUI.GetPosition().x /*+(0.06f * playerRelics->gridPos.x)*/,
+						uiPixelCoords.y - (0.12f * playerRelics->gridPos.y)), DSFLOAT2(1.5f, 1.5f), false);
+
+					playerHover->Setup(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
+						playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetBounds(), UIFunc::HoverPlayerRelic);
+
+					playerRelics->relics[playerRelics->currentRelics] = relicWindow->shopRelics[i];
+
+					playerRelics->gridPos.x++;
+					playerRelics->currentRelics++;
 				}
+
+				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
+				break;
 			}
 		}
 	}
