@@ -237,7 +237,7 @@ void HazardAttackCollision(OnCollisionParameters& params)
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
-			HazardDamageHelper(params.entity2, 50.f);
+			HazardDamageHelper(params.entity2, 20.f);
 			break;
 		case HAZARD_ICE:
 			//ICE:

@@ -382,8 +382,8 @@ void DestroyAcidHazard(EntityID& entity, const int& index)
 		registry.RemoveComponent<ModelBonelessComponent>(entity);
 	}
 
-
 	RemoveHitbox(entity, 0);
+	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
 }
 
 void CreateAcidHazard(EntityID& entity, const int& index)
