@@ -11,7 +11,7 @@
 #include "Model.h"
 #include "RenderDepthPass.h"
 
-void Render(bool isShadowPass)
+void RenderModels(bool isShadowPass)
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
@@ -96,7 +96,7 @@ bool ShadowSystem::Update()
 	SetShadowmap(true);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	
-	Render(true);
+	RenderModels(true);
 
 	//Return the camera
 	Camera::ToggleProjection();
@@ -128,7 +128,7 @@ bool RenderSystem::Update()
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(GetDepthPassPixelShader());
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
-	Render(false);
+	RenderModels(false);
 	ClearBackBuffer();
 	// Render UI
 	RenderUI();
@@ -147,11 +147,58 @@ bool RenderSystem::Update()
 	// Set Geometry Shader used for normalmapping
 	SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 	// Render
-	Render(false);
+	RenderModels(false);
 	// Unset geometry shader
 	UnsetGeometryShader();
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
 	UnsetShadowmap(false);
+
+	//Do the debugHitbox
+#ifdef _DEBUG
+	SetTopology(LINESTRIP);
+	SetVertexShader(GetHitboxVisVertexShader());
+	SetPixelShader(GetHitboxVisPixelShader());
+	SetRasterizerState(GetHitboxRasterizerState());
+	SetConstantBuffer(GetHitboxConstantBuffer(), BIND_VERTEX, 2);
+	//Do the loop
+	for (auto entity : View<TransformComponent, HitboxVisualComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		HitboxVisualComponent* hitboxV = registry.GetComponent<HitboxVisualComponent>(entity);
+		for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			hitboxV->UpdateHitboxConstantBuffer(entity, i);
+			SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
+				tc->facingX, tc->facingY, -tc->facingZ,
+				1.0f, 1.0f,1.0f,
+				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+			int vertices = hitboxV->GetNrVertices(entity, i);
+			if (vertices > 0)
+			{
+				Render(vertices);
+			}
+		}
+		for (size_t i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			hitboxV->UpdateHitboxConstantBuffer(entity, i);
+			SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
+				tc->facingX, tc->facingY, -tc->facingZ,
+				tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+			int vertices = hitboxV->GetNrVertices(entity, i);
+			if (vertices > 0)
+			{
+				Render(vertices);
+			}
+		}
+		
+		
+	}
+#endif // _DEBUG
+
+	
 	return true;
 }

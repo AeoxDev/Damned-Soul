@@ -1,31 +1,37 @@
-struct VisualHitbox
+#include "RenderPipelineHeader.hlsli"
+struct SimpleVertex
 {
-    float4 color; //4
-    float3 middlePoint; //3
-    float radius; //1
+    float4 position;
+    float4 color;
+};
+
+struct SimpleModel
+{
+    SimpleVertex vertices[8];
 };
 
 struct VertexShaderOutput
 {
     float4 position : SV_POSITION;
     float4 color : COLOR;
-    float radius : RADIUS;
 };
 
+cbuffer ModelData : register(b2)
+{
+    SimpleModel debugModel;
+}
 //cbuffer ConstantBuffer : register(b0)
 //{
 //    matrix world;
 //}
 
-StructuredBuffer<VisualHitbox> hitboxes : register(t0);
-
 VertexShaderOutput main(uint vertexID : SV_VertexID)
 {
-    VisualHitbox currentHitbox = hitboxes[vertexID];
     VertexShaderOutput output;
-    output.position = mul(float4x4(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), float4(currentHitbox.middlePoint, 1.0f));
-    output.color = currentHitbox.color;
-    output.radius = currentHitbox.radius - 0.49f;
+    output.position = mul(debugModel.vertices[vertexID].position, world);
+    output.position = mul(output.position, view);
+    output.position = mul(output.position, projection);
+    output.color = debugModel.vertices[vertexID].color;
 
     return output;
 }

@@ -126,13 +126,13 @@ int StateManager::Setup()
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
-	//models.Initialize();
 	Camera::InitializeCamera();
+	SetupHitboxVisualizer();
 	menu.Setup();
 
 	Particles::InitializeParticles();
-	//SetupTestHitbox();
 	RedrawUI();
+	
 
 	//Setup systems here
 
@@ -271,7 +271,6 @@ void StateManager::UnloadAll()
 	UnloadEntities(ENT_PERSIST_HIGHEST);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
-	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
 	ReleaseDepthPass();

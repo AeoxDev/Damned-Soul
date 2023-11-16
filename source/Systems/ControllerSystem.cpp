@@ -43,7 +43,7 @@ bool ControllerSystem::Update()
 		}
 	}
 #ifdef _DEBUG
-	if (keyInput[SCANCODE_LCTRL] == down && (currentStates & InMainMenu) == true)
+	if (keyInput[SCANCODE_LCTRL] == down)
 	{
 		if (keyState[SCANCODE_1] == pressed)
 		{
@@ -60,6 +60,51 @@ bool ControllerSystem::Update()
 		else if (keyState[SCANCODE_4] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
+		}
+	}
+	if (keyInput[SCANCODE_H] == down)
+	{
+		if (keyState[SCANCODE_0] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 0);
+			}
+		}
+		else if (keyState[SCANCODE_1] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 1);
+			}
+		}
+		else if (keyState[SCANCODE_2] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 2);
+			}
+		}
+		else if (keyState[SCANCODE_3] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 3);
+			}
+		}
+		else if (keyState[SCANCODE_4] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 4);
+			}
+		}
+		else if (keyState[SCANCODE_LALT] == pressed || keyState[SCANCODE_LSHIFT] == pressed || keyState[SCANCODE_LCTRL] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				StopVisualizeHitbox(entity);
+			}
 		}
 	}
 #endif // _DEBUG

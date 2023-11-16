@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include "Components.h"
+#include "D3D11Helper\D3D11Helper.h"
 
 /// <summary>
 /// Calculates the closest distance of two circles.
@@ -33,12 +34,43 @@
 //	return hitDistance;
 //}
 
+VS_IDX hitboxVertexShader;
+PS_IDX hitboxPixelShader;
+RS_IDX hitboxRasterizerState;
+CB_IDX hitboxConstantBuffer;
+
+bool hitboxVisualizerActive[SAME_TYPE_HITBOX_LIMIT * 2];
+
 struct CircularConvexReturn
 {
 	bool hit;
 	int line;//0 means corners 0, 1. 1 means 1, 2. 2 means 2, 3 ir 2, 0 depending on amount of corners
 	float convexAngleOfAttackX, convexAngleOfAttackY;
 };
+
+void SetupHitboxVisualizer()
+{
+	hitboxVertexShader = LoadVertexShader("DebugHitboxVertexShader.cso", LAYOUT_DESC::DEFAULT);
+	hitboxPixelShader = LoadPixelShader("DebugHitboxPixelShader.cso");
+	hitboxRasterizerState = CreateRasterizerState(false, false);
+	hitboxConstantBuffer = CreateConstantBuffer(sizeof(SimpleShape));
+	for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT * 2; i++)
+	{
+		hitboxVisualizerActive[i] = false;
+	}
+#ifdef _DEBUG
+	for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT * 2; i++)
+	{
+		hitboxVisualizerActive[i] = true;
+	}
+#endif // _DEBUG
+
+
+	// <>: Convex hitbox :)
+	// []: Also convex hitbox
+	// o: Circular hitboyx 
+	// .: Smol circular hitbox :    ^ )
+}
 
 CircularConvexReturn CircularConvex(float& pos1X, float& pos1Z, float& r1/*, ConvexComponent*/)
 {
@@ -415,6 +447,25 @@ float RotateOffset(float offsetX, float offsetZ, float xFactor, float zFactor)
 	return offsetX * xFactor + offsetZ * zFactor;
 }
 
+int8_t GetHitboxVisVertexShader()
+{
+	return hitboxVertexShader;
+}
+
+int8_t GetHitboxVisPixelShader()
+{
+	return hitboxPixelShader;
+}
+
+int8_t GetHitboxRasterizerState()
+{
+	return hitboxRasterizerState;
+}
+int8_t GetHitboxConstantBuffer()
+{
+	return hitboxConstantBuffer;
+}
+
 bool CollisionSystem::Update()
 {
 	UpdatePhysics();
@@ -434,4 +485,161 @@ float GetHitboxRadius(const EntityID& entity, int hitBoxID)
 		return hitbox->convexHitbox[hitBoxID - SAME_TYPE_HITBOX_LIMIT].boundingRadius;
 	}
 	return 0;
+}
+
+void VisualizeHitbox(EntityID& entity, int hitboxID)
+{
+	//Visualize only this hitbox of this entity.
+	HitboxVisualComponent* vis = registry.GetComponent<HitboxVisualComponent>(entity);
+	if (vis == nullptr)
+	{
+		vis = registry.AddComponent<HitboxVisualComponent>(entity);
+	}
+	float red, green, blue;
+	switch (hitboxID)
+	{
+	case 0:
+		red = 0.2f;
+		green = 0.8f;
+		blue = 0.3f;
+		break;
+	case 1:
+		red = 0.25f;
+		green = 0.4f;
+		blue = 1.0f;
+		break;
+	case 2:
+		red = 1.0f;
+		green = 0.3f;
+		blue = 0.3f;
+		break;
+	case 4:
+		red = 1.0f;
+		green = 1.0f;
+		blue = 0.2f;
+		break;
+	default:
+		red = 1.0f;
+		green = 1.0f;
+		blue = 1.0f;
+		break;
+	}
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	float height = 0.6f;
+	//Loop through the correct hitbox values
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		vis->shape[hitboxID].nrVertices = CONVEX_CORNER_LIMIT + 1;
+		
+		for (size_t i = 0; i < CONVEX_CORNER_LIMIT; i++)
+		{
+			vis->shape[hitboxID].vertices[i].color[0] = red;
+			vis->shape[hitboxID].vertices[i].color[1] = green;
+			vis->shape[hitboxID].vertices[i].color[2] = blue;
+			vis->shape[hitboxID].vertices[i].color[3] = 1.0f;
+			//DO the gf
+			vis->shape[hitboxID].vertices[i].position[0] = hitbox->circleHitbox[hitboxID].offsetX + hitbox->circleHitbox[hitboxID].radius * cosf(3.1415f * 2.0f *((float)i / (float)CONVEX_CORNER_LIMIT));
+			vis->shape[hitboxID].vertices[i].position[1] = height;
+			vis->shape[hitboxID].vertices[i].position[2] = hitbox->circleHitbox[hitboxID].offsetZ + hitbox->circleHitbox[hitboxID].radius * sinf(3.1415f * 2.0f *((float)i / (float)CONVEX_CORNER_LIMIT));
+			vis->shape[hitboxID].vertices[i].position[3] = 1.0f;
+		}
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[0] = red;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[1] = green;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[2] = blue;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[3] = 1.0f;
+		//DO the gf					  CONVEX_CORNER_LIMIT
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].position[0] = hitbox->circleHitbox[hitboxID].offsetX + hitbox->circleHitbox[hitboxID].radius;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].position[1] = height;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].position[2] = hitbox->circleHitbox[hitboxID].offsetZ;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].position[3] = 1.0f;
+	}
+	else
+	{
+		//hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].boundingRadius;
+		vis->shape[hitboxID].nrVertices = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerAmount;
+		for (size_t i = 0; i < CONVEX_CORNER_LIMIT; i++)
+		{
+			vis->shape[hitboxID].vertices[i].color[0] = red;
+			vis->shape[hitboxID].vertices[i].color[1] = green;
+			vis->shape[hitboxID].vertices[i].color[2] = blue;
+			vis->shape[hitboxID].vertices[i].color[3] = 1.0f;
+			//DO the g[hitboxID]f
+			vis->shape[hitboxID].vertices[i].position[0] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerX[i];
+			vis->shape[hitboxID].vertices[i].position[1] = height;
+			vis->shape[hitboxID].vertices[i].position[2] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerZ[i];
+			vis->shape[hitboxID].vertices[i].position[3] = 1.0f;
+		}
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[0] = red;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[1] = green;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[2] = blue;
+		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[3] = 1.0f;
+		//DO the gf					  CONVEX_CORNER_LIMIT
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[0] = vis->shape[hitboxID].vertices[0].position[0];
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[1] = vis->shape[hitboxID].vertices[0].position[1];
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[2] = vis->shape[hitboxID].vertices[0].position[2];
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[3] = vis->shape[hitboxID].vertices[0].position[3];
+	}
+}
+
+void StopVisualizeHitbox(EntityID& entity)
+{
+	HitboxVisualComponent* vis = registry.GetComponent<HitboxVisualComponent>(entity);
+	if (vis != nullptr)
+	{
+		registry.RemoveComponent<HitboxVisualComponent>(entity);//No need to release anything. Deleetus Yeetus
+	}
+}
+
+int HitboxVisualComponent::GetNrVertices(EntityID& entity, int hitboxID)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		if (hitbox->circularFlags[hitboxID].active)
+		{
+			return this->shape[hitboxID].nrVertices;
+		}
+	}
+	else
+	{
+		if (hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].active)
+		{
+			return this->shape[hitboxID].nrVertices;
+		}
+	}
+	return 0;
+}
+
+void HitboxVisualComponent::UpdateHitboxConstantBuffer(EntityID& entity, int hitboxID)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitboxID >= SAME_TYPE_HITBOX_LIMIT && hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].active)
+	{//Update convex shape
+		
+		
+		this->shape[hitboxID].nrVertices = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerAmount;
+		for (size_t i = 0; i < this->shape[hitboxID].nrVertices; i++)
+		{
+   			this->shape[hitboxID].vertices[i].color[1] = 1.0f;
+			this->shape[hitboxID].vertices[i].color[0] = 0.2f;
+			this->shape[hitboxID].vertices[i].color[2] = 0.2f;
+			this->shape[hitboxID].vertices[i].color[3] = 1.0f;
+			//thisO the[hitboxID] gf
+			this->shape[hitboxID].vertices[i].position[0] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerX[i];
+			this->shape[hitboxID].vertices[i].position[1] = 0.3f;
+			this->shape[hitboxID].vertices[i].position[2] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerZ[i];
+			this->shape[hitboxID].vertices[i].position[3] = 1.0f;
+		}
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[0] = 1.0f;
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[1] = 0.2f;
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[2] = 0.2f;
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[3] = 1.0f;
+		//the gf					  CONVEX_CORNER_LIMIT
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[0] = shape[hitboxID].vertices[0].position[0];
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[1] = shape[hitboxID].vertices[0].position[1];
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[2] = shape[hitboxID].vertices[0].position[2];
+		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[3] = shape[hitboxID].vertices[0].position[3];
+		++this->shape[hitboxID].nrVertices;
+	}
+	UpdateConstantBuffer(hitboxConstantBuffer, &this->shape[hitboxID].vertices);
 }

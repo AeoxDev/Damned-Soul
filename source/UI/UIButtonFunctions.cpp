@@ -5,7 +5,6 @@
 #include "D3D11Helper\D3D11Helper.h"
 #include "GameRenderer.h"
 #include "Registry.h"
-#include "Components.h"
 #include "DeltaTime.h"
 #include "Registry.h"
 #include "Components.h"
