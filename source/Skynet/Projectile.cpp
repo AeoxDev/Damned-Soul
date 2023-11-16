@@ -50,7 +50,7 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ)
 
 		//Setup Bullet hitbox
 		SetupProjectileCollisionBox(bullet, 1.0f);
-		AddTimedEventComponentStartEnd(bullet, 6.0f, BeginDestroyProjectile, 7.0f, EndDestroyProjectile, 0, 2);
+		AddTimedEventComponentStartEnd(bullet, 2.5f, BeginDestroyProjectile, 3.0f, EndDestroyProjectile, 0, 2);
 
 	}
 	
