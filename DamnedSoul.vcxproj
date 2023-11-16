@@ -216,10 +216,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EventFunctions\CutsceneFunctions.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
+    <ClCompile Include="source\Relics\Offensive\CrackedLense.cpp" />
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
     <ClCompile Include="source\Relics\Offensive\ExplodingWeapon.cpp" />
     <ClCompile Include="source\Relics\Offensive\HoundFang.cpp" />
     <ClCompile Include="source\Relics\Offensive\MinotaurHorn.cpp" />
+    <ClCompile Include="source\Relics\Offensive\SoulEater.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
@@ -567,11 +569,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\CorruptedHeart.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MummifiedHeart.h" />
+    <ClInclude Include="header\Relics\Offensive\CrackedLense.h" />
     <ClInclude Include="header\Relics\Offensive\DashAttack.h" />
     <ClInclude Include="header\Relics\Offensive\ExplodingWeapon.h" />
     <ClInclude Include="header\Relics\Offensive\HoundFang.h" />
     <ClInclude Include="header\Relics\Offensive\LifeSteal.h" />
     <ClInclude Include="header\Relics\Offensive\MinotaurHorn.h" />
+    <ClInclude Include="header\Relics\Offensive\SoulEater.h" />
     <ClInclude Include="header\Relics\Offensive\ThrillSeeker.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />

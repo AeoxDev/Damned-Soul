@@ -16,3 +16,16 @@ float RelicInput::OnDamageCalculation::CollapseDamage()
     // Return the damage
     return retVal;
 }
+
+float RelicInput::OnDamageCalculation::CollapseNoCap()
+{
+    // First add flat damage increase
+    float retVal = (damage + flatAdd);
+    // Multiply damage
+    retVal *= incMult * decMult;
+    // Apply flat damage decrease
+    retVal -= flatSub;
+
+    // Return the damage
+    return retVal;
+}
