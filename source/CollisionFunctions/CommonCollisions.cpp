@@ -297,7 +297,7 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		float chargedKnockback = 1.0f;
 		if (registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1) != nullptr)
 		{
-			chargedKnockback = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1)->multiplier;
+			chargedKnockback = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1)->multiplier * 1.5f; //Big knockback
 		}
 		AddKnockBack(params.entity2, kbs * chargedKnockback * (x * -weightFactor), kbs * chargedKnockback * (z * -weightFactor));
 	}
@@ -404,7 +404,7 @@ void AttackCollision(OnCollisionParameters& params)
 		RedrawUI();
 
 	// Only hit the first enemy
-	SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
+	//SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
 
 	//Lastly set for hitboxTracker[]
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);

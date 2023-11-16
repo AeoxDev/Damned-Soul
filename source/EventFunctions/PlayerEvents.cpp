@@ -126,6 +126,7 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 
 	stats->SetSpeedMult(0.6f); //Move slower while attacking
 	player->isAttacking = true;
+	ResetAttackTrackerFlags(entity);
 }
 
 void PlayerRegainControl(EntityID& entity, const int& index)
@@ -188,38 +189,9 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	stats->SetSpeedMult(1.0f); //Reset
-}
 
-void PlayerDash(EntityID& entity, const int& index)
-{
-	//Get access to players relevant components
-	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
-	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
-	// Get animation
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-
-	//Invalid entity doesn't have the required components
-	if (!transform || !stat || !dac || !anim)
-		return;
-
-	//Perform attack animation, woo, loop using DT
-	anim->aAnim = ANIMATION_WALK;
-	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-	anim->aAnimIdx = 1;
-
-	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
-	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
-
-	//Move player quickly in the relevant direction
-	transform->positionX += dac->x * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
-	transform->positionZ += dac->z * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
-}
-
-void PlayerDashSound(EntityID& entity, const int& index)
-{
-	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-	sfx->Play(Player_Dash, Channel_Base);
+	//Bugfix: Getting hit during the end of the attack animation cancels out the part where the attack hitbox should be inactivated
+	SetPlayerAttackHitboxInactive(entity, index);
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
@@ -237,7 +209,7 @@ void PlayerAttack(EntityID& entity, const int& index)
 	anim->aAnim = ANIMATION_ATTACK;
 	anim->aAnimIdx = 0;
 
-#define HITBOX_START_TIME (0.5f)
+#define HITBOX_START_TIME (0.45f)
 #define HITBOX_END_TIME (0.8f)
 #define HITBOX_SCALE (2.f)
 
@@ -245,12 +217,12 @@ void PlayerAttack(EntityID& entity, const int& index)
 	float animTime = anim->GetTimeValue();
 
 	//Make the players' attack hitbox active during the second half of the attack animation
-	if (/*GetTimedEventElapsedTime(entity, index)*/animTime >= HITBOX_END_TIME)
+	if (animTime >= HITBOX_END_TIME)
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
 		
-	else if (/*GetTimedEventElapsedTime(entity, index)*/animTime >= HITBOX_START_TIME && false == player->hasActivatedHitbox)
+	else if (animTime >= HITBOX_START_TIME) //&& false == player->hasActivatedHitbox)
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
@@ -259,8 +231,8 @@ void PlayerAttack(EntityID& entity, const int& index)
 	{
 		float softCollisionRadius = GetHitboxRadius(entity, 1);
 		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);
-		float width = (.2f + std::min(.4f, hitboxTime * 2)) * softCollisionRadius * HITBOX_SCALE;
-		float depth = (1.2f + std::min(1.f, hitboxTime * 2)) * softCollisionRadius * HITBOX_SCALE;
+		float width = (.4f + std::min(.5f, hitboxTime * 3.f)) * softCollisionRadius * HITBOX_SCALE; //.2f changed to .4f
+		float depth = (1.2f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE;
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
 
@@ -271,10 +243,10 @@ void PlayerAttack(EntityID& entity, const int& index)
 		corners.cornersX[2] = width;
 		corners.cornersX[3] = -width;
 		// Z
-		corners.cornersZ[0] = -2 * depth;
-		corners.cornersZ[1] = -2 * depth;
-		corners.cornersZ[2] = 0;
-		corners.cornersZ[3] = 0;
+		corners.cornersZ[0] = -2.f * depth;
+		corners.cornersZ[1] = -2.f * depth;
+		corners.cornersZ[2] = 0.5f;
+		corners.cornersZ[3] = 0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
 		//SetHitboxRadius(entity, player->attackHitboxID, (anim->aAnimTime - 0.5f) * 5);
