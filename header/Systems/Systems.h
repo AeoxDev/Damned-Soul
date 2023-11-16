@@ -18,6 +18,10 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
+class GlowSystem : public System	// NOTE: Right position? Renders a separate pass.
+{
+	bool Update();
+};
 class OnClickSystem : public System
 {
 	bool Update();

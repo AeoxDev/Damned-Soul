@@ -9,6 +9,7 @@
 #include "ModelComponent.h"
 #include "AnimationComponent.h"
 #include "LightComponent.h"
+#include "GlowComponent.h"	// NOTE: This right? Should be rendered, so I guess?
 // Special child belongs to both groups
 #include "TransformComponent.h"
 #include "FollowerComponent.h"

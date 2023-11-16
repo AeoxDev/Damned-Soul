@@ -1,0 +1,105 @@
+#include "Systems/Systems.h"
+#include "Components/Components.h"
+#include "Registry.h"
+#include "EntityFramework.h"
+#include "D3D11Helper/D3D11Helper.h"
+#include "Model.h"
+#include "GameRenderer.h"
+#include "Glow.h"
+
+bool GlowSystem::Update()
+{
+	// Two passes:
+	// 
+	// 1. For every glow component (& transform and model, for security reasons and possible later UI glow pass? How do I check for either or?)
+	// Can I use Render(), or do I need to create a separate version?
+
+	Glow::ClearGlowRenderTarget();
+	bool prepped = false;
+	bool drawn = false;
+	for (auto entity : View<GlowComponent>(registry))
+	{
+		SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
+		ModelBonelessComponent* boneless_comp = registry.GetComponent<ModelBonelessComponent>(entity);
+		TransformComponent* trans_comp = registry.GetComponent<TransformComponent>(entity);
+		if (boneless_comp && trans_comp)
+		{
+			if (!prepped)
+			{
+				Glow::PrepareGlowPass();
+				prepped = true;
+			}
+			if (trans_comp->offsetX != 0.0f)
+			{
+				trans_comp->offsetY = 0.0f;
+			}
+			SetWorldMatrix(trans_comp->positionX + trans_comp->offsetX, trans_comp->positionY + trans_comp->offsetY, trans_comp->positionZ + trans_comp->offsetZ,
+				trans_comp->facingX, trans_comp->facingY, -trans_comp->facingZ,
+				trans_comp->scaleX * trans_comp->offsetScaleX, trans_comp->scaleY * trans_comp->offsetScaleY, trans_comp->scaleZ * trans_comp->offsetScaleZ,
+				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[boneless_comp->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[boneless_comp->model].m_indexBuffer);
+			LOADED_MODELS[boneless_comp->model].RenderAllSubmeshes();
+			drawn = true;
+		}
+
+
+		ModelSkeletonComponent* skel_comp = registry.GetComponent<ModelSkeletonComponent>(entity);
+		AnimationComponent* anim_comp = registry.GetComponent<AnimationComponent>(entity);
+		if (skel_comp && trans_comp && anim_comp)
+		{
+			if (!prepped)
+			{
+				Glow::PrepareGlowPass();
+				prepped = true;
+			}
+			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+			SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
+			if (trans_comp->offsetX != 0.0f)
+			{
+				trans_comp->offsetY = 0.0f;
+			}
+			SetWorldMatrix(trans_comp->positionX + trans_comp->offsetX, trans_comp->positionY + trans_comp->offsetY, trans_comp->positionZ + trans_comp->offsetZ,
+				trans_comp->facingX, trans_comp->facingY, -trans_comp->facingZ,
+				trans_comp->scaleX * trans_comp->offsetScaleX, trans_comp->scaleY * trans_comp->offsetScaleY, trans_comp->scaleZ * trans_comp->offsetScaleZ,
+				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[skel_comp->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[skel_comp->model].m_indexBuffer);
+
+			// Render with data
+			LOADED_MODELS[skel_comp->model].RenderAllSubmeshes(anim_comp->aAnim, anim_comp->aAnimIdx, anim_comp->aAnimTime);
+
+			UnsetGeometryShader();
+			drawn = true;
+		}
+		
+		
+	}
+	if (drawn)
+	{
+		Glow::FinishGlowPass();
+	}
+
+	Glow::PrepareBlurPass();
+	Dispatch(1, 1, 1);		// HELP: uav is wrong size for RWTexture2D? What numbers in dispatch?
+	
+
+
+	// NOTE:
+	// Read from glow/emission texture/map
+	// (Get color from glow component)
+	// Write to "sharp" bloom (do I need to handle overlaps? probably not)
+	// 
+	// 2. Once?
+	// Read from "sharp"
+	// Calculate falloff
+	// Write to "soft" bloom
+	// 
+	// Figure out where I apply glow to final render, probably not here? After scene, before UI. Separate function for UI glow?
+
+
+	// Thought: Should I sample from shadow map and make glow sourcces in shadow darker? Does it matter? Would that look right?
+
+	Glow::FinishBlurPass();
+	return true;
+}

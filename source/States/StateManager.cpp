@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "Glow.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -131,6 +132,7 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Glow::Initialize();
 	//SetupTestHitbox();
 	RedrawUI();
 
@@ -146,9 +148,11 @@ int StateManager::Setup()
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
 
+
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
+	systems.push_back(new GlowSystem());
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
@@ -171,7 +175,7 @@ int StateManager::Setup()
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
 	systems.push_back(new TransformSystem()); //Must be before controller
-	systems.push_back(new FollowerSystem());	// CHECK: Is this allowed to be here?
+	systems.push_back(new FollowerSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new EventSystem());//Must be after controller system for correct animations
 	systems.push_back(new GeometryIndependentSystem());
