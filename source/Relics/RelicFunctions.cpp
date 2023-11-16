@@ -285,7 +285,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Pain Mirror",
-				/*Filepath*/	"RelicIcons\\Empty_Relic",
+				/*Filepath*/	"RelicIcons\\Pain_Mirror",
 				/*Description*/	PAIN_MIRROR::Description(),//"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		8,
 				/*Type*/		RELIC_DEFENSE,
