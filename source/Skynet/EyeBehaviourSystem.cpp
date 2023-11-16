@@ -4,6 +4,7 @@
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
 #include "UI/UIRenderer.h"
+#include "EventFunctions.h"
 #include <random>
 
 
@@ -243,6 +244,24 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
+void ChargeColorFlash(EntityID& entity, const int& index)
+{
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	float frequency = 10.0f; //Higher frequency = faster flashing lights
+	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	if (skelel)
+	{
+		skelel->colorAdditiveRed = cosineWave;
+		skelel->colorAdditiveGreen = cosineWave;
+	}
+	if (bonel)
+	{
+		bonel->colorAdditiveRed = cosineWave;
+		bonel->colorAdditiveGreen = cosineWave;
+	}
+}
+
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp)
 {
 	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(eID);
@@ -291,6 +310,18 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
 
 		SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 40.0f);
+		AddTimedEventComponentStartContinuousEnd(eID, 0.0f, nullptr, ChargeColorFlash, eyeComponent->aimDuration - 0.2f, ResetColor);
+	}
+	else if (eyeComponent->aimTimer < eyeComponent->aimDuration)
+	{
+		eyeComponent->goalDirectionX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
+		eyeComponent->goalDirectionZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
+
+		Normalize(eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+
+		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
+		eyeComponent->aimTimer += GetDeltaTime();
+		eyeComponent->attackTimer += GetDeltaTime();
 	}
 	else 
 	{
