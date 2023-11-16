@@ -68,8 +68,9 @@ bool ControllerSystem::Update()
 		{
 			for (auto entity : View<HitboxComponent>(registry))
 			{
-				VisualizeHitbox(entity, 0);
+				VisualizeHitbox(entity, 0); 
 			}
+			hitboxVisualizerActive[0] = true;
 		}
 		else if (keyState[SCANCODE_1] == pressed)
 		{
@@ -77,6 +78,7 @@ bool ControllerSystem::Update()
 			{
 				VisualizeHitbox(entity, 1);
 			}
+			hitboxVisualizerActive[1] = true;
 		}
 		else if (keyState[SCANCODE_2] == pressed)
 		{
@@ -84,6 +86,7 @@ bool ControllerSystem::Update()
 			{
 				VisualizeHitbox(entity, 2);
 			}
+			hitboxVisualizerActive[2] = true;
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
@@ -91,6 +94,7 @@ bool ControllerSystem::Update()
 			{
 				VisualizeHitbox(entity, 3);
 			}
+			hitboxVisualizerActive[3] = true;
 		}
 		else if (keyState[SCANCODE_4] == pressed)
 		{
@@ -98,12 +102,17 @@ bool ControllerSystem::Update()
 			{
 				VisualizeHitbox(entity, 4);
 			}
+			hitboxVisualizerActive[4] = true;
 		}
 		else if (keyState[SCANCODE_LALT] == pressed || keyState[SCANCODE_LSHIFT] == pressed || keyState[SCANCODE_LCTRL] == pressed)
 		{
 			for (auto entity : View<HitboxComponent>(registry))
 			{
 				StopVisualizeHitbox(entity);
+			}
+			for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT *2; i++)
+			{
+				hitboxVisualizerActive[i] = false;
 			}
 		}
 	}

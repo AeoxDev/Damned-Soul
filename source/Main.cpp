@@ -11,7 +11,7 @@
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
-#define MAIN_MENU_FRAMES_TEST 6000
+#define MAIN_MENU_FRAMES_TEST 3000
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 #include "Level.h"
 #endif // TEST

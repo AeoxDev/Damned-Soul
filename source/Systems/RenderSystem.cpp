@@ -168,31 +168,39 @@ bool RenderSystem::Update()
 		HitboxVisualComponent* hitboxV = registry.GetComponent<HitboxVisualComponent>(entity);
 		for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
 		{
-			hitboxV->UpdateHitboxConstantBuffer(entity, i);
-			SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
-				tc->facingX, tc->facingY, -tc->facingZ,
-				1.0f, 1.0f,1.0f,
-				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-
-			int vertices = hitboxV->GetNrVertices(entity, i);
-			if (vertices > 0)
+			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{
-				Render(vertices);
+				hitboxV->UpdateHitboxConstantBuffer(entity, i);
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
+					tc->facingX, tc->facingY, -tc->facingZ,
+					1.0f, 1.0f, 1.0f,
+					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+				int vertices = hitboxV->GetNrVertices(entity, i);
+				if (vertices > 0)
+				{
+					Render(vertices);
+				}
 			}
+			
 		}
 		for (size_t i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
 		{
-			hitboxV->UpdateHitboxConstantBuffer(entity, i);
-			SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
-				tc->facingX, tc->facingY, -tc->facingZ,
-				tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
-				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-
-			int vertices = hitboxV->GetNrVertices(entity, i);
-			if (vertices > 0)
+			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{
-				Render(vertices);
+				hitboxV->UpdateHitboxConstantBuffer(entity, i);
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
+					tc->facingX, tc->facingY, -tc->facingZ,
+					tc->scaleX, tc->scaleY, tc->scaleZ,
+					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+				int vertices = hitboxV->GetNrVertices(entity, i);
+				if (vertices > 0)
+				{
+					Render(vertices);
+				}
 			}
+			
 		}
 		
 		

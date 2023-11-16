@@ -555,29 +555,29 @@ void VisualizeHitbox(EntityID& entity, int hitboxID)
 	}
 	else
 	{
-		//hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].boundingRadius;
 		vis->shape[hitboxID].nrVertices = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerAmount;
-		for (size_t i = 0; i < CONVEX_CORNER_LIMIT; i++)
+		for (size_t i = 0; i < vis->shape[hitboxID].nrVertices; i++)
 		{
-			vis->shape[hitboxID].vertices[i].color[0] = red;
-			vis->shape[hitboxID].vertices[i].color[1] = green;
-			vis->shape[hitboxID].vertices[i].color[2] = blue;
+			vis->shape[hitboxID].vertices[i].color[1] = 1.0f;
+			vis->shape[hitboxID].vertices[i].color[0] = 0.2f;
+			vis->shape[hitboxID].vertices[i].color[2] = 0.2f;
 			vis->shape[hitboxID].vertices[i].color[3] = 1.0f;
-			//DO the g[hitboxID]f
+			//thisO the[hitboxID] gf
 			vis->shape[hitboxID].vertices[i].position[0] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerX[i];
-			vis->shape[hitboxID].vertices[i].position[1] = height;
+			vis->shape[hitboxID].vertices[i].position[1] = 0.3f;
 			vis->shape[hitboxID].vertices[i].position[2] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerZ[i];
 			vis->shape[hitboxID].vertices[i].position[3] = 1.0f;
 		}
-		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[0] = red;
-		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[1] = green;
-		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[2] = blue;
-		vis->shape[hitboxID].vertices[CONVEX_CORNER_LIMIT].color[3] = 1.0f;
-		//DO the gf					  CONVEX_CORNER_LIMIT
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].color[0] = 1.0f;
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].color[1] = 0.2f;
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].color[2] = 0.2f;
+		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].color[3] = 1.0f;
+		//vis->//the gf				vis->	  CONVEX_CORNER_LIMIT
 		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[0] = vis->shape[hitboxID].vertices[0].position[0];
 		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[1] = vis->shape[hitboxID].vertices[0].position[1];
 		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[2] = vis->shape[hitboxID].vertices[0].position[2];
 		vis->shape[hitboxID].vertices[vis->shape[hitboxID].nrVertices].position[3] = vis->shape[hitboxID].vertices[0].position[3];
+		++vis->shape[hitboxID].nrVertices;
 	}
 }
 
@@ -586,6 +586,8 @@ void StopVisualizeHitbox(EntityID& entity)
 	HitboxVisualComponent* vis = registry.GetComponent<HitboxVisualComponent>(entity);
 	if (vis != nullptr)
 	{
+		HitboxVisualComponent empty = {0};
+		memcpy(vis, &empty, sizeof(HitboxVisualComponent));
 		registry.RemoveComponent<HitboxVisualComponent>(entity);//No need to release anything. Deleetus Yeetus
 	}
 }
@@ -612,34 +614,11 @@ int HitboxVisualComponent::GetNrVertices(EntityID& entity, int hitboxID)
 
 void HitboxVisualComponent::UpdateHitboxConstantBuffer(EntityID& entity, int hitboxID)
 {
-	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (hitboxID >= SAME_TYPE_HITBOX_LIMIT && hitbox->convexFlags[hitboxID - SAME_TYPE_HITBOX_LIMIT].active)
-	{//Update convex shape
-		
-		
-		this->shape[hitboxID].nrVertices = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerAmount;
-		for (size_t i = 0; i < this->shape[hitboxID].nrVertices; i++)
-		{
-   			this->shape[hitboxID].vertices[i].color[1] = 1.0f;
-			this->shape[hitboxID].vertices[i].color[0] = 0.2f;
-			this->shape[hitboxID].vertices[i].color[2] = 0.2f;
-			this->shape[hitboxID].vertices[i].color[3] = 1.0f;
-			//thisO the[hitboxID] gf
-			this->shape[hitboxID].vertices[i].position[0] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerX[i];
-			this->shape[hitboxID].vertices[i].position[1] = 0.3f;
-			this->shape[hitboxID].vertices[i].position[2] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerZ[i];
-			this->shape[hitboxID].vertices[i].position[3] = 1.0f;
-		}
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[0] = 1.0f;
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[1] = 0.2f;
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[2] = 0.2f;
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].color[3] = 1.0f;
-		//the gf					  CONVEX_CORNER_LIMIT
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[0] = shape[hitboxID].vertices[0].position[0];
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[1] = shape[hitboxID].vertices[0].position[1];
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[2] = shape[hitboxID].vertices[0].position[2];
-		shape[hitboxID].vertices[shape[hitboxID].nrVertices].position[3] = shape[hitboxID].vertices[0].position[3];
-		++this->shape[hitboxID].nrVertices;
+	HitboxVisualComponent* vis = registry.GetComponent<HitboxVisualComponent>(entity);
+	if (vis && vis->GetNrVertices(entity, hitboxID) > 0)
+	{
+		VisualizeHitbox(entity, hitboxID);
+		UpdateConstantBuffer(hitboxConstantBuffer, &this->shape[hitboxID].vertices);
 	}
-	UpdateConstantBuffer(hitboxConstantBuffer, &this->shape[hitboxID].vertices);
+	
 }
