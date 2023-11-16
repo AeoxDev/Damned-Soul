@@ -44,7 +44,13 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		anim->aAnimTimeFactor = 5.f;
 
 		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
+
 		//SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
+		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
+		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
+		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 	}
 }
 
@@ -224,6 +230,7 @@ void PlayerDash(EntityID& entity, const int& index)
 	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;
 	
 	//Move player quickly in the relevant direction
-	transform->positionX += dac->x * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
-	transform->positionZ += dac->z * (stat->GetSpeed() * dac->dashModifier) * GetDeltaTime();
+	//transform->currentSpeedX = dac->x * (stat->GetSpeed() * dac->dashModifier);// * GetDeltaTime();
+	//transform->currentSpeedZ = dac->z * (stat->GetSpeed() * dac->dashModifier);// *GetDeltaTime();
+	//transform->currentSpeedX
 }

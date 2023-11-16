@@ -11,12 +11,16 @@
 #include "Model.h"
 #include "RenderDepthPass.h"
 
-void Render()
+void Render(bool isShadowPass)
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
+		if (isShadowPass && mc->castShadow == false)
+		{
+			continue;
+		}
 		Light::SetGammaCorrection(mc->gammaCorrection);
 		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
 			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
@@ -92,7 +96,7 @@ bool ShadowSystem::Update()
 	SetShadowmap(true);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	
-	Render();
+	Render(true);
 
 	//Return the camera
 	Camera::ToggleProjection();
@@ -109,7 +113,14 @@ bool ShadowSystem::Update()
 }
 bool RenderSystem::Update()
 {
-	
+	for (auto entity : View<TransformComponent, LightComponent>(registry))
+	{
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		//LightComponent* light = registry.GetComponent<LightComponent>(entity);
+		//Use the offset from light.
+		OffsetPosition(entity, transform->positionX, transform->positionY, transform->positionZ, transform->facingX, transform->facingY, transform->facingZ);
+		OffsetFacing(entity, transform->facingX, transform->facingY, transform->facingZ);
+	}
 	//Forward+ depth pass
 	SetTopology(TRIANGLELIST);
 	
@@ -117,7 +128,7 @@ bool RenderSystem::Update()
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(GetDepthPassPixelShader());
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
-	Render();
+	Render(false);
 	ClearBackBuffer();
 	// Render UI
 	RenderUI();
@@ -136,7 +147,7 @@ bool RenderSystem::Update()
 	// Set Geometry Shader used for normalmapping
 	SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 	// Render
-	Render();
+	Render(false);
 	// Unset geometry shader
 	UnsetGeometryShader();
 	//UpdateGlobalShaderBuffer();
