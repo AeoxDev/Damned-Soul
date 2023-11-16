@@ -59,6 +59,9 @@ void AddKnockBack(EntityID& entity, const float x, const float z)
 
 	kbc->m_velocity_x += x * BASE_SPEED;
 	kbc->m_velocity_z += z * BASE_SPEED;
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	transform->currentSpeedX += x * BASE_SPEED;
+	transform->currentSpeedZ += z * BASE_SPEED;
 	kbc->friction = 1.0f;
 }
 
