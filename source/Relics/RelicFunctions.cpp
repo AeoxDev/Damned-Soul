@@ -445,7 +445,7 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 				break;
 			}
 		}
-		possibleSelection.erase(randomlySelectedKey);
+		possibleSelection.erase((uint32_t)randomlySelectedKey);
 
 		// Return the relics that weren't picked
 		for (auto& [key, val] : possibleSelection) {

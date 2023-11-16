@@ -11,8 +11,9 @@ EntityID SOUL_POWER::_OWNER;
 
 const char* SOUL_POWER::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
+	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "You gain %ld Strength for every soul in your possession", PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

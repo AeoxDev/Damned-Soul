@@ -13,10 +13,11 @@ EntityID UNDEAD_FORTITUDE::_OWNER;
 const char* UNDEAD_FORTITUDE::Description()
 {
 	//"Reduces the damage you take by 10%-40%, based on how low your current health is"
-	char temp[RELIC_DATA_DESC_SIZE];
+	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "You take %ld%% less damage, increasing to a maximum of %ld%% as you lose health",
 		100 - PERCENT(UNDEAD_FORTITUDE_MINIMUM_MULTIPLIER),
 		100 - PERCENT(UNDEAD_FORTITUDE_MAXIMUM_MULTIPLIER));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

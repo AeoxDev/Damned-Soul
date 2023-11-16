@@ -11,10 +11,11 @@ EntityID MINOTAUR_HORN::_OWNER;
 
 const char* MINOTAUR_HORN::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
+	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "Increases your strength by %ld and your knockback force by %ld%%",
 		PERCENT(MINOTAUR_HORN_STRENGTH_INCREASE),
 		PERCENT(MINOTAUR_HORN_KNOCKBACK_INCREASE));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

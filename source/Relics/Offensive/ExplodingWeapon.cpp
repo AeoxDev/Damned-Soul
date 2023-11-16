@@ -14,9 +14,10 @@ EntityID EXPLODING_WEAPON::_OWNER;
 
 const char* EXPLODING_WEAPON::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
+	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "Whenever you hit an enemy with an attack, enemies in a small area around that enemy also take %ld%% of that attack's damage as flat damage",
 		PERCENT(EXPLODING_WEAPON_DAMAGE_FRACTION));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 
@@ -34,7 +35,7 @@ void EXPLODING_WEAPON::Initialize(void* input)
 
 void _EW_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, 0, 1.f, 0, 0, 0, EXPLODING_WEAPON_AOE_SIZE, CIRCLE_FIELD);
+	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, 0.f, 1.f, 0.f, 0.f, 0.f, EXPLODING_WEAPON_AOE_SIZE, CIRCLE_FIELD);
 }
 
 

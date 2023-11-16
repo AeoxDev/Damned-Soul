@@ -17,10 +17,11 @@ EntityID GOLDEN_DUCK::_OWNER;
 
 const char* GOLDEN_DUCK::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
+	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "You can stand in damaging hazards for up to %.1lf seconds without taking damage. Rechargers over %.1lf seconds while not in use",
 		GOLDEN_DUCK_BASE_DURATION,
 		GOLDEN_DUCK_BASE_DURATION / GOLDEN_DUCK_RECHARGE_RATE);
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

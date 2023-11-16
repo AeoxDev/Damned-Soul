@@ -12,10 +12,11 @@ EntityID FLAME_WEAPON::_OWNER;
 
 const char* FLAME_WEAPON::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
+	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "Whenever you hit an enemy with an attack, *Burn* for an additional %ld%% damage over %.2lf seconds",
 		PERCENT(FLAME_WEAPON_DOT_FRACTION),
 		FLAME_WEAPON_DOT_DURATION);
+#pragma warning(suppress : 4172)
 	return temp;
 }
 
