@@ -15,7 +15,7 @@ struct Animation
 private:
 	struct InternalAnimationStructure
 	{
-		// Used to check if the animation is correctly loaded (little vs big endian)
+		// Used to check if the animation is correctly loaded (little vs big endian) 
 		uint32_t m_sanityCheck = 1'234'567'890;
 		// The number of bones in a frame
 		uint32_t m_boneCount = 0;

@@ -496,6 +496,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\AnimationType.h" />
     <ClInclude Include="header\CombatFunctions.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
+    <ClInclude Include="header\Components\BlendAnimationsComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\CutsceneComponent.h" />
     <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
