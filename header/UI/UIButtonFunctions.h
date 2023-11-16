@@ -14,6 +14,9 @@ namespace UIFunc
 	// Go from start menu to settings
 	void MainMenu_Settings(void* args, int a);
 
+	// Go from start menu to settings
+	void MainMenu_Credits(void* args, int a);
+
 	// Quit the game from the start menu
 	void MainMenu_Quit(void* args, int a);
 
@@ -22,6 +25,9 @@ namespace UIFunc
 
 	// Return to main menu from pause state
 	void PauseState_MainMenu(void* args, int a);
+
+	// Go back from the credits menu to the main menu
+	void Credits_Back(void* args, int a);
 
 	// Go back from the settings menu to the main menu
 	void Settings_Back(void* args, int a);

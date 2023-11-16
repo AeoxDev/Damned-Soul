@@ -179,36 +179,41 @@ void Menu::Input()
 
 void Menu::SetupButtons()
 {
+	const int buttons = 4;
 
-	const char const texts[3][32] =
+	const char const texts[buttons][32] =
 	{
 		"\nStart",
+		"\nCredits",
 		"\nSettings",
 		"\nQuit"
 	};
 	
-	const DSFLOAT2 const positions[3] =
+	const DSFLOAT2 const positions[buttons] =
 	{
+		{ -0.81f, -0.02f },
 		{ -0.81f, -0.28f },
 		{ -0.81f,  -0.54f },
 		{ -0.81f, -0.8f }
 	};
 
-	const DSFLOAT2 const scales[3] =
+	const DSFLOAT2 const scales[buttons] =
 	{
+		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f }
 	};
 
-	void(* const functions[3])(void*, int) =
+	void(* const functions[buttons])(void*, int) =
 	{
 		UIFunc::MainMenu_Start,
+		UIFunc::MainMenu_Credits,
 		UIFunc::MainMenu_Settings,
 		UIFunc::MainMenu_Quit
 	};
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < buttons; i++)
 	{
 		auto button = registry.CreateEntity();
 		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);

@@ -61,6 +61,14 @@ void UIFunc::MainMenu_Settings(void* args, int a)
 	stateManager.settings.Setup();
 }
 
+void UIFunc::MainMenu_Credits(void* args, int a)
+{
+	SetInCredits(true);
+	SetInMainMenu(false);
+	stateManager.menu.Unload();
+	stateManager.credits.Setup();
+}
+
 void UIFunc::MainMenu_Quit(void* args, int a)
 {
 	UnloadEntities();
@@ -103,6 +111,14 @@ void UIFunc::PauseState_MainMenu(void* args, int a)
 	SetInPause(false);
 	UnloadEntities(ENT_PERSIST_LEVEL);
 	gameSpeed = 1.0f;
+	stateManager.menu.Setup();
+}
+
+void UIFunc::Credits_Back(void* args, int a)
+{
+	SetInMainMenu(true);
+	SetInCredits(false);
+	stateManager.credits.Unload();
 	stateManager.menu.Setup();
 }
 
@@ -210,7 +226,7 @@ void UIFunc::SelectRelic(void* args, int index)
 	UIComponent* uiElement = (UIComponent*)args;
 
 	int inverseIndex = 0;
-	int imageIndexes[2];
+	int imageIndexes[2] = { 0, 0 };
 
 	if (index == 1)
 	{

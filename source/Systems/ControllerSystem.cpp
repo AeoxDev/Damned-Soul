@@ -16,7 +16,7 @@ bool ControllerSystem::Update()
 		|| keyState[SCANCODE_D] == pressed || mouseButtonPressed[MouseButton::left] == pressed
 		|| mouseButtonPressed[MouseButton::right] == pressed))
 	{
-		if (!(currentStates & InMainMenu) && Camera::InCutscene())
+		if (!(currentStates & InMainMenu) && Camera::InCutscene() && !(currentStates & InCredits) && !(currentStates & InSettings))
 		{
 			for (auto entity : View<TimedEventComponent>(registry))
 			{
