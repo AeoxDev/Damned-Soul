@@ -8,26 +8,7 @@
 #include "ParticleComponent.h"
 #include "Particles.h"
 
-// input true on stuff you want to reset
-void ResetHellhoundVariables(HellhoundBehaviour* hc, /*bool circleBehavior,*/ bool charge)
-{
-	/*if (circleBehavior)
-	{
-		hc->giveUpChaseCounter += GetDeltaTime();
-		if (hc->giveUpChaseCounter >= 1.0f)
-		{
-			hc->isBehind = false;
-			hc->isBehindCounter = 0.f;
-			hc->circleBehaviour = false;
-			hc->giveUpChaseCounter = 0.f;
-		}
-	}*/
-	if (charge)
-	{
-		hc->charge = false;
-	}
-	
-}
+
 
 void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* htc, EntityID& ent, EnemyComponent* enmComp, AnimationComponent* animComp)
 {
@@ -172,12 +153,13 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 			hellhoundComponent->hasMadeADecision = false;
 			hellhoundComponent->charge = false;
 			hellhoundComponent->chargeCounter = 0.f;
+			hellhoundComponent->retreat = true;
 		}
-		speedMultiplier = 2.5f; 
-		enemyStats->SetSpeedMult(2.5f);
+		speedMultiplier = 2.0f; 
+		enemyStats->SetSpeedMult(speedMultiplier);
 		if (enemyStats->m_acceleration == enemyStats->m_baseAcceleration)
 		{
-			enemyStats->m_acceleration = 4.0f;
+			enemyStats->m_acceleration = 8.0f;
 		}
 		
 	}
@@ -425,7 +407,7 @@ void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, Hellhoun
 	{
 		hc->cowardCounter = 0.f;
 		hc->retreat = false;
-		ResetHellhoundVariables(hc,/* true,*/ true);
+		hc->charge = false;
 	}
 }
 
@@ -649,7 +631,7 @@ bool HellhoundBehaviourSystem::Update()
 			}
 			else if (distance < hellhoundComponent->meleeDistance || hellhoundComponent->attackTimer > 0.0f) // fight club and not currently shooting
 			{
-				ResetHellhoundVariables(hellhoundComponent, /*true,*/ true);
+				hellhoundComponent->charge = false;
 				hellhoundComponent->chargePrepareDurationCounter = 0.0f;
 				CombatBehaviour(hellhoundComponent, enemyStats, playerStats, playerTransformCompenent, hellhoundTransformComponent, enemyEntity, enmComp, enemyAnim);
 			}
@@ -701,7 +683,7 @@ bool HellhoundBehaviourSystem::Update()
 						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
-							continue;
+							continue; //illegal grid
 						}
 					}
 
@@ -740,12 +722,12 @@ bool HellhoundBehaviourSystem::Update()
 					hellhoundComponent->followPath = false;
 				}
 
-				ResetHellhoundVariables(hellhoundComponent, /*true, */true);
-				ChaseBehaviour(enemyEntity,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
+				
+				ChaseBehaviour(enemyEntity ,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 			}
 			else // idle
 			{
-				ResetHellhoundVariables(hellhoundComponent, /*true,*/ true);
+				hellhoundComponent->charge = false;
 				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 			}

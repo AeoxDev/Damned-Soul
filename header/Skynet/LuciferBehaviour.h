@@ -6,13 +6,20 @@ struct LuciferBehaviour
 	float timeCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 
-	int hitBoxID = 0;
+	int hitBoxID = 1;
 
 
 
+	// for the 10 second or damage charge
+	float chargeBehevCounter = 0.f;
+	float chargeBehevCounterTiming = 12.f;
+	float limitHP = 0.f; //how much hp left when he stops charge
 
-	float spawnCounter = 10.f;
-	float spawnTiming = 15.f;
+	//to handle the daze effect
+	bool isDazed = false;
+	float dazeCounter = 0.f;
+	float dazeTimeAmount = 3.f;
+
 
 
 	//how often pathfinding
@@ -31,13 +38,24 @@ struct LuciferBehaviour
 	float fx = 0.f;
 	float fz = 0.f;
 
-
+	//special attacks variables
+	bool nextSpecialIsSpawn = true;
+	bool isChargeCharge = false;
+	bool isJumpJump = false; 
 
 
 	// MELEE VARIABLES
 	float attackTimer = 0.f; //used as counter
 	float attackStunDurationCounter = 0.8f;
-	const float attackStunDuration = 1.5f;
-	float meleeDistance = 3.5f;
+	const float attackStunDuration = 0.8f;
+	float meleeDistance = 4.5f;
 	int attackHitboxID = 2;
+
+	// variables for jump jump 
+	float flyTime = 4.f;
+	float flyCounter = 0.f;
+	bool hasLandingPos = false;
+
+	
+	
 };
