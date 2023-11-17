@@ -18,6 +18,16 @@ struct D3D11Data
 
 };
 
+struct BlendStateHolder
+{
+private:
+	BS_IDX							_nextIdx = 0;
+public:
+	ML_Map<BS_IDX, ID3D11BlendState*> bs_map;
+
+	BS_IDX NextIdx();
+};
+
 struct GeometryShaderHolder
 {
 private:
@@ -176,6 +186,7 @@ extern DSVHolder* dsvHolder;
 extern SRVHolder* srvHolder;
 extern UAVHolder* uavHolder;
 extern RasterizerHolder* rsHolder;
+extern BlendStateHolder* bsHolder;
 
 //extern ID3D11Device* device;
 //extern ID3D11DeviceContext* deviceContext;

@@ -26,6 +26,7 @@ DSVHolder* dsvHolder;
 SRVHolder* srvHolder;
 UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
+BlendStateHolder* bsHolder;
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
@@ -93,6 +94,7 @@ int SetupDirectX(HWND& w)
 	PUSH_AND_INITIALIZE(uavHolder, UAVHolder);
 	//uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
+	PUSH_AND_INITIALIZE(bsHolder, BlendStateHolder);
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 	PUSH_AND_INITIALIZE(geoHolder, GeometryShaderHolder);
 	bool succeded = CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT);
@@ -248,6 +250,14 @@ void EndDirectX()
 			val->Release();
 	}
 	rsHolder->rs_map.clear();
+
+	// Release all pixel shaders
+	for (auto& [key, val] : bsHolder->bs_map)
+	{
+		if (val != nullptr)
+			val->Release();
+	}
+	bsHolder->bs_map.clear();
 
 	// Clear and flush device context
 	d3d11Data->deviceContext->ClearState();

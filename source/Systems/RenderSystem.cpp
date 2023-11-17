@@ -19,26 +19,25 @@ void Render()
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
-		//ARIAN SKREV DEN HÄR IF STATEMENTEN
-		if (entity.index != m_skyPlane.index)
+		if (registry.GetComponent<SkyPlaneComponent>(entity) != nullptr)
+			continue;
+
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
+		Light::SetGammaCorrection(mc->gammaCorrection);
+		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
+			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+		if (tc->offsetX != 0.0f)
 		{
-			TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
-			ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
-			Light::SetGammaCorrection(mc->gammaCorrection);
-			Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
-				mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
-			if (tc->offsetX != 0.0f)
-			{
-				tc->offsetY = 0.0f;
-			}
-			SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
-				tc->facingX, tc->facingY, -tc->facingZ,
-				tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
-				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-			SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
-			SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-			LOADED_MODELS[mc->model].RenderAllSubmeshes();
+			tc->offsetY = 0.0f;
 		}
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 	}
 
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
@@ -121,43 +120,47 @@ bool ShadowSystem::Update()
 // ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
 void RenderSkyPlane()
 {
-	//Camera::ToggleProjection();
-	//Camera::UpdateProjection();
+	int loops = 0;
 
-
-	TransformComponent* tc = registry.GetComponent<TransformComponent>(m_skyPlane);
-	ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(m_skyPlane);
-	if (tc->offsetX != 0.0f)
+	for (int i = 0; i < AMOUNT_OF_PLANES; i++)
 	{
-		tc->offsetY = 0.0f;
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(planes[i]);
+		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(planes[i]);
+		if (tc->offsetX != 0.0f)
+		{
+			tc->offsetY = 0.0f;
+		}
+
+
+		int* level = (int*)MemLib::spush(sizeof(int));
+		*level = stateManager.activeLevel;
+
+		UpdateConstantBuffer(m_skyConst, (void*)level);
+
+		MemLib::spop();
+
+		SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
+
+		UpdateTransform(loops++);
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+		SetVertexShader(m_skyVS);
+		SetPixelShader(m_skyPS);
+
+		LOADED_MODELS[mc->model].RenderAllSubmeshes();
+
+		// If this is the first loop, set the blend state as the last thing we do
+		if (i == 0)
+			SetBlendState(m_skyBlend);
+
 	}
-
-
-	int* level = (int*)MemLib::spush(sizeof(int));
-	*level = stateManager.activeLevel;
-
-	UpdateConstantBuffer(m_skyConst, (void*)level);
-	UpdateTransform();
-
-	MemLib::spop();
-
-	SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
-	SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
-		tc->facingX, tc->facingY, -tc->facingZ,
-		tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
-		SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-	SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
-	SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-
-	SetVertexShader(m_skyVS);
-	SetPixelShader(m_skyPS);
-	//SetRasterizerState(m_skyPlaneRasterizer);
-	//SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, m_skyPlaneDepth);
-	LOADED_MODELS[mc->model].RenderAllSubmeshes();
-
 	UnsetConstantBuffer(BIND_VERTEX, 3);
-	//Camera::ToggleProjection();
-	//Camera::UpdateProjection();
+	UnsetBlendState();
 }
 
 bool RenderSystem::Update()

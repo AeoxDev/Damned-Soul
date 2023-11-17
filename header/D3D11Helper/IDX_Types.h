@@ -48,3 +48,6 @@ typedef int8_t RS_IDX;
 
 // Sampler State index type definition
 typedef int8_t SMP_IDX;
+
+// Blend State index type definition
+typedef int8_t	BS_IDX;

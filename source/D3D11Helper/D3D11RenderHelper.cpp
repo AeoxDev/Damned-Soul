@@ -607,6 +607,48 @@ void UnsetRasterizerState()
 	d3d11Data->deviceContext->RSSetState(rs_NULL);
 }
 
+BS_IDX CreateBlendState()
+{
+	uint8_t currentIdx = bsHolder->NextIdx();
+
+	D3D11_BLEND_DESC desc;
+	desc.AlphaToCoverageEnable = true;
+	desc.IndependentBlendEnable = false;
+	desc.RenderTarget[0].BlendEnable = true;
+	desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	desc.RenderTarget[0].RenderTargetWriteMask = 0;
+
+	ID3D11BlendState* tempBlend = 0;
+	HRESULT hr = d3d11Data->device->CreateBlendState(&desc, &tempBlend);
+	assert(!FAILED(hr));
+	bsHolder->bs_map.emplace(currentIdx, tempBlend);
+
+	return currentIdx;
+}
+
+bool SetBlendState(const BS_IDX idx)
+{
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+
+	d3d11Data->deviceContext->OMSetBlendState(bsHolder->bs_map[idx], blendFactor, sampleMask);
+
+	return true;
+}
+
+void UnsetBlendState()
+{
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+
+	d3d11Data->deviceContext->OMSetBlendState(nullptr, blendFactor, sampleMask);
+}
+
 bool DeleteD3D11Viewport(const VP_IDX idx)
 {
 	assert(vpHolder->vp_map.contains(idx));

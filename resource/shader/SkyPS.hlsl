@@ -39,7 +39,8 @@ cbuffer LightComponentShaderBuffer : register(b2)
 
 float4 main(VS_OUT input) : SV_TARGET
 {
-    return diffuseTex.Sample(WrapSampler, input.uv);
-
+    float4 image = diffuseTex.Sample(WrapSampler, input.uv);
+    //clip(image.a - 0.1f);
+    return image;
 }
    

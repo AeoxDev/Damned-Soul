@@ -7,17 +7,20 @@
 #include "ModelComponent.h"
 #include "AnimationComponent.h"
 #include "LightComponent.h"
+
 // Special child belongs to both groups
 #include "TransformComponent.h"
 #include "MouseComponent.h"
+
 // Physics Components
 #include "GeometryIndependentComponent.h"
 #include "StaticHazardComponent.h"
+
 //Event Components
 #include "TimedEventComponent.h"
 #include "SquashStretchComponent.h"
-//To Be Decapritated
 #include "ParticleComponent.h"
+#include "SkyPlaneComponent.h"
 
 //Collision
 #include "HitboxComponent.h"

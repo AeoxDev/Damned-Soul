@@ -515,6 +515,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ProjectileComponent.h" />
     <ClInclude Include="header\Components\OnClickComponent.h" />
     <ClInclude Include="header\Components\OnHoverComponent.h" />
+    <ClInclude Include="header\Components\SkyPlaneComponent.h" />
     <ClInclude Include="header\Components\SquashStretchComponent.h" />
     <ClInclude Include="header\Components\StaticHazardComponent.h" />
     <ClInclude Include="header\Components\UIComponents.h" />

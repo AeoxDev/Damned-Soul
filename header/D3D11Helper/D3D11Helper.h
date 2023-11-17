@@ -275,6 +275,12 @@ void UnsetRasterizerState();
 // Release for a single rasterizer state
 void ReleaseRS(const RS_IDX idx);
 
+// Creates a blend state, currently hardcoded as SkyPlane is the only model thats uses a blend state
+BS_IDX CreateBlendState();
+bool SetBlendState(const BS_IDX idx);
+void UnsetBlendState();
+
+
 void SetTopology(TOPOLOGY topology);
 
 //Release
