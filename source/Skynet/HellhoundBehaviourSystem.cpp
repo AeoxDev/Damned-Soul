@@ -723,7 +723,7 @@ bool HellhoundBehaviourSystem::Update()
 				}
 
 				
-				ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
+				ChaseBehaviour(enemyEntity ,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 			}
 			else // idle
 			{
