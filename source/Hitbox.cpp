@@ -234,9 +234,9 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 	SetCollisionEvent(entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);
 	//Visualize hitbox if possible
 #ifdef _DEBUG
-	if (hitboxVisualizerActive[availableSlot])
+	if (hitboxVisualizerActive[availableSlot + SAME_TYPE_HITBOX_LIMIT])
 	{
-		VisualizeHitbox(entity, availableSlot);
+		VisualizeHitbox(entity, availableSlot +SAME_TYPE_HITBOX_LIMIT);
 	}
 #endif // _DEBUG
 	//Return the chosen slot for the user for further uses.
