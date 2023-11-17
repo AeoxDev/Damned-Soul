@@ -25,7 +25,6 @@
 #include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\PowerStrike.h"
 
-
 	/*Defense*/
 #include "Relics\Defensive\Hearts\DemonHeart.h"
 #include "Relics\Defensive\Hearts\CorruptedHeart.h"
@@ -41,11 +40,13 @@
 #include "Relics\Defensive\BackShield.h"
 #include "Relics\Defensive\SecondWind.h"
 #include "Relics\Defensive\LastStand.h"
+
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
 #include "Relics\Gadget\LightningGod.h"
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
+#include "Relics\Gadget\IcyBlade.h"
 // End of include all relics
 
 #include "Relics\Utility\ML_RelicArray.h"
@@ -102,39 +103,39 @@ void _validateMasterRelicList()
 	{
 		ML_RelicArray MasterInitializer {
 
-			//OFFENSIVE RELICS
-			RelicData(
-				/*Name*/		"Demon Bonemarrow",
-				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
-				/*Description*/	DEMON_BONEMARROW::Description(),
-				/*Price*/		8,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	DEMON_BONEMARROW::Initialize
-			),
-			RelicData(
-				/*Name*/		"Minotaur Horn Fragment",
-				/*Filepath*/	"RelicIcons\\Minotaur_Horn",
-				/*Description*/	MINOTAUR_HORN::Description(),
-				/*Price*/		6,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	MINOTAUR_HORN::Initialize
-			),
-			RelicData(
-				/*Name*/		"Hound Fang",
-				/*Filepath*/	"RelicIcons\\Hound_Fang",
-				/*Description*/	HOUND_FANG::Description(),
-				/*Price*/		4,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	HOUND_FANG::Initialize
-			),
-			RelicData(
-				/*Name*/		"Cracked Lense",
-				/*Filepath*/	"RelicIcons\\Cracked_Lense",
-				/*Description*/	CRACKED_LENSE::Description(),
-				/*Price*/		5,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	CRACKED_LENSE::Initialize
-			),
+			////OFFENSIVE RELICS
+			//RelicData(
+			//	/*Name*/		"Demon Bonemarrow",
+			//	/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
+			//	/*Description*/	DEMON_BONEMARROW::Description(),
+			//	/*Price*/		8,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	DEMON_BONEMARROW::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Minotaur Horn Fragment",
+			//	/*Filepath*/	"RelicIcons\\Minotaur_Horn",
+			//	/*Description*/	MINOTAUR_HORN::Description(),
+			//	/*Price*/		6,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	MINOTAUR_HORN::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Hound Fang",
+			//	/*Filepath*/	"RelicIcons\\Hound_Fang",
+			//	/*Description*/	HOUND_FANG::Description(),
+			//	/*Price*/		4,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	HOUND_FANG::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Cracked Lense",
+			//	/*Filepath*/	"RelicIcons\\Cracked_Lense",
+			//	/*Description*/	CRACKED_LENSE::Description(),
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	CRACKED_LENSE::Initialize
+			//),
 			RelicData(
 				/*Name*/		"Flame Weapon",
 				/*Filepath*/	"RelicIcons\\Flame_Weapon",
@@ -143,195 +144,195 @@ void _validateMasterRelicList()
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	FLAME_WEAPON::Initialize
 			),
-			RelicData(
-				/*Name*/		"Soul Power",
-				/*Filepath*/	"RelicIcons\\Soul_Power",
-				/*Description*/	SOUL_POWER::Description(),//"You gain 1 Strength for every soul in your posession",
-				/*Price*/		10,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	SOUL_POWER::Initialize
-			),
-			RelicData(
-				/*Name*/		"Life Steal",
-				/*Filepath*/	"RelicIcons\\Life_Steal",
-				/*Description*/	LIFE_STEAL::Description(),//"You heal for 15% of the damage you deal",
-				/*Price*/		5,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	LIFE_STEAL::Initialize
-			),
-			RelicData(
-				/*Name*/		"Soul Eater",
-				/*Filepath*/	"RelicIcons\\Soul_Eater",
-				/*Description*/	SOUL_EATER::Description(),
-				/*Price*/		6,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	SOUL_EATER::Initialize
-			),
-			RelicData(
-				/*Name*/		"Advanced Fighting",
-				/*Filepath*/	"RelicIcons\\Advanced_Fighting",
-				/*Description*/	ADVANCED_FIGHTING::Description(),//"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
-				/*Price*/		5,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	ADVANCED_FIGHTING::Initialize
-			),
-			RelicData(
-				/*Name*/		"Dash Attack",
-				/*Filepath*/	"RelicIcons\\Dash_Attack",
-				/*Description*/	DASH_ATTACK::Description(),//"Deals 50% of your damage when dashing through an enemy",
-				/*Price*/		5,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	DASH_ATTACK::Initialize
-			),
-			RelicData(
-				/*Name*/		"Adrenaline Rush",
-				/*Filepath*/	"RelicIcons\\Adrenaline_Rush",
-				/*Description*/	ADRENALINE_RUSH::Description(),//"You attack twice as fast for 1 second after being hit",
-				/*Price*/		10,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	ADRENALINE_RUSH::Initialize
-			),
-			RelicData(
-				/*Name*/		"Thrill Seeker",
-				/*Filepath*/	"RelicIcons\\Thrill_Seeker",
-				/*Description*/	THRILL_SEEKER::Description(),//"For every % hp lost, gain % damage",
-				/*Price*/		10,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	THRILL_SEEKER::Initialize
-			),
-			RelicData(
-				/*Name*/		"Exploding Weapon",
-				/*Filepath*/	"RelicIcons\\Exploding_Weapon",
-				/*Description*/	EXPLODING_WEAPON::Description(),
-				/*Price*/		10,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	EXPLODING_WEAPON::Initialize
-			),
-			RelicData(
-			/*Name*/		"Power Strike",
-			/*Filepath*/	"RelicIcons\\Power_Strike",
-			/*Description*/	POWER_STRIKE::Description(),
-			/*Price*/		10,
-			/*Type*/		RELIC_OFFENSE,
-			/*Function*/	POWER_STRIKE::Initialize
-			),
-			//ENDOF: OFFENSIVE RELICS
+			//RelicData(
+			//	/*Name*/		"Soul Power",
+			//	/*Filepath*/	"RelicIcons\\Soul_Power",
+			//	/*Description*/	SOUL_POWER::Description(),//"You gain 1 Strength for every soul in your posession",
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	SOUL_POWER::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Life Steal",
+			//	/*Filepath*/	"RelicIcons\\Life_Steal",
+			//	/*Description*/	LIFE_STEAL::Description(),//"You heal for 15% of the damage you deal",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	LIFE_STEAL::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Soul Eater",
+			//	/*Filepath*/	"RelicIcons\\Soul_Eater",
+			//	/*Description*/	SOUL_EATER::Description(),
+			//	/*Price*/		6,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	SOUL_EATER::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Advanced Fighting",
+			//	/*Filepath*/	"RelicIcons\\Advanced_Fighting",
+			//	/*Description*/	ADVANCED_FIGHTING::Description(),//"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	ADVANCED_FIGHTING::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Dash Attack",
+			//	/*Filepath*/	"RelicIcons\\Dash_Attack",
+			//	/*Description*/	DASH_ATTACK::Description(),//"Deals 50% of your damage when dashing through an enemy",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	DASH_ATTACK::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Adrenaline Rush",
+			//	/*Filepath*/	"RelicIcons\\Adrenaline_Rush",
+			//	/*Description*/	ADRENALINE_RUSH::Description(),//"You attack twice as fast for 1 second after being hit",
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	ADRENALINE_RUSH::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Thrill Seeker",
+			//	/*Filepath*/	"RelicIcons\\Thrill_Seeker",
+			//	/*Description*/	THRILL_SEEKER::Description(),//"For every % hp lost, gain % damage",
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	THRILL_SEEKER::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Exploding Weapon",
+			//	/*Filepath*/	"RelicIcons\\Exploding_Weapon",
+			//	/*Description*/	EXPLODING_WEAPON::Description(),
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_OFFENSE,
+			//	/*Function*/	EXPLODING_WEAPON::Initialize
+			//),
+			//RelicData(
+			///*Name*/		"Power Strike",
+			///*Filepath*/	"RelicIcons\\Power_Strike",
+			///*Description*/	POWER_STRIKE::Description(),
+			///*Price*/		10,
+			///*Type*/		RELIC_OFFENSE,
+			///*Function*/	POWER_STRIKE::Initialize
+			//),
+			////ENDOF: OFFENSIVE RELICS
 
 
-			//DEFENSIVE RELICS
-			RelicData(
-				/*Name*/		"Demon Heart",
-				/*Filepath*/	"RelicIcons\\Demon_Heart",
-				/*Description*/	DEMON_HEART::Description(),//"Increases your Maximum Health by 25",
-				/*Price*/		5,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	DEMON_HEART::Initialize
-			),
-			RelicData(
-				/*Name*/		"Corrupted Heart",
-				/*Filepath*/	"RelicIcons\\Corrupted_Heart",
-				/*Description*/	CORRUPTED_HEART::Description(),//"Increases your Maximum Health by 40",
-				/*Price*/		8,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	CORRUPTED_HEART::Initialize
-			),
-			RelicData(
-				/*Name*/		"Molten Heart",
-				/*Filepath*/	"RelicIcons\\Molten_Heart",
-				/*Description*/	MOLTEN_HEART::Description(),//"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
-				/*Price*/		6,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	MOLTEN_HEART::Initialize
-			),
-			RelicData(
-				/*Name*/		"Mummified Heart",
-				/*Filepath*/	"RelicIcons\\Mummified_Heart",
-				/*Description*/	MUMMIFIED_HEART::Description(),//"Increases your Maximum Health by 15",
-				/*Price*/		3,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	MUMMIFIED_HEART::Initialize
-			),
-			RelicData(
-				/*Name*/		"Frost Fire",
-				/*Filepath*/	"RelicIcons\\Frost_Fire",
-				/*Description*/	FROST_FIRE::Description(),//"Every few seconds, send out a shockwave that knocks back [[and damages?]] nearby enemies",
-				/*Price*/		3,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	FROST_FIRE::Initialize
-			),
-			RelicData(
-				/*Name*/		"Soul Health",
-				/*Filepath*/	"RelicIcons\\Soul_Health",
-				/*Description*/	SOUL_HEALTH::Description(),//"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
-				/*Price*/		8,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	SOUL_HEALTH::Initialize
-			),
-			RelicData(
-				/*Name*/		"Demon Skin",
-				/*Filepath*/	"RelicIcons\\Demon_Skin",
-				/*Description*/	DEMON_SKIN::Description(),//"Reduces the damage you take by 20%",
-				/*Price*/		5,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	DEMON_SKIN::Initialize
-			),
-			RelicData(
-				/*Name*/		"Spiked Skin",
-				/*Filepath*/	"RelicIcons\\Spiked_Skin",
-				/*Description*/	SPIKED_SKIN::Description(),//"Whenever an enemy strikes you, it takes 100% of the damage it would deal (before reduction) as irresistable damage",
-				/*Price*/		3,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	SPIKED_SKIN::Initialize
-			),
-			RelicData(
-				/*Name*/		"Undead Fortitude",
-				/*Filepath*/	"RelicIcons\\Undead_Fortitude",
-				/*Description*/	UNDEAD_FORTITUDE::Description(),//"Reduces the damage you take by 10%-40%, based on how low your current health is",
-				/*Price*/		6,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	UNDEAD_FORTITUDE::Initialize
-			),
-			RelicData(
-				/*Name*/		"Pain Mirror",
-				/*Filepath*/	"RelicIcons\\Pain_Mirror",
-				/*Description*/	PAIN_MIRROR::Description(),//"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
-				/*Price*/		8,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	PAIN_MIRROR::Initialize
-			),
-			RelicData(
-				/*Name*/		"Golden Duck",
-				/*Filepath*/	"RelicIcons\\Golden_Duck",
-				/*Description*/	GOLDEN_DUCK::Description(),//"You are immune to up to 3 seconds of exposure to damaging hazards. Recharges while not in use",
-				/*Price*/		8,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	GOLDEN_DUCK::Initialize
-			),
-			RelicData(
-				/*Name*/		"Back Shield",
-				/*Filepath*/	"RelicIcons\\Shield",
-				/*Description*/	BACK_SHIELD::Description(),//"Up to once every 2 seconds, you nullify the next attack when struck from behind",
-				/*Price*/		8,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	BACK_SHIELD::Initialize
-			),
-			RelicData(
-				/*Name*/		"Second Wind",
-				/*Filepath*/	"RelicIcons\\Second_Wind",
-				/*Description*/	SECOND_WIND::Description(),//"The first time that you would die while holding this relic, your remaining hit points are instead set to 25% of your hit point maximum",
-				/*Price*/		10,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	SECOND_WIND::Initialize
-			),
-			RelicData(
-				/*Name*/		"Last Stand",
-				/*Filepath*/	"RelicIcons\\Last_Stand",
-				/*Description*/	LAST_STAND::Description(),//"While below 50% health, you block 50% of damage taken from attacks up to once every 2 seconds",
-				/*Price*/		6,
-				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	LAST_STAND::Initialize
-			),
-			//ENDOF: DEFENSIVE RELICS
+			////DEFENSIVE RELICS
+			//RelicData(
+			//	/*Name*/		"Demon Heart",
+			//	/*Filepath*/	"RelicIcons\\Demon_Heart",
+			//	/*Description*/	DEMON_HEART::Description(),//"Increases your Maximum Health by 25",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	DEMON_HEART::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Corrupted Heart",
+			//	/*Filepath*/	"RelicIcons\\Corrupted_Heart",
+			//	/*Description*/	CORRUPTED_HEART::Description(),//"Increases your Maximum Health by 40",
+			//	/*Price*/		8,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	CORRUPTED_HEART::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Molten Heart",
+			//	/*Filepath*/	"RelicIcons\\Molten_Heart",
+			//	/*Description*/	MOLTEN_HEART::Description(),//"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
+			//	/*Price*/		6,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	MOLTEN_HEART::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Mummified Heart",
+			//	/*Filepath*/	"RelicIcons\\Mummified_Heart",
+			//	/*Description*/	MUMMIFIED_HEART::Description(),//"Increases your Maximum Health by 15",
+			//	/*Price*/		3,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	MUMMIFIED_HEART::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Frost Fire",
+			//	/*Filepath*/	"RelicIcons\\Frost_Fire",
+			//	/*Description*/	FROST_FIRE::Description(),//"Every few seconds, send out a shockwave that knocks back [[and damages?]] nearby enemies",
+			//	/*Price*/		3,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	FROST_FIRE::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Soul Health",
+			//	/*Filepath*/	"RelicIcons\\Soul_Health",
+			//	/*Description*/	SOUL_HEALTH::Description(),//"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
+			//	/*Price*/		8,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	SOUL_HEALTH::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Demon Skin",
+			//	/*Filepath*/	"RelicIcons\\Demon_Skin",
+			//	/*Description*/	DEMON_SKIN::Description(),//"Reduces the damage you take by 20%",
+			//	/*Price*/		5,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	DEMON_SKIN::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Spiked Skin",
+			//	/*Filepath*/	"RelicIcons\\Spiked_Skin",
+			//	/*Description*/	SPIKED_SKIN::Description(),//"Whenever an enemy strikes you, it takes 100% of the damage it would deal (before reduction) as irresistable damage",
+			//	/*Price*/		3,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	SPIKED_SKIN::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Undead Fortitude",
+			//	/*Filepath*/	"RelicIcons\\Undead_Fortitude",
+			//	/*Description*/	UNDEAD_FORTITUDE::Description(),//"Reduces the damage you take by 10%-40%, based on how low your current health is",
+			//	/*Price*/		6,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	UNDEAD_FORTITUDE::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Pain Mirror",
+			//	/*Filepath*/	"RelicIcons\\Pain_Mirror",
+			//	/*Description*/	PAIN_MIRROR::Description(),//"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
+			//	/*Price*/		8,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	PAIN_MIRROR::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Golden Duck",
+			//	/*Filepath*/	"RelicIcons\\Golden_Duck",
+			//	/*Description*/	GOLDEN_DUCK::Description(),//"You are immune to up to 3 seconds of exposure to damaging hazards. Recharges while not in use",
+			//	/*Price*/		8,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	GOLDEN_DUCK::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Back Shield",
+			//	/*Filepath*/	"RelicIcons\\Shield",
+			//	/*Description*/	BACK_SHIELD::Description(),//"Up to once every 2 seconds, you nullify the next attack when struck from behind",
+			//	/*Price*/		8,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	BACK_SHIELD::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Second Wind",
+			//	/*Filepath*/	"RelicIcons\\Second_Wind",
+			//	/*Description*/	SECOND_WIND::Description(),//"The first time that you would die while holding this relic, your remaining hit points are instead set to 25% of your hit point maximum",
+			//	/*Price*/		10,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	SECOND_WIND::Initialize
+			//),
+			//RelicData(
+			//	/*Name*/		"Last Stand",
+			//	/*Filepath*/	"RelicIcons\\Last_Stand",
+			//	/*Description*/	LAST_STAND::Description(),//"While below 50% health, you block 50% of damage taken from attacks up to once every 2 seconds",
+			//	/*Price*/		6,
+			//	/*Type*/		RELIC_DEFENSE,
+			//	/*Function*/	LAST_STAND::Initialize
+			//),
+			////ENDOF: DEFENSIVE RELICS
 
 
 			//GADGET RELICS
@@ -366,6 +367,14 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SOUL_SPEED::Initialize
+			),
+			RelicData(
+				/*Name*/		"Icy Blade",
+				/*Filepath*/	"RelicIcons\\Icy_Blade",
+				/*Description*/	ICY_BLADE::Description(),//"You gain a bonus to your speed equal to your souls",
+				/*Price*/		5,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	ICY_BLADE::Initialize
 			),
 			//ENDOF: GADGET RELICS
 		};
