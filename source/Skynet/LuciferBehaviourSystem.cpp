@@ -229,7 +229,7 @@ bool LuciferBehaviourSystem::Update()
 			{
 				luciferComponent->chargeBehevCounter = 0.f;
 				int whichAttack = rand() % 10 + 1; // 1 - 10
-				if (whichAttack > 3 ) //  charge run
+				if (whichAttack > 4 ) //  charge run
 				{
 					luciferComponent->isChargeCharge = true;
 					// runs towards the player dealing

@@ -47,7 +47,7 @@ struct LuciferBehaviour
 	// MELEE VARIABLES
 	float attackTimer = 0.f; //used as counter
 	float attackStunDurationCounter = 0.8f;
-	const float attackStunDuration = 1.5f;
+	const float attackStunDuration = 0.8f;
 	float meleeDistance = 4.5f;
 	int attackHitboxID = 2;
 
