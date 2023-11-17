@@ -1,6 +1,5 @@
 #include "ParticleHeader.hlsli"
 
-RWStructuredBuffer<Input> inputParticleData : register(u1);
 
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)

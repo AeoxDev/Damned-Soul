@@ -155,7 +155,7 @@ int SetupParticles()
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
 	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("ParticleVS.cso", PARTICLE);
 	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("ParticlePS.cso");
-	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("ParticleSamplerVS.cso", DEFAULT);
+	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("ParticleSamplerVS.cso", PARTICLE);
 	renderStates[currentSize].pixelShaders[1] = LoadPixelShader("ParticleSamplerPS.cso");
 	renderStates[currentSize].geometryShader = LoadGeometryShader("ParticleGS.cso");
 	renderStates[currentSize].computeShader = LoadComputeShader("ParticleCS.cso");

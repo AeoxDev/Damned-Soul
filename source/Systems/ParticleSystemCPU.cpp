@@ -14,7 +14,7 @@ bool ParticleSystemCPU::Update()
 	ClearParticles();
 
 	//Set all the shaders
- 	Particles::PrepareParticlePass(renderStates);
+	Particles::PrepareParticlePass(renderStates);
 
 	//Render
 	for (auto pEntity : View<ParticleComponent, TransformComponent>(registry))
@@ -28,7 +28,7 @@ bool ParticleSystemCPU::Update()
 
 		if (pComp->metadataSlot >= 0)
 		{
-			RenderOffset((Particles::GetMetadataAtIndex(pComp->metadataSlot).end - Particles::GetMetadataAtIndex(pComp->metadataSlot).start), Particles::GetMetadataAtIndex(pComp->metadataSlot).start);
+			RenderOffset((Particles::GetMetadataAtIndex(pComp->metadataSlot).end - Particles::GetMetadataAtIndex(pComp->metadataSlot).start),0);
 		}
 	}
 	Particles::FinishParticlePass();

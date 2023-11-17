@@ -433,6 +433,11 @@ void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 	d3d11Data->deviceContext->CopyResource(bfrHolder->buff_map[destination], uavHolder->uav_resource_map[source]);
 }
 
+void CopySRVtoSRV(const SRV_IDX destination, const SRV_IDX source)
+{
+	d3d11Data->deviceContext->CopyResource(srvHolder->srv_resource_map[destination], srvHolder->srv_resource_map[source]);
+}
+
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
 {
 	uint8_t currentIdx = uavHolder->NextIdx();

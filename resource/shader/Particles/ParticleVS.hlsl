@@ -20,12 +20,13 @@ struct VS_OUT
     float size : SIZE;
 };
 
-StructuredBuffer<Input> particles : register(t2);
+StructuredBuffer<Input> particles : register(t0);
 
 
 VS_OUT main(uint vertexID : SV_VertexID)
 {
-    Input inval = particles[vertexID + start];
+    int index = (int) vertexID + start;
+    Input inval = particles[index];
     //inval = particles[instanceID];
     VS_OUT retval;
     

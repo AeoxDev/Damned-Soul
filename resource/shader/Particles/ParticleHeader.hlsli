@@ -41,4 +41,5 @@ cbuffer metadataBuffer : register(b0)
 static const float PI = 3.14159265f;
 
 RWStructuredBuffer<Input> outputParticleData : register(u0);
+RWStructuredBuffer<Input> inputParticleData : register(u1);
 #endif

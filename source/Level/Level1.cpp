@@ -38,8 +38,19 @@ void LoadLevel1()
 	//SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
 	
 	
+
+	EntityID paritcleOne = registry.CreateEntity();
+	EntityID paritcleTwo = registry.CreateEntity();
 	//SetupEnemy(EnemyType::hellhound, -40.f, 0.f, 35.f);
-	registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, 2000, SMOKE);
+	registry.AddComponent<ParticleComponent>(stage, 400.f, 30.f, 0.3f, 0.0f, 0.0f, 1.0f, 2000, SMOKE);
+	registry.AddComponent<ParticleComponent>(paritcleOne, 400.f, 30.f, 0.3f, 0.f, 0.0f, 1.0f, 1340, SMOKE);
+	registry.AddComponent<ParticleComponent>(paritcleTwo, 400.f, 30.f, 0.3f, 0.f, 0.0f, 1.0f, 1660, SMOKE);
+
+	registry.AddComponent<TransformComponent>(paritcleOne);
+	registry.AddComponent<TransformComponent>(paritcleTwo);
+
+
+
 	//5 souls total
 
 

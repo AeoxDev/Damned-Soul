@@ -23,18 +23,20 @@ bool ParticleSystemGPU::Update()
 			if (highestGroupAmount < pComp->groupsRequiered)
 				highestGroupAmount = pComp->groupsRequiered;
 
-			if (pComp->vertexReset == false)
-				pComp->ResetVertex();
+			//if (pComp->vertexReset == false)
+			//	pComp->ResetVertex();
 
-			if (pComp->bufferReset == false)
-				pComp->ResetBuffer();
+			//if (pComp->bufferReset == false)
+			//	pComp->ResetBuffer();
 		}
 	}
 
 	if (highestActiveSlot >= 0)
 	{
 		Particles::PrepareParticleCompute(renderStates);
+
 		Dispatch((highestGroupAmount + 1), (highestActiveSlot + 1), 1); //x * y * z
+
 		Particles::FinishParticleCompute(renderStates);
 	}
 

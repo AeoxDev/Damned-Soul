@@ -1,6 +1,6 @@
 #include "ParticleHeader.hlsli"
 
-StructuredBuffer<Input> readParticleData : register(t0);
+//StructuredBuffer<Input> readParticleData : register(t0);
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
 inline void ArchMovement(in uint3 DTid, in uint3 blockID);
@@ -72,9 +72,9 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
 {
     
     // -- Calculate the index and get the right particle to change -- //
-    int index = blockID.x * NUM_THREADS + DTid.x;
+    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     
-    Input particle = readParticleData[index];
+    Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
 
     
@@ -86,9 +86,9 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     
     
     // ---- Get a "randomized" value to access deltaTime ---- //    
-    float psuedoRand = sin(DTid.x * 71.01) * sin(DTid.x * 71.01);
+    float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
     
-    float holder = frac(sin(dot(DTid.x, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
     
     int One_OneHundo = holder;
     if (One_OneHundo == 0)
@@ -103,25 +103,26 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     
     if (travelledDistance >= (meta[blockID.y].maxRange + meta[One_OneHundo].deltaTime))
     {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), meta[blockID.y].startPosition.z);
+        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) DTid.x / (float)NUM_THREADS), meta[blockID.y].startPosition.z);
 
+        
         particle.position = startPosition;
         particle.time = 0.f;
     }
     if (particle.time >= (meta[blockID.y].life + meta[One_OneHundo].deltaTime))
     {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + ((float) DTid.x / NUM_THREADS), meta[blockID.y].startPosition.z);
+        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) DTid.x / (float) NUM_THREADS), meta[blockID.y].startPosition.z);
 
         particle.position = startPosition;
         particle.time = 0.f;
     }
             
-    if (DTid.x < 126)
+    if (DTid.x % 2 == 1)
         particle.position.x = particle.position.x - (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
     else
         particle.position.x = particle.position.x - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
 
-    particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + psuedoRand) * dt;
+    particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + meta[One_OneHundo].deltaTime) * dt;
 
 
     outputParticleData[index] = particle;
@@ -141,7 +142,7 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     //    return;
     //// - //
     
-    //Input particle = readParticleData[index];
+    //Input particle = outputParticleData[index];
     
     //float dt = meta[0].deltaTime;
     //particle.time = particle.time + dt;
@@ -192,7 +193,7 @@ void ArchMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = readParticleData[DTid.x];
+    Input particle = inputParticleData[DTid.x];
     //____________________________________________________________________
     float time = DTid.x; // * (end - start) / float(end); FIX THIS FELIX PLEASE,
     float coefficient = 0.5; //for parabolic path, change as you see fit
@@ -206,7 +207,7 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = readParticleData[DTid.x];
+    Input particle = inputParticleData[DTid.x];
     //____________________________________________________________________
     float3 directionRandom = normalize(float3((DTid.x % 100) / 100.0f - 0.5f, (DTid.x % 57) / 57.0f - 0.5f, (DTid.x % 83) / 83.0f - 0.5f));
     float explosionSpeed = 8.0f; //adjust as you see fit
@@ -222,7 +223,7 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
     // -- SAME FOR ALL FUNCTIONS -- //
     int index = DTid.x + blockID.y * NUM_THREADS;
-    Input particle = readParticleData[index];
+    Input particle = inputParticleData[index];
     
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
@@ -317,7 +318,7 @@ void ImplosionMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = readParticleData[DTid.x];
+    Input particle = inputParticleData[DTid.x];
     //____________________________________________________________________
     float3 direction = normalize(float3(0.f, 0.f, 0.f) - particle.position); // FIX THIS FELIX PLEASE, WE NEED TO ADD IMPLPSION POINT
     float implosionSpeed = 8.0f; //adjust as you see fit
@@ -331,7 +332,7 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
 {
     int index = DTid.x + blockID.y * NUM_THREADS;
     
-    Input particle = readParticleData[DTid.x];
+    Input particle = inputParticleData[DTid.x];
     //____________________________________________________________________
     float speedOfRain = 4.0f; //adjust as you see fit
     float scatterAmount = 4.0f; // adjust as you see fit
@@ -356,7 +357,7 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
 {
 // -- SAME FOR ALL FUNCTIONS -- //
     uint index = (DTid.x + blockID.y * NUM_THREADS);
-    Input particle = readParticleData[index];
+    Input particle = inputParticleData[index];
     
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;

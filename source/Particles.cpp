@@ -11,11 +11,11 @@
 PoolPointer<ParticleInputOutput> Particles::m_readBuffer;
 PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
 std::vector<int> Particles::m_unoccupiedParticles;
-int start;
-
+CB_IDX startKeeper;
+SRV_IDX particleSRV;
 
 PoolPointer<ParticleMetadataBuffer> data;
-CB_IDX startKeeper;
+
 
 int Particles::RenderSlot;
 
@@ -63,6 +63,8 @@ void Particles::InitializeParticles()
 
 	m_readBuffer->UAV = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_readBuffer->SRV);
 	m_writeBuffer->UAV = CreateUnorderedAccessViewBuffer(sizeof(Particle), MAX_PARTICLES, m_writeBuffer->SRV);
+
+	particleSRV = CreateShaderResourceViewBuffer(&(*particles), sizeof(Particle), MAX_PARTICLES, BIND_SHADER_RESOURCE, READ);
 
 	MemLib::spop(); // for particles
 
@@ -135,32 +137,33 @@ void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 
 	SetComputeShader(renderStates[RenderSlot].computeShader);
 	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_COMPUTE, 0);
-	SetShaderResourceView(m_readBuffer->SRV, BIND_COMPUTE, 0);
 	SetUnorderedAcessView(m_writeBuffer->UAV, 0);
+	SetUnorderedAcessView(m_readBuffer->UAV, 1);
 }
 
 void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 {
 	UnsetComputeShader();
-	UnsetShaderResourceView(BIND_COMPUTE, 0);
 	UnsetUnorderedAcessView(0);
+	UnsetUnorderedAcessView(1);
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 }
 
 void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 {
-
 	SetTopology(POINTLIST);
 
-	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
+	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
 
-	SetShaderResourceView(m_writeBuffer->SRV, BIND_VERTEX, 2);
-	UnsetVertexBuffer();
-	UnsetIndexBuffer();
+	// The constant buffer for vertex is set outside of this function, in the ParticleSystemCPU Update() call
+	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
+	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
+	//UnsetVertexBuffer();
+	//UnsetIndexBuffer();
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
@@ -177,14 +180,17 @@ void Particles::FinishParticlePass()
 	UnsetConstantBuffer(BIND_GEOMETRY, 1);
 	UnsetConstantBuffer(BIND_VERTEX, 2);
 
-	UnsetShaderResourceView(BIND_VERTEX, 2);
+	UnsetShaderResourceView(BIND_VERTEX, 0);
 
 	UnsetRasterizerState();
 }
 
 void Particles::UpdateSingularMetadata(int& metadataSlot)
 {
-	start = metadataSlot;
+	int start;
+	start = data->metadata[metadataSlot].start;
+
+	UnsetConstantBuffer(BIND_VERTEX, 2);
 
 	UpdateConstantBuffer(startKeeper, &start);
 
@@ -208,6 +214,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
 	data->metadata[metadataSlot].pattern = pattern;
 
+	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
+	data->metadata[metadataSlot].rotationY = -9999.f;
+
 	// We need to find "amount" of particles free in the physical buffer
 	// so we can allocate it for the ParticleComponents logical buffer
 	int freeConsecutively = 0;
@@ -222,11 +232,17 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 		if (freeConsecutively >= amount)
 		{
 			data->metadata[metadataSlot].start = counter - amount;
-			// Make sure it doesnt start on -1
 			if (data->metadata[metadataSlot].start == -1)
+			{
 				data->metadata[metadataSlot].start = 0;
+				data->metadata[metadataSlot].end = counter + 1;
+			}
+			else
+			{
+				data->metadata[metadataSlot].start = (counter - amount) + 1;
+				data->metadata[metadataSlot].end = counter + 1;
+			}
 
-			data->metadata[metadataSlot].end = counter + 1;
 
 			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
 			break;
@@ -292,7 +308,7 @@ ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float
 			if (data->metadata[metadataSlot].start == -1)
 				data->metadata[metadataSlot].start = 0;
 
-			data->metadata[metadataSlot].end = counter + 1;
+			data->metadata[metadataSlot].end = counter;
 
 			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, metadataSlot);
 			break;
