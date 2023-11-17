@@ -11,7 +11,7 @@
 #include "MemLib\ML_String.hpp"
 #include "MemLib\ML_Map.hpp"
 #include "Relics\RelicFunctions.h"
-#define _CRT_SECURE_NO_WARNINGS 1
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
 using namespace Relics;

@@ -22,10 +22,11 @@ const char* THRILL_SEEKER::Description()
 		per = 1.f / THRILL_SEEKER_RATIO;
 	}
 
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "You deal %.1lf%% more damage for every %.1lf%% health you are missing",
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You deal %.1lf%% more damage for every %.1lf%% health you are missing",
 		bonus,
 		per);
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

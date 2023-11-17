@@ -166,6 +166,13 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 	float speedMultiplier = 1.f;
 	if (hellhoundComponent->charge)
 	{
+		hellhoundComponent->chargeCounter += GetDeltaTime();
+		if (hellhoundComponent->chargeCounter >= hellhoundComponent->chargeTimeLimit)
+		{
+			hellhoundComponent->hasMadeADecision = false;
+			hellhoundComponent->charge = false;
+			hellhoundComponent->chargeCounter = 0.f;
+		}
 		speedMultiplier = 2.5f; 
 		enemyStats->SetSpeedMult(2.5f);
 		if (enemyStats->m_acceleration == enemyStats->m_baseAcceleration)
@@ -572,7 +579,7 @@ bool HellhoundBehaviourSystem::Update()
 					}
 
 					
-					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent);
+					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent, 20.f, 40.f);
 					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, &tran);
 					
 

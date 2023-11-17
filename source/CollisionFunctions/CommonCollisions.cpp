@@ -10,6 +10,7 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
+#include <cmath>
 
 #define SOFT_COLLISION_FACTOR 0.5f
 
@@ -236,7 +237,7 @@ void HazardAttackCollision(OnCollisionParameters& params)
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
-			HazardDamageHelper(params.entity2, 50.f);
+			HazardDamageHelper(params.entity2, 20.f);
 			break;
 		case HAZARD_ICE:
 			//ICE:
@@ -450,7 +451,11 @@ void AttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
+	if (charge)
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
+	else
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
 
 	//Play entity hurt sounds
 	PlayHitSound(params);
@@ -458,6 +463,9 @@ void AttackCollision(OnCollisionParameters& params)
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
+
+	// Only hit the first enemy
+	//SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
 
 	//Lastly set for hitboxTracker[]
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);

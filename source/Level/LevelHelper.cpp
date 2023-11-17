@@ -21,19 +21,31 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			mass = 1.f;
+			mass = 35.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			mass = 6.f;
-		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			mass = 50.f;
+			mass = 80.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
 			mass = 3.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			mass = 1.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			mass = 666.f;
+		}
+		else if (eType == EnemyType::lucifer)
+		{
+			mass = 50.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			mass = 500.f;
 		}
 	}
 	if (health == 6969.f)
@@ -46,13 +58,25 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 35.f;//150.f;
 		}
+		else if (eType == EnemyType::skeleton)
+		{
+			health = 25.f; //100.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			health = 20.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			health = 100;//400.f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::lucifer)
 		{
-			health = 25.f; //100.f;
+			health = 300.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			health = 200.f;
 		}
 	}
 	if (moveSpeed == 6969.f)
@@ -65,13 +89,25 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 15.f;
 		}
+		else if (eType == EnemyType::skeleton)
+		{
+			moveSpeed = 10.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			moveSpeed = 3.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			moveSpeed = 10.f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::lucifer)
 		{
 			moveSpeed = 10.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			moveSpeed = 0.1f;
 		}
 	}
 	if (damage == 6969.f)
@@ -84,13 +120,25 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 12.f;
 		}
+		else if (eType == EnemyType::skeleton)
+		{
+			damage = 8.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			damage = 10.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			damage = 20.f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::lucifer)
 		{
-			damage = 8.f;
+			damage = 15.f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			damage = 0.f;
 		}
 	}
 	if (attackSpeed == 6969.f)
@@ -103,13 +151,25 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.1f;
 		}
+		else if (eType == EnemyType::skeleton)
+		{
+			attackSpeed = 0.5f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			attackSpeed = 0.8f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.5f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::lucifer)
 		{
 			attackSpeed = 0.5f;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			attackSpeed = 100.f;
 		}
 	}
 	if (soulWorth == 6969.f)
@@ -122,22 +182,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 3;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			soulWorth = 4;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			soulWorth = 1;
 		}
-	}
-	if (soulWorth == 6969.f)
-	{
-		if (eType == EnemyType::eye)
-		{
-			soulWorth = 2;
-		}
-		else if (eType == EnemyType::hellhound)
+		else if (eType == EnemyType::imp)
 		{
 			soulWorth = 3;
 		}
@@ -145,9 +194,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 4;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::lucifer)
 		{
-			soulWorth = 1;
+			soulWorth = 5;
+		}
+		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+		{
+			soulWorth = 0;
 		}
 	}
 	if (eType == EnemyType::tempBoss)
@@ -222,7 +275,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->lavaAnimFactor = 1.0f;
 		stat->acidAccelFactor = 1.0f;
 		stat->acidAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Eye.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, EnemyType::eye, false);
@@ -232,6 +285,41 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (player)
 		{
 			player->killThreshold++;
+		}
+	}
+	else if (eType == EnemyType::imp)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->baseCanWalkOnCrack = true;
+		stat->canWalkOnCrack = true;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<ImpBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.f, EnemyType::imp, false);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(IMP);
+
+		// REMOVE ONCE WE HAVE THE IMP MODEL
+		model->colorMultiplicativeRed = 0.2f;
+		model->colorMultiplicativeBlue = 0.2f;
+		model->colorMultiplicativeGreen = 0.2f;
+		model->colorAdditiveRed = 0.8f;
+		model->colorAdditiveBlue = 0.4f;
+		model->colorAdditiveGreen = 0.8f;
+
+		model->baseColorMultiplicativeRed = 0.2f;
+		model->baseColorMultiplicativeBlue = 0.2f;
+		model->baseColorMultiplicativeGreen = 0.2f;
+		model->baseColorAdditiveRed = 0.8f;
+		model->baseColorAdditiveBlue = 0.4f;
+		model->baseColorAdditiveGreen = 0.8f;
+
+
+		if (player)
+		{
+			player->killThreshold += 1;
 		}
 	}
 	else if (eType == EnemyType::tempBoss)
@@ -245,6 +333,57 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold+=15;
 		}
+	}
+	else if (eType == EnemyType::lucifer)
+	{
+		stat->hazardModifier = 0.0f;
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		mod->gammaCorrection = 1.5f;
+		AnimationComponent* anim = registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<LuciferBehaviour>(entity, 0, 0);
+		SetupEnemyCollisionBox(entity, 1.2f * scaleX, EnemyType::tempBoss);
+		if (player)
+		{
+			player->killThreshold++;
+		}
+	}
+	else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		model->colorMultiplicativeRed = 0.4f;
+		model->colorMultiplicativeBlue = 0.4f;
+		model->colorMultiplicativeGreen = 0.4f;
+		model->colorAdditiveRed = 0.4f;
+		model->colorAdditiveBlue = 0.8f;
+		model->colorAdditiveGreen = 0.4f;
+
+		model->baseColorMultiplicativeRed = 0.4f;
+		model->baseColorMultiplicativeBlue = 0.4f;
+		model->baseColorMultiplicativeGreen = 0.4f;
+		model->baseColorAdditiveRed = 0.4f;
+		model->baseColorAdditiveGreen = 0.4f;
+		model->baseColorAdditiveBlue = 0.8f;
+
+		registry.AddComponent<AnimationComponent>(entity);
+		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::frozenHellhound);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		if (eType == EnemyType::frozenHellhound)
+		{
+			behev->type = EnemyType::frozenHellhound;
+		}
+		else if (eType == EnemyType::frozenImp)
+		{
+			behev->type = EnemyType::frozenImp; 
+		}
+		if (eType == EnemyType::frozenEye)
+		{
+			behev->type = EnemyType::frozenEye;
+		}
+		scp->Load(HELLHOUND);
 	}
 	if (model != nullptr)
 	{
@@ -290,13 +429,21 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
+	
+	//Setup + Health
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
+
+	//Souls
 	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
 	uiElement->AddText("",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
-	
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
+	
+	//Relics
+	uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
+	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
 }
 
@@ -333,7 +480,6 @@ void ReloadPlayerNonGlobals()
 		
 	}
 	animationLoaded->aAnimTimeFactor = 1.0f;
-	LoadPlayerSounds();
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);

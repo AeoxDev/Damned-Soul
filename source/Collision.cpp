@@ -654,3 +654,16 @@ EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
 	AddStaticHazard(hazard, type);
 	return hazard;
 }
+
+void SetHitboxRadius(const EntityID& entity, int hitBoxID, const float r)
+{
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitBoxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		hitbox->circleHitbox[hitBoxID].radius = r;
+	}
+	else
+	{
+		hitbox->convexHitbox[hitBoxID - SAME_TYPE_HITBOX_LIMIT].boundingRadius = r;
+	}
+}

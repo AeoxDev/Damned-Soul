@@ -20,11 +20,12 @@ EntityID _LG_Victim;
 
 const char* LIGHTNING_GOD::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "Marks an enemy for %.1lf seconds every %.1lf seconds. Striking a marked enemy causes the attack to deal an additional %.0lf damage",
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Marks an enemy for %.1lf seconds every %.1lf seconds. Striking a marked enemy causes the attack to deal an additional %.0lf damage",
 		LIGHTNING_GOD_COOLDOWN_SECONDS,
 		LIGHTNING_GOD_COOLDOWN_SECONDS,
 		LIGHTNING_GOD_DAMAGE_FLAT);
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

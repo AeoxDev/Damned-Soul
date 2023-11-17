@@ -56,16 +56,16 @@ void ResetColor(EntityID& entity, const int& index)
 	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->colorAdditiveRed = 0.0f;
-		skelel->colorAdditiveGreen = 0.0f;
-		skelel->colorAdditiveBlue = 0.0f;
+		skelel->colorAdditiveRed = skelel->baseColorAdditiveRed;
+		skelel->colorAdditiveGreen = skelel->baseColorAdditiveGreen;
+		skelel->colorAdditiveBlue = skelel->baseColorAdditiveBlue;
 
 	}
 	if (bonel)
 	{
-		bonel->colorAdditiveRed = 0.0f;
-		bonel->colorAdditiveGreen = 0.0f;
-		bonel->colorAdditiveBlue = 0.0f;
+		bonel->colorAdditiveRed = bonel->baseColorAdditiveRed;
+		bonel->colorAdditiveGreen = bonel->baseColorAdditiveGreen;
+		bonel->colorAdditiveBlue = bonel->baseColorAdditiveBlue;
 	}
 
 }

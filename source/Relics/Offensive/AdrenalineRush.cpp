@@ -12,10 +12,11 @@ EntityID ADRENALINE_RUSH::_OWNER;
 
 const char* ADRENALINE_RUSH::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "You attack %ld%% faster for %.1lf seconds after taking damage",
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You attack %ld%% faster for %.1lf seconds after taking damage",
 		PERCENT(ADRENALINE_RUSH_ATTACK_SPEED_INCREASE),
 		ADRENALINE_RUSH_ACTIVE_DURATION);
+#pragma warning(suppress : 4172)
 	return temp;
 }
 

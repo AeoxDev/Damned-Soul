@@ -15,3 +15,5 @@
 #include "UIComponents/UIGameLevelComponent.h"
 #include "UIComponents/UIRerollComponent.h"
 #include "UIComponents/UIRunTimeComponent.h"
+#include "UIComponents/UIPlayerRelicsComponent.h"
+#include "UIComponents/UIPauseRelicTextComponent.h"

@@ -80,7 +80,7 @@ bool UIHealthSystem::Update()
 #ifdef DEBUG_HP
 			TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 
-			uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.9f - (counter * 0.15f)));
+			uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.75f - (counter * 0.125f)));
 
 			uiElement->m_BaseText.SetText(("Health: " + std::to_string((int)health->value)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
 			uiElement->m_BaseText.baseUI.Setup(uiElement->m_Images[0].baseUI.GetPosition(), uiElement->m_Images[0].baseUI.GetScale(),
