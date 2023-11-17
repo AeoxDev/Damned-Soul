@@ -162,28 +162,8 @@ void Menu::Setup()
 			float randZ = (float)(rand() % 32) - 16.0f;
 			float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
 			float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
-			EntityID hazard = registry.CreateEntity();
-			ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-			hazardModel->colorAdditiveRed = 0.1f;
-			hazardModel->colorAdditiveGreen = 0.1f;
-			hazardModel->colorAdditiveBlue = 0.5f;
-			hazardModel->colorMultiplicativeRed = 0.5f;
-			hazardModel->colorMultiplicativeGreen = 0.5f;
-			hazardModel->colorMultiplicativeBlue = 1.5f;
-			hazardModel->gammaCorrection = 1.5f;
-			hazardModel->castShadow = false;
-			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-			hazardTransform->positionX = randX;
-			hazardTransform->positionY = 0.4f;
-			hazardTransform->positionZ = randZ;
-			hazardTransform->scaleX = randScaleX;
-			hazardTransform->scaleY = 1.0f;
-			hazardTransform->scaleZ = randScaleZ;
-			hazardTransform->facingX = cosf((float)rand());
-			hazardTransform->facingZ = sinf((float)rand());
-			AddStaticHazard(hazard, HAZARD_ICE);
-
-			succeded = true;
+			EntityID hazard = CreateStaticHazard(HAZARD_ICE, "LavaPlaceholder.mdl",
+				randX, 0.1f, randZ, randScaleX, 1.0f, randScaleZ, 0.1f, 0.1f, 0.5f, 0.5f, 0.5f, 0.5f, 1.25f, cosf((float)rand()), sinf((float)rand()));
 		}
 		break;
 	default:

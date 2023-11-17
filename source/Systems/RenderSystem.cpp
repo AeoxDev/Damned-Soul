@@ -171,7 +171,7 @@ bool RenderSystem::Update()
 			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{
 				hitboxV->UpdateHitboxConstantBuffer(entity, i);
-				SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.6f, tc->positionZ + tc->offsetZ,
 					tc->facingX, tc->facingY, -tc->facingZ,
 					1.0f, 1.0f, 1.0f,
 					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
@@ -189,7 +189,7 @@ bool RenderSystem::Update()
 			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{
 				hitboxV->UpdateHitboxConstantBuffer(entity, i);
-				SetWorldMatrix(tc->positionX + tc->offsetX, 0.0f, tc->positionZ + tc->offsetZ,
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.6f, tc->positionZ + tc->offsetZ,
 					tc->facingX, tc->facingY, -tc->facingZ,
 					tc->scaleX, tc->scaleY, tc->scaleZ,
 					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);

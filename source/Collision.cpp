@@ -11,6 +11,7 @@
 #include <sstream>
 #include "Components.h"
 #include "D3D11Helper\D3D11Helper.h"
+#include "Model.h"
 
 /// <summary>
 /// Calculates the closest distance of two circles.
@@ -525,7 +526,7 @@ void VisualizeHitbox(EntityID& entity, int hitboxID)
 		break;
 	}
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	float height = 0.6f;
+	float height = 0.0f;
 	//Loop through the correct hitbox values
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
@@ -564,7 +565,7 @@ void VisualizeHitbox(EntityID& entity, int hitboxID)
 			vis->shape[hitboxID].vertices[i].color[3] = 1.0f;
 			//thisO the[hitboxID] gf
 			vis->shape[hitboxID].vertices[i].position[0] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerX[i];
-			vis->shape[hitboxID].vertices[i].position[1] = 0.3f;
+			vis->shape[hitboxID].vertices[i].position[1] = height;
 			vis->shape[hitboxID].vertices[i].position[2] = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT].cornerZ[i];
 			vis->shape[hitboxID].vertices[i].position[3] = 1.0f;
 		}
@@ -621,4 +622,35 @@ void HitboxVisualComponent::UpdateHitboxConstantBuffer(EntityID& entity, int hit
 		UpdateConstantBuffer(hitboxConstantBuffer, &this->shape[hitboxID].vertices);
 	}
 	
+}
+
+
+EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
+	const float& positionX, const float& positionY, const float& positionZ,
+	const float& scaleX, const float& scaleY, const float& scaleZ,
+	const float& colorAddR,const float& colorAddG,const float& colorAddB,
+	const float& colorMulR, const float& colorMulG, const float& colorMulB, 
+	const float& gammaCorrection, const float& facingX, const float& facingZ)
+{
+	EntityID hazard = registry.CreateEntity();
+	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel(model));
+	hazardModel->colorAdditiveRed = colorAddR;
+	hazardModel->colorAdditiveGreen = colorAddG;
+	hazardModel->colorAdditiveBlue = colorAddB;
+	hazardModel->colorMultiplicativeRed = colorMulR;
+	hazardModel->colorMultiplicativeGreen = colorMulG;
+	hazardModel->colorMultiplicativeBlue = colorMulB;
+	hazardModel->gammaCorrection = gammaCorrection;
+	hazardModel->castShadow = false;
+	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+	hazardTransform->positionX = positionX;
+	hazardTransform->positionY = positionY;
+	hazardTransform->positionZ = positionZ;
+	hazardTransform->scaleX = scaleX;
+	hazardTransform->scaleY = scaleY;
+	hazardTransform->scaleZ = scaleZ;
+	hazardTransform->facingX = facingX;
+	hazardTransform->facingZ = facingZ;
+	AddStaticHazard(hazard, type);
+	return hazard;
 }

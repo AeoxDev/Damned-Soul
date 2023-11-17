@@ -29,3 +29,10 @@ struct StaticHazardTextureComponent
 	int16_t lavaTextureID = -1;
 	int16_t iceTextureID = -1;
 };
+
+EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
+	const float& positionX, const float& positionY, const float& positionZ,
+	const float& scaleX, const float& scaleY, const float& scaleZ,
+	const float& colorAddR, const float& colorAddG, const float& colorAddB,
+	const float& colorMulR, const float& colorMulG, const float& colorMulB,
+	const float& gammaCorrection, const float& facingX, const float& facingZ);

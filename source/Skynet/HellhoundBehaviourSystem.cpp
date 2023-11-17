@@ -147,7 +147,7 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 
 	enemyAnim->aAnim = hellhoundComponent->charge ? ANIMATION_ATTACK : ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime() * (1 + hellhoundComponent->charge);
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor * (1 + hellhoundComponent->charge);
 	ANIM_BRANCHLESS(enemyAnim);
 
 	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
@@ -183,7 +183,7 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 {
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
 	hellhoundComponent->timeCounter += GetDeltaTime();
@@ -306,7 +306,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(dog);
 	enemyAnim->aAnim = ANIMATION_ATTACK;
 	enemyAnim->aAnimIdx = 1;
-	enemyAnim->aAnimTime += GetDeltaTime();
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
 	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox * (float)(hc->currentShootingAttackRange < hc->offsetForward); //updates the range of the "flamethrower"
@@ -401,7 +401,7 @@ void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, Hellhoun
 {
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
 	float newGoalX = htc->positionX + hc->cowardDirectionX * 100.f;
@@ -600,6 +600,7 @@ bool HellhoundBehaviourSystem::Update()
 				}
 
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
+				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
 				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot

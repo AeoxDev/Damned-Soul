@@ -653,9 +653,6 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
-	
-	SetHitboxCanDealDamage(entity, hID, false);
-	SetHitboxCanTakeDamage(entity, hID, false);
 
 	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
 	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
@@ -673,7 +670,6 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
-	SetHitboxCanDealDamage(entity, sID, false);
 	SetHitboxCanTakeDamage(entity, sID, true);
 	SetHitboxHitStaticHazard(entity, sID, true);
 	SetHitboxHitStage(entity, sID);
@@ -683,17 +679,11 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	playerComp->attackHitboxID = CreateHitbox(entity, radius * 2.f, 0.f, -0.5f);
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
 	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
-	SetHitboxActive(entity, playerComp->attackHitboxID);
-	SetHitboxCanTakeDamage(entity, playerComp->attackHitboxID, false);
-	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 
 	//dID = 3
 	int dID = CreateHitbox(entity, radius * 2.0f, 0.0f, 0.0f);
 	SetCollisionEvent(entity, dID, DashCollision);
 	SetHitboxHitEnemy(entity, dID);
-	SetHitboxActive(entity, dID);
-	SetHitboxCanTakeDamage(entity, dID, false);
-	SetHitboxCanDealDamage(entity, dID, false);
 }
 
 bool HitboxCanHitGI(EntityID& entity)

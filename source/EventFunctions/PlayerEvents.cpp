@@ -37,6 +37,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxCanDealDamage(entity, 3, true); //Dash hitbox
+			SetHitboxActive(entity, 3, true); //Dash hitbox
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -57,6 +58,7 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, true);
+	SetHitboxActive(entity, playerComp->attackHitboxID, true);
 }
 
 void PlayerRegainControl(EntityID& entity, const int& index)
@@ -87,6 +89,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxCanDealDamage(entity, 3, false); //Dash hitbox
+			SetHitboxActive(entity, 3, false);
 		}
 		stats->hazardModifier = stats->baseHazardModifier;
 	}
@@ -99,6 +102,7 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
+	SetHitboxActive(entity, playerComp->attackHitboxID, false);
 }
 
 void PlayerEndAttack(EntityID& entity, const int& index)
