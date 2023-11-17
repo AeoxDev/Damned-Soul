@@ -130,6 +130,10 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		Normalize(dx, dz);
 
 		CreateProjectile(entity, dx, dz, 1);
+
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if(sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
+
 		return true;
 	}
 }

@@ -26,9 +26,7 @@ void SetInMainMenu(bool value)
 {
 	if (value)
 	{
-		currentStates = (State)(currentStates | State::InMainMenu);
-
-		if (currentStates != (State)(currentStates | State::InSettings))
+		if (currentStates != (State)(currentStates | State::InSettings) && currentStates != (State)(currentStates | State::InCredits)) //All main menu specific states.
 		{
 			for (auto entity : View<AudioEngineComponent>(registry))
 			{
@@ -38,8 +36,11 @@ void SetInMainMenu(bool value)
 				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 				audioJungle->HandleSound();
 				backgroundMusic->Play(Music_Title, Channel_Base);
+				audioJungle->HandleSound();
 			}
 		}
+
+		currentStates = (State)(currentStates | State::InMainMenu);
 	}
 	else
 	{
@@ -134,7 +135,6 @@ int StateManager::Setup()
 	// Background OST
 	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
 	titleTheme->Load(MUSIC);
-	titleTheme->Play(Music_Title, Channel_Base);
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;

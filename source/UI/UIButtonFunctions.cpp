@@ -106,27 +106,31 @@ void UIFunc::PauseState_ResumeGame(void* args, int a)
 
 void UIFunc::PauseState_MainMenu(void* args, int a)
 {
-	SetInMainMenu(true);
-	SetInPause(false);
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
 	UnloadEntities(ENT_PERSIST_LEVEL);
 	gameSpeed = 1.0f;
 	stateManager.menu.Setup();
+	SetInPause(false);
 }
 
 void UIFunc::Credits_Back(void* args, int a)
 {
-	SetInMainMenu(true);
-	SetInCredits(false);
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
+
 	stateManager.credits.Unload();
 	stateManager.menu.Setup();
+	SetInCredits(false);
 }
 
 void UIFunc::Settings_Back(void* args, int a)
 {
-	SetInMainMenu(true);
-	SetInSettings(false);
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
 	stateManager.settings.Unload();
 	stateManager.menu.Setup();
+	SetInSettings(false);
 }
 
 void UIFunc::Settings_LowRes(void* args, int a)

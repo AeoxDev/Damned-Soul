@@ -364,46 +364,6 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
 }
 
-void PlayHitSound(OnCollisionParameters& params)
-{
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy)
-	{
-		enemy->lastPlayer = params.entity1;
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case EnemyType::hellhound:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::eye:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Eye_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::skeleton:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
-			}
-			break;
-		}
-	}
-	else
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(params.entity2);
-		if (player != nullptr)
-		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-			sfx->Play(Player_Hurt, Channel_Base);
-		}
-	}
-}
-
 void DashCollision(OnCollisionParameters& params)
 {
 	//Return out of the function if the damage collision isn't valid (attacker needs to be able to deal damage, defender needs to be able to take damage, etc)
@@ -417,9 +377,6 @@ void DashCollision(OnCollisionParameters& params)
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if(registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -456,9 +413,6 @@ void AttackCollision(OnCollisionParameters& params)
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
 	else
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -497,9 +451,6 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)

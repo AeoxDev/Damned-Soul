@@ -39,20 +39,6 @@ bool OnClickSystem::Update()
 							continue;
 					}
 
-					//Set which sound to play
-					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-					if (sound != nullptr)
-					{
-						if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
-						{
-							sound->Play(Button_Start, Channel_Base);
-						}
-						else
-						{
-							sound->Play(Button_Press, Channel_Base);
-						}
-					}
-
 					comp->onClickFunctions[comp->index](uiElement, comp->index);
 					return true;
 				}
@@ -91,6 +77,28 @@ bool OnClickSystem::Update()
 					{
 						if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
 							continue;
+					}
+
+					//Stop all the previous sounds (except music) to mute for example the dog breath
+					for (auto entity : View<AudioEngineComponent>(registry))
+					{
+						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+						audioJungle->HandleSound();
+						audioJungle->StopAllSounds();
+					}
+
+					//Set which sound to play
+					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+					if (sound != nullptr)
+					{
+						if (comp->onClickFunctions[comp->index] == UIFunc::MainMenu_Start)
+						{
+							sound->Play(Button_Start, Channel_Base);
+						}
+						else
+						{
+							sound->Play(Button_Press, Channel_Base);
+						}
 					}
 
 					comp->onClickFunctions[comp->index](uiElement, comp->index);

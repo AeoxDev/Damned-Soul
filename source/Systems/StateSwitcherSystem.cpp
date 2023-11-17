@@ -54,6 +54,12 @@ bool StateSwitcherSystem::Update()
 				case EnemyType::eye:
 					sfx->Play(Eye_Death, Channel_Base);
 					break;
+				case EnemyType::imp:
+					sfx->Play(Imp_Death, Channel_Base);
+					break;
+				case EnemyType::minotaur:
+					sfx->Play(Minotaur_Death, Channel_Base);
+					break;
 				}
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 			}
@@ -77,7 +83,7 @@ bool StateSwitcherSystem::Update()
 					{
 						for (auto audioJungle : View<AudioEngineComponent>(registry))
 						{
-							registry.GetComponent<SoundComponent>(audioJungle)->Play(Music_Cold, Channel_Extra); //Change this later please
+							registry.GetComponent<SoundComponent>(audioJungle)->Play(Music_Boss, Channel_Extra); //Change this later please
 						}
 					}
 

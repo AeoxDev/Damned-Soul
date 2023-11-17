@@ -16,6 +16,9 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	// Update health
 	defenderStats->ApplyDamage(damage, false); // Edit later?
 
+	//Play sound when hit by hazard
+	AddTimedEventComponentStartEnd(defender, 0.0f, HurtSound, 0.25f, nullptr, 0, 1);
+
 	// Update UI
 	RedrawUI();
 

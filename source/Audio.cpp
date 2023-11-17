@@ -31,7 +31,7 @@ void AudioEngineComponent::Setup(int& ID)
 	//Load all sounds to use in the game
 	FMOD::Sound* toAdd = nullptr;
 	this->sounds.clear();
-	for (int i = 0; i < 40; i++) //Change 1 to however many sounds you want to have in the game.
+	for (int i = 0; i < 41; i++) //Change 1 to however many sounds you want to have in the game.
 	{
 		this->sounds.push_back(toAdd);
 	}
@@ -74,6 +74,8 @@ void AudioEngineComponent::Setup(int& ID)
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 
 	//Eye
+	this->system->createSound("SFX/Enemy/Eye/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Eye/Shoot.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Eye/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
@@ -103,15 +105,15 @@ void AudioEngineComponent::Setup(int& ID)
 
 	//Imp
 	this->system->createSound("SFX/Enemy/Imp/AttackCharge.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.20f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/AttackThrow.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.20f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/Teleport.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 
 	//Minotaur
 	this->system->createSound("SFX/Enemy/Minotaur/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
@@ -193,6 +195,23 @@ void AudioEngineComponent::HandleSpecificSound(bool& playSound, bool& stopSound,
 		this->channels[channelIndex]->stop(); //Stop the previous sound
 		this->channels[channelIndex] = nullptr; //Set the channel to nullptr (this is to prevent sound cutting off)
 		stopSound = false;
+	}
+}
+
+void AudioEngineComponent::StopAllSounds(bool stopMusic)
+{
+	int start = 0;
+	if (!stopMusic)
+	{
+		start = 2;
+	}
+	for (int i = start; i < (int)this->channels.size(); i++) //Go through all channels that exist
+	{
+		if (this->channels[i] != nullptr) //Check if the channel is currently playing a sound
+		{
+			this->channels[i]->stop(); //Stop the sounds
+			this->channels[i] = nullptr; //Set the channel to nullptr
+		}
 	}
 }
 
@@ -283,6 +302,7 @@ void SoundComponent::Load(const int EntityType)
 		this->soundIndices.push_back((int)EYE1);
 		this->soundIndices.push_back((int)EYE2);
 		this->soundIndices.push_back((int)EYE3);
+		this->soundIndices.push_back((int)EYE4);
 		break;
 	case HELLHOUND:
 		//Push back all indices for the hellhound sounds into soundIndices

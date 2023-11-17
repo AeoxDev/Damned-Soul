@@ -62,8 +62,6 @@ void CombatBehaviour(LuciferBehaviour* sc, StatComponent* enemyStats, StatCompon
 		//Elliot's request: Add Skeleton attack hitbox instead of define
 		SetHitboxActive(ent, sc->attackHitboxID, true);
 		SetHitboxCanDealDamage(ent, sc->attackHitboxID, true);
-		/*SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
-		sfx->Play(Skeleton_Attack, Channel_Base);*/
 		RedrawUI();
 		sc->attackTimer = 0.f;
 		sc->attackStunDurationCounter = 0.f;
