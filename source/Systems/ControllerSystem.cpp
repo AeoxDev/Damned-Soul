@@ -49,13 +49,17 @@ bool ControllerSystem::Update()
 		}
 		else if (keyState[SCANCODE_2] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, hellhound, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, imp, 256);
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, hellhound, 256);
 		}
 		else if (keyState[SCANCODE_4] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+		}
+		else if (keyState[SCANCODE_5] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
 		}
@@ -233,10 +237,13 @@ bool ControllerSystem::Update()
 			}
 			else
 			{
-				//Default dash goes backwards
+				//Default dash goes forwards
+				//Set facing direction to dash direction when moving
+				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
-				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
-				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
+				AddSquashStretch(entity, Linear, 0.8f, 0.8f, 1.5f, true, 1.2f, 1.2f, 0.8f);
+				int squashStretch = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, ResetSquashStretch, SquashStretch, 0.2f, ResetSquashStretch, 0, 1);
 				break;
 			}
 		}

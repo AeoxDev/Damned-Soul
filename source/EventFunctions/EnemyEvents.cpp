@@ -338,6 +338,9 @@ void SpawnMainMenuEnemy(EntityID& entity, const int& index)
 	case eye:
 		RandomPlayerEnemy(eye);
 		break;
+	case imp:
+		RandomPlayerEnemy(imp);
+		break;
 	case tempBoss:
 		RandomPlayerEnemy(tempBoss);
 		break;
@@ -356,6 +359,11 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 		type = hellhound;
 	}
 	rarity = rand() % 8;
+	if (rarity == 0)
+	{
+		type = imp;
+	}
+	rarity = rand() % 16;
 	if (rarity == 0)
 	{
 		type = eye;
@@ -402,7 +410,7 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 
 	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(acidHazard);
 	hazardTransform->positionX = origin->positionX;
-	hazardTransform->positionY = 0.5f;
+	hazardTransform->positionY = 0.2f;
 	hazardTransform->positionZ = origin->positionZ;
 	hazardTransform->scaleX = scaling;
 	hazardTransform->scaleY = 1.0f;
@@ -442,8 +450,12 @@ void BeginDestroyProjectile(EntityID& entity, const int& index)
 		registry.RemoveComponent<ModelBonelessComponent>(entity);
 	}
 	
-	if(proj->type == 1)
+	if (proj->type == eye)
+	{
 		CreateAcidHazard(entity, index);
+		proj->type = imp;
+	}
+		
 
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);

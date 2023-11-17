@@ -262,7 +262,11 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
 	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, true); // grid position
-
+	if (aiPos.x > GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING || aiPos.z > GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING ||
+		aiPos.x < 0 || aiPos.z < 0)
+	{
+		return TransformComponent();
+	}
 	int x = 0, z = 0;
 	float distance = 1.f;
 	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;

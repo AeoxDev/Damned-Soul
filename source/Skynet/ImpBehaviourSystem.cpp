@@ -159,7 +159,7 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ic->goalDirectionZ = dz;
 
 		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
-		CreateProjectile(entity, dx, dz, 0);
+		CreateProjectile(entity, dx, dz, imp);
 		return true;
 	}
 }

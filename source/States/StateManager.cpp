@@ -66,6 +66,7 @@ void SetInPause(bool value)
 		currentStates = (State)(currentStates | State::InPause);
 		TimedEventIgnoreGamespeed(false);
 		gameSpeed = 0.0f;
+		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera from moving during pause.
 	}
 	else
 	{

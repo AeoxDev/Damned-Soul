@@ -37,9 +37,9 @@ void LoadLevel3()
 	SetupEnemy(EnemyType::hellhound, -20.f, 0.f, 0.f);
 	SetupEnemy(EnemyType::hellhound, 35.f, 0.f, 25.f);
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, 0.f, 0.f, -5.f);
-	SetupEnemy(EnemyType::eye, 45.f, 0.f, -38.f);
-	SetupEnemy(EnemyType::eye, 35.f, 0.f, 23.f);
-	SetupEnemy(EnemyType::eye, 25.f, 0.f, -15.f);
+	SetupEnemy(EnemyType::imp, 45.f, 0.f, -38.f);
+	SetupEnemy(EnemyType::imp, 35.f, 0.f, 23.f);
+	SetupEnemy(EnemyType::imp, 25.f, 0.f, -15.f);
 
 	Stage2IntroScene(cutsceneEnemy, 0);
 	//13 souls + 5 souls level 1 = 18 souls total

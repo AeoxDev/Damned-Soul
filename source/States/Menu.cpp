@@ -62,13 +62,19 @@ void Menu::Setup()
 	//Randomize enemies on screen max 6 of each'
 	for (size_t i = 0; i < 12; i++)
 	{
-		if (rand() % 8 == 0)//Dog, rare
+		if (rand() % 16 == 0)//Dog, rare
 			RandomPlayerEnemy(hellhound);
+	}
+	//Randomize enemies on screen max 6 of each'
+	for (size_t i = 0; i < 12; i++)
+	{
+		if (rand() % 8 == 0)//imp, uncommon
+			RandomPlayerEnemy(imp);
 	}
 
 	for (size_t i = 0; i < 12; i++)
 	{
-		if (rand() % 16 == 0)//Eye, very rare
+		if (rand() % 32 == 0)//Eye, very rare
 			RandomPlayerEnemy(eye);
 	}
 

@@ -3,9 +3,14 @@
 #include "Model.h"
 #include "EventFunctions.h"
 
-void CreateProjectile(EntityID entity, float directionX, float directionZ, int type)
+void CreateProjectile(EntityID entity, float directionX, float directionZ, EnemyType type)
 {
+	
 	int nrProjectiles = 1;//Get number of projectiles from component?
+	if (type == eye)
+	{
+		nrProjectiles = 2;
+	}
 	for (size_t i = 0; i < nrProjectiles; i++)
 	{
 		EntityID bullet = registry.CreateEntity();
@@ -19,9 +24,10 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, int t
 		TransformComponent transform;
 		transform.mass = 1.0f;
 		//Direction
-		transform.facingX = directionX + (((float)(rand() % 8) * 0.1f - 0.35f) * (float)(nrProjectiles > 1));
+		transform.facingX = directionX + 0.25f * (((float)(rand() % 8) * 0.1f - 0.35f) * (float)(nrProjectiles > 1));
 		transform.facingY = 0;
-		transform.facingZ = directionZ + (((float)(rand() % 8) * 0.1f - 0.35f) * (float)(nrProjectiles > 1));
+		transform.facingZ = directionZ + 0.25f * (((float)(rand() % 8) * 0.1f - 0.35f) * (float)(nrProjectiles > 1));
+		
 		float dist = sqrtf((transform.facingX * transform.facingX) + (transform.facingZ * transform.facingZ));
 		transform.facingX /= dist;
 		transform.facingZ /= dist;
@@ -43,14 +49,30 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, int t
 
 		//Stats needed in order to deal damage
 		//Health, Speed, Damage, attackSpeed
-		StatComponent* stats = registry.AddComponent<StatComponent>(bullet, 1.0f, 25.0f, 15.0f, 0.0f);
+		float speed = 30.0f;
+		if (type == eye)
+		{
+			speed = 50.0f;
+		}
+		StatComponent* statsParent = registry.GetComponent<StatComponent>(entity);
+
+		float damage = statsParent->GetDamage();
+		StatComponent* stats = registry.AddComponent<StatComponent>(bullet, 1.0f, speed, damage, 0.0f);
+		
 		stats->UpdateBonusKnockback(2.0f);
 		stats->baseHazardModifier = 0.0f;
 		stats->hazardModifier = 0.0f;
 
 		//Setup Bullet hitbox
 		SetupProjectileCollisionBox(bullet, 1.0f);
-		AddTimedEventComponentStartEnd(bullet, 2.5f, BeginDestroyProjectile, 3.0f, EndDestroyProjectile, 0, 2);
+		if (type == eye)
+		{
+			AddTimedEventComponentStartEnd(bullet, 1.0f, BeginDestroyProjectile, 1.01f, EndDestroyProjectile, 0, 2);
+		}
+		else
+		{
+			AddTimedEventComponentStartEnd(bullet, 10.0f, BeginDestroyProjectile, 10.01f, EndDestroyProjectile, 0, 2);
+		}
 
 	}
 	

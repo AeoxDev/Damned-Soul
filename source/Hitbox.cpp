@@ -525,7 +525,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
-	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
+	int hID = CreateHitbox(entity, radius*0.2f, 0.f, 0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsEnemy(entity, hID);
 	SetHitboxHitPlayer(entity, hID);
@@ -567,7 +567,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		break;
 
 	case EnemyType::hellhound:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.0f, 0.f, radius * -2.0f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
@@ -618,16 +618,17 @@ void SetupProjectileCollisionBox(EntityID& entity, float radius)
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
-	int hID = CreateHitbox(entity, radius * 0.5f, 0.f, 0.f);
-	SetCollisionEvent(entity, hID, HardCollision);
-	SetHitboxHitPlayer(entity, hID);
-	SetHitboxActive(entity, hID);
-	SetHitboxIsMoveable(entity, hID);
+	//int hID = CreateHitbox(entity, radius * 0.5f, 0.f, 0.f);
+	//SetCollisionEvent(entity, hID, HardCollision);
+	//SetHitboxHitPlayer(entity, hID);
+	//SetHitboxActive(entity, hID);
+	//SetHitboxIsMoveable(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, ProjectileAttackCollision);
 	SetHitboxHitPlayer(entity, sID);
 	SetHitboxActive(entity, sID);
+	SetHitboxIsMoveable(entity, sID);
 	//SetHitboxCanTakeDamage(entity, sID);
 
 	SetHitboxCanDealDamage(entity, sID, true);

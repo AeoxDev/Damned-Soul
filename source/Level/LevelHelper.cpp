@@ -21,7 +21,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			mass = 35.f;
+			mass = 50.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
@@ -29,11 +29,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			mass = 3.f;
+			mass = 70.f;
 		}
 		else if (eType == EnemyType::imp)
 		{
-			mass = 1.f;
+			mass = 35.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -41,7 +41,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			mass = 50.f;
+			mass = 666.0f;
 		}
 		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
@@ -52,7 +52,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			health = 15.f;//60.f;
+			health = 61.f;//60.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
@@ -64,7 +64,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::imp)
 		{
-			health = 20.f;
+			health = 18.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -83,7 +83,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			moveSpeed = 13.f;
+			moveSpeed = 30.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
@@ -114,11 +114,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			damage = 12.f;
+			damage = 31.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			damage = 12.f;
+			damage = 13.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
@@ -126,15 +126,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::imp)
 		{
-			damage = 10.f;
+			damage = 13.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			damage = 20.f;
+			damage = 30.f;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 15.f;
+			damage = 60.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
@@ -176,11 +176,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			soulWorth = 2;
+			soulWorth = 3;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			soulWorth = 3;
+			soulWorth = 2;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
@@ -188,7 +188,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::imp)
 		{
-			soulWorth = 3;
+			soulWorth = 1;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -196,7 +196,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			soulWorth = 5;
+			soulWorth = 666;
 		}
 		else if (eType == EnemyType::frozenHellhound || EnemyType::frozenEye || EnemyType::frozenImp)
 		{
@@ -240,7 +240,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::hellhound);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
@@ -255,7 +255,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<SkeletonBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 0.9f, EnemyType::skeleton);
+		SetupEnemyCollisionBox(entity, 1.0f, EnemyType::skeleton);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
@@ -275,10 +275,14 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->lavaAnimFactor = 1.0f;
 		stat->acidAccelFactor = 1.0f;
 		stat->acidAnimFactor = 1.0f;
+		stat->iceAccelFactor = 1.0f;
+		stat->iceAnimFactor = 1.0f;
+
+
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Eye.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.f, EnemyType::eye, false);
+		SetupEnemyCollisionBox(entity, 2.0f, EnemyType::eye, false);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(EYE);
@@ -368,7 +372,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::frozenHellhound);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		if (eType == EnemyType::frozenHellhound)

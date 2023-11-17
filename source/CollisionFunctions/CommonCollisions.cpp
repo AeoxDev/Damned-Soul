@@ -12,7 +12,7 @@
 #include "Levels/LevelHelper.h"
 #include <cmath>
 
-#define SOFT_COLLISION_FACTOR 0.5f
+#define SOFT_COLLISION_FACTOR 0.25f
 
 
 void NoCollision(OnCollisionParameters &params)

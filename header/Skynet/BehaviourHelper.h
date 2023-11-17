@@ -41,4 +41,4 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponen
 
 ML_Vector<Node> CalculateAStarPath(PathfindingMap gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
-void CreateProjectile(EntityID entity, float directionX, float directionZ, int type);
+void CreateProjectile(EntityID entity, float directionX, float directionZ, EnemyType type);

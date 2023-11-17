@@ -8,7 +8,7 @@
 
 void Combat::DamageFlash(EntityID& defender, const float damage)
 {
-	AddTimedEventComponentStartContinuousEnd(defender, 0.f, nullptr, BlinkColor, FLASH_TIME(damage), ResetColor);
+	AddTimedEventComponentStartContinuousEnd(defender, 0.f, nullptr, BlinkColor, FLASH_TIME(damage), ResetColor, 0, 5);
 }
 
 void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage)
