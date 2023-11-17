@@ -11,9 +11,7 @@
 bool ControllerSystem::Update()
 {
 	//Controller for player during play
-	if ((keyState[SCANCODE_SPACE] == pressed || keyState[SCANCODE_W] == pressed
-		|| keyState[SCANCODE_A] == pressed || keyState[SCANCODE_S] == pressed
-		|| keyState[SCANCODE_D] == pressed || mouseButtonPressed[MouseButton::left] == pressed
+	if ((keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[MouseButton::left] == pressed
 		|| mouseButtonPressed[MouseButton::right] == pressed))
 	{
 		if (!(currentStates & InMainMenu) && Camera::InCutscene())
@@ -64,6 +62,17 @@ bool ControllerSystem::Update()
 	}
 	if (keyInput[SCANCODE_H] == down)
 	{
+		if (keyState[SCANCODE_A] == pressed)
+		{
+			for (size_t i = 0; i < 8; i++)
+			{
+				hitboxVisualizerActive[i] = true;
+				for (auto entity : View<HitboxComponent>(registry))
+				{
+					VisualizeHitbox(entity, i);
+				}
+			}
+		}
 		if (keyState[SCANCODE_0] == pressed)
 		{
 			for (auto entity : View<HitboxComponent>(registry))
