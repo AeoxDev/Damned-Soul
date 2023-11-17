@@ -7,10 +7,6 @@ struct IWICImagingFactory;
 struct IDWriteTextFormat;
 struct ID2D1SolidColorBrush;
 
-struct UI;
-
-extern UI ui;
-
 struct UI
 {
 	ID2D1Factory* m_Factory = nullptr;					//Used to create other Direct2D resources that you can use to draw or describe shapes. (basicly device)
@@ -41,18 +37,23 @@ struct UI
 	ID2D1SolidColorBrush*& GetYellowBrush();
 };
 
+extern UI ui;
+
+//2D float. x, y
 struct DSFLOAT2
 {
 	float x;
 	float y;
 };
 
+//2D int. x, y
 struct DSINT2
 {
 	int x;
 	int y;
 };
 
+//Bounds for a UI element. left, top, right, bottom
 struct DSBOUNDS
 {
 	float left;

@@ -46,51 +46,58 @@ void SettingsState::Input()
 
 void SettingsState::SetupButtons()
 {
+	const int amount = 6;
 
-	const char const texts[5][32] =
+	const char const texts[amount][32] =
 	{
 		"\n1280x720",
 		"\n1600x900",
 		"\n1920x1080",
 		"\nFullscreen",
-		"\nBack"
+		"\nBack",
+		"\nEnable Game Timer"
 	};
 
-	const DSFLOAT2 const positions[5] =
+	const DSFLOAT2 const positions[amount] =
 	{
 		{ -0.375f, 0.2f },
 		{ -0.125f, 0.2f },	
 		{ 0.125f, 0.2f },
 		{ 0.375f, 0.2f },
-		{ -0.81f, -0.8f }
+		{ -0.81f, -0.8f },
+		{ -0.375f, -0.2f },
 	};
 
-	const DSFLOAT2 const scales[5] =
+	const DSFLOAT2 const scales[amount] =
 	{
 		{ 0.6f, 0.6f },
 		{ 0.6f, 0.6f },
 		{ 0.6f, 0.6f },
 		{ 0.6f, 0.6f },
-		{ 0.5f, 0.6f }
+		{ 0.5f, 0.6f },
+		{ 0.6f, 0.6f },
 	};
 
-	void(* const functions[5])(void*, int) =
+	void(* const functions[amount])(void*, int) =
 	{
 		UIFunc::Settings_LowRes,
 		UIFunc::Settings_MediumRes,
 		UIFunc::Settings_HighRes,
 		UIFunc::Settings_Fullscreen,
-		UIFunc::Settings_Back
+		UIFunc::Settings_Back,
+		UIFunc::Settings_Timer,
 	};
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < amount; i++)
 	{
 		auto button = registry.CreateEntity();
 		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+		float rnd = rand() % 200 + 1;
+
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], rnd, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);

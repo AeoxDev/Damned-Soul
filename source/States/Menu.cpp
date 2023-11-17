@@ -195,10 +195,10 @@ void Menu::SetupButtons()
 
 	const char const texts[buttons][32] =
 	{
-		"\nStart",
-		"\nCredits",
-		"\nSettings",
-		"\nQuit"
+		"Start",
+		"Credits",
+		"Settings",
+		"Quit"
 	};
 	
 	const DSFLOAT2 const positions[buttons] =

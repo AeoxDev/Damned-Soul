@@ -45,6 +45,16 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 
 }
 
+void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment)
+{
+
+	ui.GetWriteFactory()->CreateTextFormat(L"Ink Free", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &ui.GetTextFormat());
+
+	ui.GetTextFormat()->SetTextAlignment(textAlignment);
+	ui.GetTextFormat()->SetParagraphAlignment(paragraphAlignment);
+
+}
+
 void SetBounds(D2D1_RECT_F& d2d1Bounds, DSBOUNDS bounds)
 {
 	d2d1Bounds.left = bounds.left;
@@ -154,18 +164,22 @@ float UIBase::GetOpacity() const
 	return m_Opacity;
 }
 
-void UIText::SetText(const char* text, DSBOUNDS bounds)
+void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment)
 {
-	m_Text = _strdup(text);
+	if (text != "")
+	{
 
-	//ui.GetTextFormat(). doesnt give me the functions send help
+		m_Text = _strdup(text);
 
-	ML_String s = m_Text;
+		SetupText(fontSize, textAlignment, paragraphAlignment);
 
-	if (bounds.right == 0)
-		baseUI.m_OriginalBounds = { 0, 0, 20.0f * s.length(), 25.0f};
-	else
-		baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
+		ML_String s = m_Text;
+
+		if (bounds.right == 0)
+			baseUI.m_OriginalBounds = { 0, 0, (fontSize + 5.0f) * s.length(), fontSize };
+		else
+			baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
+	}
 }
 
 void UIText::Draw()
@@ -209,10 +223,9 @@ void UIImage::Draw()
 	}
 }
 
-void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
-	DSFLOAT2 scale, float rotation, bool visibility, float opacity)
+void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale, 
+	float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, float rotation, bool visibility, float opacity)
 {
-
 	if (baseImageFilepath != "")
 	{
 		m_BaseImage.SetImage(baseImageFilepath);
@@ -226,7 +239,9 @@ void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT
 
 	if (text != "")
 	{
-		m_BaseText.SetText(text, m_BaseImage.baseUI.GetOriginalBounds());
+		float rnd = rand() % 200 + 1;
+
+		m_BaseText.SetText(text, m_BaseImage.baseUI.GetOriginalBounds(), rnd, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 		m_BaseText.baseUI.Setup(position, scale, rotation, visibility, opacity);
 	}
 	else

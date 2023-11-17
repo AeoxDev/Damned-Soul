@@ -5,7 +5,6 @@
 #include "States\StateManager.h"
 #include <chrono>
 
-
 #define DELTACAP 1.f / 30.f
 
 float gameSpeed = 1.0f;
@@ -19,6 +18,7 @@ float frameTime;
 double runTime = 0.0;
 int seconds = 0;
 bool paused = true;
+bool showTimer = false;
 
 void SetPaused(bool state)
 {
@@ -29,6 +29,16 @@ void ResetRunTime()
 {
 	runTime = 0.0;
 	seconds = 0;
+}
+
+void SetVisualTimer(bool state)
+{
+	showTimer = state;
+}
+
+bool GetVisualTimer()
+{
+	return showTimer;
 }
 
 const float& GetDeltaTime()
@@ -70,9 +80,6 @@ void CountDeltaTime()
 	secondTime += deltaTime;
 	frameTime = deltaTime;
 	
-	if (!paused)
-		runTime += (double)deltaTime;
-	
 	deltaTime *= gameSpeed;
 	fps+=1.0f;
 
@@ -93,6 +100,8 @@ bool NewSecond()
 		lastFPS = fps;
 		fps = 0;
 		secondTime -= 1.0f;
+
+		runTime += 1.0;
 
 		if (!paused && !Camera::InCutscene() && !(currentStates & InMainMenu))
 		{

@@ -232,6 +232,11 @@ void UIFunc::Settings_Fullscreen(void* args, int a)
 	}
 }
 
+void UIFunc::Settings_Timer(void* args, int a)
+{
+	SetVisualTimer(!GetVisualTimer());
+}
+
 void UIFunc::SelectRelic(void* args, int index)
 {
 	UIComponent* uiElement = (UIComponent*)args;

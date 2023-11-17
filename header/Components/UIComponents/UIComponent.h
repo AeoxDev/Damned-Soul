@@ -5,6 +5,7 @@
 #include "MemLib/ML_Vector.hpp"
 
 #include <d2d1helper.h>
+#include <dwrite.h>
 
 struct ID2D1Bitmap;
 
@@ -47,7 +48,9 @@ struct UIText
 	UIBase baseUI;
 	char* m_Text;
 
-	void SetText(const char* text, DSBOUNDS bounds);
+	void SetText(const char* text, DSBOUNDS bounds, float fontSize = 20, 
+		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_LEADING, 
+		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT::DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	void Draw();
 };
@@ -72,7 +75,10 @@ struct UIComponent
 	ML_Vector<UIText> m_Texts;
 
 	void Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
-		DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
+		DSFLOAT2 scale = { 1.0f, 1.0f }, float fontSize = 20,
+		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_LEADING,
+		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR, 
+		float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
 	void SetAllVisability(bool value);
 

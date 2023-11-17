@@ -37,12 +37,7 @@ void UI::Setup()
 	hr = m_Factory->CreateDxgiSurfaceRenderTarget(UISurface, properties, &m_RenderTarget);
 	assert(!FAILED(hr));
 
-	float fontSize = 30.0f;
-	hr = m_WriteFactory->CreateTextFormat(L"Candara", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &m_TextFormat);
-	assert(!FAILED(hr));
-	m_TextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f), &m_Brush);
+	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(255.0f, 255.0f, 255.0f), &m_Brush);
 	assert(!FAILED(hr));
 
 	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 230.0f / 255.0f, 0.0f), &m_YellowBrush);

@@ -6,6 +6,9 @@
 #include "EventFunctions.h"
 #include "States\StateManager.h"
 #include "UIComponents.h"
+#include "UIButtonFunctions.h"
+#include "SDLHandler.h"
+
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
@@ -520,4 +523,70 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	registry.AddComponent<PlayerComponent>(enemy);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
 	return enemy;
+}
+
+void SetScoreboardUI(EntityID stage)
+{
+	//Scoreboard UI
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
+	uiElement->Setup("TempShopWindow3", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f));
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
+
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
+	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
+
+	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
+
+	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunc::MainMenu_Start);
+	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverImage);
+
+	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
+
+	onClick->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunc::Game_MainMenu);
+	onHover->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverImage);
+
+	DSFLOAT2 offsetUICoords = { abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().x + 32.0f) ,
+						   abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().y + 32.0f) };
+
+	DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+						-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+
+	DSFLOAT2 diffPos(uiPixelCoords.x + 1.1f, uiPixelCoords.y - 0.3f);
+
+	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y));
+	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.05f));
+	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.15f));
+
+	const int amount = 11;
+	const char const texts[amount][32] =
+	{
+		"Time:", //score
+
+		"Total Souls:",
+		"Leftover Souls:",  //score
+		"Spent Souls: ",  //-score
+
+		"Damage Done:", //score
+
+		"Strongest Hit Dealt:", //score
+
+		"Damage Taken:", //score
+
+		"Strongest Hit Taken:",
+
+		"Healing Done:", //score
+
+		"Strongest Heal Done:", //score
+
+		"Score:"
+	};
+
+	for (int i = 0; i < amount; i++)
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiPixelCoords.x + 0.2f, uiPixelCoords.y - 0.2f - (0.1f * i)));
+
+	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
+
+	uiElement->SetAllVisability(false);
 }

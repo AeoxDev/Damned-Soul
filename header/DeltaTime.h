@@ -2,6 +2,8 @@
 
 void SetPaused(bool state);
 void ResetRunTime();
+void SetVisualTimer(bool state);
+bool GetVisualTimer();
 
 const float& GetDeltaTime();
 const double& GetRunTime();
