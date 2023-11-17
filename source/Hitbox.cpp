@@ -591,7 +591,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		break;
 
 	case EnemyType::lucifer:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);

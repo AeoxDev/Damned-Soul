@@ -353,15 +353,11 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 
 	//Knockback
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
-	float frictionKnockbackFactor1 = 20.0f / stat1->m_acceleration;
-	float frictionKnockbackFactor2 = 20.0f / stat2->m_acceleration;
-	transform1->currentSpeedX -= frictionKnockbackFactor1 * SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X;
-	transform1->currentSpeedZ -= frictionKnockbackFactor1 * SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1Z;
+	float frictionKnockbackFactor1 = stat1->m_acceleration / stat1->m_baseAcceleration;
+	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	transform2->currentSpeedX -= frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2X;
-	transform2->currentSpeedZ -= frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z;
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
+	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));
 }
 
 void PlayHitSound(OnCollisionParameters& params)

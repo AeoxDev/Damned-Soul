@@ -218,6 +218,47 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	//return returnMap;
 }
 
+
+void CalculateGlobalMapValuesImp(PathfindingMap* map)
+{
+	GITexture* mapGrid = giTexture;
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+
+	//initialize grid
+	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
+	{
+		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
+		{
+			map->cost[i][j] = 0;
+		}
+	}
+
+	// 0 = non-walkable 
+	// 1 = walkable
+	// 2+ = lava
+
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
+	{
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
+		{
+			// is it walkable?
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
+			{
+				//not walkable, bad number
+				map->cost[x][z] += 10000;
+			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
+			{
+				map->cost[x][z] += 1;
+			}
+		}
+	}
+}
+
+
+
 void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map)
 {
 	GITexture* mapGrid = giTexture;

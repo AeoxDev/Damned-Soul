@@ -147,6 +147,7 @@ bool LuciferBehaviourSystem::Update()
 			float distance = Calculate2dDistance(luciferTransformComponent->positionX, luciferTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			luciferComponent->attackStunDurationCounter += GetDeltaTime();
 
+
 			//charging?
 			if (luciferComponent->isChargeCharge)
 			{
@@ -174,6 +175,8 @@ bool LuciferBehaviourSystem::Update()
 				}
 				else
 				{
+					SetHitboxActive(enemyEntity, luciferComponent->attackHitboxID, false); // to not make player rage
+					SetHitboxCanDealDamage(enemyEntity, luciferComponent->attackHitboxID, false);
 					continue; // skip, do nothing. Just stand still and be dazed
 					//maybe play dazed anymation in this scope?
 				}
@@ -186,8 +189,7 @@ bool LuciferBehaviourSystem::Update()
 				luciferComponent->attackTimer = 0.0f;
 				//enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
 				//Turn yellow for opening:
-				ChaseBehaviour(playerComponent, playerTransformCompenent, luciferComponent, luciferTransformComponent, enemyStats, 
-					enemyAnim, luciferComponent->dirX, luciferComponent->dirZ, luciferComponent->followPath, false);
+				
 				
 				continue;
 			}
@@ -222,6 +224,10 @@ bool LuciferBehaviourSystem::Update()
 				{
 					TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
 					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ); 
+					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ);
+					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ);
 				}
 				continue;
 			}
@@ -229,7 +235,7 @@ bool LuciferBehaviourSystem::Update()
 			{
 				luciferComponent->chargeBehevCounter = 0.f;
 				int whichAttack = rand() % 10 + 1; // 1 - 10
-				if (whichAttack > 4 ) //  charge run
+				if (whichAttack > 3 ) //  charge run
 				{
 					luciferComponent->isChargeCharge = true;
 					// runs towards the player dealing
@@ -364,7 +370,7 @@ bool LuciferBehaviourSystem::Update()
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 			//IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 		}
-
+		TransformDecelerate(enemyEntity);
 	}
 
 	// pop the value map

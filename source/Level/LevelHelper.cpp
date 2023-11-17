@@ -25,15 +25,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			mass = 80.f;
+			mass = 100.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			mass = 3.f;
+			mass = 70.f;
 		}
 		else if (eType == EnemyType::imp)
 		{
-			mass = 1.f;
+			mass = 40.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -41,7 +41,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			mass = 50.f;
+			mass = 500.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -351,7 +351,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		if (eType == EnemyType::frozenHellhound)
+		{
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		}
+		else if (eType == EnemyType::frozenImp)
+		{
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		}
+		if (eType == EnemyType::frozenEye)
+		{
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Eye.mdl"));
+		}
+		
 		model->colorMultiplicativeRed = 0.4f;
 		model->colorMultiplicativeBlue = 0.4f;
 		model->colorMultiplicativeGreen = 0.4f;

@@ -51,12 +51,11 @@ struct LuciferBehaviour
 	float meleeDistance = 4.5f;
 	int attackHitboxID = 2;
 
-
 	// variables for jump jump 
 	float flyTime = 4.f;
 	float flyCounter = 0.f;
 	bool hasLandingPos = false;
 
-
+	
 	
 };

@@ -155,11 +155,11 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 			hellhoundComponent->chargeCounter = 0.f;
 			hellhoundComponent->retreat = true;
 		}
-		speedMultiplier = 2.5f; 
-		enemyStats->SetSpeedMult(2.5f);
+		speedMultiplier = 2.0f; 
+		enemyStats->SetSpeedMult(speedMultiplier);
 		if (enemyStats->m_acceleration == enemyStats->m_baseAcceleration)
 		{
-			enemyStats->m_acceleration = 4.0f;
+			enemyStats->m_acceleration = 8.0f;
 		}
 		
 	}
