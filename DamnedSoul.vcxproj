@@ -199,7 +199,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\CutsceneComponent.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
-    <ClCompile Include="source\Components\DamageOverTimeComponent.cpp" />
+    <ClCompile Include="source\Components\DebuffComponent.cpp" />
     <ClCompile Include="source\Components\TransformComponent.cpp" />
     <ClCompile Include="source\Level\EyeChallenge.cpp" />
     <ClCompile Include="source\Level\Level5.cpp" />
@@ -215,6 +215,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\SecondWind.cpp" />
     <ClCompile Include="source\Relics\Defensive\UndeadFortitude.cpp" />
     <ClCompile Include="source\EventFunctions\CutsceneFunctions.cpp" />
+    <ClCompile Include="source\Relics\Gadget\IcyBlade.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Offensive\CrackedLense.cpp" />
@@ -225,7 +226,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Offensive\PowerStrike.cpp" />
     <ClCompile Include="source\Relics\Offensive\SoulEater.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
-    <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp"/>
+    <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\LuciferBehaviourSystem.cpp" />
     <ClCompile Include="source\States\Credits.cpp" />
@@ -515,7 +516,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\AnimationComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\CutsceneComponent.h" />
-    <ClInclude Include="header\Components\DamageOverTimeComponent.h" />
+    <ClInclude Include="header\Components\DebuffComponent.h" />
     <ClInclude Include="header\Components\InputComponent.h" />
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
@@ -572,6 +573,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\PainMirror.h" />
     <ClInclude Include="header\Relics\Defensive\SecondWind.h" />
     <ClInclude Include="header\Relics\Defensive\UndeadFortitude.h" />
+    <ClInclude Include="header\Relics\Gadget\IcyBlade.h" />
     <ClInclude Include="header\Relics\Offensive\AdrenalineRush.h" />
     <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h" />
     <ClInclude Include="header\Relics\Defensive\DemonSkin.h" />
