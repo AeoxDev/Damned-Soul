@@ -11,12 +11,16 @@
 #include "Model.h"
 #include "RenderDepthPass.h"
 
-void Render()
+void RenderModels(bool isShadowPass)
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
+		if (isShadowPass && mc->castShadow == false)
+		{
+			continue;
+		}
 		Light::SetGammaCorrection(mc->gammaCorrection);
 		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
 			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
@@ -55,7 +59,7 @@ void Render()
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->aAnimTime);
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
 	}
 }
 bool ShadowSystem::Update()
@@ -92,7 +96,7 @@ bool ShadowSystem::Update()
 	SetShadowmap(true);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	
-	Render();
+	RenderModels(true);
 
 	//Return the camera
 	Camera::ToggleProjection();
@@ -109,7 +113,14 @@ bool ShadowSystem::Update()
 }
 bool RenderSystem::Update()
 {
-	
+	for (auto entity : View<TransformComponent, LightComponent>(registry))
+	{
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		//LightComponent* light = registry.GetComponent<LightComponent>(entity);
+		//Use the offset from light.
+		OffsetPosition(entity, transform->positionX, transform->positionY, transform->positionZ, transform->facingX, transform->facingY, transform->facingZ);
+		OffsetFacing(entity, transform->facingX, transform->facingY, transform->facingZ);
+	}
 	//Forward+ depth pass
 	SetTopology(TRIANGLELIST);
 	
@@ -117,7 +128,7 @@ bool RenderSystem::Update()
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(GetDepthPassPixelShader());
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
-	Render();
+	RenderModels(false);
 	ClearBackBuffer();
 	// Render UI
 	RenderUI();
@@ -136,11 +147,66 @@ bool RenderSystem::Update()
 	// Set Geometry Shader used for normalmapping
 	SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 	// Render
-	Render();
+	RenderModels(false);
 	// Unset geometry shader
 	UnsetGeometryShader();
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
 	UnsetShadowmap(false);
+
+	//Do the debugHitbox
+#ifdef _DEBUG
+	SetTopology(LINESTRIP);
+	SetVertexShader(GetHitboxVisVertexShader());
+	SetPixelShader(GetHitboxVisPixelShader());
+	SetRasterizerState(GetHitboxRasterizerState());
+	SetConstantBuffer(GetHitboxConstantBuffer(), BIND_VERTEX, 2);
+	//Do the loop
+	for (auto entity : View<TransformComponent, HitboxVisualComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		HitboxVisualComponent* hitboxV = registry.GetComponent<HitboxVisualComponent>(entity);
+		for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			if (hitboxV->GetNrVertices(entity, i) > 0)
+			{
+				hitboxV->UpdateHitboxConstantBuffer(entity, i);
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.6f, tc->positionZ + tc->offsetZ,
+					tc->facingX, tc->facingY, -tc->facingZ,
+					1.0f, 1.0f, 1.0f,
+					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+				int vertices = hitboxV->GetNrVertices(entity, i);
+				if (vertices > 0)
+				{
+					Render(vertices);
+				}
+			}
+			
+		}
+		for (size_t i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			if (hitboxV->GetNrVertices(entity, i) > 0)
+			{
+				hitboxV->UpdateHitboxConstantBuffer(entity, i);
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.6f, tc->positionZ + tc->offsetZ,
+					tc->facingX, tc->facingY, -tc->facingZ,
+					tc->scaleX, tc->scaleY, tc->scaleZ,
+					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+				int vertices = hitboxV->GetNrVertices(entity, i);
+				if (vertices > 0)
+				{
+					Render(vertices);
+				}
+			}
+			
+		}
+		
+		
+	}
+#endif // _DEBUG
+
+	
 	return true;
 }

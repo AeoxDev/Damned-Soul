@@ -21,19 +21,23 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			mass = 1.f;
+			mass = 35.f;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			mass = 6.f;
-		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			mass = 50.f;
+			mass = 80.f;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
 			mass = 3.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			mass = 1.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			mass = 666.f;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -54,13 +58,17 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 35.f;//150.f;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			health = 100;//400.f;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			health = 25.f; //100.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			health = 20.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			health = 100;//400.f;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -81,11 +89,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 15.f;
 		}
-		else if (eType == EnemyType::tempBoss)
+		else if (eType == EnemyType::skeleton)
 		{
 			moveSpeed = 10.f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::imp)
+		{
+			moveSpeed = 3.f;
+		}
+		else if (eType == EnemyType::tempBoss)
 		{
 			moveSpeed = 10.f;
 		}
@@ -108,13 +120,17 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 12.f;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			damage = 20.f;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			damage = 8.f;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			damage = 10.f;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			damage = 20.f;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -135,11 +151,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.1f;
 		}
-		else if (eType == EnemyType::tempBoss)
+		else if (eType == EnemyType::skeleton)
 		{
 			attackSpeed = 0.5f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::imp)
+		{
+			attackSpeed = 0.8f;
+		}
+		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.5f;
 		}
@@ -162,13 +182,17 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 3;
 		}
-		else if (eType == EnemyType::tempBoss)
-		{
-			soulWorth = 4;
-		}
 		else if (eType == EnemyType::skeleton)
 		{
 			soulWorth = 1;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			soulWorth = 3;
+		}
+		else if (eType == EnemyType::tempBoss)
+		{
+			soulWorth = 4;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -211,6 +235,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
@@ -245,7 +271,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->baseCanWalkOnCrack = true;
 		stat->canWalkOnCrack = true;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		stat->acidAccelFactor = 1.0f;
+		stat->acidAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Eye.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<EyeBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, EnemyType::eye, false);
@@ -255,6 +285,41 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (player)
 		{
 			player->killThreshold++;
+		}
+	}
+	else if (eType == EnemyType::imp)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->baseCanWalkOnCrack = true;
+		stat->canWalkOnCrack = true;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<ImpBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.f, EnemyType::imp, false);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(IMP);
+
+		// REMOVE ONCE WE HAVE THE IMP MODEL
+		model->colorMultiplicativeRed = 0.2f;
+		model->colorMultiplicativeBlue = 0.2f;
+		model->colorMultiplicativeGreen = 0.2f;
+		model->colorAdditiveRed = 0.8f;
+		model->colorAdditiveBlue = 0.4f;
+		model->colorAdditiveGreen = 0.8f;
+
+		model->baseColorMultiplicativeRed = 0.2f;
+		model->baseColorMultiplicativeBlue = 0.2f;
+		model->baseColorMultiplicativeGreen = 0.2f;
+		model->baseColorAdditiveRed = 0.8f;
+		model->baseColorAdditiveBlue = 0.4f;
+		model->baseColorAdditiveGreen = 0.8f;
+
+
+		if (player)
+		{
+			player->killThreshold += 1;
 		}
 	}
 	else if (eType == EnemyType::tempBoss)
@@ -364,13 +429,21 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
+	
+	//Setup + Health
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
+	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
+
+	//Souls
 	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
 	uiElement->AddText("",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
-	
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
+	
+	//Relics
+	uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
+	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
 }
 
@@ -407,7 +480,6 @@ void ReloadPlayerNonGlobals()
 		
 	}
 	animationLoaded->aAnimTimeFactor = 1.0f;
-	LoadPlayerSounds();
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);
@@ -416,6 +488,8 @@ void ReloadPlayerNonGlobals()
 		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
 		playerTransform->mass = 3.0f;
 	}
+	playerTransform->currentSpeedX = 0.0f;
+	playerTransform->currentSpeedZ = 0.0f;
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
@@ -436,6 +510,8 @@ void ReloadPlayerNonGlobals()
 
 	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	player->isAttacking = false;
 }
 
 EntityID RandomPlayerEnemy(EnemyType enemyType) {

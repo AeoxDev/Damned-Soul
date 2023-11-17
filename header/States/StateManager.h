@@ -3,6 +3,7 @@
 #include "States\Menu.h"
 #include "States\Game.h"
 #include "States\Pause.h"
+#include "States\Credits.h"
 #include "Systems\Systems.h"
 #include "EntityID.h"
 
@@ -25,6 +26,7 @@ struct StateManager
 	Menu menu;
 	SettingsState settings;
 	PauseState pause;
+	Credits credits;
 	EntityID player;
 	EntityID stage;
 	/// <summary>

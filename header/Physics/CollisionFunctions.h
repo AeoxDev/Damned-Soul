@@ -19,5 +19,6 @@ void AttackCollision(OnCollisionParameters& params);
 void ShockWaveAttackCollision(OnCollisionParameters& params);
 void ProjectileAttackCollision(OnCollisionParameters& params);
 void HellhoundBreathAttackCollision(OnCollisionParameters& params);
+void HazardAttackCollision(OnCollisionParameters& params);
 
 void LoadNextLevel(OnCollisionParameters& params);

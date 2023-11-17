@@ -5,7 +5,7 @@
 namespace Combat
 {
 	// Provide a complete hit interaction between an attacker and a defender, applying damage, relics, and damage flashes
-	void HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats);
+	void HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats/*, bool isCharged = false*/);
 
 	// Calculate damage (presumably of a DoT efect), but do NOT apply it
 	float CalculateDamage(const DamageOverTimeComponent* dot, EntityID& defender, const uint64_t& source);

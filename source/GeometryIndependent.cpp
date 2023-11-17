@@ -189,7 +189,9 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	int16_t cameraIdx = Camera::GetCameraBufferIndex();
-	SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 1);
 	SetRasterizerState(GIcomponent->rasterizerState);
 	SetViewport(GIcomponent->viewport);
@@ -197,20 +199,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	//Set VS, PS, RTV, CB
 	SetVertexShader(GIcomponent->vertexShader);
 	SetPixelShader(GIcomponent->pixelShader);
-	ClearDepthStencilView(GIcomponent->depthStencil);
-	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
 	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
-	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
-	
-
-	//Update CB
-	GIcomponent->shaderData.idValue = 1.0f;
-	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
-
-	//Render texture to RTV
-	LOADED_MODELS[model->model].RenderAllSubmeshes();
 
 	//Render the static hazard texture if it exists
 	StaticHazardTextureComponent* texture = registry.GetComponent<StaticHazardTextureComponent>(stageEntity);
@@ -257,7 +247,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 		StaticHazardComponent* hazardComponent = registry.GetComponent<StaticHazardComponent>(entity);
 		TransformComponent* hazardTransform = registry.GetComponent<TransformComponent>(entity);
 		SetWorldMatrix(hazardTransform->positionX, hazardTransform->positionY, hazardTransform->positionZ,
-			hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ, 
+			-hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ, 
 			hazardTransform->scaleX, hazardTransform->scaleY, hazardTransform->scaleZ, 
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[hazardModel->model].m_vertexBuffer);
@@ -266,6 +256,15 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 		UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 		LOADED_MODELS[hazardModel->model].RenderAllSubmeshes();
 	}
+
+	//Update CB
+	GIcomponent->shaderData.idValue = 1.0f;
+	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+	SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+	//Render texture to RTV
+	LOADED_MODELS[model->model].RenderAllSubmeshes();
 
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;

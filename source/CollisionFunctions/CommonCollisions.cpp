@@ -10,6 +10,7 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
+#include <cmath>
 
 #define SOFT_COLLISION_FACTOR 0.5f
 
@@ -184,6 +185,78 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	}
 }
 
+void HazardAttackCollision(OnCollisionParameters& params)
+{
+	StatComponent* stat = registry.GetComponent<StatComponent>(params.entity2);
+	StaticHazardComponent* hazard = registry.GetComponent<StaticHazardComponent>(params.entity1);
+
+	TransformComponent* p = registry.GetComponent<TransformComponent>(params.entity2);
+	HitboxComponent* h = registry.GetComponent<HitboxComponent>(params.entity2);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(params.entity2);
+	if (HitboxCanHitGI(params.entity2))
+	{
+		int r = hazard->type;//PixelValueOnPosition(geoCo, p);
+		int takeDamage = 0;
+		ProjectileComponent* proj = nullptr;
+
+		switch (r)
+		{
+		case 0:
+			p->positionX = 0.f;
+			p->positionZ = 0.f;
+			break;
+		case 1:
+			//Footstep sound here?
+			stat->m_acceleration = stat->m_baseAcceleration;
+			break;
+		case HAZARD_LAVA:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->lavaAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
+
+			HazardDamageHelper(params.entity2, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		case HAZARD_CRACK:
+			if (!stat->canWalkOnCrack)
+			{
+				//Detect edge
+				//Edge direction
+				p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
+				p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
+			}
+			break;
+		case HAZARD_ACID://Lava but more damage
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->acidAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
+
+			HazardDamageHelper(params.entity2, 20.f);
+			break;
+		case HAZARD_ICE:
+			//ICE:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->iceAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
+
+			//HazardDamageHelper(entity, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 bool IsDamageCollisionValid(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
@@ -280,7 +353,13 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 
 	//Knockback
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
+	float frictionKnockbackFactor1 = 20.0f / stat1->m_acceleration;
+	float frictionKnockbackFactor2 = 20.0f / stat2->m_acceleration;
+	transform1->currentSpeedX -= frictionKnockbackFactor1 * SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X;
+	transform1->currentSpeedZ -= frictionKnockbackFactor1 * SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1Z;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	transform2->currentSpeedX -= frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2X;
+	transform2->currentSpeedZ -= frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z;
 	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
 	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
 }
@@ -372,7 +451,11 @@ void AttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
+	if (charge)
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
+	else
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
 
 	//Play entity hurt sounds
 	PlayHitSound(params);
@@ -380,6 +463,9 @@ void AttackCollision(OnCollisionParameters& params)
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
+
+	// Only hit the first enemy
+	//SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
 
 	//Lastly set for hitboxTracker[]
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);

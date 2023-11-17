@@ -30,9 +30,9 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
 void PlayerEndAttack(EntityID& entity, const int& index);
 
 //CONTINUOUS
-void PlayerAttack(EntityID& entity, const int& index);
-void PlayerDashSound(EntityID& entity, const int& index);
 void PlayerDash(EntityID& entity, const int& index);
+void PlayerDashSound(EntityID& entity, const int& index);
+void PlayerAttack(EntityID& entity, const int& index);
 /*END OF PLAYER EVENTS*/
 
 //Portal

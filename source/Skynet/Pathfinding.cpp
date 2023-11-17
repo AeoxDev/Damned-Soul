@@ -158,10 +158,6 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	GITexture* mapGrid = giTexture;
 
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
-	
-
-
-
 
 	// 0 = non-walkable 
 	// 1 = walkable
@@ -175,7 +171,7 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 		}
 	}
 
-	float lavaPunish = 6;
+	float lavaPunish = 6; // Never used ??
 
 	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 
@@ -204,7 +200,7 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 			continue;
 
 		// x z = functionCallFromElliot
-		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		//GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
 
 		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
@@ -303,7 +299,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 
 	int x = 0, z = 0;
 	float distance = 1.f;
-	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
 	while (!(distance > minRange && distance < maxRange))
 	{

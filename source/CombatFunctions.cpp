@@ -51,6 +51,13 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	funcInput.cap = defenderStats->GetHealth();
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
+	// Increase if charge attack
+	ChargeAttackArgumentComponent* charge = registry.GetComponent<ChargeAttackArgumentComponent>(attacker);
+	if (charge)
+	{
+		funcInput.incMult *= charge->multiplier;
+	}
+
 	// Apply on damage calc functions
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
 		func(&funcInput);
@@ -62,8 +69,12 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	return funcInput.CollapseDamage();
 }
 
-void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
+void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats/*, bool isCharged*/)
 {
+	if (attackerStats == nullptr || defenderStats == nullptr)
+	{
+		return;
+	}
 	// Calculate damage
 	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
 

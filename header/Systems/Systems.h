@@ -114,6 +114,16 @@ class EyeBehaviourSystem : public System
 	bool Update();
 };
 
+class ImpBehaviourSystem : public System
+{
+	bool Update();
+};
+
+//class MinotaurBehaviourSystem : public System
+//{
+//	bool Update();
+//};
+
 class TempBossBehaviourSystem : public System
 {
 	bool Update();

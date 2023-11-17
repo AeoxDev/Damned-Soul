@@ -1,8 +1,7 @@
 #pragma once
+#include "EntityID.h"
 #define SELF_KNOCKBACK_FACTOR 0.2f
 
-
-struct EntityID;
 
 struct KnockBackComponent
 {

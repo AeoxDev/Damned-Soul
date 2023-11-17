@@ -6,7 +6,7 @@ struct EyeBehaviour
 	float timeCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	float attackTimer = 0.f;
-	float attackStunDurationCounter = 0.f;
+	float attackStunTimer = 0.f;
 	float attackStunDuration = 2.0f;
 	float chargeTimer = 0.0f;
 	float aimTimer = 0.0f;
@@ -25,6 +25,7 @@ struct EyeBehaviour
 	bool clockwiseCircle = true;
 	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
+	bool retreating = false; //bool to check if the eye is currently retreating
 	bool dealtDamage = false;
 	bool chargeAttackSoundPlaying = false;
 };

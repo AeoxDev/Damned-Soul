@@ -88,7 +88,7 @@ void Menu::Setup()
 	// Stage Model
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage);
 	stageModel->model = LoadModel("PlaceholderScene.mdl");
-
+	int nrHazards = 8;
 	switch (random)
 	{
 	case 0: //level 1
@@ -102,7 +102,7 @@ void Menu::Setup()
 		stageModel->colorMultiplicativeGreen = 0.75f;
 		stageModel->colorMultiplicativeBlue = 0.75f;
 		break;
-	case 1: //level 2
+	case 1: //Lava
 		CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 		CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -113,8 +113,38 @@ void Menu::Setup()
 		stageModel->colorMultiplicativeGreen = 1.2f;
 		stageModel->colorMultiplicativeBlue = 0.8f;
 		stageModel->colorAdditiveRed = 0.1f;
+		
+		for (size_t i = 0; i < nrHazards; i++)
+		{
+			bool succeded = false;
+			while (!succeded)
+			{
+				float randX = (float)(rand() % 100) - 50.0f;
+				float randZ = (float)(rand() % 100) - 50.0f;
+				if (randX * randX + randZ * randZ > 80)
+				{
+					float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
+					float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+					EntityID hazard = registry.CreateEntity();
+					ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+					hazardModel->gammaCorrection = 1.5f;
+					TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+					hazardTransform->positionX = randX;
+					hazardTransform->positionY = 0.1f;
+					hazardTransform->positionZ = randZ;
+					hazardTransform->scaleX = randScaleX;
+					hazardTransform->scaleY = 0.1f;
+					hazardTransform->scaleZ = randScaleZ;
+					hazardTransform->facingX = cosf((float)rand());
+					hazardTransform->facingZ = sinf((float)rand());
+					AddStaticHazard(hazard, HAZARD_LAVA);
+
+					succeded = true;
+				}
+			}
+		}
 		break;
-	case 2:
+	case 2://Ice
 		CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 		CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -124,6 +154,17 @@ void Menu::Setup()
 		stageModel->colorMultiplicativeGreen = 1.0f;
 		stageModel->colorMultiplicativeBlue = 1.4f;
 		stageModel->colorAdditiveBlue = 0.1f;
+		nrHazards = 1;//Big ice sheet
+		for (size_t i = 0; i < nrHazards; i++)
+		{
+			bool succeded = false;
+			float randX = (float)(rand() % 32) - 16.0f;
+			float randZ = (float)(rand() % 32) - 16.0f;
+			float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
+			float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
+			EntityID hazard = CreateStaticHazard(HAZARD_ICE, "LavaPlaceholder.mdl",
+				randX, 0.1f, randZ, randScaleX, 1.0f, randScaleZ, 0.1f, 0.1f, 0.5f, 0.5f, 0.5f, 0.5f, 1.25f, cosf((float)rand()), sinf((float)rand()));
+		}
 		break;
 	default:
 		CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
@@ -136,36 +177,7 @@ void Menu::Setup()
 	}
 	
 
-	const int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 100) - 50.0f;
-			float randZ = (float)(rand() % 100) - 50.0f;
-			if (randX * randX + randZ * randZ > 80)
-			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard = registry.CreateEntity();
-				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->gammaCorrection = 1.5f;
-				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.1f;
-				hazardTransform->positionZ = randZ;
-				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 0.1f;
-				hazardTransform->scaleZ = randScaleZ;
-				hazardTransform->facingX = cosf((float)rand());
-				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_LAVA);
-
-				succeded = true;
-			}
-		}
-	}
+	
 	RenderGeometryIndependentCollision(stage);
 	stateManager.stage = stage;
 	Camera::SetCutsceneMode(false);
@@ -179,36 +191,41 @@ void Menu::Input()
 
 void Menu::SetupButtons()
 {
+	const int buttons = 4;
 
-	const char const texts[3][32] =
+	const char const texts[buttons][32] =
 	{
 		"\nStart",
+		"\nCredits",
 		"\nSettings",
 		"\nQuit"
 	};
 	
-	const DSFLOAT2 const positions[3] =
+	const DSFLOAT2 const positions[buttons] =
 	{
+		{ -0.81f, -0.02f },
 		{ -0.81f, -0.28f },
 		{ -0.81f,  -0.54f },
 		{ -0.81f, -0.8f }
 	};
 
-	const DSFLOAT2 const scales[3] =
+	const DSFLOAT2 const scales[buttons] =
 	{
+		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f }
 	};
 
-	void(* const functions[3])(void*, int) =
+	void(* const functions[buttons])(void*, int) =
 	{
 		UIFunc::MainMenu_Start,
+		UIFunc::MainMenu_Credits,
 		UIFunc::MainMenu_Settings,
 		UIFunc::MainMenu_Quit
 	};
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < buttons; i++)
 	{
 		auto button = registry.CreateEntity();
 		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
@@ -217,7 +234,7 @@ void Menu::SetupButtons()
 
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
 
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);

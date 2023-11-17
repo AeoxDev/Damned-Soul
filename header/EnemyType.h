@@ -6,6 +6,8 @@ enum EnemyType
 	hellhound,
 	skeleton,
 	eye,
+	imp,
+	minotaur,
 	tempBoss,
 	lucifer,
 	frozenHellhound, 

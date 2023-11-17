@@ -9,7 +9,8 @@ enum StaticHazardType
 	NO_HAZARD_TYPE,
 	HAZARD_LAVA = 2,
 	HAZARD_CRACK = 3,
-	HAZARD_ICE = 4
+	HAZARD_ACID = 4,
+	HAZARD_ICE = 5
 };
 
 //This does not need to be in the same entity for GI to see it.
@@ -20,7 +21,7 @@ struct StaticHazardComponent
 
 void AddStaticHazard(EntityID& entity, const StaticHazardType& type = HAZARD_LAVA);
 void AddStaticHazardTexture(EntityID& entity, char* crackTexture, char* lavaTexture, char* iceTexture);
-
+void HazardDamageHelper(EntityID& victim, const float DPS);
 //This needs to be in the same Entity as the stage for it to be seen by GI
 struct StaticHazardTextureComponent
 {
@@ -28,3 +29,10 @@ struct StaticHazardTextureComponent
 	int16_t lavaTextureID = -1;
 	int16_t iceTextureID = -1;
 };
+
+EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
+	const float& positionX, const float& positionY, const float& positionZ,
+	const float& scaleX, const float& scaleY, const float& scaleZ,
+	const float& colorAddR, const float& colorAddG, const float& colorAddB,
+	const float& colorMulR, const float& colorMulG, const float& colorMulB,
+	const float& gammaCorrection, const float& facingX, const float& facingZ);
