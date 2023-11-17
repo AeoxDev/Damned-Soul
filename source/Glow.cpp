@@ -1,13 +1,17 @@
 #include "Glow.h"
 #include "D3D11Helper/D3D11Helper.h"
 #include "SDLHandler.h"
+#include "MemLib\MemLib.hpp"
 
 SRV_IDX Glow::glow_srv;
 RTV_IDX Glow::glow_rtv;
 PS_IDX Glow::glow_shader;
 DSV_IDX Glow::glow_depth;
 CS_IDX Glow::blur_shader;
-UAV_IDX Glow::blur_uav;
+UAV_IDX Glow::blur_uav1;
+UAV_IDX Glow::blur_uav2;
+CB_IDX Glow::blur_buffer;
+PoolPointer<Glow::BlurData> Glow::blur_bufData;
 
 void Glow::Initialize()
 {
@@ -18,8 +22,10 @@ void Glow::Initialize()
 	glow_depth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 
 	// Compute
-
 	blur_shader = LoadComputeShader("BlurShader.cso");
+	blur_uav1 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, glow_srv);
+	blur_uav2 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, glow_srv);
+	blur_buffer = CreateConstantBuffer(sizeof(BlurData));
 }
 
 void Glow::PrepareGlowPass()
@@ -28,11 +34,12 @@ void Glow::PrepareGlowPass()
 	SetPixelShader(glow_shader);
 }
 
-void Glow::PrepareBlurPass()
+void Glow::SetViews()
 {
-	SetComputeShader(blur_shader);
-	SetShaderResourceView(glow_srv, BIND_COMPUTE, 0);		// WARNING: Might be reserved
-	SetUnorderedAcessView(blur_uav, 0);
+	UnsetUnorderedAcessView(0);
+	UnsetUnorderedAcessView(1);
+	SetUnorderedAcessView(blur_uav1, 0);
+	SetUnorderedAcessView(blur_uav2, 1);
 }
 
 void Glow::FinishGlowPass()
@@ -40,14 +47,42 @@ void Glow::FinishGlowPass()
 	UnsetPixelShader();
 	UnsetRenderTargetViewAndDepthStencil();
 	// NOTE: ?
+	
+	CopySRVToUAV(blur_uav2, glow_srv);
+}
+
+void Glow::SwitchUAV()
+{
+	UAV_IDX tmp = blur_uav2;
+	blur_uav2 = blur_uav1;
+	blur_uav1 = tmp;
+}
+
+void Glow::UpdateBlurBuffer(int instance)
+{
+	if (instance != 0)
+	{
+		UnsetConstantBuffer(BIND_COMPUTE, 0);
+	}
+	blur_bufData = MemLib::palloc(sizeof(BlurData));
+	blur_bufData->instance = instance;
+	UpdateConstantBuffer(blur_buffer, blur_bufData);
+	MemLib::pfree(blur_bufData);
+	SetConstantBuffer(blur_buffer, BIND_COMPUTE, 0);
+}
+
+void Glow::PrepareBlurPass()
+{
+	SetComputeShader(blur_shader);
+	SetViews();
 }
 
 void Glow::FinishBlurPass()
 {
 	UnsetUnorderedAcessView(0);
-	UnsetShaderResourceView(BIND_COMPUTE, 0);
+	UnsetUnorderedAcessView(1);
 	UnsetComputeShader();
-
+	UnsetConstantBuffer(BIND_COMPUTE, 0);
 }
 
 void Glow::ClearGlowRenderTarget()

@@ -81,8 +81,15 @@ bool GlowSystem::Update()
 	}
 
 	Glow::PrepareBlurPass();
-	Dispatch(1, 1, 1);		// HELP: uav is wrong size for RWTexture2D? What numbers in dispatch?
-	
+
+	for (int i = 0; i < 50; i++)
+	{
+		Glow::UpdateBlurBuffer(i);
+		Dispatch(50, 29, 1);
+		Glow::SwitchUAV();
+		Glow::SetViews();
+	}
+
 
 
 	// NOTE:
@@ -94,11 +101,14 @@ bool GlowSystem::Update()
 	// Read from "sharp"
 	// Calculate falloff
 	// Write to "soft" bloom
+	// Repeat dispatch as much as necessary (5-9?)
 	// 
 	// Figure out where I apply glow to final render, probably not here? After scene, before UI. Separate function for UI glow?
 
-
-	// Thought: Should I sample from shadow map and make glow sourcces in shadow darker? Does it matter? Would that look right?
+	// THOUGHTS:
+	// Sample from shadow map and make glow sources in shadow weaker? Does it matter? Would that look right?
+	// Use depth to determine falloff factor?
+	// 
 
 	Glow::FinishBlurPass();
 	return true;

@@ -18,7 +18,7 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
-class GlowSystem : public System	// NOTE: Right position? Renders a separate pass.
+class GlowSystem : public System	// NOTE: Might need a separate blur system for future readability.
 {
 	bool Update();
 };

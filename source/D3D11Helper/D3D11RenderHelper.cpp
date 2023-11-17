@@ -433,6 +433,11 @@ void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 	d3d11Data->deviceContext->CopyResource(bfrHolder->buff_map[destination], uavHolder->uav_resource_map[source]);
 }
 
+void CopySRVToUAV(const UAV_IDX destination, const SRV_IDX source)
+{
+	d3d11Data->deviceContext->CopyResource(uavHolder->uav_resource_map[destination], srvHolder->srv_resource_map[source]);
+}
+
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)
 {
 	uint8_t currentIdx = uavHolder->NextIdx();
@@ -505,6 +510,119 @@ SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, co
 	
 	uavHolder->uav_map.emplace(currentIdx, tempUAV);
 	uavHolder->size.emplace(currentIdx, (uint32_t)size);
+
+
+	return currentIdx;
+}
+
+SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& height)
+{
+	uint8_t currentIdx = uavHolder->NextIdx();
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = width;
+	texDesc.Height = height;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	ID3D11Texture2D* tempTex = 0;
+	HRESULT hr = d3d11Data->device->CreateTexture2D(&texDesc, nullptr, &tempTex);
+	assert(!FAILED(hr));
+
+	ID3D11Resource* tempResource = 0;
+	//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
+	hr = tempTex->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
+	assert(!FAILED(hr));
+	uavHolder->uav_resource_map.emplace(currentIdx, tempResource);
+
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
+	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	UAVDesc.Texture2D.MipSlice = 0;
+
+	ID3D11UnorderedAccessView* tempUAV = 0;
+	hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_map[currentIdx], &UAVDesc, &tempUAV);
+	assert(!FAILED(hr));
+
+	uavHolder->uav_map.emplace(currentIdx, tempUAV);
+	//uavHolder->size.emplace(currentIdx, (uint32_t)size);
+
+	tempTex->Release();
+	return currentIdx;
+}
+
+SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& height, const int16_t idx)
+{
+	//uint8_t currentIdx = uavHolder->NextIdx();
+
+	//D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
+	//UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	//UAVDesc.Texture2D.MipSlice = 0;
+
+
+	//ID3D11Resource* tempResource = srvHolder->srv_resource_map[(int8_t)idx];
+	//uavHolder->uav_resource_map.emplace(currentIdx, tempResource);
+	//uavHolder->uav_resource_map[currentIdx]->AddRef();
+
+
+	//ID3D11UnorderedAccessView* tempUAV = 0;
+	//HRESULT hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_map[currentIdx], &UAVDesc, &tempUAV);
+	//assert(!FAILED(hr));
+
+	//uavHolder->uav_map.emplace(currentIdx, tempUAV);
+	////uavHolder->size.emplace(currentIdx, (uint32_t)size);
+
+	uint8_t currentIdx = uavHolder->NextIdx();
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = width;
+	texDesc.Height = height;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	ID3D11Texture2D* tempTex = 0;
+	HRESULT hr = d3d11Data->device->CreateTexture2D(&texDesc, nullptr, &tempTex);
+	assert(!FAILED(hr));
+
+	ID3D11Resource* tempResource = 0;
+	//QueryInterface is a way to cast COM objects, this takes the recently created buffer and puts it into the resource array.
+	hr = tempTex->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
+	assert(!FAILED(hr));
+	uavHolder->uav_resource_map.emplace(currentIdx, tempResource);
+
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
+	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	UAVDesc.Texture2D.MipSlice = 0;
+
+	ID3D11UnorderedAccessView* tempUAV = 0;
+	hr = d3d11Data->device->CreateUnorderedAccessView(uavHolder->uav_resource_map[currentIdx], &UAVDesc, &tempUAV);
+	assert(!FAILED(hr));
+
+	uavHolder->uav_map.emplace(currentIdx, tempUAV);
+	//uavHolder->size.emplace(currentIdx, (uint32_t)size);
+
+
+
+	tempTex->Release();
+	return currentIdx;
 
 
 	return currentIdx;
