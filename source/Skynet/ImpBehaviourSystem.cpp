@@ -290,6 +290,7 @@ bool ImpBehaviourSystem::Update()
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
 			IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 		}
+		TransformDecelerate(enemyEntity);
 	}
 	
 	free(valueGrid);
