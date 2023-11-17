@@ -14,12 +14,12 @@ enum shopState
 
 };
 
-struct UIRelicWindowComponent
+struct UIShopRelicComponent
 {
 	shopState shopSelections[2] = {};
 	const RelicData* shopRelics[2] = {};
 
-	UIRelicWindowComponent()
+	UIShopRelicComponent()
 	{
 		shopSelections[0] = AVALIABLE;
 		shopSelections[1] = AVALIABLE;

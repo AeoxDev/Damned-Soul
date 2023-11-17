@@ -13,6 +13,93 @@
 #include "States\StateManager.h"
 #include "UIButtonFunctions.h"
 
+//void SetScoreboardUI(EntityID stage)
+//{
+//	//Scoreboard UI
+//	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
+//	uiElement->Setup("TempShopWindow3", "Run Completed!", DSFLOAT2(0.0f, 0.2f));
+//
+//	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
+//	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
+//
+//	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f));
+//	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
+//
+//	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunc::MainMenu_Start);
+//	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverImage);
+//
+//	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f));
+//	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
+//
+//	onClick->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunc::Game_MainMenu);
+//	onHover->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverImage);
+//
+//	const int amount = 19;
+//
+//	const char const texts[amount][32] =
+//	{
+//		"Time: ",
+//		"Best Time: ",
+//
+//		"Souls: ",
+//		"Leftover Souls: ",  //score
+//		"Spent Souls: ",  //-score
+//		"Total Souls: ",
+//
+//		"Damage Done: ", //score
+//		"Total Damage Done: ",
+//
+//		"Highest Damage Hit: ", //score
+//		"Best Highest Damage Hit: ",
+//
+//		"Damage Taken: ", //score
+//		"Total Damage Taken: ",
+//
+//		"Highest Damage Taken: ", //score
+//		"Best Highest Damage Taken: ",
+//
+//		"Healing Done: ", //score
+//		"Total Healing Done: ",
+//
+//		"Highest Healing Done: ", //score
+//		"Best Highest Healing Done: ",
+//
+//		"Score: "
+//	};
+//
+//	const DSFLOAT2 const positions[amount] =
+//	{
+//		{ 0.4f, 0.3f },
+//		{ 0.0f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f },
+//		{ -0.4f, 0.3f }
+//	};
+//
+//	for (int i = 0; i < amount; i++)
+//	{
+//		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f), positions[i]);
+//	}
+//
+//	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
+//
+//	uiElement->SetAllVisability(false);
+//}
+
 void LoadLevel9()
 {
 	//This is the eye stage. Lots of acid in a grey environment.
@@ -32,7 +119,6 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
@@ -42,16 +128,17 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
 	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
-	Stage3IntroScene(cutsceneEnemy, 0);
-	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
+	Stage3IntroScene(cutsceneEnemy, 0);
+
+	//Stage
 	float redAdd = 0.0f;
 	float greenAdd = 0.0f;
 	float blueAdd = 0.1f;
 	float redMult = 1.0f;
 	float greenMult = 1.0f;
 	float blueMult = 1.1f;
-
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
 	stageModel->colorMultiplicativeRed = redMult;
@@ -60,10 +147,6 @@ void LoadLevel9()
 	stageModel->colorAdditiveBlue = blueAdd;
 	stageModel->colorAdditiveRed = redAdd;
 
-	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
-
-	// Stage (Default)
 	registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
 	phc->Load("default");
@@ -71,24 +154,15 @@ void LoadLevel9()
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
-	PointOfInterestComponent poic;
-	poic.weight = 10.0f;
-	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
+	//SetScoreboardUI(stage);
 
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-
-
+	//Mouse
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+
+	//Light
 	float redLight = 0.05f;
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;

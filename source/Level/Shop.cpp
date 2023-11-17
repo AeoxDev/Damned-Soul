@@ -17,7 +17,7 @@
 #define SHOP_RELIC_WINDOWS (3)
 #define SHOP_SINGLE_WINDOWS (6)
 
-void CreateUIRelics(UIComponent& uiComp, UIRelicWindowComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
+void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
 {
 	ML_Array<float, 2> xPos;
 	xPos[0] = pos.x - 0.05f;
@@ -56,9 +56,9 @@ void CreateRelicWindows()
 
 	const Relics::RELIC_TYPE const type[SHOP_RELIC_WINDOWS] =
 	{
-		Relics::RELIC_UNTYPED,
-		Relics::RELIC_UNTYPED,
-		Relics::RELIC_UNTYPED
+		Relics::RELIC_OFFENSE,
+		Relics::RELIC_DEFENSE,
+		Relics::RELIC_GADGET
 	};
 
 	for (int i = 0; i < SHOP_RELIC_WINDOWS; i++)
@@ -67,7 +67,7 @@ void CreateRelicWindows()
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 		uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i]);
 
-		UIRelicWindowComponent* uiRelicWindow = registry.AddComponent<UIRelicWindowComponent>(relicWindow);
+		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
 		CreateUIRelics(*uiElement, *uiRelicWindow, type[i], positions[i]);
 
@@ -156,7 +156,7 @@ void CreateSingleWindows()
 			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 		if (i == 1)
-			registry.AddComponent<UIRerollComponent>(relicWindow);
+			registry.AddComponent<UIShopRerollComponent>(relicWindow);
 		else
 			registry.AddComponent<UIShopButtonComponent>(relicWindow);
 

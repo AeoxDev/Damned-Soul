@@ -26,6 +26,9 @@ namespace UIFunc
 	// Return to main menu from pause state
 	void PauseState_MainMenu(void* args, int a);
 
+	// Return to main menu from game state
+	void Game_MainMenu(void* args, int a);
+
 	// Go back from the credits menu to the main menu
 	void Credits_Back(void* args, int a);
 

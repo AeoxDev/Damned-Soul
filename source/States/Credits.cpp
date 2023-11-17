@@ -68,7 +68,7 @@ void Credits::SetupText()
 	const char const courses[3][32] =
 	{
 		"Technical Artists:",
-		"Civil Engineers:",
+		"Master of Engineering:",
 		"Game Programmers:"
 	};
 

@@ -233,6 +233,19 @@ void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT
 		m_BaseText.baseUI.SetVisibility(false);
 }
 
+void UIComponent::SetAllVisability(bool value)
+{
+	m_BaseImage.baseUI.SetVisibility(value);
+	m_BaseText.baseUI.SetVisibility(value);
+
+	for (size_t i = 0; i < m_Images.size(); i++)
+		m_Images[i].baseUI.SetVisibility(value);
+
+	for (size_t i = 0; i < m_Texts.size(); i++)
+		m_Texts[i].baseUI.SetVisibility(value);
+
+}
+
 void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale, bool translateText)
 {
 	m_Images.push_back();

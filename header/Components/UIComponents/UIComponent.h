@@ -74,6 +74,8 @@ struct UIComponent
 	void Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
 
+	void SetAllVisability(bool value);
+
 	void AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
 
 	void AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f });

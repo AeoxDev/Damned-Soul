@@ -222,7 +222,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(entity);
+	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(entity);
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
@@ -433,7 +433,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//Setup + Health
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
+	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(stateManager.player);
 
 	//Souls
 	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));

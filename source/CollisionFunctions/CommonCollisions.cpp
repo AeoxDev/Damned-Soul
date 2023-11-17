@@ -12,6 +12,8 @@
 #include "Levels/LevelHelper.h"
 #include <cmath>
 
+#include "UIComponents.h"
+
 #define SOFT_COLLISION_FACTOR 0.5f
 
 
@@ -510,13 +512,33 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
-	//next level is shop so we set the paramaters in statemanager as so
 	if (params.entity2.index == stateManager.player.index)
 	{
-		SetInPlay(false);
-		SetInShop(true);
+		//not final level portal
+		if (stateManager.activeLevel != stateManager.finalLevel)
+		{
+			LoadLevel(++stateManager.activeLevel);
+			return;
+		}
 
-		LoadLevel(++stateManager.activeLevel);
+		//final level portal
+
+		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
+		playerUI->SetAllVisability(false);
+
+		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
+
+			if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+				uiElement->SetAllVisability(true);
+
+			RedrawUI();
+			gameSpeed = 0.0f;
+			SetPaused(true);
+
+		}
 	}
 	
 }
