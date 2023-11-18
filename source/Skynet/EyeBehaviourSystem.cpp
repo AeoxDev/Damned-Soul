@@ -38,7 +38,7 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 		float dotX = dirToNewTileX * dirToPlayerX;
 		float dotZ = dirToNewTileZ * dirToPlayerZ;
 		int iterations = 0;
-		while ((dotX > 0.0f || dotZ > 0.0f) && iterations > 1000)
+		while ((dotX + dotZ > 0.0f) && iterations < 1000)
 		{
 			newTile = FindRetreatTile(valueGrid, etc, 20.f, 30.f);
 
@@ -56,7 +56,7 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 
 		ec->goalDirectionX = dirToNewTileX;
 		ec->goalDirectionZ = dirToNewTileZ;
-
+		
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 
 		etc->positionX += dirToNewTileX * enemyStats->GetSpeed() * GetDeltaTime();
@@ -67,6 +67,7 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 		auto dist = Calculate2dDistance(etc->positionX, etc->positionZ, ec->targetX, ec->targetZ);
 		if (dist > 1.0f)
 		{
+
 			SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 			etc->positionX += ec->goalDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
 			etc->positionZ += ec->goalDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
@@ -107,7 +108,9 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 
 		Normalize(ec->goalDirectionX, ec->goalDirectionZ);
 
+
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+		
 		ec->aimTimer += GetDeltaTime();
 		ec->attackTimer += GetDeltaTime();
 		return true;
@@ -160,12 +163,13 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 
 	Normalize(dirX, dirZ);
 
-	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
 	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
-
+	
 	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+
+	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
 void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
@@ -194,7 +198,6 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	}
 
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
-
 
 	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
@@ -250,13 +253,13 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		eyeComponent->targetX = playerTransformCompenent->positionX + dirX * 10.0f;
 		eyeComponent->targetZ = playerTransformCompenent->positionZ + dirZ * 10.0f;
 
-		eyeComponent->changeDirX = dirX; // charge direction is only set once per charge and will not change
-		eyeComponent->changeDirZ = dirZ; 
+		eyeComponent->chargeDirX = dirX; // charge direction is only set once per charge and will not change
+		eyeComponent->chargeDirZ = dirZ; 
 
 		//change what direction the eye is circling after each dash
 		(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
 
-		SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 40.0f);
+		SmoothRotation(eyeTransformComponent, eyeComponent->chargeDirX, eyeComponent->chargeDirZ, 40.0f);
 		AddTimedEventComponentStartContinuousEnd(eID, 0.0f, nullptr, ChargeColorFlash, eyeComponent->aimDuration - 0.2f, ResetColor);
 	}
 	else if (eyeComponent->aimTimer < eyeComponent->aimDuration)
@@ -286,16 +289,16 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		Normalize(dirX, dirZ);
 
 		//scalar between the current direction and the original chagre direction
-		float scalar = dirX * eyeComponent->changeDirX + dirZ * eyeComponent->changeDirZ;
+		float scalar = dirX * eyeComponent->chargeDirX + dirZ * eyeComponent->chargeDirZ;
 
 		//If charging scalar point direction > 0.0, charge
 		if (scalar > 0 && eyeComponent->chargeTimer < 3.0f)
 		{
 			eyeComponent->chargeTimer += GetDeltaTime();
-			SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 30.0f);
+			SmoothRotation(eyeTransformComponent, eyeComponent->chargeDirX, eyeComponent->chargeDirZ, 30.0f);
 
-			eyeTransformComponent->positionX += eyeComponent->changeDirX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
-			eyeTransformComponent->positionZ += eyeComponent->changeDirZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionX += eyeComponent->chargeDirX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
+			eyeTransformComponent->positionZ += eyeComponent->chargeDirZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
 
 			SetHitboxActive(eID, enemComp->attackHitBoxID, true);
 			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, true);
@@ -348,6 +351,7 @@ bool EyeBehaviourSystem::Update()
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+
 		//Find a player to kill.
 		if (enemComp->lastPlayer.index == -1)
 		{
@@ -382,6 +386,9 @@ bool EyeBehaviourSystem::Update()
 
 		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
+			float preX = eyeTransformComponent->positionX;
+			float preZ = eyeTransformComponent->positionZ;
+
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
 			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
@@ -419,6 +426,11 @@ bool EyeBehaviourSystem::Update()
 			{
 				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+			}
+			
+			if (!eyeComponent->charging)
+			{
+
 			}
 		}
 		//Idle if there are no players on screen.

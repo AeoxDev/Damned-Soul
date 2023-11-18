@@ -15,8 +15,9 @@ struct EyeBehaviour
 	float facingZ = 0.0f;
 	float targetX = 0.0f;
 	float targetZ = 0.0f;
-	float changeDirX = 0.0f;
-	float changeDirZ = 0.0f;
+	float chargeDirX = 0.0f;
+	float chargeDirZ = 0.0f;
+	
 
 
 	int specialCounter = 0;		//how many attacks since last special
@@ -25,7 +26,7 @@ struct EyeBehaviour
 	bool clockwiseCircle = true;
 	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
-	bool retreating = false; //bool to check if the eye is currently retreating
+	bool retreating = false;	//bool to check if the eye is currently retreating
 	bool dealtDamage = false;
 	bool chargeAttackSoundPlaying = false;
 };
