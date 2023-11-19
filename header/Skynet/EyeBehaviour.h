@@ -18,8 +18,9 @@ struct EyeBehaviour
 	float chargeDirX = 0.0f;
 	float chargeDirZ = 0.0f;
 	
-
-
+	const int rayCount = 5; //assumed to be odd
+	const float rayDistance = 5.0f;
+	
 	int specialCounter = 0;		//how many attacks since last special
 	int specialBreakpoint = 4;	//how many attacks are needed for next special
 

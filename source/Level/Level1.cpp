@@ -32,7 +32,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);*/
-	SetupEnemy(EnemyType::eye, -20.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::eye, -20.f, 0.f, 45.f, 6969.0f, 6969.0f, 6969.0f, 6969.0f, 6969.0f, 6969.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 
 
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);

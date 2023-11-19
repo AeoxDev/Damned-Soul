@@ -7,6 +7,8 @@
 #include "EventFunctions.h"
 #include <random>
 
+#include <iostream>
+
 void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid)
 {
 	// Regular walk
@@ -326,6 +328,43 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 }
 
+void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc)
+{
+	float eyeMovementX = etc->positionX - etc->lastPositionX;
+	float eyeMovementZ = etc->positionZ - etc->lastPositionZ;
+
+	if (eyeMovementX == 0 && eyeMovementZ == 0)
+		return;
+
+	float magnitude = sqrt(eyeMovementX * eyeMovementX + eyeMovementZ * eyeMovementZ);
+
+	Normalize(eyeMovementX, eyeMovementZ);
+
+	double deltaAngle = (3.14159265) / (ec->rayCount - 1);
+
+	double startAngle = deltaAngle * -((ec->rayCount - 1) / 2.0f);
+	double endAngle = -startAngle;
+
+	std::cout << " Start Dir: " << eyeMovementX << ", " << eyeMovementZ << std::endl;
+
+	for (double angle = startAngle; angle <= endAngle; angle += deltaAngle)
+	{
+		// Rotate current ray direction based on angle
+		float rayDirX = eyeMovementX * cos(angle) - eyeMovementZ * sin(angle);
+		float rayDirZ = eyeMovementX * sin(angle) + eyeMovementZ * cos(angle);
+		
+		std::cout << rayDirX << ", " << rayDirZ << std::endl;
+
+
+		for (auto enemyEntity : View<TransformComponent, HitboxComponent, EnemyComponent>(registry))
+		{
+
+		}
+	}
+
+
+}
+
 bool EyeBehaviourSystem::Update()
 {
 	//First find the skynet component
@@ -386,9 +425,6 @@ bool EyeBehaviourSystem::Update()
 
 		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
-			float preX = eyeTransformComponent->positionX;
-			float preZ = eyeTransformComponent->positionZ;
-
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
 			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
@@ -430,7 +466,7 @@ bool EyeBehaviourSystem::Update()
 			
 			if (!eyeComponent->charging)
 			{
-
+				ObstacleAvoidance(eyeComponent, eyeTransformComponent);
 			}
 		}
 		//Idle if there are no players on screen.
