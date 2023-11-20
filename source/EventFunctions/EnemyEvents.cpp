@@ -287,16 +287,16 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 	{
 		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset
 		{
-			skelel->colorAdditiveRed = 0.0f;
-			skelel->colorAdditiveGreen = 0.0f;
-			skelel->colorAdditiveBlue = 0.0f;
+			skelel->shared.colorAdditiveRed = 0.0f;
+			skelel->shared.colorAdditiveGreen = 0.0f;
+			skelel->shared.colorAdditiveBlue = 0.0f;
 		}
 			
 		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow
 		{
-			skelel->colorAdditiveRed = 0.8f;
-			skelel->colorAdditiveGreen = 0.8f;
-			skelel->colorAdditiveBlue = 0.5f;
+			skelel->shared.colorAdditiveRed = 0.8f;
+			skelel->shared.colorAdditiveGreen = 0.8f;
+			skelel->shared.colorAdditiveBlue = 0.5f;
 		}	
 	}
 }
@@ -309,9 +309,9 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 	{
 		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //Reset
 		{
-			skelel->colorAdditiveRed = 0.0f;
-			skelel->colorAdditiveGreen = 0.0f;
-			skelel->colorAdditiveBlue = 0.0f;
+			skelel->shared.colorAdditiveRed = 0.0f;
+			skelel->shared.colorAdditiveGreen = 0.0f;
+			skelel->shared.colorAdditiveBlue = 0.0f;
 
 			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity); //Make animation faster because we're about to schwing
 			if (anim)
@@ -319,9 +319,10 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 		}
 		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.375f) //Only start increasing gradient after 0.3 seconds
 		{
-			skelel->colorAdditiveRed += GetDeltaTime();
-			skelel->colorAdditiveGreen += GetDeltaTime();
-			skelel->colorAdditiveBlue += GetDeltaTime();
+			skelel->shared.colorAdditiveRed += GetDeltaTime();
+			skelel->shared.colorAdditiveGreen += GetDeltaTime();
+			skelel->shared.colorAdditiveBlue += GetDeltaTime();
+			
 		}
 	}
 }
