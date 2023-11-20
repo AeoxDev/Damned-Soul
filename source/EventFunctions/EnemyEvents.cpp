@@ -328,11 +328,26 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 
 void EnemyBeginAttack(EntityID& entity, const int& index)
 {
-
+	//Activate attack hitbox
+	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
+	if (comp)
+	{
+		SetHitboxActive(entity, comp->attackHitBoxID, true);
+		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+	}
 }
 
 void EnemyEndAttack(EntityID& entity, const int& index)
 {
+	//Deactivate attack hitbox
+	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
+	if (comp)
+	{
+		SetHitboxActive(entity, comp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
+	}
+
+	//
 	SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
 	skeleton->attackTimer = 0.0f;
 }
