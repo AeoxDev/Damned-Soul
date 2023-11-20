@@ -41,6 +41,39 @@ bool GetVisualTimer()
 	return showTimer;
 }
 
+ML_String GetDigitalMinuteClock()
+{
+	DSINT2 time = {};
+
+	time.x = GetSeconds() / 60;
+	time.y = GetSeconds() % 60;
+
+	ML_String minutes, seconds, totalTime;
+
+	if (time.x < 10)
+	{
+		minutes = "0";
+		minutes.append(std::to_string(time.x).c_str());
+	}
+	else
+		minutes = std::to_string(time.x).c_str();
+
+	if (time.y < 10)
+	{
+		seconds = "0";
+		seconds.append(std::to_string(time.y).c_str());
+	}
+	else
+		seconds = std::to_string(time.y).c_str();
+
+	totalTime = "Time: ";
+	totalTime.append(minutes);
+	totalTime.append(":");
+	totalTime.append(seconds);
+
+	return totalTime;
+}
+
 const float& GetDeltaTime()
 {
 	return deltaTime;

@@ -576,7 +576,8 @@ void UIFunc::HoverShopRelic(void* args, int index, bool hover)
 		std::strcpy(relicText + std::strlen(relicText), (std::to_string(uiImpText->price) + " Souls\n").c_str());
 		std::strcpy(relicText + std::strlen(relicText), uiImpText->description);
 
-		uiImpElement->m_BaseText.SetText(relicText, uiImpElement->m_BaseText.baseUI.GetBounds());
+		uiImpElement->m_BaseText.SetText(relicText, uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize, 
+			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
 	}
 	else if (!hover && relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
 	{

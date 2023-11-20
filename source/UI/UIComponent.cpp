@@ -48,7 +48,7 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, IDWriteTextFormat*& textFormat)
 {
 
-	ui.GetWriteFactory()->CreateTextFormat(L"Ink Free", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &textFormat);
+	ui.GetWriteFactory()->CreateTextFormat(L"Arial", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &textFormat);
 
 	textFormat->SetTextAlignment(textAlignment);
 	textFormat->SetParagraphAlignment(paragraphAlignment);
