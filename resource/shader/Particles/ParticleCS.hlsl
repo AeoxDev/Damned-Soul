@@ -16,11 +16,11 @@ bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
 {    
     int amount = meta[blockID.y].end - meta[blockID.y].start;
-    int index = blockID.x * NUM_THREADS + DTid.x;
+    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     
-    if (index > amount)
+    if (index < meta[blockID.y].start || index > meta[blockID.y].end)
         return;
-    
+
     
     if (meta[blockID.y].life > 0)
     {
@@ -222,59 +222,63 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
 
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
-    // -- SAME FOR ALL FUNCTIONS -- //
-    int index = DTid.x + blockID.y * NUM_THREADS;
-    Input particle = inputParticleData[index];
+    // -- Calculate the index and get the right particle to change -- //
+    int amount = meta[blockID.y].end - meta[blockID.y].start;
+    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     
+    Input particle = inputParticleData[index];
+    // -------------------------------------------------------------- // 
+
+    
+    // --- Set the standard stuff --- //
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
     particle.size = meta[blockID.y].size;
+    // ------------------------------ //
     
-    float psuedoRand = sin(DTid.x * 71.01) * sin(DTid.x * 71.01);
     
-   
-    float holder = frac(sin(dot(DTid.x, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    // ---- Get a "randomized" value to access deltaTime ---- //    
+    float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    
+    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
     
     int One_OneHundo = holder;
     if (One_OneHundo == 0)
         One_OneHundo = 1;
     
     int OneHundo_TwoFiveFive = One_OneHundo + 155;
-    // -------------------------- //
+    // ------------------------------------------------------ //
+            
     
     
     // EXLUSIVE FOR FLAME THROWER //
     // THEESE WEIRD VARIABLES ARE MEANT TO BE WEIRD, THEY HOLD VALUES
-    float2 v0 = float2(meta[blockID.y].positionInfo.y, meta[blockID.y].positionInfo.z);
-    float2 v1 = float2(meta[blockID.y].morePositionInfo.x, meta[blockID.y].morePositionInfo.y);
-    float2 v2 = float2(meta[blockID.y].morePositionInfo.z, meta[blockID.y].morePositionInfo.w);
+    float2 v0 = float2(meta[blockID.y].maxRange, meta[blockID.y].positionInfo.x);
+    float2 v1 = float2(meta[blockID.y].positionInfo.y, meta[blockID.y].positionInfo.z);
+    float2 v2 = float2(meta[blockID.y].morePositionInfo.x, meta[blockID.y].morePositionInfo.y);
+
+    float2 legThree = v2 - v1;
     
-    float2 legOne = v1 - v0;
-    float2 legTwo = v2 - v0;
+    float2 dirVec = -normalize((legThree * ((float) index / (float) amount)) + v1);
     
-    float2 middlePoint = (v2 - v1) / 2;
+    
+    float2 middlePoint = v1 + (legThree * 0.5f);
     float2 middleVector = middlePoint - v0;
     
     
+    float2 calcPosition = float2(particle.position.x - meta[blockID.y].startPosition.x, particle.position.z - meta[blockID.y].startPosition.z);
+    float2 v0ToParticle = calcPosition - v0;
     
-    
-    float2 dirVec = normalize(middlePoint - v0);
-    
-    
-    float2 v0ToParticle = particle.position.xz - v0;
-    
-    
-    float alpha = acos(dot(legOne, middleVector) / (length(legOne) * length(middleVector))) * 0.25f;
-    float beta = ((alpha * 2 * ((float) DTid.x / NUM_THREADS))) - alpha + PI * 0.5f;
+
+    float v0ToParticle_len = length(v0ToParticle);
+    float middleVector_len = length(middleVector);
 
     
-    
-    if (length(v0ToParticle) < length(middleVector))
+    if (v0ToParticle_len < middleVector_len)
     {
-        particle.position.x = particle.position.x + cos(beta) * particle.velocity.x * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+        particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 10.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
         particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
-        particle.position.z = particle.position.z + sin(beta) * particle.velocity.z * dt * meta[OneHundo_TwoFiveFive].deltaTime;
-
+        particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 10.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
     }
     else
     {
@@ -282,6 +286,7 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 
         particle.position = startPosition;
         particle.time = 0.f;
+        particle.size = 0.5f;
     }
 
     

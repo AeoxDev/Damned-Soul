@@ -29,8 +29,8 @@ struct metadata
     // Slot 1-99 is a random number between 0.0 and 1.0
     // Slot 100-255 is a random number between 1.0 and 5.0
     
-    float rotationY;
     float2 morePositionInfo;
+    bool reset;
 };
 
 cbuffer metadataBuffer : register(b0)

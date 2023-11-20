@@ -31,26 +31,11 @@ void LoadLevel1()
 	EntityID lightholderForth = registry.CreateEntity();
 	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 100.0f, 20.0f, 50.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	//SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
-	//SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
-	//SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
-	//SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
-	//SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
-	
-	
-
-	EntityID paritcleOne = registry.CreateEntity();
-	EntityID paritcleTwo = registry.CreateEntity();
-	SetupEnemy(EnemyType::hellhound, -40.f, 0.f, 35.f);
-	//registry.AddComponent<ParticleComponent>(stage, 400.f, 30.f, 0.1f, 0.0f, 0.0f, 1.0f, 32, SMOKE);
-	//registry.AddComponent<ParticleComponent>(paritcleOne, 400.f, 30.f, 0.1f, 0.f, 0.0f, 1.0f, 1340, SMOKE);
-	//registry.AddComponent<ParticleComponent>(paritcleTwo, 400.f, 30.f, 0.1f, 0.f, 0.0f, 1.0f, 1660, SMOKE);
-
-	registry.AddComponent<TransformComponent>(paritcleOne);
-	registry.AddComponent<TransformComponent>(paritcleTwo);
-
-
-
+	SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
+	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
 	//5 souls total
 
 
@@ -62,7 +47,7 @@ void LoadLevel1()
 	//stageModel->colorAdditiveRed = 0.1f;
 	
 	// Stage (Default)
-	TransformComponent *stageTransform = registry.AddComponent<TransformComponent>(stage);
+	TransformComponent* stageTransform = registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
 	phc->Load("default");	
 	

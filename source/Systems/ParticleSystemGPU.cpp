@@ -22,12 +22,6 @@ bool ParticleSystemGPU::Update()
 
 			if (highestGroupAmount < pComp->groupsRequiered)
 				highestGroupAmount = pComp->groupsRequiered;
-
-			//if (pComp->vertexReset == false)
-			//	pComp->ResetVertex();
-
-			//if (pComp->bufferReset == false)
-			//	pComp->ResetBuffer();
 		}
 	}
 
