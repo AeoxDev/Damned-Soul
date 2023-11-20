@@ -11,5 +11,7 @@ struct TempBossBehaviour
 
 	int hitBoxID = 0;
 
+	bool parts[5] = { false, false, false,false,false };
+
 	TempBossBehaviour(int deathCount, int hitID) : deathCounter(deathCount), hitBoxID(hitID) {}
 };

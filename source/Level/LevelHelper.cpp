@@ -74,7 +74,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
-	float facingY , float facingZ  )
+	float facingY , float facingZ, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4, bool zacIndex5)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
@@ -270,9 +270,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (eType == EnemyType::tempBoss)
 	{
-		scaleX *= 4;
-		scaleY *= 4;
-		scaleZ *= 4;
+		scaleX *= 2;
+		scaleY *= 2;
+		scaleZ *= 2;
 	}
 
 	transform.mass = mass;
@@ -390,13 +390,17 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	else if (eType == EnemyType::tempBoss)
 	{
 		stat->hazardModifier = 0.0f;
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
-		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
+		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+		for (int i = 0; i < 5; i++)
+			tempBossComponent->parts[i] = true; // this is needed, DO NOT TOUCH
+
+		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
-			player->killThreshold+=15;
+			player->killThreshold+=5;
 		}
 	}
 	else if (eType == EnemyType::lucifer)
