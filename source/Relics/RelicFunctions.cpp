@@ -460,7 +460,7 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 		}
 
 		if (currentTotalWeight == 0)
-			return &DefaultRelicRock;
+			return retVal;
 
 		// Randomly selected index from the possible selection
 		uint32_t randomlySelected = 1 + (std::rand() % currentTotalWeight);

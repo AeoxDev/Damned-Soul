@@ -38,7 +38,7 @@ void UIFunc::LoadNextLevel(void* args, int a)
 
 void UIFunc::MainMenu_Start(void* args, int a)
 {
-	UnloadEntities();
+	UnloadEntities(ENT_PERSIST_LEVEL);
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
