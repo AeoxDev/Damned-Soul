@@ -162,8 +162,8 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	// The constant buffer for vertex is set outside of this function, in the ParticleSystemCPU Update() call
 	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
-	//UnsetVertexBuffer();
-	//UnsetIndexBuffer();
+	UnsetVertexBuffer();
+	UnsetIndexBuffer();
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 

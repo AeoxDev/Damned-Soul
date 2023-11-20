@@ -197,7 +197,8 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	SRVDesc.Buffer.FirstElement = 0;
 	SRVDesc.Buffer.ElementOffset = 0;
-	SRVDesc.Buffer.ElementWidth = (UINT)size;
+	SRVDesc.Buffer.NumElements = amount;
+	//SRVDesc.Buffer.ElementWidth = (UINT)size;
 
 	ID3D11ShaderResourceView* tempSRV = 0;
 	hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], &SRVDesc, &tempSRV);
