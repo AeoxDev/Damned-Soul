@@ -317,7 +317,7 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 			if (anim)
 				anim->aAnimTimeFactor = 2.0f;
 		}
-		else
+		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.375f) //Only start increasing gradient after 0.3 seconds
 		{
 			skelel->colorAdditiveRed += GetDeltaTime();
 			skelel->colorAdditiveGreen += GetDeltaTime();
