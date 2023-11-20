@@ -47,6 +47,9 @@
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
 #include "Relics\Gadget\IcyBlade.h"
+#include "Relics\Gadget\Discount\ExploitableCoupon.h"
+#include "Relics\Gadget\Discount\Membership.h"
+#include "Relics\Gadget\Discount\SeeingDouble.h"
 // End of include all relics
 
 #include "Relics\Utility\ML_RelicArray.h"
@@ -375,6 +378,30 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	ICY_BLADE::Initialize
+			),
+			RelicData(
+				/*Name*/		"Exploitable Coupon",
+				/*Filepath*/	"RelicIcons\\Exploitable_Coupon",
+				/*Description*/	EXPLOITABLE_COUPON::Description(),
+				/*Price*/		5,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	EXPLOITABLE_COUPON::Initialize
+			),
+			RelicData(
+				/*Name*/		"Membership",
+				/*Filepath*/	"RelicIcons\\Membership",
+				/*Description*/	MEMBERSHIP::Description(),
+				/*Price*/		6,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	MEMBERSHIP::Initialize
+			),
+			RelicData(
+				/*Name*/		"Seeing_Double",
+				/*Filepath*/	"RelicIcons\\Seeing_Double",
+				/*Description*/	SEEING_DOUBLE::Description(),
+				/*Price*/		1,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	SEEING_DOUBLE::Initialize
 			),
 			//ENDOF: GADGET RELICS
 		};

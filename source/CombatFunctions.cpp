@@ -95,12 +95,12 @@ void Combat::DashHitInteraction(EntityID& attacker, StatComponent* attackerStats
 	funcInput.damage = attackerStats->GetDamage();
 	funcInput.cap = defenderStats->GetHealth();
 
-	//Calculate damage modifications from relics
-	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
-		func(&funcInput);
-
 	//Halve the damage since we're dashing
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH))
+		func(&funcInput);
+
+	//Calculate damage modifications from relics
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
 		func(&funcInput);
 
 	//Calculate things that happen when damage is being applied (Reflect damage, lifesteal, etc..)
