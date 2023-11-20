@@ -461,6 +461,7 @@ bool HellhoundBehaviourSystem::Update()
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enmComp = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
+	DebuffComponent* debuff = nullptr;
 
 	bool updateGridOnce = true;
 
@@ -499,6 +500,12 @@ bool HellhoundBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			continue; // frozen, won't do behavior stuff
+		}
 		
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
