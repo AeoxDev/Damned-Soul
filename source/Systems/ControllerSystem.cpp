@@ -143,6 +143,9 @@ bool ControllerSystem::Update()
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		MouseComponent* mouseComponent = registry.GetComponent<MouseComponent>(entity);
 
+		//PlayerComponent now stores a bunch of variables for cooldowns and animation timings so we need access to it early
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
 		if (controller->enabled == -1)
 			break;
 
@@ -180,7 +183,11 @@ bool ControllerSystem::Update()
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
-		MouseComponentUpdateDirection(entity);
+
+		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
+		if(!player->isAttacking)
+			MouseComponentUpdateDirection(entity);
+
 		if (moving)
 		{
 			anim->aAnim = ANIMATION_WALK;
@@ -217,9 +224,6 @@ bool ControllerSystem::Update()
 		}
 
 		/*COMBAT INPUT*/
-		//PlayerComponent now stores a bunch of variables for cooldowns and animation timings so we need access to it before combat-related stuff
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-
 		/*DASH*/
 		//Decrement and clamp
 		player->dashCounter -= GetDeltaTime();
