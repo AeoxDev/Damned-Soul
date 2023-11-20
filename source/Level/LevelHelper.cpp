@@ -529,8 +529,8 @@ void SetScoreboardUI(EntityID stage)
 {
 	//Scoreboard UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
-	uiElement->Setup("TempShopWindow3", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f));
-	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
+	uiElement->Setup("TempShopWindow3", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.7f));
 
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
@@ -553,38 +553,39 @@ void SetScoreboardUI(EntityID stage)
 	DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 						-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-	DSFLOAT2 diffPos(uiPixelCoords.x + 1.1f, uiPixelCoords.y - 0.3f);
+	DSFLOAT2 diffPos(uiPixelCoords.x + 1.1f, uiPixelCoords.y - 0.4f);
 
-	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y));
-	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.05f));
-	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.15f));
+	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y), DSFLOAT2(1.0f, 1.0f), 30.0f);
+	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.15f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.25f), DSFLOAT2(1.0f, 1.0f));
 
-	const int amount = 11;
+	const int amount = 8;
 	const char const texts[amount][32] =
 	{
-		"Time:", //score
+		"Time: ", //index 3
 
-		"Total Souls:",
-		"Leftover Souls:",  //score
-		"Spent Souls: ",  //-score
+		"Leftover Souls: ", //index 4
+		"Spent Souls: ", //index 5
+		"Total Souls: ", //index 6
 
-		"Damage Done:", //score
+		"Damage Done: ", //index 7
 
-		"Strongest Hit Dealt:", //score
+		//"Strongest Hit Dealt:",
 
-		"Damage Taken:", //score
+		"Damage Taken: ", //index 8
 
-		"Strongest Hit Taken:",
+		//"Strongest Hit Taken:",
 
-		"Healing Done:", //score
+		"Healing Done: ", //index 9
 
-		"Strongest Heal Done:", //score
+		//"Strongest Heal Done:"
 
-		"Score:"
+		"Score: " //index 10
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiPixelCoords.x + 0.2f, uiPixelCoords.y - 0.2f - (0.1f * i)));
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiPixelCoords.x + 0.4f, uiPixelCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
 

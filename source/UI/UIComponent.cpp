@@ -45,13 +45,13 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 
 }
 
-void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment)
+void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, IDWriteTextFormat*& textFormat)
 {
 
-	ui.GetWriteFactory()->CreateTextFormat(L"Ink Free", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &ui.GetTextFormat());
+	ui.GetWriteFactory()->CreateTextFormat(L"Ink Free", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &textFormat);
 
-	ui.GetTextFormat()->SetTextAlignment(textAlignment);
-	ui.GetTextFormat()->SetParagraphAlignment(paragraphAlignment);
+	textFormat->SetTextAlignment(textAlignment);
+	textFormat->SetParagraphAlignment(paragraphAlignment);
 
 }
 
@@ -168,15 +168,17 @@ void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_T
 {
 	if (text != "")
 	{
-
 		m_Text = _strdup(text);
+		m_fontSize = fontSize;
+		m_textAlignment = textAlignment;
+		m_paragraphAlignment = paragraphAlignment;
 
-		SetupText(fontSize, textAlignment, paragraphAlignment);
+		SetupText(m_fontSize, m_textAlignment, m_paragraphAlignment, m_TextFormat);
 
 		ML_String s = m_Text;
 
 		if (bounds.right == 0)
-			baseUI.m_OriginalBounds = { 0, 0, (fontSize + 5.0f) * s.length(), fontSize };
+			baseUI.m_OriginalBounds = { 0, 0, (m_fontSize + 5.0f) * s.length(), m_fontSize };
 		else
 			baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
 	}
@@ -193,7 +195,7 @@ void UIText::Draw()
 		SetBounds(tempBounds, baseUI.m_CurrentBounds);
 		ML_String s = m_Text;
 		std::wstring textAsWString(s.begin(), s.end());
-		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), ui.GetTextFormat(), tempBounds, ui.GetBrush());
+		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), m_TextFormat, tempBounds, ui.GetBrush());
 	}
 }
 
@@ -239,9 +241,7 @@ void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT
 
 	if (text != "")
 	{
-		float rnd = rand() % 200 + 1;
-
-		m_BaseText.SetText(text, m_BaseImage.baseUI.GetOriginalBounds(), rnd, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+		m_BaseText.SetText(text, m_BaseImage.baseUI.GetOriginalBounds(), fontSize, textAlignment, paragraphAlignment);
 		m_BaseText.baseUI.Setup(position, scale, rotation, visibility, opacity);
 	}
 	else
@@ -274,21 +274,20 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 
 	if (translateText && m_BaseText.baseUI.GetVisibility())
 	{
-		m_BaseText.SetText(m_BaseText.m_Text, m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds());
+		m_BaseText.SetText(m_BaseText.m_Text, m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds(), m_BaseText.m_fontSize, m_BaseText.m_textAlignment, m_BaseText.m_paragraphAlignment);
 		m_BaseText.baseUI.SetScale(m_BaseText.baseUI.GetScale());
 		m_BaseText.baseUI.SetPosition(m_BaseText.baseUI.GetPosition());
 	}
 }
 
-void UIComponent::AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale)
+void UIComponent::AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale, float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment)
 {
 	m_Texts.push_back();
 
 	m_Texts[m_Texts.size() - 1].baseUI.Setup(position, scale);
 	
-	m_Texts[m_Texts.size() - 1].SetText(text, textBounds);
+	m_Texts[m_Texts.size() - 1].SetText(text, textBounds, fontSize, textAlignment, paragraphAlignment);
 
-	m_Texts[m_Texts.size() - 1].SetText(m_Texts[m_Texts.size() - 1].m_Text, textBounds);
 	m_Texts[m_Texts.size() - 1].baseUI.SetScale(m_Texts[m_Texts.size() - 1].baseUI.GetScale());
 	m_Texts[m_Texts.size() - 1].baseUI.SetPosition(m_Texts[m_Texts.size() - 1].baseUI.GetPosition());
 }

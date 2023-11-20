@@ -95,9 +95,7 @@ void SettingsState::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		float rnd = rand() % 200 + 1;
-
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], rnd, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
@@ -123,7 +121,7 @@ void SettingsState::SetupText()
 	// Settings Text Header
 	auto settingsHeader = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsHeader);
-	uiElement->Setup("TempShopTitle", "Settings", { 0.0f, 0.43f });
+	uiElement->Setup("TempShopTitle", "Settings", { 0.0f, 0.43f }, DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 	
 }

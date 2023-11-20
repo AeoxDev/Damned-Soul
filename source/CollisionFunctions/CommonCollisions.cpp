@@ -11,6 +11,7 @@
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
 #include <cmath>
+#include <string>
 
 #include "UIComponents.h"
 
@@ -526,6 +527,8 @@ void LoadNextLevel(OnCollisionParameters& params)
 		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
 		playerUI->SetAllVisability(false);
 
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+
 		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
@@ -538,6 +541,50 @@ void LoadNextLevel(OnCollisionParameters& params)
 			gameSpeed = 0.0f;
 			SetPaused(true);
 
+			DSINT2 time = {};
+
+			time.x = GetSeconds() / 60;
+			time.y = GetSeconds() % 60;
+
+			ML_String minutes, seconds, totalTime;
+			
+			if (time.x < 10)
+			{
+				minutes = "0";
+				minutes.append(std::to_string(time.x).c_str());
+			}
+			else
+				minutes = std::to_string(time.x).c_str();
+
+			if (time.y < 10)
+			{
+				seconds = "0";
+				seconds.append(std::to_string(time.y).c_str());
+			}
+			else
+				seconds = std::to_string(time.y).c_str();
+			
+			totalTime = "Time: ";
+			totalTime.append(minutes);
+			totalTime.append(":");
+			totalTime.append(seconds);
+
+			const int amount = 4;
+			ML_String texts[amount] =
+			{
+				totalTime.c_str(),
+
+				("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
+				("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
+				("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
+
+			};
+
+			for (int i = 3; i < amount + 3; i++)
+			{
+				uiElement->m_Texts[i].SetText(texts[i - 3].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
+					DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			}
 		}
 	}
 	

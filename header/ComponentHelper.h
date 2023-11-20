@@ -138,6 +138,7 @@ struct PlayerComponent
 private:
 	// Set to private since it is important that any update is carried on through UpdateSouls
 	int souls = 0;
+	int totalSouls = 0;
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
@@ -160,6 +161,7 @@ public:
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
+	int GetTotalSouls() const;
 };
 
 struct ControllerComponent
