@@ -49,10 +49,10 @@ void LoadEyeChallenge()
 
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 0.75f;
-	stageModel->colorMultiplicativeGreen = 0.75f;
-	stageModel->colorMultiplicativeBlue = 0.75f;
-	stageModel->gammaCorrection = 0.9f;
+	stageModel->shared.colorMultiplicativeRed = 0.75f;
+	stageModel->shared.colorMultiplicativeGreen = 0.75f;
+	stageModel->shared.colorMultiplicativeBlue = 0.75f;
+	stageModel->shared.gammaCorrection = 0.9f;
 	//stageModel->colorAdditiveRed = 0.1f;
 
 	// Stage (Default)

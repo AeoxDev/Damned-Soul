@@ -228,6 +228,9 @@ void UIImage::Draw()
 void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale, 
 	float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, float rotation, bool visibility, float opacity)
 {
+	m_Images.Initialize();
+	m_Texts.Initialize();
+
 	if (baseImageFilepath != "")
 	{
 		m_BaseImage.SetImage(baseImageFilepath);

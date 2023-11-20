@@ -14,8 +14,14 @@
 
 void LoadLevel3()
 {
+	float redAdd = 0.1f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.0f;
+	float redMult = 1.4f;
+	float greenMult = 1.2f;
+	float blueMult = 0.8f;
 
-	EntityID stage = registry.CreateEntity();
+	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); // registry.CreateEntity();
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -43,27 +49,6 @@ void LoadLevel3()
 
 	Stage2IntroScene(cutsceneEnemy, 0);
 	//13 souls + 5 souls level 1 = 18 souls total
-
-	float redAdd = 0.1f;
-	float greenAdd = 0.0f;
-	float blueAdd = 0.0f;
-	float redMult = 1.4f;
-	float greenMult = 1.2f;
-	float blueMult = 0.8f;
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = redMult;
-	stageModel->colorMultiplicativeGreen = greenMult;
-	stageModel->colorMultiplicativeBlue = blueMult;
-	stageModel->colorAdditiveRed = redAdd;
-	stageModel->gammaCorrection = 0.9f;
-	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
-
-	// Stage (Default)
-	registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
 
 
 	//Player Sounds
@@ -103,40 +88,41 @@ void LoadLevel3()
 	const int nrHazards = 6;
 	for (size_t i = 0; i < nrHazards; i++)
 	{
-		bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 100) - 50.0f;
-			float randZ = (float)(rand() % 100) - 50.0f;
-			if (randX * randX + randZ * randZ > 80)
-			{
-				float randScaleX = 12.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 12.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard = registry.CreateEntity();
-				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->colorAdditiveRed = redAdd;
-				hazardModel->colorAdditiveGreen = greenAdd;
-				hazardModel->colorAdditiveBlue = blueAdd;
-				hazardModel->colorMultiplicativeRed = redMult;
-				hazardModel->colorMultiplicativeGreen = greenMult;
-				hazardModel->colorMultiplicativeBlue = blueMult;
-				hazardModel->gammaCorrection = 1.5f;
-				hazardModel->castShadow = false;
+		SetUpHazard(HAZARD_LAVA, 1.f, redAdd, greenAdd, blueAdd, redMult, greenMult, blueMult, 1.5f);
+		//bool succeded = false;
+		//while (!succeded)
+		//{
+		//	float randX = (float)(rand() % 100) - 50.0f;
+		//	float randZ = (float)(rand() % 100) - 50.0f;
+		//	if (randX * randX + randZ * randZ > 80)
+		//	{
+		//		float randScaleX = 12.0f + (float)((rand() % 100) * 0.1f);
+		//		float randScaleZ = 12.0f + (float)((rand() % 100) * 0.1f);
+		//		EntityID hazard = registry.CreateEntity();
+		//		ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+		//		hazardModel->shared.colorAdditiveRed = redAdd;
+		//		hazardModel->shared.colorAdditiveGreen = greenAdd;
+		//		hazardModel->shared.colorAdditiveBlue = blueAdd;
+		//		hazardModel->shared.colorMultiplicativeRed = redMult;
+		//		hazardModel->shared.colorMultiplicativeGreen = greenMult;
+		//		hazardModel->shared.colorMultiplicativeBlue = blueMult;
+		//		hazardModel->shared.gammaCorrection = 1.5f;
+		//		hazardModel->castShadow = false;
 
-				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.5f;
-				hazardTransform->positionZ = randZ;
-				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 1.0f;
-				hazardTransform->scaleZ = randScaleZ;
-				hazardTransform->facingX = cosf((float)rand());
-				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_LAVA);
+		//		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+		//		hazardTransform->positionX = randX;
+		//		hazardTransform->positionY = 0.5f;
+		//		hazardTransform->positionZ = randZ;
+		//		hazardTransform->scaleX = randScaleX;
+		//		hazardTransform->scaleY = 1.0f;
+		//		hazardTransform->scaleZ = randScaleZ;
+		//		hazardTransform->facingX = cosf((float)rand());
+		//		hazardTransform->facingZ = sinf((float)rand());
+		//		AddStaticHazard(hazard, HAZARD_LAVA);
 
-				succeded = true;
-			}
-		}
+		//		succeded = true;
+		//	}
+		//}
 	}
 	RenderGeometryIndependentCollision(stage);
 

@@ -35,7 +35,7 @@ bool FrozenBehaviourSystem::Update()
 				}
 				else if (frozenComponent->type == EnemyType::frozenImp)
 				{
-					//SetupEnemy(EnemyType::imp, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ);
+					SetupEnemy(EnemyType::imp, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ);
 				}
 				else if (frozenComponent->type == EnemyType::frozenEye)
 				{

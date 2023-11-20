@@ -35,5 +35,5 @@
 #include "Skynet\FrozenBehaviour.h"
 
 //Misc Combat Components
-#include "DamageOverTimeComponent.h"
+#include "DebuffComponent.h"
 #include "ProjectileComponent.h"

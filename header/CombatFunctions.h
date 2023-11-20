@@ -8,7 +8,7 @@ namespace Combat
 	void HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats/*, bool isCharged = false*/);
 
 	// Calculate damage (presumably of a DoT efect), but do NOT apply it
-	float CalculateDamage(const DamageOverTimeComponent* dot, EntityID& defender, const uint64_t& source);
+	float CalculateDamage(const DamageOverTime& dot, EntityID& defender, const uint64_t& source);
 
 	// Calculate damage (applying relics and such), but do NOT apply it
 	float CalculateDamage(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, const uint64_t& source);

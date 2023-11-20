@@ -278,6 +278,28 @@ void SplitBoss(EntityID& entity, const int& index)
 	RemoveEnemy(entity, index);
 }
 
+void BossShockwaveStart(EntityID& entity, const int& index)
+{
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxActive(entity, enemy->specialHitBoxID, true);//Set false somewhere
+	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, true);
+	SetHitboxRadius(entity, enemy->specialHitBoxID, 0.0f);
+}
+
+void BossShockwaveExpand(EntityID& entity, const int& index)
+{
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+	float radius = GetHitboxRadius(entity, enemy->specialHitBoxID);
+	float growthSpeed = 30.0f;
+	radius += GetDeltaTime() * growthSpeed;
+	SetHitboxRadius(entity, enemy->specialHitBoxID, radius);
+}
+void BossShockwaveEnd(EntityID& entity, const int& index)
+{
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxActive(entity, enemy->specialHitBoxID, false);//Set false somewhere
+	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
+}
 
 void RemoveEnemy(EntityID& entity, const int& index)
 {
@@ -392,10 +414,10 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	
 	EntityID acidHazard = registry.CreateEntity();
 	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(acidHazard, LoadModel("LavaPlaceholder.mdl"));
-	hazardModel->colorAdditiveRed = 0.1f;
-	hazardModel->colorAdditiveGreen = 0.9f;
-	hazardModel->colorAdditiveBlue = 0.2f;
-	hazardModel->gammaCorrection = 1.5f;
+	hazardModel->shared.colorAdditiveRed = 0.1f;
+	hazardModel->shared.colorAdditiveGreen = 0.9f;
+	hazardModel->shared.colorAdditiveBlue = 0.2f;
+	hazardModel->shared.gammaCorrection = 1.5f;
 	hazardModel->castShadow = false;
 
 	float scaling = 5.0f;

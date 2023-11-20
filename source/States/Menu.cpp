@@ -31,12 +31,8 @@ void Menu::Setup()
 	ResetRunTime();
 
 	//Setup stage to rotate around
-	EntityID stage = registry.CreateEntity();
-	
-	// Stage Transform
-	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
+	EntityID stage = SetUpStage(1.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f); //registry.CreateEntity();
+
 	// Stage POI
 	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
 	stageP->mode = POI_FORCE;
@@ -86,8 +82,7 @@ void Menu::Setup()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	// Stage Model
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage);
-	stageModel->model = LoadModel("PlaceholderScene.mdl");
+	ModelBonelessComponent* stageModel = registry.GetComponent<ModelBonelessComponent>(stage);
 	int nrHazards = 8;
 	switch (random)
 	{
@@ -98,9 +93,11 @@ void Menu::Setup()
 		CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-		stageModel->colorMultiplicativeRed = 0.75f;
-		stageModel->colorMultiplicativeGreen = 0.75f;
-		stageModel->colorMultiplicativeBlue = 0.75f;
+
+		// Shift color of map
+		stageModel->shared.colorMultiplicativeRed = 0.75f;
+		stageModel->shared.colorMultiplicativeGreen = 0.75f;
+		stageModel->shared.colorMultiplicativeBlue = 0.75f;
 		break;
 	case 1: //Lava
 		CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
@@ -109,39 +106,15 @@ void Menu::Setup()
 		CreatePointLight(lightholderThree, 0.35f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderForth, 0.35f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
-		stageModel->colorMultiplicativeRed = 1.4f;
-		stageModel->colorMultiplicativeGreen = 1.2f;
-		stageModel->colorMultiplicativeBlue = 0.8f;
-		stageModel->colorAdditiveRed = 0.1f;
+		// Shift color of map
+		stageModel->shared.colorMultiplicativeRed = 1.4f;
+		stageModel->shared.colorMultiplicativeGreen = 1.2f;
+		stageModel->shared.colorMultiplicativeBlue = 0.8f;
+		stageModel->shared.colorAdditiveRed = 0.1f;
 		
 		for (size_t i = 0; i < nrHazards; i++)
 		{
-			bool succeded = false;
-			while (!succeded)
-			{
-				float randX = (float)(rand() % 100) - 50.0f;
-				float randZ = (float)(rand() % 100) - 50.0f;
-				if (randX * randX + randZ * randZ > 80)
-				{
-					float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-					float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-					EntityID hazard = registry.CreateEntity();
-					ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-					hazardModel->gammaCorrection = 1.5f;
-					TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-					hazardTransform->positionX = randX;
-					hazardTransform->positionY = 0.1f;
-					hazardTransform->positionZ = randZ;
-					hazardTransform->scaleX = randScaleX;
-					hazardTransform->scaleY = 0.1f;
-					hazardTransform->scaleZ = randScaleZ;
-					hazardTransform->facingX = cosf((float)rand());
-					hazardTransform->facingZ = sinf((float)rand());
-					AddStaticHazard(hazard, HAZARD_LAVA);
-
-					succeded = true;
-				}
-			}
+			SetUpHazard(HAZARD_LAVA, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.5f);
 		}
 		break;
 	case 2://Ice
@@ -150,20 +123,16 @@ void Menu::Setup()
 		CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-		stageModel->colorMultiplicativeRed = 1.2f;
-		stageModel->colorMultiplicativeGreen = 1.0f;
-		stageModel->colorMultiplicativeBlue = 1.4f;
-		stageModel->colorAdditiveBlue = 0.1f;
+
+		// Shift stage color
+		stageModel->shared.colorMultiplicativeRed = 1.2f;
+		stageModel->shared.colorMultiplicativeGreen = 1.0f;
+		stageModel->shared.colorMultiplicativeBlue = 1.4f;
+		stageModel->shared.colorAdditiveBlue = 0.1f;
 		nrHazards = 1;//Big ice sheet
 		for (size_t i = 0; i < nrHazards; i++)
 		{
-			bool succeded = false;
-			float randX = (float)(rand() % 32) - 16.0f;
-			float randZ = (float)(rand() % 32) - 16.0f;
-			float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
-			float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
-			EntityID hazard = CreateStaticHazard(HAZARD_ICE, "LavaPlaceholder.mdl",
-				randX, 0.1f, randZ, randScaleX, 1.0f, randScaleZ, 0.1f, 0.1f, 0.5f, 0.5f, 0.5f, 0.5f, 1.25f, cosf((float)rand()), sinf((float)rand()));
+			SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
 		}
 		break;
 	default:
