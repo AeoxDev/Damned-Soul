@@ -192,7 +192,7 @@ int StateManager::Setup()
 	systems.push_back(new GeometryIndependentSystem());
 
 	//Damage Over Time (Misc Combat Systems?)
-	systems.push_back(new DamageOverTimeSystem());
+	systems.push_back(new DebuffSystem());
 
 	//CPU work that can affect rendering
 	systems.push_back(new StateSwitcherSystem());

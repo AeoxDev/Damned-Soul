@@ -94,7 +94,7 @@ class ParticleSystem : public System
 	bool Update();
 };
 
-class DamageOverTimeSystem : public System
+class DebuffSystem : public System
 {
 	bool Update();
 };

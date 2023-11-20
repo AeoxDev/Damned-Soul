@@ -25,7 +25,6 @@
 #include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\PowerStrike.h"
 
-
 	/*Defense*/
 #include "Relics\Defensive\Hearts\DemonHeart.h"
 #include "Relics\Defensive\Hearts\CorruptedHeart.h"
@@ -41,11 +40,13 @@
 #include "Relics\Defensive\BackShield.h"
 #include "Relics\Defensive\SecondWind.h"
 #include "Relics\Defensive\LastStand.h"
+
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
 #include "Relics\Gadget\LightningGod.h"
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
+#include "Relics\Gadget\IcyBlade.h"
 // End of include all relics
 
 #include "Relics\Utility\ML_RelicArray.h"
@@ -366,6 +367,14 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SOUL_SPEED::Initialize
+			),
+			RelicData(
+				/*Name*/		"Icy Blade",
+				/*Filepath*/	"RelicIcons\\Icy_Blade",
+				/*Description*/	ICY_BLADE::Description(),//"You gain a bonus to your speed equal to your souls",
+				/*Price*/		5,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	ICY_BLADE::Initialize
 			),
 			//ENDOF: GADGET RELICS
 		};
