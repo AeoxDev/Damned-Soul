@@ -172,6 +172,7 @@ bool SkeletonBehaviourSystem::Update()
 	StatComponent* playerStats = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
 	EnemyComponent* enmComp = nullptr;
+	DebuffComponent* debuff = nullptr;
 
 	bool updateGridOnce = true;
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));// (PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
@@ -184,6 +185,14 @@ bool SkeletonBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+
+		
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			continue; // frozen, won't do behavior stuff
+		}
+
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
 		{

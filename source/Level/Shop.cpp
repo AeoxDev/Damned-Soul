@@ -17,7 +17,7 @@
 #define SHOP_RELIC_WINDOWS (3)
 #define SHOP_SINGLE_WINDOWS (6)
 
-void CreateUIRelics(UIComponent& uiComp, UIRelicWindowComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
+void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
 {
 	ML_Array<float, 2> xPos;
 	xPos[0] = pos.x - 0.05f;
@@ -56,18 +56,18 @@ void CreateRelicWindows()
 
 	const Relics::RELIC_TYPE const type[SHOP_RELIC_WINDOWS] =
 	{
-		Relics::RELIC_UNTYPED,
-		Relics::RELIC_UNTYPED,
-		Relics::RELIC_UNTYPED
+		Relics::RELIC_OFFENSE,
+		Relics::RELIC_DEFENSE,
+		Relics::RELIC_GADGET
 	};
 
 	for (int i = 0; i < SHOP_RELIC_WINDOWS; i++)
 	{
 		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
-		uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i]);
+		uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-		UIRelicWindowComponent* uiRelicWindow = registry.AddComponent<UIRelicWindowComponent>(relicWindow);
+		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
 		CreateUIRelics(*uiElement, *uiRelicWindow, type[i], positions[i]);
 
@@ -146,9 +146,9 @@ void CreateSingleWindows()
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 
 		if (i == 4)
-			uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i]);
+			uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		else
-			uiElement->Setup("", texts[i], positions[i]);
+			uiElement->Setup("", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 		uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
 
@@ -156,7 +156,7 @@ void CreateSingleWindows()
 			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 		if (i == 1)
-			registry.AddComponent<UIRerollComponent>(relicWindow);
+			registry.AddComponent<UIShopRerollComponent>(relicWindow);
 		else
 			registry.AddComponent<UIShopButtonComponent>(relicWindow);
 
@@ -181,7 +181,7 @@ void LoadShop()
 	EntityID impText = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("TempShopTitle", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.8f });
+	uiTitle->Setup("TempShopTitle", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.8f }, DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	uiTitle->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
@@ -191,7 +191,7 @@ void LoadShop()
 	CreateSingleWindows();
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("TempRelicHolder", "\n\nHello There", { 0.3f, 0.1f }, { 2.0f, 2.0f });
+	uiImpText->Setup("TempRelicHolder", "Hello There", { 0.3f, -0.1f }, { 2.0f, 2.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopImpComponent>(impText);

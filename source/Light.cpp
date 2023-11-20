@@ -230,7 +230,6 @@ void Light::SetColorHue(const float& multiplicativeRed, const float& multiplicat
         lightShaderBuffer.colorAdditive.y = additiveGreen;
         lightShaderBuffer.colorAdditive.z = additiveBlue;
         updateBuffer = true;
-        UpdateLight();
     }   
 }
 

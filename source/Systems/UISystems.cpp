@@ -53,9 +53,9 @@ bool UIRenderSystem::Update()
 bool UIHealthSystem::Update()
 {
 	int counter = 0;
-	for (auto entity : View<UIHealthComponent, UIComponent, StatComponent>(registry))
+	for (auto entity : View<UIGameHealthComponent, UIComponent, StatComponent>(registry))
 	{
-		auto health = registry.GetComponent<UIHealthComponent>(entity);
+		auto health = registry.GetComponent<UIGameHealthComponent>(entity);
 		auto uiElement = registry.GetComponent<UIComponent>(entity);
 
 		auto stats = registry.GetComponent<StatComponent>(entity);
@@ -165,7 +165,7 @@ bool UIShopSystem::Update()
 				uiElement->m_Texts[i].baseUI.SetVisibility(false);
 		}
 
-		for (auto entity : View<UIRelicWindowComponent>(registry))
+		for (auto entity : View<UIShopRelicComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 
@@ -180,7 +180,7 @@ bool UIShopSystem::Update()
 				uiElement->m_Texts[i].baseUI.SetVisibility(false);
 		}
 
-		for (auto entity : View<UIRerollComponent>(registry))
+		for (auto entity : View<UIShopRerollComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 
@@ -242,7 +242,7 @@ bool UIShopSystem::Update()
 				uiElement->m_Texts[i].baseUI.SetVisibility(true);
 		}
 
-		for (auto entity : View<UIRelicWindowComponent>(registry))
+		for (auto entity : View<UIShopRelicComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 
@@ -257,7 +257,7 @@ bool UIShopSystem::Update()
 				uiElement->m_Texts[i].baseUI.SetVisibility(true);
 		}
 
-		for (auto entity : View<UIRerollComponent>(registry))
+		for (auto entity : View<UIShopRerollComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 
@@ -295,14 +295,12 @@ bool UIShopSystem::Update()
 bool UIRunTime::Update()
 {
 
-	for (auto entity : View<UIRunTimeComponent, UIComponent>(registry))
+	for (auto entity : View<UIGameTimeComponent, UIComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIRunTimeComponent* runTime = registry.GetComponent<UIRunTimeComponent>(entity);
+		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
 
-		runTime->value = GetSeconds();
-
-		uiElement->m_BaseText.SetText(("Time: " + std::to_string(runTime->value)).c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+		uiElement->m_BaseText.SetText(GetDigitalMinuteClock().c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 	return true;
 }

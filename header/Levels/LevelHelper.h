@@ -2,6 +2,11 @@
 
 #include "EntityFramework.h"
 #include "EnemyType.h"
+#include "StaticHazardComponent.h"
+
+EntityID SetUpStage(const float rm, const float gm, const float bm, const float ra, const float ga, const float ba, const float gamma);
+
+EntityID SetUpHazard(const StaticHazardType& type, const float scale, const float ra, const float ga, const float ba, const float rm, const float gm, const float bm, const float gamma);
 
 EntityID SetupEnemy(EnemyType eType, float positionX = 0.f, float positionY = 0.f, float positionZ = 0.f, float mass = 6969.f,
 	float health = 6969.f, float moveSpeed = 6969.f, float damage = 6969.f, float attackSpeed = 6969.f, int soulWorth = 6969, float scaleX = 1.f, 
@@ -18,3 +23,5 @@ void LoadPlayerSounds();
 void ReloadPlayerNonGlobals();
 
 EntityID RandomPlayerEnemy(EnemyType enemyType);
+
+void SetScoreboardUI(EntityID stage);

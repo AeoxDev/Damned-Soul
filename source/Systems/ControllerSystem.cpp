@@ -335,7 +335,7 @@ bool ControllerSystem::Update()
 			{
 				transform->mass += 100.0f;
 				player->killingSpree = 10000;
-				player->UpdateSouls(1000000);
+				player->UpdateSouls(1000);
 				hitbox->circleHitbox[2].radius += 100.0f;
 			}
 			else

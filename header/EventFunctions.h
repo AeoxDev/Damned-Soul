@@ -41,6 +41,10 @@ void CreatePortal(EntityID& entity, const int& index);
 void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
+void BossShockwaveStart(EntityID& entity, const int& index);
+void BossShockwaveExpand(EntityID& entity, const int& index);
+void BossShockwaveEnd(EntityID& entity, const int& index);
+
 
 //Enemy Combat functions
 void EnemyAttackFlash(EntityID& entity, const int& index);
