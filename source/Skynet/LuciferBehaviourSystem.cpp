@@ -55,7 +55,7 @@ void CombatBehaviour(LuciferBehaviour* sc, StatComponent* enemyStats, StatCompon
 	sc->attackTimer += GetDeltaTime();// *animComp->aAnimTimeFactor;
 	sc->goalDirectionX = ptc->positionX - ltc->positionX;
 	sc->goalDirectionZ = ptc->positionZ - ltc->positionZ;
-
+	
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
@@ -154,6 +154,8 @@ bool LuciferBehaviourSystem::Update()
 				luciferComponent->chargeBehevCounter += GetDeltaTime(); //just count charge duration stuff
 			}
 
+			
+
 			//time to stop charging?
 			if (luciferComponent->chargeBehevCounter >= luciferComponent->chargeBehevCounterTiming || enemyStats->GetHealth() <= luciferComponent->limitHP)
 			{
@@ -182,14 +184,13 @@ bool LuciferBehaviourSystem::Update()
 				}
 			}
 
-			if (luciferComponent->attackStunDurationCounter <= luciferComponent->attackStunDuration)
+			if (luciferComponent->attackStunDurationCounter <= luciferComponent->attackStunDuration) 
 			{
 				// do nothing, stand like a bad doggo and be ashamed
 				//Elliot: When finished, reset attack timer and hitbox
 				luciferComponent->attackTimer = 0.0f;
 				//enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
 				//Turn yellow for opening:
-				
 				
 				continue;
 			}
@@ -198,7 +199,6 @@ bool LuciferBehaviourSystem::Update()
 				SetHitboxActive(enemyEntity, luciferComponent->attackHitboxID, false);
 				SetHitboxCanDealDamage(enemyEntity, luciferComponent->attackHitboxID, false);
 				
-
 			}
 
 			if (luciferComponent->nextSpecialIsSpawn) // SPAWN ENEMIES
