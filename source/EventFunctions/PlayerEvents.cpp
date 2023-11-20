@@ -79,7 +79,6 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID);
-			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true); //Dash hitbox
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -87,7 +86,10 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 
 		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
 
-		//SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
+		if (playerComp->isAttacking)
+		{
+			SetHitboxActive(entity, playerComp->attackHitboxID, false);
+		}
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -185,6 +187,7 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	player->timeSinceLastAttack = 0.0f;
 	player->isAttacking = false;
 	player->currentCharge = 0.0f;
+	player->hasActivatedHitbox = false; //Reset
 
 	if (registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
 		registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
@@ -224,7 +227,7 @@ void PlayerAttack(EntityID& entity, const int& index)
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
 		
-	else if (animTime >= HITBOX_START_TIME) //&& false == player->hasActivatedHitbox)
+	else if (animTime >= HITBOX_START_TIME && player->hasActivatedHitbox == false) //hasActivatedHitbox ensures we only enable once, now for dash-cancel reasons
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
@@ -233,8 +236,8 @@ void PlayerAttack(EntityID& entity, const int& index)
 	{
 		float softCollisionRadius = GetHitboxRadius(entity, 1);
 		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);
-		float width = (.4f + std::min(.5f, hitboxTime * 3.f)) * softCollisionRadius * HITBOX_SCALE; //.2f changed to .4f
-		float depth = (1.2f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE;
+		float width = (.03f + std::min(.5f, hitboxTime * 3.f)) * softCollisionRadius * HITBOX_SCALE; //.2f changed to .1f
+		float depth = (0.3f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE;
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
 
@@ -242,13 +245,13 @@ void PlayerAttack(EntityID& entity, const int& index)
 		// X
 		corners.cornersX[0] = -width;
 		corners.cornersX[1] = width;
-		corners.cornersX[2] = width;
-		corners.cornersX[3] = -width;
+		corners.cornersX[2] = 2.0f * width;
+		corners.cornersX[3] = -2.0 * width;
 		// Z
 		corners.cornersZ[0] = -2.f * depth;
 		corners.cornersZ[1] = -2.f * depth;
-		corners.cornersZ[2] = 0.5f;
-		corners.cornersZ[3] = 0.5f;
+		corners.cornersZ[2] = -0.5f;
+		corners.cornersZ[3] = -0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
 		//SetHitboxRadius(entity, player->attackHitboxID, (anim->aAnimTime - 0.5f) * 5);
