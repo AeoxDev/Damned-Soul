@@ -100,6 +100,7 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, true);
+	SetHitboxActive(entity, playerComp->attackHitboxID, true);
 }
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
@@ -170,6 +171,7 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 {
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(entity);
 	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
+	SetHitboxActive(entity, playerComp->attackHitboxID, false);
 }
 
 void PlayerEndAttack(EntityID& entity, const int& index)

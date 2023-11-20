@@ -87,7 +87,7 @@ void sortData(char* data, const uint32_t count, const size_t pairSize)
 
 const bool ML_ComponentMap::initialized() const
 {
-	return ((m_tSize != 0) && (m_capacity != 0));
+	return ((m_tSize != 0) && (m_capacity != 0) && (false == m_data.IsNullptr()));
 }
 
 

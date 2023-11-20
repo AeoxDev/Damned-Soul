@@ -115,32 +115,6 @@ void Menu::Setup()
 		for (size_t i = 0; i < nrHazards; i++)
 		{
 			SetUpHazard(HAZARD_LAVA, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.5f);
-			/*bool succeded = false;
-			while (!succeded)
-			{
-				float randX = (float)(rand() % 100) - 50.0f;
-				float randZ = (float)(rand() % 100) - 50.0f;
-				if (randX * randX + randZ * randZ > 80)
-				{
-					float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-					float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-					EntityID hazard = registry.CreateEntity();
-					ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-					hazardModel->gammaCorrection = 1.5f;
-					TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-					hazardTransform->positionX = randX;
-					hazardTransform->positionY = 0.1f;
-					hazardTransform->positionZ = randZ;
-					hazardTransform->scaleX = randScaleX;
-					hazardTransform->scaleY = 0.1f;
-					hazardTransform->scaleZ = randScaleZ;
-					hazardTransform->facingX = cosf((float)rand());
-					hazardTransform->facingZ = sinf((float)rand());
-					AddStaticHazard(hazard, HAZARD_LAVA);
-
-					succeded = true;
-				}
-			}*/
 		}
 		break;
 	case 2://Ice
@@ -159,33 +133,6 @@ void Menu::Setup()
 		for (size_t i = 0; i < nrHazards; i++)
 		{
 			SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
-			/*bool succeded = false;
-			float randX = (float)(rand() % 32) - 16.0f;
-			float randZ = (float)(rand() % 32) - 16.0f;
-			float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
-			float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
-			EntityID hazard = registry.CreateEntity();
-			ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-			hazardModel->shared.colorAdditiveRed = 0.1f;
-			hazardModel->shared.colorAdditiveGreen = 0.1f;
-			hazardModel->shared.colorAdditiveBlue = 0.5f;
-			hazardModel->shared.colorMultiplicativeRed = 0.5f;
-			hazardModel->shared.colorMultiplicativeGreen = 0.5f;
-			hazardModel->shared.colorMultiplicativeBlue = 1.5f;
-			hazardModel->shared.gammaCorrection = 1.5f;
-			hazardModel->castShadow = false;
-			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-			hazardTransform->positionX = randX;
-			hazardTransform->positionY = 0.4f;
-			hazardTransform->positionZ = randZ;
-			hazardTransform->scaleX = randScaleX;
-			hazardTransform->scaleY = 1.0f;
-			hazardTransform->scaleZ = randScaleZ;
-			hazardTransform->facingX = cosf((float)rand());
-			hazardTransform->facingZ = sinf((float)rand());
-			AddStaticHazard(hazard, HAZARD_ICE);
-
-			succeded = true;*/
 		}
 		break;
 	default:

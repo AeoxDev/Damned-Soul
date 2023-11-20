@@ -8,6 +8,7 @@
 #include <assert.h>
 
 ID3D11Buffer* bfr_NULL = nullptr;
+CB_IDX idx = -1;
 
 CB_IDX CreateConstantBuffer(const void* data, const size_t size)
 {

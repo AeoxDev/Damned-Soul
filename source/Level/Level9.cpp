@@ -34,7 +34,7 @@ void LoadLevel9()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
+	/*SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
 	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
@@ -48,7 +48,8 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
 	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);*/
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 

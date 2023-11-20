@@ -1,11 +1,13 @@
 #ifndef RENDER_HEADER
 #define RENDER_HEADER
 
+
 /*BASE INFO*/
 cbuffer WorldMatrix : register(b0)
 {
     matrix world;
     matrix worldNormal;
+
 }
 
 cbuffer CameraBuffer : register(b1)

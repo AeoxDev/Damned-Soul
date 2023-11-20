@@ -8,10 +8,10 @@
 #include "ParticleComponent.h"
 #include "Particles.h"
 #include "Levels\LevelHelper.h"
+#include "EventFunctions.h"
 
 
-
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, LuciferBehaviour* lc, TransformComponent* ltc, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, LuciferBehaviour* lc, TransformComponent* ltc, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool move)
 {
 	if (path)
 	{
@@ -41,9 +41,11 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 
 	
-	
-	ltc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	ltc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+	if (move)
+	{
+		ltc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+		ltc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+	}
 }
 
 
@@ -89,7 +91,7 @@ bool LuciferBehaviourSystem::Update()
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));//(PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
 
 
-	for (auto enemyEntity : View<LuciferBehaviour, TransformComponent, StatComponent, EnemyComponent, AnimationComponent>(registry))
+	for (auto enemyEntity : View<LuciferBehaviour, TransformComponent, StatComponent, AnimationComponent>(registry))
 	{
 		luciferComponent = registry.GetComponent<LuciferBehaviour>(enemyEntity);
 		luciferTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
@@ -99,47 +101,86 @@ bool LuciferBehaviourSystem::Update()
 		
 		
 
+
 		//Find a player to kill.
-		if (enmComp->lastPlayer.index == -1)
+		if (enmComp != nullptr)
 		{
-			for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
-			{
-				if (enemyEntity.index == playerEntity.index)
-				{
-					continue;
-				}
-				playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
-				playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
-				playerStats = registry.GetComponent< StatComponent>(playerEntity);
-				enmComp->lastPlayer = playerEntity;
-				if (rand() % 2)
-				{
-					break;
-				}
-			}
-		}
-		else
-		{
-			playerComponent = registry.GetComponent<PlayerComponent>(enmComp->lastPlayer);
-			playerTransformCompenent = registry.GetComponent<TransformComponent>(enmComp->lastPlayer);
-			playerStats = registry.GetComponent< StatComponent>(enmComp->lastPlayer);
-			if (playerComponent == nullptr)
+			if (enmComp->lastPlayer.index == -1)
 			{
 				for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 				{
-					enmComp->lastPlayer.index = -1;
+					if (enemyEntity.index == playerEntity.index)
+					{
+						continue;
+					}
+					playerComponent = registry.GetComponent<PlayerComponent>(playerEntity);
+					playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
+					playerStats = registry.GetComponent< StatComponent>(playerEntity);
+					enmComp->lastPlayer = playerEntity;
+					if (rand() % 2)
+					{
+						break;
+					}
+				}
+			}
+			else
+			{
+				playerComponent = registry.GetComponent<PlayerComponent>(enmComp->lastPlayer);
+				playerTransformCompenent = registry.GetComponent<TransformComponent>(enmComp->lastPlayer);
+				playerStats = registry.GetComponent< StatComponent>(enmComp->lastPlayer);
+				if (playerComponent == nullptr)
+				{
+					for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
+					{
+						enmComp->lastPlayer.index = -1;
+					}
 				}
 			}
 		}
 
 		//ACTUAL BEHAVIOUR
-		if (luciferTransformComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyAnim != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
+		if (luciferTransformComponent != nullptr && playerTransformCompenent != nullptr && enemyAnim != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			ML_Vector<Node> finalPath;
 			luciferComponent->updatePathCounter += GetDeltaTime();
-			luciferComponent->spawnCounter += GetDeltaTime();
+			
 			float distance = Calculate2dDistance(luciferTransformComponent->positionX, luciferTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			luciferComponent->attackStunDurationCounter += GetDeltaTime();
+
+
+			//charging?
+			if (luciferComponent->isChargeCharge)
+			{
+				luciferComponent->chargeBehevCounter += GetDeltaTime(); //just count charge duration stuff
+			}
+
+			//time to stop charging?
+			if (luciferComponent->chargeBehevCounter >= luciferComponent->chargeBehevCounterTiming || enemyStats->GetHealth() <= luciferComponent->limitHP)
+			{
+				luciferComponent->isChargeCharge = false;
+				luciferComponent->chargeBehevCounter = 0.f;
+				luciferComponent->nextSpecialIsSpawn = true;
+				luciferComponent->isDazed = true;
+				luciferComponent->limitHP = 0.f;
+			}
+
+			// are we dazed? dazed means standing still like an idiot
+			if (luciferComponent->isDazed)
+			{
+				luciferComponent->dazeCounter += GetDeltaTime();
+				if (luciferComponent->dazeCounter >= luciferComponent->dazeTimeAmount)
+				{
+					luciferComponent->isDazed = false;
+					luciferComponent->dazeCounter = 0.f;
+				}
+				else
+				{
+					SetHitboxActive(enemyEntity, luciferComponent->attackHitboxID, false); // to not make player rage
+					SetHitboxCanDealDamage(enemyEntity, luciferComponent->attackHitboxID, false);
+					continue; // skip, do nothing. Just stand still and be dazed
+					//maybe play dazed anymation in this scope?
+				}
+			}
 
 			if (luciferComponent->attackStunDurationCounter <= luciferComponent->attackStunDuration)
 			{
@@ -148,21 +189,22 @@ bool LuciferBehaviourSystem::Update()
 				luciferComponent->attackTimer = 0.0f;
 				//enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
 				//Turn yellow for opening:
-
+				
+				
 				continue;
 			}
 			else//Elliot: Turn off attack hitbox to not make player rage.
 			{
 				SetHitboxActive(enemyEntity, luciferComponent->attackHitboxID, false);
 				SetHitboxCanDealDamage(enemyEntity, luciferComponent->attackHitboxID, false);
+				
+
 			}
 
-
-
-			if (luciferComponent->spawnCounter >= luciferComponent->spawnTiming) // SPAWN ENEMIES
+			if (luciferComponent->nextSpecialIsSpawn) // SPAWN ENEMIES
 			{
+				luciferComponent->nextSpecialIsSpawn = false;
 				//spawn an ice enemy
-				luciferComponent->spawnCounter = 0.f;
 				int levelOfDamage = 0;
 
 				if (enemyStats->GetHealth() > enemyStats->GetMaxHealth() / 3.f * 2.f) //least hurt, little power
@@ -180,15 +222,101 @@ bool LuciferBehaviourSystem::Update()
 				CalculateGlobalMapValuesHellhound(valueGrid);
 				for (int i = 0; i < levelOfDamage; i++)
 				{
-					TransformComponent tran = FindRetreatTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
 					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ); 
+					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ);
+					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ);
+				}
+				continue;
+			}
+			else if (luciferComponent->isChargeCharge  == false && luciferComponent->isJumpJump == false)
+			{
+				luciferComponent->chargeBehevCounter = 0.f;
+				int whichAttack = rand() % 10 + 1; // 1 - 10
+				if (whichAttack > 3 ) //  charge run
+				{
+					luciferComponent->isChargeCharge = true;
+					// runs towards the player dealing
+					// damage if player is close.
+					// Ends after 10 seconds or
+					// if taken enough damage
+
+					float percent = enemyStats->GetMaxHealth() / 5.f;
+					luciferComponent->limitHP = enemyStats->GetMaxHealth();
+					while (luciferComponent->limitHP >= enemyStats->GetHealth())
+					{
+						luciferComponent->limitHP = luciferComponent->limitHP - percent;
+					}
+					
+				}
+				else // jump jump
+				{
+					luciferComponent->isJumpJump = true;
+					luciferComponent->flyCounter = 0.f;
+					luciferComponent->hasLandingPos = false;
+					// jumps out of the playspace and lands
+					// in a safe spot close to the player and 
+					// sends out a large shockwave 
+
+					//registry.RemoveComponent<EnemyComponent>(enemyEntity); // this makes it immune to damage
+					//SetHitboxCanTakeDamage(enemyEntity, luciferComponent->hitBoxID, false);
+					SetHitboxActive(enemyEntity, 0, false);
+					SetHitboxActive(enemyEntity, 1, false);
+					SetHitboxActive(enemyEntity, 2, false);
+				}
+				//after either one of these, the boss goes into a daze and then summons enemies!
+			}
+			else if (luciferComponent->isJumpJump) // this is the fly up in air thing. jump jump
+			{
+				luciferComponent->flyCounter += GetDeltaTime();
+				if (luciferComponent->flyCounter <= luciferComponent->flyTime) // fly up in the air
+				{
+					luciferTransformComponent->positionY += enemyStats->GetSpeed() * 7.f * GetDeltaTime();
+				}
+				else  // fly down from air
+				{
+					if (playerComponent != nullptr && updateGridOnce && luciferComponent->hasLandingPos == false)
+					{
+						updateGridOnce = false;
+						CalculateGlobalMapValuesLuciferJump(valueGrid); //generate a gridmap
+						if (valueGrid->cost[0][0] == -69.f)
+						{
+							updateGridOnce = true; //illegal grid
+							continue;
+						}
+						TransformComponent landingPosition = FindRetreatTile(valueGrid, playerTransformCompenent, 10.f, 20.f); // where to land
+						luciferComponent->hasLandingPos = true;
+						luciferTransformComponent->positionX = landingPosition.positionX; //teleport in the air basically
+						luciferTransformComponent->positionZ = landingPosition.positionZ; // happens once
+					}
+					if (luciferTransformComponent->positionY > 0.f) // still in the air
+					{
+						luciferTransformComponent->positionY -= enemyStats->GetSpeed() * 12.f * GetDeltaTime();
+					}
+					else // on ground or below ground, set to ground and SHOCKWAVE with timed event
+					{
+						//reset variables to beheaviour. No more jump, get dazed
+						luciferComponent->isJumpJump = false;
+						luciferComponent->isDazed = true;
+						SetHitboxActive(enemyEntity, 0, true);
+						SetHitboxActive(enemyEntity, 1, true);
+						SetHitboxActive(enemyEntity, 2, true);
+						luciferTransformComponent->positionY = 0.f;
+						luciferComponent->nextSpecialIsSpawn = true;
+
+
+						//shockwave here
+						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, 4.0f, BossShockwaveEnd, 0, 1);
+					}
 				}
 			}
 			else if (distance < luciferComponent->meleeDistance || luciferComponent->attackTimer > 0.0f) // melee attack
 			{
 				CombatBehaviour(luciferComponent, enemyStats, playerStats, playerTransformCompenent, luciferTransformComponent, enemyEntity, enemyAnim);
 			}
-			else // chase behaviour
+			else if(luciferComponent->isChargeCharge) // chase behaviour or jump jump
 			{
 				if (luciferComponent->updatePathCounter >= luciferComponent->updatePathLimit)
 				{
@@ -199,7 +327,7 @@ bool LuciferBehaviourSystem::Update()
 						CalculateGlobalMapValuesHellhound(valueGrid);
 						if (valueGrid->cost[0][0] == -69.f)
 						{
-							updateGridOnce = true;
+							updateGridOnce = true; //illegal grid
 							continue;
 						}
 					}
@@ -228,7 +356,8 @@ bool LuciferBehaviourSystem::Update()
 					}
 				}
 
-				ChaseBehaviour(playerComponent, playerTransformCompenent, luciferComponent, luciferTransformComponent, enemyStats, enemyAnim, luciferComponent->dirX, luciferComponent->dirZ, luciferComponent->followPath);
+				ChaseBehaviour(playerComponent, playerTransformCompenent, luciferComponent, luciferTransformComponent, enemyStats, 
+					enemyAnim, luciferComponent->dirX, luciferComponent->dirZ, luciferComponent->followPath, true);
 			}
 
 
@@ -237,10 +366,11 @@ bool LuciferBehaviourSystem::Update()
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
+			if(enmComp != nullptr)
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 			//IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 		}
-
+		TransformDecelerate(enemyEntity);
 	}
 
 	// pop the value map

@@ -174,5 +174,60 @@ bool RenderSystem::Update()
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
 	UnsetShadowmap(false);
+
+	//Do the debugHitbox
+#ifdef _DEBUG
+	SetTopology(LINESTRIP);
+	SetVertexShader(GetHitboxVisVertexShader());
+	SetPixelShader(GetHitboxVisPixelShader());
+	SetRasterizerState(GetHitboxRasterizerState());
+	SetConstantBuffer(GetHitboxConstantBuffer(), BIND_VERTEX, 2);
+	//Do the loop
+	for (auto entity : View<TransformComponent, HitboxVisualComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		HitboxVisualComponent* hitboxV = registry.GetComponent<HitboxVisualComponent>(entity);
+		for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			if (hitboxV->GetNrVertices(entity, i) > 0)
+			{
+				hitboxV->UpdateHitboxConstantBuffer(entity, i);
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.6f, tc->positionZ + tc->offsetZ,
+					tc->facingX, tc->facingY, -tc->facingZ,
+					1.0f, 1.0f, 1.0f,
+					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+				int vertices = hitboxV->GetNrVertices(entity, i);
+				if (vertices > 0)
+				{
+					Render(vertices);
+				}
+			}
+			
+		}
+		for (size_t i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
+		{
+			if (hitboxV->GetNrVertices(entity, i) > 0)
+			{
+				hitboxV->UpdateHitboxConstantBuffer(entity, i);
+				SetWorldMatrix(tc->positionX + tc->offsetX, 0.6f, tc->positionZ + tc->offsetZ,
+					tc->facingX, tc->facingY, -tc->facingZ,
+					tc->scaleX, tc->scaleY, tc->scaleZ,
+					SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+
+				int vertices = hitboxV->GetNrVertices(entity, i);
+				if (vertices > 0)
+				{
+					Render(vertices);
+				}
+			}
+			
+		}
+		
+		
+	}
+#endif // _DEBUG
+
+	
 	return true;
 }

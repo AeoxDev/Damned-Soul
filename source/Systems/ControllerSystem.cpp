@@ -11,9 +11,7 @@
 bool ControllerSystem::Update()
 {
 	//Controller for player during play
-	if ((keyState[SCANCODE_SPACE] == pressed || keyState[SCANCODE_W] == pressed
-		|| keyState[SCANCODE_A] == pressed || keyState[SCANCODE_S] == pressed
-		|| keyState[SCANCODE_D] == pressed || mouseButtonPressed[MouseButton::left] == pressed
+	if ((keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[MouseButton::left] == pressed
 		|| mouseButtonPressed[MouseButton::right] == pressed))
 	{
 		if (!(currentStates & InMainMenu) && Camera::InCutscene() && !(currentStates & InCredits) && !(currentStates & InSettings))
@@ -43,7 +41,7 @@ bool ControllerSystem::Update()
 		}
 	}
 #ifdef _DEBUG
-	if (keyInput[SCANCODE_LCTRL] == down && (currentStates & InMainMenu) == true)
+	if (keyInput[SCANCODE_LCTRL] == down)
 	{
 		if (keyState[SCANCODE_1] == pressed)
 		{
@@ -60,6 +58,71 @@ bool ControllerSystem::Update()
 		else if (keyState[SCANCODE_4] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
+		}
+	}
+	if (keyInput[SCANCODE_H] == down)
+	{
+		if (keyState[SCANCODE_A] == pressed)
+		{
+			for (size_t i = 0; i < 8; i++)
+			{
+				hitboxVisualizerActive[i] = true;
+				for (auto entity : View<HitboxComponent>(registry))
+				{
+					VisualizeHitbox(entity, i);
+				}
+			}
+		}
+		if (keyState[SCANCODE_0] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 0); 
+			}
+			hitboxVisualizerActive[0] = true;
+		}
+		else if (keyState[SCANCODE_1] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 1);
+			}
+			hitboxVisualizerActive[1] = true;
+		}
+		else if (keyState[SCANCODE_2] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 2);
+			}
+			hitboxVisualizerActive[2] = true;
+		}
+		else if (keyState[SCANCODE_3] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 3);
+			}
+			hitboxVisualizerActive[3] = true;
+		}
+		else if (keyState[SCANCODE_4] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 4);
+			}
+			hitboxVisualizerActive[4] = true;
+		}
+		else if (keyState[SCANCODE_LALT] == pressed || keyState[SCANCODE_LSHIFT] == pressed || keyState[SCANCODE_LCTRL] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				StopVisualizeHitbox(entity);
+			}
+			for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT *2; i++)
+			{
+				hitboxVisualizerActive[i] = false;
+			}
 		}
 	}
 #endif // _DEBUG
