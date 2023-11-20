@@ -68,11 +68,8 @@ void LoadLevel1()
 		UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
 	}
-	
-	SetScoreboardUI(stage);
 
 	stateManager.stage = stage;
-
 	SetInPlay(true);
 	//AddTimedEventComponentStart(cutsceneEnemy, 0.0f, Stage1IntroScene, 0, 1);
 	Stage1IntroScene(cutsceneEnemy, 0);

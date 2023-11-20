@@ -54,13 +54,12 @@ void LoadLevel9()
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
-	//SetScoreboardUI(stage);
+	SetScoreboardUI(stage);
 
 	//Mouse
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
-
 
 	//Light
 	float redLight = 0.05f;

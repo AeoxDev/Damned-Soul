@@ -79,6 +79,7 @@ namespace EntityGlobals
 	{
 		//Static variables are stored separately for each different template, so compCount only gets incremented whenever GetId() is called on a NEW type of component
 		static int compId = compCount++;
+		assert(compCount < MAX_COMPONENTS);
 		return compId;
 	}
 
