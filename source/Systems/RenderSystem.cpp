@@ -155,12 +155,12 @@ void RenderSkyPlane()
 		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 
 		// If this is the first loop, set the blend state as the last thing we do
-		if (i == 0)
-			SetBlendState(m_skyBlend);
+		//+if (i == 0)
+			//SetBlendState(m_skyBlend);
 
 	}
 	UnsetConstantBuffer(BIND_VERTEX, 3);
-	UnsetBlendState();
+	//UnsetBlendState();
 }
 
 bool RenderSystem::Update()

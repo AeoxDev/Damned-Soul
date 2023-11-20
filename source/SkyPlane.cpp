@@ -39,7 +39,7 @@ void InitializeSky()
 
 	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
 	baseTComp.positionX = camPos.x; baseTComp.positionY = camPos.y; baseTComp.positionZ = camPos.z;
-	baseTComp.offsetY = -247.f; baseTComp.offsetZ = 330.f; 
+	baseTComp.offsetY = -247.f; baseTComp.offsetZ = 350.f; 
 	baseTComp.scaleX = 4.0f; baseTComp.scaleY = 2.5f;
 	baseTComp.facingY = 0.75f;
 
@@ -51,7 +51,7 @@ void InitializeSky()
 
 	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
 	islandTComp.positionX = camPos.x; islandTComp.positionY = camPos.y; islandTComp.positionZ = camPos.z;
-	islandTComp.offsetY = -247.f; islandTComp.offsetZ = 270.f;
+	islandTComp.offsetY = -247.f; islandTComp.offsetZ = 250.f;
 	islandTComp.scaleX = 4.0f; islandTComp.scaleY = 2.5f;
 	islandTComp.facingY = 0.75f;
 
