@@ -644,19 +644,19 @@ void SetScoreboardUI(EntityID stage)
 		"Spent Souls: ", //index 5
 		"Total Souls: ", //index 6
 
-		"Damage Done: ", //index 7
+		"Damage Done: (WIP)", //index 7
 
 		//"Strongest Hit Dealt:",
 
-		"Damage Taken: ", //index 8
+		"Damage Taken: (WIP)", //index 8
 
 		//"Strongest Hit Taken:",
 
-		"Healing Done: ", //index 9
+		"Healing Done: (WIP)", //index 9
 
 		//"Strongest Heal Done:"
 
-		"Score: " //index 10
+		"Score: (WIP)" //index 10
 	};
 
 	for (int i = 0; i < amount; i++)

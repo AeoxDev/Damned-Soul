@@ -7,6 +7,8 @@
 #include "MemLib/ML_ComponentMap.hpp"
 #include "EntityID.h"
 
+#include <assert.h>
+
 /*
 	//HOW TO USE (Basic version):
 
