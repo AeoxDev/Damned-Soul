@@ -4,10 +4,8 @@
 #include "Skynet\BehaviourHelper.h"
 #include "DeltaTime.h"
 #include "UI/UIRenderer.h"
+#include "EventFunctions.h"
 #include <random>
-
-
-
 
 
 
@@ -111,9 +109,20 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 	ANIM_BRANCHLESS(animComp);
 
+	//Niclas was here
+	if (sc->attackTimer >= enemyStats->GetAttackSpeed() / 2.0f) //color blue after halv the attack animation-ish
+	{
+		ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(ent);
+		skelel->colorAdditiveBlue = 5.0f;
+	}
+
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
+		//Niclas peaces out
+		ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(ent);
+		skelel->colorAdditiveBlue = skelel->baseColorAdditiveBlue;
+
 		//Set hitbox active here.
 		//Elliot's request: Add Skeleton attack hitbox instead of define
 		SetHitboxActive(ent, sc->attackHitboxID, true);
@@ -185,7 +194,6 @@ bool SkeletonBehaviourSystem::Update()
 				}
 			}
 		}
-
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			ML_Vector<Node> finalPath;
@@ -195,33 +203,49 @@ bool SkeletonBehaviourSystem::Update()
 #endif // TEST
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
+			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
 			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
 			{
-				// do nothing, stand like a bad doggo and be ashamed
-				//Elliot: When finished, reset attack timer and hitbox
-				skeletonComponent->attackTimer = 0.0f;
-				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
-				if (enemyAnim->aAnimTime > 0.8f)
+				//Be dazed. Do the stunned behaviour
+			}
+			else if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f)
+			{
+				//CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
+				// Elliot Combat changes:
+				//We want to attack now
+				//Startup
+				if (skeletonComponent->attackTimer <= 0.0f)
 				{
-					SetHitboxActive(enemyEntity, skeletonComponent->attackHitboxID, false);
-					SetHitboxCanDealDamage(enemyEntity, skeletonComponent->attackHitboxID, false);
+					skeletonComponent->attackTimer += GetDeltaTime();
+					enemyAnim->aAnim = ANIMATION_ATTACK;
+					enemyAnim->aAnimTime = 0.0f;
+					enemyAnim->aAnimTimePower = 1.0f;
+					enemyAnim->aAnimTimeFactor = 3.0f;
+					//This might need to be changed when timePower changes
+
+					float AttackThreshold = 0.3f / enemyAnim->aAnimTimeFactor;	//When to pause the animation
+					float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed(); //When to continue the animation
+					float AttackActiveTime = AttackStartTime + 0.10f; //When the entire attack has finished
+					//WHICH DO PEOPLE PREFER? : QUICK PREP+PAUSE+BLINK+ATTACK, OR WINDUP+GRADIENT+ATTACK?
+					//Attack Telegraphing #1:
+					AddTimedEventComponentStartContinuousEnd(enemyEntity, AttackThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, skeleton, 1);
+
+					//Attack Telegraphing #2:
+					//enemyAnim->aAnimTimeFactor = 0.5f;
+					//AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, nullptr, EnemyAttackGradient, 0.8f, nullptr, skeleton, 1);
+		
+
+					//Actual attack
+					AddTimedEventComponentStartContinuousEnd(enemyEntity, AttackStartTime, EnemyBeginAttack, nullptr, AttackActiveTime, EnemyEndAttack, skeleton, 1);
+
+					//Recovery/Daze
+					float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
+					AddTimedEventComponentStart(enemyEntity, AttackTotalTime, EnemyBecomeStunned, skeleton, 1);
 				}
-				//Turn yellow for opening:
+
+
 				
-				continue;
-			}
-			else//Elliot: Turn off attack hitbox to not make player rage.
-			{
-				SetHitboxActive(enemyEntity, skeletonComponent->attackHitboxID, false);
-				SetHitboxCanDealDamage(enemyEntity, skeletonComponent->attackHitboxID, false);
-			}
-
-
-			//Elliot: If in attack, keep attacking even if player is outside
-			if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f)
-			{
-				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
 			}
 			else if (distance < 50.f) //hunting distance
 			{
@@ -332,6 +356,9 @@ bool SkeletonBehaviourSystem::Update()
 			IdleBehaviour(enemyEntity,playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 		}
 		TransformDecelerate(enemyEntity);
+
+		//Increment animation AFTER everything has been calculated
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	}
 
 	// Pop the stack

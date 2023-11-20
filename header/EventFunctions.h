@@ -42,6 +42,13 @@ void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
 
+//Enemy Combat functions
+void EnemyAttackFlash(EntityID& entity, const int& index);
+void EnemyAttackGradient(EntityID& entity, const int& index);
+void EnemyBeginAttack(EntityID& entity, const int& index);
+void EnemyEndAttack(EntityID& entity, const int& index);
+void EnemyBecomeStunned(EntityID& entity, const int& index);
+
 //Loop static hazard hitbox
 void LoopHitbox(EntityID& entity, const int& index);
 

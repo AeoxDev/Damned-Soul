@@ -156,6 +156,10 @@ public:
 	float currentCharge = 0.0f;
 	float maxCharge = 1.0f; 
 
+	//Dash variables
+	float dashCooldown = 1.0f;
+	float dashCounter = 0.0f; //When this is 0.0f we can dash, and when we dash it's plus'd by dashCooldown
+
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses

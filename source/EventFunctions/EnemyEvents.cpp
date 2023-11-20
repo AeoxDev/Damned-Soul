@@ -278,6 +278,79 @@ void SplitBoss(EntityID& entity, const int& index)
 	RemoveEnemy(entity, index);
 }
 
+void EnemyAttackFlash(EntityID& entity, const int& index)
+{
+	//Function runs when we pause the attack animation
+	//Halfway through the pause we make enemy glow yellow, then we reset the color towards the end
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (skelel)
+	{
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset
+		{
+			skelel->colorAdditiveRed = 0.0f;
+			skelel->colorAdditiveGreen = 0.0f;
+			skelel->colorAdditiveBlue = 0.0f;
+		}
+			
+		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow
+		{
+			skelel->colorAdditiveRed = 0.8f;
+			skelel->colorAdditiveGreen = 0.8f;
+			skelel->colorAdditiveBlue = 0.5f;
+		}	
+	}
+}
+
+void EnemyAttackGradient(EntityID& entity, const int& index)
+{
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+
+	if (skelel)
+	{
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //Reset
+		{
+			skelel->colorAdditiveRed = 0.0f;
+			skelel->colorAdditiveGreen = 0.0f;
+			skelel->colorAdditiveBlue = 0.0f;
+
+			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity); //Make animation faster because we're about to schwing
+			if (anim)
+				anim->aAnimTimeFactor = 2.0f;
+		}
+		else
+		{
+			skelel->colorAdditiveRed += GetDeltaTime();
+			skelel->colorAdditiveGreen += GetDeltaTime();
+			skelel->colorAdditiveBlue += GetDeltaTime();
+		}
+	}
+}
+
+void EnemyBeginAttack(EntityID& entity, const int& index)
+{
+
+}
+
+void EnemyEndAttack(EntityID& entity, const int& index)
+{
+	SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
+	skeleton->attackTimer = 0.0f;
+}
+
+void EnemyBecomeStunned(EntityID& entity, const int& index)
+{
+	uint32_t condition = GetTimedEventCondition(entity, index);
+	if (condition == skeleton)
+	{
+		SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
+		if (skeleton != nullptr)
+		{
+			skeleton->attackStunDurationCounter = 0.0f;
+		}
+	}
+	//Find the enemycomponen and stun based on its values
+}
+
 
 void RemoveEnemy(EntityID& entity, const int& index)
 {

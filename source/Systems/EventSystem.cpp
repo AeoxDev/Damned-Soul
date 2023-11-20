@@ -29,6 +29,11 @@ struct TimedEvent
 struct TimedEventComponent
 {
 	ML_Vector<TimedEvent> timedEvents;
+
+	TimedEventComponent()
+	{
+		timedEvents.Initialize();
+	};
 };
 
 int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)

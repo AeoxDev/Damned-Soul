@@ -217,9 +217,20 @@ bool ControllerSystem::Update()
 		}
 
 		/*COMBAT INPUT*/
+		//PlayerComponent now stores a bunch of variables for cooldowns and animation timings so we need access to it before combat-related stuff
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
+		/*DASH*/
+		//Decrement and clamp
+		player->dashCounter -= GetDeltaTime();
+		if (player->dashCounter < 0.0f)
+			player->dashCounter = 0.0f;
+
 		//Dash in the direction you're moving, defaults to dashing backwards if you're not moving. Gives i-frames for the duration
-		if (keyState[SCANCODE_SPACE] == pressed)
+		if (keyState[SCANCODE_SPACE] == pressed && player->dashCounter == 0.0f)
 		{
+			player->dashCounter = player->dashCooldown;
+			//Putting cooldown on these dashes, PlayerComponent has the variables in charge of both current counter and the max-value
 			if (moving)
 			{
 				//Set facing direction to dash direction when moving
@@ -243,11 +254,6 @@ bool ControllerSystem::Update()
 
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
-		//Need: Variable storing time between inputs. If an attack happens within a certain time after another, the next attack in the chain. So also need a variable 
-		//keeping track of which attack in the chain we did last
-		//PlayerComponent now stores these two values, so we need to get access to it early
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-		
 		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
 		if(player->isAttacking == false)
 			player->timeSinceLastAttack += GetDeltaTime();
