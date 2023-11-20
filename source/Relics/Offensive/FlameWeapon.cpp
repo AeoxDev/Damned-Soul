@@ -49,10 +49,10 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 	DebuffComponent* EnemyDebuff = registry.GetComponent<DebuffComponent>(input->defender);
 	if (nullptr == EnemyDebuff)
 	{
-		registry.AddComponent<DebuffComponent>(input->defender, newDoT);
+		registry.AddComponent<DebuffComponent>(input->defender, DamageOverTime::BURN, newDoT);
 	}
-	else if (EnemyDebuff->m_dot.LessThan(newDoT))
+	else if (EnemyDebuff->m_dots[DamageOverTime::BURN].LessThan(newDoT))
 	{
-		EnemyDebuff->m_dot = newDoT;
+		EnemyDebuff->m_dots[DamageOverTime::BURN] = newDoT;
 	}
 }

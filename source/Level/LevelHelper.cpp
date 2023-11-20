@@ -7,6 +7,71 @@
 #include "States\StateManager.h"
 #include "UIComponents.h"
 
+EntityID SetUpStage(const float rm, const float gm, const float bm, const float ra, const float ga, const float ba, const float gamma)
+{
+	EntityID stage = registry.CreateEntity();
+
+	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+	stageModel->shared.colorMultiplicativeRed = rm;
+	stageModel->shared.colorMultiplicativeGreen = gm;
+	stageModel->shared.colorMultiplicativeBlue = bm;
+	stageModel->shared.colorAdditiveRed = ra;
+	stageModel->shared.colorAdditiveGreen = ga;
+	stageModel->shared.colorAdditiveBlue = ba;
+
+	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
+	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
+
+	// Stage (Default)
+	registry.AddComponent<TransformComponent>(stage);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("default");
+
+	return stage;
+}
+
+EntityID SetUpHazard(const StaticHazardType& type, const float scale, const float ra, const float ga, const float ba, const float rm, const float gm, const float bm, const float gamma)
+{
+	EntityID hazard;// = registry.CreateEntity();
+
+	bool succeded = false;
+	while (!succeded)
+	{
+		int scalePosMod = 5 * scale;
+		float randX = scalePosMod + (float)(rand() % (100 - 2 * scalePosMod)) - 50.0f;
+		float randZ = scalePosMod + (float)(rand() % (100 - 2 * scalePosMod)) - 50.0f;
+		if (randX * randX + randZ * randZ > 80)
+		{
+			float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
+			float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+			/*EntityID*/ hazard = registry.CreateEntity();
+			ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+			hazardModel->shared.colorAdditiveRed = ra;
+			hazardModel->shared.colorAdditiveGreen = ga;
+			hazardModel->shared.colorAdditiveBlue = ba;
+			hazardModel->shared.colorMultiplicativeRed = rm;
+			hazardModel->shared.colorMultiplicativeGreen = gm;
+			hazardModel->shared.colorMultiplicativeBlue = bm;
+			hazardModel->shared.gammaCorrection = gamma;
+			hazardModel->castShadow = false;
+			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+			hazardTransform->positionX = randX;
+			hazardTransform->positionY = 0.6f - (type * .1f);
+			hazardTransform->positionZ = randZ;
+			hazardTransform->scaleX = randScaleX * scale;
+			hazardTransform->scaleY = 1.f;
+			hazardTransform->scaleZ = randScaleZ * scale;
+			hazardTransform->facingX = cosf((float)rand());
+			hazardTransform->facingZ = sinf((float)rand());
+			AddStaticHazard(hazard, type);
+
+			succeded = true;
+		}
+	}
+
+	return hazard;
+}
+
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
 	float facingY , float facingZ  )
@@ -302,19 +367,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scp->Load(IMP);
 
 		// REMOVE ONCE WE HAVE THE IMP MODEL
-		model->colorMultiplicativeRed = 0.2f;
-		model->colorMultiplicativeBlue = 0.2f;
-		model->colorMultiplicativeGreen = 0.2f;
-		model->colorAdditiveRed = 0.8f;
-		model->colorAdditiveBlue = 0.4f;
-		model->colorAdditiveGreen = 0.8f;
+		model->shared.colorMultiplicativeRed = 0.2f;
+		model->shared.colorMultiplicativeBlue = 0.2f;
+		model->shared.colorMultiplicativeGreen = 0.2f;
+		model->shared.colorAdditiveRed = 0.8f;
+		model->shared.colorAdditiveBlue = 0.4f;
+		model->shared.colorAdditiveGreen = 0.8f;
 
-		model->baseColorMultiplicativeRed = 0.2f;
-		model->baseColorMultiplicativeBlue = 0.2f;
-		model->baseColorMultiplicativeGreen = 0.2f;
-		model->baseColorAdditiveRed = 0.8f;
-		model->baseColorAdditiveBlue = 0.4f;
-		model->baseColorAdditiveGreen = 0.8f;
+		model->shared.baseColorMultiplicativeRed = 0.2f;
+		model->shared.baseColorMultiplicativeBlue = 0.2f;
+		model->shared.baseColorMultiplicativeGreen = 0.2f;
+		model->shared.baseColorAdditiveRed = 0.8f;
+		model->shared.baseColorAdditiveBlue = 0.4f;
+		model->shared.baseColorAdditiveGreen = 0.8f;
 
 
 		if (player)
@@ -326,7 +391,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		stat->hazardModifier = 0.0f;
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
-		mod->gammaCorrection = 1.5f;
+		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
 		if (player)
@@ -338,7 +403,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		stat->hazardModifier = 0.0f;
 		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
-		mod->gammaCorrection = 1.5f;
+		mod->shared.gammaCorrection = 1.5f;
 		AnimationComponent* anim = registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<LuciferBehaviour>(entity, 0, 0);
 		SetupEnemyCollisionBox(entity, 1.2f * scaleX, EnemyType::tempBoss);
@@ -352,19 +417,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
-		model->colorMultiplicativeRed = 0.4f;
-		model->colorMultiplicativeBlue = 0.4f;
-		model->colorMultiplicativeGreen = 0.4f;
-		model->colorAdditiveRed = 0.4f;
-		model->colorAdditiveBlue = 0.8f;
-		model->colorAdditiveGreen = 0.4f;
+		model->shared.colorMultiplicativeRed = 0.4f;
+		model->shared.colorMultiplicativeBlue = 0.4f;
+		model->shared.colorMultiplicativeGreen = 0.4f;
+		model->shared.colorAdditiveRed = 0.4f;
+		model->shared.colorAdditiveBlue = 0.8f;
+		model->shared.colorAdditiveGreen = 0.4f;
 
-		model->baseColorMultiplicativeRed = 0.4f;
-		model->baseColorMultiplicativeBlue = 0.4f;
-		model->baseColorMultiplicativeGreen = 0.4f;
-		model->baseColorAdditiveRed = 0.4f;
-		model->baseColorAdditiveGreen = 0.4f;
-		model->baseColorAdditiveBlue = 0.8f;
+		model->shared.baseColorMultiplicativeRed = 0.4f;
+		model->shared.baseColorMultiplicativeBlue = 0.4f;
+		model->shared.baseColorMultiplicativeGreen = 0.4f;
+		model->shared.baseColorAdditiveRed = 0.4f;
+		model->shared.baseColorAdditiveGreen = 0.4f;
+		model->shared.baseColorAdditiveBlue = 0.8f;
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
@@ -387,7 +452,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (model != nullptr)
 	{
-		model->gammaCorrection = 1.5f;
+		model->shared.gammaCorrection = 1.5f;
 	}
 	CreatePointLight(entity, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 	return entity;
@@ -399,10 +464,10 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	stateManager.player = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
-	model->colorMultiplicativeRed = 1.25f;
-	model->colorMultiplicativeGreen = 1.25f;
-	model->colorMultiplicativeBlue = 1.25f;
-	model->gammaCorrection = 1.5f;
+	model->shared.colorMultiplicativeRed = 1.25f;
+	model->shared.colorMultiplicativeGreen = 1.25f;
+	model->shared.colorMultiplicativeBlue = 1.25f;
+	model->shared.gammaCorrection = 1.5f;
 	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
 	animation->aAnim = ANIMATION_IDLE;
 	animation->aAnimTime = 0.5f;
@@ -468,10 +533,10 @@ void ReloadPlayerNonGlobals()
 	if (modelLoaded == nullptr)
 	{
 		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
-		modelLoaded->colorMultiplicativeRed = 1.25f;
-		modelLoaded->colorMultiplicativeGreen = 1.25f;
-		modelLoaded->colorMultiplicativeBlue = 1.25f;
-		modelLoaded->gammaCorrection = 1.5f;
+		modelLoaded->shared.colorMultiplicativeRed = 1.25f;
+		modelLoaded->shared.colorMultiplicativeGreen = 1.25f;
+		modelLoaded->shared.colorMultiplicativeBlue = 1.25f;
+		modelLoaded->shared.gammaCorrection = 1.5f;
 	}
 	AnimationComponent* animationLoaded = registry.GetComponent<AnimationComponent>(stateManager.player);
 	if (animationLoaded == nullptr)

@@ -11,19 +11,33 @@
 #include "Model.h"
 #include "RenderDepthPass.h"
 
-void Render(bool isShadowPass)
+enum RenderPass
 {
+	ShadowPass, DepthPass, LightPass
+};
+
+void Render(RenderPass renderPass)
+{
+
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
-		if (isShadowPass && mc->castShadow == false)
+		if (renderPass  == ShadowPass && mc->castShadow == false)
 		{
 			continue;
 		}
-		Light::SetGammaCorrection(mc->gammaCorrection);
-		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
-			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+		
+		// If this isn't a shadow pass, update colors (and reset temp colors)
+		if (LightPass == renderPass)
+		{
+			Light::SetGammaCorrection(mc->shared.gammaCorrection);
+			Light::SetColorHue(mc->shared.GetRedMult(), mc->shared.GetGreenMult(), mc->shared.GetBlueMult(),
+				mc->shared.GetRedAdd(), mc->shared.GetGreenAdd(), mc->shared.GetBlueAdd());
+			Light::UpdateLight();
+			mc->shared.ResetTempColor();
+		}
+
 		if (tc->offsetX != 0.0f)
 		{
 			tc->offsetY = 0.0f;
@@ -40,13 +54,20 @@ void Render(bool isShadowPass)
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, AnimationComponent>(registry))
 	{
-		
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
 		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
-		Light::SetGammaCorrection(mc->gammaCorrection);
-		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
-			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+
+		// If this isn't a shadow pass, update colors (and reset temp colors)
+		if (LightPass == renderPass)
+		{
+			Light::SetGammaCorrection(mc->shared.gammaCorrection);
+			Light::SetColorHue(mc->shared.GetRedMult(), mc->shared.GetGreenMult(), mc->shared.GetBlueMult(),
+				mc->shared.GetRedAdd(), mc->shared.GetGreenAdd(), mc->shared.GetBlueAdd());
+			Light::UpdateLight();
+			mc->shared.ResetTempColor();
+		}
+
 		if (tc->offsetX != 0.0f)
 		{
 			tc->offsetY = 0.0f;
@@ -96,7 +117,7 @@ bool ShadowSystem::Update()
 	SetShadowmap(true);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	
-	Render(true);
+	Render(ShadowPass);
 
 	//Return the camera
 	Camera::ToggleProjection();
@@ -128,7 +149,7 @@ bool RenderSystem::Update()
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(GetDepthPassPixelShader());
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
-	Render(false);
+	Render(DepthPass);
 	ClearBackBuffer();
 	// Render UI
 	RenderUI();
@@ -147,7 +168,7 @@ bool RenderSystem::Update()
 	// Set Geometry Shader used for normalmapping
 	SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 	// Render
-	Render(false);
+	Render(LightPass);
 	// Unset geometry shader
 	UnsetGeometryShader();
 	//UpdateGlobalShaderBuffer();

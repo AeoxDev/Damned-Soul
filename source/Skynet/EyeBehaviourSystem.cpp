@@ -208,13 +208,13 @@ void ChargeColorFlash(EntityID& entity, const int& index)
 	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->colorAdditiveRed = cosineWave;
-		skelel->colorAdditiveGreen = cosineWave;
+		skelel->shared.colorAdditiveRed = cosineWave;
+		skelel->shared.colorAdditiveGreen = cosineWave;
 	}
 	if (bonel)
 	{
-		bonel->colorAdditiveRed = cosineWave;
-		bonel->colorAdditiveGreen = cosineWave;
+		bonel->shared.colorAdditiveRed = cosineWave;
+		bonel->shared.colorAdditiveGreen = cosineWave;
 	}
 }
 

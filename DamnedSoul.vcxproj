@@ -197,7 +197,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
-    <ClCompile Include="source\CutsceneComponent.cpp" />
+    <ClCompile Include="source\Components\CutsceneComponent.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DebuffComponent.cpp" />
     <ClCompile Include="source\Components\TransformComponent.cpp" />
@@ -281,8 +281,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Level\Level2.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="source\ModelComponent.cpp" />
-    <ClCompile Include="source\MouseComponent.cpp" />
+    <ClCompile Include="source\Components\ModelComponent.cpp" />
+    <ClCompile Include="source\Components\MouseComponent.cpp" />
     <ClCompile Include="source\ProximityHitboxEditor.cpp" />
     <ClCompile Include="source\Registry.cpp" />
     <ClCompile Include="source\Relics\RelicFunctions.cpp" />
@@ -312,7 +312,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\Systems\CollisionSystems.cpp" />
     <ClCompile Include="source\Systems\ControllerSystem.cpp" />
-    <ClCompile Include="source\Systems\DamageOverTimeSystem.cpp" />
+    <ClCompile Include="source\Systems\DebuffSystem.cpp" />
     <ClCompile Include="source\Systems\EventSystem.cpp" />
     <ClCompile Include="source\Systems\KnockBackSystem.cpp" />
     <ClCompile Include="source\Systems\ParticleSystemCPU.cpp" />

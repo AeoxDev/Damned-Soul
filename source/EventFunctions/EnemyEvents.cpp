@@ -392,10 +392,10 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	
 	EntityID acidHazard = registry.CreateEntity();
 	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(acidHazard, LoadModel("LavaPlaceholder.mdl"));
-	hazardModel->colorAdditiveRed = 0.1f;
-	hazardModel->colorAdditiveGreen = 0.9f;
-	hazardModel->colorAdditiveBlue = 0.2f;
-	hazardModel->gammaCorrection = 1.5f;
+	hazardModel->shared.colorAdditiveRed = 0.1f;
+	hazardModel->shared.colorAdditiveGreen = 0.9f;
+	hazardModel->shared.colorAdditiveBlue = 0.2f;
+	hazardModel->shared.gammaCorrection = 1.5f;
 	hazardModel->castShadow = false;
 
 	float scaling = 5.0f;
