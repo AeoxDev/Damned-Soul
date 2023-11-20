@@ -246,6 +246,9 @@ bool DeleteD3D11SRV(const SRV_IDX idx);
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source);
 // Copies the data in a SRV resource to a UAV resource;
 void CopySRVToUAV(const UAV_IDX destination, const SRV_IDX source);
+// Copies the data in a UAV resource to a SRV resource;
+void CopyUAVToSRV(const SRV_IDX destination, const UAV_IDX source);
+
 
 // Create a shader resource view that holds a buffer
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags);

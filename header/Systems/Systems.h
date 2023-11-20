@@ -22,6 +22,10 @@ class GlowSystem : public System	// NOTE: Might need a separate blur system for 
 {
 	bool Update();
 };
+class GlowApplySystem : public System
+{
+	bool Update();
+};
 class OnClickSystem : public System
 {
 	bool Update();

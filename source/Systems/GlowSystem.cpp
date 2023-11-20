@@ -81,14 +81,17 @@ bool GlowSystem::Update()
 	}
 
 	Glow::PrepareBlurPass();
+	Glow::UpdateBlurBuffer(1);
+	Dispatch(50, 29, 1);
 
-	for (int i = 0; i < 50; i++)
-	{
-		Glow::UpdateBlurBuffer(i);
-		Dispatch(50, 29, 1);
-		Glow::SwitchUAV();
-		Glow::SetViews();
-	}
+	// Should not need to repeat.
+	//for (int i = 0; i < /*50*/1; i++)
+	//{
+	//	Glow::UpdateBlurBuffer(i);
+	//	Dispatch(50, 29, 1);
+	//	Glow::SwitchUAV();
+	//	Glow::SetViews();
+	//}
 
 
 
