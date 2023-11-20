@@ -98,6 +98,38 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
+	if (sc->attackTimer <= 0.0f)
+	{
+		//Increment so we don't immediately get  back in here
+		sc->attackTimer += GetDeltaTime();
+
+		//Animation setup
+		animComp->aAnim = ANIMATION_ATTACK;
+		animComp->aAnimTime = 0.0f;
+		animComp->aAnimTimePower = 1.0f;
+		animComp->aAnimTimeFactor = 3.0f; //Elliot comment: This might need to be changed when timePower changes
+
+		float PauseThreshold = 0.3f / animComp->aAnimTimeFactor;	//When to pause the animation
+		float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed();//When to continue the animation
+		float AttackActiveTime = AttackStartTime + 0.10f;			//When the entire attack has finished
+
+		//Attack Telegraphing #1: Quick prep + Pause + Blink
+		AddTimedEventComponentStartContinuousEnd(ent, PauseThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, skeleton, 1);
+
+		//Attack Telegraphing #2: Slow prep + Gradual light
+		//animComp->aAnimTimeFactor = 0.5f;
+		//AddTimedEventComponentStartContinuousEnd(ent, 0.0f, nullptr, EnemyAttackGradient, 0.8f, nullptr, skeleton, 1);
+
+		//Actual attack
+		AddTimedEventComponentStartContinuousEnd(ent, AttackStartTime, EnemyBeginAttack, nullptr, AttackActiveTime, EnemyEndAttack, skeleton, 1);
+
+		//Recovery/Daze
+		float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
+		AddTimedEventComponentStart(ent, AttackTotalTime, EnemyBecomeStunned, skeleton, 1);
+	}
+
+
+	/*OLD COMBAT BEHAVIOUR
 	sc->attackTimer += GetDeltaTime() * animComp->aAnimTimeFactor;
 	sc->goalDirectionX = ptc->positionX - stc->positionX;
 	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
@@ -108,13 +140,6 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	//Elliot: Change in calculations for attack timer:
 	animComp->aAnimTime = 0.5f * sc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 	ANIM_BRANCHLESS(animComp);
-
-	//Niclas was here
-	if (sc->attackTimer >= enemyStats->GetAttackSpeed() / 2.0f) //color blue after halv the attack animation-ish
-	{
-		ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(ent);
-		skelel->colorAdditiveBlue = 5.0f;
-	}
 
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
@@ -133,6 +158,7 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 		sc->attackTimer = 0.f;
 		sc->attackStunDurationCounter = 0.f;
 	}
+	*/
 }
 
 bool SkeletonBehaviourSystem::Update()
@@ -205,49 +231,21 @@ bool SkeletonBehaviourSystem::Update()
 			
 			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
-			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
+
+			//Dazed
+			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration) 
 			{
-				//Be dazed. Do the stunned behaviour
-			}
-			else if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f)
-			{
-				//CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
-				// Elliot Combat changes:
-				//We want to attack now
-				//Startup
-				if (skeletonComponent->attackTimer <= 0.0f)
-				{
-					skeletonComponent->attackTimer += GetDeltaTime();
-					enemyAnim->aAnim = ANIMATION_ATTACK;
-					enemyAnim->aAnimTime = 0.0f;
-					enemyAnim->aAnimTimePower = 1.0f;
-					enemyAnim->aAnimTimeFactor = 3.0f;
-					//This might need to be changed when timePower changes
-
-					float AttackThreshold = 0.3f / enemyAnim->aAnimTimeFactor;	//When to pause the animation
-					float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed(); //When to continue the animation
-					float AttackActiveTime = AttackStartTime + 0.10f; //When the entire attack has finished
-					//WHICH DO PEOPLE PREFER? : QUICK PREP+PAUSE+BLINK+ATTACK, OR WINDUP+GRADIENT+ATTACK?
-					//Attack Telegraphing #1:
-					AddTimedEventComponentStartContinuousEnd(enemyEntity, AttackThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, skeleton, 1);
-
-					//Attack Telegraphing #2:
-					//enemyAnim->aAnimTimeFactor = 0.5f;
-					//AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, nullptr, EnemyAttackGradient, 0.8f, nullptr, skeleton, 1);
-		
-
-					//Actual attack
-					AddTimedEventComponentStartContinuousEnd(enemyEntity, AttackStartTime, EnemyBeginAttack, nullptr, AttackActiveTime, EnemyEndAttack, skeleton, 1);
-
-					//Recovery/Daze
-					float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
-					AddTimedEventComponentStart(enemyEntity, AttackTotalTime, EnemyBecomeStunned, skeleton, 1);
-				}
-
-
 				
 			}
-			else if (distance < 50.f) //hunting distance
+
+			//Combat
+			else if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f) 
+			{
+				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
+			}
+
+			//Pathfinding
+			else if (distance < 50.f) 
 			{
 				
 #ifdef PATH_FINDING_VISUALIZER
@@ -343,7 +341,9 @@ bool SkeletonBehaviourSystem::Update()
 				} 
 				ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
 			}
-			else // idle
+
+			//Idle
+			else
 			{
 				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 				IdleBehaviour(enemyEntity,playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
