@@ -625,35 +625,35 @@ void HitboxVisualComponent::UpdateHitboxConstantBuffer(EntityID& entity, int hit
 }
 
 
-EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
-	const float& positionX, const float& positionY, const float& positionZ,
-	const float& scaleX, const float& scaleY, const float& scaleZ,
-	const float& colorAddR,const float& colorAddG,const float& colorAddB,
-	const float& colorMulR, const float& colorMulG, const float& colorMulB, 
-	const float& gammaCorrection, const float& facingX, const float& facingZ)
-{
-	EntityID hazard = registry.CreateEntity();
-	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel(model));
-	hazardModel->colorAdditiveRed = colorAddR;
-	hazardModel->colorAdditiveGreen = colorAddG;
-	hazardModel->colorAdditiveBlue = colorAddB;
-	hazardModel->colorMultiplicativeRed = colorMulR;
-	hazardModel->colorMultiplicativeGreen = colorMulG;
-	hazardModel->colorMultiplicativeBlue = colorMulB;
-	hazardModel->gammaCorrection = gammaCorrection;
-	hazardModel->castShadow = false;
-	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-	hazardTransform->positionX = positionX;
-	hazardTransform->positionY = positionY;
-	hazardTransform->positionZ = positionZ;
-	hazardTransform->scaleX = scaleX;
-	hazardTransform->scaleY = scaleY;
-	hazardTransform->scaleZ = scaleZ;
-	hazardTransform->facingX = facingX;
-	hazardTransform->facingZ = facingZ;
-	AddStaticHazard(hazard, type);
-	return hazard;
-}
+//EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
+//	const float& positionX, const float& positionY, const float& positionZ,
+//	const float& scaleX, const float& scaleY, const float& scaleZ,
+//	const float& colorAddR,const float& colorAddG,const float& colorAddB,
+//	const float& colorMulR, const float& colorMulG, const float& colorMulB, 
+//	const float& gammaCorrection, const float& facingX, const float& facingZ)
+//{
+//	EntityID hazard = registry.CreateEntity();
+//	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel(model));
+//	hazardModel->colorAdditiveRed = colorAddR;
+//	hazardModel->colorAdditiveGreen = colorAddG;
+//	hazardModel->colorAdditiveBlue = colorAddB;
+//	hazardModel->colorMultiplicativeRed = colorMulR;
+//	hazardModel->colorMultiplicativeGreen = colorMulG;
+//	hazardModel->colorMultiplicativeBlue = colorMulB;
+//	hazardModel->gammaCorrection = gammaCorrection;
+//	hazardModel->castShadow = false;
+//	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+//	hazardTransform->positionX = positionX;
+//	hazardTransform->positionY = positionY;
+//	hazardTransform->positionZ = positionZ;
+//	hazardTransform->scaleX = scaleX;
+//	hazardTransform->scaleY = scaleY;
+//	hazardTransform->scaleZ = scaleZ;
+//	hazardTransform->facingX = facingX;
+//	hazardTransform->facingZ = facingZ;
+//	AddStaticHazard(hazard, type);
+//	return hazard;
+//}
 
 void SetHitboxRadius(const EntityID& entity, int hitBoxID, const float r)
 {

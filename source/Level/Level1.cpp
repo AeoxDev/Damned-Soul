@@ -15,8 +15,11 @@
 
 void LoadLevel1()
 {
-	
-	EntityID stage = registry.CreateEntity();
+	float redMult = .75f;
+	float greenMult = .75f;
+	float blueMult = .75f;
+	EntityID stage = SetUpStage(redMult, greenMult, blueMult, 0, 0, 0, 0.9); //registry.CreateEntity();
+
 	EntityID mouse = registry.CreateEntity();
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
@@ -35,19 +38,6 @@ void LoadLevel1()
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
 	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
 	//5 souls total
-
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 0.75f;
-	stageModel->colorMultiplicativeGreen = 0.75f;
-	stageModel->colorMultiplicativeBlue = 0.75f;
-	stageModel->gammaCorrection = 0.9f;
-	//stageModel->colorAdditiveRed = 0.1f;
-	
-	// Stage (Default)
-	TransformComponent *stageTransform = registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");	
 	
 	/*char ctexture[] = "1-1C.png";
 	char emptyTexture[] = "";

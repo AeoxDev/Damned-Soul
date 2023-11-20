@@ -15,8 +15,15 @@
 
 void LoadLevel9()
 {
+	float redAdd = 0.0f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.1f;
+	float redMult = 1.0f;
+	float greenMult = 1.0f;
+	float blueMult = 1.1f;
+
 	//This is the eye stage. Lots of acid in a grey environment.
-	EntityID stage = registry.CreateEntity();
+	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -45,29 +52,6 @@ void LoadLevel9()
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
-
-	float redAdd = 0.0f;
-	float greenAdd = 0.0f;
-	float blueAdd = 0.1f;
-	float redMult = 1.0f;
-	float greenMult = 1.0f;
-	float blueMult = 1.1f;
-
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = redMult;
-	stageModel->colorMultiplicativeGreen = greenMult;
-	stageModel->colorMultiplicativeBlue = blueMult;
-	stageModel->colorAdditiveBlue = blueAdd;
-	stageModel->colorAdditiveRed = redAdd;
-
-	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
-
-	// Stage (Default)
-	registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
@@ -105,7 +89,8 @@ void LoadLevel9()
 	int nrHazards = 8;
 	for (size_t i = 0; i < nrHazards; i++)
 	{
-		bool succeded = false;
+		SetUpHazard(HAZARD_ACID, 1.f, 0.f, 0.5f, 0.f, 0.2f, 1.2f, 0.2f, 1.5f);
+		/*bool succeded = false;
 		while (!succeded)
 		{
 			float randX = (float)(rand() % 100) - 50.0f;
@@ -116,13 +101,13 @@ void LoadLevel9()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->colorAdditiveRed = 0.0f;
-				hazardModel->colorAdditiveGreen = 0.5f;
-				hazardModel->colorAdditiveBlue = 0.0f;
-				hazardModel->colorMultiplicativeRed = 0.2f;
-				hazardModel->colorMultiplicativeGreen = 1.2f;
-				hazardModel->colorMultiplicativeBlue = 0.2f;
-				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->shared.colorAdditiveRed = 0.0f;
+				hazardModel->shared.colorAdditiveGreen = 0.5f;
+				hazardModel->shared.colorAdditiveBlue = 0.0f;
+				hazardModel->shared.colorMultiplicativeRed = 0.2f;
+				hazardModel->shared.colorMultiplicativeGreen = 1.2f;
+				hazardModel->shared.colorMultiplicativeBlue = 0.2f;
+				hazardModel->shared.gammaCorrection = 1.5f;
 				hazardModel->castShadow = false;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
@@ -137,25 +122,26 @@ void LoadLevel9()
 
 				succeded = true;
 			}
-		}
+		}*/
 	}
 	nrHazards = 1;//Big ice sheet
 	for (size_t i = 0; i < nrHazards; i++)
 	{
-		bool succeded = false;
+		SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
+		/*bool succeded = false;
 		float randX = (float)(rand() % 32) - 16.0f;
 		float randZ = (float)(rand() % 32) - 16.0f;
 		float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
 		float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
 		EntityID hazard = registry.CreateEntity();
 		ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-		hazardModel->colorAdditiveRed = 0.1f;
-		hazardModel->colorAdditiveGreen = 0.1f;
-		hazardModel->colorAdditiveBlue = 0.5f;
-		hazardModel->colorMultiplicativeRed = 0.5f;
-		hazardModel->colorMultiplicativeGreen = 0.5f;
-		hazardModel->colorMultiplicativeBlue = 1.5f;
-		hazardModel->gammaCorrection = 1.5f;
+		hazardModel->shared.colorAdditiveRed = 0.1f;
+		hazardModel->shared.colorAdditiveGreen = 0.1f;
+		hazardModel->shared.colorAdditiveBlue = 0.5f;
+		hazardModel->shared.colorMultiplicativeRed = 0.5f;
+		hazardModel->shared.colorMultiplicativeGreen = 0.5f;
+		hazardModel->shared.colorMultiplicativeBlue = 1.5f;
+		hazardModel->shared.gammaCorrection = 1.5f;
 		hazardModel->castShadow = false;
 		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 		hazardTransform->positionX = randX;
@@ -168,7 +154,7 @@ void LoadLevel9()
 		hazardTransform->facingZ = sinf((float)rand());
 		AddStaticHazard(hazard, HAZARD_ICE);
 
-		succeded = true;
+		succeded = true;*/
 	}
 	RenderGeometryIndependentCollision(stage);
 

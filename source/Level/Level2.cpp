@@ -14,7 +14,14 @@
 
 void LoadLevel2()
 {
-	EntityID stage = registry.CreateEntity();
+	float redAdd = 0.1f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.0f;
+	float redMult = 1.2f;
+	float greenMult = 1.0f;
+	float blueMult = 1.0f;
+
+	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -40,28 +47,6 @@ void LoadLevel2()
 	SetupEnemy(EnemyType::imp, -55.f, 1.f, -35.f);
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
-
-	float redAdd = 0.1f;
-	float greenAdd = 0.0f;
-	float blueAdd = 0.0f;
-	float redMult = 1.2f;
-	float greenMult = 1.0f;
-	float blueMult = 1.0f;
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = redMult;
-	stageModel->colorMultiplicativeGreen = greenMult;
-	stageModel->colorMultiplicativeBlue = blueMult;
-	stageModel->colorAdditiveBlue = blueAdd;
-	stageModel->colorAdditiveRed = redAdd;
-
-	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
-
-	// Stage (Default)
-	registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
@@ -97,7 +82,8 @@ void LoadLevel2()
 	const int nrHazards = 8;
 	for (size_t i = 0; i < nrHazards; i++)
 	{
-		bool succeded = false;
+		SetUpHazard(HAZARD_LAVA, 1.f, redAdd, greenAdd, blueAdd, redMult, greenMult, blueMult, 1.5f);
+		/*bool succeded = false;
 		while (!succeded)
 		{
 			float randX = (float)(rand() % 100) - 50.0f;
@@ -108,13 +94,13 @@ void LoadLevel2()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->colorAdditiveRed = redAdd;
-				hazardModel->colorAdditiveGreen = greenAdd;
-				hazardModel->colorAdditiveBlue = blueAdd;
-				hazardModel->colorMultiplicativeRed = redMult;
-				hazardModel->colorMultiplicativeGreen = greenMult;
-				hazardModel->colorMultiplicativeBlue = blueMult;
-				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->shared.colorAdditiveRed = redAdd;
+				hazardModel->shared.colorAdditiveGreen = greenAdd;
+				hazardModel->shared.colorAdditiveBlue = blueAdd;
+				hazardModel->shared.colorMultiplicativeRed = redMult;
+				hazardModel->shared.colorMultiplicativeGreen = greenMult;
+				hazardModel->shared.colorMultiplicativeBlue = blueMult;
+				hazardModel->shared.gammaCorrection = 1.5f;
 				hazardModel->castShadow = false;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
@@ -129,7 +115,7 @@ void LoadLevel2()
 
 				succeded = true;
 			}
-		}
+		}*/
 	}
 	RenderGeometryIndependentCollision(stage);
 

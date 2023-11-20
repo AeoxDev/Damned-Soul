@@ -9,9 +9,9 @@ EntityID CreateRoundStaticHazard(const char* file, const float& posX, const floa
 {
 	EntityID hazard = registry.CreateEntity();
 	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("PlaceholderScene.mdl"));
-	hazardModel->colorAdditiveRed = colorRed;
-	hazardModel->colorAdditiveGreen = colorGreen;
-	hazardModel->colorAdditiveBlue = colorBlue;
+	hazardModel->shared.colorAdditiveRed = colorRed;
+	hazardModel->shared.colorAdditiveGreen = colorGreen;
+	hazardModel->shared.colorAdditiveBlue = colorBlue;
 	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 	hazardTransform->positionX = posX;
 	hazardTransform->positionY = posY;

@@ -23,11 +23,11 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	Combat::DamageFlash(defender, damage);
 }
 
-float Combat::CalculateDamage(const DamageOverTimeComponent* dot, EntityID& defender, const uint64_t& source)
+float Combat::CalculateDamage(const DamageOverTime& dot, EntityID& defender, const uint64_t& source)
 {
 	RelicInput::OnDamageCalculation funcInput;
 	funcInput.defender = defender;
-	funcInput.damage = dot->GetDPS();
+	funcInput.damage = dot.GetDPS();
 	funcInput.cap = 99999999; // No real cap for DPS
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
