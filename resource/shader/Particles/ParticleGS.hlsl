@@ -38,13 +38,13 @@ void main(
     
     
     // Now construct the billboard, starting with positions
-    float3 vertices[6];
-    vertices[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom left vertex
-    vertices[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
-    vertices[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
-    vertices[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
-    vertices[4] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
-    vertices[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top right vertex
+    float3 verts[6];
+    verts[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom left vertex
+    verts[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
+    verts[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
+    verts[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get bottom right vertex
+    verts[4] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top left vertex
+    verts[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get top right vertex
 
     float4x4 viewProj = mul(view, projection);
 
@@ -53,9 +53,9 @@ void main(
     [unroll]
     for (int i = 0; i < 6; i++)
     {
-        retappend.position = mul(float4(vertices[i].xyz, inval[0].worldPosition.w), viewProj); // times rotationZ here?
+        retappend.position = mul(float4(verts[i].xyz, 1.0f), viewProj); // times rotationZ here?
         // INSERT rotate on Z-axis
-        retappend.position = retappend.position / retappend.position.w;
+        //retappend.position = retappend.position / retappend.position.w;
         retappend.rgb = inval[0].rgb;
 
 

@@ -139,7 +139,7 @@ bool NewSecond()
 		if (!paused && !Camera::InCutscene() && !(currentStates & InMainMenu))
 		{
 			seconds += 1;
-			RedrawUI();
+			//RedrawUI();
 		}
 		
 		return true;
