@@ -85,7 +85,7 @@ void LoadEyeChallenge()
 	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
-	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);
+	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
 
 	stateManager.stage = stage;

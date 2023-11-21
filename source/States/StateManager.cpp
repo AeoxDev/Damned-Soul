@@ -205,7 +205,6 @@ int StateManager::Setup()
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
-	systems.push_back(new UIRelicsSystem());
 	
 	systems.push_back(new UIShopSystem());
 

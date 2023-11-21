@@ -68,7 +68,7 @@ void Credits::SetupText()
 	const char const courses[3][32] =
 	{
 		"Technical Artists:",
-		"Civil Engineers:",
+		"Master of Engineering:",
 		"Game Programmers:"
 	};
 
@@ -107,7 +107,7 @@ void Credits::SetupText()
 
 	auto credits = registry.CreateEntity();
 	UIComponent* uiElementC = registry.AddComponent<UIComponent>(credits);
-	uiElementC->Setup("TempShopTitle", "Credits", { 0.0f, 0.6f });
+	uiElementC->Setup("TempShopTitle", "Credits", DSFLOAT2( 0.0f, 0.6f ), DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElementC->m_BaseImage.baseUI.SetVisibility(false);
 
 	for (int i = 0; i < 3; i++)
@@ -117,27 +117,30 @@ void Credits::SetupText()
 		switch (i)
 		{
 		case 0:
-			uiElement->Setup("TempRelicFlavorHolder", courses[i], positions[i], { 1.5f, 1.0f });
+			uiElement->Setup("TempRelicFlavorHolder", courses[i], positions[i], DSFLOAT2(1.5f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			for (int j = 0; j < 5; j++)
 			{
 				uiElement->AddText(TAnames[j], uiElement->m_BaseImage.baseUI.GetBounds(), 
-					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1))});
+					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1))}, DSFLOAT2(1.0f, 1.0f), 20.0f, 
+					DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			}
 			break;
 		case 1:
-			uiElement->Setup("TempRelicFlavorHolder", courses[i], positions[i], { 1.5f, 1.0f });
+			uiElement->Setup("TempRelicFlavorHolder", courses[i], positions[i], DSFLOAT2(1.5f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			for (int j = 0; j < 4; j++)
 			{
 				uiElement->AddText(CIVnames[j], uiElement->m_BaseImage.baseUI.GetBounds(),
-					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1)) });
+					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1)) }, DSFLOAT2(1.0f, 1.0f), 20.0f,
+					DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			}
 			break;
 		case 2:
-			uiElement->Setup("TempRelicFlavorHolder", courses[i], positions[i], { 1.5f, 1.0f });
+			uiElement->Setup("TempRelicFlavorHolder", courses[i], positions[i], DSFLOAT2(1.5f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			for (int j = 0; j < 5; j++)
 			{
 				uiElement->AddText(SPnames[j], uiElement->m_BaseImage.baseUI.GetBounds(),
-					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1)) });
+					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1)) }, DSFLOAT2(1.0f, 1.0f), 20.0f,
+					DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			}
 			break;
 		default:

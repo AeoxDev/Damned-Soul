@@ -38,7 +38,6 @@ void LoadLevel(int level)
 		
 	}
 
-	
 	for (auto entity : View<ControllerComponent>(registry))
 		registry.GetComponent<ControllerComponent>(entity)->enabled *= -1;
 

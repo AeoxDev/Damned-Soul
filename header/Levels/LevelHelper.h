@@ -24,3 +24,5 @@ void LoadPlayerSounds();
 void ReloadPlayerNonGlobals();
 
 EntityID RandomPlayerEnemy(EnemyType enemyType);
+
+void SetScoreboardUI(EntityID stage);

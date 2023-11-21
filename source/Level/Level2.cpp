@@ -40,11 +40,11 @@ void LoadLevel2()
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, -40.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::imp, 35.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::imp, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::imp, 35.f, 1.f, 45.f);
+	/*SetupEnemy(EnemyType::imp, 35.f, 1.f, 45.f);
 	SetupEnemy(EnemyType::imp, -25.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::imp, -50.f, 1.f, 25.f);
 	SetupEnemy(EnemyType::imp, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::imp, -55.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::imp, -55.f, 1.f, -35.f);*/
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 

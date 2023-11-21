@@ -125,6 +125,8 @@ void ReleasePS(const PS_IDX idx);
 VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout = LAYOUT_DESC::SKELETAL);
 // Set a new vertex (and accompanying input layout) shader by index
 bool SetVertexShader(const VS_IDX idx);
+// Overload for when input layout is null
+bool SetVertexShader(const VS_IDX idx, bool particle);
 // Set vertex shader to NULL
 void UnsetVertexShader();
 // Release for a single vertex shader
@@ -246,6 +248,8 @@ bool DeleteD3D11SRV(const SRV_IDX idx);
 
 // Copies the data in a SRV to a vertex buffer, for particles
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source);
+// Copies the data in source SRV to destination SRV
+void CopySRVtoSRV(const SRV_IDX destination, const SRV_IDX source);
 
 // Create a shader resource view that holds a buffer
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags);
@@ -280,7 +284,7 @@ void SetTopology(TOPOLOGY topology);
 //Release
 bool DeleteD3D11Texture(const TX_IDX idx);
 bool DeleteD3D11RenderTargetView(const RTV_IDX idx);
-bool DeleteD3D11PixelShader(const PS_IDX idx); 
+bool DeleteD3D11PixelShader(const PS_IDX idx);
 bool DeleteD3D11VertexShader(const VS_IDX idx);
 bool DeleteD3D11DepthStencilView(const DSV_IDX idx);
 bool DeleteD3D11RasterizerState(const RS_IDX idx);

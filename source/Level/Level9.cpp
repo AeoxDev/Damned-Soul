@@ -39,7 +39,6 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
@@ -49,31 +48,20 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
 	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);*/
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969, 2.f, 2.f, 2.f);
 	Stage3IntroScene(cutsceneEnemy, 0);
-	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
-	PointOfInterestComponent poic;
-	poic.weight = 10.0f;
-	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
+	SetScoreboardUI(stage);
 
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-
-
+	//Mouse
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+	//Light
 	float redLight = 0.05f;
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;

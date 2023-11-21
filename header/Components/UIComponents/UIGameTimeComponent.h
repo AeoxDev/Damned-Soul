@@ -1,6 +1,6 @@
 #pragma once
 
-struct UIRunTimeComponent
+struct UIGameTimeComponent
 {
 	int value = -1;
 };
