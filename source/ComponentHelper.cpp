@@ -19,6 +19,7 @@ void StatComponent::ZeroBonusStats()
 	m_bonusHealth = 0;
 	m_damageReduction = 1.f; // Since this is a multiplier, setting it to 1.0 is equivalent to setting the bonus to 0
 	m_bonusMoveSpeed = 0;
+	m_bonusDashValue = 0;
 	m_bonusDamage = 0;
 	m_bonusAttackSpeed = 0;
 	m_bonusKnockback = 0;
@@ -156,6 +157,16 @@ void StatComponent::UpdateBonusSpeed(const float delta)
 void StatComponent::SetSpeedMult(const float mult)
 {
 	m_speedMult = mult;
+}
+
+float StatComponent::GetDashDistance() const
+{
+	return m_baseDashValue + m_bonusDashValue;
+}
+
+void StatComponent::UpdateBonusDashDistance(const float delta)
+{
+	m_bonusDashValue += delta;
 }
 
 float StatComponent::GetBaseDamage() const

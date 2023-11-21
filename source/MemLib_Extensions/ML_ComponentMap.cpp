@@ -120,18 +120,24 @@ uint32_t ML_ComponentMap::reserve(const uint32_t& capacity)
 		throw std::invalid_argument("Capacity too small! ML_ComponentMap.reserve() cannot be called to reduce the capacity of the map!");
 		std::terminate();
 	}
+	else if (m_data.IsNullptr())
+	{
+		m_data = MemLib::palloc(capacity * PAIR_SIZE);
+	}
+	else
+	{
+		// Provide a temporary copy of the data
+		void* temp = MemLib::spush(m_capacity * PAIR_SIZE);
+		std::memcpy(temp, &(*m_data), m_capacity * PAIR_SIZE);
 
-	// Provide a temporary copy of the data
-	void* temp = MemLib::spush(m_capacity * PAIR_SIZE);
-	std::memcpy(temp, &(*m_data), m_capacity * PAIR_SIZE);
+		// Free the old pool pointer and allocate a new one
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(capacity * PAIR_SIZE);
 
-	// Free the old pool pointer and allocate a new one
-	MemLib::pfree(m_data);
-	m_data = MemLib::palloc(capacity * PAIR_SIZE);
-
-	// Copy the data over to the new location and pop the temp from the stack
-	std::memcpy(&(*m_data), temp, m_capacity * PAIR_SIZE);
-	MemLib::spop();
+		// Copy the data over to the new location and pop the temp from the stack
+		std::memcpy(&(*m_data), temp, m_capacity * PAIR_SIZE);
+		MemLib::spop();
+	}
 
 	// Inform the new capacity
 	return m_capacity = capacity;
