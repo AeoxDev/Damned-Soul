@@ -197,6 +197,17 @@ void UIText::Draw()
 	}
 }
 
+void UIText::Release()
+{
+	if (m_TextFormat != nullptr)
+	{
+		m_TextFormat->Release();
+		m_TextFormat = nullptr;
+	}
+
+	m_Text.~ML_String();
+}
+
 void UIImage::SetImage(const char* filepath, bool ignoreRename)
 {
 	if (filepath != "")
@@ -221,6 +232,17 @@ void UIImage::Draw()
 		SetBounds(tempBounds, baseUI.m_CurrentBounds);
 		rt->DrawBitmap(m_Bitmap, tempBounds, baseUI.m_Opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, tempBounds);
 	}
+}
+
+void UIImage::Release()
+{
+	if (m_Bitmap != nullptr)
+	{
+		m_Bitmap->Release();
+		m_Bitmap = nullptr;
+	}
+
+	m_fileName.~ML_String();
 }
 
 void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale, 
@@ -252,10 +274,11 @@ void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT
 void UIComponent::DrawAll()
 {
 	m_BaseImage.Draw();
-	m_BaseText.Draw();
 
 	for (uint32_t i = 0; i < m_Images.size(); i++)
 		m_Images[i].Draw();
+
+	m_BaseText.Draw();
 
 	for (uint32_t i = 0; i < m_Texts.size(); i++)
 		m_Texts[i].Draw();
@@ -307,41 +330,14 @@ void UIComponent::AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 positi
 
 void UIComponent::Release()
 {
-	if (m_BaseImage.m_Bitmap)
-	{
-		m_BaseImage.m_Bitmap->Release();
-		m_BaseImage.m_Bitmap = nullptr;
-		m_BaseImage.m_fileName.~ML_String();
-	}
+	m_BaseImage.Release();
+	m_BaseText.Release();
 
-	for (UIImage image : m_Images)
-	{
-		if (image.m_Bitmap)
-		{
-			image.m_Bitmap->Release();
-			image.m_Bitmap = nullptr;
-			image.m_fileName.~ML_String();
-		}
-	}
+	for (uint32_t i = 0; i < m_Images.size(); i++)
+		m_Images[i].Release();
 
-	if (m_BaseText.m_TextFormat)
-	{
-		m_BaseText.m_TextFormat->Release();
-		m_BaseText.m_TextFormat = nullptr;
-		m_BaseText.m_Text.~ML_String();
-	}
-
-	for (UIText text : m_Texts)
-	{
-
-		if (text.m_TextFormat)
-		{
-			text.m_TextFormat->Release();
-			text.m_TextFormat = nullptr;
-
-			text.m_Text.~ML_String();
-		}
-	}
+	for (uint32_t i = 0; i < m_Texts.size(); i++)
+		m_Texts[i].Release();
 
 	m_Texts.~ML_Vector();
 	m_Images.~ML_Vector();

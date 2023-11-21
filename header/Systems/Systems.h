@@ -59,10 +59,6 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIRelicsSystem : public System
-{
-	bool Update();
-};
 class UIShopSystem : public System
 {
 	bool Update();

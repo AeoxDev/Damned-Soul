@@ -48,20 +48,20 @@ void LoadLevel(int level)
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;//Imp stage
-	case 4: ReloadShop(); break;
-	case 5: LoadLevel3(); break;//Doggie stage
-	case 6: ReloadShop(); break;
-	case 7: LoadLevel4(); break;//Boss stage
-	case 8: ReloadShop(); break;
-	case 9: LoadLevel5(); break;//Eye stage
-	case 10: ReloadShop(); break;//
-	case 11: LoadLevel6(); break;//Minotaur stage
-	case 12: ReloadShop(); break;
-	case 13: LoadLevel7(); break;//Imp2 stage
-	case 14: ReloadShop(); break;
-	case 15: LoadLevel8(); break;//Split2 stage
-	case 16: ReloadShop(); break;
-	case 17: LoadLevel9(); break;//Final boss stage
+	//case 4: ReloadShop(); break;
+	//case 5: LoadLevel3(); break;//Doggie stage
+	//case 6: ReloadShop(); break;
+	//case 7: LoadLevel4(); break;//Boss stage
+	//case 8: ReloadShop(); break;
+	//case 9: LoadLevel5(); break;//Eye stage
+	//case 10: ReloadShop(); break;//
+	//case 11: LoadLevel6(); break;//Minotaur stage
+	//case 12: ReloadShop(); break;
+	//case 13: LoadLevel7(); break;//Imp2 stage
+	//case 14: ReloadShop(); break;
+	//case 15: LoadLevel8(); break;//Split2 stage
+	//case 16: ReloadShop(); break;
+	//case 17: LoadLevel9(); break;//Final boss stage
 	default: 
 		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game
 		stateManager.menu.Setup();

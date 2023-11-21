@@ -5,6 +5,8 @@
 struct UIShopTitleImpComponent
 {
 	ML_String name;
+
+	void Release() { name.~ML_String(); };
 };
 
 struct UIShopImpComponent
@@ -12,4 +14,10 @@ struct UIShopImpComponent
 	ML_String name;
 	ML_String description;
 	uint8_t price;
+
+	void Release() 
+	{ 
+		name.~ML_String(); 
+		description.~ML_String();
+	};
 };

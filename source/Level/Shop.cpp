@@ -193,21 +193,16 @@ void CreateSingleWindows()
 	}
 }
 
-void LoadShop()
+void CreateTextWindows()
 {
-
-	EntityID shopTitle = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	EntityID impText = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	EntityID shopTitle = registry.CreateEntity();
+	EntityID impText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
 	uiTitle->Setup("TempShopTitle", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.8f }, DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	uiTitle->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
-	
-	CreateRelicWindows();
-
-	CreateSingleWindows();
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
 	uiImpText->Setup("TempRelicHolder", "Hello There", { 0.3f, 0.1f }, { 2.0f, 2.0f }, 20.0f);
@@ -215,14 +210,26 @@ void LoadShop()
 
 	registry.AddComponent<UIShopImpComponent>(impText);
 
+}
+
+void LoadShop()
+{
+	CreateTextWindows();
+
+	CreateRelicWindows();
+
+	CreateSingleWindows();
+
 	SetInShop(true);
 }
 
 void ReloadShop()
 {
+	//CreateTextWindows();
+
 	SetInShop(true);
 	void* a = {};
-	UIFunc::RerollRelic(a, -1);
+	//UIFunc::RerollRelic(a, -1);
 
 }
 

@@ -675,8 +675,8 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 			uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 		}
 
-		uiImpText->name = _strdup(relicWindow->relics[index]->m_relicName);
-		uiImpText->description = _strdup(relicWindow->relics[index]->m_description);
+		uiImpText->name = relicWindow->relics[index]->m_relicName;
+		uiImpText->description = relicWindow->relics[index]->m_description;
 		uiImpText->price = relicWindow->relics[index]->m_price;
 
 		uiImpElement->m_BaseText.SetText(relicText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds());
@@ -692,8 +692,8 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 			uiPauseText = registry.GetComponent<UIPauseRelicTextComponent>(entity);
 		}
 
-		uiPauseText->name = _strdup(relicWindow->relics[index]->m_relicName);
-		uiPauseText->description = _strdup(relicWindow->relics[index]->m_description);
+		uiPauseText->name = relicWindow->relics[index]->m_relicName;
+		uiPauseText->description = relicWindow->relics[index]->m_description;
 
 		uiPauseElement->m_Images[0].baseUI.SetPosition({ uiElement->m_Images[2].baseUI.GetPosition().x + 0.3f, uiElement->m_Images[2].baseUI.GetPosition().y });
 		uiPauseElement->m_Texts[0].baseUI.SetPosition(uiPauseElement->m_Images[0].baseUI.GetPosition());

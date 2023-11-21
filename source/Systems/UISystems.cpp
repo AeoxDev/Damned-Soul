@@ -51,10 +51,10 @@ bool UIHealthSystem::Update()
 		auto uiElement = registry.GetComponent<UIComponent>(entity);
 
 		auto stats = registry.GetComponent<StatComponent>(entity);
-		auto maxHealth = stats->GetMaxHealth();
+		int64_t maxHealth = stats->GetMaxHealth();
 		int64_t currentHealth = stats->GetHealth();
 
-		float percentageHealth = currentHealth / maxHealth;
+		float percentageHealth = (float)currentHealth / (float)maxHealth;
 
 		health->value = currentHealth;
 		int healthBoundsRight = (int)uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
@@ -114,12 +114,6 @@ bool UIPlayerSoulsSystem::Update()
 	}
 
 	return true;
-}
-
-bool UIRelicsSystem::Update()
-{
-
-    return true;
 }
 
 bool UIShopSystem::Update()

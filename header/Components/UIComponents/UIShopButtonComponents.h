@@ -13,6 +13,12 @@ struct UIShopButtonComponent
 		m_description = desc;
 		m_price = price;
 	};
+
+	void Release()
+	{
+		m_name.~ML_String();
+		m_description.~ML_String();
+	};
 };
 
 struct UIShopRerollComponent

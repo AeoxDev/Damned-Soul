@@ -9,9 +9,9 @@ private:
 	// Pool pointer to internal data
 	PoolPointer<char> m_data;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_len;
+	uint32_t m_len = 0;
 	// Due to our memory usage restriction, a size larger than 2^30 would be guaranteed to exceed memory limits
-	uint32_t m_capacity;
+	uint32_t m_capacity = 0;
 
 public:
 	char* begin() const;
