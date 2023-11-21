@@ -91,7 +91,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-		transform->currentSpeedX = dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
+ 		transform->currentSpeedX = dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
 		transform->currentSpeedZ = dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 	}
 }
