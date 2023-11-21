@@ -4,10 +4,18 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_POWER_SOUL_FACTOR_PLAYER (1.f)
-#define SOUL_POWER_SOUL_FACTOR_ENEMY (10.f)
+#define SOUL_POWER_SOUL_FACTOR_PLAYER (0.01f)
+#define SOUL_POWER_SOUL_FACTOR_ENEMY (.2f)
 
 EntityID SOUL_POWER::_OWNER;
+
+const char* SOUL_POWER::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You gain %ld Strength for every soul in your possession", PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER));
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void SOUL_POWER::Initialize(void* input)
 {
@@ -37,12 +45,12 @@ void SOUL_POWER::ModifyStrength(void* data)
 		if (player)
 		{
 			// Increase health based on souls
-			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_PLAYER * player->GetSouls());
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_PLAYER * player->GetSouls() * stats->GetBaseDamage());
 		}
 		else
 		{
 			EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(SOUL_POWER::_OWNER);
-			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_ENEMY * enemy->soulCount);
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_ENEMY * enemy->soulCount * stats->GetBaseDamage());
 		}
 	}
 }

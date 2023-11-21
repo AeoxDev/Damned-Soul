@@ -1,37 +1,6 @@
 #pragma once
-#include <DirectXMath.h>
-#include <d3d11.h>
-#include <vector>
 #include "EntityFramework.h"
-
-//#include "MemLib/ML_Vector.hpp"
-
 //Real
-//Hitbox variables
-struct VisualHitbox
-{
-	DirectX::XMFLOAT4 color; //4
-	DirectX::XMFLOAT3 middlePoint; //3
-	float radius; //1
-};
-
-struct HitboxVisualizeVariables
-{
-	//Shaders to render the hitboxes
-	ID3D11VertexShader* vShader = nullptr;
-	ID3D11GeometryShader* gShader = nullptr;
-	ID3D11PixelShader* pShader = nullptr;
-
-	//Buffer, Input layout, and SRV used for Vertex Pulling
-	//ML_Vector<VisualHitbox> hitboxes; //Herman Help;
-	std::vector<VisualHitbox> hitboxes;
-	ID3D11Buffer* hitboxStructuredBuffer = nullptr;
-	ID3D11InputLayout* hitboxInputLayout = nullptr;
-	ID3D11ShaderResourceView* hitboxStructuredSRV = nullptr;
-
-	//RasterState for wireframe rendering
-	ID3D11RasterizerState* hitboxWireframeRaster = nullptr;
-};
 
 //CIRCLE COLLISION:
 
@@ -87,20 +56,6 @@ void AddHitboxComponent(EntityID& entity);
 void CreateProximityHitbox(EntityID& entity, std::string fileName = "default"); //File name without extension ending
 
 void AddProximityHitboxComponent(EntityID& entity);
-
-bool SetupHitboxVisualizer( );
-
-void InitializeBufferAndSRV( );
-
-void UpdateHitboxBuffer( );
-
-void CreateShadersLayoutAndRasterState();
-
-void DebugRenderHitbox(ID3D11Buffer*& worldMatrix); //ID3D11Buffer*& viewAndProjectionMatrix);
-
-void DestroyHitboxVisualizeVariables();
-
-void SetupTestHitbox();
 
 void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity);
 

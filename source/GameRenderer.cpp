@@ -143,6 +143,7 @@ int SetupGameRenderer()
 	//CreateShadowMap(512, 512);
 	CreateShadowMap(2048, 2048);
 
+
 	return currentSize++;
 }
 

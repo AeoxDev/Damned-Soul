@@ -11,6 +11,8 @@
 #include "MemLib\ML_String.hpp"
 #include "MemLib\ML_Map.hpp"
 #include "Relics\RelicFunctions.h"
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
 
 using namespace Relics;
 
@@ -20,6 +22,8 @@ extern ML_Map<RELIC_FUNCTION_TYPE, ML_Vector<VECTOR_FUNCTION_TYPE>>* _RelicFunct
 
 // Validate relics
 void _validateRelicFunctions();
+
+#define PERCENT(f) (long int((f)*100))
 
 // Calls MarkAsModified, UpdateBonusHealth, and StealthilyModifyHealth
 // These need to be called for relics like the hearts, which raise max hp and current hp simultaneously

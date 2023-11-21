@@ -22,17 +22,17 @@ void LavaBlinkColor(EntityID& entity, const int& index);
 //START
 void PlayerLoseControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
+void PlayerBeginAttack(EntityID& entity, const int& index);
 
 //END
 void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
-void PlayerResetAnimFactor(EntityID& entity, const int& index);
+void PlayerEndAttack(EntityID& entity, const int& index);
 
 //CONTINUOUS
-void PlayerAttackSound(EntityID& entity, const int& index);
-void PlayerAttack(EntityID& entity, const int& index);
-void PlayerDashSound(EntityID& entity, const int& index);
 void PlayerDash(EntityID& entity, const int& index);
+void PlayerDashSound(EntityID& entity, const int& index);
+void PlayerAttack(EntityID& entity, const int& index);
 /*END OF PLAYER EVENTS*/
 
 //Portal
@@ -41,6 +41,10 @@ void CreatePortal(EntityID& entity, const int& index);
 void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
+void BossShockwaveStart(EntityID& entity, const int& index);
+void BossShockwaveExpand(EntityID& entity, const int& index);
+void BossShockwaveEnd(EntityID& entity, const int& index);
+
 
 //Loop static hazard hitbox
 void LoopHitbox(EntityID& entity, const int& index);
@@ -73,5 +77,20 @@ void SpawnMainMenuEnemy(EntityID& entity, const int& index);
 //Main menu loop for spawning random enemies
 void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);
 
+//Creates a linear transition with end time as the full time.
+void CutsceneCreateLinearTransition(EntityID& entity, const int& index);
+//Do the given cutscene components arguments over time
+void BeginCutscene(EntityID& entity, const int& index);
+void CutsceneTransition(EntityID& entity, const int& index);
+void EndCutscene(EntityID& entity, const int& index);
+void MainMenuIntroCutscene(EntityID& entity, const int& index);
+void Stage1IntroScene(EntityID& entity, const int& index);
+void Stage2IntroScene(EntityID& entity, const int& index);
+void Stage3IntroScene(EntityID& entity, const int& index);
+void Stage4IntroScene(EntityID& entity, const int& index);
+
 void BeginDestroyProjectile(EntityID& entity, const int& index); 
 void EndDestroyProjectile(EntityID& entity, const int& index);
+
+//Game speed
+void SetGameSpeedDefault(EntityID& entity, const int& index);

@@ -1,74 +1,97 @@
 #include "Relics\Defensive\FrostFire.h"
 #include "Relics\Utility\RelicInternalHelper.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicParticleHelper.h"
 #include "Registry.h"
 #include "Components.h"
-#include "EventFunctions.h"
 #include "KnockBackComponent.h"
+#include "CombatFunctions.h"
 
+EntityID FROST_FIRE::_OWNER;
+
+#define FROST_FIRE_COOLDOWN (3.f)
 #define FROST_FIRE_BASE_KNOCKBACK (1.f)
+#define FROST_FIRE_DAMAGE_FLAT (5.f)
+#define FROST_FIRE_RANGE (10.f)
+#define FROST_FIRE_SFX_DURATION (0.3f)
 
-#define FROST_FIRE_SPEED_MULTIPLIER (.8f)
+static float _Frost_Fire_Cooldown = FROST_FIRE_COOLDOWN;
 
-static bool FrostFireAvailable = true;
+const char* FROST_FIRE::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Releases a shockwave every %.1lf seconds that deals %.0lf damage and knocks enemies back",
+		FROST_FIRE_COOLDOWN,
+		FROST_FIRE_DAMAGE_FLAT);
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void FROST_FIRE::Initialize(void* input)
 {
+	// Set owner
+	FROST_FIRE::_OWNER = *((EntityID*)input);
+
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
-	// Mark as available immediately
-	FROST_FIRE::SetAvailable(nullptr);
+	// Reset just in case
+	FROST_FIRE::Reset(nullptr);
 
 	// Add reset function to level swap list
-	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(FROST_FIRE::SetAvailable);
+	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(FROST_FIRE::Reset);
 
 	// Add it to the list of On Obtain functions
-	(*_RelicFunctions)[FUNC_ON_DAMAGE_TAKEN].push_back(FROST_FIRE::PushBackAndFreeze);
+	(*_RelicFunctions)[FUNC_ON_FRAME_UPDATE].push_back(FROST_FIRE::PushBackAndDamage);
 }
 
-void FROST_FIRE::SetAvailable(void* data)
+void FROST_FIRE::Reset(void* data)
 {
-	FrostFireAvailable = true;
+	_Frost_Fire_Cooldown = FROST_FIRE_COOLDOWN;
 }
 
-void FROST_FIRE::PushBackAndFreeze(void* data)
+void _FF_Particles_Begin(EntityID& entity, const int& index)
+{
+	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, 0.f, 0.35f, 0.f, 0.f, 0.f, FROST_FIRE_RANGE, CIRCLE_FIELD);
+}
+
+void FROST_FIRE::PushBackAndDamage(void* data)
 {
 	// Get the input
-	RelicInput::OnHealthUpdate* input = (RelicInput::OnHealthUpdate*)data;
+	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
-	// If the health modification is not negative, Frost Fire should not trigger
-	if (0 < input->hpDelta)
-		return;
+	// Reduce the cooldown
+	_Frost_Fire_Cooldown -= input->timeDelta;
 
-	EntityID player = { -1, false };
-	// Get the player entity
-	for (auto entity : View<PlayerComponent>(registry))
-		player = entity;
-
-	// Get player stat component and do nothing if ...
-	StatComponent* playerStat = registry.GetComponent<StatComponent>(player);
-	// ... the hurt component isn't the player's component
-	// ... the player's remaining health is greater than 50%
-	// ... Frost Fire has already activated this level
-	if (playerStat != input->adressOfStatComponent || .5f < playerStat->GetHealthFraction() || false == FrostFireAvailable)
-		return;
-
-	// Set frost fire to used
-	FrostFireAvailable = false;
-
-	for (auto entity : View<EnemyComponent>(registry))
+	// If of coodlown
+	if (_Frost_Fire_Cooldown <= 0)
 	{
-		float dx, dy, v, x, y;
+		// Add cooldown
+		_Frost_Fire_Cooldown += FROST_FIRE_COOLDOWN;
 
-		CalculateKnockBackDirection(player, entity, dx, dy);
-		// Flat knock back for now
-		v = FROST_FIRE_BASE_KNOCKBACK;
-		CalculateKnockBack(dx, dy, v, x, y);
+		// The transform of the owner
+		TransformComponent* ownerTrans = registry.GetComponent<TransformComponent>(FROST_FIRE::_OWNER);
 
-		AddKnockBack(entity, x, y);
+		// Create the beautiful particles
+		ParticleAtEntityLocation(FROST_FIRE::_OWNER, FROST_FIRE_SFX_DURATION, _FF_Particles_Begin);
 
-		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-		//stat->moveSpeed *= FROST_FIRE_SPEED_MULTIPLIER;
+		for (auto entity : View<EnemyComponent>(registry))
+		{
+			// The transform of the other entity
+			TransformComponent* otherTrans = registry.GetComponent<TransformComponent>(entity);
+
+			if (DistanceBetweenTransforms(ownerTrans, otherTrans) < FROST_FIRE_RANGE)
+			{
+				float dx, dy, x, y;
+				// Calculate the direction of the knockback
+				CalculateKnockBackDirection(FROST_FIRE::_OWNER, entity, dx, dy);
+				CalculateKnockBack(dx, dy, FROST_FIRE_BASE_KNOCKBACK, x, y);
+				// Add the knockback
+				AddKnockBack(entity, x, y);
+
+				// Flat damage
+				Combat::HitFlat(entity, registry.GetComponent<StatComponent>(entity), FROST_FIRE_DAMAGE_FLAT);
+			}
+		}
 	}
 }

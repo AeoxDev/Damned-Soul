@@ -35,6 +35,11 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 
 void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier)
 {
+	LightComponent* light = registry.GetComponent<LightComponent>(id);
+	if (light)
+	{
+		RemoveLight(id);
+	}
 	//Boneless model
 	ModelBonelessComponent* boneless = registry.GetComponent<ModelBonelessComponent>(id);
 	if (boneless)
@@ -59,16 +64,6 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
 	if(uiElement)
 		uiElement->Release();
-
-	//Imp Text
-	UIShopImpComponent* imp1 = registry.GetComponent<UIShopImpComponent>(id);
-	if (imp1)
-		imp1->Release();
-
-	//Shop Title
-	UIShopTitleImpComponent* imp2 = registry.GetComponent<UIShopTitleImpComponent>(id);
-	if (imp2)
-		imp2->name.~ML_String();
 
 	//Proximity Hitbox
 	ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(id);
@@ -130,12 +125,33 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 
 	for (auto entity : View<SoundComponent>(registry))
 	{
+		//Delete sound component from the pause buttons.
+		if (destructionTier == ENT_PERSIST_PAUSE) //Shitty code, for a shitty scenario with the pause menu buttons. If any other entity during pause has an ONCLICK FKING COMPONENT THIS WILL BREAK AND I WILL BREAK YOU.
+		{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			auto button = registry.GetComponent<OnClickComponent>(entity);
+			if ((sound != nullptr) && (button != nullptr))
+			{
+				sound->Unload();
+			}
+		}
+
+		//Delete the sound component from every entity that is not the Player.
 		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
-			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) == nullptr)
 				sound->Unload();
 		}
+
+		//Delete the sound component from the player, but not if we are entering the shop or a new stage.
+		if (entity.persistentTier <= destructionTier) //I hate how this code actually works
+		{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) != nullptr)
+				sound->Unload();
+		}
+		//comments written by joaking
 	}
 
 	//If the audio engine is the last entity with a sound component, kill

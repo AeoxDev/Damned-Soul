@@ -7,10 +7,11 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000
+//#define TEST3000 //Hermano 3000
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
+#define MAIN_MENU_FRAMES_TEST 3000
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 #include "Level.h"
 #endif // TEST
@@ -22,7 +23,7 @@ int main(int argc, char* args[])
 {
 	InitiateConfig();
 	MemLib::createMemoryManager();
-
+	
 	bool sdlLoaded = SetupWindow();
 	if (sdlLoaded == false)
 	{
@@ -70,20 +71,20 @@ int main(int argc, char* args[])
 	//	}
 	//}
 	//Simulate main menu for 3000 frames
-	gameSpeed = 24.0f;
+	gameSpeed = 36.0f;
 	LoadLevel(666);//Load the menu
-	for (size_t i = 0; i < 3000; i++)
+	for (size_t i = 0; i < MAIN_MENU_FRAMES_TEST; i++)
 	{
 		CountDeltaTime();
-		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / 3000");
+		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / " + std::to_string(MAIN_MENU_FRAMES_TEST));
 		stateManager.Update();
 		stateManager.EndFrame();
-		MemLib::pdefrag();
+		//MemLib::pdefrag();
 	}
 	gameSpeed = 1.0f;
 	LoadLevel(666);//Reload the menu
 #endif // TEST3000
-
+	
 	while (!sdl.quit)
 	{
 		CountDeltaTime();
@@ -94,7 +95,7 @@ int main(int argc, char* args[])
 
 		stateManager.EndFrame();
 
-		MemLib::pdefrag();
+		//MemLib::pdefrag();
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();
@@ -105,10 +106,6 @@ int main(int argc, char* args[])
 void UpdateDebugWindowTitle(std::string& title, std::string extra)
 {
 //#ifdef _DEBUG
-	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP)
-	{
-		return;
-	}
 	SetWindowTitle(title + extra);
 	if (NewSecond())
 	{

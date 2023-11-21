@@ -20,6 +20,10 @@ void PauseState::Setup()
 	SetupImages();
 	SetupButtons();
 	SetupText();
+	if (Camera::InCutscene() == true)
+	{
+		TimedEventIgnoreGamespeed(false);
+	}
 }
 
 void PauseState::Input()
@@ -30,6 +34,9 @@ void PauseState::Input()
 		{
 			SetInPause(false);
 			SetInShop(true);
+
+			SetPaused(false);
+
 			RedrawUI();
 			ResetInput();
 
@@ -39,6 +46,9 @@ void PauseState::Input()
 		{
 			SetInPause(false);
 			SetInPlay(true);
+
+			SetPaused(false);
+
 			RedrawUI();
 			gameSpeed = 1.0f;
 			ResetInput();
@@ -59,9 +69,9 @@ void PauseState::SetupButtons()
 
 	const DSFLOAT2 const positions[3] =
 	{
-		{ -0.81f, -0.28f },
-		{ -0.81f,  -0.54f },
-		{ -0.81f, -0.8f }
+		{ 0.0f, 0.275f },
+		{ 0.0f, 0.0f },
+		{ 0.0f, -0.275f }
 	};
 
 	const DSFLOAT2 const scales[3] =
@@ -87,11 +97,11 @@ void PauseState::SetupButtons()
 
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
 
-		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
-		buttonSound->Load(MENU);
+		SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
+		sound->Load(MENU);
 	}
 
 }
@@ -99,20 +109,34 @@ void PauseState::SetupButtons()
 void PauseState::SetupImages()
 {
 	// Damned Soul Main Menu Title
-	auto title = registry.CreateEntity(ENT_PERSIST_PAUSE);
+	/*auto title = registry.CreateEntity(ENT_PERSIST_PAUSE);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });
+	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.6f });*/
 }
 
 void PauseState::SetupText()
 {
 	auto pause = registry.CreateEntity(ENT_PERSIST_PAUSE);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(pause);
-	uiElement->Setup("TempShopTitle", "Game Paused", { 0.0f, 0.43f });
+	uiElement->Setup("TempShopTitle", "Game Paused", { 0.0f, 0.6f });
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+
+	uiElement->AddImage("TempRelicHolder", { 1.5f, 1.5f }, { 1.5f, 1.5f }, false);
+	uiElement->m_Images[0].baseUI.SetVisibility(false);
+
+	uiElement->AddText(" ", uiElement->m_Images[0].baseUI.GetBounds(), { 1.5f, 1.5f });
+	uiElement->m_Texts[0].baseUI.SetVisibility(false);
+
+	UIPauseRelicTextComponent* relicText = registry.AddComponent<UIPauseRelicTextComponent>(pause);
+
 }
 
 void PauseState::Unload(int unloadPersistent)
 {
 	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
+	if (Camera::InCutscene() == true)
+	{
+		TimedEventIgnoreGamespeed(true);
+		gameSpeed = 0.0f;
+	}
 }

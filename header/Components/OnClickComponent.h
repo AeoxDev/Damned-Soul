@@ -12,12 +12,17 @@ struct OnClickComponent
 
 	int index = 0;
 
+	//container of bool doesnt exist, 0 = pressed, 1 = released
+	std::vector<int> mouseStates;
+
 	std::vector<void(*)(void*, int)> onClickFunctions;
 
-	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int))
+	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, int state, void(*func)(void*, int))
 	{
 		positions.push_back(pos);
 		bounds.push_back(bnds);
+
+		mouseStates.push_back(state);
 
 		onClickFunctions.push_back(func);
 	};
@@ -26,13 +31,13 @@ struct OnClickComponent
 	int Intersect(DSINT2 mousePosition)
 	{
 		int retval = -1;
-		for (uint32_t i = positions.size(); i-- > 0;)
+		for (size_t i = positions.size(); i-- > 0;)
 		{
 			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
 			{
-				retval = i;
-				index = i;
+				retval = (int)i;
+				index = (int)i;
 				break;
 			}
 		}

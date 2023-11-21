@@ -3,6 +3,7 @@
 #include "States\Menu.h"
 #include "States\Game.h"
 #include "States\Pause.h"
+#include "States\Credits.h"
 #include "Systems\Systems.h"
 #include "EntityID.h"
 
@@ -20,11 +21,13 @@ struct StateManager
 	//ML_Vector<System*> systems; //Herman Help;
 	std::vector<System*> systems;
 	int activeLevel = -1;
+	int finalLevel = 17;
 	int activeLevelScene = -1;//Current loaded level scene in array
 	GameScene scenes[3] = {};
 	Menu menu;
 	SettingsState settings;
 	PauseState pause;
+	Credits credits;
 	EntityID player;
 	EntityID stage;
 	/// <summary>

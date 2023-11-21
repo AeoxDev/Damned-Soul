@@ -24,14 +24,14 @@ void StatComponent::ZeroBonusStats()
 	m_bonusKnockback = 0;
 }
 
-float StatComponent::GetHealth() const
+int64_t StatComponent::GetHealth() const
 {
-	return this->m_currentHealth;
+	return ceil(this->m_currentHealth);
 }
 
-float StatComponent::GetMaxHealth() const
+int64_t StatComponent::GetMaxHealth() const
 {
-	return m_baseHealth + m_bonusHealth;
+	return ceil(m_baseHealth + m_bonusHealth);
 }
 
 float StatComponent::GetHealthFraction() const
@@ -158,6 +158,11 @@ void StatComponent::SetSpeedMult(const float mult)
 	m_speedMult = mult;
 }
 
+float StatComponent::GetBaseDamage() const
+{
+	return m_baseDamage;
+}
+
 float StatComponent::GetDamage() const
 {
 	return m_baseDamage + m_bonusDamage;
@@ -226,6 +231,9 @@ int PlayerComponent::UpdateSouls(const int delta)
 		onSoulUpdateFunctions[i](&input);
 	}
 
+	if (delta > 0)
+		this->totalSouls += delta;
+
 	this->souls += delta;
 	return this->souls;
 }
@@ -233,4 +241,9 @@ int PlayerComponent::UpdateSouls(const int delta)
 int PlayerComponent::GetSouls() const
 {
 	return this->souls;
+}
+
+int PlayerComponent::GetTotalSouls() const
+{
+	return this->totalSouls;
 }

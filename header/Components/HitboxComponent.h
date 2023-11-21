@@ -4,6 +4,26 @@
 struct EntityID;
 
 struct HitboxComponent;
+
+
+struct SimpleVertex
+{
+	float position[4];
+	float color[4];
+};
+
+struct SimpleShape
+{
+	int nrVertices = 0;
+	SimpleVertex vertices[CONVEX_CORNER_LIMIT + 1];
+};
+struct HitboxVisualComponent
+{
+	SimpleShape shape[CONVEX_CORNER_LIMIT + 1];
+	//Chaders
+	int GetNrVertices(EntityID& entity, int hitboxID);
+	void UpdateHitboxConstantBuffer(EntityID& entity, int hitboxID);
+};
 /// <summary>
 /// Create a circle hitbox on the given entity with a radius and offset.
 /// The offset does not compensate for the rotation of the entity.
@@ -52,6 +72,14 @@ bool HitboxCanHitGI(EntityID& entity);
 
 void SetCollisionEvent(EntityID& entity, int hitboxID, void* function);
 
+struct ConvexReturnCorners
+{
+	int cornerCount;
+	float* cornersX;
+	float* cornersZ;
+};
+
+ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID);
 void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[]);
 
 //Reset the attack hitboxes tracker flags to allow rehit.
@@ -72,3 +100,9 @@ int CreateHitbox(EntityID& entity, int corners, float cornerPosX[], float corner
 void AddHitboxComponent(EntityID& entity);
 
 float GetHitboxRadius(const EntityID& entity, int hitBoxID);
+
+void VisualizeHitbox(EntityID& entity, int hitboxID);
+void StopVisualizeHitbox(EntityID& entity);
+void SetupHitboxVisualizer();
+
+void SetHitboxRadius(const EntityID& entity, int hitBoxID, const float r);

@@ -13,7 +13,7 @@
 
 #define SKELETON_ATTACK_HITBOX 2
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, 
+void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent,
 	TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp, float goalDirectionX, float goalDirectionZ, bool path)
 {
 	if (path)
@@ -43,11 +43,12 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-	skeletonTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
-	skeletonTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
+	//skeletonTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
+	//skeletonTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
+	TransformAccelerate(enemy, dirX, dirZ);
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
+void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
 {
 
 	skeletonComponent->timeCounter += GetDeltaTime();
@@ -79,9 +80,9 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		float oldZ = skeletonTransformComponent->positionZ;
 		float bias = 1.f;
 
-		skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
-		skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
-
+		//skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		//skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		TransformAccelerate(enemy, skeletonTransformComponent->facingX * 0.5f, skeletonTransformComponent->facingZ * 0.5f);
 		if ((skeletonTransformComponent->positionX >= oldX + bias || skeletonTransformComponent->positionZ >= oldZ + bias) && skeletonTransformComponent->positionX <= oldX - bias || skeletonTransformComponent->positionZ <= oldZ - bias)
 		{
 			//not good direction
@@ -136,6 +137,7 @@ bool SkeletonBehaviourSystem::Update()
 	StatComponent* playerStats = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
 	EnemyComponent* enmComp = nullptr;
+	DebuffComponent* debuff = nullptr;
 
 	bool updateGridOnce = true;
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));// (PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
@@ -148,6 +150,14 @@ bool SkeletonBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+
+		
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			continue; // frozen, won't do behavior stuff
+		}
+
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
 		{
@@ -201,6 +211,11 @@ bool SkeletonBehaviourSystem::Update()
 				//Elliot: When finished, reset attack timer and hitbox
 				skeletonComponent->attackTimer = 0.0f;
 				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
+				if (enemyAnim->aAnimTime > 0.8f)
+				{
+					SetHitboxActive(enemyEntity, skeletonComponent->attackHitboxID, false);
+					SetHitboxCanDealDamage(enemyEntity, skeletonComponent->attackHitboxID, false);
+				}
 				//Turn yellow for opening:
 				
 				continue;
@@ -311,20 +326,21 @@ bool SkeletonBehaviourSystem::Update()
 				{
 					skeletonComponent->followPath = false;
 				} 
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
+				ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
 			}
 			else // idle
 			{
 				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(enemyEntity,playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
 		}
 		//Idle if there are no players on screen.
 		else  if (enemyStats->GetHealth() > 0.0f)
 		{
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(enemyEntity,playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 		}
+		TransformDecelerate(enemyEntity);
 	}
 
 	// Pop the stack

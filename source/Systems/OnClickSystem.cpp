@@ -17,61 +17,108 @@ bool OnClickSystem::Update()
 	{
 		auto comp = registry.GetComponent<OnClickComponent>(entity);
 		auto uiElement = registry.GetComponent<UIComponent>(entity);
+
+		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
+
+		if (comp->mouseStates.size() == 0 || comp->onClickFunctions.size() == 0)
+			continue;
+
+		if (comp->mouseStates[comp->index] == 0)
+		{
+			if (mouseButtonPressed[MouseButton::left] == pressed)
+			{
+
+				if (index > -1)
+				{
+
+					if (index == 0) //baseimage intersect
+					{
+						if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+							continue;
+					}
+					else if (index > 0) //images intersect, higher number = later added image
+					{
+						if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
+							continue;
+					}
+
+					//Set which sound to play
+					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+					if (sound != nullptr)
+					{
+						if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
+						{
+							sound->Play(Button_Start, Channel_Base);
+						}
+						else
+						{
+							sound->Play(Button_Press, Channel_Base);
+						}
+					}
+
+					comp->onClickFunctions[comp->index](uiElement, comp->index);
+					return true;
+				}
+			}
+			else if (mouseButtonPressed[MouseButton::right] == pressed)
+			{
+
+				if (index > -1)
+				{
+
+				}
+			}
+			else if (mouseButtonPressed[MouseButton::middle] == pressed)
+			{
+
+				if (index > -1)
+				{
+
+				}
+			}
+		}
+		else if (comp->mouseStates[comp->index] == 1)
+		{
+			if (mouseButtonPressed[MouseButton::left] == released)
+			{
+
+				if (index > -1)
+				{
+
+					if (index == 0) //baseimage intersect
+					{
+						if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+							continue;
+					}
+					else if (index > 0) //images intersect, higher number = later added image
+					{
+						if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
+							continue;
+					}
+
+					comp->onClickFunctions[comp->index](uiElement, comp->index);
+					return true;
+				}
+			}
+			else if (mouseButtonPressed[MouseButton::right] == released)
+			{
+
+				if (index > -1)
+				{
+
+				}
+			}
+			else if (mouseButtonPressed[MouseButton::middle] == released)
+			{
+
+				if (index > -1)
+				{
+
+				}
+			}
+		}
+
 		
-		if (mouseButtonPressed[MouseButton::left] == released)
-		{
-			int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
-
-			if (index > -1)
-			{
-
-				if (index == 0) //baseimage intersect
-				{
-					if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-						continue;
-				}
-				else if (index > 0) //images intersect, higher number = later added image
-				{
-					if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
-						continue;
-				}
-
-				//Set which sound to play
-				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-				if (sound != nullptr)
-				{
-					if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
-					{
-						sound->Play(Button_Start, Channel_Base);
-					}
-					else
-					{
-						sound->Play(Button_Press, Channel_Base);
-					}
-				}
-
-				comp->onClickFunctions[comp->index](uiElement, comp->index);
-				return true;
-			}
-		}
-		else if (mouseButtonPressed[MouseButton::right] == released)
-		{
-			int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
-
-			if (index > -1)
-			{
-				
-			}
-		}
-		else if (mouseButtonPressed[MouseButton::middle] == released)
-		{
-			int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
-
-			if (index > -1)
-			{
-				
-			}
-		}
 	}
 
 	return true;
