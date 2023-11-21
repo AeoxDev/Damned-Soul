@@ -144,27 +144,27 @@ void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& 
 				}
 			}
 
-			if (abs(x) >= abs(B.x) - 0.001f) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
+			if ((abs(x) >= abs(B.x) - 0.001f) && (abs(x) <= abs(B.x) + 0.001f)) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
 			{
-				if (B.x <= 0)
-				{
-					x += 0.001f;
-				}
-				else
+				if ((previousX - B.x) <= 0)
 				{
 					x -= 0.001f;
 				}
+				else
+				{
+					x += 0.001f;
+				}
 			}
 			
-			if(abs(z) >= abs(B.z) - 0.001f) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
+			if((abs(z) >= abs(B.z) - 0.001f) && (abs(z) <= abs(B.z) + 0.001f)) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
 			{
-				if (B.z <= 0)
+				if ((previousZ - B.z) <= 0)
 				{
-					z += 0.01f;
+					z -= 0.01f;
 				}
 				else
 				{
-					z -= 0.01f;
+					z += 0.01f;
 				}
 			}
 		}
