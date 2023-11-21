@@ -177,14 +177,16 @@ int StateManager::Setup()
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
+	systems.push_back(new MinotaurBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
 	systems.push_back(new FrozenBehaviourSystem());
 	systems.push_back(new LuciferBehaviourSystem());
 	systems.push_back(new ProjectileSystem());
+
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
-	systems.push_back(new ImpBehaviourSystem());
+	systems.push_back(new ImpBehaviourSystem()); //Imp behavior needs to come after collision
 	systems.push_back(new TransformSystem()); //Must be before controller
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new EventSystem());//Must be after controller system for correct animations

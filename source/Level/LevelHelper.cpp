@@ -103,6 +103,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 40.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			mass = 150.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			mass = 666.f;
@@ -133,6 +137,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			health = 20.f;
+		}
+		else if (eType == EnemyType::minotaur)
+		{
+			health = 60.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -165,6 +173,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 3.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			moveSpeed = 10.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			moveSpeed = 10.f;
@@ -195,6 +207,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			damage = 10.f;
+		}
+		else if (eType == EnemyType::minotaur)
+		{
+			damage = 15.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -227,6 +243,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.8f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			moveSpeed = 3.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.5f;
@@ -257,6 +277,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			soulWorth = 3;
+		}
+		else if (eType == EnemyType::imp)
+		{
+			soulWorth = 5.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -298,8 +322,23 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	//Model
 
 	ModelSkeletonComponent* model = nullptr;
+	if (eType == EnemyType::skeleton)
+	{
+		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<SkeletonBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 0.9f, EnemyType::skeleton);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(SKELETON);
+		if (player)
+		{
+			player->killThreshold++;
+		}
 
-	if (eType == EnemyType::hellhound)
+	}
+	else if (eType == EnemyType::hellhound)
 	{
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
@@ -316,22 +355,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
-	}
-	else if (eType == EnemyType::skeleton)
-	{
-		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
-		registry.AddComponent<AnimationComponent>(entity);
-		registry.AddComponent<SkeletonBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 0.9f, EnemyType::skeleton);
-		//Sounds
-		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(SKELETON);
-		if (player)
-		{
-			player->killThreshold++;
-		}
-		
 	}
 	else if (eType == EnemyType::eye)
 	{
@@ -388,6 +411,24 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (player)
 		{
 			player->killThreshold += 1;
+		}
+	}
+	else if (eType == EnemyType::minotaur)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<MinotaurBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::minotaur);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(MINOTAUR);
+		if (player)
+		{
+			player->killThreshold++;
 		}
 	}
 	else if (eType == EnemyType::tempBoss)
