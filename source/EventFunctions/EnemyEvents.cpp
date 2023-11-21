@@ -171,16 +171,24 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 	TransformComponent* zacTransform = nullptr;
 	zacTransform = registry.GetComponent<TransformComponent>(ent);
 	bool zacIndex[5] = { false, false, false, false, false };
+	bool shouldSpawn = false;
 	for (auto enemyEntity : View<ZacBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
-		ZacBehaviour* zacComponent = registry.GetComponent<ZacBehaviour>(enemyEntity);
-		zacIndex[zacComponent->zacIndex] = true;
-		RemoveEnemy(enemyEntity, 69);
+		StatComponent* enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+		if (enemyStats->GetHealth() > 0)
+		{
+			ZacBehaviour* zacComponent = registry.GetComponent<ZacBehaviour>(enemyEntity);
+			zacIndex[zacComponent->zacIndex] = true;
+			RemoveEnemy(enemyEntity, 69);
+			shouldSpawn = true;
+		}
 	}
-
-	SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f ,
-		1.f, 0.f, 1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4]);
-
+	
+	if (shouldSpawn)
+	{
+		SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f,
+			1.f, 0.f, 1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4]);
+	}
 
 
 	registry.DestroyEntity(ent);
@@ -193,15 +201,20 @@ void SplitBoss(EntityID& entity, const int& index)
 	CalculateGlobalMapValuesImp(valueGrid);
 	TransformComponent* aiTransform = nullptr;
 	aiTransform = registry.GetComponent<TransformComponent>(entity);
+	TempBossBehaviour* tempBossComponent = nullptr;
+	tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
 
 	for (int i = 0; i < 5; ++i)
 	{
-		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 20.f, 30.f);
-		/*float angle = i * (2 * 3.141592 / 5);
-		float x = radius * cos(angle);
-		float y = radius * sin(angle);*/
-		CreateMini(entity, tran.positionX, tran.positionZ, i);
-		CalculateGlobalMapValuesImp(valueGrid);
+		if (tempBossComponent->parts[i] )
+		{
+			TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 20.f, 30.f);
+			/*float angle = i * (2 * 3.141592 / 5);
+			float x = radius * cos(angle);
+			float y = radius * sin(angle);*/
+			CreateMini(entity, tran.positionX, tran.positionZ, i);
+			CalculateGlobalMapValuesImp(valueGrid);
+		}
 	}
 
 
@@ -273,8 +286,9 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	if (toAppend2 != nullptr)
 	{
 		ReleaseModel(toAppend2->model);
-		registry.RemoveComponent<ModelSkeletonComponent>(entity);
+		registry.RemoveComponent<ModelSkeletonComponent>(entity); 
 	}
+
 	SoundComponent* s = registry.GetComponent<SoundComponent>(entity);
 	if (s != nullptr)
 	{

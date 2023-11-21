@@ -74,7 +74,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
-	float facingY , float facingZ, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4, bool zacIndex5)
+	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
@@ -394,8 +394,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
-		for (int i = 0; i < 5; i++)
-			tempBossComponent->parts[i] = true; // this is needed, DO NOT TOUCH
+		
+		tempBossComponent->parts[0] = zacIndex0; // this is needed, DO NOT TOUCH
+		tempBossComponent->parts[1] = zacIndex1;
+		tempBossComponent->parts[2] = zacIndex2;
+		tempBossComponent->parts[3] = zacIndex3;
+		tempBossComponent->parts[4] = zacIndex4;
 
 		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
