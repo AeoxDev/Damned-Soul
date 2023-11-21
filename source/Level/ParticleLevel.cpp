@@ -5,11 +5,16 @@
 #include "Particles.h"
 #include "States\StateManager.h"
 #include "Model.h"
+#include "Levels\LevelHelper.h"
+
 #include <random>
 
 void LoadParticleLevel()
 {
-	EntityID stage = registry.CreateEntity();
+	float redMult = .75f;
+	float greenMult = .75f;
+	float blueMult = .75f;
+	EntityID stage = SetUpStage(redMult, greenMult, blueMult, 0.0f, 0.0f, 0.0f, 0.9f);
 
 	srand(0);
 
@@ -37,11 +42,6 @@ void LoadParticleLevel()
 			rand() % 40 + (-30), rand() % 40 + (-30), rand() % 40 + (-30), rand() % (5000 - 1 + 1) + 1, cShad);
 		
 	}
-
-	// Stage (Default)
-	TransformComponent* stageTransform = registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
 
 	RenderGeometryIndependentCollision(stage);
 

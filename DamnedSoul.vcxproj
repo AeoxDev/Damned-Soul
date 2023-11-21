@@ -196,6 +196,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\DebugTests.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
@@ -548,6 +549,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\TransformComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopRelicComponent.h" />
+    <ClInclude Include="header\DebugTests.h" />
     <ClInclude Include="header\EnemyType.h" />
     <ClInclude Include="header\EntityCreation.h" />
     <ClInclude Include="header\EntityID.h" />
