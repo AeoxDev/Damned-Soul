@@ -114,7 +114,7 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	if (!sfx || !anim || !stats || !aac || !player)
 		return;
 
-	sfx->Play(Player_Attack, Channel_Base);
+	sfx->Play(Player_Attack1, Channel_Base); //Move this later to do the combo attack sounds
 
 	//Animations have 1 second default duration and as such we scale the speed of the animation here so it fits the duration we pass in
 	//Duration * X = 1.0f

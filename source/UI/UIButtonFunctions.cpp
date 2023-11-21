@@ -19,15 +19,54 @@
 void UIFunc::LoadNextLevel(void* args, int a)
 {
 	UnloadEntities();
+
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
-		backgroundMusic->Stop();
+		backgroundMusic->Stop(Channel_Base);
+		backgroundMusic->Stop(Channel_Extra);
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
-		backgroundMusic->Play(Music_Hot, Channel_Base);
-		//audioJungle->HandleSound();
-		//backgroundMusic->Play(Ambience_Blizzard, Channel_Extra); //Add when we got separate ambient load functions for each level.
+		switch (stateManager.activeLevel)
+		{
+		case 2:
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
+			break;
+		case 4:
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
+			break;
+		case 6:
+			backgroundMusic->Play(Music_Boss, Channel_Base);
+			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
+			break;
+		case 8:
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
+			break;
+		case 10:
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
+			break;
+		case 12:
+			backgroundMusic->Play(Music_Cold, Channel_Base);
+			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
+			break;
+		case 14:
+			backgroundMusic->Play(Music_Cold, Channel_Base);
+			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
+			break;
+		case 16:
+			backgroundMusic->Play(Music_Boss, Channel_Base);
+			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
+			break;
+		default: //Shop
+			backgroundMusic->Play(Music_Shop, Channel_Base);
+			//backgroundMusic->Play(Ambience_Cave, Channel_Extra); Maybe change this to a falling ambient noise?
+			break;
+		}
+		audioJungle->HandleSound();
 	}
 
 	LoadLevel(++stateManager.activeLevel);
@@ -40,12 +79,13 @@ void UIFunc::MainMenu_Start(void* args, int a)
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
-		backgroundMusic->Stop();
+		backgroundMusic->Stop(Channel_Base);
+		backgroundMusic->Stop(Channel_Extra);
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
 		backgroundMusic->Play(Music_Hot, Channel_Base);
-		//audioJungle->HandleSound();
-		//backgroundMusic->Play(Ambience_Cave, Channel_Extra); Add back when music for combat is good and can fade from one to another.
+		backgroundMusic->Play(Ambience_Cave, Channel_Extra);
+		audioJungle->HandleSound();
 	}
 
 	LoadLevel(++stateManager.activeLevel);
