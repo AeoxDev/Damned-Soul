@@ -46,44 +46,49 @@ void SettingsState::Input()
 
 void SettingsState::SetupButtons()
 {
+	const int amount = 6;
 
-	const char const texts[5][32] =
+	const char const texts[amount][32] =
 	{
 		"\n1280x720",
 		"\n1600x900",
 		"\n1920x1080",
 		"\nFullscreen",
-		"\nBack"
+		"\nBack",
+		"\nEnable Game Timer"
 	};
 
-	const DSFLOAT2 const positions[5] =
+	const DSFLOAT2 const positions[amount] =
 	{
 		{ -0.375f, 0.2f },
 		{ -0.125f, 0.2f },	
 		{ 0.125f, 0.2f },
 		{ 0.375f, 0.2f },
-		{ -0.81f, -0.8f }
+		{ -0.81f, -0.8f },
+		{ -0.375f, -0.2f },
 	};
 
-	const DSFLOAT2 const scales[5] =
+	const DSFLOAT2 const scales[amount] =
 	{
 		{ 0.6f, 0.6f },
 		{ 0.6f, 0.6f },
 		{ 0.6f, 0.6f },
 		{ 0.6f, 0.6f },
-		{ 0.5f, 0.6f }
+		{ 0.5f, 0.6f },
+		{ 0.6f, 0.6f },
 	};
 
-	void(* const functions[5])(void*, int) =
+	void(* const functions[amount])(void*, int) =
 	{
 		UIFunc::Settings_LowRes,
 		UIFunc::Settings_MediumRes,
 		UIFunc::Settings_HighRes,
 		UIFunc::Settings_Fullscreen,
-		UIFunc::Settings_Back
+		UIFunc::Settings_Back,
+		UIFunc::Settings_Timer,
 	};
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < amount; i++)
 	{
 		auto button = registry.CreateEntity();
 		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
@@ -92,9 +97,11 @@ void SettingsState::SetupButtons()
 
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i]);
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
 
+		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+		buttonSound->Load(MENU);
 	}	
 
 }
@@ -114,7 +121,7 @@ void SettingsState::SetupText()
 	// Settings Text Header
 	auto settingsHeader = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsHeader);
-	uiElement->Setup("TempShopTitle", "Settings", { 0.0f, 0.43f });
+	uiElement->Setup("TempShopTitle", "Settings", { 0.0f, 0.43f }, DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 	
 }

@@ -7,6 +7,8 @@
 #include "MemLib/ML_ComponentMap.hpp"
 #include "EntityID.h"
 
+#include <assert.h>
+
 /*
 	//HOW TO USE (Basic version):
 
@@ -79,6 +81,7 @@ namespace EntityGlobals
 	{
 		//Static variables are stored separately for each different template, so compCount only gets incremented whenever GetId() is called on a NEW type of component
 		static int compId = compCount++;
+		assert(compCount < MAX_COMPONENTS);
 		return compId;
 	}
 

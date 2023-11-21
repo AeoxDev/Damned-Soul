@@ -273,6 +273,12 @@ void SetTopology(TOPOLOGY topology)
 	case POINTLIST:
 		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 		break;
+	case LINELIST:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		break;
+	case LINESTRIP:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
+		break;
 	default:
 		break;
 	}

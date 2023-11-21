@@ -5,7 +5,7 @@ struct UIShopButtonComponent
 	int a = false;
 };
 
-struct UIRerollComponent
+struct UIShopRerollComponent
 {
 	bool locked = false;
 };

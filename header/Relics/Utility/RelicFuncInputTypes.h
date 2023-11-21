@@ -45,6 +45,7 @@ namespace RelicInput
 		DMG::DAMAGE_TYPE_AND_SOURCE typeSource = DMG::UNDEFINED; // The type and source of damage
 
 		float CollapseDamage();
+		float CollapseNoCap();
 	};
 
 	struct OnHealthUpdate

@@ -30,9 +30,9 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
 void PlayerEndAttack(EntityID& entity, const int& index);
 
 //CONTINUOUS
-void PlayerAttack(EntityID& entity, const int& index);
-void PlayerDashSound(EntityID& entity, const int& index);
 void PlayerDash(EntityID& entity, const int& index);
+void PlayerDashSound(EntityID& entity, const int& index);
+void PlayerAttack(EntityID& entity, const int& index);
 /*END OF PLAYER EVENTS*/
 
 //Portal
@@ -41,6 +41,10 @@ void CreatePortal(EntityID& entity, const int& index);
 void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
+void BossShockwaveStart(EntityID& entity, const int& index);
+void BossShockwaveExpand(EntityID& entity, const int& index);
+void BossShockwaveEnd(EntityID& entity, const int& index);
+
 
 //Loop static hazard hitbox
 void LoopHitbox(EntityID& entity, const int& index);

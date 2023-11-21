@@ -25,11 +25,11 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	// TODO: Play ANIMATION_TAKE_DAMAGE. Timed event?
 }
 
-float Combat::CalculateDamage(const DamageOverTimeComponent* dot, EntityID& defender, const uint64_t& source)
+float Combat::CalculateDamage(const DamageOverTime& dot, EntityID& defender, const uint64_t& source)
 {
 	RelicInput::OnDamageCalculation funcInput;
 	funcInput.defender = defender;
-	funcInput.damage = dot->GetDPS();
+	funcInput.damage = dot.GetDPS();
 	funcInput.cap = 99999999; // No real cap for DPS
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
@@ -53,6 +53,13 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	funcInput.cap = defenderStats->GetHealth();
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
+	// Increase if charge attack
+	ChargeAttackArgumentComponent* charge = registry.GetComponent<ChargeAttackArgumentComponent>(attacker);
+	if (charge)
+	{
+		funcInput.incMult *= charge->multiplier;
+	}
+
 	// Apply on damage calc functions
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
 		func(&funcInput);
@@ -64,8 +71,12 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	return funcInput.CollapseDamage();
 }
 
-void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats)
+void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats/*, bool isCharged*/)
 {
+	if (attackerStats == nullptr || defenderStats == nullptr)
+	{
+		return;
+	}
 	// Calculate damage
 	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
 

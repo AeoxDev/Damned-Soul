@@ -105,7 +105,7 @@ class ParticleSystem : public System
 	bool Update();
 };
 
-class DamageOverTimeSystem : public System
+class DebuffSystem : public System
 {
 	bool Update();
 };
@@ -125,7 +125,27 @@ class EyeBehaviourSystem : public System
 	bool Update();
 };
 
+class ImpBehaviourSystem : public System
+{
+	bool Update();
+};
+
+//class MinotaurBehaviourSystem : public System
+//{
+//	bool Update();
+//};
+
 class TempBossBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class LuciferBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class FrozenBehaviourSystem : public System
 {
 	bool Update();
 };

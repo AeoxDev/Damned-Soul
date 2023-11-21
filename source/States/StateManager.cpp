@@ -103,6 +103,18 @@ void SetInShop(bool value)
 		currentStates = (State)(currentStates & (~State::InShop));
 	}
 }
+void SetInCredits(bool value)
+{
+
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InCredits);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InCredits));
+	}
+}
 
 int StateManager::Setup()
 {
@@ -127,14 +139,15 @@ int StateManager::Setup()
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
-	//models.Initialize();
 	Camera::InitializeCamera();
+	SetupHitboxVisualizer();
 	menu.Setup();
 
 	Particles::InitializeParticles();
 	Glow::Initialize();
 	//SetupTestHitbox();
 	RedrawUI();
+	
 
 	//Setup systems here
 
@@ -173,10 +186,13 @@ int StateManager::Setup()
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
+	systems.push_back(new FrozenBehaviourSystem());
+	systems.push_back(new LuciferBehaviourSystem());
 	systems.push_back(new ProjectileSystem());
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
+	systems.push_back(new ImpBehaviourSystem());
 	systems.push_back(new TransformSystem()); //Must be before controller
 	systems.push_back(new FollowerSystem());
 	systems.push_back(new ControllerSystem());
@@ -184,7 +200,7 @@ int StateManager::Setup()
 	systems.push_back(new GeometryIndependentSystem());
 
 	//Damage Over Time (Misc Combat Systems?)
-	systems.push_back(new DamageOverTimeSystem());
+	systems.push_back(new DebuffSystem());
 
 	//CPU work that can affect rendering
 	systems.push_back(new StateSwitcherSystem());
@@ -251,6 +267,10 @@ void StateManager::Input()
 	{
 		scenes[activeLevelScene % 2 == 1].Input(true);
 	}
+	if (currentStates & State::InCredits)
+	{
+		credits.Input();
+	}
 }
 
 void StateManager::Update()
@@ -279,7 +299,6 @@ void StateManager::UnloadAll()
 	UnloadEntities(ENT_PERSIST_HIGHEST);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
-	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
 	ReleaseDepthPass();

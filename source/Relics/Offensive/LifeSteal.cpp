@@ -10,8 +10,9 @@ EntityID LIFE_STEAL::_OWNER;
 
 const char* LIFE_STEAL::Description()
 {
-	char temp[RELIC_DATA_DESC_SIZE];
-	sprintf(temp, "You heal for %ld%% of the attack damage you deal", PERCENT(LIFE_STEAL_HEALING_MULTIPLIER));
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You heal for %ld%% of the attack damage you deal", PERCENT(LIFE_STEAL_HEALING_MULTIPLIER));
+#pragma warning(suppress : 4172)
 	return temp;
 }
 
