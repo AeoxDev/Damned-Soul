@@ -133,7 +133,17 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 100;//400.f;
+			health = 0;//400.f;
+			if (zacIndex0)
+				health += 25;
+			if (zacIndex1)
+				health += 25;
+			if (zacIndex2)
+				health += 25;
+			if (zacIndex3)
+				health += 25;
+			if (zacIndex4)
+				health += 25;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
