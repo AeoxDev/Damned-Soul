@@ -54,6 +54,7 @@ struct ModelBonelessComponent
 
 struct ModelSkeletonComponent
 {
+
 	uint64_t model;
 	ModelSharedData shared;
 
