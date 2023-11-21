@@ -642,18 +642,6 @@ bool HellhoundBehaviourSystem::Update()
 				hellhoundComponent->chargePrepareDurationCounter = 0.0f;
 				CombatBehaviour(hellhoundComponent, enemyStats, playerStats, playerTransformCompenent, hellhoundTransformComponent, enemyEntity, enmComp, enemyAnim);
 			}
-			//else if (distance <= 15 + hellhoundComponent->circleBehaviour) // time to  circle?
-			//{
-			//	if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.15f) // attack the back
-			//	{
-			//		hellhoundComponent->charge = true;
-			//		ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
-			//	}
-			//	else //keep circling
-			//	{
-			//		CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
-			//	}
-			//}
 			else if (hellhoundComponent->hasMadeADecision && !hellhoundComponent->wantsToShoot) // CHARGE
 			{
 				hellhoundComponent->charge = true;
