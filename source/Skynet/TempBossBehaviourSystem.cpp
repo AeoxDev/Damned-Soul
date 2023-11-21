@@ -165,7 +165,7 @@ bool TempBossBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
-		tempBossComponent->shockwaveChanceCounter += GetDeltaTime();
+		
 
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
@@ -209,6 +209,7 @@ bool TempBossBehaviourSystem::Update()
 			ML_Vector<Node> finalPath;
 			tempBossComponent->updatePathCounter += GetDeltaTime();
 			tempBossComponent->attackStunDurationCounter += GetDeltaTime();
+			tempBossComponent->shockwaveChanceCounter += GetDeltaTime();
 
 			if (distance < 70.f && tempBossComponent->isDazed == false && tempBossComponent->willDoShockWave == false
 				&& tempBossComponent->attackStunDurationCounter > tempBossComponent->attackStunDuration && tempBossComponent->isAttacking == false)
