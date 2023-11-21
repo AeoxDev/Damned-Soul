@@ -2,12 +2,13 @@ RWTexture2D<unorm float4> outputGlowData : register(u0);
 RWTexture2D<unorm float4> inputGlowData : register(u1);
 RWTexture2D<unorm float4> backbuffer : register(u2);
 
+Texture2D<unorm float4> depthSRV : register(t0);
 
 // Not necessary, unless future information is required.
-cbuffer BlurInfo : register(b0)
-{
-    int instance; // The current number of repetitions (i)
-}
+//cbuffer BlurInfo : register(b0)
+//{
+//    int instance; // The current number of repetitions (i)
+//}
 
 static const float e = 2.71828f;
 static const float pi = 3.14159f;
@@ -36,6 +37,11 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
         return;
     }
     
+    if (depthSRV[index].a == 0)
+    {
+        return;
+    }
+    
     float total = 0;
     float4 output = float4(0, 0, 0, 0);
     
@@ -52,87 +58,18 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
         }
     }
     
-    outputGlowData[index] += inputGlowData[index] + (output / total);    // Add blur "on top of" existing texture.
+    //  Add blur "on top of" existing glow texture.
+    //outputGlowData[index] += inputGlowData[index] + (output / total;
     
-    //float4 m_rgb = inputGlowData[index.xy].rgba;
+    float4 glow = outputGlowData[index] + inputGlowData[index] + (output / total);
+    float4 bb_rgba = backbuffer[index];
     
-    //int2 up = int2(index.x, index.y - 1);
-    //int2 down = int2(index.x, index.y + 1);
-    //int2 left = int2(index.x - 1, index.y);
-    //int2 right = int2(index.x + 1, index.y);
+    // Add glow color on backbuffer, using alpha as a factor.
+    float fac_a = glow.a;
+    float res_r = (bb_rgba.r * (1 - fac_a)) + (glow.r * fac_a);     // TODO: Try tweaking. Would multiply work better?
+    float res_g = (bb_rgba.g * (1 - fac_a)) + (glow.g * fac_a);
+    float res_b = (bb_rgba.b * (1 - fac_a)) + (glow.b * fac_a);
     
-    //float4 up_rgb;
-    //float4 down_rgb;
-    //float4 left_rgb;
-    //float4 right_rgb;
-    
-    //int calc_pxl = 3;
-    
-    //if (up.y < 0)
-    //{
-    //    up_rgb = float4(0, 0, 0, 0);
-    //}
-    //else
-    //{
-    //    up_rgb = inputGlowData[up].rgba;
-    //    calc_pxl++;
-    //}
-    //if (down.y > 900)
-    //{
-    //    down_rgb = float4(0, 0, 0, 0);
-    //}
-    //else
-    //{
-    //    down_rgb = inputGlowData[down].rgba;
-    //    calc_pxl++;
-    //}
-    //if (left.x < 0)
-    //{
-    //    left_rgb = float4(0, 0, 0, 0);
-    //}
-    //else
-    //{
-    //    left_rgb = inputGlowData[left].rgba;
-    //    calc_pxl++;
-    //}
-    //if (right.x > 1600)
-    //{
-    //    right_rgb = float4(0, 0, 0, 0);
-    //}
-    //else
-    //{
-    //    right_rgb = inputGlowData[right].rgba;
-    //    calc_pxl++;
-    //}
-    ////float3 up_rgb = (up.y < 0) ? float3(0, 0, 0) : inputGlowData[up].rgb;
-    ////float3 down_rgb = (down.y > 900) ? float3(0, 0, 0) : inputGlowData[down].rgb;
-    ////float3 left_rgb = (left.x < 0) ? float3(0, 0, 0) : inputGlowData[left].rgb;
-    ////float3 right_rgb = (right.x > 1600) ? float3(0, 0, 0) : inputGlowData[right].rgb;
-    
-    //float4 avg_rgb = float4(0, 0, 0, 0);
-    
-    ////blend colors
-    ////calculate brightness?
-    
-    //[unroll]
-    //for (int i = 0; i < 4; ++i)
-    //{
-    //    avg_rgb[i] = (3 * m_rgb[i] + up_rgb[i] + down_rgb[i] + left_rgb[i] + right_rgb[i]) / calc_pxl;
-    //}
-    //avg_rgb = float4(avg_rgb.rgb * avg_rgb.a, avg_rgb.a);
-    
-    ////avg_rgb.r += (up_rgb.r + down_rgb.r + left_rgb.r + right_rgb.r) / calc_pxl;
-    ////avg_rgb.g += (up_rgb.g + down_rgb.g + left_rgb.g + right_rgb.g) / calc_pxl;
-    ////avg_rgb.b += (up_rgb.b + down_rgb.b + left_rgb.b + right_rgb.b) / calc_pxl;
-    ////avg_rgb.a += (up_rgb.a + down_rgb.a + left_rgb.a + right_rgb.a) / calc_pxl;
-    
-    ////avg_rgb.r = (instance == 0) ? avg_rgb.r : avg_rgb.r / instance;
-    ////avg_rgb.g = (instance == 0) ? avg_rgb.g : avg_rgb.g / instance;
-    ////avg_rgb.b = (instance == 0) ? avg_rgb.b : avg_rgb.b / instance;
-    
-    ////m_rgb += avg_rgb;
-    
-    ////m_rgb = clamp(m_rgb, float3(0, 0, 0), float3(1, 1, 1));
-    
-    //outputGlowData[index] = avg_rgb;    //WARNING: Might be issues with alpha being clamped! Maybe should depend on factor instead?
+    backbuffer[index] = float4(res_r, res_g, res_b, bb_rgba.a);
+
 }

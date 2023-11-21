@@ -19,6 +19,8 @@ bool GlowSystem::Update()
 	bool drawn = false;
 	for (auto entity : View<GlowComponent>(registry))
 	{
+		GlowComponent* glow_comp = registry.GetComponent<GlowComponent>(entity);
+
 		SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
 		ModelBonelessComponent* boneless_comp = registry.GetComponent<ModelBonelessComponent>(entity);
 		TransformComponent* trans_comp = registry.GetComponent<TransformComponent>(entity);
@@ -27,6 +29,7 @@ bool GlowSystem::Update()
 			if (!prepped)
 			{
 				Glow::PrepareGlowPass();
+				Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
 				prepped = true;
 			}
 			if (trans_comp->offsetX != 0.0f)
@@ -51,6 +54,7 @@ bool GlowSystem::Update()
 			if (!prepped)
 			{
 				Glow::PrepareGlowPass();
+				Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
 				prepped = true;
 			}
 			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
@@ -78,11 +82,13 @@ bool GlowSystem::Update()
 	if (drawn)
 	{
 		Glow::FinishGlowPass();
+		Glow::PrepareBlurPass();
+		//Glow::UpdateBlurBuffer(1);
+		Dispatch(50, 29, 1);
+		Glow::FinishBlurPass();
 	}
 
-	Glow::PrepareBlurPass();
-	Glow::UpdateBlurBuffer(1);
-	Dispatch(50, 29, 1);
+
 
 	// Should not need to repeat.
 	//for (int i = 0; i < /*50*/1; i++)
@@ -113,6 +119,5 @@ bool GlowSystem::Update()
 	// Use depth to determine falloff factor?
 	// 
 
-	Glow::FinishBlurPass();
 	return true;
 }

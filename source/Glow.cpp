@@ -2,6 +2,7 @@
 #include "D3D11Helper/D3D11Helper.h"
 #include "SDLHandler.h"
 #include "MemLib\MemLib.hpp"
+#include "RenderDepthPass.h"
 
 SRV_IDX Glow::glow_srv;
 UAV_IDX Glow::backbuffer_uav;
@@ -11,8 +12,8 @@ DSV_IDX Glow::glow_depth;
 CS_IDX Glow::blur_shader;
 UAV_IDX Glow::blur_uav1;
 UAV_IDX Glow::blur_uav2;
-CB_IDX Glow::blur_buffer;
-PoolPointer<Glow::BlurData> Glow::blur_bufData;
+CB_IDX Glow::glow_buffer;
+PoolPointer<Glow::GlowData> Glow::glow_bufData;
 
 void Glow::Initialize()
 {
@@ -21,13 +22,13 @@ void Glow::Initialize()
 	glow_srv = CreateShaderResourceViewTexture(glow_rtv, RESOURCE_FLAGS::BIND_RENDER_TARGET);
 	glow_shader = LoadPixelShader("GlowShader.cso");
 	glow_depth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
+	glow_buffer = CreateConstantBuffer(sizeof(GlowData));
 	
 
 	// Compute
 	blur_shader = LoadComputeShader("BlurShader.cso");
 	blur_uav1 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 	blur_uav2 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
-	blur_buffer = CreateConstantBuffer(sizeof(BlurData));
 
 	backbuffer_uav = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, renderStates[backBufferRenderSlot].renderTargetView);
 }
@@ -43,9 +44,11 @@ void Glow::SetViews()
 	//UnsetUnorderedAcessView(0);
 	//UnsetUnorderedAcessView(1);
 	//UnsetUnorderedAcessView(2);
+	UnsetRenderTargetViewAndDepthStencil();
 	SetUnorderedAcessView(blur_uav1, 0);
 	SetUnorderedAcessView(blur_uav2, 1);
 	SetUnorderedAcessView(backbuffer_uav, 2);
+	SetDepthPassTextureCompute(true);
 }
 
 void Glow::FinishGlowPass()
@@ -56,6 +59,7 @@ void Glow::FinishGlowPass()
 	
 	CopySRVToUAV(blur_uav2, glow_srv);
 	CopySRVToUAV(blur_uav1, glow_srv);
+	UnsetConstantBuffer(BIND_PIXEL, 2);
 }
 
 void Glow::SwitchUAV()
@@ -65,17 +69,16 @@ void Glow::SwitchUAV()
 	blur_uav1 = tmp;
 }
 
-void Glow::UpdateBlurBuffer(int instance)
+void Glow::UpdateGlowBuffer(float r, float g, float b)
 {
-	if (instance != 0)
-	{
-		UnsetConstantBuffer(BIND_COMPUTE, 0);
-	}
-	blur_bufData = MemLib::palloc(sizeof(BlurData));
-	blur_bufData->instance = instance;
-	UpdateConstantBuffer(blur_buffer, blur_bufData);
-	MemLib::pfree(blur_bufData);
-	SetConstantBuffer(blur_buffer, BIND_COMPUTE, 0);
+	UnsetConstantBuffer(BIND_PIXEL, 2);
+	glow_bufData = MemLib::palloc(sizeof(GlowData));
+	glow_bufData->col_r = r;
+	glow_bufData->col_g = g;
+	glow_bufData->col_b = b;
+	UpdateConstantBuffer(glow_buffer, glow_bufData);
+	MemLib::pfree(glow_bufData);
+	SetConstantBuffer(glow_buffer, BIND_PIXEL, 2);
 }
 
 void Glow::PrepareBlurPass()
@@ -89,8 +92,8 @@ void Glow::FinishBlurPass()
 	UnsetUnorderedAcessView(0);
 	UnsetUnorderedAcessView(1);
 	UnsetUnorderedAcessView(2);
+	SetDepthPassTextureCompute(false);
 	UnsetComputeShader();
-	UnsetConstantBuffer(BIND_COMPUTE, 0);
 
 	CopyUAVToSRV(glow_srv, blur_uav1);
 }

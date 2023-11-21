@@ -155,7 +155,7 @@ int StateManager::Setup()
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
 
-	systems.push_back(new GlowApplySystem());	// WARNING: Check position!
+	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());

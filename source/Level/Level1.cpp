@@ -33,7 +33,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
 	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);*/
-	registry.AddComponent<GlowComponent>(cutsceneEnemy, 1, 1, 1);
+	registry.AddComponent<GlowComponent>(cutsceneEnemy, 0, 1, 1);	// NOTE: Set glow color here.
 	
 	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
 	//5 souls total

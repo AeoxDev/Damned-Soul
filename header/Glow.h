@@ -6,9 +6,11 @@
 
 namespace Glow
 {
-	struct BlurData
+	struct GlowData
 	{
-		int instance = 0;
+		float col_r;
+		float col_g;
+		float col_b;
 	};
 
 	extern SRV_IDX glow_srv;
@@ -19,15 +21,15 @@ namespace Glow
 	extern CS_IDX blur_shader;
 	extern UAV_IDX blur_uav1;
 	extern UAV_IDX blur_uav2;
-	extern CB_IDX blur_buffer;
-	extern PoolPointer<BlurData> blur_bufData;
+	extern CB_IDX glow_buffer;
+	extern PoolPointer<GlowData> glow_bufData;
 
 	void Initialize();
 	void PrepareGlowPass();
 	void SetViews();
 	void FinishGlowPass();
 	void SwitchUAV();
-	void UpdateBlurBuffer(int instance);
+	void UpdateGlowBuffer(float r, float g, float b);
 	void PrepareBlurPass();
 	void FinishBlurPass();
 	void ClearGlowRenderTarget();
