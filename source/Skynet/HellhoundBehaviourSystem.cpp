@@ -88,7 +88,7 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 		enemyStats->SetSpeedMult(speedMultiplier);
 		if (enemyStats->m_acceleration == enemyStats->m_baseAcceleration)
 		{
-			enemyStats->m_acceleration = 8.0f;
+			enemyStats->m_acceleration = enemyStats->GetSpeed() * speedMultiplier;
 		}
 		
 	}
@@ -568,6 +568,7 @@ bool HellhoundBehaviourSystem::Update()
 				hellhoundComponent->isWating = false;
 				SetInfiniteDirection(hellhoundTransformComponent, hellhoundComponent);
 				hellhoundComponent->retreat = true;
+				hellhoundComponent->updatePathCounter = 20.f;
 				hellhoundComponent->hasMadeADecision = false;
 			}
 			else if (distance < hellhoundComponent->meleeDistance || hellhoundComponent->attackTimer > 0.0f) // fight club and not currently shooting
