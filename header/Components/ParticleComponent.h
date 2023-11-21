@@ -11,7 +11,8 @@ enum ComputeShaders
 	RAIN = 5,
 	SINUS = 6,
 	LIGHTNING = 7,
-	CIRCLE_FIELD = 8
+	CIRCLE_FIELD = 8,
+	PULSE = 9
 };
 
 struct ParticleComponent
