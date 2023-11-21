@@ -176,11 +176,13 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 	bool shouldSpawn = false;
 	for (auto enemyEntity : View<ZacBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
-		StatComponent* enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
+		StatComponent* enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
 		if (enemyStats->GetHealth() > 0)
 		{
 			ZacBehaviour* zacComponent = registry.GetComponent<ZacBehaviour>(enemyEntity);
 			zacIndex[zacComponent->zacIndex] = true;
+			EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+			enemyComp->soulCount = 0;
 			RemoveEnemy(enemyEntity, 69);
 			shouldSpawn = true;
 		}
