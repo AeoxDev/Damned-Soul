@@ -50,6 +50,8 @@ namespace UIFunc
 	// Turn on/off timer from settings
 	void Settings_Timer(void* args, int a);
 
+	void LoadParticleLevel(void* args);
+	
 	void SelectRelic(void* args, int index);
 
 	void BuyRelic(void* args, int index);

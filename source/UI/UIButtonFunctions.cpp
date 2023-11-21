@@ -32,6 +32,7 @@ void UIFunc::LoadNextLevel(void* args, int a)
 		//backgroundMusic->Play(Ambience_Blizzard, Channel_Extra); //Add when we got separate ambient load functions for each level.
 	}
 
+
 	LoadLevel(++stateManager.activeLevel);
 	//LoadLevel(2);
 }
