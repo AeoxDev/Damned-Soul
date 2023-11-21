@@ -85,7 +85,13 @@ bool StateSwitcherSystem::Update()
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
-		if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && !(currentStates & State::InShop))
+		bool endGameLoop = true;
+		for (auto enemyEntity : View<EnemyComponent>(registry))
+		{
+			endGameLoop = false;
+			continue;
+		}
+		if (/*playersComp->killingSpree >= playersComp->killThreshold*/ endGameLoop && !playersComp->portalCreated && !(currentStates & State::InShop))
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();

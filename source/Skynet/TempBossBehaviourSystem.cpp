@@ -39,8 +39,9 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 		dirZ /= magnitude;
 	}
 
-	tempBossTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
-	tempBossTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
+	//tempBossTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
+	//tempBossTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
+	TransformAccelerate(enemy, dirX, dirZ);
 }
 
 void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, TempBossBehaviour* tempBossComponent, TransformComponent* tempBossTransformComponent, StatComponent* stats, AnimationComponent* animComp)
@@ -251,6 +252,7 @@ bool TempBossBehaviourSystem::Update()
 
 			if (tempBossComponent->isDazed)
 			{
+				TransformDecelerate(enemyEntity);
 				tempBossComponent->dazeCounter += GetDeltaTime();
 				if (tempBossComponent->dazeCounter >= tempBossComponent->dazeTime)
 				{
@@ -278,10 +280,12 @@ bool TempBossBehaviourSystem::Update()
 
 					if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown) // Dew it..
 					{
+						TransformDecelerate(enemyEntity);
 						tempBossComponent->isDazed = true;
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
 					}
+					TransformDecelerate(enemyEntity);
 					continue; // dont chase
 				}
 
@@ -295,6 +299,7 @@ bool TempBossBehaviourSystem::Update()
 						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
+							TransformDecelerate(enemyEntity);
 							continue;
 						}
 					}
@@ -346,6 +351,7 @@ bool TempBossBehaviourSystem::Update()
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, tempBossComponent, tempBossTransformComponent, enemyStats, enemyAnim);
 		}
+		TransformDecelerate(enemyEntity);
 	}
 
 	free(valueGrid);
