@@ -557,6 +557,9 @@ void UIFunc::HoverShopButtons(void* args, int index, bool hover)
 		uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 	}
 
+	if (uiImpElement == nullptr || uiImpText == nullptr)
+		return;
+
 	if (hover)
 	{
 		uiImpText->name = shopButton->m_name;
@@ -617,6 +620,9 @@ void UIFunc::HoverShopRelic(void* args, int index, bool hover)
 		uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 	}
 
+	if (uiImpElement == nullptr || uiImpText == nullptr)
+		return;
+
 	int imageIndex = uiElement->m_Images.size() - (2 - index + 1);
 
 	if (hover)
@@ -674,6 +680,9 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 			uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 		}
 
+		if (uiImpElement == nullptr || uiImpText == nullptr)
+			return;
+
 		uiImpText->name = relicWindow->relics[index]->m_relicName;
 		uiImpText->description = relicWindow->relics[index]->m_description;
 		uiImpText->price = relicWindow->relics[index]->m_price;
@@ -690,6 +699,9 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 			uiPauseElement = registry.GetComponent<UIComponent>(entity);
 			uiPauseText = registry.GetComponent<UIPauseRelicTextComponent>(entity);
 		}
+
+		if (uiPauseElement == nullptr || uiPauseText == nullptr)
+			return;
 
 		uiPauseText->name = relicWindow->relics[index]->m_relicName;
 		uiPauseText->description = relicWindow->relics[index]->m_description;

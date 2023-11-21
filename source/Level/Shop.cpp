@@ -225,11 +225,11 @@ void LoadShop()
 
 void ReloadShop()
 {
-	//CreateTextWindows();
+	CreateTextWindows();
 
 	SetInShop(true);
 	void* a = {};
-	//UIFunc::RerollRelic(a, -1);
+	UIFunc::RerollRelic(a, -1);
 
 }
 

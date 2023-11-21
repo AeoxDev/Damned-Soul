@@ -7,7 +7,7 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-#define TEST3000 //Hermano 3000
+//#define TEST3000 //Hermano 3000
 
 //#define TESTMTS //Test Main to Settings 500
 //#define TESTMTC //Test Main to Credits 500

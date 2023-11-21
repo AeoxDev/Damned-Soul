@@ -66,7 +66,8 @@ bool OnHoverSystem::Update()
 			{
 				//Set which sound to play
 				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-				if (sound != nullptr) sound->Play(Button_Hover, Channel_Base);
+				OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(entity);
+				if ((sound != nullptr) && (onClick != nullptr)) sound->Play(Button_Hover, Channel_Base);
 
 				RedrawUI();
 				comp->redrawUIChecks[comp->index] = 0;
