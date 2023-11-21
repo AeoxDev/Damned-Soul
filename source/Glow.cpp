@@ -39,34 +39,21 @@ void Glow::PrepareGlowPass()
 	SetPixelShader(glow_shader);
 }
 
-void Glow::SetViews()
-{
-	//UnsetUnorderedAcessView(0);
-	//UnsetUnorderedAcessView(1);
-	//UnsetUnorderedAcessView(2);
-	UnsetRenderTargetViewAndDepthStencil();
-	SetUnorderedAcessView(blur_uav1, 0);
-	SetUnorderedAcessView(blur_uav2, 1);
-	SetUnorderedAcessView(backbuffer_uav, 2);
-	SetDepthPassTextureCompute(true);
-}
-
 void Glow::FinishGlowPass()
 {
 	UnsetPixelShader();
 	UnsetRenderTargetViewAndDepthStencil();
-	// NOTE: ?
-	
 	CopySRVToUAV(blur_uav2, glow_srv);
 	CopySRVToUAV(blur_uav1, glow_srv);
 	UnsetConstantBuffer(BIND_PIXEL, 2);
 }
 
-void Glow::SwitchUAV()
+void Glow::SetBlurViews()
 {
-	UAV_IDX tmp = blur_uav2;
-	blur_uav2 = blur_uav1;
-	blur_uav1 = tmp;
+	SetUnorderedAcessView(blur_uav1, 0);
+	SetUnorderedAcessView(blur_uav2, 1);
+	SetUnorderedAcessView(backbuffer_uav, 2);
+	SetDepthPassTextureCompute(true);
 }
 
 void Glow::UpdateGlowBuffer(float r, float g, float b)
@@ -84,7 +71,7 @@ void Glow::UpdateGlowBuffer(float r, float g, float b)
 void Glow::PrepareBlurPass()
 {
 	SetComputeShader(blur_shader);
-	SetViews();
+	SetBlurViews();
 }
 
 void Glow::FinishBlurPass()

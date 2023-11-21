@@ -13,6 +13,8 @@ namespace Glow
 		float col_b;
 	};
 
+	// TODO: Edit resources. UAV is unnecessary if only read access is needed.
+
 	extern SRV_IDX glow_srv;
 	extern UAV_IDX backbuffer_uav;
 	extern RTV_IDX glow_rtv;
@@ -26,9 +28,11 @@ namespace Glow
 
 	void Initialize();
 	void PrepareGlowPass();
-	void SetViews();
+	// Unset everything used in glow pass.
 	void FinishGlowPass();
-	void SwitchUAV();
+	// Set views necessary for blur pass.
+	void SetBlurViews();
+	// Update with values from GlowComponent.
 	void UpdateGlowBuffer(float r, float g, float b);
 	void PrepareBlurPass();
 	void FinishBlurPass();

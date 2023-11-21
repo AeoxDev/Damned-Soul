@@ -9,11 +9,6 @@
 
 bool GlowSystem::Update()
 {
-	// Two passes:
-	// 
-	// 1. For every glow component (& transform and model, for security reasons and possible later UI glow pass? How do I check for either or?)
-	// Can I use Render(), or do I need to create a separate version?
-
 	Glow::ClearGlowRenderTarget();
 	bool prepped = false;
 	bool drawn = false;
@@ -83,41 +78,9 @@ bool GlowSystem::Update()
 	{
 		Glow::FinishGlowPass();
 		Glow::PrepareBlurPass();
-		//Glow::UpdateBlurBuffer(1);
 		Dispatch(50, 29, 1);
 		Glow::FinishBlurPass();
 	}
-
-
-
-	// Should not need to repeat.
-	//for (int i = 0; i < /*50*/1; i++)
-	//{
-	//	Glow::UpdateBlurBuffer(i);
-	//	Dispatch(50, 29, 1);
-	//	Glow::SwitchUAV();
-	//	Glow::SetViews();
-	//}
-
-
-
-	// NOTE:
-	// Read from glow/emission texture/map
-	// (Get color from glow component)
-	// Write to "sharp" bloom (do I need to handle overlaps? probably not)
-	// 
-	// 2. Once?
-	// Read from "sharp"
-	// Calculate falloff
-	// Write to "soft" bloom
-	// Repeat dispatch as much as necessary (5-9?)
-	// 
-	// Figure out where I apply glow to final render, probably not here? After scene, before UI. Separate function for UI glow?
-
-	// THOUGHTS:
-	// Sample from shadow map and make glow sources in shadow weaker? Does it matter? Would that look right?
-	// Use depth to determine falloff factor?
-	// 
 
 	return true;
 }

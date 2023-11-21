@@ -37,6 +37,7 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
         return;
     }
     
+    // Don't draw glow on top of UI.
     if (depthSRV[index].a == 0)
     {
         return;
@@ -45,6 +46,7 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     float total = 0;
     float4 output = float4(0, 0, 0, 0);
     
+    // Calculate glow falloff.
     #define WIDTH_HEIGHT (10)
     #define SIGMA (5.f)
     for (int y = max(index.y - WIDTH_HEIGHT, 0); y < min(index.y + WIDTH_HEIGHT, 900); ++y)
@@ -59,8 +61,6 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     }
     
     //  Add blur "on top of" existing glow texture.
-    //outputGlowData[index] += inputGlowData[index] + (output / total;
-    
     float4 glow = outputGlowData[index] + inputGlowData[index] + (output / total);
     float4 bb_rgba = backbuffer[index];
     
