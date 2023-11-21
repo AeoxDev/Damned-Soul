@@ -25,6 +25,7 @@ void SoftCollision(OnCollisionParameters& params)
 	//Take both entities transform
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
 	
@@ -73,9 +74,20 @@ void HardCollision(OnCollisionParameters& params)
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
+	if (transform1->positionX == transform2->positionX && transform1->positionZ == transform2->positionZ)
+	{
+		float positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionX += positionOffset;
+		positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionZ += positionOffset;
 
+
+	}
 	float radius1 = 0.0f;
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	--hitbox1->nrMoveableCollisions;
 
 	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
 	{

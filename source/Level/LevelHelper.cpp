@@ -7,26 +7,73 @@
 #include "States\StateManager.h"
 #include "UIComponents.h"
 
-EntityID SetUpStage(const float rm, const float gm, const float bm, const float ra, const float ga, const float ba, const float gamma)
+EntityID SetUpStage(StageSetupVariables& stageVars)
 {
 	EntityID stage = registry.CreateEntity();
+	EntityID wall = registry.CreateEntity();
+	EntityID hitbox = registry.CreateEntity();
+	EntityID gate = registry.CreateEntity();
+	EntityID noclip = registry.CreateEntity();//Decorations
+	ModelBonelessComponent* stageModel;
+	ModelBonelessComponent* wallModel;
+	ModelBonelessComponent* hitboxModel;
+	ModelBonelessComponent* gateModel;
+	ModelBonelessComponent* noclipModel;
+	switch (stageVars.stageNr)
+	{
+	case 0:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Floor.mdl"));
+		wallModel = registry.AddComponent<ModelBonelessComponent>(wall, LoadModel("LV1Walls.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
+		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV1Noclip.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
 
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->shared.colorMultiplicativeRed = rm;
-	stageModel->shared.colorMultiplicativeGreen = gm;
-	stageModel->shared.colorMultiplicativeBlue = bm;
-	stageModel->shared.colorAdditiveRed = ra;
-	stageModel->shared.colorAdditiveGreen = ga;
-	stageModel->shared.colorAdditiveBlue = ba;
+		break;
+	case 1:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Floor.mdl"));
+		wallModel = registry.AddComponent<ModelBonelessComponent>(wall, LoadModel("LV1Walls.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
+		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV1Noclip.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
+		break;
+	case 2:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV2Floor.mdl"));
+		wallModel = registry.AddComponent<ModelBonelessComponent>(wall, LoadModel("LV2Wall.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV2Gate.mdl"));
+		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV2Noclip.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV2Hitbox.mdl"));
+		break;
+	default:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
+		ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+		phc->Load("default");
+		break;
+	}
+
+	
+	stageModel->shared.colorMultiplicativeRed = stageVars.rm;
+	stageModel->shared.colorMultiplicativeGreen = stageVars.gm;
+	stageModel->shared.colorMultiplicativeBlue = stageVars.bm;
+	stageModel->shared.colorAdditiveRed = stageVars.ra;
+	stageModel->shared.colorAdditiveGreen = stageVars.ga;
+	stageModel->shared.colorAdditiveBlue = stageVars.ba;
 
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
 	// Stage (Default)
-	registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
-
+	TransformComponent* transform = registry.AddComponent<TransformComponent>(stage);
+	transform->scaleX = stageVars.scaleX;
+	transform->scaleY = stageVars.scaleY;
+	transform->scaleZ = stageVars.scaleZ;
+	transform->positionX = stageVars.offsetX;
+	transform->positionY = stageVars.offsetY;
+	transform->positionZ = stageVars.offsetZ;
+	TransformComponent* transformW = registry.AddComponent<TransformComponent>(wall, transform);
+	TransformComponent* transformG = registry.AddComponent<TransformComponent>(gate, transform);
+	TransformComponent* transformN = registry.AddComponent<TransformComponent>(noclip, transform);
+	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
+	RenderGeometryIndependentCollision(stage, wall, hitbox);
 	return stage;
 }
 
@@ -37,7 +84,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 	bool succeded = false;
 	while (!succeded)
 	{
-		int scalePosMod = 5 * scale;
+		int scalePosMod = 5 * (int)scale;
 		float randX = scalePosMod + (float)(rand() % (100 - 2 * scalePosMod)) - 50.0f;
 		float randZ = scalePosMod + (float)(rand() % (100 - 2 * scalePosMod)) - 50.0f;
 		if (randX * randX + randZ * randZ > 80)
@@ -56,7 +103,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 			hazardModel->castShadow = false;
 			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 			hazardTransform->positionX = randX;
-			hazardTransform->positionY = 0.6f - (type * .1f);
+			hazardTransform->positionY = 0.6f - ((float)type * .1f);
 			hazardTransform->positionZ = randZ;
 			hazardTransform->scaleX = randScaleX * scale;
 			hazardTransform->scaleY = 1.f;
@@ -241,11 +288,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			soulWorth = 3;
+			soulWorth = 1;
 		}
 		else if (eType == EnemyType::hellhound)
 		{
-			soulWorth = 2;
+			soulWorth = 1;
 		}
 		else if (eType == EnemyType::skeleton)
 		{
@@ -257,7 +304,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			soulWorth = 4;
+			soulWorth = 1;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -409,7 +456,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
 		AnimationComponent* anim = registry.AddComponent<AnimationComponent>(entity);
-		registry.AddComponent<LuciferBehaviour>(entity, 0, 0);
+		registry.AddComponent<LuciferBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.2f * scaleX, EnemyType::lucifer);
 		if (player)
 		{
@@ -495,6 +542,9 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	TransformComponent* playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
 	playerTransform->facingZ = facingZ;
 	playerTransform->mass = mass;
+	playerTransform->positionX = positionX;
+	playerTransform->positionY = positionY;
+	playerTransform->positionZ = positionZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(stateManager.player);
@@ -570,6 +620,8 @@ void ReloadPlayerNonGlobals()
 	}
 	playerTransform->currentSpeedX = 0.0f;
 	playerTransform->currentSpeedZ = 0.0f;
+	playerTransform->positionX = 0.0f;
+	playerTransform->positionZ = 0.0f;
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
@@ -592,6 +644,7 @@ void ReloadPlayerNonGlobals()
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	player->isAttacking = false;
+	player->isDashing = false;
 }
 
 EntityID RandomPlayerEnemy(EnemyType enemyType) {

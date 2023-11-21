@@ -9,6 +9,69 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "States\StateManager.h"
 
+float giSpawnPosX = 0.0f;
+float giSpawnPosZ = 0.0f;
+
+struct GIFloat2
+{
+	float x, z;
+};
+
+//To find the direction to get out of cracks.
+GIFloat2 GetGIadjacentDirections(int pixelPosX, int pixelPosZ, int type)
+{
+
+	
+	float posX = 0.0f;
+	float posZ = 0.0f;
+
+	//Do a 5 by 5 g rid
+	const int gridSize = 5;
+	int gridX[gridSize] = { pixelPosX - 2 ,pixelPosX - 1, pixelPosX, (pixelPosX + 1) % GI_TEXTURE_DIMENSIONS, (pixelPosX + 2) % GI_TEXTURE_DIMENSIONS };
+	int gridZ[gridSize] = { pixelPosZ - 2 ,pixelPosZ - 1, pixelPosZ, (pixelPosZ + 1) % GI_TEXTURE_DIMENSIONS, (pixelPosZ + 2) % GI_TEXTURE_DIMENSIONS };
+
+	if (gridX[0] < 0)
+	{
+		gridX[0] = GI_TEXTURE_DIMENSIONS - 2;
+	}
+	if (gridX[1] < 0)
+	{
+		gridX[1] = GI_TEXTURE_DIMENSIONS - 1;
+	}
+	if (gridZ[0] < 0)
+	{
+		gridZ[0] = GI_TEXTURE_DIMENSIONS - 2;
+	}
+	if (gridZ[1] < 0)
+	{
+		gridZ[1] = GI_TEXTURE_DIMENSIONS - 1;
+	}
+	int value = 0;
+	//First check the upper left, then to for rowwise
+	for (int z = 0; z < gridSize; z++)
+	{
+		for (int x = 0; x < gridSize; x++)
+		{
+			value = giTexture->texture[gridZ[z]][gridX[x]];
+			if (value == type)
+			{
+				posX += (x - (gridSize / 2));
+				posZ += (z - (gridSize / 2));
+			}
+			
+		}
+	}
+	
+	GIFloat2 toReturn;
+	toReturn.x = -posX;
+	toReturn.z = posZ;
+	return toReturn;
+}
+void SetGISpawnPosition(float x, float z)
+{
+	giSpawnPosX = x;
+	giSpawnPosZ = z;
+}
 
 void HazardDamageHelper(EntityID& victim, const float DPS)
 {
@@ -55,14 +118,128 @@ bool GeometryIndependentSystem::Update()
 
 				switch (r)
 				{
-				case 0:
-					p->positionX = 0.f;
-					p->positionZ = 0.f;
+				case -1:
+					p->positionX = giSpawnPosX;
+					p->positionZ = giSpawnPosZ;
 					proj = registry.GetComponent<ProjectileComponent>(entity);
 					if (proj != nullptr)
 					{
 						registry.DestroyEntity(entity);
 					}
+				case 0:
+				/*	p->positionX = giSpawnPosX;
+					p->positionZ = giSpawnPosZ;
+					proj = registry.GetComponent<ProjectileComponent>(entity);
+					if (proj != nullptr)
+					{
+						registry.DestroyEntity(entity);
+					}*/
+					//Detect edge
+					if (proj != nullptr)
+					{
+						registry.DestroyEntity(entity);
+					}
+					{
+						GridPosition pixelPos = PositionOnGrid(geoCo, p, false);
+						TransformComponent lastPos;
+						lastPos.positionX = p->lastPositionX;
+						lastPos.positionZ = p->lastPositionZ;
+						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos, false);
+						//Edge direction
+						if (pixelPos.x >= GI_TEXTURE_DIMENSIONS || pixelPos.x < 0 || pixelPos.z >= GI_TEXTURE_DIMENSIONS || pixelPos.z < 0)
+						{
+							p->positionX = giSpawnPosX;
+							p->positionZ = giSpawnPosZ;
+							proj = registry.GetComponent<ProjectileComponent>(entity);
+							if (proj != nullptr)
+							{
+								registry.DestroyEntity(entity);
+							}
+							continue;
+						}
+						GIFloat2 direction = GetGIadjacentDirections(pixelPos.x, pixelPos.z, 0);
+						GIFloat2 lastDirection = GetGIadjacentDirections(lastPixelPos.x, lastPixelPos.z, 0);
+
+						//float sumX = direction.x + lastDirection.x;
+						//float sumZ = direction.z + lastDirection.z;
+						//float sumX = direction.x;
+						//float sumZ = direction.z;
+						float sumX = lastDirection.x;
+						float sumZ = lastDirection.z;
+
+						float len = sqrtf(sumX * sumX + sumZ * sumZ);
+						if (len > 0)
+						{
+							sumX /= len;
+							sumZ /= len;
+						}
+
+
+						p->positionX += sumX * stat->GetSpeed() * GetDeltaTime();
+						p->positionZ += sumZ * stat->GetSpeed() * GetDeltaTime();
+						//When dashing, bounce
+						if (entity.index == stateManager.player.index)
+						{
+							PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+							if (player == nullptr || player->isDashing == false)
+							{
+								continue;
+							}
+
+							float inX = p->currentSpeedX;//From last to pos
+							float inZ = p->currentSpeedZ;
+							len = sqrtf(inX * inX + inZ * inZ);
+							if (len > 0)
+							{
+								inX /= len;
+								inZ /= len;
+							}
+
+							//God ol' reflection math.
+							float scalar = 2.0f * (inX * sumX + inZ * sumZ);	// 2.0 * dot(Incident, Normal);
+
+							if (sumX == 0.0f && sumZ == 0.0f)
+							{
+								p->currentSpeedX *= -1.0f;
+								p->currentSpeedZ *= -1.0f;
+								p->positionX += p->currentSpeedX * GetDeltaTime();
+
+								p->positionZ += p->currentSpeedZ * GetDeltaTime();
+							}
+							else
+							{
+							
+								p->positionX = p->lastPositionX;
+								p->positionZ = p->lastPositionZ;
+								//p->currentSpeedX *= inX - scalar * sumX;
+								//p->currentSpeedZ *= inZ - scalar * sumZ;
+								p->currentSpeedX = sumX;
+								p->currentSpeedZ = sumZ;
+								p->positionX += p->currentSpeedX * GetDeltaTime();
+								p->positionZ += p->currentSpeedZ * GetDeltaTime();
+								AddSquashStretch(entity, Constant, 1.35f, 1.35f, 0.3f, false, 1.0f, 1.0f, 1.0f);
+								p->facingX = -sumX;
+								p->facingZ = -sumZ;
+								NormalizeFacing(p);
+								float punishTime = 0.3f;
+								AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+								if (anim != nullptr)
+								{
+									anim->aAnimIdx = 255;
+								}
+								player->isDashing = false;
+								AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PauseAnimation, TPose, punishTime, ContinueAnimation, 0, 2);
+								int squashStretch = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, ResetSquashStretch, SquashStretch, punishTime, ResetSquashStretch, 0, 2);
+								AddTimedEventComponentStartContinuousEnd(entity, 0.0f, SetSpeedZero, ShakeCamera, punishTime, ResetSpeed, 0, 2);
+								AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerLoseControl, punishTime, PlayerRegainControl, 0, 2);
+							}
+						}
+						
+					 
+					}
+
+					//p->currentSpeedX *= 0.0f;
+					//p->currentSpeedZ *= 0.0f;
 					break;
 				case 1:
 					//Footstep sound here?
@@ -80,12 +257,34 @@ bool GeometryIndependentSystem::Update()
 					//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
 					break;
 				case HAZARD_CRACK:
-					if (!stat->canWalkOnCrack)
+					if (stat->canWalkOnCrack == false || proj != nullptr)
 					{
 						//Detect edge
+						GridPosition pixelPos = PositionOnGrid(geoCo, p, false);
+						TransformComponent lastPos;
+						lastPos.positionX = p->lastPositionX;
+						lastPos.positionZ = p->lastPositionZ;
+						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos, false);
 						//Edge direction
-						p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
-						p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
+						GIFloat2 direction = GetGIadjacentDirections(pixelPos.x, pixelPos.z, HAZARD_CRACK);
+						GIFloat2 lastDirection = GetGIadjacentDirections(lastPixelPos.x, lastPixelPos.z, HAZARD_CRACK);
+						
+						float sumX = direction.x + lastDirection.x;
+						float sumZ = direction.z + lastDirection.z;
+
+						float len = sqrtf(sumX*sumX + sumZ*sumZ);
+						if (len > 0)
+						{
+							sumX /= len;
+							sumZ /= len;
+						}
+						
+
+						p->positionX += sumX * stat->GetSpeed() * GetDeltaTime();
+						p->positionZ += sumZ * stat->GetSpeed() * GetDeltaTime();
+						//p->currentSpeedX *= 0.0f;
+						//p->currentSpeedZ *= 0.0f;
+					
 					}
 					break;
 				case HAZARD_ACID://Lava but more damage

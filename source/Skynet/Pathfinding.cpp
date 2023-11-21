@@ -50,7 +50,7 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			// is it walkable?
-			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
 				map->cost[x][z] += 10000;
@@ -196,7 +196,7 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			// is it walkable?
-			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
 				map->cost[x][z] += 10000;
@@ -260,7 +260,7 @@ void CalculateGlobalMapValuesImp(PathfindingMap* map)
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			// is it walkable?
-			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
 				map->cost[x][z] += 10000;
@@ -306,7 +306,7 @@ void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map)
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			// is it walkable?
-			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
 				map->cost[x][z] += 10000;
@@ -359,11 +359,21 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		return TransformComponent();
 	}
 	int x = 0, z = 0;
+	int limit = 256;
 	float distance = 1.f;
 	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
 	while (!(distance > minRange && distance < maxRange))
 	{
+		--limit;
+		/*if (limit < 0)
+		{
+			TransformComponent retreatPosition;
+			retreatPosition.positionX = temporaryTransform->positionX - 10.0f*temporaryTransform->facingZ;
+			retreatPosition.positionZ = temporaryTransform->positionZ - 10.0f * temporaryTransform->facingX;
+			return retreatPosition;
+			break;
+		}*/
 		bool legal = false;
 		while (!legal)
 		{
@@ -378,7 +388,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace((int)temporaryTransform->positionX, (int)temporaryTransform->positionZ, returnNode);
 	}
 	
 	
@@ -422,7 +432,7 @@ TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent*
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace((int)temporaryTransform->positionX, (int)temporaryTransform->positionZ, returnNode);
 	}
 
 

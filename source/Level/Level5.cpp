@@ -22,8 +22,15 @@ void LoadLevel5()
 	float greenMult = 1.1f;
 	float blueMult = 1.0f;
 
-	//This is the eye stage. Lots of acid in a grey environment.
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 5;
+	EntityID stage = SetUpStage(stageVars);
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -126,7 +133,6 @@ void LoadLevel5()
 			}
 		}*/
 	}
-	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

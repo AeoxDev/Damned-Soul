@@ -29,6 +29,8 @@ struct StateManager
 	Credits credits;
 	EntityID player;
 	EntityID stage;
+
+
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>

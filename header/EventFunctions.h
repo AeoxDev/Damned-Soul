@@ -61,6 +61,7 @@ void BlinkColor(EntityID& entity, const int& index);
 void ResetColor(EntityID& entity, const int& index);
 void SquashStretch(EntityID& entity, const int& index);
 void ResetSquashStretch(EntityID& entity, const int& index);
+void TPose(EntityID& entity, const int& index);
 
 
 //Stats

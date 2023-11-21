@@ -58,8 +58,14 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 	bool okayDirection = false;
+	int limit = 128;
 	while (!okayDirection)
 	{
+		--limit;
+		if (limit < 0)
+		{
+			return;
+		}
 		if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
 		{
 			skeletonComponent->timeCounter = 0.f;

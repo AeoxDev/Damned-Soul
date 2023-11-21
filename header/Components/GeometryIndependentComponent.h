@@ -20,7 +20,7 @@ struct GIMapData
 
 //This takes in an EntityID for the stage, assuming there is an existing model for it.
 //It also checks for each StaticHazardComponent with a TransformComponent and renders them as well.
-void RenderGeometryIndependentCollision(EntityID& stageEntity);
+void RenderGeometryIndependentCollision(EntityID& stageFloor, EntityID& walls, EntityID& hitbox);
 
 //Functions for getting information:
 int PixelValueOnPosition(GeometryIndependentComponent*& giComponent, TransformComponent*& transform);
@@ -39,6 +39,8 @@ struct Coordinate2D
 	float z;
 };
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent*& transform, bool pathfinding);
+GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent* transform, bool pathfinding);
 Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, bool pathfinding);
 GITexture* GetMapTexture(EntityID& entity);
+
+void SetGISpawnPosition(float x, float z);

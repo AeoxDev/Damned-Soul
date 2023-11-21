@@ -21,7 +21,15 @@ void LoadLevel3()
 	float greenMult = 1.2f;
 	float blueMult = 0.8f;
 
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); // registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 3;
+	EntityID stage = SetUpStage(stageVars);
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -124,7 +132,6 @@ void LoadLevel3()
 		//	}
 		//}
 	}
-	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

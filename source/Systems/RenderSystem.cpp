@@ -96,13 +96,13 @@ bool ShadowSystem::Update()
 	DirectX::XMFLOAT3 cameraLookAt;
 	DirectX::XMStoreFloat3(&cameraLookAt, cameraV);
 	Camera::ToggleProjection();
-	float dist = 80.0f;
+	float dist = 128.0f;
 	Camera::SetPosition(cameraLookAt.x + -dir.x * dist, cameraLookAt.y + -dir.y * dist, cameraLookAt.z + -dir.z * dist + 16.0f, false);//Set this to center of stage offset upwards
 	Camera::SetLookAt(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z + 16.0f);//Set to center of stage
 	Camera::SetUp(0.0f, 1.0f, 0.0f);
 	Camera::SetWidth(640.0f * Camera::GetFOV());//Set width (x) of orthogonal based on stage
 	Camera::SetHeight(640.0f * Camera::GetFOV());//Set height (z) of orthogonal based on stage
-	Camera::SetOrthographicDepth(256.0f);
+	Camera::SetOrthographicDepth(300.0f);
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	Camera::SaveToShadowMapCamera();
@@ -187,7 +187,7 @@ bool RenderSystem::Update()
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		HitboxVisualComponent* hitboxV = registry.GetComponent<HitboxVisualComponent>(entity);
-		for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
 		{
 			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{
@@ -205,7 +205,7 @@ bool RenderSystem::Update()
 			}
 			
 		}
-		for (size_t i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
+		for (int i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
 		{
 			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{

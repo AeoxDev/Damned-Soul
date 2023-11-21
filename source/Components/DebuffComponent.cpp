@@ -30,11 +30,11 @@ void DamageOverTime::AlterModelColor(void* model, const DOT_TYPE& type)
 }
 
 #define E (2.71828f)
-#define PRIMTIVE_POINT_NINE_POW_X(x) (-9.49122*std::powf(0.9,(x)))
+#define PRIMTIVE_POINT_NINE_POW_X(x) (-9.49122f*std::powf(0.9f,(x)))
 float DamageOverTime::WeightedPower() const
 {
 	float P_X = PRIMTIVE_POINT_NINE_POW_X(remainingTime);
-	float P_0 = PRIMTIVE_POINT_NINE_POW_X(0);
+	float P_0 = PRIMTIVE_POINT_NINE_POW_X(0.0f);
 	float weightedDuration = P_X - P_0;
 	return weightedDuration * damagePerSecond;
 }

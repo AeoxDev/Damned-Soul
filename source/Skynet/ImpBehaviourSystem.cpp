@@ -20,8 +20,8 @@ void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformCom
 	ic->specialBreakpoint = (int)distribution(gen);
 
 	//Teleport
-	float minRange = 20.0f;
-	float maxRange = 40.0f;
+	float minRange = 10.0f;
+	float maxRange = 256.0f;
 
 	TransformComponent newTransform = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
 	itc->positionX = newTransform.positionX;

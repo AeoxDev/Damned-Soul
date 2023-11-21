@@ -47,7 +47,7 @@ void SettingsState::Input()
 void SettingsState::SetupButtons()
 {
 
-	const char const texts[5][32] =
+	const char texts[5][32] =
 	{
 		"\n1280x720",
 		"\n1600x900",
@@ -56,7 +56,7 @@ void SettingsState::SetupButtons()
 		"\nBack"
 	};
 
-	const DSFLOAT2 const positions[5] =
+	const DSFLOAT2 positions[5] =
 	{
 		{ -0.375f, 0.2f },
 		{ -0.125f, 0.2f },	
@@ -65,7 +65,7 @@ void SettingsState::SetupButtons()
 		{ -0.81f, -0.8f }
 	};
 
-	const DSFLOAT2 const scales[5] =
+	const DSFLOAT2 scales[5] =
 	{
 		{ 0.6f, 0.6f },
 		{ 0.6f, 0.6f },

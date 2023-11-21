@@ -60,7 +60,7 @@ bool UIHealthSystem::Update()
 
 		auto stats = registry.GetComponent<StatComponent>(entity);
 		auto maxHealth = stats->GetMaxHealth();
-		float currentHealth = stats->GetHealth();
+		float currentHealth = (float)stats->GetHealth();
 
 		float percentageHealth = currentHealth / maxHealth;
 

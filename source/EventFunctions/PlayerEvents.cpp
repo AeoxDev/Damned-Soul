@@ -9,6 +9,15 @@
 
 #include "Relics/RelicFunctions.h"
 
+static float godModeFactor = 1.0f;
+void SetGodModeFactor(float value)
+{
+	godModeFactor = value;
+}
+float GetGodModeFactor()
+{
+	return godModeFactor;
+}
 /*
 * NOTES FROM TESTING
 * 
@@ -62,7 +71,12 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		return;
 	}
 	//Start by removing the players' ControllerComponent
-	registry.RemoveComponent<ControllerComponent>(entity);
+	ControllerComponent* control = registry.GetComponent<ControllerComponent>(entity);
+	if (control != nullptr)
+	{
+		registry.RemoveComponent<ControllerComponent>(entity);
+	}
+	
 	
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 
@@ -93,6 +107,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
 		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
+		playerComp->isDashing = true;
 	}
 }
 
@@ -161,6 +176,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, false); //Dash hitbox
 		}
 		stats->hazardModifier = stats->baseHazardModifier;
+		playerComp->isDashing = false;
 	}
 
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -233,8 +249,8 @@ void PlayerAttack(EntityID& entity, const int& index)
 	{
 		float softCollisionRadius = GetHitboxRadius(entity, 1);
 		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);
-		float width = (.4f + std::min(.5f, hitboxTime * 3.f)) * softCollisionRadius * HITBOX_SCALE; //.2f changed to .4f
-		float depth = (1.2f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE;
+		float width = (.4f + std::min(.5f, hitboxTime * 3.f)) * softCollisionRadius * HITBOX_SCALE * godModeFactor; //.2f changed to .4f
+		float depth = (1.2f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE * godModeFactor;
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
 

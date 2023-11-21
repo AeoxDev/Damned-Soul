@@ -57,5 +57,5 @@ void CreateProximityHitbox(EntityID& entity, std::string fileName = "default"); 
 
 void AddProximityHitboxComponent(EntityID& entity);
 
-void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity);
+void RenderGeometryIndependentCollisionToTexture(EntityID& stageFloor, EntityID& walls, EntityID& hitbox);
 

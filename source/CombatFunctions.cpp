@@ -28,7 +28,7 @@ float Combat::CalculateDamage(const DamageOverTime& dot, EntityID& defender, con
 	RelicInput::OnDamageCalculation funcInput;
 	funcInput.defender = defender;
 	funcInput.damage = dot.GetDPS();
-	funcInput.cap = 99999999; // No real cap for DPS
+	funcInput.cap = (float)99999999; // No real cap for DPS
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
 	// Apply on damage calc functions
@@ -48,7 +48,7 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	funcInput.attacker = attacker;
 	funcInput.defender = defender;
 	funcInput.damage = attackerStats->GetDamage();
-	funcInput.cap = defenderStats->GetHealth();
+	funcInput.cap = (float)defenderStats->GetHealth();
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
 	// Increase if charge attack
@@ -93,7 +93,7 @@ void Combat::DashHitInteraction(EntityID& attacker, StatComponent* attackerStats
 	funcInput.attacker = attacker;
 	funcInput.defender = defender;
 	funcInput.damage = attackerStats->GetDamage();
-	funcInput.cap = defenderStats->GetHealth();
+	funcInput.cap = (float)defenderStats->GetHealth();
 
 	//Calculate damage modifications from relics
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))

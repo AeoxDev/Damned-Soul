@@ -68,7 +68,7 @@ bool ControllerSystem::Update()
 	{
 		if (keyState[SCANCODE_A] == pressed)
 		{
-			for (size_t i = 0; i < 8; i++)
+			for (int i = 0; i < 8; i++)
 			{
 				hitboxVisualizerActive[i] = true;
 				for (auto entity : View<HitboxComponent>(registry))
@@ -328,17 +328,19 @@ bool ControllerSystem::Update()
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
 			hitbox->circleHitbox[2].radius = 100.0f;
-			if (pStats->hazardModifier > -100.0f)
+			if (GetGodModeFactor() <= 1.0f)
 			{
-				transform->mass += 100.0f;
+				transform->mass += 1000.0f;
 				player->killingSpree = 10000;
 				player->UpdateSouls(1000000);
 				hitbox->circleHitbox[2].radius += 100.0f;
+				SetGodModeFactor(100.0f);
 			}
 			else
 			{
-				transform->mass -= 100.0f;
+				transform->mass -= 1000.0f;
 				hitbox->circleHitbox[2].radius -= 100.0f;
+				SetGodModeFactor(1.0f);
 			}
 		}
 #endif // _DEBUG

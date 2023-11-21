@@ -462,7 +462,7 @@ int8_t GetHitboxRasterizerState()
 {
 	return hitboxRasterizerState;
 }
-int8_t GetHitboxConstantBuffer()
+int16_t GetHitboxConstantBuffer()
 {
 	return hitboxConstantBuffer;
 }

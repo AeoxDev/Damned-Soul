@@ -60,21 +60,21 @@ void PauseState::Input()
 
 void PauseState::SetupButtons()
 {
-	const char const texts[3][32] =
+	const char texts[3][32] =
 	{
 		"\nResume",
 		"\nSettings (WIP)",
 		"\nMain Menu"
 	};
 
-	const DSFLOAT2 const positions[3] =
+	const DSFLOAT2 positions[3] =
 	{
 		{ 0.0f, 0.275f },
 		{ 0.0f, 0.0f },
 		{ 0.0f, -0.275f }
 	};
 
-	const DSFLOAT2 const scales[3] =
+	const DSFLOAT2 scales[3] =
 	{
 		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f },

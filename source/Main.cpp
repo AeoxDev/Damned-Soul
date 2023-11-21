@@ -6,6 +6,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
+#include "TransformComponent.h"
 //Uncomment this line for tests:
 //#define TEST3000 //Hermano 3000
 
@@ -95,6 +96,11 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 	if (NewSecond())
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps) ";
+		TransformComponent* p = GetPlayerTransform();
+		if (p != nullptr)
+		{
+			title += " pos: (" + std::to_string(p->positionX) + ", " + std::to_string(p->positionZ) + ") ";
+		}
 		//title+="";//Add more debugging information here, updates every second.
 		SetWindowTitle(title + extra);
 	}

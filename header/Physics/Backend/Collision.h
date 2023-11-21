@@ -152,6 +152,6 @@ float RotateOffset(float offsetX, float offsetZ, float xFactor, float zFactor);
 int8_t GetHitboxVisVertexShader();
 int8_t GetHitboxVisPixelShader();
 int8_t GetHitboxRasterizerState();
-int8_t GetHitboxConstantBuffer();
+int16_t GetHitboxConstantBuffer();
 
 extern bool hitboxVisualizerActive[];

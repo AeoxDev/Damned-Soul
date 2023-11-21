@@ -65,14 +65,14 @@ void Credits::SetupImages()
 
 void Credits::SetupText()
 {
-	const char const courses[3][32] =
+	const char courses[3][32] =
 	{
 		"Technical Artists:",
 		"Civil Engineers:",
 		"Game Programmers:"
 	};
 
-	const char const TAnames[5][32] =
+	const char TAnames[5][32] =
 	{
 		"Alexandra Lindberg",
 		"Erik Svensson",
@@ -81,7 +81,7 @@ void Credits::SetupText()
 		"Zannie"
 	};
 
-	const char const CIVnames[4][32] =
+	const char CIVnames[4][32] =
 	{
 		"Elliot Lundin",
 		"Felix Mathiasson",
@@ -89,7 +89,7 @@ void Credits::SetupText()
 		"Mattias Nordin"
 	};
 
-	const char const SPnames[5][32] =
+	const char SPnames[5][32] =
 	{
 		"Arian Watti",
 		"Christian Marcuz",
@@ -98,7 +98,7 @@ void Credits::SetupText()
 		"Niclas Andersson"
 	};
 
-	const DSFLOAT2 const positions[3] =
+	const DSFLOAT2 positions[3] =
 	{
 		{ 0.4f, 0.3f },
 		{ 0.0f, 0.3f },

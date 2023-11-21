@@ -8,6 +8,7 @@
 #include "Registry.h"
 #include "Hitbox.h"
 #include "Model.h"
+#include "States\StateManager.h"
 
 //480 is the size memlib allows without crashing. 
 
@@ -97,7 +98,8 @@ GITexture* GetMapTexture(EntityID& entity)
 	return (GITexture*)&giTexture;
 }
 
-void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
+
+void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID& walls, EntityID& hitbox)
 {
 	if (giTexture == nullptr)
 	{
@@ -266,6 +268,41 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	//Render texture to RTV
 	LOADED_MODELS[model->model].RenderAllSubmeshes();
 
+	//Render walls
+	if (walls.index != -1)
+	{
+		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(walls);
+		if (model != nullptr)
+		{
+			GIcomponent->shaderData.idValue = (float)0;
+			UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+			SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+			//Render texture to RTV
+			LOADED_MODELS[model->model].RenderAllSubmeshes();
+		}
+		
+	}
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	//Render hitbox
+	if (hitbox.index != -1)
+	{
+		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(hitbox);
+		if (model != nullptr)
+		{
+			GIcomponent->shaderData.idValue = (float)0;
+			UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+			SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+			//Render texture to RTV
+			LOADED_MODELS[model->model].RenderAllSubmeshes();
+		}
+		
+	}
+
+
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;
 	GetTextureByType(RTVResource, TEXTURE_HOLDER_TYPE::RENDER_TARGET_VIEW, GIcomponent->renderTargetView);
@@ -349,6 +386,26 @@ void ReleaseGI(EntityID& entity )
 	DeleteD3D11DepthStencilView(gi->depthStencil);
 	DeleteD3D11RasterizerState(gi->rasterizerState);
 	//Release here
+}
+
+float GetStageGIOffsetX()
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	if (GIcomponent != nullptr)
+	{
+		return GIcomponent->offsetX;
+	}
+	return 0.0f;
+}
+
+float GetStageGIOffsetZ()
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	if (GIcomponent != nullptr)
+	{
+		return GIcomponent->offsetZ;
+	}
+	return 0.0f;
 }
 
 RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity)
@@ -491,10 +548,10 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*&
 			return giTexture->texture[pixelPos.z][pixelPos.x];
 		}
 	}
-	return 0;
+	return -1;
 }
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent*& transform, bool pathfinding)
+GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent* transform, bool pathfinding)
 {
 	int dimension = GI_TEXTURE_DIMENSIONS;
 	if (pathfinding)
@@ -508,7 +565,7 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 	float pixelZ = gi->height / dimension;
 	//Calculate offset:
 	float offX = gi->width * 0.5f - gi->offsetX;
-	float offZ = gi->height * 0.5f - gi->offsetZ;
+	float offZ = gi->height * 0.5f + gi->offsetZ;
 	//Translate position to pixel using the size.
 	float px = (transform->positionX + offX) / pixelX;
 	float pz = (-transform->positionZ + offZ) / pixelZ;

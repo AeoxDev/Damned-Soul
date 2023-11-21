@@ -18,8 +18,15 @@ void LoadLevel4()
 	float greenMult = 1.1f;
 	float blueMult = 0.75f;
 
-	//EntityID dog = registry.CreateEntity();
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 4;
+	EntityID stage = SetUpStage(stageVars);
 	//EntityID skeleton = registry.CreateEntity();
 	//EntityID skeleton2 = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
@@ -101,6 +108,5 @@ void LoadLevel4()
 		}*/
 	}
 	stateManager.stage = stage;
-	RenderGeometryIndependentCollision(stage);
 	SetInPlay(true);
 }

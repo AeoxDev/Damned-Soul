@@ -18,3 +18,6 @@ bool SetupGIAll(EntityID& stageEntity);
 bool AddGeometryIndependentComponent(EntityID& stageEntity);
 void ReleaseGI(EntityID& entity);
 
+float GetStageGIOffsetX();
+float GetStageGIOffsetZ();
+

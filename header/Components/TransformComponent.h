@@ -19,6 +19,8 @@ struct TransformComponent
 
 	//Force for ice hazard
 	float currentSpeedX = 0.0f, currentSpeedZ = 0.0f;
+	TransformComponent(TransformComponent* comp);
+	TransformComponent() = default;
 };
 
 float DistanceBetweenTransforms(TransformComponent* f, TransformComponent* s);
@@ -29,3 +31,7 @@ void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rot
 void TransformDecelerate(EntityID& entity);
 //This already takes statcomponent into account, x, z is direction.
 void TransformAccelerate(EntityID& entity, float x, float z);
+
+void NormalizeFacing(TransformComponent* f);
+
+TransformComponent* GetPlayerTransform();

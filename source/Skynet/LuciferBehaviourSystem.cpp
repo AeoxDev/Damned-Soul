@@ -244,7 +244,7 @@ bool LuciferBehaviourSystem::Update()
 					// if taken enough damage
 
 					float percent = enemyStats->GetMaxHealth() / 5.f;
-					luciferComponent->limitHP = enemyStats->GetMaxHealth();
+					luciferComponent->limitHP = (float)enemyStats->GetMaxHealth();
 					while (luciferComponent->limitHP >= enemyStats->GetHealth())
 					{
 						luciferComponent->limitHP = luciferComponent->limitHP - percent;

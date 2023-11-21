@@ -31,7 +31,14 @@ void Menu::Setup()
 	ResetRunTime();
 
 	//Setup stage to rotate around
-	EntityID stage = SetUpStage(1.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.stageNr = 0;
+	stageVars.scaleX = 1.0f;
+	stageVars.scaleY = 1.0f;
+	stageVars.scaleZ = 1.0f;
+	stageVars.offsetY = -.1f;
+	//stageVars.offsetX = 16.f;
+	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
 
 	// Stage POI
 	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
@@ -153,7 +160,7 @@ void Menu::Setup()
 	
 
 	
-	RenderGeometryIndependentCollision(stage);
+	
 	stateManager.stage = stage;
 	Camera::SetCutsceneMode(false);
 	AddTimedEventComponentStart(stage, (8.0f + (float)(rand() % 32))* (float)(rand() % 2), MainMenuIntroCutscene);
@@ -168,7 +175,7 @@ void Menu::SetupButtons()
 {
 	const int buttons = 4;
 
-	const char const texts[buttons][32] =
+	const char texts[buttons][32] =
 	{
 		"\nStart",
 		"\nCredits",
@@ -176,7 +183,7 @@ void Menu::SetupButtons()
 		"\nQuit"
 	};
 	
-	const DSFLOAT2 const positions[buttons] =
+	const DSFLOAT2 positions[buttons] =
 	{
 		{ -0.81f, -0.02f },
 		{ -0.81f, -0.28f },
@@ -184,7 +191,7 @@ void Menu::SetupButtons()
 		{ -0.81f, -0.8f }
 	};
 
-	const DSFLOAT2 const scales[buttons] =
+	const DSFLOAT2 scales[buttons] =
 	{
 		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f },

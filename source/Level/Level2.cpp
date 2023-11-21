@@ -21,7 +21,15 @@ void LoadLevel2()
 	float greenMult = 1.0f;
 	float blueMult = 1.0f;
 
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 2;
+	EntityID stage = SetUpStage(stageVars); 
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -32,19 +40,32 @@ void LoadLevel2()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::imp, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::imp, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::imp, 15.f, 0.f, -45.f);
-	/*SetupEnemy(EnemyType::imp, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::imp, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::imp, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::imp, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::imp, -55.f, 1.f, -35.f);*/
+
+	//Enemies to the right:
+
+	SetupEnemy(EnemyType::skeleton, 88.f, 0.f, 50.f);
+	SetupEnemy(EnemyType::skeleton, 68.0f, 0.f, 46.f);
+	SetupEnemy(EnemyType::imp, 85.f, 0.f, 23.f);
+
+	//Enemies to the north:
+	SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f);
+	SetupEnemy(EnemyType::imp, 28.f, 0.f, 145.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 20.0f, 0.f, 160.0f);
+
+	//Enemies in ruins
+	SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f);
+	SetupEnemy(EnemyType::imp, -84.f, 0.f, 154.f);
+	SetupEnemy(EnemyType::imp, -96.f, 0.f, 213.f);
+	SetupEnemy(EnemyType::imp, -143.f, 0.f, 127.f);
+
+	//Enemies on the left side:
+	SetupEnemy(EnemyType::skeleton, -219.f, 0.f, 34.f);
+	SetupEnemy(EnemyType::skeleton, -235.0f, 0.f, 48.f);
+	SetupEnemy(EnemyType::imp, -237.f, 0.f, 18.f);
+
+	//One to guard the gate:
+	SetupEnemy(EnemyType::imp, -230.f, 0.f, 214.f);
+
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
@@ -117,7 +138,7 @@ void LoadLevel2()
 			}
 		}*/
 	}
-	RenderGeometryIndependentCollision(stage);
+
 
 	stateManager.stage = stage;
 	SetInPlay(true);

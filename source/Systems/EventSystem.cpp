@@ -284,8 +284,9 @@ void ReleaseTimedEvents(EntityID& entity)
 	}
 }
 
-void HardResetTimedEvents()
+void HardResetTimedEvents(EntityID& entity)
 {
+	//Loop and destroy all existing timed events
 }
 
 void TimedEventIgnoreGamespeed(bool ignore)
