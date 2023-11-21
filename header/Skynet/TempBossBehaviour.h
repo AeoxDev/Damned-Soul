@@ -49,6 +49,8 @@ struct TempBossBehaviour
 	const float dazeTime = 2.f;
 	float dazeCounter = 0.f;
 	bool isDazed = false;
+	bool isAttacking = false; // please for the love of god, DO NOT TOUCH THIS
+
 
 	TempBossBehaviour(int deathCount, int hitID) : deathCounter(deathCount), hitBoxID(hitID) {}
 };

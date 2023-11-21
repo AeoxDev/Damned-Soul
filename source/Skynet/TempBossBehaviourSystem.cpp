@@ -118,6 +118,8 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 	bc->goalDirectionX = ptc->positionX - btc->positionX;
 	bc->goalDirectionZ = ptc->positionZ - btc->positionZ;
 
+	bc->isAttacking = true;
+
 	//Elliot & Herman request: Make animationtime scale better for faster startup and swing.
 	animComp->aAnim = ANIMATION_ATTACK;
 	animComp->aAnimIdx = 0;
@@ -137,6 +139,7 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 		RedrawUI();
 		bc->attackTimer = 0.f;
 		bc->attackStunDurationCounter = 0.f;
+		bc->isAttacking = false;
 	}
 }
 
@@ -207,6 +210,24 @@ bool TempBossBehaviourSystem::Update()
 			tempBossComponent->updatePathCounter += GetDeltaTime();
 			tempBossComponent->attackStunDurationCounter += GetDeltaTime();
 
+			if (distance < 70.f && tempBossComponent->isDazed == false && tempBossComponent->willDoShockWave == false
+				&& tempBossComponent->attackStunDurationCounter > tempBossComponent->attackStunDuration && tempBossComponent->isAttacking == false)
+			{
+				if (tempBossComponent->shockwaveChanceCounter >= tempBossComponent->shockwaveChanceInterval)
+				{
+					tempBossComponent->shockwaveChanceCounter = 0.f;
+					int odds = rand() % 100 + 1; // 1 - 100
+					if (odds <= tempBossComponent->shockwaveOdds)
+					{
+						// SHOCKWAVE BABY
+						tempBossComponent->willDoShockWave = true;
+					}
+
+					//well, nothing happened....maybe next time
+
+				}
+			}
+
 			if (tempBossComponent->attackStunDurationCounter <= tempBossComponent->attackStunDuration)
 			{
 				// do nothing, stand like a bad doggo and be ashamed
@@ -248,19 +269,7 @@ bool TempBossBehaviourSystem::Update()
 			else if (distance < 70) //hunting distance
 			{
 				// insert chance for shockwave. 
-				if (tempBossComponent->shockwaveChanceCounter >= tempBossComponent->shockwaveChanceInterval)
-				{
-					tempBossComponent->shockwaveChanceCounter = 0.f;
-					int odds = rand() % 100 + 1; // 1 - 100
-					if (odds <= tempBossComponent->shockwaveOdds)
-					{
-						// SHOCKWAVE BABY
-						tempBossComponent->willDoShockWave = true;
-					}
-					
-					//well, nothing happened....maybe next time
-					
-				}
+				
 				if (tempBossComponent->willDoShockWave) // charge then do it!
 				{
 					tempBossComponent->shockwaveChanceCounter = 0.f;
