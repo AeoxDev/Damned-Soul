@@ -366,14 +366,14 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 	while (!(distance > minRange && distance < maxRange))
 	{
 		--limit;
-		/*if (limit < 0)
+		if (limit < 0)
 		{
 			TransformComponent retreatPosition;
-			retreatPosition.positionX = temporaryTransform->positionX - 10.0f*temporaryTransform->facingZ;
-			retreatPosition.positionZ = temporaryTransform->positionZ - 10.0f * temporaryTransform->facingX;
+			retreatPosition.positionX = temporaryTransform->positionX;
+			retreatPosition.positionZ = temporaryTransform->positionZ;
 			return retreatPosition;
 			break;
-		}*/
+		}
 		bool legal = false;
 		while (!legal)
 		{

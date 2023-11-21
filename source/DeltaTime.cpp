@@ -71,6 +71,9 @@ ML_String GetDigitalMinuteClock()
 	totalTime.append(":");
 	totalTime.append(seconds);
 
+	minutes.~ML_String();
+	seconds.~ML_String();
+	totalTime.~ML_String();
 	return totalTime;
 }
 

@@ -15,7 +15,7 @@ void CreatePortal(EntityID& entity, const int& index)
 	CreatePointLight(entity, 0.0f, 6.0f, 5.0f, 0.0f, 2.0f, -1.0f, 64.0f, 10.0f); 
 	switch (stateManager.activeLevel)
 	{
-	case 1:
+	case 1://Level1
 		portalTransform->positionX = -250.0f;
 		portalTransform->positionZ = 81.0f;
 		portalTransform->positionY = 10.0f;
@@ -25,15 +25,35 @@ void CreatePortal(EntityID& entity, const int& index)
 		portalTransform->scaleX = 1.0f;
 		portalTransform->scaleZ = 3.0f;
 		break;
-	case 2:
-		portalTransform->positionX = -276.0f;
-		portalTransform->positionZ = -258.0f;
+	case 3://Level2
+ 		portalTransform->positionX = -276.0f;
+		portalTransform->positionZ = 258.0f;
 		portalTransform->positionY = 6.0f;
 		portalTransform->facingZ = 0.5f;
 		portalTransform->facingX = 0.5f;
 		portalTransform->scaleY = 1.0f;
 		portalTransform->scaleX = 1.0f;
 		portalTransform->scaleZ = 3.0f;
+		break;
+	case 5://Level3
+		portalTransform->positionX = -271.0f;
+		portalTransform->positionZ = 144.0f;
+		portalTransform->positionY = 10.0f;
+		portalTransform->facingZ = 0.6f;
+		portalTransform->facingX = 0.4f;
+		portalTransform->scaleY = 1.0f;
+		portalTransform->scaleX = 1.0f;
+		portalTransform->scaleZ = 3.0f;
+		break;
+	case 7://Level4
+		portalTransform->positionX = -143.0f;
+		portalTransform->positionZ = 107.0f;
+		portalTransform->positionY = 10.0f;
+		portalTransform->facingZ = 0.5f;
+		portalTransform->facingX = 0.5f;
+		portalTransform->scaleY = 1.0f;
+		portalTransform->scaleX = 1.0f;
+		portalTransform->scaleZ = 4.0f;
 		break;
 	default:
 		portalTransform->positionX = -77.0f;

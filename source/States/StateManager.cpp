@@ -202,10 +202,10 @@ int StateManager::Setup()
 	systems.push_back(new AudioSystem());
 
 	// Updating UI Elements (Needs to be last)
-	systems.push_back(new UIHealthSystem());
-	systems.push_back(new UIPlayerSoulsSystem());
-	systems.push_back(new UIRelicsSystem());
-	
+	systems.push_back(new UIHealthSystem());//This causes leaks
+	systems.push_back(new UIPlayerSoulsSystem());//This causes leaks
+	systems.push_back(new UIRelicsSystem());//This causes leaks
+
 	systems.push_back(new UIShopSystem());
 
 	return 0;
