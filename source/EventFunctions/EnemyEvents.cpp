@@ -13,6 +13,7 @@
 #define BOSS_RESPAWN_TIME 8.f;
 
 
+
 //void EnemyExclusion(EntityID& entity)
 //{
 //	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -55,7 +56,7 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 
 }
 
-void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn, const int zacIndex)
+void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn, const int zacIndex, const float health)
 {	
 	EntityID newMini = registry.CreateEntity();
 
@@ -75,12 +76,12 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float speeeeeed = dista / BOSS_RESPAWN_TIME;
 
 	//Set stats of new boss based on original
-	float bossHP = bossStats->GetMaxHealth() / 2.f;
+	//float bossHP = bossStats->GetMaxHealth() / 2.f;
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage() / 2.f;
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	registry.AddComponent<StatComponent>(newMini, bossHP, bossSpeed, bossDamage, bossAttackSpeed);
-
+	registry.AddComponent<StatComponent>(newMini, (health / 2.f), bossSpeed, bossDamage, bossAttackSpeed );
+	// change health depending on balance. health = original max health
 
 	//Set transform
 	TransformComponent transComp;
@@ -207,6 +208,19 @@ void SplitBoss(EntityID& entity, const int& index)
 	aiTransform = registry.GetComponent<TransformComponent>(entity);
 	TempBossBehaviour* tempBossComponent = nullptr;
 	tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+	StatComponent* originalStats = registry.GetComponent<StatComponent>(entity);
+
+	float health = 0.f;
+	int partsAlive = 0;
+	for (int i = 0; i < 5; ++i)
+	{
+		if (tempBossComponent->parts[i])
+		{
+			partsAlive++;
+		}
+	}
+	health = originalStats->GetMaxHealth();
+	health = health / (float)partsAlive * 5.f;
 
 	for (int i = 0; i < 5; ++i)
 	{
@@ -216,7 +230,7 @@ void SplitBoss(EntityID& entity, const int& index)
 			/*float angle = i * (2 * 3.141592 / 5);
 			float x = radius * cos(angle);
 			float y = radius * sin(angle);*/
-			CreateMini(entity, tran.positionX, tran.positionZ, i);
+			CreateMini(entity, tran.positionX, tran.positionZ, i, health);
 			CalculateGlobalMapValuesImp(valueGrid);
 		}
 	}

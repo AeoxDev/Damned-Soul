@@ -264,7 +264,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			attackSpeed = 0.5f;
+			attackSpeed = 0.25f;
+			float partSpeed = 0.05f; // each alive part makes it this much slower
+			if (zacIndex0)
+				attackSpeed += partSpeed;
+			if (zacIndex1)
+				attackSpeed += partSpeed;
+			if (zacIndex2)
+				attackSpeed += partSpeed;
+			if (zacIndex3)
+				attackSpeed += partSpeed;
+			if (zacIndex4)
+				attackSpeed += partSpeed;
 		}
 		else if (eType == EnemyType::lucifer)
 		{

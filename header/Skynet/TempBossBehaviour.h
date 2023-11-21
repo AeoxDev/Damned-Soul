@@ -40,7 +40,7 @@ struct TempBossBehaviour
 	//this section is for triggering it
 	bool willDoShockWave = false; //needed, DO NOT TOUCH
 	const float shockwaveChanceInterval = 2.f;// how often the chance is rolled
-	const int shockwaveOdds = 20; // in percent %.    odds of 23 is 23% for example
+	const int shockwaveOdds = 30; // in percent %.    odds of 23 is 23% for example
 	float shockwaveChanceCounter = 0.f; //just a clock counting
 
 	// this section is for charging so player can get a warning
