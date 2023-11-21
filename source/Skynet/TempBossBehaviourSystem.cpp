@@ -6,7 +6,7 @@
 #include "UI/UIRenderer.h"
 #include <random>
 #include "Hitbox.h"
-
+#include "EventFunctions.h"
 
 
 void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, TempBossBehaviour* tempBossComponent,
@@ -39,9 +39,8 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 		dirZ /= magnitude;
 	}
 
-	//skeletonTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
-	//skeletonTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
-	TransformAccelerate(enemy, dirX, dirZ);
+	tempBossTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
+	tempBossTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
 }
 
 void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, TempBossBehaviour* tempBossComponent, TransformComponent* tempBossTransformComponent, StatComponent* stats, AnimationComponent* animComp)
@@ -163,6 +162,7 @@ bool TempBossBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+		tempBossComponent->shockwaveChanceCounter += GetDeltaTime();
 
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
@@ -227,13 +227,54 @@ bool TempBossBehaviourSystem::Update()
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
 			}
 
+			if (tempBossComponent->isDazed)
+			{
+				tempBossComponent->dazeCounter += GetDeltaTime();
+				if (tempBossComponent->dazeCounter >= tempBossComponent->dazeTime)
+				{
+					tempBossComponent->shockwaveChanceCounter = 0.f;
+					tempBossComponent->shockwaveChargeCounter = 0.f;
+					tempBossComponent->dazeCounter = 0.f;
+					tempBossComponent->isDazed = false;
+				}
+				continue;
+			}
+
 			//Elliot: If in attack, keep attacking even if player is outside
-			if (distance < tempBossComponent->meleeDistance || tempBossComponent->attackTimer > 0.0f)
+			if ((distance < tempBossComponent->meleeDistance || tempBossComponent->attackTimer > 0.0f) && tempBossComponent->willDoShockWave == false)
 			{
 				CombatBehaviour(tempBossComponent, enemyStats, playerStats, playerTransformCompenent, tempBossTransformComponent,enmComp, enemyEntity, enemyAnim);
 			}
 			else if (distance < 70) //hunting distance
 			{
+				// insert chance for shockwave. 
+				if (tempBossComponent->shockwaveChanceCounter >= tempBossComponent->shockwaveChanceInterval)
+				{
+					tempBossComponent->shockwaveChanceCounter = 0.f;
+					int odds = rand() % 100 + 1; // 1 - 100
+					if (odds <= tempBossComponent->shockwaveOdds)
+					{
+						// SHOCKWAVE BABY
+						tempBossComponent->willDoShockWave = true;
+					}
+					
+					//well, nothing happened....maybe next time
+					
+				}
+				if (tempBossComponent->willDoShockWave) // charge then do it!
+				{
+					tempBossComponent->shockwaveChanceCounter = 0.f;
+					tempBossComponent->shockwaveChargeCounter += GetDeltaTime();
+
+					if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown) // Dew it..
+					{
+						tempBossComponent->isDazed = true;
+						tempBossComponent->willDoShockWave = false;
+						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
+					}
+					continue; // dont chase
+				}
+
 				if (tempBossComponent->updatePathCounter >= tempBossComponent->updatePathLimit)
 				{
 					tempBossComponent->updatePathCounter = 0.f;
@@ -295,7 +336,6 @@ bool TempBossBehaviourSystem::Update()
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
 			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, tempBossComponent, tempBossTransformComponent, enemyStats, enemyAnim);
 		}
-		TransformDecelerate(enemyEntity);
 	}
 
 	free(valueGrid);

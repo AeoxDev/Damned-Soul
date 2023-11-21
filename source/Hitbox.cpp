@@ -613,6 +613,14 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
 		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+
+		//Create special hitbox
+		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, 0.f);
+		SetCollisionEvent(entity, enemyComp->specialHitBoxID, ShockWaveAttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
+		//SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
 		break;
 	default:
 		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);

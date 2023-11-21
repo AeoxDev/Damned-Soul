@@ -35,5 +35,20 @@ struct TempBossBehaviour
 	float fx = 0.f;
 	float fz = 0.f;
 
+
+	//shockwave stuff below
+	//this section is for triggering it
+	bool willDoShockWave = false; //needed, DO NOT TOUCH
+	const float shockwaveChanceInterval = 2.f;// how often the chance is rolled
+	const int shockwaveOdds = 20; // in percent %.    odds of 23 is 23% for example
+	float shockwaveChanceCounter = 0.f; //just a clock counting
+
+	// this section is for charging so player can get a warning
+	const float shockWaveChargeCooldown = 1.f; // seconds of warning for player
+	float shockwaveChargeCounter = 0.f;
+	const float dazeTime = 2.f;
+	float dazeCounter = 0.f;
+	bool isDazed = false;
+
 	TempBossBehaviour(int deathCount, int hitID) : deathCounter(deathCount), hitBoxID(hitID) {}
 };
