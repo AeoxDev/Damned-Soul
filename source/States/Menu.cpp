@@ -177,10 +177,10 @@ void Menu::SetupButtons()
 
 	const char texts[buttons][32] =
 	{
-		"\nStart",
-		"\nCredits",
-		"\nSettings",
-		"\nQuit"
+		"Start",
+		"Credits",
+		"Settings",
+		"Quit"
 	};
 	
 	const DSFLOAT2 positions[buttons] =
@@ -214,7 +214,7 @@ void Menu::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], 30.0f);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);

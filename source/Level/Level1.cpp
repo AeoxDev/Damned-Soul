@@ -11,7 +11,6 @@
 #include "Model.h"
 #include "UIComponents.h"
 #include "States\StateManager.h"
-#include "UIButtonFunctions.h"
 
 void LoadLevel1()
 {
@@ -31,7 +30,6 @@ void LoadLevel1()
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
 
 	EntityID mouse = registry.CreateEntity();
-	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
@@ -76,15 +74,18 @@ void LoadLevel1()
 	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
-	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	if (GetVisualTimer())
+	{
+		EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+		UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+		uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
+		uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
-	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);
+		UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
+	}
 
 	stateManager.stage = stage;
-
 	SetInPlay(true);
 	//AddTimedEventComponentStart(cutsceneEnemy, 0.0f, Stage1IntroScene, 0, 1);
 	Stage1IntroScene(cutsceneEnemy, 0);

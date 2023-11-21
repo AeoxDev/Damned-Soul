@@ -459,6 +459,9 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 			}
 		}
 
+		if (currentTotalWeight == 0)
+			return retVal;
+
 		// Randomly selected index from the possible selection
 		uint32_t randomlySelected = 1 + (std::rand() % currentTotalWeight);
 		// -1 means none have been selected yet

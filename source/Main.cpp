@@ -65,7 +65,7 @@ int main(int argc, char* args[])
 		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / " + std::to_string(MAIN_MENU_FRAMES_TEST));
 		stateManager.Update();
 		stateManager.EndFrame();
-		MemLib::pdefrag();
+		//MemLib::pdefrag();
 	}
 	gameSpeed = 1.0f;
 	LoadLevel(666);//Reload the menu
@@ -81,7 +81,7 @@ int main(int argc, char* args[])
 
 		stateManager.EndFrame();
 
-		MemLib::pdefrag();
+		//MemLib::pdefrag();
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

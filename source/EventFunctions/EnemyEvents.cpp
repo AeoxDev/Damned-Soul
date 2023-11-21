@@ -104,7 +104,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(newMini);
+	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(newMini);
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif

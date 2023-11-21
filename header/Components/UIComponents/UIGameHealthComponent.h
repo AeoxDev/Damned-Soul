@@ -1,6 +1,6 @@
 #pragma once
 
-struct UIHealthComponent
+struct UIGameHealthComponent
 {
 	float value = -1.0f;
 };
