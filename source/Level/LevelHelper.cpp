@@ -134,16 +134,17 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::tempBoss)
 		{
 			health = 0;//400.f;
+			float partHealth = 40.f; // this times 5 is the full starting strength
 			if (zacIndex0)
-				health += 25;
+				health += partHealth;
 			if (zacIndex1)
-				health += 25;
+				health += partHealth;
 			if (zacIndex2)
-				health += 25;
+				health += partHealth;
 			if (zacIndex3)
-				health += 25;
+				health += partHealth;
 			if (zacIndex4)
-				health += 25;
+				health += partHealth;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -153,6 +154,22 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 1.f;
 		}
+	}
+	else if (eType == EnemyType::tempBoss) // if we want a weaker version of the boss later in game, we can specify the health
+	{
+		
+		float partHealth = health / 5.f; // this times 5 is the full starting strength
+		health = 0;
+		if (zacIndex0)
+			health += partHealth;
+		if (zacIndex1)
+			health += partHealth;
+		if (zacIndex2)
+			health += partHealth;
+		if (zacIndex3)
+			health += partHealth;
+		if (zacIndex4)
+			health += partHealth;
 	}
 	if (moveSpeed == 6969.f)
 	{
@@ -174,7 +191,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			moveSpeed = 10.f;
+			moveSpeed = 20.f; //starting speed
+			float partSpeed = 2.5f; // each alive part makes it this much slower
+			if (zacIndex0)
+				moveSpeed -= partSpeed;
+			if (zacIndex1)
+				moveSpeed -= partSpeed;
+			if (zacIndex2)
+				moveSpeed -= partSpeed;
+			if (zacIndex3)
+				moveSpeed -= partSpeed;
+			if (zacIndex4)
+				moveSpeed -= partSpeed;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
