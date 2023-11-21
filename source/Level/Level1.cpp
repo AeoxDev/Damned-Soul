@@ -27,7 +27,7 @@ void LoadLevel1()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 	CreatePlayer(0.0f, 0.0f, 0.0f, 80.0f, 100.0f, 20.0f,	10.0f,		1.0f,		 1,		 0.0f,	 0.0,	-1.0f);
-	registry.AddComponent<ParticleComponent>(stage)
+	registry.AddComponent<ParticleComponent>(stage, 50.0f, 10.0f, 10.0f, 0.0f, 0.25f, 1.0f, 2, SMOKE);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth, scaleX, ScaleY, ScaleZ
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
 	//SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);

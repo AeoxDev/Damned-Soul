@@ -12,6 +12,7 @@ struct GS_IN
     float4 rgb : RGB;
     float rotationZ : ROTATIONZ;
     float size : SIZE;
+    float time : TIME;
 };
 
 struct GS_OUT
@@ -19,6 +20,7 @@ struct GS_OUT
     float4 position : SV_POSITION;
     float4 rgb : RGB;
     float2 uv : UV_COORDINATES;
+    float time : TIME;
 };
 
 [maxvertexcount(6)]
@@ -71,6 +73,7 @@ void main(
         retappend.position = retappend.position / retappend.position.w;
         retappend.rgb = inval[0].rgb;
         retappend.uv = uvCoordinates[i];
+        retappend.time = inval[0].time;
 
 
         retval.Append(retappend);

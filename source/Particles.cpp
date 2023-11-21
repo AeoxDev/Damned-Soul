@@ -16,6 +16,18 @@ SRV_IDX particleSRV;
 
 PoolPointer<ParticleMetadataBuffer> data;
 
+GS_IDX tempUVPanningGS;
+PS_IDX tempUVPanningPS;
+CB_IDX tempUVPanningCB;
+TX_IDX tempUVPanningTX;
+SMP_IDX tempUVPanningSMP;
+
+struct UVPannerCB
+{
+	float panSpeed_in; // How fast do you want the panning to be. A multiplier.
+	DirectX::XMFLOAT2 offsetXY_in; // Offset of the uv coordinates in x ( u ) and y ( v ). Clamped between 1 and -1 since its illogial to do other ones.
+};
+
 
 int Particles::RenderSlot;
 
@@ -36,6 +48,15 @@ void Particles::SwitchInputOutput()
 
 void Particles::InitializeParticles()
 {
+	// Here starts Alux code
+	tempUVPanningPS = LoadPixelShader("UVParticlePS.cso");
+	tempUVPanningGS = LoadGeometryShader("UVParticleGS.cso");
+	UVPannerCB tempUVPannerData = { 0.4, DirectX::XMFLOAT2(1.0f, 2.0f)};
+	tempUVPanningCB = CreateConstantBuffer((void*)&tempUVPannerData, sizeof(UVPannerCB));
+	tempUVPanningTX = LoadTexture("\\LavaPlaceholder.png");
+	tempUVPanningSMP = CreateSamplerState();
+
+
 	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));
 	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
 	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
@@ -157,8 +178,14 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
-	SetGeometryShader(renderStates[RenderSlot].geometryShader);
-	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
+	//SetGeometryShader(renderStates[RenderSlot].geometryShader);
+	//SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
+
+	SetGeometryShader(tempUVPanningGS);
+	SetPixelShader(tempUVPanningPS);
+	SetConstantBuffer(tempUVPanningCB, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetTexture(tempUVPanningTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetSamplerState(tempUVPanningSMP, 0);
 
 	// The constant buffer for vertex is set outside of this function, in the ParticleSystemCPU Update() call
 	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
@@ -175,6 +202,10 @@ void Particles::FinishParticlePass()
 	UnsetVertexShader();
 	UnsetGeometryShader();
 	UnsetPixelShader();
+
+	UnsetConstantBuffer(BIND_PIXEL, 0);
+	UnsetSamplerState(0);
+	UnsetTexture(tempUVPanningTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 
 	SetTopology(TRIANGLELIST);
 
