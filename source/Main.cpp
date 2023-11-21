@@ -7,7 +7,7 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 //Uncomment this line for tests:
-//#define TEST3000 //Hermano 3000
+#define TEST3000 //Hermano 3000
 
 //#define TESTMTS //Test Main to Settings 500
 //#define TESTMTC //Test Main to Credits 500
@@ -112,7 +112,11 @@ int main(int argc, char* args[])
 
 			MemLib::pdefrag();
 		}
+
 	}
+
+	gameSpeed = 1.0f;
+	UIFunc::Game_MainMenu(nullptr, 0);
  	//for (unsigned int i = 0; i < 3000; ++i) // THIS IS GONA BECOME PARTICLE TESTER
 	//{
 	//	UIFunc::LoadParticleLevel(nullptr);

@@ -16,8 +16,6 @@
 
 #include <random>
 
-#define SIZEOF_ARR(arr) (sizeof(arr)/sizeof(arr[0]))
-
 void UIFunc::LoadNextLevel(void* args, int a)
 {
 	UnloadEntities();
@@ -266,7 +264,7 @@ void UIFunc::SelectRelic(void* args, int index)
 		if (uiElement != otherUI)
 		{
 			UIShopRelicComponent* otherWindow = registry.GetComponent<UIShopRelicComponent>(entity);
-			for (uint32_t i = 0; i < SIZEOF_ARR(otherWindow->shopSelections); i++)
+			for (uint32_t i = 0; i < otherWindow->shopSelections.size(); i++)
 			{
 				if (otherWindow->shopSelections[i] == shopState::SELECTED)
 				{
