@@ -257,7 +257,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			soulWorth = 4;
+			soulWorth = 0;
 		}
 		else if (eType == EnemyType::lucifer)
 		{

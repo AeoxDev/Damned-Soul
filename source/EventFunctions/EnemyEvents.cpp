@@ -102,7 +102,9 @@ void CreateMini(const EntityID& original, const float offsetValueX, const float 
 	
 	transComp.mass = transform->mass * 0.8f;
 	registry.AddComponent<TransformComponent>(newMini, transComp); 
-	registry.AddComponent<EnemyComponent>(newMini, 2, -1);
+	int soulWorth = 2;
+
+	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
 
 #ifdef DEBUG_HP
