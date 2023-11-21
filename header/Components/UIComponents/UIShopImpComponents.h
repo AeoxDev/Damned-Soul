@@ -4,12 +4,12 @@
 
 struct UIShopTitleImpComponent
 {
-	char* name;
+	ML_String name;
 };
 
 struct UIShopImpComponent
 {
-	char* name;
-	char* description;
+	ML_String name;
+	ML_String description;
 	uint8_t price;
 };

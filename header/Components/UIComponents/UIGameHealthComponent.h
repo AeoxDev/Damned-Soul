@@ -2,5 +2,5 @@
 
 struct UIGameHealthComponent
 {
-	float value = -1.0f;
+	int64_t value = -1.0f;
 };

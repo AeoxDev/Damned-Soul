@@ -121,7 +121,8 @@ void UIFunc::Game_MainMenu(void* args, int a)
 {
 	SetInMainMenu(true);
 	SetInPlay(false);
-	UnloadEntities(ENT_PERSIST_GAME);
+	UnloadEntities(ENT_PERSIST_LEVEL);
+	gameSpeed = 1.0f;
 	stateManager.menu.Setup();
 }
 
@@ -349,7 +350,7 @@ void UIFunc::BuyRelic(void* args, int index)
 					playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(playerUI->m_Images[2].baseUI.GetPosition().x /*+(0.06f * playerRelics->gridPos.x)*/,
 						uiPixelCoords.y - (0.12f * playerRelics->gridPos.y) - 0.02f), DSFLOAT2(1.5f, 1.5f), false);
 
-					playerHover->Setup(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
+					playerHover->Add(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
 						playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetBounds(), UIFunc::HoverPlayerRelic);
 
 					playerRelics->relics[playerRelics->currentRelics] = relicWindow->shopRelics[i];
@@ -499,34 +500,94 @@ void UIFunc::HealPlayer(void* args, int index)
 void UIFunc::HoverImage(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
-	char fileName[RELIC_DATA_PATH_SIZE] = "";
-	char hoverFileName[RELIC_DATA_PATH_SIZE] = "";
+	ML_String fileName = "";
+	ML_String hoverFileName = "";
 	if (uiElement->m_Images.size() == 0)
 	{
 		if (uiElement->m_BaseImage.baseUI.GetVisibility())
 		{
-			std::strcpy(fileName, uiElement->m_BaseImage.m_fileName);
-			std::strcpy(hoverFileName, fileName);
-			std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
+			fileName = uiElement->m_BaseImage.m_fileName;
+			hoverFileName = fileName;
+			hoverFileName.append("Hover");
 
 			if (hover)
-				uiElement->m_BaseImage.SetImage(hoverFileName, true);
+				uiElement->m_BaseImage.SetImage(hoverFileName.c_str(), true);
 			else
-				uiElement->m_BaseImage.SetImage(fileName, true);
+				uiElement->m_BaseImage.SetImage(fileName.c_str(), true);
 		}
 	}
 	else if (uiElement->m_Images[index].baseUI.GetVisibility())
 	{
-		std::strcpy(fileName, uiElement->m_Images[index].m_fileName);
-		std::strcpy(hoverFileName, fileName);
-		std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
+		fileName = uiElement->m_Images[index].m_fileName;
+		hoverFileName = fileName;
+		hoverFileName.append("Hover");
 
 		if (hover)
-			uiElement->m_Images[index].SetImage(hoverFileName, true);
+			uiElement->m_Images[index].SetImage(hoverFileName.c_str(), true);
 		else
-			uiElement->m_Images[index].SetImage(fileName, true);
+			uiElement->m_Images[index].SetImage(fileName.c_str(), true);
 		
 	}
+}
+
+void UIFunc::HoverShopButtons(void* args, int index, bool hover)
+{
+	UIComponent* uiElement = (UIComponent*)args;
+	UIShopButtonComponent* shopButton = nullptr;
+
+	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+		return;
+
+	UIComponent* uiImpElement = nullptr;
+	UIShopImpComponent* uiImpText = nullptr;
+
+	for (auto entity : View<UIShopButtonComponent>(registry))
+	{
+		UIComponent* otherUI = registry.GetComponent<UIComponent>(entity);
+
+		if (uiElement != otherUI)
+			continue;
+
+		shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+
+	}
+
+	for (auto entity : View<UIShopImpComponent>(registry))
+	{
+		uiImpElement = registry.GetComponent<UIComponent>(entity);
+		uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
+	}
+
+	if (hover)
+	{
+		uiImpText->name = shopButton->m_name;
+		uiImpText->description = shopButton->m_description;
+		uiImpText->price = shopButton->m_price;
+
+		ML_String buttonText = uiImpText->name;
+
+		if (uiImpText->price > 0)
+		{
+			buttonText.append("\nPrice: ");
+			buttonText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
+		}
+		else
+			buttonText.append("\n");
+
+		buttonText.append(uiImpText->description);
+
+		uiImpElement->m_BaseText.SetText(buttonText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize,
+			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
+
+
+		UIFunc::HoverImage(args, index, hover);
+
+	}
+	else
+	{
+		UIFunc::HoverImage(args, index, hover);
+	}
+
 }
 
 void UIFunc::HoverShopRelic(void* args, int index, bool hover)
@@ -564,19 +625,24 @@ void UIFunc::HoverShopRelic(void* args, int index, bool hover)
 		uiElement->m_Images[imageIndex].baseUI.SetVisibility(true);
 		uiElement->m_Images[imageIndex].baseUI.SetPosition(uiElement->m_Images[index - 1].baseUI.GetPosition());
 
-		uiImpText->name = _strdup(relicWindow->shopRelics[index - 1]->m_relicName);
-		uiImpText->description = _strdup(relicWindow->shopRelics[index - 1]->m_description);
+		uiImpText->name = relicWindow->shopRelics[index - 1]->m_relicName;
+		uiImpText->description = relicWindow->shopRelics[index - 1]->m_description;
 		uiImpText->price = relicWindow->shopRelics[index - 1]->m_price;
 
-		char relicText[RELIC_DATA_DESC_SIZE] = "";
+		ML_String relicText = uiImpText->name;
 
-		std::strcpy(relicText, "\n\n");
-		std::strcpy(relicText + std::strlen(relicText), uiImpText->name);
-		std::strcpy(relicText + std::strlen(relicText), "\nPrice: ");
-		std::strcpy(relicText + std::strlen(relicText), (std::to_string(uiImpText->price) + " Souls\n").c_str());
-		std::strcpy(relicText + std::strlen(relicText), uiImpText->description);
+		if (uiImpText->price > 0)
+		{
+			relicText.append("\nPrice: ");
+			relicText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
+		}
+		else
+			relicText.append("\n");
 
-		uiImpElement->m_BaseText.SetText(relicText, uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize, 
+		relicText.append(uiImpText->description);
+
+
+		uiImpElement->m_BaseText.SetText(relicText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize,
 			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
 	}
 	else if (!hover && relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
@@ -594,12 +660,9 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
 		return;
 
-	char relicText[RELIC_DATA_DESC_SIZE] = "";
-
-	std::strcpy(relicText, "\n\n");
-	std::strcpy(relicText + std::strlen(relicText), relicWindow->relics[index]->m_relicName);
-	std::strcpy(relicText + std::strlen(relicText), "\n");
-	std::strcpy(relicText + std::strlen(relicText), relicWindow->relics[index]->m_description);
+	ML_String relicText = relicWindow->relics[index]->m_relicName;
+	relicText.append("\n");
+	relicText.append(relicWindow->relics[index]->m_description);
 
 	if ((currentStates & State::InShop))
 	{
@@ -616,7 +679,7 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 		uiImpText->description = _strdup(relicWindow->relics[index]->m_description);
 		uiImpText->price = relicWindow->relics[index]->m_price;
 
-		uiImpElement->m_BaseText.SetText(relicText, uiImpElement->m_BaseText.baseUI.GetBounds());
+		uiImpElement->m_BaseText.SetText(relicText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds());
 	}
 	else if ((currentStates & State::InPause))
 	{
@@ -635,7 +698,7 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 		uiPauseElement->m_Images[0].baseUI.SetPosition({ uiElement->m_Images[2].baseUI.GetPosition().x + 0.3f, uiElement->m_Images[2].baseUI.GetPosition().y });
 		uiPauseElement->m_Texts[0].baseUI.SetPosition(uiPauseElement->m_Images[0].baseUI.GetPosition());
 
-		uiPauseElement->m_Texts[0].SetText(relicText, uiPauseElement->m_BaseText.baseUI.GetBounds());
+		uiPauseElement->m_Texts[0].SetText(relicText.c_str(), uiPauseElement->m_BaseText.baseUI.GetBounds());
 
 		if (hover)
 		{

@@ -175,10 +175,8 @@ void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_T
 
 		SetupText(m_fontSize, m_textAlignment, m_paragraphAlignment, m_TextFormat);
 
-		ML_String s = m_Text;
-
 		if (bounds.right == 0)
-			baseUI.m_OriginalBounds = { 0, 0, (m_fontSize + 5.0f) * s.length(), m_fontSize };
+			baseUI.m_OriginalBounds = { 0, 0, (m_fontSize + 5.0f) * m_Text.length(), m_fontSize };
 		else
 			baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
 	}
@@ -193,8 +191,8 @@ void UIText::Draw()
 		D2D1_RECT_F tempBounds;
 
 		SetBounds(tempBounds, baseUI.m_CurrentBounds);
-		ML_String s = m_Text;
-		std::wstring textAsWString(s.begin(), s.end());
+
+		std::wstring textAsWString(m_Text.begin(), m_Text.end());
 		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), m_TextFormat, tempBounds, ui.GetBrush());
 	}
 }
@@ -251,15 +249,27 @@ void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT
 		m_BaseText.baseUI.SetVisibility(false);
 }
 
+void UIComponent::DrawAll()
+{
+	m_BaseImage.Draw();
+	m_BaseText.Draw();
+
+	for (uint32_t i = 0; i < m_Images.size(); i++)
+		m_Images[i].Draw();
+
+	for (uint32_t i = 0; i < m_Texts.size(); i++)
+		m_Texts[i].Draw();
+}
+
 void UIComponent::SetAllVisability(bool value)
 {
 	m_BaseImage.baseUI.SetVisibility(value);
 	m_BaseText.baseUI.SetVisibility(value);
 
-	for (size_t i = 0; i < m_Images.size(); i++)
+	for (uint32_t i = 0; i < m_Images.size(); i++)
 		m_Images[i].baseUI.SetVisibility(value);
 
-	for (size_t i = 0; i < m_Texts.size(); i++)
+	for (uint32_t i = 0; i < m_Texts.size(); i++)
 		m_Texts[i].baseUI.SetVisibility(value);
 
 }
@@ -277,7 +287,7 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 
 	if (translateText && m_BaseText.baseUI.GetVisibility())
 	{
-		m_BaseText.SetText(m_BaseText.m_Text, m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds(), m_BaseText.m_fontSize, m_BaseText.m_textAlignment, m_BaseText.m_paragraphAlignment);
+		m_BaseText.SetText(m_BaseText.m_Text.c_str(), m_Images[m_Images.size() - 1].baseUI.GetOriginalBounds(), m_BaseText.m_fontSize, m_BaseText.m_textAlignment, m_BaseText.m_paragraphAlignment);
 		m_BaseText.baseUI.SetScale(m_BaseText.baseUI.GetScale());
 		m_BaseText.baseUI.SetPosition(m_BaseText.baseUI.GetPosition());
 	}
@@ -301,6 +311,7 @@ void UIComponent::Release()
 	{
 		m_BaseImage.m_Bitmap->Release();
 		m_BaseImage.m_Bitmap = nullptr;
+		m_BaseImage.m_fileName.~ML_String();
 	}
 
 	for (UIImage image : m_Images)
@@ -309,6 +320,26 @@ void UIComponent::Release()
 		{
 			image.m_Bitmap->Release();
 			image.m_Bitmap = nullptr;
+			image.m_fileName.~ML_String();
+		}
+	}
+
+	if (m_BaseText.m_TextFormat)
+	{
+		m_BaseText.m_TextFormat->Release();
+		m_BaseText.m_TextFormat = nullptr;
+		m_BaseText.m_Text.~ML_String();
+	}
+
+	for (UIText text : m_Texts)
+	{
+
+		if (text.m_TextFormat)
+		{
+			text.m_TextFormat->Release();
+			text.m_TextFormat = nullptr;
+
+			text.m_Text.~ML_String();
 		}
 	}
 

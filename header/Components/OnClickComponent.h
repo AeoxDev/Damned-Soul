@@ -7,17 +7,32 @@
 
 struct OnClickComponent
 {
-	std::vector<DSFLOAT2> positions;
-	std::vector<DSBOUNDS> bounds;
+	ML_Vector<DSFLOAT2> positions;
+	ML_Vector<DSBOUNDS> bounds;
 
 	int index = 0;
 
 	//container of bool doesnt exist, 0 = pressed, 1 = released
-	std::vector<int> mouseStates;
+	ML_Vector<int> mouseStates;
 
-	std::vector<void(*)(void*, int)> onClickFunctions;
+	ML_Vector<void(*)(void*, int)> onClickFunctions;
 
 	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, int state, void(*func)(void*, int))
+	{
+		positions.Initialize();
+		bounds.Initialize();
+		mouseStates.Initialize();
+		onClickFunctions.Initialize();
+
+		positions.push_back(pos);
+		bounds.push_back(bnds);
+
+		mouseStates.push_back(state);
+
+		onClickFunctions.push_back(func);
+	};
+
+	void Add(DSFLOAT2 pos, DSBOUNDS bnds, int state, void(*func)(void*, int))
 	{
 		positions.push_back(pos);
 		bounds.push_back(bnds);
@@ -31,7 +46,7 @@ struct OnClickComponent
 	int Intersect(DSINT2 mousePosition)
 	{
 		int retval = -1;
-		for (size_t i = positions.size(); i-- > 0;)
+		for (uint32_t i = positions.size(); i-- > 0;)
 		{
 			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
@@ -47,9 +62,9 @@ struct OnClickComponent
 
 	void Release()
 	{
-		positions.~vector();
-		bounds.~vector();
-
-		onClickFunctions.~vector();
+		positions.~ML_Vector();
+		bounds.~ML_Vector();
+		mouseStates.~ML_Vector();
+		onClickFunctions.~ML_Vector();
 	};
 };

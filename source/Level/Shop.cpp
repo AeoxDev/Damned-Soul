@@ -75,12 +75,12 @@ void CreateRelicWindows()
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 
 		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunc::EmptyOnClick);
-		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
-		uiOnClick->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
+		uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
+		uiOnClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
 
 		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::EmptyOnHover);
-		uiOnHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverShopRelic);
-		uiOnHover->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverShopRelic);
+		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverShopRelic);
+		uiOnHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverShopRelic);
 
 	}
 
@@ -109,17 +109,6 @@ void CreateSingleWindows()
 		{0.8f, -0.75f }
 	};
 
-	//doesnt work in setup image, "" != "" is true
-	const char const baseFilenames[SHOP_SINGLE_WINDOWS][32] =
-	{
-		"",
-		"",
-		"",
-		"",
-		"TempRelicFlavorHolder",
-		"TempRelicFlavorHolder"
-	};
-
 	const char const filenames[SHOP_SINGLE_WINDOWS][32] =
 	{
 		"Heal",
@@ -140,6 +129,37 @@ void CreateSingleWindows()
 		UIFunc::LoadNextLevel
 	};
 
+	const char const name[SHOP_SINGLE_WINDOWS][32] =
+	{
+		"Heal",
+		"Reroll",
+		"Lock",
+		"Buy",
+		"Upgrade Weapon",
+		""
+	};
+
+	const char const description[SHOP_SINGLE_WINDOWS][64] =
+	{
+		"Recover 25% of max Health",
+		"Reroll a new set of relics",
+		"Lock the selected relic until the next reroll or shop",
+		"Buy the selected relic",
+		"Upgrade your weapon",
+		"Leave the shop"
+	};
+
+	uint8_t price[SHOP_SINGLE_WINDOWS] =
+	{
+		2,
+		0,
+		0,
+		0,
+		0,
+		0,
+	};
+
+
 	for (int i = 0; i < SHOP_SINGLE_WINDOWS; i++)
 	{
 		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
@@ -155,22 +175,21 @@ void CreateSingleWindows()
 		if (i == 5)
 			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
-		if (i == 1)
+		if (i == 0)
+			registry.AddComponent<UIShopHealComponent>(relicWindow);
+		else if (i == 1)
 			registry.AddComponent<UIShopRerollComponent>(relicWindow);
-		else
-			registry.AddComponent<UIShopButtonComponent>(relicWindow);
 
+		UIShopButtonComponent* button = registry.AddComponent<UIShopButtonComponent>(relicWindow);
+		button->Setup(name[i], description[i], price[i]);
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 
 		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunc::EmptyOnClick);
 		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, functions[i]);
 
-		if (i != 5)
-		{
-			OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
-			uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
-		}
+		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
+		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverShopButtons);
 	}
 }
 
@@ -191,7 +210,7 @@ void LoadShop()
 	CreateSingleWindows();
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("TempRelicHolder", "Hello There", { 0.3f, -0.1f }, { 2.0f, 2.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	uiImpText->Setup("TempRelicHolder", "Hello There", { 0.3f, 0.1f }, { 2.0f, 2.0f }, 20.0f);
 	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopImpComponent>(impText);
