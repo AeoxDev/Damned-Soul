@@ -200,24 +200,6 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
-void ChargeColorFlash(EntityID& entity, const int& index)
-{
-	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
-	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
-	if (skelel)
-	{
-		skelel->shared.colorAdditiveRed = cosineWave;
-		skelel->shared.colorAdditiveGreen = cosineWave;
-	}
-	if (bonel)
-	{
-		bonel->shared.colorAdditiveRed = cosineWave;
-		bonel->shared.colorAdditiveGreen = cosineWave;
-	}
-}
-
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp, AnimationComponent* enemyAnim)
 {
 	if (!eyeComponent->charging)

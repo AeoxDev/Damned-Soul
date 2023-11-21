@@ -61,7 +61,7 @@ void BlinkColor(EntityID& entity, const int& index);
 void ResetColor(EntityID& entity, const int& index);
 void SquashStretch(EntityID& entity, const int& index);
 void ResetSquashStretch(EntityID& entity, const int& index);
-
+void ChargeColorFlash(EntityID& entity, const int& index);
 
 //Stats
 void SetSpeedZero(EntityID& entity, const int& index);

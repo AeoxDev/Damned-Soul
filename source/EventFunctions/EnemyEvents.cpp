@@ -301,6 +301,24 @@ void BossShockwaveEnd(EntityID& entity, const int& index)
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
 }
 
+void ChargeColorFlash(EntityID& entity, const int& index)
+{
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	float frequency = 10.0f; //Higher frequency = faster flashing lights
+	float cosineWave = cosf(GetTimedEventElapsedTime(entity, index) * frequency) * cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	if (skelel)
+	{
+		skelel->shared.colorAdditiveRed = cosineWave;
+		skelel->shared.colorAdditiveGreen = cosineWave;
+	}
+	if (bonel)
+	{
+		bonel->shared.colorAdditiveRed = cosineWave;
+		bonel->shared.colorAdditiveGreen = cosineWave;
+	}
+}
+
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 
