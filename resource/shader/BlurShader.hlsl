@@ -38,10 +38,10 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     }
     
     // Don't draw glow on top of UI.
-    if (depthSRV[index].a == 0)
-    {
-        return;
-    }
+    //if (depthSRV[index].a == 0)
+    //{
+    //    return;
+    //}
     
     float total = 0;
     float4 output = float4(0, 0, 0, 0);
@@ -56,19 +56,20 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
             int2 h8t = int2(x, y);
             float temp = Gaussian(index.x - x, index.y - y, SIGMA);
             total += temp;
-            output += inputGlowData[h8t] * temp;
+            output += /*float4(*/inputGlowData[h8t]/*.rgb, 1.0f)*/ * temp; // How to calculate alpha correctly
         }
     }
-    
+    // TODO: Figure out how to add everything together and make it look good!
     //  Add blur "on top of" existing glow texture.
-    float4 glow = outputGlowData[index] + inputGlowData[index] + (output / total);
+    float3 tmp = output.rgb/total + inputGlowData[index].rgb * inputGlowData[index].a;
+    float4 glow = float4(tmp, output.a/* / total*/) /*outputGlowData[index] + */ /*inputGlowData[index]*/ /*float4(tmp, inputGlowData[index].a) + (output / total)*/;
     float4 bb_rgba = backbuffer[index];
     
     // Add glow color on backbuffer, using alpha as a factor.
     float fac_a = glow.a;
-    float res_r = (bb_rgba.r * (1 - fac_a)) + (glow.r * fac_a);     // TODO: Try tweaking. Would multiply work better?
-    float res_g = (bb_rgba.g * (1 - fac_a)) + (glow.g * fac_a);
-    float res_b = (bb_rgba.b * (1 - fac_a)) + (glow.b * fac_a);
+    float res_r = bb_rgba.r + glow.r * fac_a; /*(bb_rgba.r * (1 - fac_a)) + (glow.r * fac_a); */ // TODO: Try tweaking. Would multiply work better?
+    float res_g = bb_rgba.g + glow.g * fac_a; /*(bb_rgba.g * (1 - fac_a)) + (glow.g * fac_a);*/
+    float res_b = bb_rgba.b + glow.b * fac_a; /*(bb_rgba.b * (1 - fac_a)) + (glow.b * fac_a);*/
     
     backbuffer[index] = float4(res_r, res_g, res_b, bb_rgba.a);
 

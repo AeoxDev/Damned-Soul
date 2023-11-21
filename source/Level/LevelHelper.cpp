@@ -477,7 +477,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//Create player
 	stateManager.player = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
-	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerLP.mdl"));
 	model->shared.colorMultiplicativeRed = 1.25f;
 	model->shared.colorMultiplicativeGreen = 1.25f;
 	model->shared.colorMultiplicativeBlue = 1.25f;
@@ -528,10 +528,10 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
 	ModelSkeletonComponent* weapon_model = registry.AddComponent<ModelSkeletonComponent>(stateManager.weapon, LoadModel("AxeV1.mdl"));
-	weapon_model->colorMultiplicativeRed = 1.25f;
-	weapon_model->colorMultiplicativeGreen = 1.25f;
-	weapon_model->colorMultiplicativeBlue = 1.25f;
-	weapon_model->gammaCorrection = 1.5f;
+	weapon_model->shared.colorMultiplicativeRed = 1.25f;
+	weapon_model->shared.colorMultiplicativeGreen = 1.25f;
+	weapon_model->shared.colorMultiplicativeBlue = 1.25f;
+	weapon_model->shared.gammaCorrection = 1.5f;
 
 	AnimationComponent* weapon_animation = registry.AddComponent<AnimationComponent>(stateManager.weapon, AnimationComponent());
 	weapon_animation->aAnim = ANIMATION_IDLE;
@@ -566,7 +566,7 @@ void ReloadPlayerNonGlobals()
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{
-		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerLP.mdl"));
 		modelLoaded->shared.colorMultiplicativeRed = 1.25f;
 		modelLoaded->shared.colorMultiplicativeGreen = 1.25f;
 		modelLoaded->shared.colorMultiplicativeBlue = 1.25f;

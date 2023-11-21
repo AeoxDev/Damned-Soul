@@ -17,7 +17,7 @@ float4 main(VS_OUT input) : SV_TARGET
     if (tex_rgba.r <= 0.0f && tex_rgba.g <= 0.0f && tex_rgba.b <= 0.0f)
     {
         // Apply color from glow component.
-        float4 glow_col = float4(in_r, in_g, in_b, 0.f);
+        float4 glow_col = float4(0, 0, 0, 0.f);
         return glow_col;
     }
     
