@@ -28,13 +28,13 @@ void LoadLevel1()
 	EntityID lightholderForth = registry.CreateEntity();
 	CreatePlayer(0.0f, 0.0f, 0.0f, 80.0f, 100.0f, 20.0f,	10.0f,		1.0f,		 1,		 0.0f,	 0.0,	-1.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth, scaleX, ScaleY, ScaleZ
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
-	//SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
-	//SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
-	//SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
-	//SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -45.f, 0.f, -20.f);
+	SetupEnemy(EnemyType::skeleton, 40.f, 0.f, -35.f);
+	SetupEnemy(EnemyType::skeleton, -30.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
-	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
+	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, 64000, SMOKE);
 	//5 souls total
 	
 	/*char ctexture[] = "1-1C.png";
@@ -72,5 +72,5 @@ void LoadLevel1()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	//AddTimedEventComponentStart(cutsceneEnemy, 0.0f, Stage1IntroScene, 0, 1);
-	//Stage1IntroScene(cutsceneEnemy, 0);
+	Stage1IntroScene(cutsceneEnemy, 0);
 }
