@@ -18,4 +18,5 @@ struct MinotaurBehaviour
 
 	bool charging = false;		//bool to check if the minotaur is currently charging or not
 	bool jumping = false;
+	bool hasLandingPos = false;
 };
