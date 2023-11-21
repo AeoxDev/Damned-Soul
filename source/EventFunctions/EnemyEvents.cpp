@@ -55,7 +55,7 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 
 }
 
-void CreateMini(const EntityID& original, const float offsetValueX, const float offsetValueZ, const int zacIndex)
+void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn, const int zacIndex)
 {	
 	EntityID newMini = registry.CreateEntity();
 
@@ -70,7 +70,7 @@ void CreateMini(const EntityID& original, const float offsetValueX, const float 
 	
 
 	// now we need the speed for the blob, to make sure it ends up in middle after X seconds
-	float dista = Calculate2dDistance(transform->positionX + /*offsetX * */offsetValueX, transform->positionZ +/* offsetZ * */offsetValueZ, transform->positionX, transform->positionZ);
+	float dista = Calculate2dDistance(xSpawn, zSpawn, transform->positionX, transform->positionZ);
 	//float dista = 15.f;
 	float speeeeeed = dista / BOSS_RESPAWN_TIME;
 
@@ -93,8 +93,8 @@ void CreateMini(const EntityID& original, const float offsetValueX, const float 
 	//	offsetX /= magnitude;
 	//	offsetZ /= magnitude;
 	//}
-	transComp.positionX = transform->positionX + /*offsetX * */offsetValueX;
-	transComp.positionZ = transform->positionZ +/* offsetZ * */offsetValueZ;
+	transComp.positionX = xSpawn;
+	transComp.positionZ = zSpawn;
 	transComp.scaleX = transform->scaleX * newScaleSize;
 	transComp.scaleY = transform->scaleY * newScaleSize;
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
@@ -212,7 +212,7 @@ void SplitBoss(EntityID& entity, const int& index)
 	{
 		if (tempBossComponent->parts[i] )
 		{
-			TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 20.f, 30.f);
+			TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
 			/*float angle = i * (2 * 3.141592 / 5);
 			float x = radius * cos(angle);
 			float y = radius * sin(angle);*/
