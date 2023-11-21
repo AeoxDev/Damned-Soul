@@ -66,8 +66,8 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		phc->Load("default");
 		break;
 	}
-
 	
+
 	stageModel->shared.colorMultiplicativeRed = stageVars.rm;
 	stageModel->shared.colorMultiplicativeGreen = stageVars.gm;
 	stageModel->shared.colorMultiplicativeBlue = stageVars.bm;
@@ -91,6 +91,10 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	TransformComponent* transformN = registry.AddComponent<TransformComponent>(noclip, transform);
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
 	RenderGeometryIndependentCollision(stage, wall, hitbox);
+
+#ifndef _DEBUG
+	registry.DestroyEntity(hitbox);
+#endif // _DEBUG
 	return stage;
 }
 
@@ -665,7 +669,24 @@ void ReloadPlayerNonGlobals()
 }
 
 EntityID RandomPlayerEnemy(EnemyType enemyType) {
-	EntityID enemy = SetupEnemy(enemyType, (float)(rand() % 100) - 50.0f, 0.f, (float)(rand() % 100) - 50.0f);
+	int pixelValue = 0;
+	GridPosition gridPos = {0};
+	GeometryIndependentComponent* geoCo = nullptr;
+	for (auto entity : View<GeometryIndependentComponent>(registry))
+	{
+		geoCo = registry.GetComponent<GeometryIndependentComponent>(entity);
+	}
+	do
+	{
+		gridPos.x = ((float)GI_TEXTURE_DIMENSIONS * 0.1f) + ((rand() % GI_TEXTURE_DIMENSIONS) * 0.8f);
+		gridPos.z = ((float)GI_TEXTURE_DIMENSIONS * 0.1f) + ((rand() % GI_TEXTURE_DIMENSIONS) * 0.8f);
+		
+		pixelValue = giTexture->texture[gridPos.x][gridPos.z];
+	} while (pixelValue != 1);
+
+	
+	Coordinate2D coords = GridOnPosition(gridPos, geoCo, false);
+	EntityID enemy = SetupEnemy(enemyType, coords.x, 0.f, coords.z);
 	SetHitboxIsPlayer(enemy, 1, true);
 	registry.AddComponent<PlayerComponent>(enemy);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);

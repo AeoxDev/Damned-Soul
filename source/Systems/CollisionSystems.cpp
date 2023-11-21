@@ -146,7 +146,8 @@ bool GeometryIndependentSystem::Update()
 						lastPos.positionZ = p->lastPositionZ;
 						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos, false);
 						//Edge direction
-						if (pixelPos.x >= GI_TEXTURE_DIMENSIONS || pixelPos.x < 0 || pixelPos.z >= GI_TEXTURE_DIMENSIONS || pixelPos.z < 0)
+						if (pixelPos.x >= GI_TEXTURE_DIMENSIONS || pixelPos.x < 0 || pixelPos.z >= GI_TEXTURE_DIMENSIONS || pixelPos.z < 0 ||
+							lastPixelPos.x >= GI_TEXTURE_DIMENSIONS || lastPixelPos.x < 0 || lastPixelPos.z >= GI_TEXTURE_DIMENSIONS || lastPixelPos.z < 0)
 						{
 							p->positionX = giSpawnPosX;
 							p->positionZ = giSpawnPosZ;

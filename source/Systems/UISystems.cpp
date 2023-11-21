@@ -301,7 +301,6 @@ bool UIRunTime::Update()
 		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
 		ML_String clock = GetDigitalMinuteClock();
 		uiElement->m_BaseText.SetText(clock.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
-		clock.~ML_String();
 	}
 	return true;
 }

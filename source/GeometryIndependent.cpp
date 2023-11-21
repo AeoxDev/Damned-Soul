@@ -531,7 +531,7 @@ GeometryIndependentComponent::~GeometryIndependentComponent()
 	//ReleaseTexture(stagingTexture);
 }
 
-int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*& transform)
+int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent* transform)
 {
 	//Calculate size per pixel:
 	GridPosition pixelPos = PositionOnGrid(gi, transform, false);
@@ -596,7 +596,7 @@ Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*&
 	float pixelX = gi->width / dimension;
 	float pixelZ = gi->height / dimension;
 	float offX = gi->width * 0.5f - gi->offsetX;//In world
-	float offZ = gi->height * 0.5f - gi->offsetZ;//In world
+	float offZ = gi->height * 0.5f + gi->offsetZ;//In world
 
 	//Get pixel to world
 	//Pixel 73/64 is 0.0 in world. Put pixel

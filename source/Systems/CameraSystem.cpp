@@ -114,22 +114,12 @@ bool PointOfInterestSystem::Update()
 		}
 		else if (poiCo->mode == POI_FORCE)
 		{
-			if (currentStates & InMainMenu)
-			{
-				//(0.0, -200) -> (200, 0.0) -> (0.0, 200) -> (-200, 0.0)
-				Camera::SetPosition(GetStageGIOffsetX() + tCo->positionX + poiCo->rotationRadius * -sinf(poiCo->rotationY), tCo->positionY + poiCo->height + CAMERA_OFFSET_Y, GetStageGIOffsetZ() + tCo->positionZ + poiCo->rotationRadius * cosf(poiCo->rotationY), false);
-				Camera::SetLookAt(GetStageGIOffsetX() + tCo->positionX, tCo->positionY, GetStageGIOffsetZ() + tCo->positionZ);
-				Camera::UpdateView();
-				Camera::UpdateProjection();
-			}
-			else
-			{
-				//(0.0, -200) -> (200, 0.0) -> (0.0, 200) -> (-200, 0.0)
-				Camera::SetPosition(tCo->positionX + poiCo->rotationRadius * -sinf(poiCo->rotationY), tCo->positionY + poiCo->height + CAMERA_OFFSET_Y, tCo->positionZ + poiCo->rotationRadius * cosf(poiCo->rotationY), false);
-				Camera::SetLookAt(tCo->positionX, tCo->positionY, tCo->positionZ);
-				Camera::UpdateView();
-				Camera::UpdateProjection();
-			}
+
+			//(0.0, -200) -> (200, 0.0) -> (0.0, 200) -> (-200, 0.0)
+			Camera::SetPosition(tCo->positionX + poiCo->rotationRadius * -sinf(poiCo->rotationY), tCo->positionY + poiCo->height + CAMERA_OFFSET_Y, tCo->positionZ + poiCo->rotationRadius * cosf(poiCo->rotationY), false);
+			Camera::SetLookAt(tCo->positionX, tCo->positionY, tCo->positionZ);
+			Camera::UpdateView();
+			Camera::UpdateProjection();
 			poiCo->rotationY += GetDeltaTime() * poiCo->rotationAccel;
 		
 			return true;

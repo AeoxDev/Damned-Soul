@@ -23,7 +23,7 @@ struct GIMapData
 void RenderGeometryIndependentCollision(EntityID& stageFloor, EntityID& walls, EntityID& hitbox);
 
 //Functions for getting information:
-int PixelValueOnPosition(GeometryIndependentComponent*& giComponent, TransformComponent*& transform);
+int PixelValueOnPosition(GeometryIndependentComponent*& giComponent, TransformComponent* transform);
 struct GridPosition
 {
 	int x;
