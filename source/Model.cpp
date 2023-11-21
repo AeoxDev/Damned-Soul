@@ -216,13 +216,62 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 	// That would sort of explain some of the wonky stuff happening
 
 	// Try to get the initial animation frame
+	DirectX::XMVECTOR tempScalar;
+	DirectX::XMVECTOR tempRotation;
+	DirectX::XMVECTOR tempTranslation;
+
+	DirectX::XMMATRIX tempMatrix;
+
+	m_data->m_numBones;
+
 	if (m_animationVertexBuffer != -1)
 	{
 		AnimationFrame frame = GetAnimation(aType, aIdx, aTime);
-		UpdateStructuredBuffer(m_animationVertexBuffer, frame.vertex);
+		// Push copy onto the stack
+		AnimationFrame modified;
+		modified.vertex = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
+		modified.normal = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
+		DirectX::XMMATRIX copy;
+
+		for (int i = 0; i < m_data->m_numBones; i++)
+		{
+
+			if (i < 12)
+			{
+				copy = frame.vertex[2];
+			}
+			else
+			{
+				copy = frame.vertex[2];
+			}
+			
+
+			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copy));
+
+			DirectX::XMMATRIX copyR = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 1.f));
+
+			tempMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixScalingFromVector(tempScalar), copyR
+				/*DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 0.5f))*/),
+				DirectX::XMMatrixTranslationFromVector(tempTranslation)));
+
+			tempMatrix = DirectX::XMMatrixTranspose(tempMatrix);
+
+			modified.vertex[i] = tempMatrix;
+			modified.normal[i] = frame.normal[i];
+
+		}
+		
+
+
+
+		UpdateStructuredBuffer(m_animationVertexBuffer, modified.vertex);
 		SetShaderResourceView(m_animationVertexBufferSRV, BIND_VERTEX, 0);
-		UpdateStructuredBuffer(m_animationNormalBuffer, frame.normal);
+		UpdateStructuredBuffer(m_animationNormalBuffer, modified.normal);
 		SetShaderResourceView(m_animationNormalBufferSRV, BIND_VERTEX, 1);
+		// Pop the copy from the stack
+		MemLib::spop();
+		MemLib::spop();
 	}
 
 	// Set as slot 0, for the time being
