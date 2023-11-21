@@ -240,7 +240,7 @@ bool TempBossBehaviourSystem::Update()
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						CalculateGlobalMapValuesSkeleton(valueGrid, playerTransformCompenent);
+						CalculateGlobalMapValuesHellhound(valueGrid);
 						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
