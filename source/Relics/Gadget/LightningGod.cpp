@@ -45,7 +45,7 @@ void LIGHTNING_GOD::Initialize(void* input)
 
 void _LG_Particles_Begin_Big(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION_BIG, 0.0f, LIGHTNING_GOD_SFX_SIZE_BIG, 0.0f, 0.0f, 0.0f, LIGHTNING);
+	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION_BIG, 0.0f, LIGHTNING_GOD_SFX_SIZE_BIG, 0.0f, 0.0f, 0.0f, 256, LIGHTNING);
 }
 
 void LIGHTNING_GOD::ProcMark(void* data)

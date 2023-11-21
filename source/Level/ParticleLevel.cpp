@@ -38,14 +38,6 @@ void LoadParticleLevel()
 		
 	}
 
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 0.75f;
-	stageModel->colorMultiplicativeGreen = 0.75f;
-	stageModel->colorMultiplicativeBlue = 0.75f;
-	stageModel->gammaCorrection = 0.9f;
-	//stageModel->colorAdditiveRed = 0.1f;
-
 	// Stage (Default)
 	TransformComponent* stageTransform = registry.AddComponent<TransformComponent>(stage);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
