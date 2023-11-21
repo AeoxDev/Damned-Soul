@@ -11,12 +11,10 @@
 bool ControllerSystem::Update()
 {
 	//Controller for player during play
-	if ((keyState[SCANCODE_SPACE] == pressed || keyState[SCANCODE_W] == pressed
-		|| keyState[SCANCODE_A] == pressed || keyState[SCANCODE_S] == pressed
-		|| keyState[SCANCODE_D] == pressed || mouseButtonPressed[MouseButton::left] == pressed
+	if ((keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[MouseButton::left] == pressed
 		|| mouseButtonPressed[MouseButton::right] == pressed))
 	{
-		if (!(currentStates & InMainMenu) && Camera::InCutscene())
+		if (!(currentStates & InMainMenu) && Camera::InCutscene() && !(currentStates & InCredits) && !(currentStates & InSettings))
 		{
 			for (auto entity : View<TimedEventComponent>(registry))
 			{
@@ -43,7 +41,7 @@ bool ControllerSystem::Update()
 		}
 	}
 #ifdef _DEBUG
-	if (keyInput[SCANCODE_LCTRL] == down && (currentStates & InMainMenu) == true)
+	if (keyInput[SCANCODE_LCTRL] == down)
 	{
 		if (keyState[SCANCODE_1] == pressed)
 		{
@@ -60,6 +58,71 @@ bool ControllerSystem::Update()
 		else if (keyState[SCANCODE_4] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
+		}
+	}
+	if (keyInput[SCANCODE_H] == down)
+	{
+		if (keyState[SCANCODE_A] == pressed)
+		{
+			for (size_t i = 0; i < 8; i++)
+			{
+				hitboxVisualizerActive[i] = true;
+				for (auto entity : View<HitboxComponent>(registry))
+				{
+					VisualizeHitbox(entity, i);
+				}
+			}
+		}
+		if (keyState[SCANCODE_0] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 0); 
+			}
+			hitboxVisualizerActive[0] = true;
+		}
+		else if (keyState[SCANCODE_1] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 1);
+			}
+			hitboxVisualizerActive[1] = true;
+		}
+		else if (keyState[SCANCODE_2] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 2);
+			}
+			hitboxVisualizerActive[2] = true;
+		}
+		else if (keyState[SCANCODE_3] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 3);
+			}
+			hitboxVisualizerActive[3] = true;
+		}
+		else if (keyState[SCANCODE_4] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				VisualizeHitbox(entity, 4);
+			}
+			hitboxVisualizerActive[4] = true;
+		}
+		else if (keyState[SCANCODE_LALT] == pressed || keyState[SCANCODE_LSHIFT] == pressed || keyState[SCANCODE_LCTRL] == pressed)
+		{
+			for (auto entity : View<HitboxComponent>(registry))
+			{
+				StopVisualizeHitbox(entity);
+			}
+			for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT *2; i++)
+			{
+				hitboxVisualizerActive[i] = false;
+			}
 		}
 	}
 #endif // _DEBUG
@@ -182,22 +245,22 @@ bool ControllerSystem::Update()
 		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
 		//Need: Variable storing time between inputs. If an attack happens within a certain time after another, the next attack in the chain. So also need a variable 
 		//keeping track of which attack in the chain we did last
-		//PlayerComponent now stores these two values
+		//PlayerComponent now stores these two values, so we need to get access to it early
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		
 		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
 		if(player->isAttacking == false)
 			player->timeSinceLastAttack += GetDeltaTime();
 
-		//Half a second is what I consider to be a reasonable window of time for you to decide if you're going to continue the attack chain
+		//Clamp and reset attack chain if more than half a second has passed
 		if (player->timeSinceLastAttack > 0.5f)
 		{
 			player->attackChainIndex = 0;
 			player->timeSinceLastAttack = 0.0f;
 		}
 
-		//Schwing
-		if (mouseButtonPressed[0] == pressed && player->isAttacking == false)
+		//Schwing (Now with 50% less carpal tunnel)
+		if (mouseButtonDown[0] == down && player->isAttacking == false)
 		{
 			StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
 			float attackDuration = 5.0f;
@@ -206,7 +269,8 @@ bool ControllerSystem::Update()
 			if (player->attackChainIndex == 0) //First attack in the chain
 			{
 				player->attackChainIndex = 1;
-				attackDuration = 0.6f;
+				attackDuration = 0.5f;
+				//attackDuration = 0.6f;
 			}
 			else //
 			{
@@ -218,15 +282,39 @@ bool ControllerSystem::Update()
 				else //Third and final attack in the chain, resets attackChainIndex
 				{
 					player->attackChainIndex = 0;
-					attackDuration = 0.8f;
+					attackDuration = 0.7f;
+					//attackDuration = 0.8f;
 				}
 				
 			}
 			attackDuration /= playerStats->GetAttackSpeed(); //Speed up the attack animation based on attack speed
 			registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
-			AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
+			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack); //Esketit xd
 		}
+		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge)
+		{
+			auto stats = registry.GetComponent<StatComponent>(entity);
+			if (stats)
+				stats->SetSpeedMult(0.2f);
+			player->currentCharge += GetDeltaTime();
+			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
+				player->currentCharge = player->maxCharge;
+			//Play some sound, do some animation, indicate that we're charging the bigboy move
+		}
+		else //If you're not holding down any mouse button, see if we have any heavy-attack charge
+		{
+			if (player->currentCharge > 0.0f)
+			{
+				//it's time
+				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
+				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
+				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
+				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack);
+			}
+		}
+
 #ifdef _DEBUG
 		if (keyState[SCANCODE_G] == pressed) {
 			StatComponent* pStats = registry.GetComponent<StatComponent>(stateManager.player);
@@ -237,7 +325,7 @@ bool ControllerSystem::Update()
 			{
 				transform->mass += 100.0f;
 				player->killingSpree = 10000;
-				player->UpdateSouls(1000000);
+				player->UpdateSouls(1000);
 				hitbox->circleHitbox[2].radius += 100.0f;
 			}
 			else

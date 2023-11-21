@@ -104,7 +104,7 @@ void CreateMini(const EntityID& original, const float offsetValue)
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(newMini);
+	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(newMini);
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
@@ -278,9 +278,33 @@ void SplitBoss(EntityID& entity, const int& index)
 	RemoveEnemy(entity, index);
 }
 
+void BossShockwaveStart(EntityID& entity, const int& index)
+{
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxActive(entity, enemy->specialHitBoxID, true);//Set false somewhere
+	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, true);
+	SetHitboxRadius(entity, enemy->specialHitBoxID, 0.0f);
+}
+
+void BossShockwaveExpand(EntityID& entity, const int& index)
+{
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+	float radius = GetHitboxRadius(entity, enemy->specialHitBoxID);
+	float growthSpeed = 30.0f;
+	radius += GetDeltaTime() * growthSpeed;
+	SetHitboxRadius(entity, enemy->specialHitBoxID, radius);
+}
+void BossShockwaveEnd(EntityID& entity, const int& index)
+{
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+	SetHitboxActive(entity, enemy->specialHitBoxID, false);//Set false somewhere
+	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
+}
 
 void RemoveEnemy(EntityID& entity, const int& index)
 {
+
+
 	// Eat them souls
 	for (auto player : View<PlayerComponent>(registry))
 	{
@@ -367,7 +391,7 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }
 
-void BeginDestroyProjectile(EntityID& entity, const int& index)
+void DestroyAcidHazard(EntityID& entity, const int& index)
 {
 	if (entity.isDestroyed == true)
 	{
@@ -379,7 +403,69 @@ void BeginDestroyProjectile(EntityID& entity, const int& index)
 		ReleaseModel(model->model);
 		registry.RemoveComponent<ModelBonelessComponent>(entity);
 	}
+
+	RemoveHitbox(entity, 0);
+	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+}
+
+void CreateAcidHazard(EntityID& entity, const int& index)
+{
+	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
 	
+	EntityID acidHazard = registry.CreateEntity();
+	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(acidHazard, LoadModel("LavaPlaceholder.mdl"));
+	hazardModel->shared.colorAdditiveRed = 0.1f;
+	hazardModel->shared.colorAdditiveGreen = 0.9f;
+	hazardModel->shared.colorAdditiveBlue = 0.2f;
+	hazardModel->shared.gammaCorrection = 1.5f;
+	hazardModel->castShadow = false;
+
+	float scaling = 5.0f;
+
+	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(acidHazard);
+	hazardTransform->positionX = origin->positionX;
+	hazardTransform->positionY = 0.5f;
+	hazardTransform->positionZ = origin->positionZ;
+	hazardTransform->scaleX = scaling;
+	hazardTransform->scaleY = 1.0f;
+	hazardTransform->scaleZ = scaling;
+	hazardTransform->facingX = cosf((float)rand());
+	hazardTransform->facingZ = sinf((float)rand());
+	AddStaticHazard(acidHazard, HAZARD_LAVA);
+
+	registry.AddComponent<StaticHazardComponent>(acidHazard, StaticHazardType::HAZARD_ACID);
+
+	float radius = 5.0f;
+	AddHitboxComponent(acidHazard);
+	int hitboxID = CreateHitbox(acidHazard, radius * 0.5f, 0.f, 0.f);
+	SetCollisionEvent(acidHazard, hitboxID, HazardAttackCollision);
+	SetHitboxHitPlayer(acidHazard, hitboxID);
+	SetHitboxHitEnemy(acidHazard, hitboxID);
+	SetHitboxActive(acidHazard, hitboxID);
+	SetHitboxCanDealDamage(acidHazard, hitboxID, true);
+	
+
+	AddTimedEventComponentStart(acidHazard, 5.0f, DestroyAcidHazard);
+	//AddTimedEventComponentStartEnd(acidHazard, 5.0f, DestroyAcidHazard, 5.5f, EndDestroyProjectile, 0, 2);
+}
+
+void BeginDestroyProjectile(EntityID& entity, const int& index)
+{
+	ProjectileComponent* proj = registry.GetComponent<ProjectileComponent>(entity);
+	
+	if (entity.isDestroyed == true)
+	{
+		return;
+	}
+	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
+	if (model != nullptr)
+	{
+		ReleaseModel(model->model);
+		registry.RemoveComponent<ModelBonelessComponent>(entity);
+	}
+	
+	if(proj->type == 1)
+		CreateAcidHazard(entity, index);
 
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);

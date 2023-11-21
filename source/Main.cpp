@@ -11,7 +11,7 @@
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
-#define MAIN_MENU_FRAMES_TEST 6000
+#define MAIN_MENU_FRAMES_TEST 3000
 #include "UI/UIButtonFunctions.h" //Uncomment if you wanna do the funny stress-test thing
 #include "Level.h"
 #endif // TEST
@@ -64,7 +64,7 @@ int main(int argc, char* args[])
 		UpdateDebugWindowTitle(title, " frame: " + std::to_string(i) + " / " + std::to_string(MAIN_MENU_FRAMES_TEST));
 		stateManager.Update();
 		stateManager.EndFrame();
-		MemLib::pdefrag();
+		//MemLib::pdefrag();
 	}
 	gameSpeed = 1.0f;
 	LoadLevel(666);//Reload the menu
@@ -80,7 +80,7 @@ int main(int argc, char* args[])
 
 		stateManager.EndFrame();
 
-		MemLib::pdefrag();
+		//MemLib::pdefrag();
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

@@ -5,6 +5,17 @@
 #include <DirectXMath.h>
 #include "Registry.h"
 
+void Normalize(float& X, float& Z)
+{
+	float magnitude = sqrt(X * X + Z * Z);
+	if (magnitude < 0.001f)
+	{
+		magnitude = 0.001f;
+	}
+	X /= magnitude;
+	Z /= magnitude;
+}
+
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z)
 {
 	return sqrt((pos1X - pos2X) * (pos1X - pos2X) + (pos1Z - pos2Z) * (pos1Z - pos2Z));
@@ -81,6 +92,4 @@ void TransformAccelerate(EntityID& entity, float x, float z)
 	}
 	transform->currentSpeedX += stat->m_acceleration * x * stat->GetSpeed() * GetDeltaTime();
 	transform->currentSpeedZ += stat->m_acceleration * z * stat->GetSpeed() * GetDeltaTime();
-	
-
 }

@@ -87,7 +87,7 @@ void sortData(char* data, const uint32_t count, const size_t pairSize)
 
 const bool ML_ComponentMap::initialized() const
 {
-	return ((m_tSize != 0) && (m_capacity != 0));
+	return ((m_tSize != 0) && (m_capacity != 0) && (false == m_data.IsNullptr()));
 }
 
 
@@ -249,7 +249,7 @@ ML_ComponentMap::ML_ComponentMap()
 	m_tSize = 0;
 };
 
-const ML_ComponentMap& ML_ComponentMap::Initialize(const size_t& sizeofType)
+void /*const ML_ComponentMap&*/ ML_ComponentMap::Initialize(const size_t& sizeofType)
 {
 	m_size = 0;
 	// Set capacity
@@ -260,7 +260,7 @@ const ML_ComponentMap& ML_ComponentMap::Initialize(const size_t& sizeofType)
 	// Allocate new to memory pool
 	m_data = MemLib::palloc(m_capacity * PAIR_SIZE);
 
-	return *this;
+	//return *this;
 }
 
 ML_ComponentMap::ML_ComponentMap(const ML_ComponentMap& to_copy)

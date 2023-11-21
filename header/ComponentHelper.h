@@ -138,6 +138,7 @@ struct PlayerComponent
 private:
 	// Set to private since it is important that any update is carried on through UpdateSouls
 	int souls = 0;
+	int totalSouls = 0;
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
@@ -152,12 +153,15 @@ public:
 	bool isAttacking = false;
 	bool hasActivatedHitbox = false;
 
-	
+	//New additions because of player heavy attacks
+	float currentCharge = 0.0f;
+	float maxCharge = 1.0f; 
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
+	int GetTotalSouls() const;
 };
 
 struct ControllerComponent
@@ -186,6 +190,11 @@ struct DashArgumentComponent
 struct AttackArgumentComponent
 {
 	float duration = 0.0f;
+};
+
+struct ChargeAttackArgumentComponent
+{
+	float multiplier = 0.0f;
 };
 
 struct CollisionParamsComponent

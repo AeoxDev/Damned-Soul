@@ -13,7 +13,9 @@
 #include "Relics\Offensive\DemonBonemarrow.h"
 #include "Relics\Offensive\MinotaurHorn.h"
 #include "Relics\Offensive\HoundFang.h"
+#include "Relics\Offensive\CrackedLense.h"
 #include "Relics\Offensive\LifeSteal.h"
+#include "Relics\Offensive\SoulEater.h"
 #include "Relics\Offensive\AdvancedFighting.h"
 #include "Relics\Offensive\SoulPower.h"
 #include "Relics\Offensive\FlameWeapon.h"
@@ -21,8 +23,7 @@
 #include "Relics\Offensive\AdrenalineRush.h"
 #include "Relics\Offensive\ThrillSeeker.h"
 #include "Relics\Offensive\ExplodingWeapon.h"
-//#include "Relics\Offensive\PowerStrike.h"
-
+#include "Relics\Offensive\PowerStrike.h"
 
 	/*Defense*/
 #include "Relics\Defensive\Hearts\DemonHeart.h"
@@ -39,11 +40,13 @@
 #include "Relics\Defensive\BackShield.h"
 #include "Relics\Defensive\SecondWind.h"
 #include "Relics\Defensive\LastStand.h"
+
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
 #include "Relics\Gadget\LightningGod.h"
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
+#include "Relics\Gadget\IcyBlade.h"
 // End of include all relics
 
 #include "Relics\Utility\ML_RelicArray.h"
@@ -105,7 +108,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Demon Bonemarrow",
 				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
 				/*Description*/	DEMON_BONEMARROW::Description(),
-				/*Price*/		5,
+				/*Price*/		8,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DEMON_BONEMARROW::Initialize
 			),
@@ -121,9 +124,17 @@ void _validateMasterRelicList()
 				/*Name*/		"Hound Fang",
 				/*Filepath*/	"RelicIcons\\Hound_Fang",
 				/*Description*/	HOUND_FANG::Description(),
-				/*Price*/		6,
+				/*Price*/		4,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	HOUND_FANG::Initialize
+			),
+			RelicData(
+				/*Name*/		"Cracked Lense",
+				/*Filepath*/	"RelicIcons\\Cracked_Lense",
+				/*Description*/	CRACKED_LENSE::Description(),
+				/*Price*/		5,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	CRACKED_LENSE::Initialize
 			),
 			RelicData(
 				/*Name*/		"Flame Weapon",
@@ -148,6 +159,14 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	LIFE_STEAL::Initialize
+			),
+			RelicData(
+				/*Name*/		"Soul Eater",
+				/*Filepath*/	"RelicIcons\\Soul_Eater",
+				/*Description*/	SOUL_EATER::Description(),
+				/*Price*/		6,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	SOUL_EATER::Initialize
 			),
 			RelicData(
 				/*Name*/		"Advanced Fighting",
@@ -185,9 +204,17 @@ void _validateMasterRelicList()
 				/*Name*/		"Exploding Weapon",
 				/*Filepath*/	"RelicIcons\\Exploding_Weapon",
 				/*Description*/	EXPLODING_WEAPON::Description(),
-				/*Price*/		0,
+				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	EXPLODING_WEAPON::Initialize
+			),
+			RelicData(
+			/*Name*/		"Power Strike",
+			/*Filepath*/	"RelicIcons\\Power_Strike",
+			/*Description*/	POWER_STRIKE::Description(),
+			/*Price*/		10,
+			/*Type*/		RELIC_OFFENSE,
+			/*Function*/	POWER_STRIKE::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 
@@ -267,7 +294,7 @@ void _validateMasterRelicList()
 			),
 			RelicData(
 				/*Name*/		"Pain Mirror",
-				/*Filepath*/	"RelicIcons\\Empty_Relic",
+				/*Filepath*/	"RelicIcons\\Pain_Mirror",
 				/*Description*/	PAIN_MIRROR::Description(),//"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		8,
 				/*Type*/		RELIC_DEFENSE,
@@ -340,6 +367,14 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SOUL_SPEED::Initialize
+			),
+			RelicData(
+				/*Name*/		"Icy Blade",
+				/*Filepath*/	"RelicIcons\\Icy_Blade",
+				/*Description*/	ICY_BLADE::Description(),//"You gain a bonus to your speed equal to your souls",
+				/*Price*/		5,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	ICY_BLADE::Initialize
 			),
 			//ENDOF: GADGET RELICS
 		};
@@ -423,6 +458,9 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 				++i;
 			}
 		}
+
+		if (currentTotalWeight == 0)
+			return retVal;
 
 		// Randomly selected index from the possible selection
 		uint32_t randomlySelected = 1 + (std::rand() % currentTotalWeight);
