@@ -5,7 +5,6 @@
 #include "States\StateManager.h"
 #include <chrono>
 
-
 #define DELTACAP 1.f / 30.f
 
 float gameSpeed = 1.0f;
@@ -19,6 +18,7 @@ float frameTime;
 double runTime = 0.0;
 int seconds = 0;
 bool paused = true;
+bool showTimer = false;
 
 void SetPaused(bool state)
 {
@@ -29,6 +29,49 @@ void ResetRunTime()
 {
 	runTime = 0.0;
 	seconds = 0;
+}
+
+void SetVisualTimer(bool state)
+{
+	showTimer = state;
+}
+
+bool GetVisualTimer()
+{
+	return showTimer;
+}
+
+ML_String GetDigitalMinuteClock()
+{
+	DSINT2 time = {};
+
+	time.x = GetSeconds() / 60;
+	time.y = GetSeconds() % 60;
+
+	ML_String minutes, seconds, totalTime;
+
+	if (time.x < 10)
+	{
+		minutes = "0";
+		minutes.append(std::to_string(time.x).c_str());
+	}
+	else
+		minutes = std::to_string(time.x).c_str();
+
+	if (time.y < 10)
+	{
+		seconds = "0";
+		seconds.append(std::to_string(time.y).c_str());
+	}
+	else
+		seconds = std::to_string(time.y).c_str();
+
+	totalTime = "Time: ";
+	totalTime.append(minutes);
+	totalTime.append(":");
+	totalTime.append(seconds);
+
+	return totalTime;
 }
 
 const float& GetDeltaTime()
@@ -70,9 +113,6 @@ void CountDeltaTime()
 	secondTime += deltaTime;
 	frameTime = deltaTime;
 	
-	if (!paused)
-		runTime += (double)deltaTime;
-	
 	deltaTime *= gameSpeed;
 	fps+=1.0f;
 
@@ -94,10 +134,13 @@ bool NewSecond()
 		fps = 0;
 		secondTime -= 1.0f;
 
+		runTime += 1.0;
+
 		if (!paused && !Camera::InCutscene() && !(currentStates & InMainMenu))
 		{
 			seconds += 1;
-			RedrawUI();
+			if (showTimer)
+				RedrawUI();
 		}
 		
 		return true;

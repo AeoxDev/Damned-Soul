@@ -10,7 +10,6 @@ struct HellhoundBehaviour
 	bool circleBehaviour = false;
 	bool isBehind = false;
 	float isBehindCounter = 0.f;
-	float giveUpChaseCounter = 0.f;
 	bool charge = false;
 
 
@@ -98,7 +97,7 @@ struct HellhoundBehaviour
 
 
 	//charge variables
-	float chargeTimeLimit = 3.f;
+	float chargeTimeLimit = 4.f;
 	float chargeCounter = 0.f;
 
 };

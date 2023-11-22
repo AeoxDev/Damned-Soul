@@ -210,7 +210,7 @@ bool ImpBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enemComp = nullptr;
-
+	DebuffComponent* debuff = nullptr;
 	bool hasUpdatedMap = false;
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
 
@@ -226,6 +226,13 @@ bool ImpBehaviourSystem::Update()
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			continue; // frozen, won't do behavior stuff
+		}
+
 		//Find a player to kill.
 		if (enemComp->lastPlayer.index == -1)
 		{

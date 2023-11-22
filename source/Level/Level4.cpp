@@ -11,8 +11,15 @@
 
 void LoadLevel4()
 {
+	float redAdd = 0.15f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.0f;
+	float redMult = 1.5f;
+	float greenMult = 1.1f;
+	float blueMult = 0.75f;
+
 	//EntityID dog = registry.CreateEntity();
-	EntityID stage = registry.CreateEntity();
+	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
 	//EntityID skeleton = registry.CreateEntity();
 	//EntityID skeleton2 = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
@@ -21,24 +28,8 @@ void LoadLevel4()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
-	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss/*, 10.f, 0.f, 2.f, 50.f, 400.f, 10.f, 20.f, 0.5f, 4, 4.f, 4.f, 4.f*/);
+	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, 20.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
 	Stage4IntroScene(tempBoss, 0);
-	float redAdd = 0.15f;
-	float greenAdd = 0.0f;
-	float blueAdd = 0.0f;
-	float redMult = 1.5f;
-	float greenMult = 1.1f;
-	float blueMult = 0.75f;
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = redMult;
-	stageModel->colorMultiplicativeGreen = greenMult;
-	stageModel->colorMultiplicativeBlue = blueMult;
-	stageModel->colorAdditiveRed = redAdd;
-	stageModel->gammaCorrection = 0.9f;
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
-
 
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 	stc->scaleX = 1.0f;
@@ -73,7 +64,8 @@ void LoadLevel4()
 	const int nrHazards = 4;
 	for (size_t i = 0; i < nrHazards; i++)
 	{
-		bool succeded = false;
+		SetUpHazard(HAZARD_LAVA, 1.f, redAdd, greenAdd, blueAdd, redMult, greenMult, blueMult, 1.5f);
+		/*bool succeded = false;
 		while (!succeded)
 		{
 			float randX = (float)(rand() % 64) - 32.0f;
@@ -84,13 +76,13 @@ void LoadLevel4()
 				float randScaleZ = 16.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->colorAdditiveRed = redAdd;
-				hazardModel->colorAdditiveGreen = greenAdd;
-				hazardModel->colorAdditiveBlue = blueAdd;
-				hazardModel->colorMultiplicativeRed = redMult;
-				hazardModel->colorMultiplicativeGreen = greenMult;
-				hazardModel->colorMultiplicativeBlue = blueMult;
-				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->shared.colorAdditiveRed = redAdd;
+				hazardModel->shared.colorAdditiveGreen = greenAdd;
+				hazardModel->shared.colorAdditiveBlue = blueAdd;
+				hazardModel->shared.colorMultiplicativeRed = redMult;
+				hazardModel->shared.colorMultiplicativeGreen = greenMult;
+				hazardModel->shared.colorMultiplicativeBlue = blueMult;
+				hazardModel->shared.gammaCorrection = 1.5f;
 				hazardModel->castShadow = false;
 
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
@@ -106,7 +98,7 @@ void LoadLevel4()
 
 				succeded = true;
 			}
-		}
+		}*/
 	}
 	stateManager.stage = stage;
 	RenderGeometryIndependentCollision(stage);

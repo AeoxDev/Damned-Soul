@@ -19,6 +19,7 @@ void StatComponent::ZeroBonusStats()
 	m_bonusHealth = 0;
 	m_damageReduction = 1.f; // Since this is a multiplier, setting it to 1.0 is equivalent to setting the bonus to 0
 	m_bonusMoveSpeed = 0;
+	m_bonusDashValue = 0;
 	m_bonusDamage = 0;
 	m_bonusAttackSpeed = 0;
 	m_bonusKnockback = 0;
@@ -158,6 +159,16 @@ void StatComponent::SetSpeedMult(const float mult)
 	m_speedMult = mult;
 }
 
+float StatComponent::GetDashDistance() const
+{
+	return m_baseDashValue + m_bonusDashValue;
+}
+
+void StatComponent::UpdateBonusDashDistance(const float delta)
+{
+	m_bonusDashValue += delta;
+}
+
 float StatComponent::GetBaseDamage() const
 {
 	return m_baseDamage;
@@ -231,6 +242,9 @@ int PlayerComponent::UpdateSouls(const int delta)
 		onSoulUpdateFunctions[i](&input);
 	}
 
+	if (delta > 0)
+		this->totalSouls += delta;
+
 	this->souls += delta;
 	return this->souls;
 }
@@ -238,4 +252,9 @@ int PlayerComponent::UpdateSouls(const int delta)
 int PlayerComponent::GetSouls() const
 {
 	return this->souls;
+}
+
+int PlayerComponent::GetTotalSouls() const
+{
+	return this->totalSouls;
 }

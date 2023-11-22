@@ -24,6 +24,12 @@ private:
 	// Used to alter speed when performing actions such as attacking
 	float m_speedMult = 1.0f;
 
+	// Dash
+	// Base dash value
+	float m_baseDashValue = 2.5f;
+	// Bonus dash value
+	float m_bonusDashValue = 0.f;
+
 
 
 //Weapon stats
@@ -110,6 +116,11 @@ public:
 	void UpdateBonusSpeed(const float delta);
 	// Set the entity's speed mult
 	void SetSpeedMult(const float mult);
+	
+	// Get the current dash distance
+	float GetDashDistance() const;
+	// Update Bonus Dash
+	void UpdateBonusDashDistance(const float delta);
 
 // Offensive
 	// Get the base damage of the entity
@@ -138,6 +149,7 @@ struct PlayerComponent
 private:
 	// Set to private since it is important that any update is carried on through UpdateSouls
 	int souls = 0;
+	int totalSouls = 0;
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
@@ -160,6 +172,7 @@ public:
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
+	int GetTotalSouls() const;
 };
 
 struct ControllerComponent

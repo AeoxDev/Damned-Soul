@@ -47,7 +47,7 @@ public:
 	// ML_Map<tKey, tVal>() = { args };
 	ML_ComponentMap();
 
-	const ML_ComponentMap& Initialize(const size_t& sizeofType);
+	void /*const ML_ComponentMap&*/ Initialize(const size_t& sizeofType);
 
 	ML_ComponentMap(const ML_ComponentMap& to_copy);
 

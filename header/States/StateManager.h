@@ -21,6 +21,7 @@ struct StateManager
 	//ML_Vector<System*> systems; //Herman Help;
 	std::vector<System*> systems;
 	int activeLevel = -1;
+	int finalLevel = 17;
 	int activeLevelScene = -1;//Current loaded level scene in array
 	GameScene scenes[3] = {};
 	Menu menu;
@@ -28,6 +29,7 @@ struct StateManager
 	PauseState pause;
 	Credits credits;
 	EntityID player;
+	EntityID weapon;
 	EntityID stage;
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind

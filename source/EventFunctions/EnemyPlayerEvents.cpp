@@ -43,7 +43,8 @@ void DashBeginHit(EntityID& entity, const int& index)
 	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
 
 	//Disable damage taken until EndHit
-	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+	if (registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
 }
 
 void MiddleHit(EntityID& entity, const int& index)
@@ -73,9 +74,9 @@ void EndHit(EntityID& entity, const int& index)
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
 	if (skelel)
-		skelel->colorAdditiveRed = 0.0f;
+		skelel->shared.colorAdditiveRed = 0.0f;
 	if (bonel)
-		bonel->colorAdditiveRed = 0.0f;
+		bonel->shared.colorAdditiveRed = 0.0f;
 	RedrawUI();//Bug fix redraw
 }
 
@@ -95,9 +96,9 @@ void HazardBeginHit(EntityID& entity, const int& index)
 
 	//Become red
 	if (skelel)
-		skelel->colorAdditiveRed = 1.0f;
+		skelel->shared.colorAdditiveRed = 1.0f;
 	if (bonel)
-		bonel->colorAdditiveRed = 1.0f;
+		bonel->shared.colorAdditiveRed = 1.0f;
 }
 void HazardEndHit(EntityID& entity, const int& index)
 {
@@ -106,9 +107,9 @@ void HazardEndHit(EntityID& entity, const int& index)
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
 	if (skelel)
-		skelel->colorAdditiveRed = 0.0f;
+		skelel->shared.colorAdditiveRed = 0.0f;
 	if (bonel)
-		bonel->colorAdditiveRed = 0.0f;
+		bonel->shared.colorAdditiveRed = 0.0f;
 }
 
 void StaticHazardDamage(EntityID& entity, const int& index)
@@ -146,13 +147,13 @@ void LavaBlinkColor(EntityID& entity, const int& index)
 	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->colorAdditiveRed = cosineWave;
-		skelel->colorAdditiveGreen = 0.2f * cosineWave;
+		skelel->shared.colorAdditiveRed = cosineWave;
+		skelel->shared.colorAdditiveGreen = 0.2f * cosineWave;
 	}
 		
 	if (bonel)
 	{
-		bonel->colorAdditiveRed = cosineWave;
-		bonel->colorAdditiveGreen = 0.2f * cosineWave;
+		bonel->shared.colorAdditiveRed = cosineWave;
+		bonel->shared.colorAdditiveGreen = 0.2f * cosineWave;
 	}
 }

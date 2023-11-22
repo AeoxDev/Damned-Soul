@@ -12,9 +12,9 @@
 #include "UIComponents.h"
 #include "Input.h"
 
-#include <random>
+#include "MemLib/ML_Map.hpp"
 
-#define SIZEOF_ARR(arr) (sizeof(arr)/sizeof(arr[0]))
+#include <random>
 
 void UIFunc::LoadNextLevel(void* args, int a)
 {
@@ -65,13 +65,14 @@ void UIFunc::LoadNextLevel(void* args, int a)
 		audioJungle->HandleSound();
 	}
 
+
 	LoadLevel(++stateManager.activeLevel);
 	//LoadLevel(2);
 }
 
 void UIFunc::MainMenu_Start(void* args, int a)
 {
-	UnloadEntities();
+	UnloadEntities(ENT_PERSIST_LEVEL);
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
@@ -84,7 +85,9 @@ void UIFunc::MainMenu_Start(void* args, int a)
 		audioJungle->HandleSound();
 	}
 
+	stateManager.activeLevel = 0;
 	LoadLevel(++stateManager.activeLevel);
+
 	SetPaused(false);
 }
 
@@ -148,6 +151,15 @@ void UIFunc::PauseState_MainMenu(void* args, int a)
 	gameSpeed = 1.0f;
 	stateManager.menu.Setup();
 	SetInPause(false);
+}
+
+void UIFunc::Game_MainMenu(void* args, int a)
+{
+	SetInMainMenu(true);
+	SetInPlay(false);
+	UnloadEntities(ENT_PERSIST_LEVEL);
+	gameSpeed = 1.0f;
+	stateManager.menu.Setup();
 }
 
 void UIFunc::Credits_Back(void* args, int a)
@@ -260,6 +272,11 @@ void UIFunc::Settings_Fullscreen(void* args, int a)
 	}
 }
 
+void UIFunc::Settings_Timer(void* args, int a)
+{
+	SetVisualTimer(!GetVisualTimer());
+}
+
 void UIFunc::SelectRelic(void* args, int index)
 {
 	UIComponent* uiElement = (UIComponent*)args;
@@ -280,14 +297,14 @@ void UIFunc::SelectRelic(void* args, int index)
 		imageIndexes[1] = uiElement->m_Images.size() - 2;
 	}
 
-	for (auto entity : View<UIRelicWindowComponent>(registry))
+	for (auto entity : View<UIShopRelicComponent>(registry))
 	{
 		UIComponent* otherUI = registry.GetComponent<UIComponent>(entity);
 
 		if (uiElement != otherUI)
 		{
-			UIRelicWindowComponent* otherWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
-			for (uint32_t i = 0; i < SIZEOF_ARR(otherWindow->shopSelections); i++)
+			UIShopRelicComponent* otherWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+			for (uint32_t i = 0; i < otherWindow->shopSelections.size(); i++)
 			{
 				if (otherWindow->shopSelections[i] == shopState::SELECTED)
 				{
@@ -301,7 +318,7 @@ void UIFunc::SelectRelic(void* args, int index)
 			continue;
 		}
 
-		UIRelicWindowComponent* uiWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+		UIShopRelicComponent* uiWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 
 		if (uiWindow->shopSelections[index - 1] != shopState::LOCKED && uiWindow->shopSelections[index - 1] != shopState::BOUGHT)
 		{
@@ -337,10 +354,10 @@ void UIFunc::BuyRelic(void* args, int index)
 	UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
 	OnHoverComponent* playerHover = registry.GetComponent<OnHoverComponent>(stateManager.player);
 
-	for (auto entity : View<UIRelicWindowComponent>(registry))
+	for (auto entity : View<UIShopRelicComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIRelicWindowComponent* relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 
 		for (int i = 0; i < 2; i++)
 		{
@@ -372,7 +389,7 @@ void UIFunc::BuyRelic(void* args, int index)
 					playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(playerUI->m_Images[2].baseUI.GetPosition().x /*+(0.06f * playerRelics->gridPos.x)*/,
 						uiPixelCoords.y - (0.12f * playerRelics->gridPos.y) - 0.02f), DSFLOAT2(1.5f, 1.5f), false);
 
-					playerHover->Setup(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
+					playerHover->Add(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
 						playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetBounds(), UIFunc::HoverPlayerRelic);
 
 					playerRelics->relics[playerRelics->currentRelics] = relicWindow->shopRelics[i];
@@ -401,10 +418,10 @@ void UIFunc::LockRelic(void* args, int index)
 	if (player->GetSouls() < 0)
 		return;
 	
-	for (auto entity : View<UIRelicWindowComponent>(registry))
+	for (auto entity : View<UIShopRelicComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIRelicWindowComponent* relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 
 		for (int i = 0; i < 2; i++)
 		{
@@ -424,15 +441,15 @@ void UIFunc::LockRelic(void* args, int index)
 void UIFunc::RerollRelic(void* args, int index)
 {
 	UIComponent* uiElement = (UIComponent*)args;
-	UIRerollComponent* uiReroll = nullptr;
+	UIShopRerollComponent* uiReroll = nullptr;
 
 	PlayerComponent* player = nullptr;
 
 	for (auto entity : View<PlayerComponent>(registry))
 		player = registry.GetComponent<PlayerComponent>(entity);
 
-	for (auto entity : View<UIRerollComponent>(registry))
-		uiReroll = registry.GetComponent<UIRerollComponent>(entity);
+	for (auto entity : View<UIShopRerollComponent>(registry))
+		uiReroll = registry.GetComponent<UIShopRerollComponent>(entity);
 
 	if (index == -1)
 		uiReroll->locked = false;
@@ -443,10 +460,10 @@ void UIFunc::RerollRelic(void* args, int index)
 		if (player->GetSouls() < 0)
 			return;
 		
-		for (auto entity : View<UIRelicWindowComponent>(registry))
+		for (auto entity : View<UIShopRelicComponent>(registry))
 		{
 			UIComponent* uiRelic = registry.GetComponent<UIComponent>(entity);
-			UIRelicWindowComponent* relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 
 			for (int i = 0; i < 2; i++)
 			{
@@ -468,7 +485,12 @@ void UIFunc::RerollRelic(void* args, int index)
 
 				relicWindow->shopSelections[i] = shopState::AVALIABLE;
 
-				const RelicData* relic = Relics::PickRandomRelic(Relics::RELIC_UNTYPED);
+				ML_Map<ML_String, Relics::RELIC_TYPE> type;
+				type.emplace("Offence", Relics::RELIC_OFFENSE);
+				type.emplace("Defence", Relics::RELIC_DEFENSE);
+				type.emplace("Gadget", Relics::RELIC_GADGET);
+
+				const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
 				uiRelic->m_Images[i].SetImage(relic->m_filePath);
 				relicWindow->shopRelics[i] = relic;
 			}
@@ -517,40 +539,40 @@ void UIFunc::HealPlayer(void* args, int index)
 void UIFunc::HoverImage(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
-	char fileName[RELIC_DATA_PATH_SIZE] = "";
-	char hoverFileName[RELIC_DATA_PATH_SIZE] = "";
+	ML_String fileName = "";
+	ML_String hoverFileName = "";
 	if (uiElement->m_Images.size() == 0)
 	{
 		if (uiElement->m_BaseImage.baseUI.GetVisibility())
 		{
-			std::strcpy(fileName, uiElement->m_BaseImage.m_fileName);
-			std::strcpy(hoverFileName, fileName);
-			std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
+			fileName = uiElement->m_BaseImage.m_fileName;
+			hoverFileName = fileName;
+			hoverFileName.append("Hover");
 
 			if (hover)
-				uiElement->m_BaseImage.SetImage(hoverFileName, true);
+				uiElement->m_BaseImage.SetImage(hoverFileName.c_str(), true);
 			else
-				uiElement->m_BaseImage.SetImage(fileName, true);
+				uiElement->m_BaseImage.SetImage(fileName.c_str(), true);
 		}
 	}
 	else if (uiElement->m_Images[index].baseUI.GetVisibility())
 	{
-		std::strcpy(fileName, uiElement->m_Images[index].m_fileName);
-		std::strcpy(hoverFileName, fileName);
-		std::strcpy(hoverFileName + std::strlen(hoverFileName), "Hover");
+		fileName = uiElement->m_Images[index].m_fileName;
+		hoverFileName = fileName;
+		hoverFileName.append("Hover");
 
 		if (hover)
-			uiElement->m_Images[index].SetImage(hoverFileName, true);
+			uiElement->m_Images[index].SetImage(hoverFileName.c_str(), true);
 		else
-			uiElement->m_Images[index].SetImage(fileName, true);
+			uiElement->m_Images[index].SetImage(fileName.c_str(), true);
 		
 	}
 }
 
-void UIFunc::HoverShopRelic(void* args, int index, bool hover)
+void UIFunc::HoverShopButtons(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
-	UIRelicWindowComponent* relicWindow = nullptr;
+	UIShopButtonComponent* shopButton = nullptr;
 
 	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
 		return;
@@ -558,14 +580,77 @@ void UIFunc::HoverShopRelic(void* args, int index, bool hover)
 	UIComponent* uiImpElement = nullptr;
 	UIShopImpComponent* uiImpText = nullptr;
 
-	for (auto entity : View<UIRelicWindowComponent>(registry))
+	for (auto entity : View<UIShopButtonComponent>(registry))
 	{
 		UIComponent* otherUI = registry.GetComponent<UIComponent>(entity);
 
 		if (uiElement != otherUI)
 			continue;
 
-		relicWindow = registry.GetComponent<UIRelicWindowComponent>(entity);
+		shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+
+	}
+
+	for (auto entity : View<UIShopImpComponent>(registry))
+	{
+		uiImpElement = registry.GetComponent<UIComponent>(entity);
+		uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
+	}
+
+	if (uiImpElement == nullptr || uiImpText == nullptr)
+		return;
+
+	if (hover)
+	{
+		uiImpText->name = shopButton->m_name;
+		uiImpText->description = shopButton->m_description;
+		uiImpText->price = shopButton->m_price;
+
+		ML_String buttonText = uiImpText->name;
+
+		if (uiImpText->price > 0)
+		{
+			buttonText.append("\nPrice: ");
+			buttonText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
+		}
+		else
+			buttonText.append("\n");
+
+		buttonText.append(uiImpText->description);
+
+		uiImpElement->m_BaseText.SetText(buttonText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize,
+			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
+
+
+		UIFunc::HoverImage(args, index, hover);
+
+	}
+	else
+	{
+		UIFunc::HoverImage(args, index, hover);
+	}
+
+}
+
+void UIFunc::HoverShopRelic(void* args, int index, bool hover)
+{
+	UIComponent* uiElement = (UIComponent*)args;
+	UIShopRelicComponent* relicWindow = nullptr;
+
+	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+		return;
+
+	UIComponent* uiImpElement = nullptr;
+	UIShopImpComponent* uiImpText = nullptr;
+
+	for (auto entity : View<UIShopRelicComponent>(registry))
+	{
+		UIComponent* otherUI = registry.GetComponent<UIComponent>(entity);
+
+		if (uiElement != otherUI)
+			continue;
+
+		relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 		
 	}
 
@@ -575,6 +660,9 @@ void UIFunc::HoverShopRelic(void* args, int index, bool hover)
 		uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 	}
 
+	if (uiImpElement == nullptr || uiImpText == nullptr)
+		return;
+
 	int imageIndex = uiElement->m_Images.size() - (2 - index + 1);
 
 	if (hover)
@@ -582,19 +670,25 @@ void UIFunc::HoverShopRelic(void* args, int index, bool hover)
 		uiElement->m_Images[imageIndex].baseUI.SetVisibility(true);
 		uiElement->m_Images[imageIndex].baseUI.SetPosition(uiElement->m_Images[index - 1].baseUI.GetPosition());
 
-		uiImpText->name = _strdup(relicWindow->shopRelics[index - 1]->m_relicName);
-		uiImpText->description = _strdup(relicWindow->shopRelics[index - 1]->m_description);
+		uiImpText->name = relicWindow->shopRelics[index - 1]->m_relicName;
+		uiImpText->description = relicWindow->shopRelics[index - 1]->m_description;
 		uiImpText->price = relicWindow->shopRelics[index - 1]->m_price;
 
-		char relicText[RELIC_DATA_DESC_SIZE] = "";
+		ML_String relicText = uiImpText->name;
 
-		std::strcpy(relicText, "\n\n");
-		std::strcpy(relicText + std::strlen(relicText), uiImpText->name);
-		std::strcpy(relicText + std::strlen(relicText), "\nPrice: ");
-		std::strcpy(relicText + std::strlen(relicText), (std::to_string(uiImpText->price) + " Souls\n").c_str());
-		std::strcpy(relicText + std::strlen(relicText), uiImpText->description);
+		if (uiImpText->price > 0)
+		{
+			relicText.append("\nPrice: ");
+			relicText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
+		}
+		else
+			relicText.append("\n");
 
-		uiImpElement->m_BaseText.SetText(relicText, uiImpElement->m_BaseText.baseUI.GetBounds());
+		relicText.append(uiImpText->description);
+
+
+		uiImpElement->m_BaseText.SetText(relicText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize,
+			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
 	}
 	else if (!hover && relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
 	{
@@ -611,12 +705,9 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
 		return;
 
-	char relicText[RELIC_DATA_DESC_SIZE] = "";
-
-	std::strcpy(relicText, "\n\n");
-	std::strcpy(relicText + std::strlen(relicText), relicWindow->relics[index]->m_relicName);
-	std::strcpy(relicText + std::strlen(relicText), "\n");
-	std::strcpy(relicText + std::strlen(relicText), relicWindow->relics[index]->m_description);
+	ML_String relicText = relicWindow->relics[index]->m_relicName;
+	relicText.append("\n");
+	relicText.append(relicWindow->relics[index]->m_description);
 
 	if ((currentStates & State::InShop))
 	{
@@ -629,11 +720,14 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 			uiImpText = registry.GetComponent<UIShopImpComponent>(entity);
 		}
 
-		uiImpText->name = _strdup(relicWindow->relics[index]->m_relicName);
-		uiImpText->description = _strdup(relicWindow->relics[index]->m_description);
+		if (uiImpElement == nullptr || uiImpText == nullptr)
+			return;
+
+		uiImpText->name = relicWindow->relics[index]->m_relicName;
+		uiImpText->description = relicWindow->relics[index]->m_description;
 		uiImpText->price = relicWindow->relics[index]->m_price;
 
-		uiImpElement->m_BaseText.SetText(relicText, uiImpElement->m_BaseText.baseUI.GetBounds());
+		uiImpElement->m_BaseText.SetText(relicText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds());
 	}
 	else if ((currentStates & State::InPause))
 	{
@@ -646,13 +740,16 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 			uiPauseText = registry.GetComponent<UIPauseRelicTextComponent>(entity);
 		}
 
-		uiPauseText->name = _strdup(relicWindow->relics[index]->m_relicName);
-		uiPauseText->description = _strdup(relicWindow->relics[index]->m_description);
+		if (uiPauseElement == nullptr || uiPauseText == nullptr)
+			return;
+
+		uiPauseText->name = relicWindow->relics[index]->m_relicName;
+		uiPauseText->description = relicWindow->relics[index]->m_description;
 
 		uiPauseElement->m_Images[0].baseUI.SetPosition({ uiElement->m_Images[2].baseUI.GetPosition().x + 0.3f, uiElement->m_Images[2].baseUI.GetPosition().y });
 		uiPauseElement->m_Texts[0].baseUI.SetPosition(uiPauseElement->m_Images[0].baseUI.GetPosition());
 
-		uiPauseElement->m_Texts[0].SetText(relicText, uiPauseElement->m_BaseText.baseUI.GetBounds());
+		uiPauseElement->m_Texts[0].SetText(relicText.c_str(), uiPauseElement->m_BaseText.baseUI.GetBounds());
 
 		if (hover)
 		{

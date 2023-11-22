@@ -41,7 +41,7 @@ void ADVANCED_FIGHTING::Initialize(void* input)
 
 void _AF_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, ADVANDED_FIGHTING_SFX_DURATION, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f, LIGHTNING);
+	registry.AddComponent<ParticleComponent>(entity, ADVANDED_FIGHTING_SFX_DURATION, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f, 256, LIGHTNING);
 }
 
 void ADVANCED_FIGHTING::CritChance(void* data)

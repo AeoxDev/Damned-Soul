@@ -50,20 +50,51 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	if (skeleton)
 		ReleaseModel(skeleton->model);
 
-	//OnClick
-	OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(id);
-	if (onClick)
-		onClick->Release();
+	//Interactives
+	{
+		//OnClick
+		OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(id);
+		if (onClick)
+			onClick->Release();
+
+		//OnHover
+		OnHoverComponent* onHover = registry.GetComponent<OnHoverComponent>(id);
+		if (onHover)
+			onHover->Release();
+	}
 	
-	//OnHover
-	OnHoverComponent* onHover = registry.GetComponent<OnHoverComponent>(id);
-	if (onHover)
-		onHover->Release();
-	
-	//UIComponent
-	UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
-	if(uiElement)
-		uiElement->Release();
+	//UI
+	{
+		//UIComponent
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
+		if (uiElement)
+			uiElement->Release();
+
+		//UIImp1
+		UIShopImpComponent* uiImp1 = registry.GetComponent<UIShopImpComponent>(id);
+		if (uiImp1)
+			uiImp1->Release();
+
+		//UIImp2
+		UIShopTitleImpComponent* uiImp2 = registry.GetComponent<UIShopTitleImpComponent>(id);
+		if (uiImp2)
+			uiImp2->Release();
+
+		//UIPause
+		UIPauseRelicTextComponent* uiPause = registry.GetComponent<UIPauseRelicTextComponent>(id);
+		if (uiPause)
+			uiPause->Release();
+
+		//UIShopButtons
+		UIShopButtonComponent* uiShopButton = registry.GetComponent<UIShopButtonComponent>(id);
+		if (uiShopButton)
+			uiShopButton->Release();
+
+		//UIShopRelics
+		UIShopRelicComponent* uiShopRelic = registry.GetComponent<UIShopRelicComponent>(id);
+		if (uiShopRelic)
+			uiShopRelic->Release();
+	}
 
 	//Proximity Hitbox
 	ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(id);
@@ -107,6 +138,15 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 
 	if (destructionTier != ENT_PERSIST_PAUSE)
 		Light::FreeLight();
+
+	for (auto entity : View<ParticleComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
+			pComp->Release();
+		}
+	}
 
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
