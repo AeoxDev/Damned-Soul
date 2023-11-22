@@ -125,6 +125,8 @@ void ReleasePS(const PS_IDX idx);
 VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout = LAYOUT_DESC::SKELETAL);
 // Set a new vertex (and accompanying input layout) shader by index
 bool SetVertexShader(const VS_IDX idx);
+// Overload for when input layout is null
+bool SetVertexShader(const VS_IDX idx, bool particle);
 // Set vertex shader to NULL
 void UnsetVertexShader();
 // Release for a single vertex shader
@@ -246,14 +248,22 @@ bool DeleteD3D11SRV(const SRV_IDX idx);
 
 // Copies the data in a SRV to a vertex buffer, for particles
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source);
+// Copies the data in source SRV to destination SRV
+void CopySRVtoSRV(const SRV_IDX destination, const SRV_IDX source);
+// Copies the data in a SRV resource to a UAV resource;
+void CopySRVToUAV(const UAV_IDX destination, const SRV_IDX source);
+// Copies the data in a UAV resource to a SRV resource;
+void CopyUAVToSRV(const SRV_IDX destination, const UAV_IDX source);
+
 
 // Create a shader resource view that holds a buffer
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags);
 // Overload to create a Unordered Access View with an already existing buffer from a Shader Resource View
 SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx);
 // Create a shader resource view that holds a texture 
-// NOT DEFINED, WILL BE DEFINED IF NEEDED
-SRV_IDX CreateUnorderedAccessViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height);
+SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& height);
+// Overload to create an Unordered Access View with an already existing texture
+SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& height, const int16_t idx);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx, uint8_t slot);
 // Sets unordered access view of parameter slot to NULL in the shader of parameter bindto
@@ -280,7 +290,7 @@ void SetTopology(TOPOLOGY topology);
 //Release
 bool DeleteD3D11Texture(const TX_IDX idx);
 bool DeleteD3D11RenderTargetView(const RTV_IDX idx);
-bool DeleteD3D11PixelShader(const PS_IDX idx); 
+bool DeleteD3D11PixelShader(const PS_IDX idx);
 bool DeleteD3D11VertexShader(const VS_IDX idx);
 bool DeleteD3D11DepthStencilView(const DSV_IDX idx);
 bool DeleteD3D11RasterizerState(const RS_IDX idx);

@@ -1,17 +1,14 @@
+#include "ParticleHeader.hlsli"
+
 cbuffer WorldMatrix : register(b0)
 {
     matrix world;
 }
 
-struct VS_IN
-{
-    float3 position : POSITION;
-    float time : TIME;
-    float3 velocity : VELOCITY;
-    float rotationZ : ROTATIONZ;
-    float3 rgb : RGB; // Red Green Blue
-    float size : SIZE;
 
+cbuffer metadataBuffer : register(b2)
+{
+    int start;
 };
 
 struct VS_OUT
@@ -23,8 +20,14 @@ struct VS_OUT
     float size : SIZE;
 };
 
-VS_OUT main(VS_IN inval)
+StructuredBuffer<Input> particles : register(t0);
+
+
+VS_OUT main(uint vertexID : SV_VertexID)
 {
+    int index = (int) vertexID + start;
+    Input inval = particles[index];
+    //inval = particles[instanceID];
     VS_OUT retval;
     
     retval.position = float4(inval.position, 1.f);

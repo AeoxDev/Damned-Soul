@@ -240,7 +240,7 @@ bool ControllerSystem::Update()
 				//Set facing direction to dash direction when moving
 				transform->facingX = controller->goalX;
 				transform->facingZ = controller->goalZ;
-				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
+				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, stat->GetDashDistance());
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 				AddSquashStretch(entity, Linear, 0.8f, 0.8f, 1.5f, true, 1.2f, 1.2f, 0.8f);

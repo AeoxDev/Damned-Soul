@@ -1,7 +1,6 @@
 #pragma once
 #include "MemLib/ML_String.hpp"
 
-
 void SetPaused(bool state);
 void ResetRunTime();
 void SetVisualTimer(bool state);
