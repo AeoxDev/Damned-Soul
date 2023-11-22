@@ -7,6 +7,7 @@ inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
 inline void ImplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void RainMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
+inline void FireMovement(in uint3 DTid, in uint3 blockID);
 
 bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
 
@@ -55,6 +56,11 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         if (meta[blockID.y].pattern == 7)
         {
             LightningMovement(DTid, blockID);
+        }
+        // 8 = FIRE
+        if (meta[blockID.y].pattern == 8)
+        {
+            FireMovement(DTid, blockID);
         }
     }
 
@@ -344,4 +350,37 @@ bool IsPointInTriangle(float2 particleVector, float2 triangleVector)
     float scalar = dot(particleVector, triangleVector) / (length(particleVector) * length(triangleVector));
 
     return true;
+}
+
+void FireMovement(in uint3 DTid, in uint3 blockID)
+{
+// -- SAME FOR ALL FUNCTIONS -- //
+    uint index = (DTid.x + blockID.y * NUM_THREADS);
+    Input particle = inputParticleData[index];
+    
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
+    
+    float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
+    float posy = (index % 256) * 0.2f; // 51 / 255
+    float idxFraction = (index % 256) / 255.f;
+    float timeFraction = PI * (1 - (particle.time / meta[blockID.y].life));
+    
+    float alpha = pow(sin(2 * PI * idxFraction + timeFraction), 3); // Pi
+    float beta = pow(sin(4 * 2.71828f * idxFraction + 4 * timeFraction), 3); // Eulers
+    float gamma = pow(sin(6 * sqrt(5) * idxFraction + 9 * timeFraction), 3); // Root(5)
+    
+    particle.position.y = (1 + directionRandom);
+    particle.position.x = (4*index);
+    particle.position.z = (5+directionRandom);
+    
+    particle.rgb.r = 0.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 1.0f;
+    
+    particle.patterns.x = 8 /*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    
+    outputParticleData[index] = particle;
 }

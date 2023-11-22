@@ -84,7 +84,7 @@ void LoadLevel1()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	registry.AddComponent<ParticleComponent>(stage, 10, 20, 5, 0, 0, 60, SMOKE);//(entity, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(stage, 10, 20, 5, 0, 0, 60, FIRE);//(entity, float seconds, float radius, float size, float x, float y, float z, ComputeShaders pattern)
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
 	SetDirectionLight(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
