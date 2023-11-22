@@ -302,7 +302,7 @@ bool ControllerSystem::Update()
 			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack); //Esketit xd
 		}
-		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge)
+		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge && player->isAttacking != true)
 		{
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)

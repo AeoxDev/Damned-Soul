@@ -120,6 +120,9 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		{
 			SetHitboxActive(entity, playerComp->attackHitboxID, false);
 		}
+
+		playerComp->currentCharge = 0.0f; //Reset charged attack, well spotted arian
+
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
