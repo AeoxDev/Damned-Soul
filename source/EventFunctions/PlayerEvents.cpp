@@ -275,7 +275,7 @@ void PlayerDash(EntityID& entity, const int& index)
 		return;
 
 	//Perform attack animation, woo, loop using DT
-	anim->aAnim = ANIMATION_WALK;
+	anim->aAnim = ANIMATION_ATTACK;
 	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
 	anim->aAnimIdx = 1;
 

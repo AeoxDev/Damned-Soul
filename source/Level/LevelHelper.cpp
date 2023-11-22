@@ -6,6 +6,9 @@
 #include "EventFunctions.h"
 #include "States\StateManager.h"
 #include "UIComponents.h"
+#include "UIButtonFunctions.h"
+#include "SDLHandler.h"
+
 
 EntityID SetUpStage(const float rm, const float gm, const float bm, const float ra, const float ga, const float ba, const float gamma)
 {
@@ -74,7 +77,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
-	float facingY , float facingZ  )
+	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
@@ -133,7 +136,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 100;//400.f;
+			health = 0;//400.f;
+			float partHealth = 40.f; // this times 5 is the full starting strength
+			if (zacIndex0)
+				health += partHealth;
+			if (zacIndex1)
+				health += partHealth;
+			if (zacIndex2)
+				health += partHealth;
+			if (zacIndex3)
+				health += partHealth;
+			if (zacIndex4)
+				health += partHealth;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -143,6 +157,22 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 1.f;
 		}
+	}
+	else if (eType == EnemyType::tempBoss) // if we want a weaker version of the boss later in game, we can specify the health
+	{
+		
+		float partHealth = health / 5.f; // this times 5 is the full starting strength
+		health = 0;
+		if (zacIndex0)
+			health += partHealth;
+		if (zacIndex1)
+			health += partHealth;
+		if (zacIndex2)
+			health += partHealth;
+		if (zacIndex3)
+			health += partHealth;
+		if (zacIndex4)
+			health += partHealth;
 	}
 	if (moveSpeed == 6969.f)
 	{
@@ -164,7 +194,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			moveSpeed = 10.f;
+			moveSpeed = 20.f; //starting speed
+			float partSpeed = 2.5f; // each alive part makes it this much slower
+			if (zacIndex0)
+				moveSpeed -= partSpeed;
+			if (zacIndex1)
+				moveSpeed -= partSpeed;
+			if (zacIndex2)
+				moveSpeed -= partSpeed;
+			if (zacIndex3)
+				moveSpeed -= partSpeed;
+			if (zacIndex4)
+				moveSpeed -= partSpeed;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -226,7 +267,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			attackSpeed = 0.5f;
+			attackSpeed = 0.25f;
+			float partSpeed = 0.05f; // each alive part makes it this much slower
+			if (zacIndex0)
+				attackSpeed += partSpeed;
+			if (zacIndex1)
+				attackSpeed += partSpeed;
+			if (zacIndex2)
+				attackSpeed += partSpeed;
+			if (zacIndex3)
+				attackSpeed += partSpeed;
+			if (zacIndex4)
+				attackSpeed += partSpeed;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -257,7 +309,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			soulWorth = 4;
+			soulWorth = 0;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -270,9 +322,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (eType == EnemyType::tempBoss)
 	{
-		scaleX *= 4;
-		scaleY *= 4;
-		scaleZ *= 4;
+		scaleX *= 2;
+		scaleY *= 2;
+		scaleZ *= 2;
 	}
 
 	transform.mass = mass;
@@ -287,7 +339,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(entity);
+	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(entity);
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
@@ -390,13 +442,26 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	else if (eType == EnemyType::tempBoss)
 	{
 		stat->hazardModifier = 0.0f;
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
-		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
+		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+		
+		tempBossComponent->parts[0] = zacIndex0; // this is needed, DO NOT TOUCH
+		tempBossComponent->parts[1] = zacIndex1;
+		tempBossComponent->parts[2] = zacIndex2;
+		tempBossComponent->parts[3] = zacIndex3;
+		tempBossComponent->parts[4] = zacIndex4;
+
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(SKELETON);
+
+		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
-			player->killThreshold+=15;
+			player->killThreshold+=5;
 		}
 	}
 	else if (eType == EnemyType::lucifer)
@@ -474,7 +539,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//Create player
 	stateManager.player = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
-	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerLP.mdl"));
 	model->shared.colorMultiplicativeRed = 1.25f;
 	model->shared.colorMultiplicativeGreen = 1.25f;
 	model->shared.colorMultiplicativeBlue = 1.25f;
@@ -509,11 +574,11 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//Setup + Health
 	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
 	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
-	UIHealthComponent* uiHealth = registry.AddComponent<UIHealthComponent>(stateManager.player);
+	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(stateManager.player);
 
 	//Souls
 	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
-	uiElement->AddText("",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
+	uiElement->AddText(" ",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
 	
 	//Relics
@@ -521,6 +586,26 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
+	// Create weapon
+	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
+
+	ModelSkeletonComponent* weapon_model = registry.AddComponent<ModelSkeletonComponent>(stateManager.weapon, LoadModel("AxeV1.mdl"));
+	weapon_model->shared.colorMultiplicativeRed = 1.25f;
+	weapon_model->shared.colorMultiplicativeGreen = 1.25f;
+	weapon_model->shared.colorMultiplicativeBlue = 1.25f;
+	weapon_model->shared.gammaCorrection = 1.5f;
+
+	AnimationComponent* weapon_animation = registry.AddComponent<AnimationComponent>(stateManager.weapon, AnimationComponent());
+	weapon_animation->aAnim = ANIMATION_IDLE;
+	weapon_animation->aAnimTime = 0.5f;
+	weapon_animation->aAnimIdx = 0;
+	weapon_animation->aAnimTimeFactor = 1.0f;
+
+	TransformComponent* weapon_transform = registry.AddComponent<TransformComponent>(stateManager.weapon);
+	weapon_transform->facingZ = facingZ;
+	weapon_transform->mass = mass;
+
+	FollowerComponent* weapon_follow = registry.AddComponent<FollowerComponent>(stateManager.weapon, stateManager.player);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)
@@ -543,7 +628,7 @@ void ReloadPlayerNonGlobals()
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{
-		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerLP.mdl"));
 		modelLoaded->shared.colorMultiplicativeRed = 1.25f;
 		modelLoaded->shared.colorMultiplicativeGreen = 1.25f;
 		modelLoaded->shared.colorMultiplicativeBlue = 1.25f;
@@ -596,4 +681,71 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	registry.AddComponent<PlayerComponent>(enemy);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
 	return enemy;
+}
+
+void SetScoreboardUI(EntityID stage)
+{
+	//Scoreboard UI
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
+	uiElement->Setup("TempShopWindow3", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.7f));
+
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
+	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
+
+	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
+
+	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunc::MainMenu_Start);
+	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverImage);
+
+	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
+
+	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunc::Game_MainMenu);
+	onHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverImage);
+
+	DSFLOAT2 offsetUICoords = { abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().x + 32.0f) ,
+						   abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().y + 32.0f) };
+
+	DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+						-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+
+	DSFLOAT2 diffPos(uiPixelCoords.x + 1.1f, uiPixelCoords.y - 0.4f);
+
+	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y), DSFLOAT2(1.0f, 1.0f), 30.0f);
+	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.15f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.25f), DSFLOAT2(1.0f, 1.0f));
+
+	const int amount = 8;
+	const char const texts[amount][32] =
+	{
+		"Time: ", //index 3
+
+		"Leftover Souls: ", //index 4
+		"Spent Souls: ", //index 5
+		"Total Souls: ", //index 6
+
+		"Damage Done: (WIP)", //index 7
+
+		//"Strongest Hit Dealt:",
+
+		"Damage Taken: (WIP)", //index 8
+
+		//"Strongest Hit Taken:",
+
+		"Healing Done: (WIP)", //index 9
+
+		//"Strongest Heal Done:"
+
+		"Score: (WIP)" //index 10
+	};
+
+	for (int i = 0; i < amount; i++)
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiPixelCoords.x + 0.4f, uiPixelCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+
+	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
+
+	uiElement->SetAllVisability(false);
 }

@@ -37,15 +37,7 @@ void UI::Setup()
 	hr = m_Factory->CreateDxgiSurfaceRenderTarget(UISurface, properties, &m_RenderTarget);
 	assert(!FAILED(hr));
 
-	float fontSize = 30.0f;
-	hr = m_WriteFactory->CreateTextFormat(L"Candara", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &m_TextFormat);
-	assert(!FAILED(hr));
-	m_TextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f), &m_Brush);
-	assert(!FAILED(hr));
-
-	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 230.0f / 255.0f, 0.0f), &m_YellowBrush);
+	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(255.0f, 255.0f, 255.0f), &m_Brush);
 	assert(!FAILED(hr));
 
 	hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)&m_ImagingFactory);
@@ -58,7 +50,6 @@ void UI::Release()
 	m_RenderTarget->Release();
 	m_WriteFactory->Release();
 	m_Brush->Release();
-	m_YellowBrush->Release();
 	m_Factory->Release();
 }
 
@@ -112,17 +103,7 @@ IWICImagingFactory*& UI::GetImagingFactory()
 	return m_ImagingFactory;
 }
 
-IDWriteTextFormat*& UI::GetTextFormat()
-{
-	return m_TextFormat;
-}
-
 ID2D1SolidColorBrush*& UI::GetBrush()
 {
 	return m_Brush;
-}
-
-ID2D1SolidColorBrush*& UI::GetYellowBrush()
-{
-	return m_YellowBrush;
 }

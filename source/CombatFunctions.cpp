@@ -21,6 +21,8 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 
 	// Damage flash
 	Combat::DamageFlash(defender, damage);
+
+	// TODO: Play ANIMATION_TAKE_DAMAGE. Timed event?
 }
 
 float Combat::CalculateDamage(const DamageOverTime& dot, EntityID& defender, const uint64_t& source)

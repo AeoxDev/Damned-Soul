@@ -5,6 +5,8 @@
 #include "MemLib/ML_Vector.hpp"
 
 #include <d2d1helper.h>
+#include <dwrite.h>
+#include <vector>
 
 struct ID2D1Bitmap;
 
@@ -45,23 +47,37 @@ struct UIBase
 struct UIText
 {
 	UIBase baseUI;
-	char* m_Text;
 
-	void SetText(const char* text, DSBOUNDS bounds);
+	ML_String m_Text;
+	IDWriteTextFormat* m_TextFormat = nullptr;
+
+	float m_fontSize;
+	DWRITE_TEXT_ALIGNMENT m_textAlignment;
+	DWRITE_PARAGRAPH_ALIGNMENT m_paragraphAlignment;
+
+	void SetText(const char* text, DSBOUNDS bounds, float fontSize = 20, 
+		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_CENTER,
+		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	void Draw();
+
+	void Release();
+
 };
 
 struct UIImage
 {
 	UIBase baseUI;
 
-	char* m_fileName;
+	ML_String m_fileName;
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
 	void SetImage(const char* filepath, bool ignoreRename = false);
 
 	void Draw();
+
+	void Release();
+
 };
 
 struct UIComponent
@@ -72,11 +88,20 @@ struct UIComponent
 	ML_Vector<UIText> m_Texts;
 
 	void Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
-		DSFLOAT2 scale = { 1.0f, 1.0f }, float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
+		DSFLOAT2 scale = { 1.0f, 1.0f }, float fontSize = 20,
+		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
+		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER,
+		float rotation = 0.0f, bool visibility = true, float opacity = 1.0f);
+
+	void DrawAll();
+
+	void SetAllVisability(bool value);
 
 	void AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
 
-	void AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f });
+	void AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, float 
+		fontSize = 20, DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
+		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	void Release();
 };

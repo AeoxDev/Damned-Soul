@@ -20,6 +20,9 @@ bool OnClickSystem::Update()
 
 		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 
+		if (comp->mouseStates.size() == 0 || comp->onClickFunctions.size() == 0)
+			continue;
+
 		if (comp->mouseStates[comp->index] == 0)
 		{
 			if (mouseButtonPressed[MouseButton::left] == pressed)

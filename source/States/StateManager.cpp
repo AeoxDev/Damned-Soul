@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "Glow.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -143,6 +144,8 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Glow::Initialize();
+	//SetupTestHitbox();
 	RedrawUI();
 	
 
@@ -154,13 +157,18 @@ int StateManager::Setup()
 	// Render/GPU
 	
 	systems.push_back(new ParticleSystemCPU());
-	
+
+
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
+
 
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
+	systems.push_back(new GlowSystem());
+
+	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
@@ -181,11 +189,14 @@ int StateManager::Setup()
 	systems.push_back(new FrozenBehaviourSystem());
 	systems.push_back(new LuciferBehaviourSystem());
 	systems.push_back(new ProjectileSystem());
+	
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
 	systems.push_back(new ImpBehaviourSystem());
+	systems.push_back(new ZacBehaviourSystem());
 	systems.push_back(new TransformSystem()); //Must be before controller
+	systems.push_back(new FollowerSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new EventSystem());//Must be after controller system for correct animations
 	systems.push_back(new GeometryIndependentSystem());
@@ -203,7 +214,6 @@ int StateManager::Setup()
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
-	systems.push_back(new UIRelicsSystem());
 	
 	systems.push_back(new UIShopSystem());
 

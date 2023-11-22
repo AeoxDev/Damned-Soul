@@ -9,6 +9,7 @@
 bool ParticleSystemGPU::Update()
 {
 	int highestActiveSlot = -1;
+	int highestGroupAmount = -1;
 
 
 	for (auto pEntity : View<ParticleComponent>(registry))
@@ -18,13 +19,18 @@ bool ParticleSystemGPU::Update()
 		{
 			if (highestActiveSlot < pComp->metadataSlot)
 				highestActiveSlot = pComp->metadataSlot;
+
+			if (highestGroupAmount < pComp->groupsRequiered)
+				highestGroupAmount = pComp->groupsRequiered;
 		}
 	}
 
 	if (highestActiveSlot >= 0)
 	{
 		Particles::PrepareParticleCompute(renderStates);
-		Dispatch(1, highestActiveSlot + 1, 1); //x * y * z
+
+		Dispatch((highestGroupAmount + 1), (highestActiveSlot + 1), 1); //x * y * z
+
 		Particles::FinishParticleCompute(renderStates);
 	}
 

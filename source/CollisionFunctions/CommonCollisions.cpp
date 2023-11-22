@@ -11,6 +11,9 @@
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
 #include <cmath>
+#include <string>
+
+#include "UIComponents.h"
 
 #define SOFT_COLLISION_FACTOR 0.5f
 
@@ -357,8 +360,8 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	
-	float selfKnockback = -SELF_KNOCKBACK_FACTOR / (transform2->mass / transform1->mass * frictionKnockbackFactor1);
-	float appliedKnockback = stat1->GetKnockback() / (transform1->mass / transform2->mass * frictionKnockbackFactor2);
+	float selfKnockback = -SELF_KNOCKBACK_FACTOR * (transform2->mass / transform1->mass * frictionKnockbackFactor1);
+	float appliedKnockback = stat1->GetKnockback() * (transform1->mass / transform2->mass * frictionKnockbackFactor2);
 	float dx, dz;
 	CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
@@ -561,13 +564,51 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
-	//next level is shop so we set the paramaters in statemanager as so
 	if (params.entity2.index == stateManager.player.index)
 	{
-		SetInPlay(false);
-		SetInShop(true);
+		//not final level portal
+		if (stateManager.activeLevel != stateManager.finalLevel)
+		{
+			LoadLevel(++stateManager.activeLevel);
+			return;
+		}
 
-		LoadLevel(++stateManager.activeLevel);
+		//final level portal
+
+		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
+		playerUI->SetAllVisability(false);
+
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+
+		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
+
+			if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+				uiElement->SetAllVisability(true);
+
+			RedrawUI();
+			gameSpeed = 0.0f;
+			SetPaused(true);
+
+			const int amount = 4;
+			ML_String texts[amount] =
+			{
+				GetDigitalMinuteClock().c_str(),
+
+				("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
+				("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
+				("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
+
+			};
+
+			for (int i = 3; i < amount + 3; i++)
+			{
+				uiElement->m_Texts[i].SetText(texts[i - 3].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
+					DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			}
+		}
 	}
 	
 }

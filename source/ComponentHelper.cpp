@@ -242,6 +242,9 @@ int PlayerComponent::UpdateSouls(const int delta)
 		onSoulUpdateFunctions[i](&input);
 	}
 
+	if (delta > 0)
+		this->totalSouls += delta;
+
 	this->souls += delta;
 	return this->souls;
 }
@@ -249,4 +252,9 @@ int PlayerComponent::UpdateSouls(const int delta)
 int PlayerComponent::GetSouls() const
 {
 	return this->souls;
+}
+
+int PlayerComponent::GetTotalSouls() const
+{
+	return this->totalSouls;
 }

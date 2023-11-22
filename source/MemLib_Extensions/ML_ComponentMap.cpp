@@ -255,7 +255,7 @@ ML_ComponentMap::ML_ComponentMap()
 	m_tSize = 0;
 };
 
-const ML_ComponentMap& ML_ComponentMap::Initialize(const size_t& sizeofType)
+void /*const ML_ComponentMap&*/ ML_ComponentMap::Initialize(const size_t& sizeofType)
 {
 	m_size = 0;
 	// Set capacity
@@ -266,7 +266,7 @@ const ML_ComponentMap& ML_ComponentMap::Initialize(const size_t& sizeofType)
 	// Allocate new to memory pool
 	m_data = MemLib::palloc(m_capacity * PAIR_SIZE);
 
-	return *this;
+	//return *this;
 }
 
 ML_ComponentMap::ML_ComponentMap(const ML_ComponentMap& to_copy)
