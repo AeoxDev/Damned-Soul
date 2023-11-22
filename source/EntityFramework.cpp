@@ -171,7 +171,9 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
-			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) == nullptr)
+			auto shopRelicIcon = registry.GetComponent<UIShopRelicComponent>(entity);
+			auto shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) == nullptr && shopRelicIcon == nullptr && shopButton == nullptr)
 				sound->Unload();
 		}
 
@@ -179,6 +181,17 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		if (entity.persistentTier <= destructionTier) //I hate how this code actually works
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
+			auto shopRelicIcon = registry.GetComponent<UIShopRelicComponent>(entity);
+			auto shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+			if (shopRelicIcon != nullptr)
+			{
+				sound->Unload();
+			}
+			else if (shopButton != nullptr)
+			{
+				sound->Unload();
+			}
+
 			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) != nullptr)
 				sound->Unload();
 		}

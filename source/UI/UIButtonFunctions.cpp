@@ -279,7 +279,7 @@ void UIFunc::Settings_Timer(void* args, int a)
 
 void UIFunc::SelectRelic(void* args, int index)
 {
-	UIComponent* uiElement = (UIComponent*)args;
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 
 	int inverseIndex = 0;
 	int imageIndexes[2] = { 0, 0 };
@@ -398,6 +398,40 @@ void UIFunc::BuyRelic(void* args, int index)
 					playerRelics->currentRelics++;
 				}
 
+				int soundToPlay = rand() % 16;
+				if (soundToPlay == 0)
+				{
+					//Player voice line
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+					soundToPlay = rand() % 2;
+					if (soundToPlay == 0)
+					{
+						if (sfx != nullptr) sfx->Play(Player_BetterWork, Channel_Extra);
+					}
+					else
+					{
+						if (sfx != nullptr) sfx->Play(Player_SomethingPositive, Channel_Extra);
+					}
+				}
+				else if (soundToPlay == 1)
+				{
+					//Imp voice line
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+					soundToPlay = rand() % 2;
+					if (soundToPlay == 0)
+					{
+						if (sfx != nullptr) sfx->Play(Shop_RelicPurchase, Channel_Extra);
+					}
+					else
+					{
+						if (sfx != nullptr) sfx->Play(Shop_RelicPurchase2, Channel_Extra);
+					}
+				}
+
+				//Normal buy sound
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+				if (sfx != nullptr) sfx->Play(Shop_Buy, Channel_Base);
+
 				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 				break;
 			}
@@ -430,6 +464,10 @@ void UIFunc::LockRelic(void* args, int index)
 				relicWindow->shopSelections[i] = shopState::LOCKED;
 				uiElement->m_Images[i + 2].SetImage("RelicIcons\\LockedRelic");
 				player->UpdateSouls(0);
+
+				//Normal lock sound
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+				if (sfx != nullptr) sfx->Play(Shop_Dibs, Channel_Base);
 				break;
 			}
 		}
@@ -440,7 +478,6 @@ void UIFunc::LockRelic(void* args, int index)
 
 void UIFunc::RerollRelic(void* args, int index)
 {
-	UIComponent* uiElement = (UIComponent*)args;
 	UIShopRerollComponent* uiReroll = nullptr;
 
 	PlayerComponent* player = nullptr;
@@ -496,6 +533,10 @@ void UIFunc::RerollRelic(void* args, int index)
 			}
 		}
 
+		//Normal re-reroll sound
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+		if (sfx != nullptr) sfx->Play(Shop_Reroll, Channel_Base);
+
 		player->UpdateSouls(0);
 
 		if (index != -1)
@@ -529,6 +570,10 @@ void UIFunc::HealPlayer(void* args, int index)
 			break;
 
 		float heal = stats->GetMaxHealth() * 0.25f;
+
+		//Normal heal sound
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+		if (sfx != nullptr) sfx->Play(Shop_Heal, Channel_Base);
 
 		stats->ApplyHealing(heal);
 

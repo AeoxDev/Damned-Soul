@@ -82,6 +82,8 @@ void CreateRelicWindows()
 		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverShopRelic);
 		uiOnHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverShopRelic);
 
+		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
+		sfx->Load(SHOP);
 	}
 
 };
@@ -190,6 +192,9 @@ void CreateSingleWindows()
 
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverShopButtons);
+
+		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
+		sfx->Load(SHOP);
 	}
 }
 
@@ -228,8 +233,12 @@ void ReloadShop()
 	CreateTextWindows();
 
 	SetInShop(true);
-	void* a = {};
-	UIFunc::RerollRelic(a, -1);
 
+	for (auto entity : View<UIShopRerollComponent>(registry))
+	{
+		UIFunc::RerollRelic((void*)&entity, -1);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx != nullptr) sfx->Stop(Channel_Base);
+	}
 }
 

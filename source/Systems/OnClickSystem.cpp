@@ -42,7 +42,7 @@ bool OnClickSystem::Update()
 							continue;
 					}
 
-					comp->onClickFunctions[comp->index](uiElement, comp->index);
+					comp->onClickFunctions[comp->index]((void*)&entity, comp->index);
 					return true;
 				}
 			}
@@ -82,29 +82,49 @@ bool OnClickSystem::Update()
 							continue;
 					}
 
-					//Stop all the previous sounds (except music) to mute for example the dog breath
-					for (auto entity : View<AudioEngineComponent>(registry))
-					{
-						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
-						audioJungle->HandleSound();
-						audioJungle->StopAllSounds();
-					}
-
 					//Set which sound to play
 					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 					if (sound != nullptr)
 					{
 						if (comp->onClickFunctions[comp->index] == UIFunc::MainMenu_Start)
 						{
+							//Stop all the previous sounds (except music) to mute for example the dog breath
+							for (auto entity : View<AudioEngineComponent>(registry))
+							{
+								AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+								audioJungle->HandleSound();
+								audioJungle->StopAllSounds();
+							}
 							sound->Play(Button_Start, Channel_Base);
 						}
-						else
+						else if (comp->onClickFunctions[comp->index] == UIFunc::SelectRelic)
+						{
+							sound->Play(Shop_Press, Channel_Base);
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunc::BuyRelic)
+						{
+							//Play sound in the function itself
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunc::HealPlayer)
+						{
+							//Play sound in the function itself
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunc::LockRelic)
+						{
+							//Play sound in the function itself
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunc::RerollRelic)
+						{
+							//Play sound in the function itself
+						}
+						//else if (comp->onClickFunctions[comp->index] == UIFunc::UpgradeWeapon) //Add this when the function for upgrading weapon has been included.
+						else if (comp->onClickFunctions[comp->index] != UIFunc::EmptyOnClick)
 						{
 							sound->Play(Button_Press, Channel_Base);
 						}
 					}
 
-					comp->onClickFunctions[comp->index](uiElement, comp->index);
+					comp->onClickFunctions[comp->index]((void*)&entity, comp->index);
 					return true;
 				}
 			}
