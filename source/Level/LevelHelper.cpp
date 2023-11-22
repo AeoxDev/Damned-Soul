@@ -336,6 +336,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	StatComponent* stat = registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
 	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
 
+	// TODO: set color based on enemy (or other factors)
+	registry.AddComponent<GlowComponent>(entity, 0, 1, 1);
+
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
@@ -586,6 +589,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
+	//GlowComponent* player_glow = registry.AddComponent<GlowComponent>(stateManager.player, 1, 0, 0);
+
 	// Create weapon
 	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
@@ -606,6 +611,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	weapon_transform->mass = mass;
 
 	FollowerComponent* weapon_follow = registry.AddComponent<FollowerComponent>(stateManager.weapon, stateManager.player);
+
+	GlowComponent* weaponGlow = registry.AddComponent<GlowComponent>(stateManager.weapon, 0, 0.8, 0.7);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)
