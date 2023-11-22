@@ -116,7 +116,7 @@ float4 AniRowA(float counter, GS_OUT input)////4x4 sections, First Row
 
 }
 
-float4 AniRowB(float counter, GS_OUT input)////4x4 sections, First Row 
+float4 AniRowB(float counter, GS_OUT input)////4x4 sections, Second Row 
 {
     float4 image;
     
@@ -140,7 +140,7 @@ float4 AniRowB(float counter, GS_OUT input)////4x4 sections, First Row
     return image;
 }
 
-float4 AniRowC(float counter, GS_OUT input)////4x4 sections, First Row 
+float4 AniRowC(float counter, GS_OUT input)////4x4 sections, Third Row 
 {
     float4 image;
     
@@ -164,7 +164,7 @@ float4 AniRowC(float counter, GS_OUT input)////4x4 sections, First Row
     return image;
 }
 
-float4 AniRowD(float counter, GS_OUT input)////4x4 sections, First Row 
+float4 AniRowD(float counter, GS_OUT input)////4x4 sections, Forth Row 
 {
     float4 image;
     
