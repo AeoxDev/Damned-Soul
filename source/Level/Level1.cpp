@@ -57,16 +57,12 @@ void LoadLevel1()
 	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
-	if (GetVisualTimer())
-	{
-		EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
-		UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-		uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
-		uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
+	uiElement->SetAllVisability(false);
 
-		UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
-
-	}
+	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

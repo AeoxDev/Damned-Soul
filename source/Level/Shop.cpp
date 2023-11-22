@@ -74,13 +74,13 @@ void CreateRelicWindows()
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 
-		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunc::EmptyOnClick);
-		uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
-		uiOnClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
+		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunctions::OnClick::None);
+		uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunctions::OnClick::SelectRelic);
+		uiOnClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunctions::OnClick::SelectRelic);
 
-		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::EmptyOnHover);
-		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverShopRelic);
-		uiOnHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverShopRelic);
+		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::None);
+		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
+		uiOnHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
 
 	}
 
@@ -121,12 +121,12 @@ void CreateSingleWindows()
 
 	void(*const functions[SHOP_SINGLE_WINDOWS])(void*, int)  =
 	{
-		UIFunc::HealPlayer,
-		UIFunc::RerollRelic,
-		UIFunc::LockRelic,
-		UIFunc::BuyRelic,
-		UIFunc::EmptyOnClick,
-		UIFunc::LoadNextLevel
+		UIFunctions::OnClick::HealPlayer,
+		UIFunctions::OnClick::RerollRelic,
+		UIFunctions::OnClick::LockRelic,
+		UIFunctions::OnClick::BuyRelic,
+		UIFunctions::OnClick::None,
+		UIFunctions::Game::LoadNextLevel
 	};
 
 	const char const name[SHOP_SINGLE_WINDOWS][32] =
@@ -185,11 +185,11 @@ void CreateSingleWindows()
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 
-		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunc::EmptyOnClick);
+		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunctions::OnClick::None);
 		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, functions[i]);
 
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
-		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverShopButtons);
+		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::ShopButton);
 	}
 }
 
@@ -229,7 +229,7 @@ void ReloadShop()
 
 	SetInShop(true);
 	void* a = {};
-	UIFunc::RerollRelic(a, -1);
+	UIFunctions::OnClick::RerollRelic(a, -1);
 
 }
 
