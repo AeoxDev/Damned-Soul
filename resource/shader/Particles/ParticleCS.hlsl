@@ -385,7 +385,7 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     if (travelledDistance >= meta[blockID.y].maxRange)
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y , meta[blockID.y].startPosition.z);
-
+        
         
         particle.position = startPosition;
         particle.time = 0.f;
@@ -398,16 +398,23 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
         particle.time = 0.f;
     }
     
-    if (localIndex % 2 == 0)
-    {
-        particle.position.x = particle.position.x + cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
-        particle.position.z = particle.position.z + sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
-    }
-    else
-    {
-        particle.position.x = particle.position.x - cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
-        particle.position.z = particle.position.z - sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
-    }
+    particle.position.x = particle.position.x + meta[blockID.y].deltaTime * cos(particle.time) * dt; //cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
+    //particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
+        particle.position.z = particle.position.z + sin(particle.time) * dt; //sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
     
-    outputParticleData[index] = particle;
-}
+    //if (localIndex % 2 == 0)
+    //{
+    //    particle.position.x = particle.position.x + cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
+    //    particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
+    //    particle.position.z = particle.position.z + sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
+    //}
+    //else
+    //{
+    //    particle.position.x = particle.position.x - cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
+    //    particle.position.y = particle.position.y - 0.2f * sin(particle.time * 128.f);
+    //    particle.position.z = particle.position.z - sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
+    //}
+    
+    
+        outputParticleData[index] = particle;
+    }
