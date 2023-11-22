@@ -11,7 +11,7 @@ enum Ambience {Ambience_Cave = 5, Ambience_Lava, Ambience_Blizzard};
 enum Player { Player_Attack1, Player_Attack2, Player_Attack3, Player_AttackHeavyCharge, Player_HeavyAttack, Player_Dash, Player_Hurt, Player_Death };
 enum PlayerVoice {Player_IntroSkeleton1 = 8, Player_IntroSkeleton2, Player_IntroDog1, Player_IntroDog2, Player_IntroDog3, Player_IntroDog4,
 				Player_IntroEye1, Player_IntroEye2, Player_IntroEye3, Player_IntroEye4, Player_IntroImp1, Player_IntroImp2, Player_IntroImp3,
-				Player_IntroMinotaur1, Player_IntroMinotaur2, Player_IntroSplitboss1, Player_IntroSplitboss2, Player_Hot, Player_Chills1, PlayerChills2,
+				Player_IntroMinotaur1, Player_IntroMinotaur2, Player_IntroSplitboss1, Player_IntroSplitboss2, Player_Hot, Player_Chills1, Player_Chills2,
 				Player_BetterLuck, Player_AnotherSoul, Player_BringItOn, Player_ThisWillBeFun, Player_DontMind, Player_FindersKeepers, Player_WatchStep,
 				Player_PlaceSucks, Player_HotInHere, Player_BurningUp, Player_IceInHell, Player_HotChocolate, Player_WasntSoBad, Player_BetterWork,
 				Player_SomethingPositive, Player_LikeTheLook, Player_WillDoDamage, Player_SuckOnThat, Player_WinnerIs, Player_HellYeah, Player_NotAgain,
@@ -74,6 +74,7 @@ struct AudioEngineComponent
 	ML_Vector<FMOD::ChannelGroup*> groups;
 	ML_Vector<int> freeChannels;
 	ML_Vector<Volume> volumes;
+	ML_Vector<int> occasionalVoiceLinesPlayed;
 	void Setup(int& ID);
 	void AddChannel();
 	void StopAllSounds(bool stopMusic = false);

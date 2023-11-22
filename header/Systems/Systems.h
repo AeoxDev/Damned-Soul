@@ -46,6 +46,10 @@ class AudioSystem : public System
 {
 	bool Update();
 };
+class StageVoiceLineSystem : public System
+{
+	bool Update();
+};
 
 class UIRenderSystem : public System
 {

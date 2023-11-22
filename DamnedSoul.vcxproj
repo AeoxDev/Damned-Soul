@@ -225,11 +225,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Offensive\PowerStrike.cpp" />
     <ClCompile Include="source\Relics\Offensive\SoulEater.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
-    <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp"/>
+    <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\LuciferBehaviourSystem.cpp" />
     <ClCompile Include="source\States\Credits.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
+    <ClCompile Include="source\Systems\StageVoiceLineSystem.cpp" />
     <ClCompile Include="source\UI\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />

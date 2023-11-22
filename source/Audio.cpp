@@ -380,11 +380,13 @@ void AudioEngineComponent::Destroy()
 		this->groups[i] = nullptr;
 	}
 	this->volumes.clear();
+	this->occasionalVoiceLinesPlayed.clear();
 	this->groups.~ML_Vector();
 	this->sounds.~ML_Vector();
 	this->channels.~ML_Vector();
 	this->freeChannels.~ML_Vector();
 	this->volumes.~ML_Vector();
+	this->occasionalVoiceLinesPlayed.~ML_Vector();
 	this->system->close();
 	this->system->release();
 }

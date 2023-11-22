@@ -61,10 +61,6 @@ void UIFunc::LoadNextLevel(void* args, int a)
 			backgroundMusic->Play(Music_Boss, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
-		default: //Shop
-			backgroundMusic->Play(Music_Shop, Channel_Base);
-			//backgroundMusic->Play(Ambience_Cave, Channel_Extra); Maybe change this to a falling ambient noise?
-			break;
 		}
 		audioJungle->HandleSound();
 	}
