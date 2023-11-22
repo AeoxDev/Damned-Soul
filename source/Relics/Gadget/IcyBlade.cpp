@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define ICY_BLADE_FREEZE_CHANCE (1.f)
+#define ICY_BLADE_FREEZE_CHANCE (0.1f)
 #define ICY_BLADE_DURATION (2.f)
 
 EntityID ICY_BLADE::_OWNER;

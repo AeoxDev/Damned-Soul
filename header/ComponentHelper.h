@@ -24,6 +24,12 @@ private:
 	// Used to alter speed when performing actions such as attacking
 	float m_speedMult = 1.0f;
 
+	// Dash
+	// Base dash value
+	float m_baseDashValue = 2.5f;
+	// Bonus dash value
+	float m_bonusDashValue = 0.f;
+
 
 
 //Weapon stats
@@ -110,6 +116,11 @@ public:
 	void UpdateBonusSpeed(const float delta);
 	// Set the entity's speed mult
 	void SetSpeedMult(const float mult);
+	
+	// Get the current dash distance
+	float GetDashDistance() const;
+	// Update Bonus Dash
+	void UpdateBonusDashDistance(const float delta);
 
 // Offensive
 	// Get the base damage of the entity

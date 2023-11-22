@@ -29,6 +29,7 @@ struct StateManager
 	PauseState pause;
 	Credits credits;
 	EntityID player;
+	EntityID weapon;
 	EntityID stage;
 	EntityID hitboxVis;
 

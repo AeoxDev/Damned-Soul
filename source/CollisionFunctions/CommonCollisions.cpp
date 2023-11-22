@@ -371,8 +371,18 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	float frictionKnockbackFactor1 = stat1->m_acceleration / stat1->m_baseAcceleration;
 	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));
+	
+	float massFactor = std::sqrt(transform1->mass / transform2->mass);
+	float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
+	float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
+	float dx, dz;
+	CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
+
+	AddKnockBack(params.entity1, selfKnockback * dx, selfKnockback * dz);
+	AddKnockBack(params.entity2, appliedKnockback * dx, appliedKnockback * dz);
+
+	/*AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));*/
 }
 
 void PlayHitSound(OnCollisionParameters& params)

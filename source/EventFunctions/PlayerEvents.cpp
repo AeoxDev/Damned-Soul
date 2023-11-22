@@ -108,6 +108,8 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
 		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 		playerComp->isDashing = true;
+ 		transform->currentSpeedX = dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
+		transform->currentSpeedZ = dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 	}
 }
 
@@ -291,7 +293,7 @@ void PlayerDash(EntityID& entity, const int& index)
 		return;
 
 	//Perform attack animation, woo, loop using DT
-	anim->aAnim = ANIMATION_WALK;
+	anim->aAnim = ANIMATION_ATTACK;
 	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
 	anim->aAnimIdx = 1;
 
