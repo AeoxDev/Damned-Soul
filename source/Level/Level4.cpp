@@ -28,7 +28,7 @@ void LoadLevel4()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
-	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, 20.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
+	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, 20.f, 0.f, 0.f);
 	Stage4IntroScene(tempBoss, 0);
 
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
