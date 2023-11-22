@@ -10,7 +10,6 @@ struct HellhoundBehaviour
 	bool circleBehaviour = false;
 	bool isBehind = false;
 	float isBehindCounter = 0.f;
-	float giveUpChaseCounter = 0.f;
 	bool charge = false;
 
 

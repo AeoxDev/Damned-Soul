@@ -33,6 +33,7 @@
 #include "Skynet\TempBossBehaviour.h"
 #include "Skynet\LuciferBehaviour.h"
 #include "Skynet\FrozenBehaviour.h"
+#include "Skynet\ZacBehaviour.h"
 
 //Misc Combat Components
 #include "DebuffComponent.h"

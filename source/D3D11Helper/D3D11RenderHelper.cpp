@@ -197,7 +197,8 @@ SRV_IDX CreateShaderResourceViewBuffer(const void* data, const size_t& size, con
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	SRVDesc.Buffer.FirstElement = 0;
 	SRVDesc.Buffer.ElementOffset = 0;
-	SRVDesc.Buffer.ElementWidth = (UINT)size;
+	SRVDesc.Buffer.NumElements = amount;
+	//SRVDesc.Buffer.ElementWidth = (UINT)size;
 
 	ID3D11ShaderResourceView* tempSRV = 0;
 	hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], &SRVDesc, &tempSRV);
@@ -431,6 +432,11 @@ bool DeleteD3D11SRV(const SRV_IDX idx)
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source)
 {
 	d3d11Data->deviceContext->CopyResource(bfrHolder->buff_map[destination], uavHolder->uav_resource_map[source]);
+}
+
+void CopySRVtoSRV(const SRV_IDX destination, const SRV_IDX source)
+{
+	d3d11Data->deviceContext->CopyResource(srvHolder->srv_resource_map[destination], srvHolder->srv_resource_map[source]);
 }
 
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags)

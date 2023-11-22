@@ -395,9 +395,10 @@ bool SetVertexBuffer(const VB_IDX idx)
 
 void UnsetVertexBuffer()
 {
-	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &bfr_NULL, 0, 0);
+	UINT stride = 0;
+	UINT offset = 0;
+	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &bfr_NULL, &stride, &offset);
 }
-
 
 
 // Create an Index Buffer with provided data and return a unique index to it
