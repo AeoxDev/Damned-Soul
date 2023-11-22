@@ -13,7 +13,7 @@ EntityID SOUL_POWER::_OWNER;
 const char* SOUL_POWER::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You gain %ld Strength for every soul in your possession, but you lose %ld%% of your current souls (rounded up) at the start of each level",
+	sprintf_s(temp, "Increases your Attack Damage by %ld of your Base Weapon Damage for every soul in your possession, but you lose %ld%% of your current souls (rounded up) at the start of each level",
 		PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER),
 		PERCENT(_SC_FACTOR));
 #pragma warning(suppress : 4172)

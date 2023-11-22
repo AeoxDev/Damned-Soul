@@ -47,6 +47,7 @@
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
 #include "Relics\Gadget\IcyBlade.h"
+#include "Relics\Gadget\FrozenMaul.h"
 #include "Relics\Gadget\Discount\ExploitableCoupon.h"
 #include "Relics\Gadget\Discount\Membership.h"
 #include "Relics\Gadget\Discount\SeeingDouble.h"
@@ -377,9 +378,17 @@ void _validateMasterRelicList()
 				/*Name*/		"Icy Blade",
 				/*Filepath*/	"RelicIcons\\Icy_Blade",
 				/*Description*/	ICY_BLADE::Description(),//"You gain a bonus to your speed equal to your souls",
-				/*Price*/		5,
+				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	ICY_BLADE::Initialize
+			),
+			RelicData(
+				/*Name*/		"Frozen Maul",
+				/*Filepath*/	"RelicIcons\\Frozen_Maul",
+				/*Description*/	FROZEN_MAUL::Description(),//"You gain a bonus to your speed equal to your souls",
+				/*Price*/		10,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	FROZEN_MAUL::Initialize
 			),
 			RelicData(
 				/*Name*/		"Exploitable Coupon",
