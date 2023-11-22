@@ -230,7 +230,10 @@ bool TempBossBehaviourSystem::Update()
 			//Dazed
 			if (tempBossComponent->attackStunDurationCounter <= tempBossComponent->attackStunDuration)
 			{
-				
+				// this is where we rotate the AI to avoid bullshit player tactics
+				tempBossComponent->goalDirectionX = playerTransformCompenent->positionX - tempBossTransformComponent->positionX;
+				tempBossComponent->goalDirectionZ = playerTransformCompenent->positionZ - tempBossTransformComponent->positionZ;
+				SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ, 4.f);
 			}
 
 			//Combat
