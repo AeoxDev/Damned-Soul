@@ -22,22 +22,16 @@ cbuffer pannerInput: register(b0) {
 
 float4 main(GS_OUT gs_in) : SV_Target
 {
-    float2 uvCoordinates = float2(-gs_in.uv.x - frac(offsetXY_in.x * gs_in.time * panSpeed_in), gs_in.uv.y - frac(offsetXY_in.y * gs_in.time * panSpeed_in));
     float4 vornoiTexture = vornoiTexture_in.Sample(diffuseSampler_in, UVPan(offsetXY_in, panSpeed_in, gs_in.time, gs_in.uv));
-    
-    float distortionAmount = 0.132f;
-    float4 lerpingTexture = lerp(float4(gs_in.uv, 0.0f, 0.0f), vornoiTexture, distortionAmount);
-    
-    float4 diffuseTexture = diffuseTexture_in.Sample(diffuseSampler_in, gs_in.uv);
-    
-    float4 mask = maskTexture_in.Sample(diffuseSampler_in, lerpingTexture.xy);
-    float2 newUV = float2((gs_in.position.x / screenResolution_in.x), ( gs_in.position.y / screenResolution_in.y));
+    float4 mask = maskTexture_in.Sample(diffuseSampler_in, distortUV(0.132f, gs_in.uv, vornoiTexture));
+    float4 backBuffer = SampleBackbuffer(gs_in.position, screenResolution_in, backbufferTexture_in, diffuseSampler_in);
     
     float3 results;
-    results.r = backbufferTexture_in.Sample(diffuseSampler_in, newUV).r * ( 1 - mask.r) + (mask.r * 1.0f * mask.r);
-    results.g = backbufferTexture_in.Sample(diffuseSampler_in, newUV).g * ( 1 - mask.r) + (mask.b * 0.2f * mask.r);
-    results.b = backbufferTexture_in.Sample(diffuseSampler_in, newUV).b * ( 1 - mask.r) + (mask.g * 0.0f * mask.r);
+    results.r = backBuffer.r * ( 1 - mask.r) + (mask.r * 1.0f * mask.r);
+    results.g = backBuffer.g * ( 1 - mask.r) + (mask.b * 0.2f * mask.r);
+    results.b = backBuffer.b * ( 1 - mask.r) + (mask.g * 0.0f * mask.r);
     
+    // TODO: Make the Blending be in a function instead of here.
     
     return float4(saturate(results.rgb), 1.0);
 }
