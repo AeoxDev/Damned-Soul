@@ -50,6 +50,7 @@ void CreateNewSplitZac(EntityID& entity, const int& index);
 //Enemy Combat functions
 void EnemyAttackFlash(EntityID& entity, const int& index);
 void EnemyAttackGradient(EntityID& entity, const int& index);
+void EnemyAttack(EntityID& entity, const int& index);
 void EnemyBeginAttack(EntityID& entity, const int& index);
 void EnemyEndAttack(EntityID& entity, const int& index);
 void EnemyBecomeStunned(EntityID& entity, const int& index);

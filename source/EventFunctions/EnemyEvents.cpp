@@ -279,6 +279,12 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 			skelel->shared.colorAdditiveBlue = 0.5f;
 		}	
 	}
+
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim)
+	{
+		anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
+	}
 }
 
 void EnemyAttackGradient(EntityID& entity, const int& index)
@@ -307,6 +313,14 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 	}
 }
 
+void EnemyAttack(EntityID& entity, const int& index)
+{
+	if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
+		EnemyEndAttack(entity, index);
+	else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
+		EnemyBeginAttack(entity, index);
+}
+
 void EnemyBeginAttack(EntityID& entity, const int& index)
 {
 	//Activate attack hitbox
@@ -328,15 +342,30 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
 	}
 
-	//
-	SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
-	skeleton->attackTimer = 0.0f;
+	//Get enemytype
+	uint32_t condition = GetTimedEventCondition(entity, index);
+
+	if (condition == EnemyType::skeleton)
+	{
+		SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
+		if (skeleton)
+			skeleton->attackTimer = 0.0f;
+	}
+
+	else if (condition == EnemyType::tempBoss)
+	{
+		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+		if (tempBoss)
+			tempBoss->attackTimer = 0.0f;
+	}
 }
 
 void EnemyBecomeStunned(EntityID& entity, const int& index)
 {
+	//Find the enemycomponent and stun based on its values, start by getting condition to see what enemytype it is
 	uint32_t condition = GetTimedEventCondition(entity, index);
-	if (condition == skeleton)
+
+	if (condition == EnemyType::skeleton)
 	{
 		SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
 		if (skeleton != nullptr)
@@ -344,7 +373,15 @@ void EnemyBecomeStunned(EntityID& entity, const int& index)
 			skeleton->attackStunDurationCounter = 0.0f;
 		}
 	}
-	//Find the enemycomponen and stun based on its values
+
+	else if (condition == EnemyType::tempBoss)
+	{
+		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+		if (tempBoss != nullptr)
+		{
+			tempBoss->attackStunDurationCounter = 0.0f;
+		}
+	}
 }
 
 void BossShockwaveStart(EntityID& entity, const int& index)
