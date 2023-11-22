@@ -115,6 +115,11 @@ class ImpBehaviourSystem : public System
 	bool Update();
 };
 
+class ZacBehaviourSystem : public System
+{
+	bool Update();
+};
+
 //class MinotaurBehaviourSystem : public System
 //{
 //	bool Update();

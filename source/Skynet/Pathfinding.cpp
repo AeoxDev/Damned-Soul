@@ -146,6 +146,105 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 	//return returnMap;
 }
 
+
+void CalculateGlobalMapValuesZac(PathfindingMap* map)
+{
+	GITexture* mapGrid = giTexture;
+
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+	
+
+	
+
+
+
+	// 0 = non-walkable 
+	// 1 = walkable
+	// 2+ = lava
+
+	//PathfindingMap returnMap;
+	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
+	{
+		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
+		{
+			map->cost[i][j] = 0;
+		}
+	}
+
+	float lavaPunish = 6;
+
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
+	{
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
+		{
+			// is it walkable?
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
+			{
+				//not walkable, bad number
+				map->cost[x][z] += 10000;
+			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
+			{
+				map->cost[x][z] += 1;
+			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_LAVA) // is the floor lava?
+			{
+				map->cost[x][z] += 1;
+			}
+		}
+	}
+	float enemyPunish = 20000.f;
+	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
+	{
+		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
+		if (enemyTransformCompenent == nullptr)
+			continue;
+
+		// x z = functionCallFromElliot
+		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
+
+		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+		{
+			map->cost[pos.x][pos.z] += enemyPunish;
+
+			//RIght column
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x + 1][pos.z + 1] += enemyPunish / 2;
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x + 1][pos.z] += enemyPunish / 2;
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && pos.z > 0)
+				map->cost[pos.x + 1][pos.z - 1] += enemyPunish / 2;
+
+			//Middle column
+			if (pos.z > 0)
+				map->cost[pos.x][pos.z - 1] += enemyPunish / 2;
+			if (pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x][pos.z + 1] += enemyPunish / 2;
+
+			//Left column
+
+			if (pos.x > 0 && pos.z > 0)
+				map->cost[pos.x - 1][pos.z - 1] += enemyPunish / 2;
+			if (pos.x > 0)
+				map->cost[pos.x - 1][pos.z] += enemyPunish / 2;
+			if (pos.x > 0 && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x - 1][pos.z + 1] += enemyPunish / 2;
+		}
+		else
+		{
+			map->cost[0][0] = -69.f;
+			//MemLib::spop();
+			return;// returnMap;
+		}
+	}
+
+	//MemLib::spop();
+	//return returnMap;
+}
+
 float CalculateEuclideanDistanceWorldSpace(int x, int z, Node goal)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
@@ -269,6 +368,28 @@ void CalculateGlobalMapValuesImp(PathfindingMap* map)
 			{
 				map->cost[x][z] += 1;
 			}
+		}
+	}
+
+	// SO YOU DO NOT TELEPORT ON ANOTHER AI
+	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
+	{
+		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
+		if (enemyTransformCompenent == nullptr)
+			continue;
+
+		// x z = functionCallFromElliot
+		//GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
+
+		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+		{
+			map->cost[pos.x][pos.z] += 10000;
+		}
+		else
+		{
+			map->cost[0][0] = -69.f;
+			return;// returnMap;
 		}
 	}
 }

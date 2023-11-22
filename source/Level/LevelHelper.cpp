@@ -77,7 +77,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
-	float facingY , float facingZ  )
+	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
@@ -136,7 +136,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 100;//400.f;
+			health = 0;//400.f;
+			float partHealth = 40.f; // this times 5 is the full starting strength
+			if (zacIndex0)
+				health += partHealth;
+			if (zacIndex1)
+				health += partHealth;
+			if (zacIndex2)
+				health += partHealth;
+			if (zacIndex3)
+				health += partHealth;
+			if (zacIndex4)
+				health += partHealth;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -146,6 +157,22 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 1.f;
 		}
+	}
+	else if (eType == EnemyType::tempBoss) // if we want a weaker version of the boss later in game, we can specify the health
+	{
+		
+		float partHealth = health / 5.f; // this times 5 is the full starting strength
+		health = 0;
+		if (zacIndex0)
+			health += partHealth;
+		if (zacIndex1)
+			health += partHealth;
+		if (zacIndex2)
+			health += partHealth;
+		if (zacIndex3)
+			health += partHealth;
+		if (zacIndex4)
+			health += partHealth;
 	}
 	if (moveSpeed == 6969.f)
 	{
@@ -167,7 +194,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			moveSpeed = 10.f;
+			moveSpeed = 20.f; //starting speed
+			float partSpeed = 2.5f; // each alive part makes it this much slower
+			if (zacIndex0)
+				moveSpeed -= partSpeed;
+			if (zacIndex1)
+				moveSpeed -= partSpeed;
+			if (zacIndex2)
+				moveSpeed -= partSpeed;
+			if (zacIndex3)
+				moveSpeed -= partSpeed;
+			if (zacIndex4)
+				moveSpeed -= partSpeed;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -229,7 +267,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			attackSpeed = 0.5f;
+			attackSpeed = 0.25f;
+			float partSpeed = 0.05f; // each alive part makes it this much slower
+			if (zacIndex0)
+				attackSpeed += partSpeed;
+			if (zacIndex1)
+				attackSpeed += partSpeed;
+			if (zacIndex2)
+				attackSpeed += partSpeed;
+			if (zacIndex3)
+				attackSpeed += partSpeed;
+			if (zacIndex4)
+				attackSpeed += partSpeed;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -260,7 +309,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			soulWorth = 4;
+			soulWorth = 0;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -273,9 +322,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (eType == EnemyType::tempBoss)
 	{
-		scaleX *= 4;
-		scaleY *= 4;
-		scaleZ *= 4;
+		scaleX *= 2;
+		scaleY *= 2;
+		scaleZ *= 2;
 	}
 
 	transform.mass = mass;
@@ -393,13 +442,26 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	else if (eType == EnemyType::tempBoss)
 	{
 		stat->hazardModifier = 0.0f;
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("PHBoss.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
-		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
+		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+		
+		tempBossComponent->parts[0] = zacIndex0; // this is needed, DO NOT TOUCH
+		tempBossComponent->parts[1] = zacIndex1;
+		tempBossComponent->parts[2] = zacIndex2;
+		tempBossComponent->parts[3] = zacIndex3;
+		tempBossComponent->parts[4] = zacIndex4;
+
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(SKELETON);
+
+		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
-			player->killThreshold+=15;
+			player->killThreshold+=5;
 		}
 	}
 	else if (eType == EnemyType::lucifer)
