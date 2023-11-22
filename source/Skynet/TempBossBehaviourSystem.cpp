@@ -27,7 +27,6 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
-	//animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 
 	SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ);
@@ -50,7 +49,6 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
-	//animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 	bool okayDirection = false;
 	while (!okayDirection)
@@ -94,41 +92,9 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	}
 }
 
-//void TemporaryPretendAnimation()
-//{
-//	// lmao funny code do many many things
-//	int i = 0;
-//}
-//void BeginHitting(EntityID& entity)
-//{
-//	auto comp = registry.GetComponent<EnemyComponent>(entity);
-//	SetHitboxActive(entity, comp->attackHitBoxID, true);
-//	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
-//}
-//void WeShallOverCome(EntityID& entity)
-//{
-//	auto comp = registry.GetComponent<EnemyComponent>(entity);
-//	SetHitboxActive(entity, comp->attackHitBoxID, false);
-//	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
-//}
-
 
 void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EnemyComponent* enmComp, EntityID& ent, AnimationComponent* animComp)
 {
-	//bc->attackTimer += GetDeltaTime() * animComp->aAnimTimeFactor;
-	//bc->goalDirectionX = ptc->positionX - btc->positionX;
-	//bc->goalDirectionZ = ptc->positionZ - btc->positionZ;
-
-	//bc->isAttacking = true;
-
-	////Elliot & Herman request: Make animationtime scale better for faster startup and swing.
-	//animComp->aAnim = ANIMATION_ATTACK;
-	//animComp->aAnimIdx = 0;
-	////Elliot: Change in calculations for attack timer:
-	//animComp->aAnimTime = 0.5f * bc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
-	//ANIM_BRANCHLESS(animComp);
-
-	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (bc->attackTimer <= 0.0f) // yes, we can indeed attack. (bc->attackTimer >= enemyStats->GetAttackSpeed())
 	{
 		//Increment so we don't immediately get  back in here
@@ -158,40 +124,6 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 		float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
 		AddTimedEventComponentStart(ent, AttackTotalTime, EnemyBecomeStunned, EnemyType::tempBoss, 1);
 	}
-
-	/*
-	SKELETON FOR REFERENCE
-
-	if (sc->attackTimer <= 0.0f)
-	{
-		//Increment so we don't immediately get  back in here
-		sc->attackTimer += GetDeltaTime();
-
-		//Animation setup
-		animComp->aAnim = ANIMATION_ATTACK;
-		animComp->aAnimTime = 0.0f;
-		animComp->aAnimTimePower = 1.0f;
-		animComp->aAnimTimeFactor = 3.0f; //Elliot comment: This might need to be changed when timePower changes
-
-		float PauseThreshold = 0.3f / animComp->aAnimTimeFactor;	//When to pause the animation
-		float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed();//When to continue the animation
-		float AttackActiveTime = AttackStartTime + 0.10f;			//When the entire attack has finished
-
-		//Attack Telegraphing #1: Quick prep + Pause + Blink
-		AddTimedEventComponentStartContinuousEnd(ent, PauseThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, skeleton, 1);
-
-		//Attack Telegraphing #2: Slow prep + Gradual light
-		//animComp->aAnimTimeFactor = 0.5f;
-		//AddTimedEventComponentStartContinuousEnd(ent, 0.0f, nullptr, EnemyAttackGradient, 0.8f, nullptr, skeleton, 1);
-
-		//Actual attack
-		AddTimedEventComponentStartContinuousEnd(ent, AttackStartTime, EnemyBeginAttack, nullptr, AttackActiveTime, EnemyEndAttack, skeleton, 1);
-
-		//Recovery/Daze
-		float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
-		AddTimedEventComponentStart(ent, AttackTotalTime, EnemyBecomeStunned, skeleton, 1);
-	}
-	*/
 }
 
 bool TempBossBehaviourSystem::Update()
