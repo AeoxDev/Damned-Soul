@@ -338,7 +338,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::skeleton)
 		{
-			attackSpeed = 0.5f;
+			//NICLAS WAS HERE
+			attackSpeed = 1.0f;
+			//attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::imp)
 		{
@@ -401,9 +403,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (eType == EnemyType::tempBoss)
 	{
-		scaleX *= 2;
-		scaleY *= 2;
-		scaleZ *= 2;
+		scaleX = 4;
+		scaleY = 4;
+		scaleZ = 4;
 	}
 
 	transform.mass = mass;

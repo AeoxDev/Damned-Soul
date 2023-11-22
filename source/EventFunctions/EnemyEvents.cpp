@@ -258,6 +258,132 @@ void SplitBoss(EntityID& entity, const int& index)
 	RemoveEnemy(entity, index);
 }
 
+void EnemyAttackFlash(EntityID& entity, const int& index)
+{
+	//Function runs when we pause the attack animation
+	//Halfway through the pause we make enemy glow yellow, then we reset the color towards the end
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (skelel)
+	{
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset
+		{
+			skelel->shared.colorAdditiveRed = 0.0f;
+			skelel->shared.colorAdditiveGreen = 0.0f;
+			skelel->shared.colorAdditiveBlue = 0.0f;
+		}
+			
+		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow
+		{
+			skelel->shared.colorAdditiveRed = 0.8f;
+			skelel->shared.colorAdditiveGreen = 0.8f;
+			skelel->shared.colorAdditiveBlue = 0.5f;
+		}	
+	}
+
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim)
+	{
+		anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
+	}
+}
+
+void EnemyAttackGradient(EntityID& entity, const int& index)
+{
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+
+	if (skelel)
+	{
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //Reset
+		{
+			skelel->shared.colorAdditiveRed = 0.0f;
+			skelel->shared.colorAdditiveGreen = 0.0f;
+			skelel->shared.colorAdditiveBlue = 0.0f;
+
+			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity); //Make animation faster because we're about to schwing
+			if (anim)
+				anim->aAnimTimeFactor = 2.0f;
+		}
+		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.375f) //Only start increasing gradient after 0.3 seconds
+		{
+			skelel->shared.colorAdditiveRed += GetDeltaTime();
+			skelel->shared.colorAdditiveGreen += GetDeltaTime();
+			skelel->shared.colorAdditiveBlue += GetDeltaTime();
+			
+		}
+	}
+}
+
+void EnemyAttack(EntityID& entity, const int& index)
+{
+	if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
+		EnemyEndAttack(entity, index);
+	else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
+		EnemyBeginAttack(entity, index);
+}
+
+void EnemyBeginAttack(EntityID& entity, const int& index)
+{
+	//Activate attack hitbox
+	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
+	if (comp)
+	{
+		SetHitboxActive(entity, comp->attackHitBoxID, true);
+		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+	}
+}
+
+void EnemyEndAttack(EntityID& entity, const int& index)
+{
+	//Deactivate attack hitbox
+	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
+	if (comp)
+	{
+		SetHitboxActive(entity, comp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
+	}
+
+	//Get enemytype
+	uint32_t condition = GetTimedEventCondition(entity, index);
+
+	if (condition == EnemyType::skeleton)
+	{
+		SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
+		if (skeleton)
+			skeleton->attackTimer = 0.0f;
+	}
+
+	else if (condition == EnemyType::tempBoss)
+	{
+		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+		if (tempBoss)
+			tempBoss->attackTimer = 0.0f;
+	}
+}
+
+void EnemyBecomeStunned(EntityID& entity, const int& index)
+{
+	//Find the enemycomponent and stun based on its values, start by getting condition to see what enemytype it is
+	uint32_t condition = GetTimedEventCondition(entity, index);
+
+	if (condition == EnemyType::skeleton)
+	{
+		SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
+		if (skeleton != nullptr)
+		{
+			skeleton->attackStunDurationCounter = 0.0f;
+		}
+	}
+
+	else if (condition == EnemyType::tempBoss)
+	{
+		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+		if (tempBoss != nullptr)
+		{
+			tempBoss->attackStunDurationCounter = 0.0f;
+		}
+	}
+}
+
 void BossShockwaveStart(EntityID& entity, const int& index)
 {
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
@@ -279,6 +405,36 @@ void BossShockwaveEnd(EntityID& entity, const int& index)
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enemy->specialHitBoxID, false);//Set false somewhere
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
+}
+
+void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
+{
+	TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+	if (tempBoss)
+		tempBoss->isBlinking = true;
+
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (skelel)
+	{
+		skelel->shared.colorAdditiveRed = 0.8f;
+		skelel->shared.colorAdditiveGreen = 0.8f;
+		skelel->shared.colorAdditiveBlue = 0.5f;
+	}
+}
+
+void BossResetBeforeShockwave(EntityID& entity, const int& index)
+{
+	TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+	if (tempBoss)
+		tempBoss->isBlinking = false;
+
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (skelel)
+	{
+		skelel->shared.colorAdditiveRed = 0.0f;
+		skelel->shared.colorAdditiveGreen = 0.0f;
+		skelel->shared.colorAdditiveBlue = 0.0f;
+	}
 }
 
 void RemoveEnemy(EntityID& entity, const int& index)

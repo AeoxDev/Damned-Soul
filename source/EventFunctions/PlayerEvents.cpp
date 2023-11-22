@@ -69,6 +69,36 @@ void SetGodModePortal(bool createPortal)
 * Make dash have a cooldown, obviously. It's a quick and easy fix but I'm waiting until the dogs have a solid counter
 */
 
+/*
+* NOTES FROM TESTING V2 (MORE ON THE BALANCING SIDE):
+* SOULS/ECONOMY:
+* The economy in the game is kinda scuffed, we earn too many souls for how cheap things are in the shop. Big conversation needs to be had about the increasing and decreasing of numbers
+* I personally think all numbers should be bumped up. Regular skeleton for instance giving 12 souls (5 of them on level 1 results in 60 souls once you enter the first shop)
+* 
+* DAMAGE:
+* I think damage numbers are fairly reasonable right now, when we don't take relics into account. All relics that increase our damage need to be nerfed, since they all stack
+* This stacking leads to numbers spiralling out of control *so quickly*. An alternate solution is diminishing returns but I think we've kinda voted against that in the past.
+* 
+* DEFENSE:
+* Don't let life steal apply to reflected damage. Plain and simple. If you get reduction + reflect + lifesteal it's over. Hold down left-click and you win.
+* 
+* LIFESTEAL(HEALING IN GENERAL):
+* Lifesteal has been a problem since day one, and imo shouldn't scale with your damage.
+* Because we have so many ways to bump up our damage, it becomes exponentially better with time.
+* A flat, low number will be much better and more balanced, and still useful. 
+* HOWEVER, in the current state of the game, it'd make lifesteal useless compared to the regular "Heal" option in the shop.
+* This heal should have its cost go up in three ways. 
+*		First, the base cost should be higher, 2 souls is ridiculous. 
+*		Second, the cost should go up over the course of the game
+*		Third, the cost should go up depending on your maximum health. 
+* Stacking health relics and buying 25% of your max hp back after every level for just 2 souls is ridiculous (or better yet, full heal for 8 souls)
+* If you get Soul Health early you can just buy that and then only use souls for healing in shop for the rest of the game, easymode
+* 
+* SOUL-RELICS:
+* Generally scuffed. If you find any of them in shop you can buy them and never buy anything else and it's gg, you're scaling until lategame
+* Numbers need to be tweaked(even more if souls gained go up). Should also be capped (idk if they already are)
+*/
+
 void PlayerLoseControl(EntityID& entity, const int& index)
 {	
 	//Get relevant components
@@ -102,7 +132,6 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID);
-			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true); //Dash hitbox
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -110,7 +139,20 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 
 		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
 
-		//SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);//Set attack hitbox to false
+		if (playerComp->isAttacking)
+		{
+			SetHitboxActive(entity, playerComp->attackHitboxID, false);
+		}
+
+		if (playerComp->currentCharge > 0.0f) //Dash cancelling a charged attack
+		{
+			playerComp->currentCharge = 0.0f; //Reset charged attack, well spotted arian
+			if(stats)
+				stats->SetSpeedMult(1.0f); //Reset the speed too, phew
+		}
+		
+
+
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
@@ -210,6 +252,7 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	player->timeSinceLastAttack = 0.0f;
 	player->isAttacking = false;
 	player->currentCharge = 0.0f;
+	player->hasActivatedHitbox = false; //Reset
 
 	if (registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
 		registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
@@ -249,7 +292,7 @@ void PlayerAttack(EntityID& entity, const int& index)
 		SetPlayerAttackHitboxInactive(entity, index);
 	}
 		
-	else if (animTime >= HITBOX_START_TIME) //&& false == player->hasActivatedHitbox)
+	else if (animTime >= HITBOX_START_TIME && player->hasActivatedHitbox == false) //hasActivatedHitbox ensures we only enable once, now for dash-cancel reasons
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
@@ -258,8 +301,8 @@ void PlayerAttack(EntityID& entity, const int& index)
 	{
 		float softCollisionRadius = GetHitboxRadius(entity, 1);
 		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);
-		float width = (.4f + std::min(.5f, hitboxTime * 3.f)) * softCollisionRadius * HITBOX_SCALE * godModeFactor; //.2f changed to .4f
-		float depth = (1.2f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE * godModeFactor;
+		float width = (.03f + std::min(.5f, hitboxTime * 3.f)) * softCollisionRadius * HITBOX_SCALE * GetGodModeFactor(); //.2f changed to .1f
+		float depth = (0.3f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE * GetGodModeFactor();
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
 
@@ -267,13 +310,13 @@ void PlayerAttack(EntityID& entity, const int& index)
 		// X
 		corners.cornersX[0] = -width;
 		corners.cornersX[1] = width;
-		corners.cornersX[2] = width;
-		corners.cornersX[3] = -width;
+		corners.cornersX[2] = 2.0f * width;
+		corners.cornersX[3] = -2.0 * width;
 		// Z
 		corners.cornersZ[0] = -2.f * depth;
 		corners.cornersZ[1] = -2.f * depth;
-		corners.cornersZ[2] = 0.5f;
-		corners.cornersZ[3] = 0.5f;
+		corners.cornersZ[2] = -0.5f;
+		corners.cornersZ[3] = -0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
 		//SetHitboxRadius(entity, player->attackHitboxID, (anim->aAnimTime - 0.5f) * 5);

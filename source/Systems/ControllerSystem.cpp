@@ -189,6 +189,9 @@ bool ControllerSystem::Update()
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		MouseComponent* mouseComponent = registry.GetComponent<MouseComponent>(entity);
 
+		//PlayerComponent now stores a bunch of variables for cooldowns and animation timings so we need access to it early
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
 		if (controller->enabled == -1)
 			break;
 
@@ -226,7 +229,11 @@ bool ControllerSystem::Update()
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
-		MouseComponentUpdateDirection(entity);
+
+		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
+		if(!player->isAttacking)
+			MouseComponentUpdateDirection(entity);
+
 		if (moving)
 		{
 			anim->aAnim = ANIMATION_WALK;
@@ -263,9 +270,17 @@ bool ControllerSystem::Update()
 		}
 
 		/*COMBAT INPUT*/
+		/*DASH*/
+		//Decrement and clamp
+		player->dashCounter -= GetDeltaTime();
+		if (player->dashCounter < 0.0f)
+			player->dashCounter = 0.0f;
+
 		//Dash in the direction you're moving, defaults to dashing backwards if you're not moving. Gives i-frames for the duration
-		if (keyState[SCANCODE_SPACE] == pressed)
+		if (keyState[SCANCODE_SPACE] == pressed && player->dashCounter == 0.0f)
 		{
+			player->dashCounter = player->dashCooldown;
+			//Putting cooldown on these dashes, PlayerComponent has the variables in charge of both current counter and the max-value
 			if (moving)
 			{
 				//Set facing direction to dash direction when moving
@@ -292,11 +307,6 @@ bool ControllerSystem::Update()
 
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
-		//Need: Variable storing time between inputs. If an attack happens within a certain time after another, the next attack in the chain. So also need a variable 
-		//keeping track of which attack in the chain we did last
-		//PlayerComponent now stores these two values, so we need to get access to it early
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-		
 		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
 		if(player->isAttacking == false)
 			player->timeSinceLastAttack += GetDeltaTime();
@@ -341,7 +351,7 @@ bool ControllerSystem::Update()
 			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack); //Esketit xd
 		}
-		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge)
+		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge && player->isAttacking != true)
 		{
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)
