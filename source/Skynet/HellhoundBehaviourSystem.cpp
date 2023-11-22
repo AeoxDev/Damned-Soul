@@ -107,8 +107,14 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	hellhoundComponent->timeCounter += GetDeltaTime();
 
 	bool okayDirection = false;
+	int limit = 256;
 	while (!okayDirection)
 	{
+		--limit;
+		if (limit < 0)
+		{
+			return;
+		}
 		if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
 		{
 			hellhoundComponent->timeCounter = 0.f;

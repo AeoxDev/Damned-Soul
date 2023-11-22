@@ -83,19 +83,25 @@ uint32_t ML_String::reserve(const uint32_t& capacity)
 		throw std::invalid_argument("Capacity too small! ML_String.reserve() cannot be called to reduce the capacity of the string!");
 		std::terminate();
 	}
+	else if (m_data.IsNullptr())
+	{
+		m_data = MemLib::palloc(capacity);
+	}
+	else
+	{
+		// Provide a temporary copy of the data
+		char* temp = (char*)MemLib::spush(m_capacity);
 
-	// Provide a temporary copy of the data
-	char* temp = (char*)MemLib::spush(m_capacity);
+		// Free the old pool pointer and allocate a new one, if need be
+		std::memcpy(temp, &(*m_data), m_capacity);
+		MemLib::pfree(m_data);
 
-	// Free the old pool pointer and allocate a new one, if need be
-	std::memcpy(temp, &(*m_data), m_capacity);
-	MemLib::pfree(m_data);
+		m_data = MemLib::palloc(capacity);
 
-	m_data = MemLib::palloc(capacity);
-
-	// Copy the data over to the new location and pop the temp from the stack
-	std::memcpy(&(*m_data), temp, m_capacity);
-	MemLib::spop();
+		// Copy the data over to the new location and pop the temp from the stack
+		std::memcpy(&(*m_data), temp, m_capacity);
+		MemLib::spop();
+	}
 
 	// Inform the new capacity
 	return m_capacity = capacity;

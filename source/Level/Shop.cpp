@@ -40,21 +40,21 @@ void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, cons
 
 void CreateRelicWindows()
 {
-	const char const texts[SHOP_RELIC_WINDOWS][32] =
+	const char texts[SHOP_RELIC_WINDOWS][32] =
 	{
 		"Offence",
 		"Defence",
 		"Gadget"
 	};
 
-	const DSFLOAT2 const positions[SHOP_RELIC_WINDOWS] =
+	const DSFLOAT2 positions[SHOP_RELIC_WINDOWS] =
 	{
 		{ SHOP_POSITION_X, 0.6f }, 
 		{ SHOP_POSITION_X, 0.3f }, 
 		{ SHOP_POSITION_X, 0.0f }
 	};
 
-	const Relics::RELIC_TYPE const type[SHOP_RELIC_WINDOWS] =
+	const Relics::RELIC_TYPE type[SHOP_RELIC_WINDOWS] =
 	{
 		Relics::RELIC_OFFENSE,
 		Relics::RELIC_DEFENSE,
@@ -89,7 +89,7 @@ void CreateRelicWindows()
 void CreateSingleWindows()
 {
 
-	const char const texts[SHOP_SINGLE_WINDOWS][32] =
+	const char texts[SHOP_SINGLE_WINDOWS][32] =
 	{
 		"Heal",
 		"Reroll",
@@ -99,7 +99,7 @@ void CreateSingleWindows()
 		""
 	};
 
-	const DSFLOAT2 const positions[SHOP_SINGLE_WINDOWS] =
+	const DSFLOAT2 positions[SHOP_SINGLE_WINDOWS] =
 	{
 		{SHOP_OFFSET_X, 0.6f},
 		{SHOP_OFFSET_X, 0.3f},

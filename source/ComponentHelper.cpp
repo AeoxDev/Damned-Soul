@@ -19,6 +19,7 @@ void StatComponent::ZeroBonusStats()
 	m_bonusHealth = 0;
 	m_damageReduction = 1.f; // Since this is a multiplier, setting it to 1.0 is equivalent to setting the bonus to 0
 	m_bonusMoveSpeed = 0;
+	m_bonusDashValue = 0;
 	m_bonusDamage = 0;
 	m_bonusAttackSpeed = 0;
 	m_bonusKnockback = 0;
@@ -26,12 +27,12 @@ void StatComponent::ZeroBonusStats()
 
 int64_t StatComponent::GetHealth() const
 {
-	return ceil(this->m_currentHealth);
+	return (int64_t)ceil(this->m_currentHealth);
 }
 
 int64_t StatComponent::GetMaxHealth() const
 {
-	return ceil(m_baseHealth + m_bonusHealth);
+	return (int64_t)ceil(m_baseHealth + m_bonusHealth);
 }
 
 float StatComponent::GetHealthFraction() const
@@ -41,7 +42,7 @@ float StatComponent::GetHealthFraction() const
 
 float StatComponent::CapHealth()
 {
-	float maxHp = GetMaxHealth();
+	float maxHp = (float)GetMaxHealth();
 	bool contained = m_currentHealth < maxHp;
 
 	// Branchless limit
@@ -112,7 +113,7 @@ float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
 
 	// Return current health
 	// Can potentially return negative
-	return GetHealth();
+	return (float)GetHealth();
 }
 
 float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
@@ -134,7 +135,7 @@ float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
 
 	// Return current health
 	// Can potentially return greater than max, but StatCalcSystem does limit current health to max health when calculating stats later
-	return GetHealth();
+	return (float)GetHealth();
 }
 
 void StatComponent::UpdateBonusHealth(const float delta)
@@ -156,6 +157,16 @@ void StatComponent::UpdateBonusSpeed(const float delta)
 void StatComponent::SetSpeedMult(const float mult)
 {
 	m_speedMult = mult;
+}
+
+float StatComponent::GetDashDistance() const
+{
+	return m_baseDashValue + m_bonusDashValue;
+}
+
+void StatComponent::UpdateBonusDashDistance(const float delta)
+{
+	m_bonusDashValue += delta;
 }
 
 float StatComponent::GetBaseDamage() const

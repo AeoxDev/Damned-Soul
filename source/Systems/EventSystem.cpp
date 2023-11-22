@@ -29,6 +29,11 @@ struct TimedEvent
 struct TimedEventComponent
 {
 	ML_Vector<TimedEvent> timedEvents;
+
+	TimedEventComponent()
+	{
+		timedEvents.Initialize();
+	};
 };
 
 int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
@@ -284,8 +289,9 @@ void ReleaseTimedEvents(EntityID& entity)
 	}
 }
 
-void HardResetTimedEvents()
+void HardResetTimedEvents(EntityID& entity)
 {
+	//Loop and destroy all existing timed events
 }
 
 void TimedEventIgnoreGamespeed(bool ignore)

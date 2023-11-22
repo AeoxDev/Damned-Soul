@@ -77,6 +77,16 @@ void SetDepthPassTexture(bool forRendering)
 
 }
 
+// ARIAN SKREV DETTA, FIGHT ME
+void SetDepthPassTextureCompute(bool set)
+{
+	if (set)
+		d3d11Data->deviceContext->CSSetShaderResources(0, 1, &depthPassSRV);
+	else
+		UnsetShaderResourceView(BIND_COMPUTE, 0);
+
+}
+
 void UnsetDepthPassTexture(bool forRendering)
 {
 	if (forRendering)

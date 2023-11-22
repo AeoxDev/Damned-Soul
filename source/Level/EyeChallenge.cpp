@@ -64,8 +64,6 @@ void LoadEyeChallenge()
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, emptyTexture, emptyTexture);*/
 
-	RenderGeometryIndependentCollision(stage);
-
 	//Finally set the collision boxes
 
 	registry.AddComponent<TransformComponent>(mouse);
