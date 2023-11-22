@@ -43,7 +43,6 @@ void LoadParticleLevel()
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
 	phc->Load("default");
 
-	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
 }
