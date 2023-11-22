@@ -153,14 +153,14 @@ int StateManager::Setup()
 
 	// Render/GPU
 	
-	systems.push_back(new ParticleSystemCPU());
 	
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
 
 	//systems[2]->timeCap = 1.f / 60.f;
-	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
+	systems.push_back(new ParticleSystemCPU());
+	systems.push_back(new ParticleSystem());
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
