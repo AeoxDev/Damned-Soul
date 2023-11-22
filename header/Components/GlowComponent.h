@@ -1,12 +1,12 @@
 #pragma once
 #include "EntityID.h"
 
+// float r, float g,float b
 struct GlowComponent
 {
 	float m_r;
 	float m_g;
 	float m_b;
-	//float m_intensity; Maybe?
 
 	GlowComponent(float r, float g, float b)
 	{
