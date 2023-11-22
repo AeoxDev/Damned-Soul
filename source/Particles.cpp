@@ -38,7 +38,7 @@ void Particles::InitializeParticles()
 	Particle* particles;
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
 
-	flipBookTexture = LoadTexture("\\Sprite.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
+	flipBookTexture = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
 	textureParticle = LoadTexture("\\LavaPlaceholderAlpha.png");
 	noTextureParticle = LoadTexture("\\DefaultParticle.png");
 
@@ -96,6 +96,7 @@ void Particles::UpdateMetadata(int metadataSlot, float v0x, float v0z, float v1x
 	data->metadata[metadataSlot].positionInfo.y = v0x; data->metadata[metadataSlot].positionInfo.z = v0z;
 	data->metadata[metadataSlot].morePositionInfo.x = v1x; 	data->metadata[metadataSlot].morePositionInfo.y = v1z;
 	data->metadata[metadataSlot].morePositionInfo.z = v2x; data->metadata[metadataSlot].morePositionInfo.w = v2z;
+	
 }
 
 ParticleMetadataBuffer* Particles::GetData()
