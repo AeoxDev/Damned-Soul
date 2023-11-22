@@ -51,6 +51,7 @@
 #include "Relics\Gadget\Discount\Membership.h"
 #include "Relics\Gadget\Discount\SeeingDouble.h"
 #include "Relics\Gadget\DashFlash.h"
+#include "Relics\Gadget\QuickReflexes.h"
 // End of include all relics
 
 #include "Relics\Utility\ML_RelicArray.h"
@@ -213,12 +214,12 @@ void _validateMasterRelicList()
 				/*Function*/	EXPLODING_WEAPON::Initialize
 			),
 			RelicData(
-			/*Name*/		"Power Strike",
-			/*Filepath*/	"RelicIcons\\Power_Strike",
-			/*Description*/	POWER_STRIKE::Description(),
-			/*Price*/		10,
-			/*Type*/		RELIC_OFFENSE,
-			/*Function*/	POWER_STRIKE::Initialize
+				/*Name*/		"Power Strike",
+				/*Filepath*/	"RelicIcons\\Power_Strike",
+				/*Description*/	POWER_STRIKE::Description(),
+				/*Price*/		10,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	POWER_STRIKE::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 
@@ -411,6 +412,14 @@ void _validateMasterRelicList()
 				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	DASH_FLASH::Initialize
+			),
+			RelicData(
+				/*Name*/		"Quick Reflexes",
+				/*Filepath*/	"RelicIcons\\Quick_Reflexes",
+				/*Description*/	QUICK_REFLEXES::Description(),
+				/*Price*/		10,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	QUICK_REFLEXES::Initialize
 			),
 			//ENDOF: GADGET RELICS
 		};

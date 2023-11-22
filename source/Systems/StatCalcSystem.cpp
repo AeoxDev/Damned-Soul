@@ -29,6 +29,21 @@ bool StatCalcSystem::Update()
 
 			// It is possible for HP bonus to be reduced to a point that current health is now above maximum without the cap ever being called
 			stats->CapHealth();
+
+			PlayerComponent* pc = registry.GetComponent<PlayerComponent>(entity);
+			if (pc)
+			{
+				pc->ZeroBonusStats();
+				RelicInput::OnStatCalcInputPlayer playerInput =
+				{
+					entity,
+					pc
+				};
+				for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PLAYER_STAT_CALC))
+					// Apply relic
+					func(&playerInput);
+			}
+
 		}
 	}
 	return true;

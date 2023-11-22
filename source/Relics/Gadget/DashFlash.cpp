@@ -28,41 +28,22 @@ void DASH_FLASH::Initialize(void* input)
 	_validateRelicFunctions();
 
 	// Add it to the list of On Obtain functions
-	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(DASH_FLASH::IncreaseDashDistance);
+	(*_RelicFunctions)[FUNC_ON_PLAYER_STAT_CALC].push_back(DASH_FLASH::IncreaseDashDistance);
 }
 
 void DASH_FLASH::IncreaseDashDistance(void* data)
 {
-	RelicInput::OnStatCalcInput* input = (RelicInput::OnStatCalcInput*)data;
-	static bool _enter = true;
+	RelicInput::OnStatCalcInputPlayer* input = (RelicInput::OnStatCalcInputPlayer*)data;
 
 	// Check if this is the owner
-	if (input->entity.index == DASH_FLASH::_OWNER.index && _enter)
+	if (input->entity.index == DASH_FLASH::_OWNER.index)
 	{
-		// Lock so that we don't get infinite recursive calls
-		_enter = false;
-		// Push temp stats onto the stack
-		StatComponent* tempStats = (StatComponent*)MemLib::spush(sizeof(StatComponent));
-		// Get real stats
-		StatComponent* stats = (StatComponent*)input->adressOfStatComonent;
-		// Set the temp stats
-		*tempStats = *stats;
-		tempStats->ZeroBonusStats();
-
-		// Calculate stats
-		RelicInput::OnStatCalcInput tempInput =
-		{
-			DASH_FLASH::_OWNER,
-			tempStats
-		};
-		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_STAT_CALC))
-			func(&tempInput);
+		// Get player component
+		PlayerComponent* playerComp = (PlayerComponent*)input->adressOfPlayerComonent;
+		// Get  stats
+		StatComponent* stats = registry.GetComponent<StatComponent>(DASH_FLASH::_OWNER);
 
 		// Increase dash distance based on speed
-		stats->UpdateBonusDashDistance(DASH_FLASH_FACTOR * stats->GetBonusSpeed());
-
-		// Pop and unlock
-		MemLib::spop();
-		_enter = true;
+		playerComp->UpdateBonusDashScaling(DASH_FLASH_FACTOR * stats->GetBonusSpeed());
 	}
 }

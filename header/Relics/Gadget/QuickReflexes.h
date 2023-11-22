@@ -1,7 +1,7 @@
 #pragma once
 #include "EntityID.h"
 
-namespace DASH_FLASH
+namespace QUICK_REFLEXES
 {
 	extern EntityID _OWNER;
 
@@ -10,6 +10,6 @@ namespace DASH_FLASH
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
-	// The Increase Dash Distance function for Dash Flash
-	void IncreaseDashDistance(void* data);
+	// The Increase Dash Count function of Double Trouble
+	void IncreaseDashCount(void* data);
 }

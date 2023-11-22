@@ -19,7 +19,7 @@ void StatComponent::ZeroBonusStats()
 	m_bonusHealth = 0;
 	m_damageReduction = 1.f; // Since this is a multiplier, setting it to 1.0 is equivalent to setting the bonus to 0
 	m_bonusMoveSpeed = 0;
-	m_bonusDashValue = 0;
+	//m_bonusDashValue = 0;
 	m_bonusDamage = 0;
 	m_bonusAttackSpeed = 0;
 	m_bonusKnockback = 0;
@@ -169,15 +169,15 @@ void StatComponent::SetSpeedMult(const float mult)
 	m_speedMult = mult;
 }
 
-float StatComponent::GetDashDistance() const
-{
-	return m_baseDashValue + m_bonusDashValue;
-}
-
-void StatComponent::UpdateBonusDashDistance(const float delta)
-{
-	m_bonusDashValue += delta;
-}
+//float StatComponent::GetDashDistance() const
+//{
+//	return m_baseDashValue + m_bonusDashValue;
+//}
+//
+//void StatComponent::UpdateBonusDashDistance(const float delta)
+//{
+//	m_bonusDashValue += delta;
+//}
 
 float StatComponent::GetBaseDamage() const
 {
@@ -267,4 +267,43 @@ int PlayerComponent::GetSouls() const
 int PlayerComponent::GetTotalSouls() const
 {
 	return this->totalSouls;
+}
+
+void PlayerComponent::UpdateBonusDashScaling(const float delta)
+{
+	m_bonusDashValue += delta;
+}
+
+void PlayerComponent::UpdateBonusDashes(const int delta)
+{
+	m_bonusDashes += delta;
+}
+
+bool PlayerComponent::ConsumeDash()
+{
+	if (m_remainingDashes == m_baseDashes + m_bonusDashes)
+		m_dashCounter = m_dashCooldown;
+	return 0 <= --m_remainingDashes;
+}
+
+void PlayerComponent::DashCooldown(const float dt)
+{
+	if (m_dashCounter < dt)
+	{
+		m_dashCounter = 0;
+		m_remainingDashes = m_baseDashes + m_bonusDashes;
+	}
+	else if (0 < m_dashCounter)
+		m_dashCounter -= dt;
+}
+
+float PlayerComponent::GetDashValue()
+{
+	return m_baseDashValue + m_bonusDashValue;
+}
+
+void PlayerComponent::ZeroBonusStats()
+{
+	m_bonusDashes = 0;
+	m_bonusDashValue = 0;
 }
