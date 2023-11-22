@@ -43,7 +43,8 @@ void DashBeginHit(EntityID& entity, const int& index)
 	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
 
 	//Disable damage taken until EndHit
-	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+	if (registry.GetComponent<PlayerComponent>(entity) != nullptr)
+		SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
 }
 
 void MiddleHit(EntityID& entity, const int& index)

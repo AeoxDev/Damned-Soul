@@ -18,6 +18,14 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
+class GlowSystem : public System	// NOTE: Might need a separate blur system for future readability.
+{
+	bool Update();
+};
+class GlowApplySystem : public System
+{
+	bool Update();
+};
 class OnClickSystem : public System
 {
 	bool Update();
@@ -76,7 +84,10 @@ class TransformSystem : public System
 {
 	bool Update();
 };
-
+class FollowerSystem : public System
+{
+	bool Update();
+};
 class ParticleSystemGPU : public System
 {
 	bool Update();

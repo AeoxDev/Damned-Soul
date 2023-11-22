@@ -580,7 +580,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//Create player
 	stateManager.player = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
-	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerLP.mdl"));
 	model->shared.colorMultiplicativeRed = 1.25f;
 	model->shared.colorMultiplicativeGreen = 1.25f;
 	model->shared.colorMultiplicativeBlue = 1.25f;
@@ -627,6 +627,26 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
+	// Create weapon
+	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
+
+	ModelSkeletonComponent* weapon_model = registry.AddComponent<ModelSkeletonComponent>(stateManager.weapon, LoadModel("AxeV1.mdl"));
+	weapon_model->shared.colorMultiplicativeRed = 1.25f;
+	weapon_model->shared.colorMultiplicativeGreen = 1.25f;
+	weapon_model->shared.colorMultiplicativeBlue = 1.25f;
+	weapon_model->shared.gammaCorrection = 1.5f;
+
+	AnimationComponent* weapon_animation = registry.AddComponent<AnimationComponent>(stateManager.weapon, AnimationComponent());
+	weapon_animation->aAnim = ANIMATION_IDLE;
+	weapon_animation->aAnimTime = 0.5f;
+	weapon_animation->aAnimIdx = 0;
+	weapon_animation->aAnimTimeFactor = 1.0f;
+
+	TransformComponent* weapon_transform = registry.AddComponent<TransformComponent>(stateManager.weapon);
+	weapon_transform->facingZ = facingZ;
+	weapon_transform->mass = mass;
+
+	FollowerComponent* weapon_follow = registry.AddComponent<FollowerComponent>(stateManager.weapon, stateManager.player);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)
@@ -649,7 +669,7 @@ void ReloadPlayerNonGlobals()
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{
-		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerPlaceholder.mdl"));
+		modelLoaded= registry.AddComponent<ModelSkeletonComponent>(stateManager.player, LoadModel("PlayerLP.mdl"));
 		modelLoaded->shared.colorMultiplicativeRed = 1.25f;
 		modelLoaded->shared.colorMultiplicativeGreen = 1.25f;
 		modelLoaded->shared.colorMultiplicativeBlue = 1.25f;
