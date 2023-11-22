@@ -99,15 +99,23 @@ void SimulateMainMenu(std::string& title, int total)
 
 void SimulateParticleLevel(std::string& title, int total)
 {
-	LoadParticleLevel();
 	for (size_t i = 0; i < total; i++)
 	{
-		CountDeltaTime();
-		UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
-		stateManager.Update();
-		stateManager.EndFrame();
-		//MemLib::pdefrag();
+		LoadLevel(-1);
+
+		for (int j = 0; j < 60; j++)
+		{
+			CountDeltaTime();
+			UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
+			stateManager.Update();
+			stateManager.EndFrame();
+			//MemLib::pdefrag();
+		}
+
+		stateManager.activeLevel = 0;
+		UIFunc::LoadNextLevel(nullptr, i);
 	}
+	
 	gameSpeed = 1.0f;
 	UIFunc::Game_MainMenu(nullptr, 0);
 }

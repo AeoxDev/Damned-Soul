@@ -8,7 +8,8 @@
 
 //#define MAIN_MENU_TEST
 
-#define PARTICLE_TEST
+//Not done, Dont use
+//#define PARTICLE_TEST
 
 //Displays info in the application title
 void UpdateDebugWindowTitle(std::string& title, std::string extra = "");
@@ -36,7 +37,7 @@ void SimulateMainMenu(std::string& title, int total);
 
 #ifdef PARTICLE_TEST
 
-//Simulate Main Menu enemies for [total] frames
+//Not done, dont use
 void SimulateParticleLevel(std::string& title, int total);
 
 #endif // PARTICLE_TEST

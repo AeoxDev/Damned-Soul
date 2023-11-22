@@ -47,7 +47,7 @@ int main(int argc, char* args[])
 
 #ifdef PARTICLE_TEST
 
-	SimulateParticleLevel(title, 10000);
+	SimulateParticleLevel(title, 100);
 
 #endif // MAIN_MENU_TEST
 

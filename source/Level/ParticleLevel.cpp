@@ -46,4 +46,5 @@ void LoadParticleLevel()
 	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
+	SetInPlay(true);
 }
