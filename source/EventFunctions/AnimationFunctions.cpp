@@ -153,7 +153,9 @@ void TPose(EntityID& entity, const int& index)
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	if (anim != nullptr)
 	{
-		anim->aAnimIdx = 255;
+		anim->aAnimIdx = 0;
+		anim->aAnim = ANIMATION_DEATH;
+		anim->aAnimTime = 0.01f;;
 	}
 	
 }

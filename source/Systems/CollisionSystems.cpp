@@ -189,8 +189,26 @@ bool GeometryIndependentSystem::Update()
 						float repositionFactor = 1.0f;
 						p->positionX += repositionFactor * sumX * stat->GetSpeed() * GetDeltaTime();
 						p->positionZ += repositionFactor * sumZ * stat->GetSpeed() * GetDeltaTime();
-						p->positionX -= repositionFactor * p->currentSpeedX * GetDeltaTime();
-						p->positionZ -= repositionFactor * p->currentSpeedZ * GetDeltaTime();
+						if (sumX*sumX + sumZ*sumZ > 0.0f)
+						{
+							//On edge. Go back a little based on current speed to prevent glitching.
+							p->positionX -= repositionFactor * p->currentSpeedX * GetDeltaTime();
+							p->positionZ -= repositionFactor * p->currentSpeedZ * GetDeltaTime();
+						}
+						else
+						{
+							//Something went wrong and now we are inside the wall, go back to last safe spot.
+							p->positionX = p->lastSafeGIPosX;
+							p->positionY = p->lastSafeGIPosY;
+							p->positionZ = p->lastSafeGIPosZ;
+
+							KnockBackComponent* k = registry.GetComponent<KnockBackComponent>(entity);
+							if (k)
+							{
+								registry.RemoveComponent<KnockBackComponent>(entity);
+							}
+						}
+					
 						//When dashing, bounce
 						if (entity.index == stateManager.player.index)
 						{
@@ -231,6 +249,7 @@ bool GeometryIndependentSystem::Update()
 								p->currentSpeedZ = sumZ;
 								p->positionX += p->currentSpeedX * GetDeltaTime();
 								p->positionZ += p->currentSpeedZ * GetDeltaTime();
+								//Squish
 								AddSquashStretch(entity, Constant, 1.35f, 1.35f, 0.3f, false, 1.0f, 1.0f, 1.0f);
 								p->facingX = -sumX;
 								p->facingZ = -sumZ;
@@ -239,7 +258,9 @@ bool GeometryIndependentSystem::Update()
 								AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 								if (anim != nullptr)
 								{
-									anim->aAnimIdx = 255;
+									anim->aAnimIdx = 0;
+									anim->aAnim = ANIMATION_DEATH;
+									anim->aAnimTime = 0.01f;
 								}
 								player->isDashing = false;
 								AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PauseAnimation, TPose, punishTime, ContinueAnimation, 0, 2);
@@ -258,6 +279,10 @@ bool GeometryIndependentSystem::Update()
 				case 1:
 					//Footstep sound here?
 					stat->m_acceleration = stat->m_baseAcceleration;
+					//Remember last non clipping state.
+					p->lastSafeGIPosX = p->positionX;
+					p->lastSafeGIPosY = p->positionY;
+					p->lastSafeGIPosZ = p->positionZ;
 					break;
 				case HAZARD_LAVA:
 					if (anim != nullptr && anim->aAnim == ANIMATION_WALK)

@@ -10,6 +10,7 @@
 #include "Relics/RelicFunctions.h"
 
 static float godModeFactor = 1.0f;
+bool godModePortal = false;
 void SetGodModeFactor(float value)
 {
 	godModeFactor = value;
@@ -17,6 +18,14 @@ void SetGodModeFactor(float value)
 float GetGodModeFactor()
 {
 	return godModeFactor;
+}
+bool GetGodModePortal()
+{
+	return godModePortal;
+}
+void SetGodModePortal(bool createPortal)
+{
+	godModePortal = createPortal;
 }
 /*
 * NOTES FROM TESTING
@@ -105,11 +114,9 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
-		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
-		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 		playerComp->isDashing = true;
- 		transform->currentSpeedX = dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
-		transform->currentSpeedZ = dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
+ 		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
+		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 	}
 }
 

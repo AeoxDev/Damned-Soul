@@ -385,6 +385,10 @@ bool ControllerSystem::Update()
 				SetGodModeFactor(1.0f);
 			}
 		}
+		if (keyState[SCANCODE_P] == pressed)
+		{
+			SetGodModePortal(true);
+		}
 #endif // _DEBUG
 
 		//Update animation at the end of user input

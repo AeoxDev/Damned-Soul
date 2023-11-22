@@ -228,3 +228,5 @@ struct EnemyComponent
 
 void SetGodModeFactor(float value);
 float GetGodModeFactor();
+bool GetGodModePortal();
+void SetGodModePortal(bool createPortal);

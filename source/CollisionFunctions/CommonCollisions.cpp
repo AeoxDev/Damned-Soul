@@ -558,7 +558,11 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 			return;
 		}
 	}
-
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (hitbox2->circularFlags[params.hitboxID2].canTakeDamage == false)
+	{
+		return;
+	}
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 
