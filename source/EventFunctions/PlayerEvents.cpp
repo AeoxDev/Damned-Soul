@@ -121,7 +121,14 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 			SetHitboxActive(entity, playerComp->attackHitboxID, false);
 		}
 
-		playerComp->currentCharge = 0.0f; //Reset charged attack, well spotted arian
+		if (playerComp->currentCharge > 0.0f) //Dash cancelling a charged attack
+		{
+			playerComp->currentCharge = 0.0f; //Reset charged attack, well spotted arian
+			if(stats)
+				stats->SetSpeedMult(1.0f); //Reset the speed too, phew
+		}
+		
+
 
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
