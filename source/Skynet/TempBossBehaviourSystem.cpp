@@ -324,6 +324,12 @@ bool TempBossBehaviourSystem::Update()
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
 					}
+
+					else if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown * 0.8f && tempBossComponent->isBlinking == false)
+					{
+						AddTimedEventComponentStartEnd(enemyEntity, 0.0f, BossBlinkBeforeShockwave, tempBossComponent->shockWaveChargeCooldown * 0.2f, BossResetBeforeShockwave);
+					}
+
 					TransformDecelerate(enemyEntity);
 					continue; // dont chase
 				}

@@ -407,6 +407,36 @@ void BossShockwaveEnd(EntityID& entity, const int& index)
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
 }
 
+void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
+{
+	TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+	if (tempBoss)
+		tempBoss->isBlinking = true;
+
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (skelel)
+	{
+		skelel->shared.colorAdditiveRed = 0.8f;
+		skelel->shared.colorAdditiveGreen = 0.8f;
+		skelel->shared.colorAdditiveBlue = 0.5f;
+	}
+}
+
+void BossResetBeforeShockwave(EntityID& entity, const int& index)
+{
+	TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+	if (tempBoss)
+		tempBoss->isBlinking = false;
+
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (skelel)
+	{
+		skelel->shared.colorAdditiveRed = 0.0f;
+		skelel->shared.colorAdditiveGreen = 0.0f;
+		skelel->shared.colorAdditiveBlue = 0.0f;
+	}
+}
+
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 
