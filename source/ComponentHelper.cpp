@@ -149,6 +149,16 @@ float StatComponent::GetSpeed() const
 	return speed * (0.f < speed); // Branchlessly put a lower limit of zero on speed
 }
 
+float StatComponent::GetBaseSpeed() const
+{
+	return m_baseMoveSpeed;
+}
+
+float StatComponent::GetBonusSpeed() const
+{
+	return GetSpeed() - m_baseMoveSpeed;
+}
+
 void StatComponent::UpdateBonusSpeed(const float delta)
 {
 	m_bonusMoveSpeed += delta;

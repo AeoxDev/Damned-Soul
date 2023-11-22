@@ -17,17 +17,15 @@ bool StatCalcSystem::Update()
 		if (stats->IsModified())
 		{
 			stats->ZeroBonusStats();
-			for (auto func : relevantRelicFuncs)
+			// Set input
+			RelicInput::OnStatCalcInput input =
 			{
-				// Set input
-				RelicInput::OnStatCalcInput input =
-				{
-					entity,
-					stats
-				};
+				entity,
+				stats
+			};
+			for (auto func : relevantRelicFuncs)
 				// Apply relic
 				func(&input);
-			}
 
 			// It is possible for HP bonus to be reduced to a point that current health is now above maximum without the cap ever being called
 			stats->CapHealth();

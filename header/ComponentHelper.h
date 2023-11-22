@@ -112,6 +112,8 @@ public:
 // Speed
 	// Get the current speed
 	float GetSpeed() const;
+	float GetBaseSpeed() const;
+	float GetBonusSpeed() const;
 	// Update the entity's bonus speed
 	void UpdateBonusSpeed(const float delta);
 	// Set the entity's speed mult

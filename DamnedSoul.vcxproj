@@ -216,6 +216,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\SecondWind.cpp" />
     <ClCompile Include="source\Relics\Defensive\UndeadFortitude.cpp" />
     <ClCompile Include="source\EventFunctions\CutsceneFunctions.cpp" />
+    <ClCompile Include="source\Relics\Gadget\DashFlash.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\ExploitableCoupon.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\Membership.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\SeeingDouble.cpp" />
@@ -602,6 +603,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\PainMirror.h" />
     <ClInclude Include="header\Relics\Defensive\SecondWind.h" />
     <ClInclude Include="header\Relics\Defensive\UndeadFortitude.h" />
+    <ClInclude Include="header\Relics\Gadget\DashFlash.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\ExploitableCoupon.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\Membership.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\SeeingDouble.h" />
@@ -638,6 +640,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Gadget\SoulSpeed.h" />
     <ClInclude Include="header\Relics\Gadget\SpeedyLittleDevil.h" />
     <ClInclude Include="header\Relics\Defensive\SpikedSkin.h" />
+    <ClInclude Include="header\Relics\Utility\SoulRelicHelper.h" />
     <ClInclude Include="header\RenderDepthPass.h" />
     <ClInclude Include="header\Skynet\ImpBehaviour.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
