@@ -26,15 +26,20 @@ namespace Glow
 	extern CB_IDX glow_buffer;
 	extern PoolPointer<GlowData> glow_bufData;
 
+	// Create and load everything necessary for glow to work.
 	void Initialize();
+	// Set recources for glow pass.
 	void PrepareGlowPass();
-	// Unset everything used in glow pass.
+	// Unset resources used in glow pass.
 	void FinishGlowPass();
 	// Set views necessary for blur pass.
 	void SetBlurViews();
 	// Update with values from GlowComponent.
 	void UpdateGlowBuffer(float r, float g, float b);
+	// Set resources for blur pass.
 	void PrepareBlurPass();
+	// Unset resources used in blur pass.
 	void FinishBlurPass();
+	// Clear glow texture.
 	void ClearGlowRenderTarget();
 }

@@ -3,6 +3,7 @@
 #include "SDLHandler.h"
 #include "MemLib\MemLib.hpp"
 #include "RenderDepthPass.h"
+#include "UIRenderer.h"
 
 SRV_IDX Glow::glow_srv;
 UAV_IDX Glow::backbuffer_uav;
@@ -29,7 +30,6 @@ void Glow::Initialize()
 	blur_shader = LoadComputeShader("BlurShader.cso");
 	blur_uav1 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 	blur_uav2 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
-
 	backbuffer_uav = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, renderStates[backBufferRenderSlot].renderTargetView);
 }
 
@@ -53,7 +53,7 @@ void Glow::SetBlurViews()
 	SetUnorderedAcessView(blur_uav1, 0);
 	SetUnorderedAcessView(blur_uav2, 1);
 	SetUnorderedAcessView(backbuffer_uav, 2);
-	SetDepthPassTextureCompute(true);
+	SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_COMPUTE, 0);
 }
 
 void Glow::UpdateGlowBuffer(float r, float g, float b)
@@ -87,6 +87,6 @@ void Glow::FinishBlurPass()
 
 void Glow::ClearGlowRenderTarget()
 {
-	ClearRenderTargetView(glow_rtv, 0, 0, 0, 0); // NOTE: Alpha?
+	ClearRenderTargetView(glow_rtv, 0, 0, 0, 0);
 	ClearDepthStencilView(glow_depth);
 }
