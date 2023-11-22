@@ -250,7 +250,10 @@ bool SkeletonBehaviourSystem::Update()
 			//Dazed
 			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration) 
 			{
-				
+				// this is where we rotate the AI to avoid bullshit player tactics
+				skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
+				skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+				SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ, 4.f);
 			}
 
 			//Combat
