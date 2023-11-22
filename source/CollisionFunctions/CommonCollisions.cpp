@@ -360,8 +360,9 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	
-	float selfKnockback = -SELF_KNOCKBACK_FACTOR * (transform2->mass / transform1->mass * frictionKnockbackFactor1);
-	float appliedKnockback = stat1->GetKnockback() * (transform1->mass / transform2->mass * frictionKnockbackFactor2);
+	float massFactor = std::sqrt(transform1->mass / transform2->mass);
+	float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
+	float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
 	float dx, dz;
 	CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
