@@ -480,21 +480,11 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		return TransformComponent();
 	}
 	int x = 0, z = 0;
-	int limit = 256;
 	float distance = 1.f;
 	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
 	while (!(distance > minRange && distance < maxRange))
 	{
-		--limit;
-		if (limit < 0)
-		{
-			TransformComponent retreatPosition;
-			retreatPosition.positionX = temporaryTransform->positionX;
-			retreatPosition.positionZ = temporaryTransform->positionZ;
-			return retreatPosition;
-			break;
-		}
 		bool legal = false;
 		while (!legal)
 		{

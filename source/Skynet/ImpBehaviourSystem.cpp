@@ -21,7 +21,7 @@ void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformCom
 
 	//Teleport
 	float minRange = 10.0f;
-	float maxRange = 256.0f;
+	float maxRange = 40.0f;
 
 	TransformComponent newTransform = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
 	itc->positionX = newTransform.positionX;
