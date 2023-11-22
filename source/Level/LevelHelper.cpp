@@ -324,9 +324,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (eType == EnemyType::tempBoss)
 	{
-		scaleX *= 2;
-		scaleY *= 2;
-		scaleZ *= 2;
+		scaleX = 4;
+		scaleY = 4;
+		scaleZ = 4;
 	}
 
 	transform.mass = mass;
