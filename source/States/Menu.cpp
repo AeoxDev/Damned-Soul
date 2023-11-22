@@ -30,7 +30,7 @@ void Menu::Setup()
 	Camera::ResetCamera();
 
 	ResetRunTime();
-	int random = rand() % 4;//Level 1, 2, 3
+	int random = rand() % 5;//Level 1, 2, 3, 4
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;

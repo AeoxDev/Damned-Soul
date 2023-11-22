@@ -11,6 +11,7 @@
 #include "GameRenderer.h"
 #include "UIComponents.h"
 #include "Model.h"
+#include "Levels\LevelHelper.h"
 
 void Credits::Setup()
 {
@@ -22,10 +23,11 @@ void Credits::Setup()
 	Camera::ResetCamera();
 
 	//Setup stage to rotate around
-	EntityID stage = registry.CreateEntity();
 	// Stage Model
-	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
-	stageM->model = LoadModel("PlaceholderScene.mdl");
+	StageSetupVariables stageVars;
+
+	stageVars.stageNr = rand() % 5;
+	EntityID stage = SetUpStage(stageVars);
 	// Stage Transform
 	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
 	// Stage POI
