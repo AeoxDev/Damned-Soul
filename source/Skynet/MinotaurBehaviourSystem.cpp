@@ -118,13 +118,14 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 		float scalar = dirX * mc->chargeDirX + dirZ * mc->chargeDirZ;
 
 		//If charging scalar point direction > 0.0, charge
-		if (scalar > 0 && mc->chargeTimer < 3.0f)
+		if (mc->chargeTimer < mc->chargeDuration)
 		{
 			mc->chargeTimer += GetDeltaTime();
  			SmoothRotation(mtc, mc->chargeDirX, mc->chargeDirZ, 30.0f);
 
 			mtc->positionX += mc->chargeDirX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
 			mtc->positionZ += mc->chargeDirZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
+			//TransformAccelerate(enemy, mtc->facingX * 6.0f, mtc->facingZ * 6.0f);
 
 			SetHitboxActive(enemy, enemyComp->attackHitBoxID, true);
 			SetHitboxCanDealDamage(enemy, enemyComp->attackHitBoxID, true);

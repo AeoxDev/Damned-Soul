@@ -105,7 +105,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			mass = 150.f;
+			mass = 80.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -175,7 +175,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			moveSpeed = 10.f;
+			moveSpeed = 12.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
