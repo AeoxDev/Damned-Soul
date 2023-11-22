@@ -92,7 +92,7 @@ void LoadLevel2()
 
 	float redLight = 0.35f;
 
-	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
+	SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
 	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);

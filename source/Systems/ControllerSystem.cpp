@@ -7,6 +7,7 @@
 #include "EventFunctions.h"
 #include "States\StateManager.h"
 #include "Camera.h"
+#include "Model.h"
 
 bool ControllerSystem::Update()
 {
@@ -77,6 +78,40 @@ bool ControllerSystem::Update()
 				}
 			}
 		}
+		if (keyState[SCANCODE_S] == pressed)
+		{
+			if (stateManager.hitboxVis.index == -1)
+			{
+				stateManager.hitboxVis = registry.CreateEntity();
+				ModelBonelessComponent* stageHitbox;
+				TransformComponent* transform;
+				visualizeStage = true;
+				switch (stateManager.activeLevel)
+				{
+					case 1://Level 1
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV1Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 3://Level 2
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV2Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 5://Level 3
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV3Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 7://Level 4
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV4Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+				default:
+					break;
+				}
+			}
+			
+			
+			
+		}
 		if (keyState[SCANCODE_0] == pressed)
 		{
 			for (auto entity : View<HitboxComponent>(registry))
@@ -127,6 +162,13 @@ bool ControllerSystem::Update()
 			{
 				hitboxVisualizerActive[i] = false;
 			}
+			if (stateManager.hitboxVis.index != -1)
+			{
+				registry.DestroyEntity(stateManager.hitboxVis);
+				stateManager.hitboxVis.index = -1;
+				visualizeStage = false;
+			}
+
 		}
 	}
 #endif // _DEBUG

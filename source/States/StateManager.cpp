@@ -118,6 +118,9 @@ void SetInCredits(bool value)
 
 int StateManager::Setup()
 {
+#ifdef _DEBUG
+	visualizeStage = true;
+#endif
 	bool loaded = Setup3dGraphics();
 	if (!loaded)
 	{

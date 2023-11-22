@@ -92,9 +92,23 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
 	RenderGeometryIndependentCollision(stage, wall, hitbox);
 
+	
+	
 #ifndef _DEBUG
 	registry.DestroyEntity(hitbox);
+#else
+	if (visualizeStage == true)
+	{
+		stateManager.hitboxVis = hitbox;
+	}
+	else
+	{
+		registry.DestroyEntity(hitbox);
+	}
+	
+	
 #endif // _DEBUG
+
 	return stage;
 }
 
@@ -468,7 +482,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		SetupEnemyCollisionBox(entity, 1.4f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
-			player->killThreshold+=15;
+			player->killThreshold+=14;
 		}
 	}
 	else if (eType == EnemyType::lucifer)
@@ -678,10 +692,10 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	}
 	do
 	{
-		gridPos.x = ((float)GI_TEXTURE_DIMENSIONS * 0.1f) + ((rand() % GI_TEXTURE_DIMENSIONS) * 0.8f);
-		gridPos.z = ((float)GI_TEXTURE_DIMENSIONS * 0.1f) + ((rand() % GI_TEXTURE_DIMENSIONS) * 0.8f);
+		gridPos.x = (int)(((float)GI_TEXTURE_DIMENSIONS * 0.33f) + ((float)(rand() % GI_TEXTURE_DIMENSIONS) * 0.33f));
+		gridPos.z = (int)(((float)GI_TEXTURE_DIMENSIONS * 0.33f) + ((float)(rand() % GI_TEXTURE_DIMENSIONS) * 0.33f));
 		
-		pixelValue = giTexture->texture[gridPos.x][gridPos.z];
+		pixelValue = giTexture->texture[gridPos.z][gridPos.x];
 	} while (pixelValue != 1);
 
 	
@@ -728,7 +742,7 @@ void SetScoreboardUI(EntityID stage)
 	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.25f), DSFLOAT2(1.0f, 1.0f));
 
 	const int amount = 8;
-	const char const texts[amount][32] =
+	const char texts[amount][32] =
 	{
 		"Time: ", //index 3
 

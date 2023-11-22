@@ -2,7 +2,6 @@
 #include "D3D11Helper\D3D11Helper.h"
 #include "EntityFramework.h"
 #include "EntityID.h"
-#define TEXTURE_DIMENSIONS 512
 
 
 RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity);

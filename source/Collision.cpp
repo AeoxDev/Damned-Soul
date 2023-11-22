@@ -41,6 +41,7 @@ RS_IDX hitboxRasterizerState;
 CB_IDX hitboxConstantBuffer;
 
 bool hitboxVisualizerActive[SAME_TYPE_HITBOX_LIMIT * 2];
+bool visualizeStage = false;
 
 struct CircularConvexReturn
 {

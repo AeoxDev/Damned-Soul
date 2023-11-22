@@ -100,8 +100,8 @@ bool ShadowSystem::Update()
 	Camera::SetPosition(cameraLookAt.x + -dir.x * dist, cameraLookAt.y + -dir.y * dist, cameraLookAt.z + -dir.z * dist + 16.0f, false);//Set this to center of stage offset upwards
 	Camera::SetLookAt(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z + 16.0f);//Set to center of stage
 	Camera::SetUp(0.0f, 1.0f, 0.0f);
-	Camera::SetWidth(640.0f * Camera::GetFOV());//Set width (x) of orthogonal based on stage
-	Camera::SetHeight(640.0f * Camera::GetFOV());//Set height (z) of orthogonal based on stage
+	Camera::SetWidth(700.0f * Camera::GetFOV());//Set width (x) of orthogonal based on stage
+	Camera::SetHeight(700.0f * Camera::GetFOV());//Set height (z) of orthogonal based on stage
 	Camera::SetOrthographicDepth(300.0f);
 	Camera::UpdateView();
 	Camera::UpdateProjection();

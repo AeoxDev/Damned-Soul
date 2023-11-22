@@ -103,7 +103,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 {
 	if (giTexture == nullptr)
 	{
-		giTexture = (GITexture*)MemLib::spush(sizeof(char) * TEXTURE_DIMENSIONS * TEXTURE_DIMENSIONS);
+		giTexture = (GITexture*)MemLib::spush(sizeof(char) * GI_TEXTURE_DIMENSIONS * GI_TEXTURE_DIMENSIONS);
+
 	}
 	//Find GI component
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
@@ -310,8 +311,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	GetTextureByType(stagingResource, TEXTURE_HOLDER_TYPE::TEXTURE, GIcomponent->stagingTexture);
 	d3d11Data->deviceContext->CopyResource(stagingResource, RTVResource);
 
-	giCopyTexture* mappingTexture;
-	mappingTexture = (giCopyTexture*)MemLib::spush(sizeof(giCopyTexture));
+	giCopyTexture* mappingTexture = new giCopyTexture();//Does not fit onto the memlib stack :(
+	//mappingTexture = (giCopyTexture*)MemLib::spush(sizeof(giCopyTexture));
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource{0};
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -338,8 +339,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 		}
 	}
 
-	bool succeeded = MemLib::spop();
-
+	//bool succeeded = MemLib::spop();
 	//Set back camera to previous mode
 	Camera::ToggleProjection();
 	DirectX::XMStoreFloat3(&vData, previousPos);
@@ -351,6 +351,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	delete mappingTexture;
 	//RTVResource->Release();
 	//stagingResource->Release();
 	//Return.

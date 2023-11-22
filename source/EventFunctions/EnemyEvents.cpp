@@ -375,17 +375,17 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 {
 	int rarity = 0;
 	EnemyType type = skeleton;
-	rarity = rand() % 8;
+	rarity = rand() % 16;
 	if (rarity == 0)
 	{
 		type = hellhound;
 	}
-	rarity = rand() % 8;
+	rarity = rand() % 16;
 	if (rarity == 0)
 	{
 		type = imp;
 	}
-	rarity = rand() % 16;
+	rarity = rand() % 64;
 	if (rarity == 0)
 	{
 		type = eye;

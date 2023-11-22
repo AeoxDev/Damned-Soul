@@ -15,7 +15,18 @@ float giSpawnPosZ = 0.0f;
 struct GIFloat2
 {
 	float x, z;
+	GIFloat2 operator+(GIFloat2 add);
 };
+GIFloat2 GIFloat2::operator+(GIFloat2 add)
+{
+	
+	
+	GIFloat2 sum;
+	sum.x = this->x + add.x;
+	sum.z = this->z + add.z;
+	return sum;
+}
+
 
 //To find the direction to get out of cracks.
 GIFloat2 GetGIadjacentDirections(int pixelPosX, int pixelPosZ, int type)
@@ -126,6 +137,7 @@ bool GeometryIndependentSystem::Update()
 					{
 						registry.DestroyEntity(entity);
 					}
+					break;
 				case 0:
 				/*	p->positionX = giSpawnPosX;
 					p->positionZ = giSpawnPosZ;
@@ -135,6 +147,7 @@ bool GeometryIndependentSystem::Update()
 						registry.DestroyEntity(entity);
 					}*/
 					//Detect edge
+					proj = registry.GetComponent<ProjectileComponent>(entity);
 					if (proj != nullptr)
 					{
 						registry.DestroyEntity(entity);
@@ -158,15 +171,13 @@ bool GeometryIndependentSystem::Update()
 							}
 							continue;
 						}
+
 						GIFloat2 direction = GetGIadjacentDirections(pixelPos.x, pixelPos.z, 0);
 						GIFloat2 lastDirection = GetGIadjacentDirections(lastPixelPos.x, lastPixelPos.z, 0);
-
-						//float sumX = direction.x + lastDirection.x;
-						//float sumZ = direction.z + lastDirection.z;
-						//float sumX = direction.x;
-						//float sumZ = direction.z;
-						float sumX = lastDirection.x;
-						float sumZ = lastDirection.z;
+					
+						GIFloat2 directionSum = direction + lastDirection;//0, 0 and last
+						float sumX = directionSum.x;
+						float sumZ = directionSum.z;
 
 						float len = sqrtf(sumX * sumX + sumZ * sumZ);
 						if (len > 0)
@@ -175,9 +186,11 @@ bool GeometryIndependentSystem::Update()
 							sumZ /= len;
 						}
 
-
-						p->positionX += sumX * stat->GetSpeed() * GetDeltaTime();
-						p->positionZ += sumZ * stat->GetSpeed() * GetDeltaTime();
+						float repositionFactor = 1.0f;
+						p->positionX += repositionFactor * sumX * stat->GetSpeed() * GetDeltaTime();
+						p->positionZ += repositionFactor * sumZ * stat->GetSpeed() * GetDeltaTime();
+						p->positionX -= repositionFactor * p->currentSpeedX * GetDeltaTime();
+						p->positionZ -= repositionFactor * p->currentSpeedZ * GetDeltaTime();
 						//When dashing, bounce
 						if (entity.index == stateManager.player.index)
 						{
@@ -320,3 +333,4 @@ bool GeometryIndependentSystem::Update()
 	
 	return true;
 }
+

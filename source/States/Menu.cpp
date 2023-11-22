@@ -19,6 +19,7 @@
 
 void Menu::Setup()
 {
+	gameSpeed = 1.0f;
 	// Clear relics when entering the main menu
 	Relics::ResetRelics();
 	SetInMainMenu(true);
@@ -41,7 +42,7 @@ void Menu::Setup()
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
 
 
-	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
+	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
 
 	/*char ctexture[] = "3-1C.png";
 	char ltexture[] = "3-1L.png";
@@ -52,11 +53,11 @@ void Menu::Setup()
 
 	stateManager.activeLevel = 0;
 	AddTimedEventComponentStart(stage, 2.0f, LoopSpawnMainMenuEnemy, skeleton, 1);
-	EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
+	/*EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
 	SetHitboxIsPlayer(enemy, 1, true);
-	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
+	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);*/
 
-	//Randomize enemies on screen max 6 of each'
+	//Randomize enemies on screen max 12 of each'
 	for (size_t i = 0; i < 12; i++)
 	{
 		if (rand() % 16 == 0)//Dog, rare

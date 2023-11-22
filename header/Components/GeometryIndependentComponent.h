@@ -1,6 +1,6 @@
 #pragma once
 #include <cinttypes>
-#define GI_TEXTURE_DIMENSIONS 512
+#define GI_TEXTURE_DIMENSIONS 2048
 #define GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING 128
 struct EntityID;
 

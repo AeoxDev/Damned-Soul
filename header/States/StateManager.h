@@ -30,6 +30,7 @@ struct StateManager
 	Credits credits;
 	EntityID player;
 	EntityID stage;
+	EntityID hitboxVis;
 
 
 	/// <summary>
