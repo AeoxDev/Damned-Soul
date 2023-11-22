@@ -339,6 +339,9 @@ int ParticleComponent::FindSlot()
 
 void ParticleComponent::Release()
 {
+	if (data->metadata[metadataSlot].start >= data->metadata[metadataSlot].end)
+		return;
+
 	std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
 	
 	// Declare to the compute shader that this components particles is to be reset
@@ -375,42 +378,42 @@ void ParticleComponent::Release()
 	metadataSlot = -1;
 }
 
-void ParticleComponent::RemoveParticles(EntityID& entity)
-{
-	std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
-
-	// Declare to the compute shader that this components particles is to be reset
-	data->metadata[metadataSlot].reset = true;
-	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
-
-	// Prepare dispatch
-	SetComputeShader(setToZeroCS);
-	SetUnorderedAcessView(Particles::m_readBuffer->UAV, 0);
-	SetUnorderedAcessView(Particles::m_writeBuffer->UAV, 1);
-	SetConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, BIND_COMPUTE, 0);
-
-	// Reset the time values of the particles to a glorious zero
-	Dispatch(groupsRequiered + 1, metadataSlot + 1, 1); //x * y * z
-
-	// Finish dispatch
-	UnsetComputeShader();
-	UnsetUnorderedAcessView(0);
-	UnsetUnorderedAcessView(1);
-	UnsetConstantBuffer(BIND_COMPUTE, 0);
-
-	data->metadata[metadataSlot].life = -1.f;
-	data->metadata[metadataSlot].maxRange = -1.f;
-	data->metadata[metadataSlot].size = -1.f;
-	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1.f;
-	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].end = 0.f;
-
-	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
-
-	metadataSlot = -1;
-
-	registry.RemoveComponent<ParticleComponent>(entity);
-}
+//void ParticleComponent::RemoveParticles(EntityID& entity)
+//{
+//	std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
+//
+//	// Declare to the compute shader that this components particles is to be reset
+//	data->metadata[metadataSlot].reset = true;
+//	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+//
+//	// Prepare dispatch
+//	SetComputeShader(setToZeroCS);
+//	SetUnorderedAcessView(Particles::m_readBuffer->UAV, 0);
+//	SetUnorderedAcessView(Particles::m_writeBuffer->UAV, 1);
+//	SetConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, BIND_COMPUTE, 0);
+//
+//	// Reset the time values of the particles to a glorious zero
+//	Dispatch(groupsRequiered + 1, metadataSlot + 1, 1); //x * y * z
+//
+//	// Finish dispatch
+//	UnsetComputeShader();
+//	UnsetUnorderedAcessView(0);
+//	UnsetUnorderedAcessView(1);
+//	UnsetConstantBuffer(BIND_COMPUTE, 0);
+//
+//	data->metadata[metadataSlot].life = -1.f;
+//	data->metadata[metadataSlot].maxRange = -1.f;
+//	data->metadata[metadataSlot].size = -1.f;
+//	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
+//	data->metadata[metadataSlot].pattern = -1.f;
+//	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].end = 0.f;
+//
+//	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+//
+//	metadataSlot = -1;
+//
+//	registry.RemoveComponent<ParticleComponent>(entity);
+//}
 
 void ParticleComponent::ResetBuffer()
 {
