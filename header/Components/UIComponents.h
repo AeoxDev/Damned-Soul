@@ -17,7 +17,7 @@
 
 //Shop Components
 #include "UIComponents/UIShopImpComponents.h"
-#include "UIComponents/UIShopRerollComponent.h"
+#include "UIComponents/UIShopButtonComponents.h"
 #include "UIComponents/UIShopRelicComponent.h"
 
 //Player Components

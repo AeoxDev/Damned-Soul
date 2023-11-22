@@ -44,6 +44,7 @@ void SplitBoss(EntityID& entity, const int& index);
 void BossShockwaveStart(EntityID& entity, const int& index);
 void BossShockwaveExpand(EntityID& entity, const int& index);
 void BossShockwaveEnd(EntityID& entity, const int& index);
+void CreateNewSplitZac(EntityID& entity, const int& index);
 
 
 //Loop static hazard hitbox

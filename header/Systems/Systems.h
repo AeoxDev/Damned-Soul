@@ -59,10 +59,6 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIRelicsSystem : public System
-{
-	bool Update();
-};
 class UIShopSystem : public System
 {
 	bool Update();
@@ -120,6 +116,11 @@ class ImpBehaviourSystem : public System
 };
 
 class MinotaurBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class ZacBehaviourSystem : public System
 {
 	bool Update();
 };

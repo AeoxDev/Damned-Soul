@@ -217,6 +217,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\EventFunctions\CutsceneFunctions.cpp" />
     <ClCompile Include="source\Relics\Gadget\IcyBlade.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
+    <ClCompile Include="source\Level\ParticleLevel.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Offensive\CrackedLense.cpp" />
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
@@ -230,9 +231,10 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\LuciferBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\MinotaurBehaviourSystem.cpp" />
+    <ClCompile Include="source\Skynet\ZacBehaviourSystem.cpp" />
     <ClCompile Include="source\States\Credits.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
-    <ClCompile Include="source\UI\UIComponent.cpp" />
+    <ClCompile Include="source\Components\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
@@ -537,7 +539,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\UIComponents\UIGameScoreboardComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPauseRelicTextComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopRerollComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIShopButtonComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameTimeComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIComponent.h">
@@ -618,6 +620,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />
+    <ClInclude Include="header\Skynet\ZacBehaviour.h" />
     <ClInclude Include="header\States\CleanupMacros.h" />
     <ClInclude Include="header\States\Credits.h" />
     <ClInclude Include="header\States\Pause.h" />
