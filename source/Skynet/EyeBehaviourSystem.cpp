@@ -168,7 +168,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
 	if (enemyAnim->aAnim != ANIMATION_IDLE)
 	{
@@ -177,27 +177,46 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		enemyAnim->aAnimTime = 0.0f;
 	}
 
-	eyeComponent->timeCounter += GetDeltaTime();
-	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
+	bool okayDirection = false;
+	while (!okayDirection)
 	{
-		eyeComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		eyeComponent->goalDirectionX = randomX;
-		eyeComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		eyeComponent->updateInterval = randomInterval(gen);
+		if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
+		{
+			eyeComponent->timeCounter = 0.f;
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			// Define a uniform distribution for the range [-1.0, 1.0]
+			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+			float randomX = distribution(gen);
+			float randomZ = distribution(gen);
+			eyeComponent->goalDirectionX = randomX;
+			eyeComponent->goalDirectionZ = randomZ;
+			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+			eyeComponent->updateInterval = randomInterval(gen);
+		}
+
+		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+		float oldX = eyeTransformComponent->positionX;
+		float oldZ = eyeTransformComponent->positionZ;
+		float bias = 1.f;
+
+		//skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		//skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		TransformAccelerate(enemy, eyeTransformComponent->facingX * 0.5f, eyeTransformComponent->facingZ * 0.5f);
+		if ((eyeTransformComponent->positionX >= oldX + bias || eyeTransformComponent->positionZ >= oldZ + bias) && eyeTransformComponent->positionX <= oldX - bias || eyeTransformComponent->positionZ <= oldZ - bias)
+		{
+			//not good direction
+			eyeTransformComponent->positionX = oldX;
+			eyeTransformComponent->positionZ = oldZ;
+			eyeComponent->timeCounter = eyeComponent->updateInterval + 1.f;
+		}
+		else
+		{
+			// good direction
+			okayDirection = true;
+		}
+
 	}
-
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
-
-
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
 void ChargeColorFlash(EntityID& entity, const int& index)
@@ -427,14 +446,14 @@ bool EyeBehaviourSystem::Update()
 			else // idle
 			{
 				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
 		}
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 		}
 
 		eyeComponent->attackStunTimer += GetDeltaTime();

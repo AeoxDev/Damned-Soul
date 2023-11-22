@@ -7,21 +7,40 @@
 
 struct OnHoverComponent
 {
-	std::vector<DSFLOAT2> positions;
-	std::vector<DSBOUNDS> bounds;
+	ML_Vector<DSFLOAT2> positions;
+	ML_Vector<DSBOUNDS> bounds;
 
 	int index = 0;
 	int oldIndex = 0;
 
 	//container of bool doesnt exit, 0 = false, 1 = true
-	std::vector<int> redrawUIChecks;
+	ML_Vector<int> redrawUIChecks;
 
 	//container of bool doesnt exit, 0 = false, 1 = true
-	std::vector<int> hasBeenDrawnChecks;
+	ML_Vector<int> hasBeenDrawnChecks;
 
-	std::vector<void(*)(void*, int, bool)> onHoverFunctions;
+	ML_Vector<void(*)(void*, int, bool)> onHoverFunctions;
 
 	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int, bool))
+	{
+		positions.Initialize();
+		bounds.Initialize();
+
+		redrawUIChecks.Initialize();
+		hasBeenDrawnChecks.Initialize();
+
+		onHoverFunctions.Initialize();
+
+		positions.push_back(pos);
+		bounds.push_back(bnds);
+
+		onHoverFunctions.push_back(func);
+
+		redrawUIChecks.push_back(1);
+		hasBeenDrawnChecks.push_back(0);
+	};
+
+	void Add(DSFLOAT2 pos, DSBOUNDS bnds, void(*func)(void*, int, bool))
 	{
 		positions.push_back(pos);
 		bounds.push_back(bnds);
@@ -36,7 +55,7 @@ struct OnHoverComponent
 	int Intersect(DSINT2 mousePosition)
 	{
 		int retval = -1;
-		for (size_t i = positions.size(); i --> 0;)
+		for (uint32_t i = positions.size(); i --> 0;)
 		{
 			if ((mousePosition.x > positions[i].x) && (mousePosition.x < positions[i].x + bounds[i].right) &&
 				(mousePosition.y > positions[i].y) && (mousePosition.y < positions[i].y + bounds[i].bottom))
@@ -52,12 +71,12 @@ struct OnHoverComponent
 
 	void Release()
 	{
-		positions.~vector();
-		bounds.~vector();
+		positions.~ML_Vector();
+		bounds.~ML_Vector();
 
-		onHoverFunctions.~vector();
+		redrawUIChecks.~ML_Vector();
+		hasBeenDrawnChecks.~ML_Vector();
 
-		redrawUIChecks.~vector();
-		hasBeenDrawnChecks.~vector();
+		onHoverFunctions.~ML_Vector();
 	};
 };
