@@ -55,7 +55,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunctions::SetSettings(nullptr, i);
+		UIFunctions::MainMenu::Settings(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();
@@ -68,7 +68,7 @@ int main(int argc, char* args[])
 
 			MemLib::pdefrag();
 		}
-		UIFunctions::Back(nullptr, i);
+		UIFunctions::Settings::Back(nullptr, i);
 	}
 
 #endif // TESTMTS
@@ -77,7 +77,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunctions::SetCredits(nullptr, i);
+		UIFunctions::MainMenu::SetCredits(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();
@@ -100,7 +100,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunctions::LoadNextLevel(nullptr, i);
+		UIFunctions::Game::LoadNextLevel(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();
@@ -117,7 +117,7 @@ int main(int argc, char* args[])
 	}
 
 	gameSpeed = 1.0f;
-	UIFunctions::SetMainMenu(nullptr, 0);
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
  	//for (unsigned int i = 0; i < 3000; ++i) // THIS IS GONA BECOME PARTICLE TESTER
 	//{
 	//	UIFunctions::LoadParticleLevel(nullptr);
