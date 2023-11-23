@@ -202,10 +202,10 @@ void Menu::SetupButtons()
 
 	void(* const functions[buttons])(void*, int) =
 	{
-		UIFunc::MainMenu_Start,
-		UIFunc::MainMenu_Credits,
-		UIFunc::MainMenu_Settings,
-		UIFunc::MainMenu_Quit
+		UIFunctions::MainMenu::Start,
+		UIFunctions::MainMenu::SetCredits,
+		UIFunctions::MainMenu::SetSettings,
+		UIFunctions::MainMenu::Quit
 	};
 
 	for (int i = 0; i < buttons; i++)
@@ -218,7 +218,7 @@ void Menu::SetupButtons()
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], 30.0f);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
-		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);

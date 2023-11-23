@@ -26,3 +26,5 @@
 
 //Pause Components
 #include "UIComponents/UIPauseRelicTextComponent.h"
+#include "UIComponents/UIPauseButtonComponent.h"
+#include "UIComponents/UIPauseSettingsComponent.h"

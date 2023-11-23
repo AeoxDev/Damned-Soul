@@ -298,21 +298,19 @@ bool ControllerSystem::Update()
 		/*COMBAT INPUT*/
 		/*DASH*/
 		//Decrement and clamp
-		player->dashCounter -= GetDeltaTime();
-		if (player->dashCounter < 0.0f)
-			player->dashCounter = 0.0f;
+		player->DashCooldown(GetDeltaTime());
 
 		//Dash in the direction you're moving, defaults to dashing backwards if you're not moving. Gives i-frames for the duration
-		if (keyState[SCANCODE_SPACE] == pressed && player->dashCounter == 0.0f)
+		if (keyState[SCANCODE_SPACE] == pressed && player->ConsumeDash())
 		{
-			player->dashCounter = player->dashCooldown;
+			//player->dashCounter = player->dashCooldown; // Not handled in ConsumeDash()
 			//Putting cooldown on these dashes, PlayerComponent has the variables in charge of both current counter and the max-value
 			if (moving)
 			{
 				//Set facing direction to dash direction when moving
 				transform->facingX = controller->goalX;
 				transform->facingZ = controller->goalZ;
-				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, stat->GetDashDistance());
+				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, player->GetDashValue());
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 				AddSquashStretch(entity, Linear, 0.8f, 0.8f, 1.5f, true, 1.2f, 1.2f, 0.8f);

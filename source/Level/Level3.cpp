@@ -47,23 +47,24 @@ void LoadLevel3()
 	//Upper right corner:
 	SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f);
 	SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f);
+	SetupEnemy(EnemyType::imp, -40.f, 0.f, 103.f);
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -13.f, 0.f, 80.f);
 
 	//Under ribs
-	SetupEnemy(EnemyType::hellhound, -188.f, 0.f, 24.f);
-	SetupEnemy(EnemyType::hellhound, -181.f, 0.f, 33.f);
-	SetupEnemy(EnemyType::hellhound, -194.f, 0.f, 13.f);
-	SetupEnemy(EnemyType::skeleton, -202.f, 0.f, 39.f);
+	SetupEnemy(EnemyType::skeleton, -188.f, 0.f, 24.f);
+	SetupEnemy(EnemyType::skeleton, -181.f, 0.f, 33.f);
+	SetupEnemy(EnemyType::skeleton, -194.f, 0.f, 13.f);
+	SetupEnemy(EnemyType::imp, -202.f, 0.f, 39.f);
 
 	//North of big bone 
 	SetupEnemy(EnemyType::hellhound, -144.0f, 0.f, 168.f);
-	SetupEnemy(EnemyType::imp, -150.f, 0.f, 199.f);
+	SetupEnemy(EnemyType::skeleton, -150.f, 0.f, 199.f);
 	SetupEnemy(EnemyType::imp, -184.f, 0.f, 166.f);
 	SetupEnemy(EnemyType::imp, -162.f, 0.f, 154.f);
 
 	//Doggo to guard the gate
-	SetupEnemy(EnemyType::hellhound, -263, 0.f, 138.f);
-	
+	SetupEnemy(EnemyType::skeleton, -263, 0.f, 138.f);
+	SetupEnemy(EnemyType::imp, -260.f, 0.f, 134.f);
 
 	//Small arena:
 	SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f);

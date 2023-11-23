@@ -80,7 +80,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage() / 2.f;
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, (health / 2.f), bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, (health / 2.5f), bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -230,14 +230,16 @@ void SplitBoss(EntityID& entity, const int& index)
 		if (tempBossComponent->parts[i] )
 		{
 			TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
-			/*float angle = i * (2 * 3.141592 / 5);
-			float x = radius * cos(angle);
-			float y = radius * sin(angle);*/
 			CreateMini(entity, tran.positionX, tran.positionZ, i, health);
 			CalculateGlobalMapValuesImp(valueGrid);
 		}
 	}
-
+	for (int i = 0; i < 3; ++i)
+	{
+		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
+		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ);
+		CalculateGlobalMapValuesImp(valueGrid);
+	}
 
 
 	/*CreateMini(entity, 5.f * multiplier, 0.f * multiplier, 0);

@@ -17,12 +17,6 @@ void LoadLevel(int level)
 	SetInPlay(false);
 	SetInShop(false);
 	SetInMainMenu(false);
-	ResetInput();
-	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
-	for (uint32_t i = 0; i < relics.size(); ++i)
-	{
-		relics[i](nullptr);
-	}
 
 	RedrawUI();
 	Camera::ResetCamera();
@@ -68,5 +62,12 @@ void LoadLevel(int level)
 		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
+	}
+
+	// Load swaps after switching
+	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
+	for (uint32_t i = 0; i < relics.size(); ++i)
+	{
+		relics[i](nullptr);
 	}
 }
