@@ -10,6 +10,9 @@ namespace SOUL_HEALTH
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
+	// Consume souls at the start of each level
+	void Consume(void* input);
+
 	// The modify health function
 	void ModifyHealth(void* data);
 }

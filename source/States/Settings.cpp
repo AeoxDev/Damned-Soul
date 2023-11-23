@@ -50,12 +50,12 @@ void SettingsState::SetupButtons()
 
 	const char const texts[amount][32] =
 	{
-		"\n1280x720",
-		"\n1600x900",
-		"\n1920x1080",
-		"\nFullscreen",
-		"\nBack",
-		"\nEnable Game Timer"
+		"1280x720",
+		"1600x900",
+		"1920x1080",
+		"Fullscreen",
+		"Back",
+		"Enable Game Timer"
 	};
 
 	const DSFLOAT2 const positions[amount] =
@@ -80,12 +80,12 @@ void SettingsState::SetupButtons()
 
 	void(* const functions[amount])(void*, int) =
 	{
-		UIFunc::Settings_LowRes,
-		UIFunc::Settings_MediumRes,
-		UIFunc::Settings_HighRes,
-		UIFunc::Settings_Fullscreen,
-		UIFunc::Settings_Back,
-		UIFunc::Settings_Timer,
+		UIFunctions::Settings::SetLowRes,
+		UIFunctions::Settings::SetMediumRes,
+		UIFunctions::Settings::SetHighRes,
+		UIFunctions::Settings::SetFullscreen,
+		UIFunctions::Settings::Back,
+		UIFunctions::Settings::SwitchTimer,
 	};
 
 	for (int i = 0; i < amount; i++)
@@ -98,7 +98,7 @@ void SettingsState::SetupButtons()
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
-		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);

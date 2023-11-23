@@ -43,19 +43,21 @@ void LoadLevel7()
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
 	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
+	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -40.f, 0.f, -45.f); // make stronger version
+	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, 15.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::skeleton, 35.f, 1.f, 45.f);
+	SetupEnemy(EnemyType::imp, -25.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::imp, -50.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::imp, -40.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::imp, -55.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::imp, -65.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::imp, -45.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);// make stronger version
+	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);// make stronger version
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 

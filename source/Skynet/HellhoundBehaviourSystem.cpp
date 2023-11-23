@@ -459,6 +459,7 @@ bool HellhoundBehaviourSystem::Update()
 		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
 		if (debuff && debuff->m_frozen)
 		{
+			TransformDecelerate(enemyEntity);//Always decelerate
 			continue; // frozen, won't do behavior stuff
 		}
 		

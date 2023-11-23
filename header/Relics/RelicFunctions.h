@@ -17,6 +17,10 @@ namespace Relics
 		// arguments: foo(EntityID, StatComponent*)
 		FUNC_ON_STAT_CALC,
 
+		// Called when calculating the player's specific bonus stats
+		// arguments: foo(EntityID, PlayerComopnent*)
+		FUNC_ON_PLAYER_STAT_CALC,
+
 		// Called when damage is calculated
 		//arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
 		FUNC_ON_DAMAGE_CALC,
