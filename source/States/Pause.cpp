@@ -41,6 +41,12 @@ void PauseState::Input()
 			ResetInput();
 
 			Unload(ENT_PERSIST_PAUSE);
+			gameSpeed = 1.0f;
+			if (Camera::InCutscene() == true)
+			{
+				TimedEventIgnoreGamespeed(true);
+				gameSpeed = 0.0f;
+			}
 		}
 		else
 		{
@@ -48,9 +54,13 @@ void PauseState::Input()
 			SetInPlay(true);
 
 			SetPaused(false);
-
-			RedrawUI();
 			gameSpeed = 1.0f;
+			RedrawUI();
+			if (Camera::InCutscene() == true)
+			{
+				TimedEventIgnoreGamespeed(true);
+				gameSpeed = 0.0f;
+			}
 			ResetInput();
 
 			Unload(ENT_PERSIST_PAUSE);

@@ -104,6 +104,7 @@ void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
 void Stage4IntroScene(EntityID& entity, const int& index);
 void CutsceneFallStage1(EntityID& entity, const int& index);
+void CutsceneFallStage2(EntityID& entity, const int& index);
 void CutscenePlayerFallDown(EntityID& entity, const int& index);
 void LoopCutscenePlayerFallInPlace(EntityID& entity, const int& index);
 void CutscenePlayerFallInPlace(EntityID& entity, const int& index);

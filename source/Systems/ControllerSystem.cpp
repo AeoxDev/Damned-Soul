@@ -13,8 +13,7 @@
 bool ControllerSystem::Update()
 {
 	//Controller for player during play
-	if ((keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[MouseButton::left] == pressed
-		|| mouseButtonPressed[MouseButton::right] == pressed))
+	if ((keyState[SCANCODE_SPACE] == pressed))
 	{
 		if (!(currentStates & InMainMenu) && Camera::InCutscene() > 0 && !(currentStates & InCredits) && !(currentStates & InSettings))
 		{
@@ -28,9 +27,15 @@ bool ControllerSystem::Update()
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				//Reset player transform for safety:
 				TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+				PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+				if (player != nullptr)
+				{
+					player->isAttacking = false;//Bugfix to prevent getting stuck doing no attacks.
+				}
+				
 				if (transform != nullptr)
 				{
-					transform->positionY = 0.0f;
+					transform->positionY = 0.0f;//Bugfix to prevent player from getting stuck above or under the stage.
 				}
 			}
 			else if (Camera::InCutscene() == 2)
@@ -43,27 +48,23 @@ bool ControllerSystem::Update()
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				LoadLevel(++stateManager.activeLevel);
 			}
+			
+		}
 		
-			
-		}
-		else if (true)
-		{
+	}
+	if ((currentStates & InMainMenu) == true && (keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[left] == pressed))
+	{
+		ReleaseTimedEvents(stateManager.stage);
 
-		}
-		if ((currentStates & InMainMenu) == true)
+		AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+		if (keyState[SCANCODE_SPACE] == pressed)
 		{
-			ReleaseTimedEvents(stateManager.stage);
-			
-			AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
-			if (keyState[SCANCODE_SPACE] == pressed)
-			{
-				AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
-				Camera::SetCutsceneMode(false);
-			}
-			else
-			{
-				AddTimedEventComponentStart(stateManager.stage, 0.0f, MainMenuIntroCutscene, 0, 8);
-			}
+			AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
+			Camera::SetCutsceneMode(false);
+		}
+		else
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, MainMenuIntroCutscene, 0, 8);
 		}
 	}
 #ifdef _DEBUG

@@ -93,8 +93,8 @@ void StageIntroFall(EntityID& entity, const int& index)
 
 	EntityID returnCamera = registry.CreateEntity();
 	CutsceneComponent* returnCutscene = registry.AddComponent<CutsceneComponent>(returnCamera);
-	returnCutscene->mode = (CutsceneMode)(CutsceneMode::Cutscene_Linear);
-	CutsceneSetPosition(returnCamera, 90.0f, CAMERA_OFFSET_X, CAMERA_OFFSET_X, CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z);
+	returnCutscene->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Linear);
+	CutsceneSetPosition(returnCamera, 0.0f, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z);
 	CutsceneSetLookAt(returnCamera, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	
 	AddTimedEventComponentStartContinuousEnd(returnCamera, fallTime, BeginCutscene, CutsceneTransition, pauseTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
@@ -575,17 +575,22 @@ void CutsceneFallStage1(EntityID& entity, const int& index)
 	sidewaysCut->mode = (CutsceneMode)0b111;
 	CutsceneSetLookAt(cutscene1, -250.0f, 0.0f, 81.0f, -321.6f - 30.0f, 0.0f, 133.14f + 30.0f);
 	CutsceneSetPosition(cutscene1, -250.0f, 90.0f, -80.0f, -300.0f, 90.0f, -20.0f);
-	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginPortalCutscene, CutsceneTransition, endTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginPortalCutscene, CutsceneTransition, endTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//Move character from portal to jump off point
 	CutsceneComponent* playerWalk = registry.AddComponent<CutsceneComponent>(entity);
 	playerWalk->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Character_Walk);
-	CutsceneSetPosition(entity, -250.0f, 0.0f, 81.0f, -321.6f - 10.0f, 0.0f, 133.14f + 10.0f);
-	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginPortalCutscene, CutsceneTransition, fallTime + 0.2, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	CutsceneSetPosition(entity, -250.0f, 0.0f, 81.0f, -321.6f - 0.0f, 0.0f, 133.14f + 0.0f);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginPortalCutscene, CutsceneTransition, fallTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	
-	AddTimedEventComponentStartContinuousEnd(entity, fallTime - 0.2f, CutscenePlayerFallDown, nullptr, endTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(entity, fallTime, CutscenePlayerFallDown, nullptr, endTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	AddTimedEventComponentStart(entity, endTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 	AddTimedEventComponentStart(entity, newLevelTime, EventLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+}
+void CutsceneFallStage2(EntityID& entity, const int& index)
+{
+	//-334, 319
+
 }
 
 void CutscenePlayerFallDown(EntityID& entity, const int& index)
