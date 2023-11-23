@@ -55,7 +55,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunctions::MainMenu::Settings(nullptr, i);
+		UIFunctions::MainMenu::SetSettings(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();

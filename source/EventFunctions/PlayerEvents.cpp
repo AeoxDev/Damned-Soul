@@ -99,6 +99,22 @@ void SetGodModePortal(bool createPortal)
 * Numbers need to be tweaked(even more if souls gained go up). Should also be capped (idk if they already are)
 */
 
+/*
+* NOTES FROM TESTING V3 (NEWER LEVELS):
+* CAMERA:
+* Camera should be zoomed in, as well as *work* (aiming is completely off right now. EDIT: Elliot fixed the biggest issue)
+*
+* SCALE:
+* Depending on how much the camera is zoomed in, models should be scaled up because all that TA work for models that can't even be seen
+*
+* MAP:
+* Loving the new maps, but they FEEL a bit too large imo. I think in tandem with zooming the camera and scaling the models up, speeds should go up as well so it doesn't take too long running around the arena
+* On the topic of running around the arena, not knowing where the final few enemies are is pretty annoying so maybe some sort of indicator so we know where they're at?
+* Maybe the increased model size + increased speed will fix that issue but just a thought
+* Also: Big objects like pillars or huge skulls can end up hiding not only us the player, but also enemies (such as imps, shooting us from out of nowhere)
+* Some sort of transparency is needed so we can still see stuff (I think the zoomed-in camera will help this feel more natural)
+*/
+
 void PlayerLoseControl(EntityID& entity, const int& index)
 {	
 	//Get relevant components

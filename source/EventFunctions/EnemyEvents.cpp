@@ -267,18 +267,26 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset
+		//Get enemytype
+		uint32_t condition = GetTimedEventCondition(entity, index);
+
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset before the attack
 		{
-			skelel->shared.colorAdditiveRed = 0.0f;
-			skelel->shared.colorAdditiveGreen = 0.0f;
-			skelel->shared.colorAdditiveBlue = 0.0f;
+			skelel->shared.ResetTempColor();
 		}
-			
-		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow
+		
+		else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Hellhound glows immediately because there's no windup on the attack
 		{
-			skelel->shared.colorAdditiveRed = 0.8f;
-			skelel->shared.colorAdditiveGreen = 0.8f;
-			skelel->shared.colorAdditiveBlue = 0.5f;
+			skelel->shared.bcaR_temp = 0.8f;
+			skelel->shared.bcaG_temp = 0.8f;
+			skelel->shared.bcaB_temp = 0.5f;
+		}
+
+		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow halfway through the pause
+		{
+			skelel->shared.bcaR_temp = 0.8f;
+			skelel->shared.bcaG_temp = 0.8f;
+			skelel->shared.bcaB_temp = 0.5f;
 		}	
 	}
 
@@ -332,6 +340,14 @@ void EnemyBeginAttack(EntityID& entity, const int& index)
 		SetHitboxActive(entity, comp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
 	}
+
+	uint32_t condition = GetTimedEventCondition(entity, index);
+	if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Dogs do big knockback on their headbutt
+	{
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+		if(stats)
+			stats->SetKnockbackMultiplier(8.0f);
+	}
 }
 
 void EnemyEndAttack(EntityID& entity, const int& index)
@@ -360,6 +376,16 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 		if (tempBoss)
 			tempBoss->attackTimer = 0.0f;
 	}
+
+	else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Reset big dog knockback after hit
+	{
+		HellhoundBehaviour* doggo = registry.GetComponent<HellhoundBehaviour>(entity);
+		if (doggo)
+			doggo->attackTimer = 0.0f;
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+		if (stats)
+			stats->SetKnockbackMultiplier(1.0f);
+	}
 }
 
 void EnemyBecomeStunned(EntityID& entity, const int& index)
@@ -384,6 +410,50 @@ void EnemyBecomeStunned(EntityID& entity, const int& index)
 			tempBoss->attackStunDurationCounter = 0.0f;
 		}
 	}
+
+	else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound)
+	{
+		HellhoundBehaviour* doggo = registry.GetComponent<HellhoundBehaviour>(entity);
+		if (doggo != nullptr)
+		{
+			doggo->attackStunDurationCounter = 0.0f;
+		}
+	}
+}
+
+void DogBeginWait(EntityID& entity, const int& index)
+{
+
+}
+
+void DogEndWait(EntityID& entity, const int& index)
+{
+	HellhoundBehaviour* hc = registry.GetComponent<HellhoundBehaviour>(entity);
+	if (hc)
+	{
+		hc->isWating = false;
+
+		//SetInfiniteDirection() function from HellhoundBehaviourSystem
+		TransformComponent* htc = registry.GetComponent<TransformComponent>(entity);
+		if (htc)
+		{
+			float x = hc->lastPositionX - htc->positionX;
+			float z = hc->lastPositionZ - htc->positionZ;
+			float magnitude = sqrt(x * x + z * z);
+			if (magnitude > 0.001f)
+			{
+				x /= magnitude;
+				z /= magnitude;
+			}
+			hc->cowardDirectionX = x;
+			hc->cowardDirectionZ = z;
+		}
+		
+		hc->retreat = true;
+		hc->updatePathCounter = 20.f;
+		hc->hasMadeADecision = false;
+	}
+	
 }
 
 void BossShockwaveStart(EntityID& entity, const int& index)
