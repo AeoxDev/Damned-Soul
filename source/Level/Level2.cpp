@@ -49,14 +49,14 @@ void LoadLevel2()
 
 	//Enemies to the north:
 	SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f);
-	SetupEnemy(EnemyType::imp, 28.f, 0.f, 145.f);
+	SetupEnemy(EnemyType::skeleton, 28.f, 0.f, 145.f);
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 20.0f, 0.f, 160.0f);
 
 	//Enemies in ruins
 	SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f);
-	SetupEnemy(EnemyType::imp, -84.f, 0.f, 154.f);
-	SetupEnemy(EnemyType::imp, -96.f, 0.f, 213.f);
-	SetupEnemy(EnemyType::imp, -143.f, 0.f, 127.f);
+	SetupEnemy(EnemyType::skeleton, -84.f, 0.f, 154.f);
+	SetupEnemy(EnemyType::skeleton, -96.f, 0.f, 213.f);
+	SetupEnemy(EnemyType::skeleton, -143.f, 0.f, 127.f);
 
 	//Enemies on the left side:
 	SetupEnemy(EnemyType::skeleton, -219.f, 0.f, 34.f);
@@ -64,7 +64,7 @@ void LoadLevel2()
 	SetupEnemy(EnemyType::imp, -237.f, 0.f, 18.f);
 
 	//One to guard the gate:
-	SetupEnemy(EnemyType::imp, -230.f, 0.f, 214.f);
+	SetupEnemy(EnemyType::skeleton, -230.f, 0.f, 214.f);
 
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
