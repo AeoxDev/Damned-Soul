@@ -24,11 +24,15 @@ struct MinotaurBehaviour
 	float airDuration = 2.5f;
 
 	//used for determening the window before the minotaur charges the player
+	float jumpTimer = 0.0f;
+	float JumpDuration = 0.5f;
+	
 	float aimTimer = 0.0f;
-	float aimDuration = 0.4f;
+	float aimDuration = 1.4f;
 
 	bool charging = false;		//bool to check if the minotaur is currently charging or not
 	bool jumping = false;
 	bool hasLandingPos = false;
+	bool hasChargingDir = false;
 	bool chargeAttackSoundPlaying = false;
 };

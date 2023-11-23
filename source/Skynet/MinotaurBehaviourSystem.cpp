@@ -7,6 +7,7 @@
 #include "EventFunctions.h"
 
 #include <random>
+#include <math.h>
 
 void IdleBehaviour(EntityID& enemy, MinotaurBehaviour* mc, TransformComponent* mtc, StatComponent* stats, AnimationComponent* animComp)
 {
@@ -63,19 +64,15 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 		enemyStats->SetKnockbackMultiplier(2.0f);
 
 		//direction from the enemy towards the player
-		float dirX = ptc->positionX - mtc->positionX;
-		float dirZ = ptc->positionZ - mtc->positionZ;
+		mc->chargeDirX = ptc->positionX - mtc->positionX;
+		mc->chargeDirZ = ptc->positionZ - mtc->positionZ;
+		Normalize(mc->chargeDirX, mc->chargeDirZ);
 
-		Normalize(dirX, dirZ);
+		mc->goalDirectionX = mc->chargeDirX;
+		mc->goalDirectionZ = mc->chargeDirZ;
 
-		//target is the stopping point of the charge, a set distance behind the players position
-		mc->targetX = ptc->positionX + dirX * 3.0f;
-		mc->targetZ = ptc->positionZ + dirZ * 3.0f;
 
-		mc->chargeDirX = dirX; // charge direction is only set once per charge and will not change
-		mc->chargeDirZ = dirZ;
-
-		SmoothRotation(mtc, mc->chargeDirX, mc->chargeDirZ, 40.0f);
+		SmoothRotation(mtc, mc->goalDirectionZ, mc->goalDirectionZ, 40.0f);
 
 		AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, ChargeColorFlash, mc->aimDuration - 0.2f, ResetColor);
 	}
@@ -99,32 +96,35 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			enemyAnim->aAnimTime = 0.0f;
 		}
 		//slightly adjust the charging direction based on player position
-		float playerOffsetX = ptc->positionX - ptc->lastPositionX;
-		float playerOffsetZ = ptc->positionZ - ptc->lastPositionZ;
-		Normalize(playerOffsetX, playerOffsetZ);
-		
-		float offsetScalar = 0.2f;
 
-		mc->chargeDirX += playerOffsetX * offsetScalar;
-		mc->chargeDirZ += playerOffsetZ * offsetScalar;
-		Normalize(mc->chargeDirX, mc->chargeDirZ);
+		//direction from the enemy towards the player
+		float dirToPlayerX = ptc->positionX - mtc->positionX;
+		float dirToPlayerZ = ptc->positionZ - mtc->positionZ;
+		Normalize(dirToPlayerX, dirToPlayerZ);
 
-		//calculate the current direction towards the target position
-		float dirX = (mc->targetX - mtc->positionX); //no workie
-		float dirZ = (mc->targetZ - mtc->positionZ); //no workie
-		Normalize(dirX, dirZ);
+		float scalar = mc->chargeDirX * dirToPlayerX + mc->chargeDirZ * dirToPlayerZ;
 
-		//scalar between the current direction and the original chagre direction
-		float scalar = dirX * mc->chargeDirX + dirZ * mc->chargeDirZ;
+		if (scalar > 0.0f && !mc->hasChargingDir)
+		{
+			mc->goalDirectionX = ptc->positionX - mtc->positionX;
+			mc->goalDirectionZ = ptc->positionZ - mtc->positionZ;
+			Normalize(mc->goalDirectionX, mc->goalDirectionZ);
+		}
+		else
+		{
+			mc->goalDirectionX = mtc->facingX;
+			mc->goalDirectionZ = mtc->facingZ;
+			mc->hasChargingDir = true;
+		}
 
 		//If charging scalar point direction > 0.0, charge
 		if (mc->chargeTimer < mc->chargeDuration)
 		{
 			mc->chargeTimer += GetDeltaTime();
- 			SmoothRotation(mtc, mc->chargeDirX, mc->chargeDirZ, 30.0f);
+ 			SmoothRotation(mtc, mc->goalDirectionX, mc->goalDirectionZ, 2.0f);
 
-			mtc->positionX += mc->chargeDirX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
-			mtc->positionZ += mc->chargeDirZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
+			mtc->positionX += mtc->facingX * enemyStats->GetSpeed() * 12.f * GetDeltaTime();
+			mtc->positionZ += mtc->facingZ * enemyStats->GetSpeed() * 12.f * GetDeltaTime();
 			//TransformAccelerate(enemy, mtc->facingX * 6.0f, mtc->facingZ * 6.0f);
 
 			SetHitboxActive(enemy, enemyComp->attackHitBoxID, true);
@@ -142,8 +142,10 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			//reset values
 			mc->charging = false;
 			mc->chargeAttackSoundPlaying = false;
-			//mc->attackTimer = 0;
+			mc->hasChargingDir = false;
 			mc->attackStunTimer = 0;
+			mc->aimTimer = 0;
+			//mc->attackTimer = 0;
 
 			enemyAnim->aAnimTime = 0.0f;
 			enemyAnim->aAnim = ANIMATION_IDLE;
@@ -222,7 +224,7 @@ bool MinotaurBehaviourSystem::Update()
 			{
 				minoComp->attackStunTimer += GetDeltaTime();
 			}
-			else if (minoComp->charging || distance <= 40.0f)
+			else if (minoComp->charging )
 			{
 				if (!minoComp->chargeAttackSoundPlaying)
 				{
@@ -233,9 +235,14 @@ bool MinotaurBehaviourSystem::Update()
 				}
 				ChargeBehaviour(enemyEntity, playerTransformCompenent, minoComp, minoTransformComponent, enemyStats, enmComp, enemyAnim);
 			}
-			else if (minoComp->jumping) // jump
+			else if (minoComp->jumping || distance <= 40.0f) // jump
 			{
-				minoComp->airTimer += GetDeltaTime();
+				if (minoComp->jumpTimer <= minoComp->JumpDuration)
+				{
+					AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, 4.0f, BossShockwaveEnd, 0, 1);
+
+				}
+
 				if (minoComp->airTimer <= minoComp->airDuration) // fly up in the air
 				{
 					minoTransformComponent->positionY += enemyStats->GetSpeed() * 7.f * GetDeltaTime();
@@ -273,13 +280,17 @@ bool MinotaurBehaviourSystem::Update()
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, 4.0f, BossShockwaveEnd, 0, 1);
 					}
+				
+					minoComp->airTimer += GetDeltaTime();
 				}
+				minoComp->jumpTimer += GetDeltaTime();
 			}
 			else // Nothing to do, go idle 
 			{ 
 				IdleBehaviour(enemyEntity, minoComp, minoTransformComponent, enemyStats, enemyAnim);
 			}
 		}
+		//TransformDecelerate(enemyEntity);
 	}
 	
 	free(valueGrid);
