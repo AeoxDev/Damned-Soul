@@ -741,6 +741,7 @@ void ReloadPlayerNonGlobals()
 	playerTransform->currentSpeedZ = 0.0f;
 	playerTransform->positionX = 0.0f;
 	playerTransform->positionZ = 0.0f;
+	playerTransform->positionY = 0.0f;
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
@@ -756,6 +757,11 @@ void ReloadPlayerNonGlobals()
 	}
 	ReleaseTimedEvents(stateManager.player);
 	registry.GetComponent<TimedEventComponent>(stateManager.player);
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
+	if (hitbox)
+	{
+		registry.RemoveComponent<HitboxComponent>(stateManager.player);
+	}
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
 

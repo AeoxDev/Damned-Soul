@@ -530,7 +530,7 @@ void CutsceneFallStage1(EntityID& entity, const int& index)
 	TimedEventIgnoreGamespeed(true);
 	gameSpeed = 0.0f;
 	float endTime = 6.0f;
-	float newLevelTime = 5.0f;
+	float newLevelTime = 4.5f;
 	float fallTime = 3.0f;
 	//Fall of point. -321.6, 133.14
 	//Move camera to view point and background from a lower angle
@@ -538,8 +538,8 @@ void CutsceneFallStage1(EntityID& entity, const int& index)
 	EntityID cutscene1 = registry.CreateEntity();
 	CutsceneComponent* sidewaysCut = registry.AddComponent<CutsceneComponent>(cutscene1);
 	sidewaysCut->mode = (CutsceneMode)0b111;
-	CutsceneSetLookAt(cutscene1, -321.6f, 0.0f, 133.14f, -321.6f, 0.0f, 133.14f);
-	CutsceneSetPosition(cutscene1, -321.6f, 90.0f, -30.0f, -321.6f, 90.0f, -30.0f);
+	CutsceneSetLookAt(cutscene1, -250.0f, 0.0f, 81.0f, -321.6f - 30.0f, 0.0f, 133.14f + 30.0f);
+	CutsceneSetPosition(cutscene1, -250.0f, 90.0f, -80.0f, -300.0f, 90.0f, -20.0f);
 	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginPortalCutscene, CutsceneTransition, endTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//Move character from portal to jump off point
