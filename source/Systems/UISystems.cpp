@@ -205,8 +205,8 @@ bool UIRunTime::Update()
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
-
-		uiElement->m_BaseText.SetText(GetDigitalMinuteClock().c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+		ML_String clock = GetDigitalMinuteClock();
+		uiElement->m_BaseText.SetText(clock.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 	return true;
 }

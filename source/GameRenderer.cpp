@@ -141,7 +141,7 @@ int SetupGameRenderer()
 	shadowClampSamlper = CreateShadowClampSamplerState();
 	SetSamplerState(shadowClampSamlper, 1);
 	//CreateShadowMap(512, 512);
-	CreateShadowMap(2048, 2048);
+	CreateShadowMap(3072, 3072);
 
 
 	return currentSize++;

@@ -20,7 +20,7 @@ void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformCom
 	ic->specialBreakpoint = (int)distribution(gen);
 
 	//Teleport
-	float minRange = 20.0f;
+	float minRange = 10.0f;
 	float maxRange = 40.0f;
 
 	TransformComponent newTransform = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
@@ -159,7 +159,7 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ic->goalDirectionZ = dz;
 
 		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
-		CreateProjectile(entity, dx, dz, 0);
+		CreateProjectile(entity, dx, dz, imp);
 		return true;
 	}
 }
