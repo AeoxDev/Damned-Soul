@@ -7,6 +7,8 @@
 #include "MemLib/ML_ComponentMap.hpp"
 #include "EntityID.h"
 
+#include <assert.h>
+
 /*
 	//HOW TO USE (Basic version):
 
@@ -79,6 +81,7 @@ namespace EntityGlobals
 	{
 		//Static variables are stored separately for each different template, so compCount only gets incremented whenever GetId() is called on a NEW type of component
 		static int compId = compCount++;
+		assert(compCount < MAX_COMPONENTS);
 		return compId;
 	}
 
@@ -127,7 +130,10 @@ public:
 	EntityID CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier = ENT_PERSIST_LOWEST);
 
 	//Destroys the entity with the specified ID
-	void DestroyEntity(EntityID id);
+	void DestroyEntity(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier = ENT_PERSIST_LOWEST);
+
+	//UI Reasons
+	void SortAvailableEntitySlotsVector();
 
 	//Add a component T along with potential arguments to the entity with the specified ID
 	template<typename T, typename ...Args>
@@ -177,7 +183,7 @@ public:
 	T* GetComponent(EntityID id)
 	{
 		//Don't try to access entity that has already been destroyed
-		if (entities[GetEntityIndex(id)].id.isDestroyed)
+		if (id.index < 0 || entities[GetEntityIndex(id)].id.isDestroyed)
 			return nullptr;
 
 		//Get the unique ID of the component we're trying to add
@@ -208,6 +214,8 @@ private:
 	{
 		return id.isDestroyed;
 	}
+
+	void ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier);
 
 	//Private member variables
 	std::vector<ML_ComponentMap> componentMaps;

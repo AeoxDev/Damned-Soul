@@ -3,6 +3,7 @@
 #include "D3D11Helper\D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "GameRenderer.h"
+#include <assert.h>
 
 PS_IDX depthPassShader;
 
@@ -67,13 +68,23 @@ void SetDepthPassTexture(bool forRendering)
 		float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		d3d11Data->deviceContext->ClearRenderTargetView(depthPassRTV, color);
 		d3d11Data->deviceContext->OMSetRenderTargets(1, &depthPassRTV, dsvHolder->dsv_map[renderStates[backBufferRenderSlot].depthStencilView]);
-		
+
 	}
 	else
 	{
 		d3d11Data->deviceContext->PSSetShaderResources(3, 1, &depthPassSRV);
 	}
-	
+
+}
+
+// ARIAN SKREV DETTA, FIGHT ME
+void SetDepthPassTextureCompute(bool set)
+{
+	if (set)
+		d3d11Data->deviceContext->CSSetShaderResources(0, 1, &depthPassSRV);
+	else
+		UnsetShaderResourceView(BIND_COMPUTE, 0);
+
 }
 
 void UnsetDepthPassTexture(bool forRendering)

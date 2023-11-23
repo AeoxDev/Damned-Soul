@@ -5,7 +5,16 @@
 namespace Combat
 {
 	// Provide a complete hit interaction between an attacker and a defender, applying damage, relics, and damage flashes
-	void HitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats);
+	void HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats/*, bool isCharged = false*/);
+
+	// Calculate damage (presumably of a DoT efect), but do NOT apply it
+	float CalculateDamage(const DamageOverTime& dot, EntityID& defender, const uint64_t& source);
+
+	// Calculate damage (applying relics and such), but do NOT apply it
+	float CalculateDamage(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, const uint64_t& source);
+
+	//Works like hit interaction, but happens specifically when we dash into an enemy rather than hitting them
+	void DashHitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats);
 
 	// Damage an entity and apply a damage flash. No relics are applied.
 	void HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage);

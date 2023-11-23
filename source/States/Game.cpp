@@ -28,12 +28,11 @@ void GameScene::Input(bool isShop)
 	{
 		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
-			SetInPause(true);
+			SetInMainMenu(true);
 			SetInShop(false);
+			Unload(true);
 
-			gameSpeed = 0.0f;
-			ResetInput();
-			stateManager.pause.Setup();
+			stateManager.menu.Setup();
 		}
 	}
 	// If Game Level is loaded
@@ -43,7 +42,9 @@ void GameScene::Input(bool isShop)
 		{
 			SetInPause(true);
 			SetInPlay(false);
-			
+
+			SetPaused(true);
+
 			gameSpeed = 0.0f;
 			ResetInput();
 			stateManager.pause.Setup();

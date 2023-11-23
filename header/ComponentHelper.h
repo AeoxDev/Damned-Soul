@@ -24,6 +24,13 @@ private:
 	// Used to alter speed when performing actions such as attacking
 	float m_speedMult = 1.0f;
 
+	// Dash
+	// Base dash value
+	float m_baseDashValue = 2.5f;
+	// Bonus dash value
+	float m_bonusDashValue = 0.f;
+
+
 
 //Weapon stats
 	// Damage
@@ -46,7 +53,8 @@ private:
 	// If the entity has bonus stats, used to skip entities in the system
 	bool m_modifiedStats = false;
 public:
-
+	float m_acceleration = 1.0f;//How much of speed to gain over one second
+	float m_baseAcceleration = 1.0f;//How much of speed to gain over one second
 	// for death animation
 	bool performingDeathAnimation = false;
 
@@ -55,9 +63,19 @@ public:
 	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
 	bool baseCanWalkOnCrack = false;//onCrack
 	bool canWalkOnCrack = false;//If the entity can walk on cracks or not.
+	float iceAccelFactor = 0.08f;
+	float iceAnimFactor = 2.5f;
+	float lavaAccelFactor = 0.5f;
+	float lavaAnimFactor = 2.0f;
+	float acidAccelFactor = 0.3f;
+	float acidAnimFactor = 0.5f;
+
 
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
-	{/* m_baseMoveSpeed = m_moveSpeed; */}
+	{/* m_baseMoveSpeed = m_moveSpeed; */
+		m_baseAcceleration = ms;
+		m_acceleration = ms;
+	}
 
 // Metadata
 	// Mark the entity as being modified and having stat bonueses to calculate
@@ -72,9 +90,9 @@ public:
 
 // Defensive Stats
 	// Get max health
-	float GetMaxHealth() const;
+	int64_t GetMaxHealth() const;
 	// Get current health
-	float GetHealth() const;
+	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
 	// Update the entity's bonus health
@@ -98,8 +116,15 @@ public:
 	void UpdateBonusSpeed(const float delta);
 	// Set the entity's speed mult
 	void SetSpeedMult(const float mult);
+	
+	// Get the current dash distance
+	float GetDashDistance() const;
+	// Update Bonus Dash
+	void UpdateBonusDashDistance(const float delta);
 
 // Offensive
+	// Get the base damage of the entity
+	float GetBaseDamage() const;
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage
@@ -124,19 +149,35 @@ struct PlayerComponent
 private:
 	// Set to private since it is important that any update is carried on through UpdateSouls
 	int souls = 0;
+	int totalSouls = 0;
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
+	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
 	bool portalCreated = false;
+	bool isDashing = false;
 
-	
+	//New additions because of player attack chains
+	float timeSinceLastAttack = -1.0f;
+	unsigned int attackChainIndex = 0;
+	bool isAttacking = false;
+	bool hasActivatedHitbox = false;
+
+	//New additions because of player heavy attacks
+	float currentCharge = 0.0f;
+	float maxCharge = 1.0f; 
+
+	//Dash variables
+	float dashCooldown = 1.0f;
+	float dashCounter = 0.0f; //When this is 0.0f we can dash, and when we dash it's plus'd by dashCooldown
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
+	int GetTotalSouls() const;
 };
 
 struct ControllerComponent
@@ -162,6 +203,16 @@ struct DashArgumentComponent
 	DashArgumentComponent(float x, float z, float dashModifier, float arc = 0.0f) : x(x), z(z), dashModifier(dashModifier) {}
 };
 
+struct AttackArgumentComponent
+{
+	float duration = 0.0f;
+};
+
+struct ChargeAttackArgumentComponent
+{
+	float multiplier = 0.0f;
+};
+
 struct CollisionParamsComponent
 {
 	OnCollisionParameters params;
@@ -179,87 +230,7 @@ struct EnemyComponent
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
 
-//
-//#define MAX_RELICS 8
-//struct RelicHolderComponent
-//{
-//#define MAX_LENGTH 16
-//
-//	char name[MAX_LENGTH] = "Default Name";
-//	std::bitset<MAX_RELICS> relicBitset; //I have become bitset enjoyer
-//
-//	RelicHolderComponent(const char name_in[MAX_LENGTH])
-//	{
-//		std::memcpy(name, name_in, MAX_LENGTH);
-//	}
-//
-//	struct RelicArray
-//	{
-//		RelicArray(size_t relicSize)
-//		{
-//			this->relicSize = relicSize;
-//			this->data = new char[relicSize];
-//		}
-//
-//		inline void* get()
-//		{
-//			return data;
-//		}
-//
-//		~RelicArray()
-//		{
-//			delete[] data;
-//		}
-//
-//		char* data = nullptr;
-//
-//	private:
-//		size_t relicSize = 0;
-//	};
-//
-//	//Any time GetId() is called on a new type of relic, relicCount gets incremented, which results in the ID number for every component type being unique
-//	int relicCount = 0;
-//	template <typename T>
-//	int GetId()
-//	{
-//		static int id = relicCount++;
-//		return id;
-//	}
-//
-//	template<typename T>
-//	void AddRelic()
-//	{
-//		//Ehe
-//		int id = GetId<T>();
-//
-//		//Create relic and cast to RelicArray data
-//		T* relicPointer = new (relics->get()) T();
-//
-//		//Set the component bitset of the entity at "id" to match the component we're passing in
-//		relicBitset.set(id);
-//	}
-//
-//	template<typename T>
-//	T* GetRelic()
-//	{
-//		int id = GetId<T>(); //Since GetId is being called on a type T that it's been called on before, the id won't be incremented. It's brilliant honestly
-//
-//		if (!relicBitset.test(id)) //Test to see if we have the relic before we try returning it
-//			return nullptr;
-//
-//		//Get relic by casting RelicArray data back to the relic struct (but pointer)
-//		T* relicPointer = (T*)(relics->get());
-//
-//		return relicPointer;
-//	}
-//
-//	template<typename T>
-//	void RemoveRelic()
-//	{
-//		int id = GetId<T>();
-//		relicBitset.reset(id);
-//	}
-//
-//private:
-//	RelicArray* relics = new RelicArray(sizeof(DamageRelic)); //Since all relics are the same size, this is fine
-//};
+void SetGodModeFactor(float value);
+float GetGodModeFactor();
+bool GetGodModePortal();
+void SetGodModePortal(bool createPortal);

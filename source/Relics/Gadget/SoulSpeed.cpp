@@ -4,10 +4,18 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_SPEED_SOUL_FACTOR_PLAYER (1.f)
-#define SOUL_SPEED_SOUL_FACTOR_ENEMY (10.f)
+#define SOUL_SPEED_SOUL_FACTOR_PLAYER (.6f)
+#define SOUL_SPEED_SOUL_FACTOR_ENEMY (6.f)
 
 EntityID SOUL_SPEED::_OWNER;
+
+const char* SOUL_SPEED::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You gain %.1lf speed for every soul in your possession", SOUL_SPEED_SOUL_FACTOR_PLAYER);
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void SOUL_SPEED::Initialize(void* input)
 {

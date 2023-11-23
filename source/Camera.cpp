@@ -32,6 +32,7 @@ struct CameraStruct
 	//If this is true, the camera will update the persepctive matrix on update call
 	//if it is false, the camera will update the orthographic matrix on call.
 	bool m_projectionType;
+	bool m_CutsceneMode = false;//True: Force the camera to do nothing, let others take over the camera.
 };
 
 struct CameraConstantBuffer
@@ -42,6 +43,7 @@ struct CameraConstantBuffer
 	DirectX::XMFLOAT4X4 m_shadowViewMatrix;
 	DirectX::XMFLOAT4X4 m_shadowProjectionMatrix;
 };
+
 
 PoolPointer<CameraStruct> GameCamera;
 PoolPointer<CameraConstantBuffer> BufferData;
@@ -54,9 +56,16 @@ float offsetZ = 0.0f;
 
 void Camera::SetPosition(const float x, const float y, const float z, const bool includeOffset)
 {
+
 	GameCamera->m_position.x = x + (includeOffset * CAMERA_OFFSET_X) + offsetX;
-	GameCamera->m_position.y = y + (includeOffset * CAMERA_OFFSET_Y) + offsetY;
-	GameCamera->m_position.z = z + (includeOffset * CAMERA_OFFSET_Z) + offsetZ;
+
+	float xRotYy = (float)cos(GameCamera->m_rotation.x);
+	float xRotYz = (float)sin(GameCamera->m_rotation.x);
+	float xRotZz = (float)cos(GameCamera->m_rotation.x);
+	float xRotZy = (float)sin(GameCamera->m_rotation.x);
+
+	GameCamera->m_position.y = y + includeOffset * (CAMERA_OFFSET_Y * xRotYy + CAMERA_OFFSET_Z * xRotYz) + offsetY;
+	GameCamera->m_position.z = z + includeOffset * (xRotZz * CAMERA_OFFSET_Z + CAMERA_OFFSET_X * xRotZy) + offsetZ;
 
 	BufferData->m_cameraPosition = DirectX::XMFLOAT4(GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.f);
 }
@@ -146,6 +155,15 @@ void Camera::AdjustUp(const float x, const float y, const float z)
 void Camera::AdjustRotation(const float x, const float y, const float z)
 {
 	GameCamera->m_rotation.x += x;
+	if (GameCamera->m_rotation.x > 0.6f)
+	{
+		GameCamera->m_rotation.x = 0.6f;
+	}
+	if (GameCamera->m_rotation.x < -1.4f)
+	{
+		GameCamera->m_rotation.x = -1.4f;
+	}
+	
 	GameCamera->m_rotation.y += y;
 	GameCamera->m_rotation.z += z;
 }
@@ -169,9 +187,19 @@ const DirectX::XMVECTOR Camera::GetPosition()
 	return DirectX::XMVECTOR{ GameCamera->m_position.x, GameCamera->m_position.y, GameCamera->m_position.z, 1.0f };
 }
 
+const DirectX::XMFLOAT3 Camera::GetPositionFloat()
+{
+	return GameCamera->m_position;
+}
+
 const DirectX::XMVECTOR Camera::GetLookAt()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_lookAt.x, GameCamera->m_lookAt.y, GameCamera->m_lookAt.z, 1.0f };
+}
+
+const DirectX::XMFLOAT3 Camera::GetLookAtFloat()
+{
+	return GameCamera->m_lookAt;
 }
 
 const DirectX::XMVECTOR Camera::GetUp()
@@ -182,6 +210,11 @@ const DirectX::XMVECTOR Camera::GetUp()
 const DirectX::XMVECTOR Camera::GetRotation()
 {
 	return DirectX::XMVECTOR{ GameCamera->m_rotation.x, GameCamera->m_rotation.y, GameCamera->m_rotation.z, 0.0f };
+}
+
+const float Camera::GetRotationX()
+{
+	return GameCamera->m_rotation.x;
 }
 
 const DirectX::XMMATRIX Camera::GetView()
@@ -202,6 +235,16 @@ const DirectX::XMMATRIX Camera::GetPerspective()
 const DirectX::XMMATRIX Camera::GetOrthographic()
 {
 	return DirectX::XMLoadFloat4x4(&GameCamera->m_orthographic);
+}
+
+void Camera::SetCutsceneMode(bool inCutscene)
+{
+	GameCamera->m_CutsceneMode = inCutscene;
+}
+
+bool Camera::InCutscene()
+{
+	return GameCamera->m_CutsceneMode;
 }
 
 int16_t Camera::GetCameraBufferIndex()
@@ -256,7 +299,7 @@ void Camera::ResetCamera()
 	SetPosition(CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, false);
 	SetLookAt(0.f, 0.f, 0.f);
 	SetUp(0.f, 1.f, 0.f);
-
+	SetOffset(0.0f, 0.0f, 0.0f);
 	SetRotation(0.f, 0.f, 0.f);
 	SetFOV(CAMERA_FOV);
 

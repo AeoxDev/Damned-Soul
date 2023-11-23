@@ -7,6 +7,8 @@
 #include "MemLib\ML_Vector.hpp"
 #include <assert.h>
 
+bool ignoreGameSpeed = false;
+
 struct TimedEvent
 {
 	bool isActive = true;
@@ -27,6 +29,11 @@ struct TimedEvent
 struct TimedEventComponent
 {
 	ML_Vector<TimedEvent> timedEvents;
+
+	TimedEventComponent()
+	{
+		timedEvents.Initialize();
+	};
 };
 
 int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
@@ -46,8 +53,7 @@ int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
 bool EventSystem::Update()
 {
 	//Make sure continuous events aren't updating while the game is paused
-	float dt = GetDeltaTime();
-	if (gameSpeed == 0.0f)
+	if (gameSpeed == 0.0f && ignoreGameSpeed == false)
 		return true;
 
 	for (auto entity : View<TimedEventComponent>(registry))
@@ -59,7 +65,15 @@ bool EventSystem::Update()
 			{
 				continue;
 			}
-			comp->timedEvents[i].timer += GetDeltaTime();
+			if (comp->timedEvents[i].condition == CONDITION_IGNORE_GAMESPEED_SLOWDOWN && gameSpeed < 1.0f)
+			{
+				comp->timedEvents[i].timer += GetFrameTime();
+			}
+			else
+			{
+				comp->timedEvents[i].timer += GetDeltaTime();
+			}
+
 			if (comp->timedEvents[i].startFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer)
 			{
 				comp->timedEvents[i].startFunction(comp->timedEvents[i].eventity, i);
@@ -254,6 +268,7 @@ float GetTimedEventTotalTime(EntityID& entityID, const int& timedEventSlot)
 	return -1.0f;
 }
 
+
 void CancelTimedEvent(EntityID& entity, const int& timedEventSlot)
 {
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
@@ -272,4 +287,14 @@ void ReleaseTimedEvents(EntityID& entity)
 		//registry.RemoveComponent<TimedEventComponent>(entity);
 		comp->timedEvents.~ML_Vector();
 	}
+}
+
+void HardResetTimedEvents(EntityID& entity)
+{
+	//Loop and destroy all existing timed events
+}
+
+void TimedEventIgnoreGamespeed(bool ignore)
+{
+	ignoreGameSpeed = ignore;
 }

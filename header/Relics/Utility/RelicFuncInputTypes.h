@@ -4,6 +4,22 @@
 
 namespace RelicInput
 {
+	namespace DMG
+	{
+		enum DAMAGE_TYPE_AND_SOURCE
+		{
+			UNDEFINED = 0x0,
+			INSTANT = 0x1,
+			DOT = 0x2,
+			ENEMY = 0x4,
+			HAZARD = 0x8,
+			INSTANT_ENEMY = INSTANT | ENEMY,
+			DOT_ENEMY = DOT | ENEMY,
+			INSTANT_HAZARD = INSTANT | HAZARD,
+			DOT_HAZARD = DOT | HAZARD
+		};
+	}
+
 	struct OnStatCalcInput
 	{
 		EntityID entity;
@@ -26,8 +42,10 @@ namespace RelicInput
 		float flatAdd = 0.f; // The flat addition
 		float flatSub = 0.f; // The flat decrease
 		float cap = 0.f; // The maximum damage that can be dealt
+		DMG::DAMAGE_TYPE_AND_SOURCE typeSource = DMG::UNDEFINED; // The type and source of damage
 
 		float CollapseDamage();
+		float CollapseNoCap();
 	};
 
 	struct OnHealthUpdate
@@ -44,5 +62,14 @@ namespace RelicInput
 	struct OnTimeUpdate
 	{
 		float timeDelta;
+	};
+
+	struct OnPriceCalculation
+	{
+		float everythingCostMult = 1.f;
+		float relicCostMult = 1.f;
+		float healCostMult = 1.f;
+		float rerollCostMult = 1.f;
+		float upgradeCost = 1.f;
 	};
 }

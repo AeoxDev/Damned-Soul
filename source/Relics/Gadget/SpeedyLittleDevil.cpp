@@ -8,6 +8,14 @@
 
 EntityID SPEEDY_LITTLE_DEVIL::_OWNER;
 
+const char* SPEEDY_LITTLE_DEVIL::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Increases your speed by %ld", long int(SPEEDY_LITTLE_DEVIL_SPEED_INCREASE));
+#pragma warning(suppress : 4172)
+	return temp;
+}
+
 void SPEEDY_LITTLE_DEVIL::Initialize(void* input)
 {
 	// Set owner

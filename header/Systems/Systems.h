@@ -18,7 +18,19 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
-class ButtonSystem : public System
+class GlowSystem : public System	// NOTE: Might need a separate blur system for future readability.
+{
+	bool Update();
+};
+class GlowApplySystem : public System
+{
+	bool Update();
+};
+class OnClickSystem : public System
+{
+	bool Update();
+};
+class OnHoverSystem : public System
 {
 	bool Update();
 };
@@ -55,15 +67,11 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIRelicsSystem : public System
+class UIShopSystem : public System
 {
 	bool Update();
 };
-//class UIGameLevelSystem : public System
-//{
-//	bool Update();
-//};
-class UIShopSystem : public System
+class UIRunTime : public System
 {
 	bool Update();
 };
@@ -76,7 +84,10 @@ class TransformSystem : public System
 {
 	bool Update();
 };
-
+class FollowerSystem : public System
+{
+	bool Update();
+};
 class ParticleSystemGPU : public System
 {
 	bool Update();
@@ -90,7 +101,7 @@ class ParticleSystem : public System
 	bool Update();
 };
 
-class DamageOverTimeSystem : public System
+class DebuffSystem : public System
 {
 	bool Update();
 };
@@ -110,7 +121,32 @@ class EyeBehaviourSystem : public System
 	bool Update();
 };
 
+class ImpBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class ZacBehaviourSystem : public System
+{
+	bool Update();
+};
+
+//class MinotaurBehaviourSystem : public System
+//{
+//	bool Update();
+//};
+
 class TempBossBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class LuciferBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class FrozenBehaviourSystem : public System
 {
 	bool Update();
 };
@@ -130,6 +166,10 @@ class StateSwitcherSystem : public System
 	bool Update();
 };
 
+class ProjectileSystem : public System
+{
+	bool Update();
+};
 //System implementation that'll pretty much need to be worked into the scene class and not fuck up the rest of the project
 //Order of operations in the main update loop is essentially:
 //1. Do general window events

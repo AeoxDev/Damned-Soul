@@ -11,6 +11,7 @@
 #include "RenderDepthPass.h"
 
 RenderSetupComponent renderStates[8];
+SMP_IDX shadowClampSamlper;
 int currentSize = 0;
 int backBufferRenderSlot;
 
@@ -137,9 +138,12 @@ int SetupGameRenderer()
 	char depthShader[] = "DepthPixel.cso";
 	CreateDepthPassPixelShader(depthShader);
 	CreateDepthPass();
-
+	shadowClampSamlper = CreateShadowClampSamplerState();
+	SetSamplerState(shadowClampSamlper, 1);
 	//CreateShadowMap(512, 512);
-	CreateShadowMap(1536, 1536);
+	CreateShadowMap(3072, 3072);
+
+
 	return currentSize++;
 }
 
@@ -152,7 +156,7 @@ int SetupParticles()
 	renderStates[currentSize].vertexBuffer = CreateVertexBuffer(sizeof(Particle), MAX_PARTICLES, USAGE_DEFAULT);
 	renderStates[currentSize].vertexShaders[0] = LoadVertexShader("ParticleVS.cso", PARTICLE);
 	renderStates[currentSize].pixelShaders[0] = LoadPixelShader("ParticlePS.cso");
-	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("ParticleSamplerVS.cso", DEFAULT);
+	renderStates[currentSize].vertexShaders[1] = LoadVertexShader("ParticleSamplerVS.cso", PARTICLE);
 	renderStates[currentSize].pixelShaders[1] = LoadPixelShader("ParticleSamplerPS.cso");
 	renderStates[currentSize].geometryShader = LoadGeometryShader("ParticleGS.cso");
 	renderStates[currentSize].computeShader = LoadComputeShader("ParticleCS.cso");

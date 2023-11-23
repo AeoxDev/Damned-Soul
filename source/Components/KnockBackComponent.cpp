@@ -2,14 +2,14 @@
 #include "Registry.h"
 #include "Components.h"
 
-#define BASE_SPEED (30.f)
+#define BASE_SPEED (12.f)
 #define FRICTION_GROWTH_SPEED 5.0f
 
 KnockBackComponent::KnockBackComponent(const float x, const float z)
 {
 	this->m_velocity_x = x * BASE_SPEED;
 	this->m_velocity_z = z * BASE_SPEED;
-	friction = 0.0f;
+	friction = 1.0f;
 }
 
 void KnockBackComponent::Diminish(const float deltaTime)
@@ -24,20 +24,28 @@ void KnockBackComponent::Diminish(const float deltaTime)
 	//Elliot: Diminish like balloon?
 	friction += deltaTime * FRICTION_GROWTH_SPEED;
 	float dx = m_velocity_x * deltaTime * friction * friction;
-	float dy = m_velocity_z * deltaTime * friction * friction;
+	float dz = m_velocity_z * deltaTime * friction * friction;
 	// Subtract or set to 0, whichever is more relevant
 	//m_velocity_x = abs(update_x) < abs(m_velocity_x) ? m_velocity_x - update_x : 0;
 	//m_velocity_z = abs(update_z) < abs(m_velocity_z) ? m_velocity_z - update_z : 0;
-	m_velocity_x -= dx;
-	m_velocity_z -= dy;
-	if (abs(m_velocity_x) < 0.01f)
-	{
+	if (abs(m_velocity_x) < abs(dx))
 		m_velocity_x = 0.0f;
-	}
-	if (abs(m_velocity_z) < 0.01f)
-	{
+	else
+		m_velocity_x -= dx;
+	if (abs(m_velocity_z) < abs(dz))
 		m_velocity_z = 0.0f;
-	}
+	else
+		m_velocity_z -= dz;
+	//m_velocity_x -= dx;
+	//m_velocity_z -= dy;
+	//if (abs(m_velocity_x) < 0.01f)
+	//{
+	//	m_velocity_x = 0.0f;
+	//}
+	//if (abs(m_velocity_z) < 0.01f)
+	//{
+	//	m_velocity_z = 0.0f;
+	//}
 }
 
 void AddKnockBack(EntityID& entity, const float x, const float z)

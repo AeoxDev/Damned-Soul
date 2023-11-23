@@ -30,14 +30,20 @@ namespace Camera
 	void SaveToShadowMapCamera();
 
 	const DirectX::XMVECTOR GetPosition();
+	const DirectX::XMFLOAT3 GetPositionFloat();
 	const DirectX::XMVECTOR GetLookAt();
+	const DirectX::XMFLOAT3 GetLookAtFloat();
 	const DirectX::XMVECTOR GetUp();
 	const DirectX::XMVECTOR GetRotation();
+	const float GetRotationX();
 	float GetFOV();
 
 	const DirectX::XMMATRIX GetView();
 	const DirectX::XMMATRIX GetPerspective();
 	const DirectX::XMMATRIX GetOrthographic();
+
+	void SetCutsceneMode(bool inCutscene);
+	bool InCutscene();
 
 	int16_t GetCameraBufferIndex();
 

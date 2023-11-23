@@ -67,15 +67,12 @@ bool StateSwitcherSystem::Update()
 				if (tempBossComp->deathCounter < 3) //spawn new mini russian doll skeleton
 				{
 					// start timed event for new little bossies
-					for (auto audioJungle : View<AudioEngineComponent>(registry)) //Remove this after playtest. It is just for the funnies.
-					{
-						registry.GetComponent<SoundComponent>(audioJungle)->Play(Music_StageCombat, Channel_Base);
-					}
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);
 				}
 				else // le snap
 				{
 					// start timed event for MURDER
+				
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 				}
 			}
@@ -88,10 +85,17 @@ bool StateSwitcherSystem::Update()
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
-		if (playersComp->killingSpree >= playersComp->killThreshold && !playersComp->portalCreated && !(currentStates & State::InShop))
+		bool endGameLoop = true;
+		for (auto enemyEntity : View<EnemyComponent>(registry))
+		{
+			endGameLoop = false;
+			continue;
+		}
+		if (/*playersComp->killingSpree >= playersComp->killThreshold*/(GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop))
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();
+			SetGodModePortal(false);
 			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 		}
 	}

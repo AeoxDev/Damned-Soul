@@ -9,9 +9,6 @@
 #include "States\StateManager.h"
 #include <cmath>
 #include "CombatFunctions.h"
-//#include <cmath> //sin
-
-#define KNOCKBACK_FACTOR 0.3f
 
 void BeginHit(EntityID& entity, const int& index)
 {
@@ -21,40 +18,41 @@ void BeginHit(EntityID& entity, const int& index)
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 
-	//ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
-	//ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	//Charged attack extravaganza
+	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
+	uint32_t condition = GetTimedEventCondition(teComp, index);
+	
+	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats/*, condition == CONDITION_CHARGE*/);
 
-	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
+	//Disable damage taken until EndHit if we're the player (enemy i-frames make faster attacks useless)
+	auto player = registry.GetComponent<PlayerComponent>(entity);
+	if(player)
+		SetHitboxCanTakeDamage(entity, player->softHitboxID, false); //Only disables for like 0.3 seconds but it's better than nothing, you got reaction times
 
+	//I want to play a sound that's just a straight-up *smack* for better hit feedback
+}
 
-	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-	////Deal regular damage as well as on-hit damage from potential relics
+void DashBeginHit(EntityID& entity, const int& index)
+{
+	//Get relevant components
+	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
+	
+	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
+	StatComponent* defenderStats = registry.GetComponent<StatComponent>(cpc->params.entity2);
 
-	//// Calculate damage
-	//float calculatedDamage = attackerStats->CalculateDamageDealt(stats);
-
-	//stats->UpdateHealth(-calculatedDamage, player != nullptr);
-	//auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY);
-	//RedrawUI();
-	//RelicInput::OnHitInput funcInput
-	//{
-	//	cpc->params.entity1,
-	//	entity
-	//};
-	//for (uint32_t i = 0; i < funcVector.size(); ++i)
-	//{
-	//	funcVector[i](&funcInput);
-	//}
+	//Apply the damage
+	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
 
 	//Disable damage taken until EndHit
-	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+	auto player = registry.GetComponent<PlayerComponent>(entity);
+	if(player)
+		SetHitboxCanTakeDamage(entity, player->softHitboxID, false);
 }
 
 void MiddleHit(EntityID& entity, const int& index)
 {
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-
 	
 	//Take knockback
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
@@ -65,30 +63,23 @@ void MiddleHit(EntityID& entity, const int& index)
 		CancelTimedEvent(entity, index);
 		return;
 	}
-
-	/*StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
-	if (cpc && transform)
-	{
-		float knockbackFactor = KNOCKBACK_FACTOR / (0.1f + transform->mass * GetTimedEventElapsedTime(entity, index));
-		knockbackFactor *= knockbackFactor;
-		transform->positionX += cpc->params.normal1X * GetDeltaTime() * knockbackFactor;
-		transform->positionZ += cpc->params.normal1Z * GetDeltaTime() * knockbackFactor;
-	}*/
 }
 
 void EndHit(EntityID& entity, const int& index)
 {
-	//Enable damage taken again
-	SetHitboxCanTakeDamage(entity, 1, true);
+	//Enable damage taken again for the player
+	auto player = registry.GetComponent<PlayerComponent>(entity);
+	if (player)
+		SetHitboxCanTakeDamage(entity, player->softHitboxID, true);
 
 	//Make sure we're back to our regular color
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
 	if (skelel)
-		skelel->colorAdditiveRed = 0.0f;
+		skelel->shared.colorAdditiveRed = 0.0f;
 	if (bonel)
-		bonel->colorAdditiveRed = 0.0f;
+		bonel->shared.colorAdditiveRed = 0.0f;
 	RedrawUI();//Bug fix redraw
 }
 
@@ -142,41 +133,22 @@ void HazardBeginHit(EntityID& entity, const int& index)
 
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
-	//PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-
-	//// Calculate damage
-	//float calculatedDamage = attackerStats->CalculateDamageDealt(stats);
-
-	////Deal regular damage as well as on-hit damage from potential relics
-	//stats->UpdateHealth(-calculatedDamage, player != nullptr);
-	//auto funcVector = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY);
-	//RelicInput::OnHitInput funcInput
-	//{
-	//	cpc->params.entity1,
-	//	entity
-	//};
-	//for (uint32_t i = 0; i < funcVector.size(); ++i)
-	//{
-	//	funcVector[i](&funcInput);
-	//}
-
 	//Become red
 	if (skelel)
-		skelel->colorAdditiveRed = 1.0f;
+		skelel->shared.colorAdditiveRed = 1.0f;
 	if (bonel)
-		bonel->colorAdditiveRed = 1.0f;
+		bonel->shared.colorAdditiveRed = 1.0f;
 }
 void HazardEndHit(EntityID& entity, const int& index)
 {
-
 	//Make sure we're back to our regular color
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
 	if (skelel)
-		skelel->colorAdditiveRed = 0.0f;
+		skelel->shared.colorAdditiveRed = 0.0f;
 	if (bonel)
-		bonel->colorAdditiveRed = 0.0f;
+		bonel->shared.colorAdditiveRed = 0.0f;
 }
 
 void StaticHazardDamage(EntityID& entity, const int& index)
@@ -214,14 +186,13 @@ void LavaBlinkColor(EntityID& entity, const int& index)
 	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->colorAdditiveRed = cosineWave;
-		skelel->colorAdditiveGreen = 0.2f * cosineWave;
+		skelel->shared.colorAdditiveRed = cosineWave;
+		skelel->shared.colorAdditiveGreen = 0.2f * cosineWave;
 	}
 		
 	if (bonel)
 	{
-		bonel->colorAdditiveRed = cosineWave;
-		bonel->colorAdditiveGreen = 0.2f * cosineWave;
+		bonel->shared.colorAdditiveRed = cosineWave;
+		bonel->shared.colorAdditiveGreen = 0.2f * cosineWave;
 	}
-		
 }

@@ -13,13 +13,14 @@ ID3D11VertexShader* vrtShader_NULL = nullptr;
 ID3D11PixelShader* pixShader_NULL = nullptr;
 ID3D11ComputeShader* comShader_NULL = nullptr;
 ID3D11GeometryShader* geoShader_NULL = nullptr;
+ID3D11InputLayout* inputLayout_NULL = nullptr;
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
 	std::ifstream reader;
 	reader.open(name, std::ios::binary | std::ios::ate);
 	assert(true == reader.is_open());
-	
+
 
 	// Allocate the byte data on the stack
 	reader.seekg(0, std::ios::end);
@@ -72,7 +73,7 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	Layout defaultLayout = { defaultInputDesc, ARRAYSIZE(defaultInputDesc)};
+	Layout defaultLayout = { defaultInputDesc, ARRAYSIZE(defaultInputDesc) };
 
 	//Skeletal Layout
 	D3D11_INPUT_ELEMENT_DESC skeletalInputDesc[5] =
@@ -141,7 +142,7 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 	ID3D11VertexShader* tempVS = 0;
 	HRESULT hr = d3d11Data->device->CreateVertexShader(shaderData, size, NULL, &tempVS); // Does not increment here
 	assert(!FAILED(hr));
-	
+
 	VS_IDX idx = vrtHolder->NextIdx();
 	vrtHolder->vs_map.emplace(idx, tempVS);
 
@@ -162,11 +163,22 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 bool SetVertexShader(const VS_IDX idx)
 {
 	assert(true == vrtHolder->vs_map.contains(idx));
-	
+
 	assert(idx >= 0);
 
 	d3d11Data->deviceContext->VSSetShader(vrtHolder->vs_map[idx], nullptr, 0);
 	d3d11Data->deviceContext->IASetInputLayout(vrtHolder->il_map[idx]);
+	return true;
+}
+
+bool SetVertexShader(const VS_IDX idx, bool particle)
+{
+	assert(true == vrtHolder->vs_map.contains(idx));
+
+	assert(idx >= 0);
+
+	d3d11Data->deviceContext->VSSetShader(vrtHolder->vs_map[idx], nullptr, 0);
+	d3d11Data->deviceContext->IASetInputLayout(inputLayout_NULL);
 	return true;
 }
 
@@ -273,6 +285,12 @@ void SetTopology(TOPOLOGY topology)
 		break;
 	case POINTLIST:
 		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		break;
+	case LINELIST:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		break;
+	case LINESTRIP:
+		d3d11Data->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
 		break;
 	default:
 		break;

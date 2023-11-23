@@ -10,11 +10,13 @@ struct HellhoundBehaviour
 	bool circleBehaviour = false;
 	bool isBehind = false;
 	float isBehindCounter = 0.f;
-	float giveUpChaseCounter = 0.f;
 	bool charge = false;
+
+
 	
 
-
+	bool wantsToShoot = false;
+	bool hasMadeADecision = false;
 
 
 	// MELEE VARIABLES
@@ -22,7 +24,10 @@ struct HellhoundBehaviour
 	float attackStunDurationCounter = 0.8f;
 	const float attackStunDuration = 0.8f;
 
+	float chargePrepareDurationCounter = 0.0f;
+	const float chargePrepareDuration = 0.5f;
 
+	float meleeDistance = 3.5f;
 
 
 	// SHOOTING VARIABLES
@@ -54,7 +59,6 @@ struct HellhoundBehaviour
 	bool flameSoundsStartedPlaying = false;
 	
 
-
 	// COWARD VARIABLES
 	const float cowardDuration = 2.f; // How long the dog will run away
 	float cowardCounter = 0.f;
@@ -67,5 +71,33 @@ struct HellhoundBehaviour
 	bool isWating = false; // kind of dumb, but needed for checks
 
 
+
 	
+
+	//how often pathfinding
+	float updatePathCounter = 1.8f;
+	float updatePathLimit = 0.5f;
+
+
+
+	//pathfinding
+	float dirX = 0.f;
+	float dirZ = 0.f;
+	float dir2X = 0.f;
+	float dir2Z = 0.f;
+	bool followPath = false;
+
+
+
+
+	//trust me, these are needed. int errors
+	float fx = 0.f;
+	float fz = 0.f;
+
+
+
+	//charge variables
+	float chargeTimeLimit = 4.f;
+	float chargeCounter = 0.f;
+
 };

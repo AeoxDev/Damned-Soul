@@ -4,98 +4,144 @@
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
 #include "UI/UIRenderer.h"
+#include "EventFunctions.h"
 #include <random>
 
-
-void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid)
 {
 	// Regular walk
-	enemyAnim->aAnim = ANIMATION_WALK;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
-	ANIM_BRANCHLESS(enemyAnim);
-
-	//calculate the direction away from the player
-	eyeComponent->goalDirectionX = -(playerTransformCompenent->positionX - eyeTransformComponent->positionX);
-	eyeComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - eyeTransformComponent->positionZ);
-	float magnitude = sqrt(eyeComponent->goalDirectionX * eyeComponent->goalDirectionX + eyeComponent->goalDirectionZ * eyeComponent->goalDirectionZ);
-	if (magnitude < 0.001f)
+	if (enemyAnim->aAnim != ANIMATION_WALK)
 	{
-		magnitude = 0.001f;
+		enemyAnim->aAnim = ANIMATION_WALK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
 	}
-	eyeComponent->goalDirectionX /= magnitude;
-	eyeComponent->goalDirectionZ /= magnitude;
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
-	float dirX = eyeTransformComponent->facingX, dirZ = eyeTransformComponent->facingZ;
-	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	if (magnitude < 0.001f)
+	
+	//using charge timer as a safetynet 
+	ec->chargeTimer += GetDeltaTime();
+	if (!ec->retreating)
 	{
-		magnitude = 0.001f;
-	}
+		ec->retreating = true;
+		float minRange = 20.0f;
+		float maxRange = 30.0f;
 
-	eyeTransformComponent->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	eyeTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+		TransformComponent newTile = FindRetreatTile(valueGrid, etc, 20.f, 30.f);
+
+		float dirToPlayerX = ptc->positionX - etc->positionX;
+		float dirToPlayerZ = ptc->positionZ - etc->positionZ;
+		Normalize(dirToPlayerX, dirToPlayerZ);
+
+		float dirToNewTileX = newTile.positionX - etc->positionX;
+		float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+		Normalize(dirToNewTileX, dirToNewTileZ);
+
+		float dotX = dirToNewTileX * dirToPlayerX;
+		float dotZ = dirToNewTileZ * dirToPlayerZ;
+		int iterations = 0;
+		while ((dotX > 0.0f || dotZ > 0.0f) && iterations > 1000)
+		{
+			newTile = FindRetreatTile(valueGrid, etc, 20.f, 30.f);
+
+			float dirToNewTileX = newTile.positionX - etc->positionX;
+			float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+			Normalize(dirToNewTileX, dirToNewTileZ);
+
+			dotX = dirToNewTileX * dirToPlayerX;
+			dotZ = dirToNewTileZ * dirToPlayerZ;
+			iterations++;
+		}
+
+		ec->targetX = newTile.positionX;
+		ec->targetZ = newTile.positionZ;
+
+		ec->goalDirectionX = dirToNewTileX;
+		ec->goalDirectionZ = dirToNewTileZ;
+
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+
+		etc->positionX += dirToNewTileX * enemyStats->GetSpeed() * GetDeltaTime();
+		etc->positionZ += dirToNewTileZ * enemyStats->GetSpeed() * GetDeltaTime();
+	}
+	else if(ec->chargeTimer < 1.5f)
+	{
+		auto dist = Calculate2dDistance(etc->positionX, etc->positionZ, ec->targetX, ec->targetZ);
+		if (dist > 1.0f)
+		{
+			SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+			etc->positionX += ec->goalDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
+			etc->positionZ += ec->goalDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
+		}
+		else
+		{
+			ec->retreating = false;
+			ec->chargeTimer = 0.0f;
+		}
+	}
+	else 
+	{
+		ec->retreating = false;
+		ec->chargeTimer = 0.0f;
+	}
 }
 
-bool CombatBehaviour(PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
+bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
-	// Regular attack?
-	enemyAnim->aAnim = ANIMATION_ATTACK;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
-	ANIM_BRANCHLESS(enemyAnim);
+	//if you just attacked go back to circle behaviour
+	if (ec->attackTimer < enemyStats->GetAttackSpeed())
+	{
+		ec->attackTimer += GetDeltaTime();
+		return false;
+	}
+	//rotate eye in order to shoot at the player
+	else if (ec->aimTimer < ec->aimDuration)
+	{
+		if (enemyAnim->aAnim != ANIMATION_ATTACK)
+		{
+			enemyAnim->aAnim = ANIMATION_ATTACK;
+			enemyAnim->aAnimIdx = 1;
+			enemyAnim->aAnimTime = 0.0f;
+		}
+		
+		ec->goalDirectionX = ptc->positionX - etc->positionX;
+		ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 
-	//impose timer so they cannot run and hit at the same time also not do a million damage per sec
-	if (ec->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
+		Normalize(ec->goalDirectionX, ec->goalDirectionZ);
+
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+		ec->aimTimer += GetDeltaTime();
+		ec->attackTimer += GetDeltaTime();
+		return true;
+	}
+	else // yes, we can indeed attack. 
 	{
 		ec->attackTimer = 0;
-		ec->attackStunDurationCounter = 0;
+		ec->aimTimer = 0;
 		ec->specialCounter++; //increase the special counter for special attack
+		ec->attackStunTimer = 0;
+		
+		enemyAnim->aAnim = ANIMATION_IDLE;
+		enemyAnim->aAnimIdx = 1;
+		enemyAnim->aAnimTime = 0.0f;
 
 		//set direction for attack
 		float dx = ptc->positionX - etc->positionX;
 		float dz = ptc->positionZ - etc->positionZ;
-		float magnitude = sqrt(dx * dx + dz * dz);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-
-		float orthoX = -dz;
-		float orthoZ = dx;
-
-		dx /= magnitude;
-		dz /= magnitude;
-
-		float targetX = etc->positionX + dx * 10.0f;
-		float targetZ = etc->positionZ + dz * 10.0f;
-
-		ec->facingX = targetX;
-		ec->facingZ = targetZ;
-
-		//SmoothRotation(etc, ec->facingX, ec->facingZ);
 		
+		Normalize(dx, dz);
 
-		//SHOOOT
-
-		//playerStats->health -= enemyStats->damage;
-		//RedrawUI();
-
+		CreateProjectile(entity, dx, dz, eye);
 		return true;
-	}
-	else
-	{
-		return false;
 	}
 }
 
 void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, StatComponent* playerStats, AnimationComponent* enemyAnim)
 {
-	// Regular attack?
-	enemyAnim->aAnim = ANIMATION_WALK;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
-	ANIM_BRANCHLESS(enemyAnim);
+	if (enemyAnim->aAnim != ANIMATION_WALK && enemyAnim->aAnimIdx != 0)
+	{
+		enemyAnim->aAnim = ANIMATION_WALK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
 
 	float magnitude = 0.f;
 	float dirX = 0.f;
@@ -111,91 +157,103 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 		dirX = ec->goalDirectionZ;
 		dirZ = -ec->goalDirectionX;
 	}
-	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	SmoothRotation(etc, dirX, dirZ, 30.f);
-	if (magnitude < 0.001f)
-	{
-		magnitude = 0.001f;
-	}
-	dirX /= magnitude;
-	dirZ /= magnitude;
+
+	Normalize(dirX, dirZ);
+
 	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
 	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
 	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
+
+	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
-	enemyAnim->aAnim = ANIMATION_IDLE;
-	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
-	ANIM_BRANCHLESS(enemyAnim);
-
-	/*eyeComponent->timeCounter += GetDeltaTime();
-	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
+	if (enemyAnim->aAnim != ANIMATION_IDLE)
 	{
-		eyeComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-
-		std::uniform_real_distribution<float> distributionX(eyeTransformComponent->facingX - 0.3f, eyeTransformComponent->facingX + 0.3f);
-		std::uniform_real_distribution<float> distributionZ(eyeTransformComponent->facingZ - 0.3f, eyeTransformComponent->facingZ + 0.3f);
-		float randomX = distributionX(gen);
-		float randomZ = distributionZ(gen);
-		eyeComponent->goalDirectionX = randomX;
-		eyeComponent->goalDirectionZ = randomZ;
-
-		std::uniform_real_distribution<float> randomInterval(0.4f, 0.8f);
-		eyeComponent->updateInterval = randomInterval(gen);
+		enemyAnim->aAnim = ANIMATION_IDLE;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
 	}
 
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
-
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->moveSpeed / 2.f * GetDeltaTime();
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->moveSpeed / 2.f * GetDeltaTime();*/
-	eyeComponent->timeCounter += GetDeltaTime();
-	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
+	bool okayDirection = false;
+	while (!okayDirection)
 	{
-		eyeComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		eyeComponent->goalDirectionX = randomX;
-		eyeComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		eyeComponent->updateInterval = randomInterval(gen);
+		if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
+		{
+			eyeComponent->timeCounter = 0.f;
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			// Define a uniform distribution for the range [-1.0, 1.0]
+			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+			float randomX = distribution(gen);
+			float randomZ = distribution(gen);
+			eyeComponent->goalDirectionX = randomX;
+			eyeComponent->goalDirectionZ = randomZ;
+			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+			eyeComponent->updateInterval = randomInterval(gen);
+		}
+
+		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+		float oldX = eyeTransformComponent->positionX;
+		float oldZ = eyeTransformComponent->positionZ;
+		float bias = 1.f;
+
+		//skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		//skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		TransformAccelerate(enemy, eyeTransformComponent->facingX * 0.5f, eyeTransformComponent->facingZ * 0.5f);
+		if ((eyeTransformComponent->positionX >= oldX + bias || eyeTransformComponent->positionZ >= oldZ + bias) && eyeTransformComponent->positionX <= oldX - bias || eyeTransformComponent->positionZ <= oldZ - bias)
+		{
+			//not good direction
+			eyeTransformComponent->positionX = oldX;
+			eyeTransformComponent->positionZ = oldZ;
+			eyeComponent->timeCounter = eyeComponent->updateInterval + 1.f;
+		}
+		else
+		{
+			// good direction
+			okayDirection = true;
+		}
+
 	}
-
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
-
-
-	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
-bool Collision(float aX, float aZ, float bX, float bZ, float tolerance) // A = enemy pos, B = player pos, tolerance = 
+void ChargeColorFlash(EntityID& entity, const int& index)
 {
-	if (aX < bX + tolerance && aX > bX - tolerance &&
-		aZ < bZ + tolerance && aZ > bZ - tolerance)
-		return true;
-	else
-		return false;
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	float frequency = 10.0f; //Higher frequency = faster flashing lights
+	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	if (skelel)
+	{
+		skelel->shared.colorAdditiveRed = cosineWave;
+		skelel->shared.colorAdditiveGreen = cosineWave;
+	}
+	if (bonel)
+	{
+		bonel->shared.colorAdditiveRed = cosineWave;
+		bonel->shared.colorAdditiveGreen = cosineWave;
+	}
 }
 
-void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp)
+void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp, AnimationComponent* enemyAnim)
 {
-	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(eID);
-
 	if (!eyeComponent->charging)
 	{
 		enemyAnim->aAnimTime = 0;
 
+		//reset value and calculate new breakpoint
+		eyeComponent->attackTimer = 0;
 		eyeComponent->specialCounter = 0;
 		eyeComponent->charging = true;
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// Define a uniform distribution for the range [2.0, 5.0]
+		std::uniform_real_distribution<float> distribution(2.0f, 5.0f);
+		eyeComponent->specialBreakpoint = (int)distribution(gen);
+
 
 		//while charging disable hitboxes
 		SetHitboxIsMoveable(eID, 0, false);
@@ -205,14 +263,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
 		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
 
-		float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-
-		dirX /= magnitude;
-		dirZ /= magnitude;
+		Normalize(dirX, dirZ);
 
 		//target is the stopping point of the charge, a set distance behind the players position
 		eyeComponent->targetX = playerTransformCompenent->positionX + dirX * 10.0f;
@@ -225,25 +276,33 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
 
 		SmoothRotation(eyeTransformComponent, eyeComponent->changeDirX, eyeComponent->changeDirZ, 40.0f);
+		AddTimedEventComponentStartContinuousEnd(eID, 0.0f, nullptr, ChargeColorFlash, eyeComponent->aimDuration - 0.2f, ResetColor);
+	}
+	else if (eyeComponent->aimTimer < eyeComponent->aimDuration)
+	{
+		eyeComponent->goalDirectionX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
+		eyeComponent->goalDirectionZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
+
+		Normalize(eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+
+		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
+		eyeComponent->aimTimer += GetDeltaTime();
+		eyeComponent->attackTimer += GetDeltaTime();
 	}
 	else 
 	{
-		// Regular attack?
-		enemyAnim->aAnim = ANIMATION_ATTACK;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime += GetDeltaTime();
+		if (enemyAnim->aAnim != ANIMATION_ATTACK)
+		{
+			enemyAnim->aAnim = ANIMATION_ATTACK;
+			enemyAnim->aAnimIdx = 0;
+			enemyAnim->aAnimTime = 0.0f;
+		}
 		
 		//calculate the current direction towards player
 		float dirX = (eyeComponent->targetX - eyeTransformComponent->positionX);
 		float dirZ = (eyeComponent->targetZ - eyeTransformComponent->positionZ);
 
-		float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		dirX /= magnitude;
-		dirZ /= magnitude;
+		Normalize(dirX, dirZ);
 
 		//scalar between the current direction and the original chagre direction
 		float scalar = dirX * eyeComponent->changeDirX + dirZ * eyeComponent->changeDirZ;
@@ -273,13 +332,15 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			eyeComponent->charging = false;
 			eyeComponent->chargeAttackSoundPlaying = false;
 			eyeComponent->attackTimer = 0;
-			eyeComponent->attackStunDurationCounter = 0;
+			eyeComponent->attackStunTimer = 0;
 			eyeComponent->dealtDamage = false;
+			
+			enemyAnim->aAnimTime = 0.0f;
+			enemyAnim->aAnim = ANIMATION_IDLE;
+			enemyAnim->aAnimIdx = 1;
 		}
 	}
 }
-
-//static int TEMPCOUNTER_WILLBEREMOVEDLATER = 0; //used to increase the special counter, should be in the combatbehaviour but not yet implemented
 
 bool EyeBehaviourSystem::Update()
 {
@@ -292,12 +353,14 @@ bool EyeBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enemComp = nullptr;
+	DebuffComponent* debuff = nullptr;
+
+	bool hasUpdatedMap = false;
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
+	
 	//Find available entity
-	
-	
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
-		
 		SetLightColor(enemyEntity, 0.3f, 0.3f, 0.3f);
 		eyeComponent = registry.GetComponent<EyeBehaviour>(enemyEntity);
 		eyeTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
@@ -305,6 +368,14 @@ bool EyeBehaviourSystem::Update()
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			continue; // frozen, won't do behavior stuff
+		}
+
+
 		//Find a player to kill.
 		if (enemComp->lastPlayer.index == -1)
 		{
@@ -339,25 +410,22 @@ bool EyeBehaviourSystem::Update()
 
 		if (enemyStats->GetHealth() > 0 && eyeComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
-			// Get animation component
-			
-
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
-			eyeComponent->attackTimer += GetDeltaTime();
-			eyeComponent->attackStunDurationCounter += GetDeltaTime();
-			if (eyeComponent->attackStunDurationCounter <= eyeComponent->attackStunDuration)
+			
+			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
 			{
-				// Regular attack?
-				enemyAnim->aAnim = ANIMATION_IDLE;
-				enemyAnim->aAnimIdx = 0;
-				enemyAnim->aAnimTime += GetDeltaTime() * .7f;
-				ANIM_BRANCHLESS(enemyAnim);
+				//do nothing
 			}
-			else if (distance < 25.0f && !eyeComponent->charging) // Retreat to safe distance if not charging
+			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging) // Retreat to safe distance if not charging
 			{
-				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+				if (hasUpdatedMap == false)
+				{
+					hasUpdatedMap = true;
+					CalculateGlobalMapValuesImp(valueGrid);
+				}
+				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim, valueGrid);
 			}
-			else if (eyeComponent->charging || (eyeComponent->attackTimer > enemyStats->GetDamage() && distance < 45.f)/*eyeComponent->specialCounter > eyeComponent->specialBreakpoint*/) //if special is ready or is currently doing special
+			else if (eyeComponent->charging || (eyeComponent->specialCounter >= eyeComponent->specialBreakpoint && eyeComponent->attackTimer >= enemyStats->GetAttackSpeed())) //if special is ready or is currently doing special
 			{
 				//CHAAAAARGE
 				if (!eyeComponent->chargeAttackSoundPlaying)
@@ -367,35 +435,34 @@ bool EyeBehaviourSystem::Update()
 					sfx->Play(Eye_Attack, Channel_Base);
 					eyeComponent->chargeTimer = 0.0f;
 				}
-				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp);
+				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp, enemyAnim);
 
 			}
 			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
-				//SmoothRotation(eyeTransformComponent, eyeComponent->facingX, eyeComponent->facingZ);
-				//if(!CombatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats))
-				CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
-				
-				//TEMPCOUNTER_WILLBEREMOVEDLATER++; //this will not be neccessary later
-				//if (TEMPCOUNTER_WILLBEREMOVEDLATER % 1000 == 0)
-				//{
-				//	eyeComponent->specialCounter++;
-				//}
+				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
+					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
 			}
 			else // idle
 			{
 				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
 		}
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 		}
+
+		eyeComponent->attackStunTimer += GetDeltaTime();
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(enemyAnim);
+		TransformDecelerate(enemyEntity);
 	}
 
-	
+	free(valueGrid);
+
 	return true;
 }

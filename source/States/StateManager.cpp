@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "Glow.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -64,10 +65,19 @@ void SetInPause(bool value)
 	if (value)
 	{
 		currentStates = (State)(currentStates | State::InPause);
+		TimedEventIgnoreGamespeed(false);
+		gameSpeed = 0.0f;
+		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera from moving during pause.
 	}
 	else
 	{
 		currentStates = (State)(currentStates & (~State::InPause));
+		if (Camera::InCutscene() == true)
+		{
+			TimedEventIgnoreGamespeed(true);
+			gameSpeed = 0.0f;
+		}
+		
 	}
 }
 void SetInSettings(bool value)
@@ -94,9 +104,24 @@ void SetInShop(bool value)
 		currentStates = (State)(currentStates & (~State::InShop));
 	}
 }
+void SetInCredits(bool value)
+{
+
+	if (value)
+	{
+		currentStates = (State)(currentStates | State::InCredits);
+	}
+	else
+	{
+		currentStates = (State)(currentStates & (~State::InCredits));
+	}
+}
 
 int StateManager::Setup()
 {
+#ifdef _DEBUG
+	visualizeStage = true;
+#endif
 	bool loaded = Setup3dGraphics();
 	if (!loaded)
 	{
@@ -118,13 +143,15 @@ int StateManager::Setup()
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
-	//models.Initialize();
 	Camera::InitializeCamera();
+	SetupHitboxVisualizer();
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Glow::Initialize();
 	//SetupTestHitbox();
 	RedrawUI();
+	
 
 	//Setup systems here
 
@@ -134,17 +161,25 @@ int StateManager::Setup()
 	// Render/GPU
 	
 	systems.push_back(new ParticleSystemCPU());
-	
+
+
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
+
+
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
+	systems.push_back(new GlowSystem());
 
+	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
 
+	systems.push_back(new UIRunTime());
+	systems.push_back(new UIRenderSystem());
 	
-	//Input based CPU
-	systems.push_back(new ButtonSystem());
+	//Input based CPU 
+	systems.push_back(new OnClickSystem());
+	systems.push_back(new OnHoverSystem());
 
 	// Stat Calculatoins
 	systems.push_back(new StatCalcSystem()); // Should be before behaviours and controllers so that the correct stats are applied
@@ -155,16 +190,23 @@ int StateManager::Setup()
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
+	systems.push_back(new FrozenBehaviourSystem());
+	systems.push_back(new LuciferBehaviourSystem());
+	systems.push_back(new ProjectileSystem());
+	
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
+	systems.push_back(new ImpBehaviourSystem());
+	systems.push_back(new ZacBehaviourSystem());
 	systems.push_back(new TransformSystem()); //Must be before controller
+	systems.push_back(new FollowerSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new EventSystem());//Must be after controller system for correct animations
 	systems.push_back(new GeometryIndependentSystem());
 
 	//Damage Over Time (Misc Combat Systems?)
-	systems.push_back(new DamageOverTimeSystem());
+	systems.push_back(new DebuffSystem());
 
 	//CPU work that can affect rendering
 	systems.push_back(new StateSwitcherSystem());
@@ -176,10 +218,9 @@ int StateManager::Setup()
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
-	systems.push_back(new UIRelicsSystem());
+	
 	systems.push_back(new UIShopSystem());
-	//Lastly redraw the 2D UI
-	systems.push_back(new UIRenderSystem());//Render in 2D. Does not use 3d pipeline
+
 	return 0;
 }
 
@@ -231,8 +272,11 @@ void StateManager::Input()
 	{
 		scenes[activeLevelScene % 2 == 1].Input(true);
 	}
+	if (currentStates & State::InCredits)
+	{
+		credits.Input();
+	}
 }
-
 
 void StateManager::Update()
 {
@@ -260,7 +304,6 @@ void StateManager::UnloadAll()
 	UnloadEntities(ENT_PERSIST_HIGHEST);
 	Particles::ReleaseParticles();
 	Light::FreeLight();
-	DestroyHitboxVisualizeVariables();
 	ReleaseUIRenderer();
 	ui.Release();
 	ReleaseDepthPass();

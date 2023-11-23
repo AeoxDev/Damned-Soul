@@ -3,13 +3,21 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
-#include "DamageOverTimeComponent.h"
 
 #define FLAME_WEAPON_DOT_DURATION (1.75f)
 #define FLAME_WEAPON_DOT_FRACTION (0.65f)
-#define FLAME_WEAPON_BASE_DAMAGE (0.f)
 
 EntityID FLAME_WEAPON::_OWNER;
+
+const char* FLAME_WEAPON::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Whenever you hit an enemy with an attack, *Burn* for an additional %ld%% damage over %.2lf seconds",
+		PERCENT(FLAME_WEAPON_DOT_FRACTION),
+		FLAME_WEAPON_DOT_DURATION);
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void FLAME_WEAPON::Initialize(void* input)
 {
@@ -33,14 +41,18 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 	StatComponent* attackerStats = registry.GetComponent<StatComponent>(input->attacker);
 	StatComponent* defenderStats = registry.GetComponent<StatComponent>(input->defender);
 
-	DamageOverTimeComponent newDoT
+	DamageOverTime newDoT
+	(
+		(FLAME_WEAPON_DOT_FRACTION * input->CollapseDamage()) / FLAME_WEAPON_DOT_DURATION,
+		FLAME_WEAPON_DOT_DURATION
+	);
+	DebuffComponent* debuff = registry.GetComponent<DebuffComponent>(input->defender);
+	if (nullptr == debuff)
 	{
-		/*Duration*/	FLAME_WEAPON_DOT_DURATION,
-		/*DPS*/			(FLAME_WEAPON_BASE_DAMAGE + (FLAME_WEAPON_DOT_FRACTION * input->CollapseDamage())) / FLAME_WEAPON_DOT_DURATION
-	};
-	DamageOverTimeComponent* EnemyDoT = registry.GetComponent<DamageOverTimeComponent>(input->defender);
-	if (nullptr == EnemyDoT || EnemyDoT->LessThan(newDoT))
+		registry.AddComponent<DebuffComponent>(input->defender, DamageOverTime::BURN, newDoT);
+	}
+	else if (debuff->m_dots[DamageOverTime::BURN].LessThan(newDoT))
 	{
-		registry.AddComponent<DamageOverTimeComponent>(input->defender, newDoT);
+		debuff->m_dots[DamageOverTime::BURN] = newDoT;
 	}
 }

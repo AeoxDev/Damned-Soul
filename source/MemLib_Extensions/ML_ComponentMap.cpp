@@ -2,7 +2,6 @@
 #include "MemLib\ML_ComponentMap.hpp"
 #include <stdexcept>
 #include <algorithm>
-#include "UIButton.h"
 
 #define BIT_64 (sizeof(size_t))
 #define PAIR_SIZE (m_tSize + BIT_64)
@@ -25,12 +24,6 @@ void swapData(void* first, void* second, const size_t pairSize)
 	// Copy temp to second
 	std::memcpy(second, temp, pairSize);
 }
-
-struct VIS_BOY
-{
-	size_t key;
-	UIButton model;
-};
 
 // Specialized quick sort implementation.
 // We know that all maps will begin at size 0, and that only one elment, at most, will ever be removed or added at the time.
@@ -76,10 +69,6 @@ void sortData(char* data, const uint32_t count, const size_t pairSize)
 	// Recursive for the greater partition
 	sortData(more, moreCount, pairSize);
 
-	VIS_BOY& visualization1 = ((VIS_BOY*)data)[0];
-	VIS_BOY& visualization2 = ((VIS_BOY*)data)[1];
-	VIS_BOY& visualization3 = ((VIS_BOY*)data)[2];
-
 	// Copy less
 	std::memcpy(data, less, pairSize * lessCount);
 	// More, Pivot
@@ -98,7 +87,7 @@ void sortData(char* data, const uint32_t count, const size_t pairSize)
 
 const bool ML_ComponentMap::initialized() const
 {
-	return ((m_tSize != 0) && (m_capacity != 0));
+	return ((m_tSize != 0) && (m_capacity != 0) && (false == m_data.IsNullptr()));
 }
 
 
@@ -131,18 +120,24 @@ uint32_t ML_ComponentMap::reserve(const uint32_t& capacity)
 		throw std::invalid_argument("Capacity too small! ML_ComponentMap.reserve() cannot be called to reduce the capacity of the map!");
 		std::terminate();
 	}
+	else if (m_data.IsNullptr())
+	{
+		m_data = MemLib::palloc(capacity * PAIR_SIZE);
+	}
+	else
+	{
+		// Provide a temporary copy of the data
+		void* temp = MemLib::spush(m_capacity * PAIR_SIZE);
+		std::memcpy(temp, &(*m_data), m_capacity * PAIR_SIZE);
 
-	// Provide a temporary copy of the data
-	void* temp = MemLib::spush(m_capacity * PAIR_SIZE);
-	std::memcpy(temp, &(*m_data), m_capacity * PAIR_SIZE);
+		// Free the old pool pointer and allocate a new one
+		MemLib::pfree(m_data);
+		m_data = MemLib::palloc(capacity * PAIR_SIZE);
 
-	// Free the old pool pointer and allocate a new one
-	MemLib::pfree(m_data);
-	m_data = MemLib::palloc(capacity * PAIR_SIZE);
-
-	// Copy the data over to the new location and pop the temp from the stack
-	std::memcpy(&(*m_data), temp, m_capacity * PAIR_SIZE);
-	MemLib::spop();
+		// Copy the data over to the new location and pop the temp from the stack
+		std::memcpy(&(*m_data), temp, m_capacity * PAIR_SIZE);
+		MemLib::spop();
+	}
 
 	// Inform the new capacity
 	return m_capacity = capacity;
@@ -260,7 +255,7 @@ ML_ComponentMap::ML_ComponentMap()
 	m_tSize = 0;
 };
 
-const ML_ComponentMap& ML_ComponentMap::Initialize(const size_t& sizeofType)
+void /*const ML_ComponentMap&*/ ML_ComponentMap::Initialize(const size_t& sizeofType)
 {
 	m_size = 0;
 	// Set capacity
@@ -271,7 +266,7 @@ const ML_ComponentMap& ML_ComponentMap::Initialize(const size_t& sizeofType)
 	// Allocate new to memory pool
 	m_data = MemLib::palloc(m_capacity * PAIR_SIZE);
 
-	return *this;
+	//return *this;
 }
 
 ML_ComponentMap::ML_ComponentMap(const ML_ComponentMap& to_copy)

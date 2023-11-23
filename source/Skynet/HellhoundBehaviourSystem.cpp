@@ -8,136 +8,60 @@
 #include "ParticleComponent.h"
 #include "Particles.h"
 
-// input true on stuff you want to reset
-void ResetHellhoundVariables(HellhoundBehaviour* hc, bool circleBehavior, bool charge)
-{
-	if (circleBehavior)
-	{
-		hc->giveUpChaseCounter += GetDeltaTime();
-		if (hc->giveUpChaseCounter >= 1.0f)
-		{
-			hc->isBehind = false;
-			hc->isBehindCounter = 0.f;
-			hc->circleBehaviour = false;
-			hc->giveUpChaseCounter = 0.f;
-		}
-	}
-	if (charge)
-	{
-		hc->charge = false;
-	}
 
-}
 
 void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* htc, EntityID& ent, EnemyComponent* enmComp, AnimationComponent* animComp)
 {
 	hc->attackTimer += GetDeltaTime() * animComp->aAnimTimeFactor;
 	hc->goalDirectionX = ptc->positionX - htc->positionX;
 	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
-
+	
 	animComp->aAnim = ANIMATION_ATTACK;
 	animComp->aAnimIdx = 0;
 	//Elliot: Change in calculations for attack timer:
 	animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 	ANIM_BRANCHLESS(animComp);
-
+	
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (hc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
 		enemyStats->SetKnockbackMultiplier(8.0f);
 		SetHitboxActive(ent, enmComp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(ent, enmComp->attackHitBoxID, true);
-
+		
 		hc->attackTimer = 0;
 		hc->attackStunDurationCounter = 0;
-
+		
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
 		sfx->Play(Hellhound_Attack, Channel_Base);
 		RedrawUI();
 	}
 }
 
-void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, HellhoundBehaviour* hc, TransformComponent* htc, StatComponent* enemyStats)
+
+void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
 {
-	float relativePosX = ptc->positionX - htc->positionX;
-	float relativePosZ = ptc->positionZ - htc->positionZ;
-
-	float relativeDirectionX = ptc->facingX - htc->facingX;
-	float relativeDirectionZ = ptc->facingZ - htc->facingZ;
-
-	//this will be used to determine if we are exactly
-	 // a = spelare. b = hellhound
-	float playerToHellhoundX = htc->positionX - ptc->positionX;
-	float playerToHellhoundZ = htc->positionZ - ptc->positionZ;
-	float behindDot = playerToHellhoundX * ptc->facingX + playerToHellhoundZ * ptc->facingZ;
-	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
-	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
-
-	float tolerance = 0.7f; // THIS IS FOR ANGLE SMOOTHING
-	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
+	if (path)
 	{
-		hc->isBehind = true;
-		hc->isBehindCounter += GetDeltaTime();
+		hellhoundComponent->goalDirectionX = goalDirectionX;
+		hellhoundComponent->goalDirectionZ = goalDirectionZ;
 	}
 	else
 	{
-		ResetHellhoundVariables(hc, true, true);
+		hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
+		hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
 	}
 
 
-	float dot = relativePosX * relativeDirectionZ - relativePosZ * relativeDirectionX;
 
 
-	float magnitude = 0.f;
-	float dirX = 0.f;
-	float dirZ = 0.f;
-	if (!hc->circleBehaviour)
-	{
-		hc->circleBehaviour = true;
-		if (dot < 0) // clockwise
-		{
-			hc->clockwiseCircle = true;
-		}
-		else // counter clockwise
-		{
-			hc->clockwiseCircle = false;
-		}
-	}
-
-	if (hc->clockwiseCircle) //clockwise
-	{
-		dirX = -hc->goalDirectionZ;
-		dirZ = hc->goalDirectionX;
-
-	}
-	else // counter clockwise
-	{
-		dirX = hc->goalDirectionZ;
-		dirZ = -hc->goalDirectionX;
-	}
-	magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-	SmoothRotation(htc, dirX, dirZ, 40.f);
-	if (magnitude > 0.001f)
-	{
-		dirX /= magnitude;
-		dirZ /= magnitude;
-	}
-	htc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	htc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
-	hc->goalDirectionX = ptc->positionX - htc->positionX;
-	hc->goalDirectionZ = ptc->positionZ - htc->positionZ;
-}
-
-
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
-{
 	enemyAnim->aAnim = hellhoundComponent->charge ? ANIMATION_ATTACK : ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime() * (1 + hellhoundComponent->charge);
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor * (1 + hellhoundComponent->charge);
 	ANIM_BRANCHLESS(enemyAnim);
 
-	hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
-	hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
+	//hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
+	//hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
 
 	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.f);
 	float dirX = hellhoundTransformComponent->facingX, dirZ = hellhoundTransformComponent->facingZ;
@@ -148,55 +72,97 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-
 	//speed set to 10.0f, use enemy component later
 	float speedMultiplier = 1.f;
 	if (hellhoundComponent->charge)
 	{
-		speedMultiplier = 2.f;
+		hellhoundComponent->chargeCounter += GetDeltaTime();
+		if (hellhoundComponent->chargeCounter >= hellhoundComponent->chargeTimeLimit)
+		{
+			hellhoundComponent->hasMadeADecision = false;
+			hellhoundComponent->charge = false;
+			hellhoundComponent->chargeCounter = 0.f;
+			hellhoundComponent->retreat = true;
+		}
+		speedMultiplier = 2.0f; 
+		enemyStats->SetSpeedMult(speedMultiplier);
+		if (enemyStats->m_acceleration == enemyStats->m_baseAcceleration)
+		{
+			enemyStats->m_acceleration = enemyStats->GetSpeed() * speedMultiplier;
+		}
+		
 	}
-	hellhoundTransformComponent->positionX += dirX * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	//hellhoundTransformComponent->positionX += dirX * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	//hellhoundTransformComponent->positionZ += dirZ * enemyStats->GetSpeed() * speedMultiplier * GetDeltaTime();
+	TransformAccelerate(enemy, dirX * speedMultiplier, dirZ * speedMultiplier);
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent* hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
 	hellhoundComponent->timeCounter += GetDeltaTime();
-	if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
+
+	bool okayDirection = false;
+	int limit = 256;
+	while (!okayDirection)
 	{
-		hellhoundComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		hellhoundComponent->goalDirectionX = randomX;
-		hellhoundComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		hellhoundComponent->updateInterval = randomInterval(gen);
+		--limit;
+		if (limit < 0)
+		{
+			return;
+		}
+		if (hellhoundComponent->timeCounter >= hellhoundComponent->updateInterval)
+		{
+			hellhoundComponent->timeCounter = 0.f;
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			// Define a uniform distribution for the range [-1.0, 1.0]
+			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+			float randomX = distribution(gen);
+			float randomZ = distribution(gen);
+			hellhoundComponent->goalDirectionX = randomX;
+			hellhoundComponent->goalDirectionZ = randomZ;
+			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+			hellhoundComponent->updateInterval = randomInterval(gen);
+		}
+
+		SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
+		float oldX = hellhoundTransformComponent->positionX;
+		float oldZ = hellhoundTransformComponent->positionZ;
+		float bias = 1.f;
+
+
+		//hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+		//hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+		TransformAccelerate(enemy, hellhoundTransformComponent->facingX * 0.5f, hellhoundTransformComponent->facingZ * 0.5f);
+		if ((hellhoundTransformComponent->positionX >= oldX + bias || hellhoundTransformComponent->positionZ >= oldZ + bias) && hellhoundTransformComponent->positionX <= oldX - bias || hellhoundTransformComponent->positionZ <= oldZ - bias)
+		{
+			//not good direction
+			hellhoundTransformComponent->positionX = oldX;
+			hellhoundTransformComponent->positionZ = oldZ;
+			hellhoundComponent->timeCounter = hellhoundComponent->updateInterval + 1.f;
+		}
+		else
+		{
+			// good direction
+			okayDirection = true;
+		}
 	}
-
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 35.1f);
-
-	hellhoundTransformComponent->positionX += hellhoundTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-	hellhoundTransformComponent->positionZ += hellhoundTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 }
 
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
-{
+{	
 	hc->isShooting = true;
 	//Temp: Create SMALL spotlight when dog prepares to flame
 	CreatePointLight(dog, 2.0f, 0.40f, 0.1f, 0.0f, 2.5f, -5.0f, 5.0f, 1.3f);
 	//CreateSpotLight(dog, 8.0f, 4.0f, 1.0f,
 	//	0.0f, 1.0f, -0.25f,
-	//	hc->offsetForward + 1.0f, 7.0f,
-	//	0.0f, 0.0f, -1.0f, 1.0f);
+	//	hc->offsetForward + 1.0f, 1.0f,
+	//	0.0f, 0.0f, -1.0f, 33.0f);
 	hc->currentShootingAttackRange = 1.f;
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(dog);
 	sfx->Play(Hellhound_Inhale, Channel_Base);
@@ -210,7 +176,7 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 	htc->facingX = dx / dist;
 	htc->facingZ = dz / dist;
 
-
+	
 	float magnitude = sqrt(dx * dx + dz * dz);
 	if (magnitude < 0.001f)
 	{
@@ -225,7 +191,7 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 
 
 	float targetX = htc->positionX + dx * hc->offsetForward;
-	float targetZ = htc->positionZ + dz * hc->offsetForward;
+	float targetZ = htc->positionZ +  dz  * hc->offsetForward;
 	magnitude = sqrt(orthoX * orthoX + orthoZ * orthoZ);
 
 	if (magnitude < 0.001f)
@@ -264,7 +230,7 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 	AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(dog);
 	enemyAnim->aAnim = ANIMATION_ATTACK;
 	enemyAnim->aAnimIdx = 1;
-	enemyAnim->aAnimTime += GetDeltaTime();
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
 	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox * (float)(hc->currentShootingAttackRange < hc->offsetForward); //updates the range of the "flamethrower"
@@ -276,25 +242,29 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 		hc->currentShootingAttackRange + 1.0f, 7.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);
 
-
+	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
-	float  cornersX[3] = { 0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
-	float  cornersZ[3] = { -1.0f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange };//Counter clockwise
-	SetHitboxCorners(dog, enemy->specialHitBoxID, 3, cornersX, cornersZ);
+	float  cornersX[3] = {0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
+	float  cornersZ[3] = {-1.0f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange};//Counter clockwise
+	SetHitboxCorners(dog,enemy->specialHitBoxID, 3, cornersX, cornersZ);
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);//Reset hitbox
 	SetHitboxActive(dog, enemy->specialHitBoxID, true);
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, true);
 
 	if (registry.GetComponent<ParticleComponent>(dog) == nullptr)
 	{
-		registry.AddComponent<ParticleComponent>(dog, 1.0f, 0.0f, 0.5f,
+		registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
 			0.0f, 2.5f, 3.0f, 0.0f,
-			cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], FLAMETHROWER);
+			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, FLAMETHROWER);
 	}
 	else
 	{
 		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
-		Particles::UpdateMetadata(pc->metadataSlot, cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2]);
+		if (pc != nullptr)
+		{
+			Particles::UpdateMetadata(pc->metadataSlot, cornersX[0], cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2]);
+		}
+
 	}
 
 	//if (IsPlayerHitByFlameThrower(hc->shootingStartX, hc->shootingStartZ, hc->shootingSideTarget1X, hc->shootingSideTarget1Z, hc->shootingSideTarget2X, hc->shootingSideTarget2Z, ptc->positionX, ptc->positionZ))
@@ -335,7 +305,8 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 			pc->Release();
 			registry.RemoveComponent<ParticleComponent>(dog);
 		}
-
+		hc->hasMadeADecision = false;
+		hc->retreat = true;
 	}
 }
 
@@ -354,29 +325,70 @@ void SetInfiniteDirection(TransformComponent* htc, HellhoundBehaviour* hc)
 }
 
 
-void TacticalRetreatBehaviour(TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
-	enemyAnim->aAnimTime += GetDeltaTime();
+	enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
 	float newGoalX = htc->positionX + hc->cowardDirectionX * 100.f;
-	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f;
+	float newGoalZ = htc->positionZ + hc->cowardDirectionZ * 100.f; 
 	SmoothRotation(htc, newGoalX, newGoalZ, 35.f);
 
-	htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
-	htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
-
+	//htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
+	//htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
+	enemyStats->SetSpeedMult(1.0f);
+	TransformAccelerate(enemy, hc->cowardDirectionX, hc->cowardDirectionZ);
 	hc->cowardCounter += GetDeltaTime();
 
 	if (hc->cowardCounter >= hc->cowardDuration) // have we been tactically retreating long enough?
 	{
 		hc->cowardCounter = 0.f;
 		hc->retreat = false;
-		ResetHellhoundVariables(hc, true, true);
+		hc->charge = false;
 	}
 }
+
+void MakeBehaviourDecision(TransformComponent* htc, TransformComponent* ptc, HellhoundBehaviour* hc)
+{
+	float playerToHellhoundX = htc->positionX - ptc->positionX;
+	float playerToHellhoundZ = htc->positionZ - ptc->positionZ;
+	float behindDot = playerToHellhoundX * ptc->facingX + playerToHellhoundZ * ptc->facingZ;
+	float magHellhound = sqrt(playerToHellhoundX * playerToHellhoundX + playerToHellhoundZ * playerToHellhoundZ);
+	float magPlayer = sqrt(ptc->facingX * ptc->facingX + ptc->facingZ * ptc->facingZ);
+
+	float tolerance = 0.7f; // THIS IS FOR ANGLE SMOOTHING
+	hc->hasMadeADecision = true;
+	hc->chargeCounter = 0.f;
+	if (std::abs((behindDot / (magHellhound * magPlayer) + 1)) < tolerance) // are we behind player back? (trust the magic math, please)
+	{
+		//we are behind, more likely to charge
+		int randomNumber = rand() % 10 + 1; // between 1-10
+		if (randomNumber < 3 && (!hc->isShooting && hc->shootingCooldownCounter >= hc->shootingCooldown))
+		{
+			hc->wantsToShoot = true;
+		}
+		else
+		{
+			hc->wantsToShoot = false;
+		}
+	}
+	else
+	{
+		//we are not behind, more likely to flame
+		int randomNumber = rand() % 10 + 1; // between 1-10
+		if (randomNumber >= 3 && (!hc->isShooting && hc->shootingCooldownCounter >= hc->shootingCooldown))
+		{
+			hc->wantsToShoot = true;
+		}
+		else
+		{
+			hc->wantsToShoot = false;
+		}
+	}
+}
+
 
 bool HellhoundBehaviourSystem::Update()
 {
@@ -389,6 +401,12 @@ bool HellhoundBehaviourSystem::Update()
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enmComp = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
+	DebuffComponent* debuff = nullptr;
+
+	bool updateGridOnce = true;
+
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));//(PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
+	//*valueGrid = PathfindingMap();
 
 	//for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 	//{
@@ -399,7 +417,7 @@ bool HellhoundBehaviourSystem::Update()
 
 
 	// FOR TESTING
-	/*int i = 0;
+	/*int i = 0; 
 	TransformComponent* stc = nullptr;
 	TransformComponent* stcTwo = nullptr;
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent>(registry))
@@ -422,6 +440,13 @@ bool HellhoundBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			continue; // frozen, won't do behavior stuff
+		}
+		
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
 		{
@@ -457,6 +482,10 @@ bool HellhoundBehaviourSystem::Update()
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyAnim != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
+			ML_Vector<Node> finalPath;
+			hellhoundComponent->updatePathCounter += GetDeltaTime();
+
+
 			float distance = Calculate2dDistance(hellhoundTransformComponent->positionX, hellhoundTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
 			hellhoundComponent->shootingCooldownCounter += GetDeltaTime();
@@ -464,8 +493,51 @@ bool HellhoundBehaviourSystem::Update()
 
 			if (hellhoundComponent->retreat)
 			{
+				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit * 3.f)
+				{
+					hellhoundComponent->updatePathCounter = 0;
+					if (playerComponent != nullptr && updateGridOnce)
+					{
+						updateGridOnce = false;
+						CalculateGlobalMapValuesHellhound(valueGrid);
+						if (valueGrid->cost[0][0] == -69.f)
+						{
+							updateGridOnce = true;
+							continue;
+						}
+					}
+
+					
+					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent, 20.f, 40.f);
+					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, &tran);
+					
+
+					// goal (next node) - current
+					if (finalPath.size() > 2 && hellhoundComponent->followPath)
+					{
+						hellhoundComponent->fx = finalPath[0].fx;
+						hellhoundComponent->fz = finalPath[0].fz;
+						hellhoundComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+						hellhoundComponent->dirZ = (float)-(finalPath[1].z - (float)finalPath[0].z);
+						hellhoundComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+						hellhoundComponent->dir2Z = (float)-(finalPath[2].z - (float)finalPath[1].z);
+						hellhoundComponent->followPath = true;
+					}
+					else
+					{
+						hellhoundComponent->followPath = false;
+					}
+				}
+
+				if (hellhoundComponent->followPath == true && hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit / 2.f)
+				{
+					hellhoundComponent->dirX = hellhoundComponent->dir2X;
+					hellhoundComponent->dirZ = hellhoundComponent->dir2Z;
+				}
+
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
-				TacticalRetreatBehaviour(hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
+				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
+				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
 			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
 			{
@@ -481,7 +553,7 @@ bool HellhoundBehaviourSystem::Update()
 						hellhoundComponent->flameSoundsStartedPlaying = true;
 
 					}
-
+					
 					ShootingBehaviour(playerTransformCompenent, hellhoundComponent, enemyStats, playerStats, enemyEntity, enmComp/*, stc, stcTwo*/); //this is damage thing
 				}
 				//else we do nothing, we're just charging the flames.
@@ -502,49 +574,164 @@ bool HellhoundBehaviourSystem::Update()
 				hellhoundComponent->isWating = false;
 				SetInfiniteDirection(hellhoundTransformComponent, hellhoundComponent);
 				hellhoundComponent->retreat = true;
+				hellhoundComponent->updatePathCounter = 20.f;
+				hellhoundComponent->hasMadeADecision = false;
 			}
-			else if (distance < 3.5f || hellhoundComponent->attackTimer > 0.0f) // fight club and not currently shooting
+			else if (distance < hellhoundComponent->meleeDistance || hellhoundComponent->attackTimer > 0.0f) // fight club and not currently shooting
 			{
-				ResetHellhoundVariables(hellhoundComponent, true, true);
+				hellhoundComponent->charge = false;
+				hellhoundComponent->chargePrepareDurationCounter = 0.0f;
 				CombatBehaviour(hellhoundComponent, enemyStats, playerStats, playerTransformCompenent, hellhoundTransformComponent, enemyEntity, enmComp, enemyAnim);
 			}
-			else if (distance <= 15 + hellhoundComponent->circleBehaviour) // circle player
+			else if (hellhoundComponent->hasMadeADecision && !hellhoundComponent->wantsToShoot) // CHARGE
 			{
-				if (hellhoundComponent->isBehind && hellhoundComponent->isBehindCounter >= 0.15f) // attack the back
+				hellhoundComponent->charge = true;
+				hellhoundComponent->chargePrepareDurationCounter += GetDeltaTime();
+				if (hellhoundComponent->chargePrepareDurationCounter >= hellhoundComponent->chargePrepareDuration) // to make it feel fair
 				{
-					hellhoundComponent->charge = true;
-					ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
-				}
-				else //keep circling
-				{
-					CircleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats);
+					if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit / 2.f
+						&& distance >= hellhoundComponent->meleeDistance * 3.f)
+					{
+						hellhoundComponent->updatePathCounter = 0;
+						if (playerComponent != nullptr && updateGridOnce)
+						{
+							updateGridOnce = false;
+							CalculateGlobalMapValuesHellhound(valueGrid);
+							if (valueGrid->cost[0][0] == -69.f)
+							{
+								updateGridOnce = true;
+								continue; //illegal grid
+							}
+						}
+
+						finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, playerTransformCompenent);
+
+						if (finalPath.size() > 2)
+						{
+							hellhoundComponent->fx = finalPath[0].fx;
+							hellhoundComponent->fz = finalPath[0].fz;
+							hellhoundComponent->followPath = true;
+						}
+
+						// goal (next node) - current
+						if (finalPath.size() > 2 && hellhoundComponent->followPath)
+						{
+							hellhoundComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+							hellhoundComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
+							hellhoundComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+							hellhoundComponent->dir2Z = -(float)(finalPath[2].z - (float)finalPath[1].z);
+							hellhoundComponent->followPath = true;
+						}
+						else
+						{
+							hellhoundComponent->followPath = false;
+						}
+					}
+
+					if (hellhoundComponent->followPath == true && hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit / 2.f)
+					{
+						hellhoundComponent->dirX = hellhoundComponent->dir2X;
+						hellhoundComponent->dirZ = hellhoundComponent->dir2Z;
+					}
+
+					if (distance < hellhoundComponent->meleeDistance * 3.f) // dont follow path, go melee
+					{
+						hellhoundComponent->followPath = false;
+					}
+
+					ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 				}
 			}
-			else if ((distance <= 17) && (!hellhoundComponent->isShooting && hellhoundComponent->shootingCooldownCounter >= hellhoundComponent->shootingCooldown)) //is not shooting and cooldown is ready
+			else if (hellhoundComponent->hasMadeADecision && hellhoundComponent->wantsToShoot) // shoot
 			{
 				hellhoundComponent->lastPositionX = hellhoundTransformComponent->positionX;
 				hellhoundComponent->lastPositionZ = hellhoundTransformComponent->positionZ;
 				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent, enemyEntity); //set a target for the ranged attack
+			
 			}
+			else if (distance <= 17 && hellhoundComponent->hasMadeADecision == false) // time to make a decision
+			{
+				MakeBehaviourDecision(hellhoundTransformComponent, playerTransformCompenent, hellhoundComponent);
+			}
+			//else if ((distance <= 17) && (!hellhoundComponent->isShooting && hellhoundComponent->shootingCooldownCounter >= hellhoundComponent->shootingCooldown)) //is not shooting and cooldown is ready
+			//{
+			//	hellhoundComponent->lastPositionX = hellhoundTransformComponent->positionX;
+			//	hellhoundComponent->lastPositionZ = hellhoundTransformComponent->positionZ;
+			//	FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent, enemyEntity); //set a target for the ranged attack
+			//}
 			else if (distance < 50) //hunting distance, go chase
 			{
-				ResetHellhoundVariables(hellhoundComponent, true, true);
-				ChaseBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
+				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit)
+				{
+					hellhoundComponent->updatePathCounter = 0;
+					if (playerComponent != nullptr && updateGridOnce)
+					{
+						updateGridOnce = false;
+						CalculateGlobalMapValuesHellhound(valueGrid);
+						if (valueGrid->cost[0][0] == -69.f)
+						{
+							updateGridOnce = true;
+							continue; //illegal grid
+						}
+					}
+
+					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, playerTransformCompenent);
+
+					if (finalPath.size() > 2)
+					{
+						hellhoundComponent->fx = finalPath[0].fx;
+						hellhoundComponent->fz = finalPath[0].fz;
+						hellhoundComponent->followPath = true;
+					}
+
+					// goal (next node) - current
+					if (finalPath.size() > 2 && hellhoundComponent->followPath)
+					{
+						hellhoundComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+						hellhoundComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
+						hellhoundComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+						hellhoundComponent->dir2Z = -(float)(finalPath[2].z - (float)finalPath[1].z);
+						hellhoundComponent->followPath = true;
+					}
+					else
+					{
+						hellhoundComponent->followPath = false;
+					}
+				}
+
+				if (hellhoundComponent->followPath == true && hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit / 2.f)
+				{
+					hellhoundComponent->dirX = hellhoundComponent->dir2X;
+					hellhoundComponent->dirZ = hellhoundComponent->dir2Z;
+				}
+
+				if (distance < hellhoundComponent->meleeDistance * 2.f) // dont follow path, go melee
+				{
+					hellhoundComponent->followPath = false;
+				}
+
+				
+				ChaseBehaviour(enemyEntity ,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 			}
 			else // idle
 			{
-				ResetHellhoundVariables(hellhoundComponent, true, true);
+				hellhoundComponent->charge = false;
 				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 			}
 		}
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 		}
+		TransformDecelerate(enemyEntity);//Always decelerate
 
 	}
+
+	// pop the value map
+	//MemLib::spop();
+	free(valueGrid);
 	return true;
 }

@@ -3,59 +3,83 @@
 #include "Relics/RelicFunctions.h"
 #include "MemLib/ML_Vector.hpp"
 
-//enum temprelicslist
-//{
-//	DemonBonemarrow,
-//	FlameWeapon,
-//	SoulPower,
-//	DemonHeart,
-//	FrostFire,
-//	SoulHealth,
-//	SpeedyLittleDevil,
-//	LightningGod
-//};
-
-namespace UIFunc
+namespace UIFunctions
 {
-	// Start the next level
-	void LoadNextLevel(void* args);
 
-	// Go from start menu to settings
-	void MainMenu_Settings(void* args);
+	namespace MainMenu
+	{
+		void Start(void* args, int a);
 
-	// Quit the game from the start menu
-	void MainMenu_Quit(void* args);
+		void SetSettings(void* args, int a);
 
-	// Resume game from pause state
-	void PauseState_ResumeGame(void* args);
+		void SetCredits(void* args, int a);
 
-	// Return to main menu from pause state
-	void PauseState_MainMenu(void* args);
+		void Quit(void* args, int a);
 
-	// Go back from the settings menu to the main menu
-	void Settings_Back(void* args);
+	}
 
-	// Change to low Resolution from settings
-	void Settings_LowRes(void* args);
+	namespace Game
+	{
+		void LoadNextLevel(void* args, int a);
+
+		void SetMainMenu(void* args, int a);
+
+	}
+
+	namespace Settings
+	{
+		void Back(void* args, int a);
+
+		void SetLowRes(void* args, int a);
+
+		void SetMediumRes(void* args, int a);
+
+		void SetHighRes(void* args, int a);
+
+		void SetFullscreen(void* args, int a);
+
+		void SwitchTimer(void* args, int a);
+	}
+
+	void Credits_Back(void* args, int a);
 	
-	// Change to medium Resolution from settings
-	void Settings_MediumRes(void* args);
+	namespace Pause
+	{
+		void Resume(void* args, int a);
 
-	// Change to high Resolution from settings
-	void Settings_HighRes(void* args);
+		void SetSettings(void* args, int a);
 
-	// Change to fullscreen from settings
-	void Settings_Fullscreen(void* args);
+		void Back(void* args, int a);
 
-	// Buy a relic in shop
-	void Shop_BuyRelic(void* args);
+		void SetMainMenu(void* args, int a);
+	}
 
-	// Lock a relic in shop
-	void Shop_LockRelic(void* args);
+	namespace OnClick
+	{
+		void None(void* args, int index);
 
-	// Re-roll a relic in shop
-	void Shop_ReRollRelic(void* args);
+		void SelectRelic(void* args, int index);
 
-	// Heal the player
-	void Shop_Heal(void* args);
+		void HealPlayer(void* args, int index);
+
+		void RerollRelic(void* args, int index);
+
+		void LockRelic(void* args, int index);
+
+		void BuyRelic(void* args, int index);
+	}
+
+	namespace OnHover
+	{
+		void None(void* args, int index, bool hover);
+
+		void Image(void* args, int index, bool hover);
+
+		void ShopButton(void* args, int index, bool hover);
+
+		void ShopRelic(void* args, int index, bool hover);
+
+		void PlayerRelic(void* args, int index, bool hover);
+	}
+
 }

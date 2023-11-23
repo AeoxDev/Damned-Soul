@@ -4,16 +4,14 @@
 #include "Skynet\BehaviourHelper.h"
 #include "DeltaTime.h"
 #include "UI/UIRenderer.h"
+#include "EventFunctions.h"
 #include <random>
-
-
-
 
 
 
 #define SKELETON_ATTACK_HITBOX 2
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, 
+void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent,
 	TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp, float goalDirectionX, float goalDirectionZ, bool path)
 {
 	if (path)
@@ -43,11 +41,12 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		dirZ /= magnitude;
 	}
 
-	skeletonTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
-	skeletonTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
+	//skeletonTransformComponent->positionX += dirX * stats->GetSpeed() * GetDeltaTime();
+	//skeletonTransformComponent->positionZ += dirZ * stats->GetSpeed() * GetDeltaTime();
+	TransformAccelerate(enemy, dirX, dirZ);
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
+void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, SkeletonBehaviour* skeletonComponent, TransformComponent* skeletonTransformComponent, StatComponent* stats, AnimationComponent* animComp)
 {
 
 	skeletonComponent->timeCounter += GetDeltaTime();
@@ -56,31 +55,87 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 	animComp->aAnimIdx = 0;
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
-
-	if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
+	bool okayDirection = false;
+	int limit = 128;
+	while (!okayDirection)
 	{
-		skeletonComponent->timeCounter = 0.f;
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [-1.0, 1.0]
-		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-		float randomX = distribution(gen);
-		float randomZ = distribution(gen);
-		skeletonComponent->goalDirectionX = randomX;
-		skeletonComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-		skeletonComponent->updateInterval = randomInterval(gen);
+		--limit;
+		if (limit < 0)
+		{
+			return;
+		}
+		if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
+		{
+			skeletonComponent->timeCounter = 0.f;
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			// Define a uniform distribution for the range [-1.0, 1.0]
+			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+			float randomX = distribution(gen);
+			float randomZ = distribution(gen);
+			skeletonComponent->goalDirectionX = randomX;
+			skeletonComponent->goalDirectionZ = randomZ;
+			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+			skeletonComponent->updateInterval = randomInterval(gen);
+		}
+
+		SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
+		float oldX = skeletonTransformComponent->positionX;
+		float oldZ = skeletonTransformComponent->positionZ;
+		float bias = 1.f;
+
+		//skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		//skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
+		TransformAccelerate(enemy, skeletonTransformComponent->facingX * 0.5f, skeletonTransformComponent->facingZ * 0.5f);
+		if ((skeletonTransformComponent->positionX >= oldX + bias || skeletonTransformComponent->positionZ >= oldZ + bias) && skeletonTransformComponent->positionX <= oldX - bias || skeletonTransformComponent->positionZ <= oldZ - bias)
+		{
+			//not good direction
+			skeletonTransformComponent->positionX = oldX;
+			skeletonTransformComponent->positionZ = oldZ;
+			skeletonComponent->timeCounter = skeletonComponent->updateInterval + 1.f;
+		}
+		else
+		{
+			// good direction
+			okayDirection = true;
+		}
+
 	}
-
-	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
-
-
-	skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
-	skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
-
 }
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
+	if (sc->attackTimer <= 0.0f)
+	{
+		//Increment so we don't immediately get  back in here
+		sc->attackTimer += GetDeltaTime();
+
+		//Animation setup
+		animComp->aAnim = ANIMATION_ATTACK;
+		animComp->aAnimTime = 0.0f;
+		animComp->aAnimTimePower = 1.0f;
+		animComp->aAnimTimeFactor = 3.0f; //Elliot comment: This might need to be changed when timePower changes
+
+		float PauseThreshold = 0.3f / animComp->aAnimTimeFactor;	//When to pause the animation
+		float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed();//When to continue the animation
+		float AttackActiveTime = AttackStartTime + 0.10f;			//When the entire attack has finished
+
+		//Attack Telegraphing #1: Quick prep + Pause + Blink
+		AddTimedEventComponentStartContinuousEnd(ent, PauseThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, skeleton, 1);
+
+		//Attack Telegraphing #2: Slow prep + Gradual light
+		//animComp->aAnimTimeFactor = 0.5f;
+		//AddTimedEventComponentStartContinuousEnd(ent, 0.0f, nullptr, EnemyAttackGradient, 0.8f, nullptr, skeleton, 1);
+
+		//Actual attack
+		AddTimedEventComponentStartContinuousEnd(ent, AttackStartTime, EnemyBeginAttack, nullptr, AttackActiveTime, EnemyEndAttack, skeleton, 1);
+
+		//Recovery/Daze
+		float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
+		AddTimedEventComponentStart(ent, AttackTotalTime, EnemyBecomeStunned, skeleton, 1);
+	}
+
+
+	/*OLD COMBAT BEHAVIOUR
 	sc->attackTimer += GetDeltaTime() * animComp->aAnimTimeFactor;
 	sc->goalDirectionX = ptc->positionX - stc->positionX;
 	sc->goalDirectionZ = ptc->positionZ - stc->positionZ;
@@ -95,6 +150,10 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
 	if (sc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
 	{
+		//Niclas peaces out
+		ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(ent);
+		skelel->colorAdditiveBlue = skelel->baseColorAdditiveBlue;
+
 		//Set hitbox active here.
 		//Elliot's request: Add Skeleton attack hitbox instead of define
 		SetHitboxActive(ent, sc->attackHitboxID, true);
@@ -102,9 +161,10 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
 		sfx->Play(Skeleton_Attack, Channel_Base);
 		RedrawUI();
-		sc->attackTimer = 0;
-		sc->attackStunDurationCounter = 0;
+		sc->attackTimer = 0.f;
+		sc->attackStunDurationCounter = 0.f;
 	}
+	*/
 }
 
 bool SkeletonBehaviourSystem::Update()
@@ -118,9 +178,11 @@ bool SkeletonBehaviourSystem::Update()
 	StatComponent* playerStats = nullptr;
 	AnimationComponent* enemyAnim = nullptr;
 	EnemyComponent* enmComp = nullptr;
+	DebuffComponent* debuff = nullptr;
 
 	bool updateGridOnce = true;
-	PathfindingMap valueGrid;
+	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));// (PathfindingMap*)MemLib::spush(sizeof(PathfindingMap));
+	//*valueGrid = PathfindingMap();
 
 	for (auto enemyEntity : View<SkeletonBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
@@ -129,6 +191,14 @@ bool SkeletonBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
 		enmComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+
+		
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			continue; // frozen, won't do behavior stuff
+		}
+
 		//Find a player to kill.
 		if (enmComp->lastPlayer.index == -1)
 		{
@@ -165,7 +235,6 @@ bool SkeletonBehaviourSystem::Update()
 				}
 			}
 		}
-
 		if (skeletonComponent != nullptr && playerTransformCompenent!= nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
 			ML_Vector<Node> finalPath;
@@ -175,30 +244,26 @@ bool SkeletonBehaviourSystem::Update()
 #endif // TEST
 			float distance = Calculate2dDistance(skeletonTransformComponent->positionX, skeletonTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
+			
 			skeletonComponent->attackStunDurationCounter += GetDeltaTime();
-			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration)
+
+			//Dazed
+			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration) 
 			{
-				// do nothing, stand like a bad doggo and be ashamed
-				//Elliot: When finished, reset attack timer and hitbox
-				skeletonComponent->attackTimer = 0.0f;
-				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
-				//Turn yellow for opening:
-				
-				continue;
-			}
-			else//Elliot: Turn off attack hitbox to not make player rage.
-			{
-				SetHitboxActive(enemyEntity, skeletonComponent->attackHitboxID, false);
-				SetHitboxCanDealDamage(enemyEntity, skeletonComponent->attackHitboxID, false);
+				// this is where we rotate the AI to avoid bullshit player tactics
+				skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
+				skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+				SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ, 4.f);
 			}
 
-
-			//Elliot: If in attack, keep attacking even if player is outside
-			if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f)
+			//Combat
+			else if (distance < skeletonComponent->meleeDistance || skeletonComponent->attackTimer > 0.0f) 
 			{
 				CombatBehaviour(skeletonComponent, enemyStats, playerStats, playerTransformCompenent, skeletonTransformComponent, enemyEntity, enemyAnim);
 			}
-			else if (distance < 50.f) //hunting distance
+
+			//Pathfinding
+			else if (distance < 50.f) 
 			{
 				
 #ifdef PATH_FINDING_VISUALIZER
@@ -211,12 +276,12 @@ bool SkeletonBehaviourSystem::Update()
 #endif // TEST
 				if (skeletonComponent->updatePathCounter >= skeletonComponent->updatePathLimit)
 				{
-					skeletonComponent->updatePathCounter = 0;
+					skeletonComponent->updatePathCounter = 0.f;
 					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						valueGrid = CalculateGlobalMapValuesSkeleton(playerTransformCompenent);
-						if (valueGrid.cost[0][0] == -69.f)
+						CalculateGlobalMapValuesSkeleton(valueGrid, playerTransformCompenent);
+						if (valueGrid->cost[0][0] == -69.f)
 						{
 							updateGridOnce = true;
 							continue;
@@ -247,10 +312,10 @@ bool SkeletonBehaviourSystem::Update()
 					// goal (next node) - current
 					if (finalPath.size() > 2 && skeletonComponent->followPath)
 					{
-						skeletonComponent->dirX = finalPath[1].x - finalPath[0].x;
-						skeletonComponent->dirZ = -(finalPath[1].z - finalPath[0].z);
-						skeletonComponent->dir2X = finalPath[2].x - finalPath[1].x;
-						skeletonComponent->dir2Z = -(finalPath[2].z - finalPath[1].z);
+						skeletonComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+						skeletonComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
+						skeletonComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+						skeletonComponent->dir2Z = -(float)(finalPath[2].z - (float)finalPath[1].z);
 						skeletonComponent->followPath = true;
 					}
 					else
@@ -292,22 +357,30 @@ bool SkeletonBehaviourSystem::Update()
 				{
 					skeletonComponent->followPath = false;
 				} 
-				ChaseBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
+				ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim, skeletonComponent->dirX, skeletonComponent->dirZ, skeletonComponent->followPath);
 			}
-			else // idle
+
+			//Idle
+			else
 			{
 				enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(enemyEntity,playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 			}
 		}
 		//Idle if there are no players on screen.
 		else  if (enemyStats->GetHealth() > 0.0f)
 		{
 			enmComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(enemyEntity,playerComponent, playerTransformCompenent, skeletonComponent, skeletonTransformComponent, enemyStats, enemyAnim);
 		}
+		TransformDecelerate(enemyEntity);
+
+		//Increment animation AFTER everything has been calculated
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	}
 
-
+	// Pop the stack
+	//MemLib::spop;
+	free(valueGrid);
 	return true;
 }
