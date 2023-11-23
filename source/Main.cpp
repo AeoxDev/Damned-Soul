@@ -11,7 +11,7 @@
 //#define TEST3000 //Hermano 3000
 
 //#define TESTMTS //Test Main to Settings 500
-//#define TESTMTC //Test Main to Credits 500
+#define TESTMTC //Test Main to Credits 500
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
@@ -55,7 +55,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunctions::MainMenu::Settings(nullptr, i);
+		UIFunctions::MainMenu::SetSettings(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();
