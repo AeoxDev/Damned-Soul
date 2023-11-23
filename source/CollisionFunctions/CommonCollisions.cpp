@@ -583,6 +583,16 @@ void LoadNextLevel(OnCollisionParameters& params)
 {
 	if (params.entity2.index == stateManager.player.index)
 	{
+		switch (stateManager.activeLevel)
+		{
+		case 1:
+			CutsceneFallStage1(params.entity2, 0);
+			registry.DestroyEntity(params.entity1);
+			return;
+			break;
+		default:
+			break;
+		}
 		//not final level portal
 		if (stateManager.activeLevel != stateManager.finalLevel)
 		{

@@ -478,6 +478,10 @@ bool CollisionSystem::Update()
 float GetHitboxRadius(const EntityID& entity, int hitBoxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return 1.0f;
+	}
 	if (hitBoxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		return hitbox->circleHitbox[hitBoxID].radius;
@@ -597,6 +601,10 @@ void StopVisualizeHitbox(EntityID& entity)
 int HitboxVisualComponent::GetNrVertices(EntityID& entity, int hitboxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return 0;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		if (hitbox->circularFlags[hitboxID].active)

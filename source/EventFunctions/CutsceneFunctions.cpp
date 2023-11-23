@@ -5,6 +5,9 @@
 #include "Camera.h"
 #include <assert.h>
 #include "DeltaTime.h"
+#include "States\StateManager.h"
+#include "CollisionFunctions.h"
+#include "Level.h"
 
 void CutsceneCreateLinearTransition(EntityID& entity, const int& index)
 {
@@ -36,11 +39,15 @@ void CutsceneCreateLinearTransition(EntityID& entity, const int& index)
 }
 void BeginCutscene(EntityID& entity, const int& index)
 {
-	Camera::SetCutsceneMode(true);
+	Camera::SetCutsceneMode(1);
+}
+void BeginPortalCutscene(EntityID& entity, const int& index)
+{
+	Camera::SetCutsceneMode(2);
 }
 void EndCutscene(EntityID& entity, const int& index)
 {
-	Camera::SetCutsceneMode(false);
+	Camera::SetCutsceneMode(0);
 }
 //Do the given cutscene components arguments over time
 void CutsceneTransition(EntityID& entity, const int& index)
@@ -53,10 +60,10 @@ void CutsceneTransition(EntityID& entity, const int& index)
 
 	
 
-	if (cutscene->mode | Cutscene_Linear)
+	if (cutscene->mode & Cutscene_Linear)
 	{
 		
-		if (cutscene->mode | CutsceneMode::Transition_Position)
+		if (cutscene->mode & CutsceneMode::Transition_Position)
 		{
 			float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
 			float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
@@ -66,7 +73,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 			float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
 			Camera::SetPosition(newPosX, newPosY, newPosZ, false);
 		}
-		if (cutscene->mode | CutsceneMode::Transition_LookAt)
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
 		{
 			float lookAtDifX = cutscene->goalLookAtX - cutscene->startLookAtX;
 			float lookAtDifY = cutscene->goalLookAtY - cutscene->startLookAtY;
@@ -77,6 +84,75 @@ void CutsceneTransition(EntityID& entity, const int& index)
 			Camera::SetLookAt(newLookAtX, newLookAtY, newLookAtZ);
 		}
 	}
+	if (cutscene->mode & Cutscene_Character_Walk)
+	{
+		float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
+		float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
+		float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
+		float newPosX = posDifX * scalar + cutscene->startPositionX;
+		float newPosY = posDifY * scalar + cutscene->startPositionY;
+		float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		//Set the facing towards the goal
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
+		{
+			transform->facingX = posDifX;
+			transform->facingY = posDifY;
+			transform->facingZ = posDifZ;
+			NormalizeFacing(transform);
+		}
+		
+		//Move the character
+		if (cutscene->mode & CutsceneMode::Transition_Position)
+		{
+			transform->positionX = newPosX;
+			transform->positionY = newPosY;
+			transform->positionZ = newPosZ;
+		}
+		
+		//Loop the walk animation
+		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		animation->aAnim = ANIMATION_WALK;
+		animation->aAnimIdx = 0;
+		animation->aAnimTime = GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS(animation);
+		
+	}
+	if (cutscene->mode & Cutscene_Character_Fall)
+	{
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
+		float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
+		float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
+		float newPosX = posDifX * scalar + cutscene->startPositionX;
+		float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
+		scalar *= scalar;
+		float newPosY = posDifY * scalar + cutscene->startPositionY;
+	
+		//Set the facing towards the goal
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
+		{
+			transform->facingX = posDifX;
+			transform->facingY = posDifY;
+			transform->facingZ = posDifZ;
+			NormalizeFacing(transform);
+		}
+
+		//Move the character
+		if (cutscene->mode & CutsceneMode::Transition_Position)
+		{
+			transform->positionX = newPosX;
+			transform->positionY = newPosY;
+			transform->positionZ = newPosZ;
+		}
+
+		//Loop the walk animation
+		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		animation->aAnim = ANIMATION_IDLE;
+		animation->aAnimIdx = 1;
+		animation->aAnimTime = GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS(animation);
+	}
 	
 }
 
@@ -84,4 +160,9 @@ void SetGameSpeedDefault(EntityID& entity, const int& index)
 {
 	gameSpeed = 1.0f;
 	TimedEventIgnoreGamespeed(false);
+}
+
+void EventLoadNextLevel(EntityID& entity, const int& index)
+{
+	LoadLevel(++stateManager.activeLevel);
 }

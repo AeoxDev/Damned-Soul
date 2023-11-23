@@ -73,7 +73,8 @@ void ResetColor(EntityID& entity, const int& index);
 void SquashStretch(EntityID& entity, const int& index);
 void ResetSquashStretch(EntityID& entity, const int& index);
 void TPose(EntityID& entity, const int& index);
-
+void LoopFallingAnimation(EntityID& entity, const int& index);
+void FallingAnimation(EntityID& entity, const int& index);
 
 //Stats
 void SetSpeedZero(EntityID& entity, const int& index);
@@ -93,6 +94,7 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);
 void CutsceneCreateLinearTransition(EntityID& entity, const int& index);
 //Do the given cutscene components arguments over time
 void BeginCutscene(EntityID& entity, const int& index);
+void BeginPortalCutscene(EntityID& entity, const int& index);
 void CutsceneTransition(EntityID& entity, const int& index);
 void EndCutscene(EntityID& entity, const int& index);
 void MainMenuIntroCutscene(EntityID& entity, const int& index);
@@ -100,9 +102,17 @@ void Stage1IntroScene(EntityID& entity, const int& index);
 void Stage2IntroScene(EntityID& entity, const int& index);
 void Stage3IntroScene(EntityID& entity, const int& index);
 void Stage4IntroScene(EntityID& entity, const int& index);
+void CutsceneFallStage1(EntityID& entity, const int& index);
+void CutscenePlayerFallDown(EntityID& entity, const int& index);
+void LoopCutscenePlayerFallInPlace(EntityID& entity, const int& index);
+void CutscenePlayerFallInPlace(EntityID& entity, const int& index);
 
-void BeginDestroyProjectile(EntityID& entity, const int& index); 
+void BeginDestroyProjectile(EntityID& entity, const int& index);
 void EndDestroyProjectile(EntityID& entity, const int& index);
+
 
 //Game speed
 void SetGameSpeedDefault(EntityID& entity, const int& index);
+
+//Game level
+void EventLoadNextLevel(EntityID& entity, const int& index);

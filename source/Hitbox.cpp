@@ -310,6 +310,10 @@ void AddProximityHitboxComponent(EntityID& entity)
 void SetHitboxActive(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].active = setFlag;
@@ -324,6 +328,10 @@ void SetHitboxActive(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsStage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isStage = setFlag;
@@ -337,6 +345,10 @@ void SetHitboxIsStage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsWall(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isWall = setFlag;
@@ -350,6 +362,10 @@ void SetHitboxIsWall(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsPlayer(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isPlayer = setFlag;
@@ -363,6 +379,10 @@ void SetHitboxIsPlayer(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsEnemy(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isEnemy = setFlag;
@@ -376,6 +396,10 @@ void SetHitboxIsEnemy(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isStaticHazard = setFlag;
@@ -389,6 +413,10 @@ void SetHitboxIsStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isDynamicHazard = setFlag;
@@ -402,6 +430,10 @@ void SetHitboxIsDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsMoveable(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isMoveable = setFlag;
@@ -415,6 +447,10 @@ void SetHitboxIsMoveable(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].canTakeDamage = setFlag;
@@ -429,6 +465,10 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (!GetHitboxCanDealDamage(entity, hitboxID))
 	{
 		ResetAttackTrackerFlags(entity);
@@ -446,6 +486,10 @@ void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitStage = setFlag;
@@ -459,6 +503,10 @@ void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitWall(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitWall = setFlag;
@@ -472,6 +520,10 @@ void SetHitboxHitWall(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitPlayer(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitPlayer = setFlag;
@@ -485,6 +537,10 @@ void SetHitboxHitPlayer(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitEnemy(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitEnemy = setFlag;
@@ -498,6 +554,10 @@ void SetHitboxHitEnemy(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitStaticHazard = setFlag;
@@ -511,6 +571,10 @@ void SetHitboxHitStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitDynamicHazard = setFlag;
@@ -740,6 +804,10 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 bool HitboxCanHitGI(EntityID& entity)
 {
 	HitboxComponent* h = registry.GetComponent<HitboxComponent>(entity);
+	if (h == nullptr)
+	{
+		return false;
+	}
 	if ((h->circularFlags[0].isMoveable && h->circularFlags[0].active) || (h->convexFlags[0].isMoveable && h->convexFlags[0].active))
 	{
 		return true;
@@ -751,6 +819,10 @@ void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->onCircleCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
@@ -766,6 +838,10 @@ ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return{ -1, nullptr, nullptr };
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		return { -1, nullptr, nullptr };
@@ -780,6 +856,10 @@ ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID)
 void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[])
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	assert(hitboxID >= SAME_TYPE_HITBOX_LIMIT);
 	int slot = hitboxID - SAME_TYPE_HITBOX_LIMIT;
 	//Redo center and bounding radius
@@ -849,6 +929,10 @@ void ResetAttackTrackerFlags(EntityID& entity)
 {
 	//If hitboxID = -1 reset all trackers
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
 	{
 		hitbox->hitTracker[i].active = false;

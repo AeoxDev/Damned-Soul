@@ -8,6 +8,7 @@
 #include "States\StateManager.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Level.h"
 
 bool ControllerSystem::Update()
 {
@@ -15,15 +16,33 @@ bool ControllerSystem::Update()
 	if ((keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[MouseButton::left] == pressed
 		|| mouseButtonPressed[MouseButton::right] == pressed))
 	{
-		if (!(currentStates & InMainMenu) && Camera::InCutscene() && !(currentStates & InCredits) && !(currentStates & InSettings))
+		if (!(currentStates & InMainMenu) && Camera::InCutscene() > 0 && !(currentStates & InCredits) && !(currentStates & InSettings))
 		{
-			for (auto entity : View<TimedEventComponent>(registry))
+			if (Camera::InCutscene() == 1)
 			{
-				ReleaseTimedEvents(entity);
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 			}
-			AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-			AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+			else if (Camera::InCutscene() == 2)
+			{
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				LoadLevel(++stateManager.activeLevel);
+			}
+		
 			
+		}
+		else if (true)
+		{
+
 		}
 		if ((currentStates & InMainMenu) == true)
 		{

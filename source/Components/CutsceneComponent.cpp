@@ -99,6 +99,36 @@ void Stage4IntroScene(EntityID& entity, const int& index)
 
 
 
+void CutsceneSetPosition(EntityID& entity, float startX, float startY, float startZ, float goalX, float goalY, float goalZ)
+{
+	CutsceneComponent* cutscene = registry.GetComponent<CutsceneComponent>(entity);
+	if (cutscene == nullptr)
+	{
+		return;
+	}
+	cutscene->startPositionX = startX;
+	cutscene->startPositionY = startY;
+	cutscene->startPositionZ = startZ;
+	cutscene->goalPositionX = goalX;
+	cutscene->goalPositionY = goalY;
+	cutscene->goalPositionZ = goalZ;
+}
+
+void CutsceneSetLookAt(EntityID& entity, float startX, float startY, float startZ, float goalX, float goalY, float goalZ)
+{
+	CutsceneComponent* cutscene = registry.GetComponent<CutsceneComponent>(entity);
+	if (cutscene == nullptr)
+	{
+		return;
+	}
+	cutscene->startLookAtX = startX;
+	cutscene->startLookAtY = startY;
+	cutscene->startLookAtZ = startZ;
+	cutscene->goalLookAtX = goalX;
+	cutscene->goalLookAtY = goalY;
+	cutscene->goalLookAtZ = goalZ;
+}
+
 //One overhead to legs, one side to side, one zoom in, then return
 void CutsceneNPCIntro1NoText(EntityID& entity)
 {
@@ -493,4 +523,70 @@ void CutsceneNPCIntro4NoText(EntityID& entity)
 	cutscene->goalPositionZ = transformPlayer->positionZ + CAMERA_OFFSET_Z;
 	AddTimedEventComponentStartContinuousEnd(returnTransition, 3.6f, BeginCutscene, CutsceneTransition, 5.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	AddTimedEventComponentStart(entity, 5.1f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+}
+
+void CutsceneFallStage1(EntityID& entity, const int& index)
+{
+	TimedEventIgnoreGamespeed(true);
+	gameSpeed = 0.0f;
+	float endTime = 6.0f;
+	float newLevelTime = 5.0f;
+	float fallTime = 3.0f;
+	//Fall of point. -321.6, 133.14
+	//Move camera to view point and background from a lower angle
+	registry.RemoveComponent<HitboxComponent>(entity);//Remove GI constraints
+	EntityID cutscene1 = registry.CreateEntity();
+	CutsceneComponent* sidewaysCut = registry.AddComponent<CutsceneComponent>(cutscene1);
+	sidewaysCut->mode = (CutsceneMode)0b111;
+	CutsceneSetLookAt(cutscene1, -321.6f, 0.0f, 133.14f, -321.6f, 0.0f, 133.14f);
+	CutsceneSetPosition(cutscene1, -321.6f, 90.0f, -30.0f, -321.6f, 90.0f, -30.0f);
+	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginPortalCutscene, CutsceneTransition, endTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Move character from portal to jump off point
+	CutsceneComponent* playerWalk = registry.AddComponent<CutsceneComponent>(entity);
+	playerWalk->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Character_Walk);
+	CutsceneSetPosition(entity, -250.0f, 0.0f, 81.0f, -321.6f - 10.0f, 0.0f, 133.14f + 10.0f);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginPortalCutscene, CutsceneTransition, fallTime + 0.2f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	
+	AddTimedEventComponentStartContinuousEnd(entity, fallTime - 0.2f, CutscenePlayerFallDown, nullptr, endTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStart(entity, endTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(entity, newLevelTime, EventLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+}
+
+void CutscenePlayerFallDown(EntityID& entity, const int& index)
+{
+	//Find player component and create a timed event for falling downwards to a point. For use at beginning and end of stage.
+	//Get player position, go downwards from start to goal.
+	TimedEventIgnoreGamespeed(true);
+	gameSpeed = 0.0f;
+	float endTime = 3.0f;
+	EntityID player = stateManager.player;
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(player);
+	CutsceneComponent* downwardsFall = registry.AddComponent<CutsceneComponent>(player);
+	AnimationComponent* anim = registry.AddComponent<AnimationComponent>(player);
+	anim->aAnimIdx = 1;
+	anim->aAnim = ANIMATION_IDLE;
+	downwardsFall->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Cutscene_Character_Fall);
+	CutsceneSetPosition(entity, transform->positionX, transform->positionY + 1.0f, transform->positionZ, transform->positionX + transform->facingX*100.0f, transform->positionY - 300.0f, transform->positionZ + transform->facingZ * 100.0f);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginPortalCutscene, CutsceneTransition, endTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStart(entity, endTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+}
+
+void LoopCutscenePlayerFallInPlace(EntityID& entity, const int& index)
+{
+	//Loop every second
+
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, CutscenePlayerFallInPlace, nullptr, 1.0f, LoopCutscenePlayerFallInPlace, 0, 2);
+}
+
+void CutscenePlayerFallInPlace(EntityID& entity, const int& index)
+{
+	//Find player component and create a timed event for falling in place. For use in shop.
+	//Get player position. Stay in place
+	EntityID player = stateManager.player;
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(player);
+	CutsceneComponent* downwardsFall = registry.AddComponent<CutsceneComponent>(player);
+	downwardsFall->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Cutscene_Character_Fall);
+	CutsceneSetPosition(entity, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, transform->positionY, transform->positionZ);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, 10.0f, EndCutscene, 0, 2);
 }
