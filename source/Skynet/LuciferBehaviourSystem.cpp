@@ -244,7 +244,7 @@ bool LuciferBehaviourSystem::Update()
 					// if taken enough damage
 
 					float percent = enemyStats->GetMaxHealth() / 5.f;
-					luciferComponent->limitHP = enemyStats->GetMaxHealth();
+					luciferComponent->limitHP = (float)enemyStats->GetMaxHealth();
 					while (luciferComponent->limitHP >= enemyStats->GetHealth())
 					{
 						luciferComponent->limitHP = luciferComponent->limitHP - percent;
@@ -308,7 +308,7 @@ bool LuciferBehaviourSystem::Update()
 
 
 						//shockwave here
-						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, 4.0f, BossShockwaveEnd, 0, 1);
+						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
 					}
 				}
 			}

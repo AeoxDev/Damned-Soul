@@ -8,7 +8,7 @@
 
 void Combat::DamageFlash(EntityID& defender, const float damage)
 {
-	AddTimedEventComponentStartContinuousEnd(defender, 0.f, nullptr, BlinkColor, FLASH_TIME(damage), ResetColor);
+	AddTimedEventComponentStartContinuousEnd(defender, 0.f, nullptr, BlinkColor, FLASH_TIME(damage), ResetColor, 0, 5);
 }
 
 void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage)
@@ -21,6 +21,8 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 
 	// Damage flash
 	Combat::DamageFlash(defender, damage);
+
+	// TODO: Play ANIMATION_TAKE_DAMAGE. Timed event?
 }
 
 float Combat::CalculateDamage(const DamageOverTime& dot, EntityID& defender, const uint64_t& source)
@@ -28,7 +30,7 @@ float Combat::CalculateDamage(const DamageOverTime& dot, EntityID& defender, con
 	RelicInput::OnDamageCalculation funcInput;
 	funcInput.defender = defender;
 	funcInput.damage = dot.GetDPS();
-	funcInput.cap = 99999999; // No real cap for DPS
+	funcInput.cap = (float)99999999; // No real cap for DPS
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
 	// Apply on damage calc functions
@@ -48,7 +50,7 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	funcInput.attacker = attacker;
 	funcInput.defender = defender;
 	funcInput.damage = attackerStats->GetDamage();
-	funcInput.cap = defenderStats->GetHealth();
+	funcInput.cap = (float)defenderStats->GetHealth();
 	funcInput.typeSource = RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(source);
 
 	// Increase if charge attack
@@ -93,14 +95,14 @@ void Combat::DashHitInteraction(EntityID& attacker, StatComponent* attackerStats
 	funcInput.attacker = attacker;
 	funcInput.defender = defender;
 	funcInput.damage = attackerStats->GetDamage();
-	funcInput.cap = defenderStats->GetHealth();
-
-	//Calculate damage modifications from relics
-	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
-		func(&funcInput);
+	funcInput.cap = (float)defenderStats->GetHealth();
 
 	//Halve the damage since we're dashing
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH))
+		func(&funcInput);
+
+	//Calculate damage modifications from relics
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
 		func(&funcInput);
 
 	//Calculate things that happen when damage is being applied (Reflect damage, lifesteal, etc..)

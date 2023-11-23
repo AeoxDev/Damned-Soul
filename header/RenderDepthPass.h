@@ -9,6 +9,8 @@ PS_IDX GetDepthPassPixelShader();
 
 void CreateDepthPass();
 void SetDepthPassTexture(bool forRendering);
+// ARIAN SKREV DETTA, FIGHT ME
+void SetDepthPassTextureCompute(bool set);
 void UnsetDepthPassTexture(bool forRendering);
 void ReleaseDepthPass();
 

@@ -142,7 +142,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)lib\DirectXTK\Inc</AdditionalIncludeDirectories>
@@ -171,7 +171,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)header\UI;$(SolutionDir)lib</AdditionalIncludeDirectories>
@@ -198,6 +198,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
+    <ClCompile Include="source\Glow.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DebuffComponent.cpp" />
     <ClCompile Include="source\Components\TransformComponent.cpp" />
@@ -215,8 +216,15 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\SecondWind.cpp" />
     <ClCompile Include="source\Relics\Defensive\UndeadFortitude.cpp" />
     <ClCompile Include="source\EventFunctions\CutsceneFunctions.cpp" />
+    <ClCompile Include="source\Relics\Gadget\DashFlash.cpp" />
+    <ClCompile Include="source\Relics\Gadget\Discount\ExploitableCoupon.cpp" />
+    <ClCompile Include="source\Relics\Gadget\Discount\Membership.cpp" />
+    <ClCompile Include="source\Relics\Gadget\Discount\SeeingDouble.cpp" />
+    <ClCompile Include="source\Relics\Gadget\FrozenMaul.cpp" />
+    <ClCompile Include="source\Relics\Gadget\QuickReflexes.cpp" />
     <ClCompile Include="source\Relics\Gadget\IcyBlade.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
+    <ClCompile Include="source\Level\ParticleLevel.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdvancedFighting.cpp" />
     <ClCompile Include="source\Relics\Offensive\CrackedLense.cpp" />
     <ClCompile Include="source\Relics\Offensive\DashAttack.cpp" />
@@ -229,9 +237,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\LuciferBehaviourSystem.cpp" />
+    <ClCompile Include="source\Skynet\ZacBehaviourSystem.cpp" />
     <ClCompile Include="source\States\Credits.cpp" />
+    <ClCompile Include="source\Systems\FollowerSystem.cpp" />
+    <ClCompile Include="source\Systems\GlowApplySystem.cpp" />
+    <ClCompile Include="source\Systems\GlowSystem.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
-    <ClCompile Include="source\UI\UIComponent.cpp" />
+    <ClCompile Include="source\Components\UIComponent.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
@@ -349,6 +361,22 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\STB_Helper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resource\shader\BlurShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="resource\shader\GlowShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\DepthPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -518,6 +546,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\CutsceneComponent.h" />
     <ClInclude Include="header\Components\DebuffComponent.h" />
+    <ClInclude Include="header\Components\FollowerComponent.h" />
+    <ClInclude Include="header\Components\GlowComponent.h" />
     <ClInclude Include="header\Components\InputComponent.h" />
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
@@ -535,9 +565,11 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\TimedEventComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameScoreboardComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPauseButtonComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPauseRelicTextComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPauseSettingsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopRerollComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIShopButtonComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameTimeComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIComponent.h">
@@ -554,6 +586,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\EventFunctions.h" />
     <ClInclude Include="header\Format.h" />
     <ClInclude Include="header\Components\ParticleComponent.h" />
+    <ClInclude Include="header\Glow.h" />
     <ClInclude Include="header\Hashing.h" />
     <ClInclude Include="header\D3D11Helper\IDX_Types.h" />
     <ClInclude Include="header\Input.h" />
@@ -575,6 +608,12 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\PainMirror.h" />
     <ClInclude Include="header\Relics\Defensive\SecondWind.h" />
     <ClInclude Include="header\Relics\Defensive\UndeadFortitude.h" />
+    <ClInclude Include="header\Relics\Gadget\DashFlash.h" />
+    <ClInclude Include="header\Relics\Gadget\Discount\ExploitableCoupon.h" />
+    <ClInclude Include="header\Relics\Gadget\Discount\Membership.h" />
+    <ClInclude Include="header\Relics\Gadget\Discount\SeeingDouble.h" />
+    <ClInclude Include="header\Relics\Gadget\FrozenMaul.h" />
+    <ClInclude Include="header\Relics\Gadget\QuickReflexes.h" />
     <ClInclude Include="header\Relics\Gadget\IcyBlade.h" />
     <ClInclude Include="header\Relics\Offensive\AdrenalineRush.h" />
     <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h" />
@@ -608,6 +647,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Gadget\SoulSpeed.h" />
     <ClInclude Include="header\Relics\Gadget\SpeedyLittleDevil.h" />
     <ClInclude Include="header\Relics\Defensive\SpikedSkin.h" />
+    <ClInclude Include="header\Relics\Utility\SoulRelicHelper.h" />
     <ClInclude Include="header\RenderDepthPass.h" />
     <ClInclude Include="header\Skynet\ImpBehaviour.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
@@ -617,6 +657,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />
+    <ClInclude Include="header\Skynet\ZacBehaviour.h" />
     <ClInclude Include="header\States\CleanupMacros.h" />
     <ClInclude Include="header\States\Credits.h" />
     <ClInclude Include="header\States\Pause.h" />

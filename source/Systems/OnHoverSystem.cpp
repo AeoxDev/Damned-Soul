@@ -22,6 +22,7 @@ void UndrawHoverInteractable(OnHoverComponent& comp, UIComponent& uiElement, int
 	}
 };
 
+
 bool OnHoverSystem::Update()
 {
 	for (auto entity : View<OnHoverComponent, UIComponent>(registry))
@@ -56,9 +57,9 @@ bool OnHoverSystem::Update()
 		if (index == comp->index)
 		{
 			//skip if interactable isnt visible or has no hover function
-			if ((index == 0 && !uiElement->m_BaseImage.baseUI.GetVisibility()) || (index == 0 && comp->onHoverFunctions[index] == UIFunc::EmptyOnHover))
+			if ((index == 0 && !uiElement->m_BaseImage.baseUI.GetVisibility()) || (index == 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
 				continue;
-			else if ((index > 0 && !uiElement->m_Images[index - 1].baseUI.GetVisibility()) || (index > 0 && comp->onHoverFunctions[index] == UIFunc::EmptyOnHover))
+			else if ((index > 0 && !uiElement->m_Images[index - 1].baseUI.GetVisibility()) || (index > 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
 				continue;
 
 
@@ -66,7 +67,8 @@ bool OnHoverSystem::Update()
 			{
 				//Set which sound to play
 				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-				if (sound != nullptr) sound->Play(Button_Hover, Channel_Base);
+				OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(entity);
+				if ((sound != nullptr) && (onClick != nullptr)) sound->Play(Button_Hover, Channel_Base);
 
 				RedrawUI();
 				comp->redrawUIChecks[comp->index] = 0;

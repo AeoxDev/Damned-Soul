@@ -22,8 +22,15 @@ void LoadLevel8()
 	float greenMult = 1.0f;
 	float blueMult = 1.1f;
 
-	//This is the eye stage. Lots of acid in a grey environment.
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 8;
+	EntityID stage = SetUpStage(stageVars);
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -36,19 +43,29 @@ void LoadLevel8()
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
 	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
+	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
+	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::tempBoss, -40.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, 15.f, 0.f, -45.f);
+	SetupEnemy(EnemyType::skeleton, 35.f, 1.f, 45.f);
+	SetupEnemy(EnemyType::skeleton, -25.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::skeleton, -50.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, -40.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, -55.f, 1.f, -35.f);
+	SetupEnemy(EnemyType::skeleton, -32.f, 1.f, 28.f);
+	SetupEnemy(EnemyType::skeleton, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
 	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f);
+	SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f);
+	//SetupEnemy(EnemyType::, 13.f, 1.f, -12.f); make minitaur
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
@@ -78,7 +95,7 @@ void LoadLevel8()
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;
 
-	SetDirectionLight(1.0f, 1.1f, 1.0f, -1.6f, -2.0f, 1.0f);
+	SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -156,7 +173,6 @@ void LoadLevel8()
 
 		succeded = true;*/
 	}
-	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

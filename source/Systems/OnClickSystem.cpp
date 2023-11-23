@@ -46,7 +46,7 @@ bool OnClickSystem::Update()
 					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 					if (sound != nullptr)
 					{
-						if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
+						if (comp->onClickFunctions[comp->index] == UIFunctions::Game::LoadNextLevel)
 						{
 							sound->Play(Button_Start, Channel_Base);
 						}

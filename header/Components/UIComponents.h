@@ -17,7 +17,7 @@
 
 //Shop Components
 #include "UIComponents/UIShopImpComponents.h"
-#include "UIComponents/UIShopRerollComponent.h"
+#include "UIComponents/UIShopButtonComponents.h"
 #include "UIComponents/UIShopRelicComponent.h"
 
 //Player Components
@@ -26,3 +26,5 @@
 
 //Pause Components
 #include "UIComponents/UIPauseRelicTextComponent.h"
+#include "UIComponents/UIPauseButtonComponent.h"
+#include "UIComponents/UIPauseSettingsComponent.h"
