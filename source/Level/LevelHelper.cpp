@@ -219,7 +219,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			health = 60.f;
+			health = 120.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -364,7 +364,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			moveSpeed = 3.f;
+			attackSpeed = 3.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -392,7 +392,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (soulWorth == 6969.f)
 	{
-		if (eType == EnemyType::eye)
+		if (eType == EnemyType::skeleton)
 		{
 			soulWorth = 1;
 		}
@@ -400,7 +400,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 1;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::eye)
 		{
 			soulWorth = 1;
 		}
@@ -408,9 +408,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 1;
 		}
-		else if (eType == EnemyType::imp)
+		else if (eType == EnemyType::minotaur)
 		{
-			soulWorth = 5.f;
+			soulWorth = 1;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{

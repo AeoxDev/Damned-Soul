@@ -400,6 +400,7 @@ void BossShockwaveExpand(EntityID& entity, const int& index)
 	radius += GetDeltaTime() * growthSpeed;
 	SetHitboxRadius(entity, enemy->specialHitBoxID, radius);
 }
+
 void BossShockwaveEnd(EntityID& entity, const int& index)
 {
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
@@ -453,6 +454,36 @@ void BossResetBeforeShockwave(EntityID& entity, const int& index)
 		skelel->shared.colorAdditiveGreen = 0.0f;
 		skelel->shared.colorAdditiveBlue = 0.0f;
 	}
+}
+
+void RemoveLandingIndicator(EntityID& entity, const int& index)
+{
+	if (entity.isDestroyed == true)
+	{
+		return;
+	}
+	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+}
+
+void IncreaseLandingIndicator(EntityID& entity, const int& index)
+{
+	TransformComponent* landingTransform = registry.GetComponent<TransformComponent>(entity);
+	landingTransform->positionY += 3.0f * GetDeltaTime();
+}
+
+void CreateLandingIndicator(EntityID& entity, const int& index)
+{
+	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
+
+	EntityID landingSpot = registry.CreateEntity();
+	TransformComponent* landingTransform = registry.AddComponent<TransformComponent>(landingSpot);
+	landingTransform->positionX = origin->positionX;
+	landingTransform->positionY = 1.0f;
+	landingTransform->positionZ = origin->positionZ;
+
+	CreateSpotLight(landingSpot, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 30);
+	//AddTimedEventComponentStartEnd(landingSpot, 0.0f, nullptr, 2.0f, RemoveLandingIndicator);
+	AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicator, 2.0f, RemoveLandingIndicator);
 }
 
 void RemoveEnemy(EntityID& entity, const int& index)

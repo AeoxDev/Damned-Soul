@@ -9,14 +9,56 @@
 #include <random>
 #include <math.h>
 
-void IdleBehaviour(EntityID& enemy, MinotaurBehaviour* mc, TransformComponent* mtc, StatComponent* stats, AnimationComponent* animComp)
+void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, MinotaurBehaviour* mc,
+	TransformComponent* mtc, StatComponent* stats, AnimationComponent* enemyAnim)
+{
+	if (!mc->followPath)
+	{
+		mc->goalDirectionX = playerTransformCompenent->positionX - mtc->positionX;
+		mc->goalDirectionZ = playerTransformCompenent->positionZ - mtc->positionZ;
+	}
+	else
+	{
+		mc->goalDirectionX = mc->dirX;
+		mc->goalDirectionZ = mc->dirZ;
+	}
+
+	if (enemyAnim->aAnim != ANIMATION_WALK)
+	{
+		enemyAnim->aAnim = ANIMATION_WALK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
+	else if (enemyAnim->aAnimIdx != 0)
+	{
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
+
+	SmoothRotation(mtc, mc->goalDirectionX, mc->goalDirectionZ);
+	float dirX = mtc->facingX, dirZ = mtc->facingZ;
+	Normalize(dirX, dirZ);
+
+	/*mtc->positionX += mtc->facingX * stats->GetSpeed() * GetDeltaTime();
+	mtc->positionZ += mtc->facingZ * stats->GetSpeed() * GetDeltaTime();*/
+	TransformAccelerate(enemy, dirX, dirZ);
+}
+
+void IdleBehaviour(EntityID& enemy, MinotaurBehaviour* mc, TransformComponent* mtc, StatComponent* stats, AnimationComponent* enemyAnim)
 {
 	mc->timeCounter += GetDeltaTime();
 
-	animComp->aAnim = ANIMATION_WALK;
-	animComp->aAnimIdx = 0;
-	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
-	ANIM_BRANCHLESS(animComp);
+	if (enemyAnim->aAnim != ANIMATION_WALK)
+	{
+		enemyAnim->aAnim = ANIMATION_WALK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
+	else if (enemyAnim->aAnimIdx != 0)
+	{
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.0f;
+	}
 
 	if (mc->timeCounter >= mc->updateInterval)
 	{
@@ -35,12 +77,12 @@ void IdleBehaviour(EntityID& enemy, MinotaurBehaviour* mc, TransformComponent* m
 
 	SmoothRotation(mtc, mc->goalDirectionX, mc->goalDirectionZ);
 
-	mtc->positionX += mtc->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
-	mtc->positionZ += mtc->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
-	//TransformAccelerate(enemy, mtc->facingX * 0.5f, mtc->facingZ * 0.5f);
+	//mtc->positionX += mtc->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
+	//mtc->positionZ += mtc->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
+	TransformAccelerate(enemy, mtc->facingX, mtc->facingZ);
 }
 
-void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour* mc, TransformComponent* mtc, StatComponent* enemyStats, EnemyComponent* enemyComp, AnimationComponent* enemyAnim, float goalDirectionX = 0.0f, float goalDirectionZ = 0.0f, bool path = false)
+void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour* mc, TransformComponent* mtc, StatComponent* enemyStats, EnemyComponent* enemyComp, AnimationComponent* enemyAnim)
 {
 	if (!mc->charging)
 	{
@@ -51,7 +93,11 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			enemyAnim->aAnim = ANIMATION_WALK;
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor * (1 + mc->charging);
-			ANIM_BRANCHLESS(enemyAnim);
+		}
+		else if (enemyAnim->aAnimIdx != 0)
+		{
+			enemyAnim->aAnimIdx = 0;
+			enemyAnim->aAnimTime = 0.0f;
 		}
 
 		//reset values
@@ -95,6 +141,11 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime = 0.0f;
 		}
+		else if (enemyAnim->aAnimIdx != 0)
+		{
+			enemyAnim->aAnimIdx = 0;
+			enemyAnim->aAnimTime = 0.0f;
+		}
 		//slightly adjust the charging direction based on player position
 
 		//direction from the enemy towards the player
@@ -123,8 +174,8 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			mc->chargeTimer += GetDeltaTime();
  			SmoothRotation(mtc, mc->goalDirectionX, mc->goalDirectionZ, 2.0f);
 
-			mtc->positionX += mtc->facingX * enemyStats->GetSpeed() * 12.f * GetDeltaTime();
-			mtc->positionZ += mtc->facingZ * enemyStats->GetSpeed() * 12.f * GetDeltaTime();
+			mtc->positionX += mtc->facingX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
+			mtc->positionZ += mtc->facingZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
 			//TransformAccelerate(enemy, mtc->facingX * 6.0f, mtc->facingZ * 6.0f);
 
 			SetHitboxActive(enemy, enemyComp->attackHitBoxID, true);
@@ -150,7 +201,134 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			enemyAnim->aAnimTime = 0.0f;
 			enemyAnim->aAnim = ANIMATION_IDLE;
 			enemyAnim->aAnimIdx = 1;
+
+			mc->behaviourState = 1;
 		}
+	}
+}
+
+void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour* mc, TransformComponent* mtc, StatComponent* enemyStats, EnemyComponent* enemyComp, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& updateGridOnce)
+{
+	if (mc->jumpCounter < mc->jumpBreakpoint)
+	{
+		if (mc->jumpStunTimer <= mc->jumpStunDuration)
+		{
+			if (enemyAnim->aAnim != ANIMATION_IDLE)
+			{
+				enemyAnim->aAnim = ANIMATION_IDLE;
+				enemyAnim->aAnimIdx = 1;
+				enemyAnim->aAnimTime = 0.0f;
+			}
+			else if (enemyAnim->aAnimIdx != 1)
+			{
+				enemyAnim->aAnimIdx = 1;
+				enemyAnim->aAnimTime = 0.0f;
+			}
+
+			mc->jumpStunTimer += GetDeltaTime();
+			return;
+		}
+		if (mc->jumpBuildUpTimer <= mc->jumpBuildUpDuration)
+		{
+			if (!mc->jumping)
+			{
+				enemyAnim->aAnim = ANIMATION_WALK;
+				enemyAnim->aAnimIdx = 1;
+				enemyAnim->aAnimTime = 0.0f;
+
+				AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, BossBlinkBeforeShockwave, mc->jumpDuration * 0.2f, ResetColor);
+				mc->jumping = true;
+			}
+			mc->jumpBuildUpTimer += GetDeltaTime();
+		}
+		else if (mc->jumpTimer <= mc->jumpDuration) // fly up in the air
+		{
+			if (mc->jumpTimer == 0.0f)
+			{
+				SetHitboxActive(enemy, 0, false);
+				SetHitboxActive(enemy, 1, false);
+				SetHitboxActive(enemy, 2, false);
+			}
+			mtc->positionY += enemyStats->GetSpeed() * 12.f * GetDeltaTime();
+			mc->jumpTimer += GetDeltaTime();
+		}
+		else  // fly down from air
+		{
+			if (enemyAnim->aAnim != ANIMATION_WALK)
+			{
+				enemyAnim->aAnim = ANIMATION_WALK;
+				enemyAnim->aAnimIdx = 2;
+				enemyAnim->aAnimTime = 0.0f;
+			}
+			else if (enemyAnim->aAnimIdx != 2)
+			{
+				enemyAnim->aAnimIdx = 2;
+				enemyAnim->aAnimTime = 0.0f;
+			}
+
+			if (mc->hasLandingPos == false)
+			{
+				if (updateGridOnce == true)
+				{
+					updateGridOnce = false;
+					CalculateGlobalMapValuesLuciferJump(valueGrid); //generate a gridmap
+					if (valueGrid->cost[0][0] == -69.f)
+					{
+						updateGridOnce = true; //illegal grid
+						return;
+					}
+					TransformComponent landingPosition = FindRetreatTile(valueGrid, ptc, 10.f, 20.f); // where to land
+					mc->hasLandingPos = true;
+					mtc->positionX = landingPosition.positionX; //teleport in the air basically
+					mtc->positionZ = landingPosition.positionZ; // happens once
+					AddTimedEventComponentStart(enemy, 0.0f, CreateLandingIndicator);
+				}
+			}
+			if (mtc->positionY >= 0.f) // still in the air
+			{
+				mtc->positionY -= enemyStats->GetSpeed() * 10.f * GetDeltaTime();
+			}
+			else // on ground or below ground, set to ground and SHOCKWAVE with timed event
+			{
+				if (mc->jumping == true) // make sure we only reset values and create a shockwave once
+				{
+					//reset variables to beheaviour. No more jump, get dazed
+					mc->jumping = false;
+					updateGridOnce = true;
+					mc->hasLandingPos = false;
+					mc->jumpStunTimer = 0;
+					mc->jumpBuildUpTimer = 0;
+					mc->jumpTimer = 0;
+
+					//minoComp->isDazed = true;
+					SetHitboxActive(enemy, 0, true);
+					SetHitboxActive(enemy, 1, true);
+					SetHitboxActive(enemy, 2, true);
+					mtc->positionY = 0.f;
+
+					//shockwave here
+					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, 1.0f, BossShockwaveEnd, 0, 1);
+					mc->jumpCounter++;
+				}
+			}
+		}
+	}
+	else
+	{
+		enemyAnim->aAnim = ANIMATION_IDLE;
+		enemyAnim->aAnimIdx = 1;
+		enemyAnim->aAnimTime = 0.0f;
+
+		mc->attackStunTimer = 0;
+		mc->behaviourState = 0;
+		mc->jumpCounter = 0;
+
+		//Calculate new teleport breakpoint
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// Define a uniform distribution for the range [2.0, 4.0]
+		std::uniform_real_distribution<float> distribution(2.0f, 4.0f);
+		mc->jumpBreakpoint = (int)distribution(gen);
 	}
 }
 
@@ -169,7 +347,6 @@ bool MinotaurBehaviourSystem::Update()
 	bool updateGridOnce = true;
 
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
-
 
 	for (auto enemyEntity : View<MinotaurBehaviour, TransformComponent, StatComponent, EnemyComponent, AnimationComponent>(registry))
 	{
@@ -218,13 +395,41 @@ bool MinotaurBehaviourSystem::Update()
 		//ACTUAL BEHAVIOUR
 		if (minoTransformComponent != nullptr && playerTransformCompenent != nullptr && enemyAnim != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
+			ML_Vector<Node> finalPath;
+			minoComp->updatePathCounter += GetDeltaTime();
+
 			float distance = Calculate2dDistance(minoTransformComponent->positionX, minoTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
+
+			if (minoComp->hasSeenPlayer != true)
+			{
+				if (distance < 60.f)
+				{
+					minoComp->hasSeenPlayer = true;
+				}
+			}
+
 
 			if (minoComp->attackStunTimer <= minoComp->attackStunDuration)
 			{
+				if (enemyAnim->aAnim != ANIMATION_IDLE)
+				{
+					enemyAnim->aAnim = ANIMATION_IDLE;
+					enemyAnim->aAnimIdx = 1;
+					enemyAnim->aAnimTime = 0.0f;
+				}
+				else if (enemyAnim->aAnimIdx != 1)
+				{
+					enemyAnim->aAnimIdx = 1;
+					enemyAnim->aAnimTime = 0.0f;
+				}
+
 				minoComp->attackStunTimer += GetDeltaTime();
 			}
-			else if (minoComp->charging )
+			else if (minoComp->jumping || (minoComp->behaviourState == 1 && distance < 25.0f)) // jump
+			{
+				JumpingBehaviour(enemyEntity, playerTransformCompenent, minoComp, minoTransformComponent, enemyStats, enmComp, enemyAnim, valueGrid, updateGridOnce);
+			}
+			else if (minoComp->charging || (minoComp->behaviourState == 0 && distance < 40.0f))
 			{
 				if (!minoComp->chargeAttackSoundPlaying)
 				{
@@ -235,62 +440,54 @@ bool MinotaurBehaviourSystem::Update()
 				}
 				ChargeBehaviour(enemyEntity, playerTransformCompenent, minoComp, minoTransformComponent, enemyStats, enmComp, enemyAnim);
 			}
-			else if (minoComp->jumping || distance <= 40.0f) // jump
+			else if (minoTransformComponent->positionY < 0.05f)
 			{
-				if (minoComp->jumpTimer <= minoComp->JumpDuration)
+				if (minoComp->updatePathCounter >= minoComp->updatePathLimit)
 				{
-					AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, 4.0f, BossShockwaveEnd, 0, 1);
-
-				}
-
-				if (minoComp->airTimer <= minoComp->airDuration) // fly up in the air
-				{
-					minoTransformComponent->positionY += enemyStats->GetSpeed() * 7.f * GetDeltaTime();
-				}
-				else  // fly down from air
-				{
-					if (playerComponent != nullptr && updateGridOnce && minoComp->hasLandingPos == false)
+					minoComp->updatePathCounter = 0.f;
+					if (playerComponent != nullptr && updateGridOnce)
 					{
 						updateGridOnce = false;
-						CalculateGlobalMapValuesLuciferJump(valueGrid); //generate a gridmap
+						CalculateGlobalMapValuesSkeleton(valueGrid, playerTransformCompenent);
 						if (valueGrid->cost[0][0] == -69.f)
 						{
-							updateGridOnce = true; //illegal grid
+							updateGridOnce = true;
 							continue;
 						}
-						TransformComponent landingPosition = FindRetreatTile(valueGrid, playerTransformCompenent, 10.f, 20.f); // where to land
-						minoComp->hasLandingPos = true;
-						minoTransformComponent->positionX = landingPosition.positionX; //teleport in the air basically
-						minoTransformComponent->positionZ = landingPosition.positionZ; // happens once
 					}
-					if (minoTransformComponent->positionY > 0.f) // still in the air
-					{
-						minoTransformComponent->positionY -= enemyStats->GetSpeed() * 12.f * GetDeltaTime();
-					}
-					else // on ground or below ground, set to ground and SHOCKWAVE with timed event
-					{
-						//reset variables to beheaviour. No more jump, get dazed
-						minoComp->jumping = false;
-						//minoComp->isDazed = true;
-						SetHitboxActive(enemyEntity, 0, true);
-						SetHitboxActive(enemyEntity, 1, true);
-						SetHitboxActive(enemyEntity, 2, true);
-						minoTransformComponent->positionY = 0.f;
+ 					finalPath = CalculateAStarPath(valueGrid, minoTransformComponent, playerTransformCompenent);
 
-						//shockwave here
-						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, 4.0f, BossShockwaveEnd, 0, 1);
+					// goal (next node) - current
+					if (finalPath.size() > 2)
+					{
+						minoComp->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
+						minoComp->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
+						minoComp->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
+						minoComp->dir2Z = -(float)(finalPath[2].z - (float)finalPath[1].z);
+						minoComp->followPath = true;
 					}
-				
-					minoComp->airTimer += GetDeltaTime();
+					else
+					{
+						minoComp->followPath = false;
+					}
 				}
-				minoComp->jumpTimer += GetDeltaTime();
-			}
-			else // Nothing to do, go idle 
-			{ 
-				IdleBehaviour(enemyEntity, minoComp, minoTransformComponent, enemyStats, enemyAnim);
+				
+				if (minoComp->followPath == true && minoComp->updatePathCounter >= minoComp->updatePathLimit / 2.f)
+				{
+					minoComp->dirX = minoComp->dir2X;
+					minoComp->dirZ = minoComp->dir2Z;
+				}
+
+				if(minoComp->hasSeenPlayer == true)
+					ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, minoComp, minoTransformComponent, enemyStats, enemyAnim);
+				else // Go idle 
+					IdleBehaviour(enemyEntity, minoComp, minoTransformComponent, enemyStats, enemyAnim);
 			}
 		}
-		//TransformDecelerate(enemyEntity);
+
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+		ANIM_BRANCHLESS(enemyAnim);
+		TransformDecelerate(enemyEntity);
 	}
 	
 	free(valueGrid);
