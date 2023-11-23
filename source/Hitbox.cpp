@@ -835,7 +835,7 @@ ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	if (hitbox == nullptr || hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		return { -1, nullptr, nullptr };
 	}

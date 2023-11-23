@@ -63,7 +63,7 @@ void LoadLevel3()
 
 	//Doggo to guard the gate
 	SetupEnemy(EnemyType::hellhound, -263, 0.f, 138.f);
-	Stage2IntroScene(cutsceneEnemy, 0);
+	
 
 	//Small arena:
 	SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f);
@@ -107,4 +107,7 @@ void LoadLevel3()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, HellhoundIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

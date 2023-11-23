@@ -26,6 +26,12 @@ bool ControllerSystem::Update()
 				}
 				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				//Reset player transform for safety:
+				TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+				if (transform != nullptr)
+				{
+					transform->positionY = 0.0f;
+				}
 			}
 			else if (Camera::InCutscene() == 2)
 			{

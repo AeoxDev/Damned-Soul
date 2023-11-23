@@ -7,6 +7,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "UIButtonFunctions.h"
+#include "Input.h"
 #include <time.h>
 
 void LoadLevel(int level)
@@ -16,6 +17,7 @@ void LoadLevel(int level)
 	SetInPlay(false);
 	SetInShop(false);
 	SetInMainMenu(false);
+	ResetInput();
 	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
 	for (uint32_t i = 0; i < relics.size(); ++i)
 	{

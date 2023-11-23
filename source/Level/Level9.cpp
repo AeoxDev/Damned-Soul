@@ -56,7 +56,7 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
 	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);*/
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969, 2.f, 2.f, 2.f);
-	Stage3IntroScene(cutsceneEnemy, 0);
+	
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
@@ -154,4 +154,6 @@ void LoadLevel9()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

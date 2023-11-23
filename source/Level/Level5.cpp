@@ -56,7 +56,7 @@ void LoadLevel5()
 	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
 	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
-	Stage3IntroScene(cutsceneEnemy, 0);
+	
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -136,4 +136,6 @@ void LoadLevel5()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

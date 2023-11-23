@@ -36,7 +36,7 @@ void LoadLevel4()
 
 	//**************************************************
 	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -103.666f, 0.0f, 66.6f);
-	Stage4IntroScene(tempBoss, 0);
+	
 
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 	stc->scaleX = 1.0f;
@@ -71,4 +71,6 @@ void LoadLevel4()
 	
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(tempBoss, 0.85f + 0.3f + 0.1f, Stage4IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

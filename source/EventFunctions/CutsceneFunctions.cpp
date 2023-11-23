@@ -84,6 +84,30 @@ void CutsceneTransition(EntityID& entity, const int& index)
 			Camera::SetLookAt(newLookAtX, newLookAtY, newLookAtZ);
 		}
 	}
+	else if (cutscene->mode & Cutscene_Accelerating)
+	{
+		scalar *= scalar;
+		if (cutscene->mode & CutsceneMode::Transition_Position)
+		{
+			float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
+			float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
+			float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
+			float newPosX = posDifX * scalar + cutscene->startPositionX;
+			float newPosY = posDifY * scalar + cutscene->startPositionY;
+			float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
+			Camera::SetPosition(newPosX, newPosY, newPosZ, false);
+		}
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
+		{
+			float lookAtDifX = cutscene->goalLookAtX - cutscene->startLookAtX;
+			float lookAtDifY = cutscene->goalLookAtY - cutscene->startLookAtY;
+			float lookAtDifZ = cutscene->goalLookAtZ - cutscene->startLookAtZ;
+			float newLookAtX = lookAtDifX * scalar + cutscene->startLookAtX;
+			float newLookAtY = lookAtDifY * scalar + cutscene->startLookAtY;
+			float newLookAtZ = lookAtDifZ * scalar + cutscene->startLookAtZ;
+			Camera::SetLookAt(newLookAtX, newLookAtY, newLookAtZ);
+		}
+	}
 	if (cutscene->mode & Cutscene_Character_Walk)
 	{
 		float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
@@ -106,7 +130,6 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		if (cutscene->mode & CutsceneMode::Transition_Position)
 		{
 			transform->positionX = newPosX;
-			transform->positionY = newPosY;
 			transform->positionZ = newPosZ;
 		}
 		
@@ -126,7 +149,8 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
 		float newPosX = posDifX * scalar + cutscene->startPositionX;
 		float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
-		scalar *= scalar;
+		if (cutscene->mode & Cutscene_Accelerating)
+			scalar *= scalar;
 		float newPosY = posDifY * scalar + cutscene->startPositionY;
 	
 		//Set the facing towards the goal
