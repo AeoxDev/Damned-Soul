@@ -31,6 +31,9 @@ struct StateManager
 	EntityID player;
 	EntityID weapon;
 	EntityID stage;
+	EntityID hitboxVis;
+
+
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>

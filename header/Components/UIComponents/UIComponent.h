@@ -51,11 +51,11 @@ struct UIText
 	ML_String m_Text;
 	IDWriteTextFormat* m_TextFormat = nullptr;
 
-	float m_fontSize;
-	DWRITE_TEXT_ALIGNMENT m_textAlignment;
-	DWRITE_PARAGRAPH_ALIGNMENT m_paragraphAlignment;
+	float m_fontSize = 20.0f;
+	DWRITE_TEXT_ALIGNMENT m_textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;
+	DWRITE_PARAGRAPH_ALIGNMENT m_paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
 
-	void SetText(const char* text, DSBOUNDS bounds, float fontSize = 20, 
+	void SetText(const char* text, DSBOUNDS bounds, float fontSize = 20.0f, 
 		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_CENTER,
 		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 

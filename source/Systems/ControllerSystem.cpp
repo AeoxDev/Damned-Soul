@@ -7,6 +7,7 @@
 #include "EventFunctions.h"
 #include "States\StateManager.h"
 #include "Camera.h"
+#include "Model.h"
 
 bool ControllerSystem::Update()
 {
@@ -49,13 +50,17 @@ bool ControllerSystem::Update()
 		}
 		else if (keyState[SCANCODE_2] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, hellhound, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, imp, 256);
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, hellhound, 256);
 		}
 		else if (keyState[SCANCODE_4] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+		}
+		else if (keyState[SCANCODE_5] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
 		}
@@ -64,7 +69,7 @@ bool ControllerSystem::Update()
 	{
 		if (keyState[SCANCODE_A] == pressed)
 		{
-			for (size_t i = 0; i < 8; i++)
+			for (int i = 0; i < 8; i++)
 			{
 				hitboxVisualizerActive[i] = true;
 				for (auto entity : View<HitboxComponent>(registry))
@@ -72,6 +77,40 @@ bool ControllerSystem::Update()
 					VisualizeHitbox(entity, i);
 				}
 			}
+		}
+		if (keyState[SCANCODE_S] == pressed)
+		{
+			if (stateManager.hitboxVis.index == -1)
+			{
+				stateManager.hitboxVis = registry.CreateEntity();
+				ModelBonelessComponent* stageHitbox;
+				TransformComponent* transform;
+				visualizeStage = true;
+				switch (stateManager.activeLevel)
+				{
+					case 1://Level 1
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV1Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 3://Level 2
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV2Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 5://Level 3
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV3Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 7://Level 4
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV4Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+				default:
+					break;
+				}
+			}
+			
+			
+			
 		}
 		if (keyState[SCANCODE_0] == pressed)
 		{
@@ -123,6 +162,13 @@ bool ControllerSystem::Update()
 			{
 				hitboxVisualizerActive[i] = false;
 			}
+			if (stateManager.hitboxVis.index != -1)
+			{
+				registry.DestroyEntity(stateManager.hitboxVis);
+				stateManager.hitboxVis.index = -1;
+				visualizeStage = false;
+			}
+
 		}
 	}
 #endif // _DEBUG
@@ -246,10 +292,13 @@ bool ControllerSystem::Update()
 			}
 			else
 			{
-				//Default dash goes backwards
+				//Default dash goes forwards
+				//Set facing direction to dash direction when moving
+				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
-				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
-				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
+				AddSquashStretch(entity, Linear, 0.8f, 0.8f, 1.5f, true, 1.2f, 1.2f, 0.8f);
+				int squashStretch = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, ResetSquashStretch, SquashStretch, 0.2f, ResetSquashStretch, 0, 1);
 				break;
 			}
 		}
@@ -329,18 +378,24 @@ bool ControllerSystem::Update()
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
 			hitbox->circleHitbox[2].radius = 100.0f;
-			if (pStats->hazardModifier > -100.0f)
+			if (GetGodModeFactor() <= 1.0f)
 			{
-				transform->mass += 100.0f;
+				transform->mass += 1000.0f;
 				player->killingSpree = 10000;
 				player->UpdateSouls(1000);
 				hitbox->circleHitbox[2].radius += 100.0f;
+				SetGodModeFactor(100.0f);
 			}
 			else
 			{
-				transform->mass -= 100.0f;
+				transform->mass -= 1000.0f;
 				hitbox->circleHitbox[2].radius -= 100.0f;
+				SetGodModeFactor(1.0f);
 			}
+		}
+		if (keyState[SCANCODE_P] == pressed)
+		{
+			SetGodModePortal(true);
 		}
 #endif // _DEBUG
 

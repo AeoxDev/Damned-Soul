@@ -78,9 +78,9 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
 {
     
     // -- Calculate the index and get the right particle to change -- //
-    int amount = meta[blockID.y].end - meta[blockID.y].start;
-    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
-    int localIndex = (index - meta[blockID.y].start) % amount;
+    uint amount = meta[blockID.y].end - meta[blockID.y].start;
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    uint localIndex = (index - meta[blockID.y].start) % amount;
     
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
@@ -169,9 +169,9 @@ void ExplosionMovement(in uint3 DTid, in uint3 blockID)
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
     // -- Calculate the index and get the right particle to change -- //
-    int amount = meta[blockID.y].end - meta[blockID.y].start;
-    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
-    int localIndex = (index - meta[blockID.y].start) % amount;
+    uint amount = meta[blockID.y].end - meta[blockID.y].start;
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    uint localIndex = (index - meta[blockID.y].start) % amount;
     
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
@@ -281,8 +281,8 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
 void LightningMovement(in uint3 DTid, in uint3 blockID)
 {
     // -- Calculate the index and get the right particle to change -- //
-    int amount = meta[blockID.y].end - meta[blockID.y].start;
-    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    uint amount = meta[blockID.y].end - meta[blockID.y].start;
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
@@ -294,7 +294,7 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.size = meta[blockID.y].size;
     // ------------------------------ //
     
-    int localIndex = (index - meta[blockID.y].start) % amount;
+    uint localIndex = (index - meta[blockID.y].start) % amount;
     
     
     float posy = localIndex * 0.2f; // 51 / 255
@@ -315,8 +315,8 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
 void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
 {
     // -- Calculate the index and get the right particle to change -- //
-    int amount = meta[blockID.y].end - meta[blockID.y].start;
-    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    uint amount = meta[blockID.y].end - meta[blockID.y].start;
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
@@ -328,7 +328,7 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     particle.size = meta[blockID.y].size;
     // ------------------------------ //
     
-    int localIndex = (index - meta[blockID.y].start) % amount;
+    uint localIndex = (index - meta[blockID.y].start) % amount;
     
     
     float indexValue = sqrt((10 + localIndex) / 265.f);

@@ -56,8 +56,14 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 	bool okayDirection = false;
+	int limit = 128;
 	while (!okayDirection)
 	{
+		--limit;
+		if (limit < 0)
+		{
+			return;
+		}
 		if (skeletonComponent->timeCounter >= skeletonComponent->updateInterval)
 		{
 			skeletonComponent->timeCounter = 0.f;
@@ -245,7 +251,10 @@ bool SkeletonBehaviourSystem::Update()
 			//Dazed
 			if (skeletonComponent->attackStunDurationCounter <= skeletonComponent->attackStunDuration) 
 			{
-				
+				// this is where we rotate the AI to avoid bullshit player tactics
+				skeletonComponent->goalDirectionX = playerTransformCompenent->positionX - skeletonTransformComponent->positionX;
+				skeletonComponent->goalDirectionZ = playerTransformCompenent->positionZ - skeletonTransformComponent->positionZ;
+				SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ, 4.f);
 			}
 
 			//Combat

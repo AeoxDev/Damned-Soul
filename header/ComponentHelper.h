@@ -169,6 +169,7 @@ public:
 	int killingSpree = 0;
 	int killThreshold = 0;
 	bool portalCreated = false;
+	bool isDashing = false;
 
 	//New additions because of player attack chains
 	float timeSinceLastAttack = -1.0f;
@@ -250,3 +251,8 @@ struct EnemyComponent
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
+
+void SetGodModeFactor(float value);
+float GetGodModeFactor();
+bool GetGodModePortal();
+void SetGodModePortal(bool createPortal);
