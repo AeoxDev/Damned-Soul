@@ -11,7 +11,7 @@
 //#define TEST3000 //Hermano 3000
 
 //#define TESTMTS //Test Main to Settings 500
-#define TESTMTC //Test Main to Credits 500
+//#define TESTMTC //Test Main to Credits 500
 
 #ifdef TEST3000
 #define SIMULATED_FRAMES 1
