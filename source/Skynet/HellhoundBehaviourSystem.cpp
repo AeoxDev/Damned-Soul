@@ -237,7 +237,7 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 	hc->shootingTimer += GetDeltaTime();
 	//Temp: Create BIG spotlight when dog flame
 		//Temp: Create point light to indicate that we're going to do flamethrower
-	CreateSpotLight(dog, 10.0f, 0.0f, 0.0f,
+	CreateSpotLight(dog, 5.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, -0.25f,
 		hc->currentShootingAttackRange + 1.0f, 7.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);

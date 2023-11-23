@@ -43,36 +43,36 @@ void main(
     
     
     // Now construct the billboard, starting with positions
-    float3 vertices[6];
+    float3 verts[6];
     float2 uvCord[6];
     
     // Get bottom left vertex
-    vertices[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2);
+    verts[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2);
     //uvCord[0] = float2(0.0f, 1.0f);
     uvCord[0] = float2(1.0f, 1.0f);
     
     // Get top left vertex
-    vertices[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2);
+    verts[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2);
     //uvCord[1] = float2(0.0f, 0.0f);
     uvCord[1] = float2(1.0f, 0.0f);
     
     // Get bottom right vertex
-    vertices[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2);
+    verts[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2);
     //uvCord[2] = float2(1.0f, 1.0f);
     uvCord[2] = float2(0.0f, 1.0f);
     
     // Get bottom right vertex
-    vertices[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2);
+    verts[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2);
     //uvCord[3] = float2(1.0f, 1.0f);
     uvCord[3] = float2(0.0f, 1.0f);
     
     // Get top left vertex
-    vertices[4] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2);
+    verts[4] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2);
     //uvCord[4] = float2(0.0f, 0.0f);
     uvCord[4] = float2(1.0f, 0.0f);
     
     // Get top right vertex
-    vertices[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2);
+    verts[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2);
     //uvCord[5] = float2(1.0f, 0.0f);
     uvCord[5] = float2(0.0f, 0.0f);
     

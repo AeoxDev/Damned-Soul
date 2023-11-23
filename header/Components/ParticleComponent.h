@@ -15,6 +15,7 @@ enum ComputeShaders
 	FIRE = 9
 };
 
+//(entity, float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)
 struct ParticleComponent
 {
 	int metadataSlot = -1;

@@ -337,7 +337,7 @@ float4 main(GS_OUT input) : SV_TARGET
     float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
     
     //Pattern can use animation on Row A,B,C,D or A&B or C&D
-    if (pattern == 8) //4x4 sections, Top Row and Second Row A&B//patterns = //test 0(SMOKE)
+    if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//patterns = //test 0(SMOKE)
     {
         image = AniRowAB(counter, input);
         //image = AniRowCD(counter, input);

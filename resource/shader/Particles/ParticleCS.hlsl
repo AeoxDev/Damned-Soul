@@ -149,51 +149,13 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
     outputParticleData[index] = particle;
 }
 
-void ArchMovement(in uint3 DTid, in uint3 blockID)
+void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
-    int index = DTid.x + blockID.y * NUM_THREADS;
-    
-    Input particle = inputParticleData[DTid.x];
-    //____________________________________________________________________
-    float time = DTid.x; // * (end - start) / float(end); FIX THIS FELIX PLEASE,
-    float coefficient = 0.5; //for parabolic path, change as you see fit
-    particle.position.y = meta[index].startPosition.y + coefficient * time * time;
-    
-    particle.patterns = 1; //is currently used to define pattern in PS-Shader for flipAnimations, patterns.x (free slots on y,z,w values)
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
-    
-    //____________________________________________________________________
-    //test.position = test.position;
-    outputParticleData[DTid.x] = particle;
-}
-
-void ExplosionMovement(in uint3 DTid, in uint3 blockID)
-{
-    int index = DTid.x + blockID.y * NUM_THREADS;
-    
-    Input particle = inputParticleData[DTid.x];
-    //____________________________________________________________________
-    float3 directionRandom = normalize(float3((DTid.x % 100) / 100.0f - 0.5f, (DTid.x % 57) / 57.0f - 0.5f, (DTid.x % 83) / 83.0f - 0.5f));
-    float explosionSpeed = 8.0f; //adjust as you see fit
-    float distance = length(particle.position - meta[index].startPosition);
-    
-    particle.position += directionRandom * explosionSpeed * distance;
-    
-    particle.patterns = 3; //is currently used to define pattern in PS-Shader for flipAnimations
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
-    
-    //____________________________________________________________________
-    // -- Calculate the index and get the right particle to change -- //
+    // -- SAME FOR ALL FUNCTIONS -- //
     uint amount = meta[blockID.y].end - meta[blockID.y].start;
     uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     uint localIndex = (index - meta[blockID.y].start) % amount;
     
-}
-
-void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
-{
-    // -- SAME FOR ALL FUNCTIONS -- //
-    int index = DTid.x + blockID.y * NUM_THREADS;
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
 
@@ -215,6 +177,8 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
         One_OneHundo = 1;
     
     int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    
+    float directionRandom = normalize(float((DTid.x % 84.0) / 84.0f - 0.5f));
     // ------------------------------------------------------ //
             
     
@@ -237,15 +201,15 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     float2 calcPosition = float2(particle.position.x - meta[blockID.y].startPosition.x, particle.position.z - meta[blockID.y].startPosition.z);
     float2 v0ToParticle = calcPosition - v0;
     
-
-
-
+    
+    float v0ToParticle_len = length(v0ToParticle);
+    float middleVector_len = length(middleVector);
+    
     if (v0ToParticle_len < middleVector_len)
     {
-        particle.position.x = particle.position.x + cos(beta) * particle.velocity.x * dt * meta[OneHundo_TwoFiveFive].deltaTime;
-        //particle.position.y = particle.position.y + directionRandom * dt / meta[OneHundo_TwoFiveFive].deltaTime; // +(((float) DTid.x - 127) / 128) * dt;
-        particle.position.z = particle.position.z + sin(beta) * particle.velocity.z * dt * meta[OneHundo_TwoFiveFive].deltaTime;
-
+        particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 10.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+        particle.position.y = particle.position.y + directionRandom * dt / meta[OneHundo_TwoFiveFive].deltaTime; // +(((float) DTid.x - 127) / 128) * dt;  //titta på vilka värden
+        particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 10.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
     }
     else
     {
@@ -256,24 +220,6 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
       // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
     
     outputParticleData[index] = particle;
-}
-
-void ImplosionMovement(in uint3 DTid, in uint3 blockID)
-{
-    int index = DTid.x + blockID.y * NUM_THREADS;
-    
-    Input particle = inputParticleData[DTid.x];
-    //____________________________________________________________________
-    float3 direction = normalize(float3(0.f, 0.f, 0.f) - particle.position); // FIX THIS FELIX PLEASE, WE NEED TO ADD IMPLPSION POINT
-    float implosionSpeed = 8.0f; //adjust as you see fit
-    particle.position += direction * implosionSpeed;
-    
-    particle.patterns = 4/*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
-    
-    //____________________________________________________________________
-    //test.position = test.position;
-    outputParticleData[DTid.x] = particle;
 }
 
 void RainMovement(in uint3 DTid, in uint3 blockID)
@@ -394,15 +340,43 @@ bool IsPointInTriangle(float2 particleVector, float2 triangleVector)
 
 void FireMovement(in uint3 DTid, in uint3 blockID)
 {
-// -- SAME FOR ALL FUNCTIONS -- //
-    uint index = (DTid.x + blockID.y * NUM_THREADS);
+    // -- SAME FOR ALL FUNCTIONS -- //
+    uint amount = meta[blockID.y].end - meta[blockID.y].start; //particels
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x; //index slots of the 65000
+    uint localIndex = (index - meta[blockID.y].start) % amount;
+    
     Input particle = inputParticleData[index];
+    // -------------------------------------------------------------- // 
+
     
+    // --- Set the standard stuff --- //
     float dt = meta[0].deltaTime;
-    particle.time = particle.time + dt;
+    particle.time = particle.time + dt; //
     particle.size = meta[blockID.y].size;
+    // ------------------------------ //
     
-    float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
+    
+    // ---- Get a "randomized" value to access deltaTime ---- //    
+    float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    
+    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    
+    int One_OneHundo = holder;
+    if (One_OneHundo == 0)
+        One_OneHundo = 1;
+    
+    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    
+    float directionRandom = normalize(float((DTid.x % 84.0) / 84.0f - 0.5f));
+    // ------------------------------------------------------ //
+    
+    
+    if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
+    {
+        //spawning different variable
+        particle.time = 0.0f;
+    }
+    
     float posy = (index % 256) * 0.2f; // 51 / 255
     float idxFraction = (index % 256) / 255.f;
     float timeFraction = PI * (1 - (particle.time / meta[blockID.y].life));
@@ -412,15 +386,15 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
     float gamma = pow(sin(6 * sqrt(5) * idxFraction + 9 * timeFraction), 3); // Root(5)
     
     particle.position.y = (1 + directionRandom);
-    particle.position.x = (4*index);
-    particle.position.z = (5+directionRandom);
+    particle.position.x = (4 * index);
+    particle.position.z = (5 + directionRandom);
     
     particle.rgb.r = 0.0f;
     particle.rgb.g = 0.0f;
     particle.rgb.b = 1.0f;
     
-    particle.patterns = 9 /*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    particle.patterns = 9; /*meta[blockID.y].pattern*/ //is currently used to define pattern in PS-Shader for flipAnimations
+// 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
     
     outputParticleData[index] = particle;
 }
