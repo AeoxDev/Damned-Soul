@@ -200,61 +200,22 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 	}
 }
 
-
-void UIFunctions::Settings::Volume::Master_Press(void* args, int a)
+#include <iostream>
+void UIFunctions::Settings::Volume::Press(void* args, int a)
 {
 	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
 
 	slider->holding = true;
+	std::cout << "Press: " << slider->holding << std::endl;
 }
 
-void UIFunctions::Settings::Volume::Master_Release(void* args, int a)
+void UIFunctions::Settings::Volume::Release(void* args, int a)
 {
 	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
 
 	slider->holding = false;
+	std::cout << "Release: " << slider->holding << std::endl;
 }
-
-void UIFunctions::Settings::Volume::Voice_Press(void* args, int a)
-{
-
-}
-
-void UIFunctions::Settings::Volume::Voice_Release(void* args, int a)
-{
-
-}
-
-void UIFunctions::Settings::Volume::SFX_Press(void* args, int a)
-{
-
-}
-
-void UIFunctions::Settings::Volume::SFX_Release(void* args, int a)
-{
-
-}
-
-void UIFunctions::Settings::Volume::Music_Press(void* args, int a)
-{
-
-}
-
-void UIFunctions::Settings::Volume::Music_Release(void* args, int a)
-{
-
-}
-
-void UIFunctions::Settings::Volume::Ambient_Press(void* args, int a)
-{
-
-}
-
-void UIFunctions::Settings::Volume::Ambient_Release(void* args, int a)
-{
-
-}
-
 
 void UIFunctions::Credits_Back(void* args, int a)
 {

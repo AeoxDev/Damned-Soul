@@ -211,62 +211,48 @@ bool UIRunTimeSystem::Update()
 	return true;
 }
 
-#include <iostream>
 bool UISliderSystem::Update()
 {
 	for (auto entity : View<UISettingsSliderComponent, UIComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(entity);
-		
-		DSFLOAT2 mousePos = { (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) };
 
-		DSFLOAT2 offsetMousePixelCoords = { abs(mousePos.x + 32.0f) ,
-					   abs(mousePos.y + 32.0f) };
-
-		DSFLOAT2 uiMouseCoords = { (offsetMousePixelCoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-							-1 * ((offsetMousePixelCoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+		DSFLOAT2 uiMouseCoords = { (((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)) / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+							-1 * ((((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 		if (slider->holding)
 		{
 			DSFLOAT2 offsetSliderPixelCoords = { abs(uiElement->m_BaseImage.baseUI.GetPosition().x + 32.0f) ,
 						   abs(uiElement->m_BaseImage.baseUI.GetPosition().y + 32.0f) };
 
-			uiElement->m_BaseImage.baseUI.GetPositionBounds();
-
 			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
 			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
 
-			float sliderWidth = abs(maxLeftPosition + 0.13f) + abs(maxRightPosition - 0.13f);
+			float sliderWidth = abs(maxRightPosition - 0.13f) - abs(maxLeftPosition + 0.13f);
 
 			if (slider->currentPosition >= maxRightPosition - 0.13f)
-			{
-				slider->currentPercentage = 100;
 				slider->currentPosition = maxRightPosition - 0.13f;
-			}
 
 			if (slider->currentPosition <= maxLeftPosition + 0.13f)
-			{
-				slider->currentPercentage = 0;
 				slider->currentPosition = maxLeftPosition + 0.13f;
-			}
 
 			if (uiMouseCoords.x > slider->currentPosition && slider->currentPosition < maxRightPosition - 0.13f)
 			{
 				slider->currentPercentage += 1;
 				slider->currentPosition += (sliderWidth * 0.01f);
+				RedrawUI();
 			}
 
-			if (uiMouseCoords.x < slider->currentPosition && slider->currentPosition > maxLeftPosition + 0.13f)
+			if (uiMouseCoords.x  < slider->currentPosition && slider->currentPosition > maxLeftPosition + 0.13f)
 			{
 				slider->currentPercentage -= 1;
 				slider->currentPosition -= (sliderWidth * 0.01f);
+				RedrawUI();
 			}
 
-			RedrawUI();
 		}
 
-		std::cout << slider->currentPercentage << "% | " << slider->currentPosition << ", " << uiMouseCoords.x << std::endl;
 		uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(slider->currentPosition, uiElement->m_Images[0].baseUI.GetPosition().y));
 	}
 

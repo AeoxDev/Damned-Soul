@@ -120,27 +120,13 @@ void SettingsState::SetupButtons()
 		const DSFLOAT2 const positions[sliderAmount] =
 		{
 			{ 0.4f, 0.3f },
-			{ 0.4f, 0.1f },
-			{ 0.4f, -0.1f },
+			{ 0.4f, 0.15f },
+			{ 0.4f, 0.0f },
+			{ 0.4f, -0.15f },
 			{ 0.4f, -0.3f },
-			{ 0.4f, -0.5f },
 		};
 
-		void(* const functions[sliderAmount * 2])(void*, int) =
-		{
-			UIFunctions::Settings::Volume::Master_Press,
-			UIFunctions::Settings::Volume::Master_Release,
-			UIFunctions::Settings::Volume::Voice_Press,
-			UIFunctions::Settings::Volume::Voice_Release,
-			UIFunctions::Settings::Volume::SFX_Press,
-			UIFunctions::Settings::Volume::SFX_Release,
-			UIFunctions::Settings::Volume::Music_Press,
-			UIFunctions::Settings::Volume::Music_Release,
-			UIFunctions::Settings::Volume::Ambient_Press,
-			UIFunctions::Settings::Volume::Ambient_Release,
-		};
-
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < sliderAmount; i++)
 		{
 			auto button = registry.CreateEntity();
 			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
@@ -152,7 +138,7 @@ void SettingsState::SetupButtons()
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 			slider->currentPosition = uiElement->m_Images[0].baseUI.GetPosition().x;
 
-			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], functions[i + 1]);
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Settings::Volume::Press, UIFunctions::Settings::Volume::Release);
 
 		}
 	}
