@@ -201,7 +201,7 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     float2 calcPosition = float2(particle.position.x - meta[blockID.y].startPosition.x, particle.position.z - meta[blockID.y].startPosition.z);
     float2 v0ToParticle = calcPosition - v0;
     
-    
+
     float v0ToParticle_len = length(v0ToParticle);
     float middleVector_len = length(middleVector);
     
@@ -218,6 +218,9 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 
     particle.patterns = 3; //is currently used to define pattern in PS-Shader for flipAnimations
       // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    particle.rgb.r = 0.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 1.0f;
     
     outputParticleData[index] = particle;
 }
