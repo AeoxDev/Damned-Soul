@@ -819,10 +819,7 @@ void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (hitbox == nullptr)
-	{
-		return;
-	}
+
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->onCircleCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
@@ -838,10 +835,6 @@ ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (hitbox == nullptr)
-	{
-		return{ -1, nullptr, nullptr };
-	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		return { -1, nullptr, nullptr };
@@ -856,10 +849,7 @@ ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID)
 void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[])
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (hitbox == nullptr)
-	{
-		return;
-	}
+
 	assert(hitboxID >= SAME_TYPE_HITBOX_LIMIT);
 	int slot = hitboxID - SAME_TYPE_HITBOX_LIMIT;
 	//Redo center and bounding radius
@@ -929,10 +919,7 @@ void ResetAttackTrackerFlags(EntityID& entity)
 {
 	//If hitboxID = -1 reset all trackers
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (hitbox == nullptr)
-	{
-		return;
-	}
+
 	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
 	{
 		hitbox->hitTracker[i].active = false;

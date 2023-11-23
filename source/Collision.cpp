@@ -480,7 +480,7 @@ float GetHitboxRadius(const EntityID& entity, int hitBoxID)
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
 	if (hitbox == nullptr)
 	{
-		return 1.0f;
+		return -1.0f;
 	}
 	if (hitBoxID < SAME_TYPE_HITBOX_LIMIT)
 	{
