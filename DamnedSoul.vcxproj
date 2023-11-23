@@ -420,13 +420,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="resource\shader\Particles\UVParticleGS.hlsl">
+    <FxCompile Include="resource\shader\Particles\VFXGeometry.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
     </FxCompile>
-    <FxCompile Include="resource\shader\Particles\UVParticlePS.hlsl">
+    <FxCompile Include="resource\shader\Particles\VFXPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -670,7 +670,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
     <None Include="lib\SDL2\lib\x64\SDL2.dll" />
-    <None Include="resource\shader\Particles\UVParticleDistortions.hlsli" />
+    <None Include="resource\shader\Particles\VFX_Header.hlsli" />
+    <None Include="resource\shader\Particles\VFX_Patterns.hlsli" />
     <None Include="resource\shader\RenderPipelineHeader.hlsli" />
     <None Include="resource\shader\Particles\ParticleHeader.hlsli" />
   </ItemGroup>

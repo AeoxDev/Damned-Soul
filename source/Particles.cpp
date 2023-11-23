@@ -16,22 +16,29 @@ SRV_IDX particleSRV;
 
 PoolPointer<ParticleMetadataBuffer> data;
 
+// ## ALEX CODE ##
 GS_IDX tempUVPanningGS;
-PS_IDX tempUVPanningPS;
-CB_IDX tempUVPanningCB;
-TX_IDX tempUVPanningTX;
-TX_IDX tempVornoiTX;
-TX_IDX tempMaskTX;
-SMP_IDX tempUVPanningSMP;
-SRV_IDX tempBackBufferSRV;
+PS_IDX VFXPixelShader;
+CB_IDX VFXConstantBuffer;
 
-struct UVPannerCB
+SMP_IDX VFXSampler;
+
+SRV_IDX VFXBackBufferSRV; // Difference between SRV and TX is that SRV are textures created by the pipeline.
+TX_IDX VFXColorRampTX;
+TX_IDX VFXDiffuseTX;
+TX_IDX VFXVornoiTX;
+TX_IDX VFXNoiseTX;
+TX_IDX VFXShapeTX;
+TX_IDX VFXMaskTX;
+
+
+struct VFXBufferData
 {
 	DirectX::XMFLOAT2 offsetXY_in; // Offset of the uv coordinates in x ( u ) and y ( v ). Clamped between 1 and -1 since its illogial to do other ones.
 	DirectX::XMFLOAT2 resolution_in; // Offset of the uv coordinates in x ( u ) and y ( v ). Clamped between 1 and -1 since its illogial to do other ones.
 	float panSpeed_in; // How fast do you want the panning to be. A multiplier.
 };
-
+// ## EO ALEX CODE ##
 
 int Particles::RenderSlot;
 
@@ -52,17 +59,25 @@ void Particles::SwitchInputOutput()
 
 void Particles::InitializeParticles()
 {
-	// Alex Code
-	tempUVPanningPS = LoadPixelShader("UVParticlePS.cso");
-	tempUVPanningGS = LoadGeometryShader("UVParticleGS.cso");
-	UVPannerCB tempUVPannerData = { DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT2(sdl.WIDTH, sdl.HEIGHT), 0.75f };
-	tempUVPanningCB = CreateConstantBuffer((void*)&tempUVPannerData, sizeof(UVPannerCB));
-	tempUVPanningTX = LoadTexture("\\LavaPlaceholder.png");
-	tempVornoiTX = LoadTexture("\\VornoiTest.png");
-	tempMaskTX = LoadTexture("\\CircleSoft.png");
-	tempUVPanningSMP = CreateSamplerState();
-	tempBackBufferSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
+// ## ALEX CODE ##
+	VFXPixelShader = LoadPixelShader("VFXPixel.cso");
+	tempUVPanningGS = LoadGeometryShader("VFXGeometry.cso");
 
+	VFXBufferData VFXData = {
+		DirectX::XMFLOAT2(0.0f, 1.0f),
+		DirectX::XMFLOAT2(sdl.WIDTH,sdl.HEIGHT),
+		0.75f };
+	VFXConstantBuffer = CreateConstantBuffer((void*)&VFXData, sizeof(VFXBufferData));
+
+	VFXSampler =		CreateSamplerState();
+	VFXBackBufferSRV =	CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
+	VFXColorRampTX =	LoadTexture("\\VFX_GradientRamp.png");
+	VFXDiffuseTX =		LoadTexture("\\LavaPlaceholder.png");
+	VFXVornoiTX =		LoadTexture("\\VFX_Vornoi.png");
+	VFXNoiseTX =		LoadTexture("\\VFX_GaussianNoise.png");
+	VFXShapeTX =		LoadTexture("\\VFX_SoftCircle.png");
+	VFXMaskTX =			LoadTexture("\\VFX_Black.png");
+// ## EO ALEX CODE ##
 
 	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));
 	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
@@ -188,15 +203,20 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	//SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	//SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
 
-	// Alex Code
+	// ## ALEX CODE ##
 	SetGeometryShader(tempUVPanningGS);
-	SetPixelShader(tempUVPanningPS);
-	SetConstantBuffer(tempUVPanningCB, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
-	SetShaderResourceView(tempBackBufferSRV, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
-	SetTexture(tempUVPanningTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
-	SetTexture(tempVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
-	SetTexture(tempMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
-	SetSamplerState(tempUVPanningSMP, 3);
+	SetPixelShader(VFXPixelShader);
+	SetConstantBuffer(VFXConstantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetShaderResourceView(VFXBackBufferSRV, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
+	SetTexture(VFXDiffuseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	SetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
+	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
+	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 6);
+	SetSamplerState(VFXSampler, 3);
+
+	// ## EO ALEX CODE ##
 
 	// The constant buffer for vertex is set outside of this function, in the ParticleSystemCPU Update() call
 	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
@@ -218,9 +238,13 @@ void Particles::FinishParticlePass()
 	UnsetConstantBuffer(BIND_PIXEL, 0);
 	UnsetSamplerState(3);
 	UnsetShaderResourceView(SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
-	UnsetTexture(tempUVPanningTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
-	UnsetTexture(tempVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
-	UnsetTexture(tempMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+
+	UnsetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
+	UnsetTexture(VFXDiffuseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	UnsetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	UnsetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
+	UnsetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
+	UnsetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 6);
 
 	SetTopology(TRIANGLELIST);
 

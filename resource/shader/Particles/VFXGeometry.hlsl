@@ -44,13 +44,13 @@ void main(
     float3 vertices[6];
     float2 uvCoordinates[6];
     vertices[0] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get top left vertex
-    uvCoordinates[0] = float2(0.0, 0.0f);
+    uvCoordinates[0] = float2(0.0, 1.0f);
     
     vertices[1] = inval[0].worldPosition.xyz - right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get bottom left vertex
-    uvCoordinates[1] = float2(0.0, 1.0f);
+    uvCoordinates[1] = float2(0.0, 0.0f);
     
     vertices[2] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get top right vertex
-    uvCoordinates[2] = float2(1.0, 0.0f);
+    uvCoordinates[2] = float2(1.0, 1.0f);
     
     vertices[3] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) - up * (inval[0].size / 2); // Get top right vertex
     uvCoordinates[3] = uvCoordinates[2];
@@ -59,7 +59,7 @@ void main(
     uvCoordinates[4] = uvCoordinates[1];
     
     vertices[5] = inval[0].worldPosition.xyz + right * (inval[0].size / 2) + up * (inval[0].size / 2); // Get bottom right vertex
-    uvCoordinates[5] = float2(1.0f, 1.0f);
+    uvCoordinates[5] = float2(1.0f, 0.0f);
     
     float4x4 viewProj = mul(view, projection);
 
