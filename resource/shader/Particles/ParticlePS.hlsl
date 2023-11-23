@@ -127,8 +127,12 @@ float4 AniRowAB(float counter, GS_OUT input)////4x4 sections, First Row and Seco
         image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.25 + input.uv.y / 4));
     }
     
-    //float2 newUV = float2(input.uv.x / 4 + 1 / counter);
+   
     
+    ////float test = ((counter - 1) * 0.25);
+    
+    ////image = flipBookTex.Sample(WrapSampler, float2(test + input.uv.x / 4, input.uv.y / 4));
+   
     return image;
 }
 
