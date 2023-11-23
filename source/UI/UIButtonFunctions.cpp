@@ -201,6 +201,61 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 }
 
 
+void UIFunctions::Settings::Volume::Master_Press(void* args, int a)
+{
+	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
+
+	slider->holding = true;
+}
+
+void UIFunctions::Settings::Volume::Master_Release(void* args, int a)
+{
+	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
+
+	slider->holding = false;
+}
+
+void UIFunctions::Settings::Volume::Voice_Press(void* args, int a)
+{
+
+}
+
+void UIFunctions::Settings::Volume::Voice_Release(void* args, int a)
+{
+
+}
+
+void UIFunctions::Settings::Volume::SFX_Press(void* args, int a)
+{
+
+}
+
+void UIFunctions::Settings::Volume::SFX_Release(void* args, int a)
+{
+
+}
+
+void UIFunctions::Settings::Volume::Music_Press(void* args, int a)
+{
+
+}
+
+void UIFunctions::Settings::Volume::Music_Release(void* args, int a)
+{
+
+}
+
+void UIFunctions::Settings::Volume::Ambient_Press(void* args, int a)
+{
+
+}
+
+void UIFunctions::Settings::Volume::Ambient_Release(void* args, int a)
+{
+
+}
+
+
 void UIFunctions::Credits_Back(void* args, int a)
 {
 	SetInMainMenu(true);
@@ -242,7 +297,8 @@ void UIFunctions::Pause::Resume(void* args, int a)
 
 void UIFunctions::Pause::SetSettings(void* args, int a)
 {
-	UIFunctions::OnHover::Image(args, 0, false);
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
 	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
@@ -262,7 +318,8 @@ void UIFunctions::Pause::SetSettings(void* args, int a)
 
 void UIFunctions::Pause::Back(void* args, int a)
 {
-	UIFunctions::OnHover::Image(args, 0, false);
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
 	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
@@ -297,7 +354,7 @@ void UIFunctions::OnClick::None(void* args, int index)
 
 void UIFunctions::OnClick::SelectRelic(void* args, int index)
 {
-	UIComponent* uiElement = (UIComponent*)args;
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 
 	int inverseIndex = 0;
 	int imageIndexes[2] = { 0, 0 };
@@ -388,7 +445,7 @@ void UIFunctions::OnClick::HealPlayer(void* args, int index)
 
 void UIFunctions::OnClick::RerollRelic(void* args, int index)
 {
-	UIComponent* uiElement = (UIComponent*)args;
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 	UIShopRerollComponent* uiReroll = nullptr;
 
 	PlayerComponent* player = nullptr;
@@ -452,7 +509,6 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 
 	RedrawUI();
 }
-
 
 void UIFunctions::OnClick::LockRelic(void* args, int index)
 {
@@ -779,4 +835,3 @@ void UIFunctions::OnHover::PlayerRelic(void* args, int index, bool hover)
 
 	}
 }
-

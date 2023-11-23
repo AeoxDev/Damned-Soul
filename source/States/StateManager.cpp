@@ -174,7 +174,7 @@ int StateManager::Setup()
 
 	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
 
-	systems.push_back(new UIRunTime());
+	systems.push_back(new UIRunTimeSystem());
 	systems.push_back(new UIRenderSystem());
 	
 	//Input based CPU 
@@ -218,6 +218,7 @@ int StateManager::Setup()
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
+	systems.push_back(new UISliderSystem());
 	
 	systems.push_back(new UIShopSystem());
 

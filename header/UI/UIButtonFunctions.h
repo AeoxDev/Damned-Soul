@@ -39,7 +39,31 @@ namespace UIFunctions
 		void SetFullscreen(void* args, int a);
 
 		void SwitchTimer(void* args, int a);
+
+		namespace Volume
+		{
+			void Master_Press(void* args, int a);
+
+			void Master_Release(void* args, int a);
+
+			void Voice_Press(void* args, int a);
+
+			void Voice_Release(void* args, int a);
+
+			void SFX_Press(void* args, int a);
+
+			void SFX_Release(void* args, int a);
+
+			void Music_Press(void* args, int a);
+
+			void Music_Release(void* args, int a);
+
+			void Ambient_Press(void* args, int a);
+
+			void Ambient_Release(void* args, int a);
+		}
 	}
+
 
 	void Credits_Back(void* args, int a);
 	

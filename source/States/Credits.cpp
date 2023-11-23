@@ -53,7 +53,7 @@ void Credits::SetupButtons()
 
 	uiElement->Setup("Exmenu/ButtonBackground", "\nBack", { -0.81f, -0.8f }, { 0.5f, 0.6f });
 
-	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunctions::Credits_Back);
+	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Credits_Back, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 	SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
