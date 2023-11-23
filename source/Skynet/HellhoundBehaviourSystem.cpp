@@ -490,7 +490,7 @@ bool HellhoundBehaviourSystem::Update()
 			hellhoundComponent->attackStunDurationCounter += GetDeltaTime();
 			hellhoundComponent->shootingCooldownCounter += GetDeltaTime();
 
-
+			//Retreat behaviour
 			if (hellhoundComponent->retreat)
 			{
 				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit * 3.f)
@@ -539,7 +539,9 @@ bool HellhoundBehaviourSystem::Update()
 				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
 				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
 			}
-			else if (hellhoundComponent->isShooting) //currently charging his ranged attack, getting ready to shoot
+
+			//Charging ranged attack, getting ready to shoot
+			else if (hellhoundComponent->isShooting) 
 			{
 
 				hellhoundComponent->shootingCounter += GetDeltaTime();
