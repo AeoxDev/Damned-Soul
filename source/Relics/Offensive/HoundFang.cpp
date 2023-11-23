@@ -11,7 +11,7 @@ EntityID HOUND_FANG::_OWNER;
 const char* HOUND_FANG::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Increases your weapon damage by %ld flat", HOUND_FANG_BASE_DAMAGE_INCREASE);
+	sprintf_s(temp, "Increases your Attack Damage by %ld", HOUND_FANG_BASE_DAMAGE_INCREASE);
 #pragma warning(suppress : 4172)
 	return temp;
 }

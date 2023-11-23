@@ -27,7 +27,6 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
-	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 
 	SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ);
@@ -50,7 +49,6 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
-	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 	bool okayDirection = false;
 	while (!okayDirection)
@@ -94,53 +92,37 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	}
 }
 
-//void TemporaryPretendAnimation()
-//{
-//	// lmao funny code do many many things
-//	int i = 0;
-//}
-//void BeginHitting(EntityID& entity)
-//{
-//	auto comp = registry.GetComponent<EnemyComponent>(entity);
-//	SetHitboxActive(entity, comp->attackHitBoxID, true);
-//	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
-//}
-//void WeShallOverCome(EntityID& entity)
-//{
-//	auto comp = registry.GetComponent<EnemyComponent>(entity);
-//	SetHitboxActive(entity, comp->attackHitBoxID, false);
-//	SetHitboxCanDealDamage(entity, comp->attackHitBoxID, false);
-//}
-
 
 void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* btc, EnemyComponent* enmComp, EntityID& ent, AnimationComponent* animComp)
 {
-	bc->attackTimer += GetDeltaTime() * animComp->aAnimTimeFactor;
-	bc->goalDirectionX = ptc->positionX - btc->positionX;
-	bc->goalDirectionZ = ptc->positionZ - btc->positionZ;
-
-	bc->isAttacking = true;
-
-	//Elliot & Herman request: Make animationtime scale better for faster startup and swing.
-	animComp->aAnim = ANIMATION_ATTACK;
-	animComp->aAnimIdx = 0;
-	//Elliot: Change in calculations for attack timer:
-	animComp->aAnimTime = 0.5f * bc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
-	ANIM_BRANCHLESS(animComp);
-
-	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	if (bc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
+	if (bc->attackTimer <= 0.0f) // yes, we can indeed attack. (bc->attackTimer >= enemyStats->GetAttackSpeed())
 	{
-		//Set hitbox active here.
-		//Elliot's request: Add Skeleton attack hitbox instead of define
-		SetHitboxActive(ent, enmComp->attackHitBoxID, true);
-		SetHitboxCanDealDamage(ent, enmComp->attackHitBoxID, true);
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
-		sfx->Play(Skeleton_Attack, Channel_Base);
-		RedrawUI();
-		bc->attackTimer = 0.f;
-		bc->attackStunDurationCounter = 0.f;
-		bc->isAttacking = false;
+		//Increment so we don't immediately get  back in here
+		bc->attackTimer += GetDeltaTime();
+
+		//Animation setup
+		animComp->aAnim = ANIMATION_ATTACK;
+		animComp->aAnimTime = 0.0f;
+		animComp->aAnimTimePower = 1.0f;
+		animComp->aAnimTimeFactor = 3.0f; //Elliot comment: This might need to be changed when timePower changes
+
+		float PauseThreshold = 0.3f / animComp->aAnimTimeFactor;	//When to pause the animation
+		float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed();//When to continue the animation
+		float AttackActiveTime = AttackStartTime + 0.10f;			//When the entire attack has finished
+
+		//Attack Telegraphing #1: Quick prep + Pause + Blink
+		AddTimedEventComponentStartContinuousEnd(ent, PauseThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, EnemyType::tempBoss, 1);
+
+		//Attack Telegraphing #2: Slow prep + Gradual light
+		//animComp->aAnimTimeFactor = 0.5f;
+		//AddTimedEventComponentStartContinuousEnd(ent, 0.0f, nullptr, EnemyAttackGradient, 0.8f, nullptr, skeleton, 1);
+
+		//Actual attack
+		AddTimedEventComponentStartContinuousEnd(ent, AttackStartTime, EnemyBeginAttack, nullptr, AttackActiveTime, EnemyEndAttack, EnemyType::tempBoss, 1);
+
+		//Recovery/Daze
+		float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
+		AddTimedEventComponentStart(ent, AttackTotalTime, EnemyBecomeStunned, EnemyType::tempBoss, 1);
 	}
 }
 
@@ -230,26 +212,7 @@ bool TempBossBehaviourSystem::Update()
 				}
 			}
 
-			if (tempBossComponent->attackStunDurationCounter <= tempBossComponent->attackStunDuration)
-			{
-				// do nothing, stand like a bad doggo and be ashamed
-				//Elliot: When finished, reset attack timer and hitbox
-				tempBossComponent->attackTimer = 0.0f;
-				enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
-				if (enemyAnim->aAnimTime > 0.8f)
-				{
-					SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
-					SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
-				}
-				//enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
-				continue;
-			}
-			else//Elliot: Turn off attack hitbox to not make player rage.
-			{
-				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
-				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
-			}
-
+			//Dazed specifically because of shockwave, do not touch IN CAPS
 			if (tempBossComponent->isDazed)
 			{
 				TransformDecelerate(enemyEntity);
@@ -264,12 +227,23 @@ bool TempBossBehaviourSystem::Update()
 				continue;
 			}
 
-			//Elliot: If in attack, keep attacking even if player is outside
-			if ((distance < tempBossComponent->meleeDistance || tempBossComponent->attackTimer > 0.0f) && tempBossComponent->willDoShockWave == false)
+			//Dazed
+			if (tempBossComponent->attackStunDurationCounter <= tempBossComponent->attackStunDuration)
+			{
+				// this is where we rotate the AI to avoid bullshit player tactics
+				tempBossComponent->goalDirectionX = playerTransformCompenent->positionX - tempBossTransformComponent->positionX;
+				tempBossComponent->goalDirectionZ = playerTransformCompenent->positionZ - tempBossTransformComponent->positionZ;
+				SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ, 4.f);
+			}
+
+			//Combat
+			else if ((distance < tempBossComponent->meleeDistance || tempBossComponent->attackTimer > 0.0f) && tempBossComponent->willDoShockWave == false)
 			{
 				CombatBehaviour(tempBossComponent, enemyStats, playerStats, playerTransformCompenent, tempBossTransformComponent,enmComp, enemyEntity, enemyAnim);
 			}
-			else if (distance < 70) //hunting distance
+
+			//Pathfinding
+			else if (distance < 70) 
 			{
 				// insert chance for shockwave. 
 				
@@ -285,6 +259,12 @@ bool TempBossBehaviourSystem::Update()
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
 					}
+
+					else if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown * 0.8f && tempBossComponent->isBlinking == false)
+					{
+						AddTimedEventComponentStartEnd(enemyEntity, 0.0f, BossBlinkBeforeShockwave, tempBossComponent->shockWaveChargeCooldown * 0.2f, BossResetBeforeShockwave);
+					}
+
 					TransformDecelerate(enemyEntity);
 					continue; // dont chase
 				}
@@ -352,6 +332,9 @@ bool TempBossBehaviourSystem::Update()
 			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, tempBossComponent, tempBossTransformComponent, enemyStats, enemyAnim);
 		}
 		TransformDecelerate(enemyEntity);
+
+		//Increment animation AFTER everything has been calculated
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	}
 
 	free(valueGrid);

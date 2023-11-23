@@ -10,6 +10,13 @@ void AudioEngineComponent::Setup(int& ID)
 	this->result = this->system->init(256, FMOD_INIT_NORMAL, 0);    // Initialize FMOD (The value 256 is the max amount of channels. If we have problems, increase this value)
 	assert(this->result == FMOD_OK);
 
+	//Herman: I suspect uninitialized ML_[Container] structs might cause infrequent crashes
+	this->sounds.Initialize();
+	this->channels.Initialize();
+	this->groups.Initialize();
+	this->freeChannels.Initialize();
+	this->volumes.Initialize();
+
 	FMOD::ChannelGroup* add = nullptr;
 	this->groups.clear();
 	this->groups.push_back(add); //Master
@@ -402,6 +409,7 @@ void SoundComponent::Load(const int EntityType)
 		{
 			if ((int)audioEngine->freeChannels.size() > 0)
 			{
+
 				this->channelIndex[i] = audioEngine->freeChannels[(audioEngine->freeChannels.size() - 1)];
 				audioEngine->freeChannels.pop_back();
 			}

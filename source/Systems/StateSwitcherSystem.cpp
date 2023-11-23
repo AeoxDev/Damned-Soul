@@ -134,10 +134,11 @@ bool StateSwitcherSystem::Update()
 			endGameLoop = false;
 			continue;
 		}
-		if (/*playersComp->killingSpree >= playersComp->killThreshold*/ endGameLoop && !playersComp->portalCreated && !(currentStates & State::InShop))
+		if (/*playersComp->killingSpree >= playersComp->killThreshold*/(GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop))
 		{
 			playersComp->portalCreated = true;
 			EntityID portal = registry.CreateEntity();
+			SetGodModePortal(false);
 			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
 
 			//If it's on the split boss stage play a voice line from the player.

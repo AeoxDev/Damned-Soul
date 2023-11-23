@@ -68,6 +68,7 @@ void SetInPause(bool value)
 		currentStates = (State)(currentStates | State::InPause);
 		TimedEventIgnoreGamespeed(false);
 		gameSpeed = 0.0f;
+		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera from moving during pause.
 	}
 	else
 	{
@@ -129,6 +130,9 @@ void SetInCredits(bool value)
 
 int StateManager::Setup()
 {
+#ifdef _DEBUG
+	visualizeStage = true;
+#endif
 	bool loaded = Setup3dGraphics();
 	if (!loaded)
 	{
@@ -195,6 +199,7 @@ int StateManager::Setup()
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
+	systems.push_back(new MinotaurBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
 	systems.push_back(new FrozenBehaviourSystem());
 	systems.push_back(new LuciferBehaviourSystem());
@@ -203,7 +208,7 @@ int StateManager::Setup()
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
-	systems.push_back(new ImpBehaviourSystem());
+	systems.push_back(new ImpBehaviourSystem()); //Imp behavior needs to come after collision
 	systems.push_back(new ZacBehaviourSystem());
 	systems.push_back(new TransformSystem()); //Must be before controller
 	systems.push_back(new FollowerSystem());
@@ -245,7 +250,7 @@ void StateManager::Input()
 		// :)
 		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
 		//{
-		//	//öhö
+		//	//ï¿½hï¿½
 		//	SetInMainMenu(false);
 		//	SetInPlay(true);
 		//	SetInShop(false);

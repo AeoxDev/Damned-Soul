@@ -155,3 +155,4 @@ int8_t GetHitboxRasterizerState();
 int16_t GetHitboxConstantBuffer();
 
 extern bool hitboxVisualizerActive[];
+extern bool visualizeStage;

@@ -51,6 +51,12 @@ struct SoundComponent
 	void Play(const int SoundIndex = 0, const int SelectedChannel = 0);
 	void Stop(const int SelectedChannel = 0);
 	void Unload();
+
+	SoundComponent()
+	{
+		//Herman: I suspect uninitialized ML_[Container] structs might cause infrequent crashes
+		soundIndices.Initialize();
+	}
 };
 
 struct Volume

@@ -6,6 +6,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
+#include "TransformComponent.h"
 //Uncomment this line for tests:
 //#define TEST3000 //Hermano 3000
 
@@ -54,7 +55,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunc::MainMenu_Settings(nullptr, i);
+		UIFunctions::MainMenu::SetSettings(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();
@@ -67,7 +68,7 @@ int main(int argc, char* args[])
 
 			MemLib::pdefrag();
 		}
-		UIFunc::Settings_Back(nullptr, i);
+		UIFunctions::Settings::Back(nullptr, i);
 	}
 
 #endif // TESTMTS
@@ -76,7 +77,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunc::MainMenu_Credits(nullptr, i);
+		UIFunctions::MainMenu::SetCredits(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();
@@ -89,7 +90,7 @@ int main(int argc, char* args[])
 
 			MemLib::pdefrag();
 		}
-		UIFunc::Credits_Back(nullptr, i);
+		UIFunctions::Credits_Back(nullptr, i);
 	}
 
 #endif // TESTMTC
@@ -99,7 +100,7 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
-		UIFunc::LoadNextLevel(nullptr, i);
+		UIFunctions::Game::LoadNextLevel(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
 			CountDeltaTime();
@@ -116,10 +117,10 @@ int main(int argc, char* args[])
 	}
 
 	gameSpeed = 1.0f;
-	UIFunc::Game_MainMenu(nullptr, 0);
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
  	//for (unsigned int i = 0; i < 3000; ++i) // THIS IS GONA BECOME PARTICLE TESTER
 	//{
-	//	UIFunc::LoadParticleLevel(nullptr);
+	//	UIFunctions::LoadParticleLevel(nullptr);
 	//	for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 	//	{
 	//		CountDeltaTime();
@@ -173,6 +174,11 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 	if (NewSecond())
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps) ";
+		TransformComponent* p = GetPlayerTransform();
+		if (p != nullptr)
+		{
+			title += " pos: (" + std::to_string(p->positionX) + ", " + std::to_string(p->positionZ) + ") ";
+		}
 		//title+="";//Add more debugging information here, updates every second.
 		SetWindowTitle(title + extra);
 	}

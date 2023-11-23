@@ -21,7 +21,15 @@ void LoadLevel2()
 	float greenMult = 1.0f;
 	float blueMult = 1.0f;
 
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 2;
+	EntityID stage = SetUpStage(stageVars); 
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -32,19 +40,32 @@ void LoadLevel2()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::imp, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::imp, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::imp, 15.f, 0.f, -45.f);
-	/*SetupEnemy(EnemyType::imp, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::imp, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::imp, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::imp, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::imp, -55.f, 1.f, -35.f);*/
+
+	//Enemies to the right:
+
+	SetupEnemy(EnemyType::skeleton, 88.f, 0.f, 50.f);
+	SetupEnemy(EnemyType::skeleton, 68.0f, 0.f, 46.f);
+	SetupEnemy(EnemyType::imp, 85.f, 0.f, 23.f);
+
+	//Enemies to the north:
+	SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f);
+	SetupEnemy(EnemyType::skeleton, 28.f, 0.f, 145.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 20.0f, 0.f, 160.0f);
+
+	//Enemies in ruins
+	SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f);
+	SetupEnemy(EnemyType::skeleton, -84.f, 0.f, 154.f);
+	SetupEnemy(EnemyType::skeleton, -96.f, 0.f, 213.f);
+	SetupEnemy(EnemyType::skeleton, -143.f, 0.f, 127.f);
+
+	//Enemies on the left side:
+	SetupEnemy(EnemyType::skeleton, -219.f, 0.f, 34.f);
+	SetupEnemy(EnemyType::skeleton, -235.0f, 0.f, 48.f);
+	SetupEnemy(EnemyType::imp, -237.f, 0.f, 18.f);
+
+	//One to guard the gate:
+	SetupEnemy(EnemyType::skeleton, -230.f, 0.f, 214.f);
+
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
@@ -71,53 +92,12 @@ void LoadLevel2()
 
 	float redLight = 0.35f;
 
-	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
+	SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
 	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderThree, redLight, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, redLight, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-
-	//Add static hazards on the where player does not spawn
-	const int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_LAVA, 1.f, redAdd, greenAdd, blueAdd, redMult, greenMult, blueMult, 1.5f);
-		/*bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 100) - 50.0f;
-			float randZ = (float)(rand() % 100) - 50.0f;
-			if (randX * randX + randZ * randZ > 80)
-			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard = registry.CreateEntity();
-				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->shared.colorAdditiveRed = redAdd;
-				hazardModel->shared.colorAdditiveGreen = greenAdd;
-				hazardModel->shared.colorAdditiveBlue = blueAdd;
-				hazardModel->shared.colorMultiplicativeRed = redMult;
-				hazardModel->shared.colorMultiplicativeGreen = greenMult;
-				hazardModel->shared.colorMultiplicativeBlue = blueMult;
-				hazardModel->shared.gammaCorrection = 1.5f;
-				hazardModel->castShadow = false;
-				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.5f;
-				hazardTransform->positionZ = randZ;
-				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 1.0f;
-				hazardTransform->scaleZ = randScaleZ;
-				hazardTransform->facingX = cosf((float)rand());
-				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_LAVA);
-
-				succeded = true;
-			}
-		}*/
-	}
-	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

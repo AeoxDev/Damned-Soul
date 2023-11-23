@@ -19,7 +19,7 @@ void StatComponent::ZeroBonusStats()
 	m_bonusHealth = 0;
 	m_damageReduction = 1.f; // Since this is a multiplier, setting it to 1.0 is equivalent to setting the bonus to 0
 	m_bonusMoveSpeed = 0;
-	m_bonusDashValue = 0;
+	//m_bonusDashValue = 0;
 	m_bonusDamage = 0;
 	m_bonusAttackSpeed = 0;
 	m_bonusKnockback = 0;
@@ -27,12 +27,12 @@ void StatComponent::ZeroBonusStats()
 
 int64_t StatComponent::GetHealth() const
 {
-	return ceil(this->m_currentHealth);
+	return (int64_t)ceil(this->m_currentHealth);
 }
 
 int64_t StatComponent::GetMaxHealth() const
 {
-	return ceil(m_baseHealth + m_bonusHealth);
+	return (int64_t)ceil(m_baseHealth + m_bonusHealth);
 }
 
 float StatComponent::GetHealthFraction() const
@@ -42,7 +42,7 @@ float StatComponent::GetHealthFraction() const
 
 float StatComponent::CapHealth()
 {
-	float maxHp = GetMaxHealth();
+	float maxHp = (float)GetMaxHealth();
 	bool contained = m_currentHealth < maxHp;
 
 	// Branchless limit
@@ -113,7 +113,7 @@ float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
 
 	// Return current health
 	// Can potentially return negative
-	return GetHealth();
+	return (float)GetHealth();
 }
 
 float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
@@ -135,7 +135,7 @@ float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
 
 	// Return current health
 	// Can potentially return greater than max, but StatCalcSystem does limit current health to max health when calculating stats later
-	return GetHealth();
+	return (float)GetHealth();
 }
 
 void StatComponent::UpdateBonusHealth(const float delta)
@@ -149,6 +149,16 @@ float StatComponent::GetSpeed() const
 	return speed * (0.f < speed); // Branchlessly put a lower limit of zero on speed
 }
 
+float StatComponent::GetBaseSpeed() const
+{
+	return m_baseMoveSpeed;
+}
+
+float StatComponent::GetBonusSpeed() const
+{
+	return GetSpeed() - m_baseMoveSpeed;
+}
+
 void StatComponent::UpdateBonusSpeed(const float delta)
 {
 	m_bonusMoveSpeed += delta;
@@ -159,15 +169,15 @@ void StatComponent::SetSpeedMult(const float mult)
 	m_speedMult = mult;
 }
 
-float StatComponent::GetDashDistance() const
-{
-	return m_baseDashValue + m_bonusDashValue;
-}
-
-void StatComponent::UpdateBonusDashDistance(const float delta)
-{
-	m_bonusDashValue += delta;
-}
+//float StatComponent::GetDashDistance() const
+//{
+//	return m_baseDashValue + m_bonusDashValue;
+//}
+//
+//void StatComponent::UpdateBonusDashDistance(const float delta)
+//{
+//	m_bonusDashValue += delta;
+//}
 
 float StatComponent::GetBaseDamage() const
 {
@@ -295,4 +305,43 @@ int PlayerComponent::GetSouls() const
 int PlayerComponent::GetTotalSouls() const
 {
 	return this->totalSouls;
+}
+
+void PlayerComponent::UpdateBonusDashScaling(const float delta)
+{
+	m_bonusDashValue += delta;
+}
+
+void PlayerComponent::UpdateBonusDashes(const int delta)
+{
+	m_bonusDashes += delta;
+}
+
+bool PlayerComponent::ConsumeDash()
+{
+	if (m_remainingDashes == m_baseDashes + m_bonusDashes)
+		m_dashCounter = m_dashCooldown;
+	return 0 <= --m_remainingDashes;
+}
+
+void PlayerComponent::DashCooldown(const float dt)
+{
+	if (m_dashCounter < dt)
+	{
+		m_dashCounter = 0;
+		m_remainingDashes = m_baseDashes + m_bonusDashes;
+	}
+	else if (0 < m_dashCounter)
+		m_dashCounter -= dt;
+}
+
+float PlayerComponent::GetDashValue()
+{
+	return m_baseDashValue + m_bonusDashValue;
+}
+
+void PlayerComponent::ZeroBonusStats()
+{
+	m_bonusDashes = 0;
+	m_bonusDashValue = 0;
 }

@@ -129,7 +129,7 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		
 		Normalize(dx, dz);
 
-		CreateProjectile(entity, dx, dz, 1);
+		CreateProjectile(entity, dx, dz, eye);
 
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if(sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
@@ -181,64 +181,25 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 		enemyAnim->aAnimTime = 0.0f;
 	}
 
-	bool okayDirection = false;
-	while (!okayDirection)
+	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
 	{
-		if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
-		{
-			eyeComponent->timeCounter = 0.f;
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			// Define a uniform distribution for the range [-1.0, 1.0]
-			std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-			float randomX = distribution(gen);
-			float randomZ = distribution(gen);
-			eyeComponent->goalDirectionX = randomX;
-			eyeComponent->goalDirectionZ = randomZ;
-			std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
-			eyeComponent->updateInterval = randomInterval(gen);
-		}
-
-		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
-		float oldX = eyeTransformComponent->positionX;
-		float oldZ = eyeTransformComponent->positionZ;
-		float bias = 1.f;
-
-		//skeletonTransformComponent->positionX += skeletonTransformComponent->facingX * stats->GetSpeed() * 0.5f * GetDeltaTime();
-		//skeletonTransformComponent->positionZ += skeletonTransformComponent->facingZ * stats->GetSpeed() * 0.5f * GetDeltaTime();
-		TransformAccelerate(enemy, eyeTransformComponent->facingX * 0.5f, eyeTransformComponent->facingZ * 0.5f);
-		if ((eyeTransformComponent->positionX >= oldX + bias || eyeTransformComponent->positionZ >= oldZ + bias) && eyeTransformComponent->positionX <= oldX - bias || eyeTransformComponent->positionZ <= oldZ - bias)
-		{
-			//not good direction
-			eyeTransformComponent->positionX = oldX;
-			eyeTransformComponent->positionZ = oldZ;
-			eyeComponent->timeCounter = eyeComponent->updateInterval + 1.f;
-		}
-		else
-		{
-			// good direction
-			okayDirection = true;
-		}
-
+		eyeComponent->timeCounter = 0.f;
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// Define a uniform distribution for the range [-1.0, 1.0]
+		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+		float randomX = distribution(gen);
+		float randomZ = distribution(gen);
+		eyeComponent->goalDirectionX = randomX;
+		eyeComponent->goalDirectionZ = randomZ;
+		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+		eyeComponent->updateInterval = randomInterval(gen);
 	}
-}
 
-void ChargeColorFlash(EntityID& entity, const int& index)
-{
-	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
-	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
-	if (skelel)
-	{
-		skelel->shared.colorAdditiveRed = cosineWave;
-		skelel->shared.colorAdditiveGreen = cosineWave;
-	}
-	if (bonel)
-	{
-		bonel->shared.colorAdditiveRed = cosineWave;
-		bonel->shared.colorAdditiveGreen = cosineWave;
-	}
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
+	eyeComponent->timeCounter += GetDeltaTime();
 }
 
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp, AnimationComponent* enemyAnim)
@@ -376,6 +337,7 @@ bool EyeBehaviourSystem::Update()
 		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
 		if (debuff && debuff->m_frozen)
 		{
+			TransformDecelerate(enemyEntity);//Always decelerate
 			continue; // frozen, won't do behavior stuff
 		}
 

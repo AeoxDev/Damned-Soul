@@ -16,7 +16,53 @@
 
 #include <random>
 
-void UIFunc::LoadNextLevel(void* args, int a)
+	
+
+void UIFunctions::MainMenu::Start(void* args, int a)
+{
+	UnloadEntities(ENT_PERSIST_LEVEL);
+	for (auto entity : View<AudioEngineComponent>(registry))
+	{
+		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+		backgroundMusic->Stop(Channel_Base);
+		backgroundMusic->Stop(Channel_Extra);
+		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+		audioJungle->HandleSound();
+		backgroundMusic->Play(Music_Hot, Channel_Base);
+		backgroundMusic->Play(Ambience_Cave, Channel_Extra);
+		audioJungle->HandleSound();
+	}
+
+	stateManager.activeLevel = 0;
+	LoadLevel(++stateManager.activeLevel);
+
+	SetPaused(false);
+}
+
+void UIFunctions::MainMenu::SetSettings(void* args, int a)
+{
+	SetInSettings(true);
+	SetInMainMenu(false);
+	stateManager.menu.Unload();
+	stateManager.settings.Setup();
+}
+
+void UIFunctions::MainMenu::SetCredits(void* args, int a)
+{
+	SetInCredits(true);
+	SetInMainMenu(false);
+	stateManager.menu.Unload();
+	stateManager.credits.Setup();
+}
+
+void UIFunctions::MainMenu::Quit(void* args, int a)
+{
+	UnloadEntities();
+	sdl.quit = true;
+}
+
+
+void UIFunctions::Game::LoadNextLevel(void* args, int a)
 {
 	UnloadEntities();
 
@@ -53,7 +99,7 @@ void UIFunc::LoadNextLevel(void* args, int a)
 			playerSouls->spentThisShop = 0;
 			playerSouls->spentThisShopOnRelics = 0;
 		}
-		
+
 
 		switch (stateManager.activeLevel)
 		{
@@ -159,50 +205,151 @@ void UIFunc::LoadNextLevel(void* args, int a)
 	LoadLevel(++stateManager.activeLevel);
 }
 
-void UIFunc::MainMenu_Start(void* args, int a)
+void UIFunctions::Game::SetMainMenu(void* args, int a)
 {
+	SetInMainMenu(true);
+	SetInPlay(false);
 	UnloadEntities(ENT_PERSIST_LEVEL);
-	for (auto entity : View<AudioEngineComponent>(registry))
+	gameSpeed = 1.0f;
+	stateManager.menu.Setup();
+}
+
+void UIFunc::Credits_Back(void* args, int a)
+{
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
+
+	stateManager.credits.Unload();
+	stateManager.menu.Setup();
+	SetInCredits(false);
+}
+
+void UIFunctions::Settings::Back(void* args, int a)
+{
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
+	stateManager.settings.Unload();
+	stateManager.menu.Setup();
+	SetInSettings(false);
+}
+
+void UIFunctions::Settings::SetLowRes(void* args, int a)
+{
+	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
 	{
-		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
-		backgroundMusic->Stop(Channel_Base);
-		backgroundMusic->Stop(Channel_Extra);
-		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
-		audioJungle->HandleSound();
-		backgroundMusic->Play(Music_Hot, Channel_Base);
-		backgroundMusic->Play(Ambience_Cave, Channel_Extra);
-		audioJungle->HandleSound();
+		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
-
-	stateManager.activeLevel = 0;
-	LoadLevel(++stateManager.activeLevel);
-
-	SetPaused(false);
+	else
+	{
+		sdl.WIDTH = 1280;
+		sdl.HEIGHT = 720;
+		sdl.WINDOWED_WIDTH = sdl.WIDTH;
+		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+		SDL_SetWindowSize(sdl.sdlWindow, 1280, 720);
+		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1280, 720);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	}
 }
 
-void UIFunc::MainMenu_Settings(void* args, int a)
+void UIFunctions::Settings::SetMediumRes(void* args, int a)
 {
-	SetInSettings(true);
-	SetInMainMenu(false);
-	stateManager.menu.Unload();
-	stateManager.settings.Setup();
+	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
+	{
+		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	}
+	else
+	{
+		sdl.WIDTH = 1600;
+		sdl.HEIGHT = 900;
+		sdl.WINDOWED_WIDTH = sdl.WIDTH;
+		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+		SDL_SetWindowSize(sdl.sdlWindow, 1600, 900);
+		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1600, 900);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	}
 }
 
-void UIFunc::MainMenu_Credits(void* args, int a)
+void UIFunctions::Settings::SetHighRes(void* args, int a)
 {
-	SetInCredits(true);
-	SetInMainMenu(false);
-	stateManager.menu.Unload();
-	stateManager.credits.Setup();
+	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
+	{
+		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
+
+	}
+	else
+	{
+		SDL_SetWindowSize(sdl.sdlWindow, 1920, 1080);
+		sdl.WIDTH = 1920;
+		sdl.HEIGHT = 1080;
+		sdl.WINDOWED_WIDTH = sdl.WIDTH;
+		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	}
 }
 
-void UIFunc::MainMenu_Quit(void* args, int a)
+void UIFunctions::Settings::SetFullscreen(void* args, int a)
 {
-	UnloadEntities();
-	sdl.quit = true;
+	sdl.windowFlags = SDL_GetWindowFlags(sdl.sdlWindow);
+	if ((sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
+	{
+		SDL_SetWindowFullscreen(sdl.sdlWindow, 0);
+		sdl.windowFlags = sdl.windowFlags & (~SDL_WINDOW_FULLSCREEN_DESKTOP);
+		sdl.WIDTH = sdl.WINDOWED_WIDTH;
+		sdl.HEIGHT = sdl.WINDOWED_HEIGHT;
+		SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
+		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
+	}
+	else
+	{
+		sdl.windowFlags = sdl.windowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP;
+		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
+		SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	}
 }
 
-void UIFunc::PauseState_ResumeGame(void* args, int a)
+void UIFunctions::Settings::SwitchTimer(void* args, int a)
+{
+	SetVisualTimer(!GetVisualTimer());
+
+	for (auto entity : View<UIGameTimeComponent, UIComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
+
+		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualTimer());
+	}
+}
+
+
+void UIFunctions::Credits_Back(void* args, int a)
+{
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
+
+	stateManager.credits.Unload();
+	stateManager.menu.Setup();
+	SetInCredits(false);
+}
+
+
+void UIFunctions::Pause::Resume(void* args, int a)
 {
 	if (currentStates & State::InShop)
 	{
@@ -232,7 +379,47 @@ void UIFunc::PauseState_ResumeGame(void* args, int a)
 	}
 }
 
-void UIFunc::PauseState_MainMenu(void* args, int a)
+void UIFunctions::Pause::SetSettings(void* args, int a)
+{
+	UIFunctions::OnHover::Image(args, 0, false);
+
+	RedrawUI();
+	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
+	{
+		UIComponent* uiPauseButton = registry.GetComponent<UIComponent>(entity);
+
+		uiPauseButton->SetAllVisability(false);
+	}
+
+	for (auto entity : View<UIComponent, UIPauseSettingsComponent>(registry))
+	{
+		UIComponent* uiPauseSettings = registry.GetComponent<UIComponent>(entity);
+
+		uiPauseSettings->SetAllVisability(true);
+	}
+}
+
+void UIFunctions::Pause::Back(void* args, int a)
+{
+	UIFunctions::OnHover::Image(args, 0, false);
+
+	RedrawUI();
+	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+		uiElement->SetAllVisability(true);
+	}
+
+	for (auto entity : View<UIComponent, UIPauseSettingsComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+		uiElement->SetAllVisability(false);
+	}
+}
+
+void UIFunctions::Pause::SetMainMenu(void* args, int a)
 {
 	//Please check this function cause the Setup sets in main menu to true already.
 	//SetInMainMenu(true);
@@ -242,133 +429,15 @@ void UIFunc::PauseState_MainMenu(void* args, int a)
 	SetInPause(false);
 }
 
-void UIFunc::Game_MainMenu(void* args, int a)
+
+void UIFunctions::OnClick::None(void* args, int index)
 {
-	SetInMainMenu(true);
-	SetInPlay(false);
-	UnloadEntities(ENT_PERSIST_LEVEL);
-	gameSpeed = 1.0f;
-	stateManager.menu.Setup();
+
 }
 
-void UIFunc::Credits_Back(void* args, int a)
+void UIFunctions::OnClick::SelectRelic(void* args, int index)
 {
-	//Please check this function cause the Setup sets in main menu to true already.
-	//SetInMainMenu(true);
-
-	stateManager.credits.Unload();
-	stateManager.menu.Setup();
-	SetInCredits(false);
-}
-
-void UIFunc::Settings_Back(void* args, int a)
-{
-	//Please check this function cause the Setup sets in main menu to true already.
-	//SetInMainMenu(true);
-	stateManager.settings.Unload();
-	stateManager.menu.Setup();
-	SetInSettings(false);
-}
-
-void UIFunc::Settings_LowRes(void* args, int a)
-{
-	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
-	{
-		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-	}
-	else
-	{
-		sdl.WIDTH = 1280;
-		sdl.HEIGHT = 720;
-		sdl.WINDOWED_WIDTH = sdl.WIDTH;
-		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
-		SDL_SetWindowSize(sdl.sdlWindow, 1280, 720);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1280, 720);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-	}
-}
-
-void UIFunc::Settings_MediumRes(void* args, int a)
-{
-	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
-	{
-		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-	}
-	else
-	{
-		sdl.WIDTH = 1600;
-		sdl.HEIGHT = 900;
-		sdl.WINDOWED_WIDTH = sdl.WIDTH;
-		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
-		SDL_SetWindowSize(sdl.sdlWindow, 1600, 900);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1600, 900);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-	}
-}
-
-void UIFunc::Settings_HighRes(void* args, int a)
-{
-	if (sdl.windowFlags & SDL_WINDOW_FULLSCREEN)
-	{
-		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-
-	}
-	else
-	{
-		SDL_SetWindowSize(sdl.sdlWindow, 1920, 1080);
-		sdl.WIDTH = 1920;
-		sdl.HEIGHT = 1080;
-		sdl.WINDOWED_WIDTH = sdl.WIDTH;
-		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
-		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-	}
-}
-
-void UIFunc::Settings_Fullscreen(void* args, int a)
-{
-	sdl.windowFlags = SDL_GetWindowFlags(sdl.sdlWindow);
-	if ((sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
-	{
-		SDL_SetWindowFullscreen(sdl.sdlWindow, 0);
-		sdl.windowFlags = sdl.windowFlags & (~SDL_WINDOW_FULLSCREEN_DESKTOP);
-		sdl.WIDTH = sdl.WINDOWED_WIDTH;
-		sdl.HEIGHT = sdl.WINDOWED_HEIGHT;
-		SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
-	}
-	else
-	{
-		sdl.windowFlags = sdl.windowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP;
-		SDL_SetWindowFullscreen(sdl.sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
-		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
-		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-	}
-}
-
-void UIFunc::Settings_Timer(void* args, int a)
-{
-	SetVisualTimer(!GetVisualTimer());
-}
-
-void UIFunc::SelectRelic(void* args, int index)
-{
-	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+	UIComponent* uiElement = (UIComponent*)args;
 
 	int inverseIndex = 0;
 	int imageIndexes[2] = { 0, 0 };
@@ -606,11 +675,9 @@ void UIFunc::LockRelic(void* args, int index)
 			}
 		}
 	}
-
-	RedrawUI();
 }
 
-void UIFunc::RerollRelic(void* args, int index)
+void UIFunctions::OnClick::RerollRelic(void* args, int index)
 {
 	UIShopRerollComponent* uiReroll = nullptr;
 
@@ -628,7 +695,7 @@ void UIFunc::RerollRelic(void* args, int index)
 
 		if (player != nullptr && player->GetSouls() < 0)
 			return;
-		
+
 		for (auto entity : View<UIShopRelicComponent>(registry))
 		{
 			UIComponent* uiRelic = registry.GetComponent<UIComponent>(entity);
@@ -679,15 +746,67 @@ void UIFunc::RerollRelic(void* args, int index)
 	RedrawUI();
 }
 
-void UIFunc::EmptyOnClick(void* args, int index)
-{
 
+void UIFunctions::OnClick::LockRelic(void* args, int index)
+{
+	PlayerComponent* player = nullptr;
+
+	for (auto entity : View<PlayerComponent>(registry))
+		player = registry.GetComponent<PlayerComponent>(entity);
+
+
+	if (player->GetSouls() < 0)
+		return;
+	
+	for (auto entity : View<UIShopRelicComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (relicWindow->shopSelections[i] == shopState::SELECTED)
+			{
+				relicWindow->shopSelections[i] = shopState::LOCKED;
+				uiElement->m_Images[i + 2].SetImage("RelicIcons\\LockedRelic");
+				player->UpdateSouls(0);
+				break;
+			}
+		}
+	}
+
+	RedrawUI();
 }
 
-void UIFunc::EmptyOnHover(void* args, int index, bool hover)
+void UIFunctions::OnClick::BuyRelic(void* args, int index)
 {
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
+	UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
+	OnHoverComponent* playerHover = registry.GetComponent<OnHoverComponent>(stateManager.player);
 
-}
+	for (auto entity : View<UIShopRelicComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (relicWindow->shopSelections[i] == shopState::SELECTED)
+			{
+				if (player->GetSouls() < relicWindow->shopRelics[i]->m_price)
+					return;
+
+				relicWindow->shopSelections[i] = shopState::BOUGHT;
+
+				uiElement->m_Images[i + 2].SetImage("Buy");
+				relicWindow->shopRelics[i]->m_function(&stateManager.player);
+
+				DSFLOAT2 offsetUICoords = { abs(playerUI->m_Images[2].baseUI.GetPixelCoords().x + 32.0f) ,
+						   abs(playerUI->m_Images[2].baseUI.GetPixelCoords().y + 32.0f) };
+
+				DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+									-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 void UIFunc::HealPlayer(void* args, int index)
 {
@@ -697,13 +816,15 @@ void UIFunc::HealPlayer(void* args, int index)
 		UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 
-		if (player->GetSouls() < 2)
-			break;
+				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
+				break;
+			}
+		}
+	}
 
-		if (stats->GetHealth() == stats->GetMaxHealth())
-			break;
+	RedrawUI();
+}
 
-		float heal = stats->GetMaxHealth() * 0.25f;
 
 		//Normal heal sound
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
@@ -716,7 +837,7 @@ void UIFunc::HealPlayer(void* args, int index)
 	}
 }
 
-void UIFunc::HoverImage(void* args, int index, bool hover)
+void UIFunctions::OnHover::Image(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
 	ML_String fileName = "";
@@ -749,7 +870,7 @@ void UIFunc::HoverImage(void* args, int index, bool hover)
 	}
 }
 
-void UIFunc::HoverShopButtons(void* args, int index, bool hover)
+void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
 	UIShopButtonComponent* shopButton = nullptr;
@@ -802,17 +923,17 @@ void UIFunc::HoverShopButtons(void* args, int index, bool hover)
 			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
 
 
-		UIFunc::HoverImage(args, index, hover);
+		UIFunctions::OnHover::Image(args, index, hover);
 
 	}
 	else
 	{
-		UIFunc::HoverImage(args, index, hover);
+		UIFunctions::OnHover::Image(args, index, hover);
 	}
 
 }
 
-void UIFunc::HoverShopRelic(void* args, int index, bool hover)
+void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
 	UIShopRelicComponent* relicWindow = nullptr;
@@ -877,7 +998,7 @@ void UIFunc::HoverShopRelic(void* args, int index, bool hover)
 
 }
 
-void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
+void UIFunctions::OnHover::PlayerRelic(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
 	UIPlayerRelicsComponent* relicWindow = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
@@ -944,3 +1065,4 @@ void UIFunc::HoverPlayerRelic(void* args, int index, bool hover)
 
 	}
 }
+
