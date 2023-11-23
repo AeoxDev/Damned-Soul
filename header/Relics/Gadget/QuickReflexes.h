@@ -1,7 +1,7 @@
 #pragma once
 #include "EntityID.h"
 
-namespace SOUL_EATER
+namespace QUICK_REFLEXES
 {
 	extern EntityID _OWNER;
 
@@ -10,8 +10,6 @@ namespace SOUL_EATER
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
-	void Consume(void* input);
-
-	// The Increase Damage Reduction function for Demon Skin
-	void HealFromSouls(void* data);
+	// The Increase Dash Count function of Double Trouble
+	void IncreaseDashCount(void* data);
 }

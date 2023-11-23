@@ -1,7 +1,7 @@
 #pragma once
 #include "EntityID.h"
 
-namespace SOUL_EATER
+namespace FROZEN_MAUL
 {
 	extern EntityID _OWNER;
 
@@ -10,8 +10,9 @@ namespace SOUL_EATER
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
-	void Consume(void* input);
+	// Increase knockback stat function
+	void IncreaseKnockback(void* data);
 
-	// The Increase Damage Reduction function for Demon Skin
-	void HealFromSouls(void* data);
+	// The chance to freeze on hit
+	void FreezeOnHit(void* data);
 }
