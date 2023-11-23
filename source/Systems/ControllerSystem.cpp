@@ -177,7 +177,7 @@ bool ControllerSystem::Update()
 
 	
 
-	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
+	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, BlendAnimationComponent, MouseComponent>(registry))
 	{
 		if (gameSpeed < 0.00001f)
 		{
@@ -200,7 +200,7 @@ bool ControllerSystem::Update()
 		controller->goalZ = 0.0f;
 
 		//Default the animation to idle, subject to be changed based off of user input
-		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+		BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
 
 		/*MOVEMENT INPUT*/
 		bool moving = false;
@@ -229,6 +229,7 @@ bool ControllerSystem::Update()
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
+		player->isMoving = moving;
 
 		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
 		if(!player->isAttacking)
@@ -236,8 +237,14 @@ bool ControllerSystem::Update()
 
 		if (moving)
 		{
-			anim->aAnim = ANIMATION_WALK;
-			anim->aAnimIdx = 0;
+			anim->anim1.aAnim = ANIMATION_WALK;
+			anim->anim1.aAnimIdx= 0;
+
+			if (!player->isAttacking)
+			{
+				anim->anim2.aAnim = ANIMATION_WALK;
+				anim->anim2.aAnimIdx = 0;
+			}
 
 			float len = controller->goalX * controller->goalX + controller->goalZ * controller->goalZ;
 			if (len <= 0.0f)
@@ -262,8 +269,12 @@ bool ControllerSystem::Update()
 		//clamp moveTime to lower limit if not moving
 		else 
 		{
-			anim->aAnim = ANIMATION_IDLE;
-			anim->aAnimIdx = 0;
+		
+			anim->anim1.aAnim = ANIMATION_IDLE;
+			anim->anim1.aAnimIdx = 0;
+
+			anim->anim2.aAnim = ANIMATION_IDLE;
+			anim->anim2.aAnimIdx = 0;
 			
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			TransformDecelerate(entity);
@@ -400,8 +411,10 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 		//Update animation at the end of user input
-		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-		ANIM_BRANCHLESS(anim);
+		anim->anim1.aAnimTime += GetDeltaTime() * anim->anim1.aAnimTimeFactor;
+		anim->anim2.aAnimTime += GetDeltaTime() * anim->anim2.aAnimTimeFactor;
+		ANIM_BRANCHLESS((&(anim->anim1)));
+		ANIM_BRANCHLESS((&(anim->anim2)));
 
 	}
 	//Loop for player during other places

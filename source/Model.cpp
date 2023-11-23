@@ -225,7 +225,6 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 	if (m_animationVertexBuffer != -1)
 	{
 		AnimationFrame frame = GetAnimation(aType, aIdx, aTime);
-		AnimationFrame frame2 = GetAnimation(ANIMATION_ATTACK, 0, aTime);
 		// Push copy onto the stack
 		AnimationFrame modified;
 		modified.vertex = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
@@ -234,35 +233,9 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 
 		for (int i = 0; i < m_data->m_numBones; i++)
 		{
-			if (i == 2) copy = frame.vertex[i];			//Center_Joint
-			else if (i == 3) copy = frame.vertex[i];	//FootL_Joint
-			else if (i == 4) copy = frame.vertex[i];	//FootR_Joint
-			else if (i == 5) copy = frame.vertex[i];	//"freedom" joint
-			else if (i == 9) copy = frame.vertex[i];	//Hip_Joint
-			else if (i == 10) copy = frame.vertex[i];	//LegL_Joint
-			else if (i == 11) copy = frame.vertex[i];	//LegR_Joint
-			else if (i == 13) copy = frame.vertex[i];	//Root_Joint
-			else if (i == 18) copy = frame.vertex[i];	//ThighL_Joint
-			else if (i == 19) copy = frame.vertex[i];	//ThighR_Joint
-			else if (i == 20) copy = frame.vertex[i];	//ToeL_Joint
-			else if (i == 21) copy = frame.vertex[i];	//ToeR_Joint
-			//Upper Body
-			else if (i == 0) copy = frame2.vertex[i]; //ArmL_Joint
-			else if (i == 1) copy = frame2.vertex[i]; //ArmR_Joint
-			else if (i == 6) copy = frame2.vertex[i]; //HandL_Joint
-			else if (i == 7) copy = frame2.vertex[i]; //HandR_Joint
-			else if (i == 8) copy = frame2.vertex[i]; //Head_Joint
-			else if (i == 12) copy = frame2.vertex[i];//Neck_Joint
-			else if (i == 14) copy = frame2.vertex[i];//ShoulderL_Joint
-			else if (i == 15) copy = frame2.vertex[i];//ShoulderR_Joint
-			else if (i == 16) copy = frame2.vertex[i];//Spine1_Joint
-			else if (i == 17) copy = frame2.vertex[i];//Spine2_Joint
-			else if (i == 22) copy = frame2.vertex[i];//Top_Joint
-
-			else
-			{
-				copy = frame.vertex[13];
-			}
+			
+			copy = frame.vertex[i];
+			
 			
 
 			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copy));
@@ -276,7 +249,7 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 
 			tempMatrix = DirectX::XMMatrixTranspose(tempMatrix);
 
-			modified.vertex[i] = tempMatrix;
+			modified.vertex[i] = frame.vertex[i];
 			modified.normal[i] = frame.normal[i];
 
 		}
@@ -313,7 +286,7 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 	}
 }
 
-void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const ANIMATION_TYPE aType2, const uint8_t aIdx, const float aTime)
+void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime , const ANIMATION_TYPE aType2, const uint8_t aIdx2, const float aTime2)
 {
 
 	// Try to get the initial animation frame
@@ -321,23 +294,26 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const ANI
 	DirectX::XMVECTOR tempRotation;
 	DirectX::XMVECTOR tempTranslation;
 
-	DirectX::XMMATRIX tempMatrix;
+	DirectX::XMMATRIX tempVertMatrix;
+	DirectX::XMMATRIX tempNormMatrix;
 
 	m_data->m_numBones;
 
 	if (m_animationVertexBuffer != -1)
 	{
 		AnimationFrame frame = GetAnimation(aType, aIdx, aTime);
-		AnimationFrame frame2 = GetAnimation(ANIMATION_ATTACK, 0, aTime);
+		AnimationFrame frame2 = GetAnimation(aType2, aIdx2, aTime2);
 		// Push copy onto the stack
 		AnimationFrame modified;
 		modified.vertex = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
 		modified.normal = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
 		DirectX::XMMATRIX copy;
+		DirectX::XMMATRIX tempTEST;
+
 
 		for (int i = 0; i < m_data->m_numBones; i++)
 		{
-			if (i == 2) copy = frame.vertex[i];			//Center_Joint
+			/*if (i == 2) copy = frame.vertex[i];			//Center_Joint
 			else if (i == 3) copy = frame.vertex[i];	//FootL_Joint
 			else if (i == 4) copy = frame.vertex[i];	//FootR_Joint
 			else if (i == 5) copy = frame.vertex[i];	//"freedom" joint
@@ -360,31 +336,54 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const ANI
 			else if (i == 15) copy = frame2.vertex[i];//ShoulderR_Joint
 			else if (i == 16) copy = frame2.vertex[i];//Spine1_Joint
 			else if (i == 17) copy = frame2.vertex[i];//Spine2_Joint
-			else if (i == 22) copy = frame2.vertex[i];//Top_Joint
+			else if (i == 22) copy = frame2.vertex[i];//Top_Joint*/
 
+
+			//if (i == 0) copy = frame.vertex[i];		//0  Control_Joint
+			if (i == 15) copy = frame.vertex[i];		//15 FootL_Joint
+			else if (i == 16) copy = frame.vertex[i];	//16 FootR_Joint
+			else if (i == 20) copy = frame.vertex[i];	//20 Hip_Joint
+			else if (i == 21) copy = frame.vertex[i];	//21 KneeL_Joint
+			else if (i == 22) copy = frame.vertex[i];	//22 KneeR_Joint
+			//else if (i == 24) copy = frame.vertex[i];	//24 Root_Joint
+			else if (i == 27) copy = frame.vertex[i];	//27 Spine1_Joint
+			else if (i == 29) copy = frame.vertex[i];	//29 ThighL_Joint
+			else if (i == 30) copy = frame.vertex[i];	//30 ThighR_Joint
+			else if (i == 37) copy = frame.vertex[i];	//37 TiptoeL_Joint
+			else if (i == 38) copy = frame.vertex[i];	//38 TiptoeR_Joint
+			else if (i == 39) copy = frame.vertex[i];	//39 ToeL_Joint
+			else if (i == 40) copy = frame.vertex[i];	//40 ToeR_Joint
+			//Upper Body
 			else
 			{
-				copy = frame.vertex[13];
+				copy = frame2.vertex[i];
 			}
+			
+			copy = frame2.vertex * 0.2
+
+
+
 
 
 			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copy));
-
 			DirectX::XMMATRIX copyR = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 1.f));
 
-			tempMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(
-				DirectX::XMMatrixScalingFromVector(tempScalar), copyR
-			/*DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 0.5f))*/),
+			tempVertMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixScalingFromVector(tempScalar), copyR),
 				DirectX::XMMatrixTranslationFromVector(tempTranslation)));
 
-			tempMatrix = DirectX::XMMatrixTranspose(tempMatrix);
+			tempVertMatrix = DirectX::XMMatrixTranspose(tempVertMatrix);
 
-			modified.vertex[i] = tempMatrix;
+			tempNormMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixScalingFromVector(tempScalar), copyR),
+				DirectX::XMMatrixTranslationFromVector(tempTranslation)));
+
+			tempNormMatrix = DirectX::XMMatrixTranspose(tempVertMatrix);
+
+			modified.vertex[i] = tempVertMatrix;
 			modified.normal[i] = frame.normal[i];
 
 		}
-
-
 
 
 		UpdateStructuredBuffer(m_animationVertexBuffer, modified.vertex);

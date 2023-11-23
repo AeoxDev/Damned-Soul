@@ -196,6 +196,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Components\BlendAnimationsComponent.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
     <ClCompile Include="source\Glow.cpp" />

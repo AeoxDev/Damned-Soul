@@ -181,6 +181,9 @@ public:
 	float currentCharge = 0.0f;
 	float maxCharge = 1.0f; 
 
+	//New additions because if Blend Animations
+	bool isMoving = false;
+
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses

@@ -80,14 +80,39 @@ void Render(RenderPass renderPass)
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 		
 		// Render with data
-		if (entity.index)
-		{
 			LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
-		}
-		else
+	}
+
+	for (auto entity : View<TransformComponent, ModelSkeletonComponent, BlendAnimationComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
+		BlendAnimationComponent* bac = registry.GetComponent<BlendAnimationComponent>(entity);
+
+
+		// If this isn't a shadow pass, update colors (and reset temp colors)
+		if (LightPass == renderPass)
 		{
-			LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+			Light::SetGammaCorrection(mc->shared.gammaCorrection);
+			Light::SetColorHue(mc->shared.GetRedMult(), mc->shared.GetGreenMult(), mc->shared.GetBlueMult(),
+				mc->shared.GetRedAdd(), mc->shared.GetGreenAdd(), mc->shared.GetBlueAdd());
+			Light::UpdateLight();
+			mc->shared.ResetTempColor();
 		}
+
+		if (tc->offsetX != 0.0f)
+		{
+			tc->offsetY = 0.0f;
+		}
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+		// Render with data
+		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->anim1.aAnim,  bac->anim1.aAnimIdx, bac->anim1.GetTimeValue(),bac->anim2.aAnim, bac->anim2.aAnimIdx, bac->anim2.GetTimeValue());
 	}
 }
 bool ShadowSystem::Update()

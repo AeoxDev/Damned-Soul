@@ -118,7 +118,7 @@ public:
 	void RenderAllSubmeshes(const ANIMATION_TYPE aType = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f);
 
 	// Render all tge model's submeshes one after another WITH blending
-	void RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType = ANIMATION_IDLE, const ANIMATION_TYPE aType2 = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f);
+	void RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f, const ANIMATION_TYPE aType2 = ANIMATION_IDLE, const uint8_t aIdx2 = 0, const float aTime2 = -1.f);
 
 	void Free();
 };

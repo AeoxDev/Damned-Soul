@@ -17,9 +17,14 @@ bool FollowerSystem::Update()
 
 		AnimationComponent* aComp = registry.GetComponent<AnimationComponent>(follower);
 		AnimationComponent* target_aComp = registry.GetComponent<AnimationComponent>(comp->m_target);
+		BlendAnimationComponent* target_aBlendComp = registry.GetComponent<BlendAnimationComponent>(comp->m_target);
 		if (aComp && target_aComp)
 		{
 			*aComp = *target_aComp;
+		}
+		else if (aComp && target_aBlendComp)
+		{
+			*aComp = target_aBlendComp->anim2;
 		}
 	}
 	return true;
