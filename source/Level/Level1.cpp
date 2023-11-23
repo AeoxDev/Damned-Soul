@@ -49,7 +49,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::empoweredImp, -205.0f, 0.f, 88.f);
 
 	SetupEnemy(EnemyType::empoweredSkeleton, -122.0f, 0.f, 61.f);
-	SetupEnemy(EnemyType::empoweredHellhound, -94.0f, 0.f, 54.f);
+	SetupEnemy(EnemyType::hellhound, -94.0f, 0.f, 54.f);
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
 	//REAL LEVEL 1

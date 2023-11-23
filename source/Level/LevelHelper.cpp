@@ -468,7 +468,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->lavaAccelFactor = 1.0f;
 		stat->lavaAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
@@ -604,7 +604,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		if (eType == EnemyType::frozenHellhound)
 		{
-			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
@@ -656,7 +656,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->lavaAnimFactor = 1.0f;
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
-		registry.AddComponent<HellhoundBehaviour>(entity);
+		HellhoundBehaviour* hhb = registry.AddComponent<HellhoundBehaviour>(entity);
+		hhb->isEmpoweredDoggo = true;
 		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
@@ -668,15 +669,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		//Hue shift for strongdogs (Darker mult on the red parts, then add blue?)
 		//model->shared.baseColorMultiplicativeRed = 0.3f;
-		model->shared.baseColorMultiplicativeRed = 0.6f;
-		model->shared.baseColorMultiplicativeRed = 0.8f;
+		model->shared.baseColorMultiplicativeRed = 0.3f;
+		model->shared.baseColorMultiplicativeGreen = 0.7f;
+		model->shared.baseColorMultiplicativeBlue = 0.7f;
 		model->shared.baseColorAdditiveBlue = 0.2f;
 
 		//Gotta do the color, not just base, not sure why
-		model->shared.colorMultiplicativeRed = 0.6f;
-		model->shared.colorMultiplicativeGreen = 0.8f;
-		
-		//model->shared.colorMultiplicativeRed = 0.3f;
+		model->shared.colorMultiplicativeRed = 0.3f;
+		model->shared.colorMultiplicativeGreen = 0.7f;
+		model->shared.colorMultiplicativeBlue = 0.7f;
 		model->shared.colorAdditiveBlue = 0.2f;
 
 	}

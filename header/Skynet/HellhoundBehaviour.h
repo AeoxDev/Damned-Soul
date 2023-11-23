@@ -57,6 +57,8 @@ struct HellhoundBehaviour
 	float flameDamage = 0.08f; // flame damage per frame
 	//------------
 	bool flameSoundsStartedPlaying = false;
+
+	bool isEmpoweredDoggo = false; //Set to true when making empowered dogs, we check against this when we make flamethrower
 	
 
 	// COWARD VARIABLES
