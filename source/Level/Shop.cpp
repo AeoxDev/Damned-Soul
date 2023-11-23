@@ -234,7 +234,7 @@ void LoadShop()
 		{
 			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
 			{
-				if (shopBuy->onClickFunctions[i] == UIFunc::BuyRelic) //Purchase button found, play the first imp voice line.
+				if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr) sfx->Play(Shop_FirstMeet, Channel_Extra);
@@ -265,7 +265,7 @@ void ReloadShop()
 		{
 			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
 			{
-				if (shopBuy->onClickFunctions[i] == UIFunc::BuyRelic) //Purchase button found, play the correct sound based on the level.
+				if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr)

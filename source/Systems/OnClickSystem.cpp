@@ -86,7 +86,7 @@ bool OnClickSystem::Update()
 					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 					if (sound != nullptr)
 					{
-						if (comp->onClickFunctions[comp->index] == UIFunc::MainMenu_Start)
+						if (comp->onClickFunctions[comp->index] == UIFunctions::MainMenu::Start)
 						{
 							//Stop all the previous sounds (except music) to mute for example the dog breath
 							for (auto entity : View<AudioEngineComponent>(registry))
@@ -97,27 +97,27 @@ bool OnClickSystem::Update()
 							}
 							sound->Play(Button_Start, Channel_Base);
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunc::SelectRelic)
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::SelectRelic)
 						{
 							sound->Play(Shop_Press, Channel_Base);
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunc::BuyRelic)
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::BuyRelic)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunc::HealPlayer)
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::HealPlayer)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunc::LockRelic)
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::LockRelic)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunc::RerollRelic)
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::RerollRelic)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::Game::LoadNextLevel)
 						{
 							for (auto entity : View<AudioEngineComponent>(registry))
 							{
@@ -126,7 +126,7 @@ bool OnClickSystem::Update()
 								audioJungle->StopAllSounds();
 							}
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunc::Game_MainMenu)
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::Game::SetMainMenu)
 						{
 							//Stop all the previous sounds (except music) to mute for example the dog breath
 							for (auto entity : View<AudioEngineComponent>(registry))
@@ -138,7 +138,7 @@ bool OnClickSystem::Update()
 							sound->Play(Button_Press, Channel_Base);
 						}
 						//else if (comp->onClickFunctions[comp->index] == UIFunc::UpgradeWeapon) //Add this when the function for upgrading weapon has been included.
-						else if (comp->onClickFunctions[comp->index] != UIFunc::EmptyOnClick)
+						else if (comp->onClickFunctions[comp->index] != UIFunctions::OnClick::None)
 						{
 							sound->Play(Button_Press, Channel_Base);
 						}

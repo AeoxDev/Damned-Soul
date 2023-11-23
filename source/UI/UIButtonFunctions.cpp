@@ -17,7 +17,6 @@
 #include <random>
 
 	
-
 void UIFunctions::MainMenu::Start(void* args, int a)
 {
 	UnloadEntities(ENT_PERSIST_LEVEL);
@@ -88,7 +87,7 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 					{
 						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
 						{
-							if (shopBuy->onClickFunctions[i] == UIFunction::OnClick::BuyRelic) //Purchase button found
+							if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
 							{
 								selectedID = onClick;
 							}
@@ -213,6 +212,7 @@ void UIFunctions::Game::SetMainMenu(void* args, int a)
 	gameSpeed = 1.0f;
 	stateManager.menu.Setup();
 }
+
 
 void UIFunctions::Settings::Back(void* args, int a)
 {
@@ -371,7 +371,9 @@ void UIFunctions::Pause::Resume(void* args, int a)
 
 void UIFunctions::Pause::SetSettings(void* args, int a)
 {
-	UIFunctions::OnHover::Image(args, 0, false);
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+
+	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
 	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
@@ -391,7 +393,9 @@ void UIFunctions::Pause::SetSettings(void* args, int a)
 
 void UIFunctions::Pause::Back(void* args, int a)
 {
-	UIFunctions::OnHover::Image(args, 0, false);
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+
+	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
 	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
@@ -427,7 +431,7 @@ void UIFunctions::OnClick::None(void* args, int index)
 
 void UIFunctions::OnClick::SelectRelic(void* args, int index)
 {
-	UIComponent* uiElement = (UIComponent*)args;
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 
 	int inverseIndex = 0;
 	int imageIndexes[2] = { 0, 0 };
@@ -744,6 +748,14 @@ void UIFunctions::OnClick::HealPlayer(void* args, int index)
 		UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 
+		if (player->GetSouls() < 2)
+			break;
+
+		if (stats->GetHealth() == stats->GetMaxHealth())
+			break;
+
+		float heal = stats->GetMaxHealth() * 0.25f;
+
 		//Normal heal sound
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 		if (sfx != nullptr) sfx->Play(Shop_Heal, Channel_Base);
@@ -753,6 +765,12 @@ void UIFunctions::OnClick::HealPlayer(void* args, int index)
 		souls->spentThisShop += 2;
 		player->UpdateSouls(-2);
 	}
+}
+
+
+void UIFunctions::OnHover::None(void* args, int index, bool hover)
+{
+
 }
 
 void UIFunctions::OnHover::Image(void* args, int index, bool hover)
