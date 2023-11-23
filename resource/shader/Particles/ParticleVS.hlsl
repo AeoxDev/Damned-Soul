@@ -11,7 +11,7 @@ struct VS_IN
     float rotationZ : ROTATIONZ;        //!!! is currently used to define pattern in PS-Shader for flipAnimations
     float3 rgb : RGB; // Red Green Blue
     float size : SIZE;
-    float4 patterns : PATTERNS;
+    int patterns : PATTERNS;
 
 };
 
@@ -23,7 +23,7 @@ struct VS_OUT
     float rotationZ : ROTATIONZ;        //!!! is currently used to define pattern in PS-Shader for flipAnimations
     float size : SIZE;
     float time : TIME;
-    float4 patterns : PATTERNS;
+    int patterns : PATTERNS;
 };
 
 VS_OUT main(VS_IN inval)
@@ -36,6 +36,6 @@ VS_OUT main(VS_IN inval)
     retval.rotationZ = inval.rotationZ; //!!! is currently used to define pattern in PS-Shader for flipAnimations
     retval.size = inval.size;
     retval.time = inval.time;
-    retval.patterns = inval.patterns;
+    retval.patterns = (int)inval.patterns;
     return retval;
 }

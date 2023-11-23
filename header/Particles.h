@@ -24,7 +24,7 @@ struct Particle
 	float rotationZ;
 	DirectX::XMFLOAT3 rgb;
 	float size;
-	DirectX::XMFLOAT4 patterns;
+	int patterns;
 };
 
 struct ParticleMetadata

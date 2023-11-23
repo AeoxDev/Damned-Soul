@@ -7,7 +7,7 @@ struct GS_OUT
     float4 rgb : RGB;
     float2 uv : UV;
     float time : TIME;
-    float4 patterns : PATTERNS;
+    int patterns : PATTERNS;
 };
 
 float4 AniRowABCD(float counter, GS_OUT input, int time)////4x4 sections, First Row and Second Row
@@ -274,7 +274,7 @@ float4 main(GS_OUT input) : SV_TARGET
 {
     int counter = 1;
     float time = 0.0f;
-    int pattern = (int)input.patterns.x;
+    int pattern = input.patterns;
     time = (int)input.time;
     
     ////if (input.time >= (time + 0.25) && input.time < (time + 0.50)) //To slow
@@ -336,11 +336,13 @@ float4 main(GS_OUT input) : SV_TARGET
     if (pattern == 8) //4x4 sections, Top Row and Second Row A&B//patterns = //test 0(SMOKE)
     {
         image = AniRowAB(counter, input);
+        //image = AniRowCD(counter, input);
+
     }
     else if (pattern == 0) //4x4 sections, Third and Forth Row C&D//patterns = test 1(ARCH)
     {
         //image = AniRowCD(counter, input);
-        image = AniRowABCD(counter, input, (int)time);
+        //image = AniRowABCD(counter, input, (int) time);
     }
     else
     {

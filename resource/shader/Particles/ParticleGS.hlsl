@@ -13,7 +13,7 @@ struct GS_IN
     float rotationZ : ROTATIONZ;
     float size : SIZE;
     float time : TIME;
-    float4 patterns : PATTERNS;
+    int patterns : PATTERNS;
 };
 
 struct GS_OUT
@@ -22,7 +22,7 @@ struct GS_OUT
     float4 rgb : RGB;
     float2 uv : UV;
     float time : TIME;
-    float4 patterns : PATTERNS;
+    int patterns : PATTERNS;
 };
 
 [maxvertexcount(6)]
@@ -85,7 +85,7 @@ void main(
     {
         retappend.position = mul(float4(vertices[i].xyz, inval[0].worldPosition.w), viewProj); // times rotationZ here?
         // INSERT rotate on Z-axis
-        retappend.position = retappend.position / retappend.position.w;
+        //retappend.position = retappend.position / retappend.position.w;
         retappend.rgb = inval[0].rgb;
         retappend.uv = uvCord[i];
         retappend.time = inval[0].time;
