@@ -351,7 +351,7 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
 
 void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
 {
-        // -- Calculate the index and get the right particle to change -- //
+    // -- Calculate the index and get the right particle to change -- //
     int amount = meta[blockID.y].end - meta[blockID.y].start;
     int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     int localIndex = (index - meta[blockID.y].start) % amount;
@@ -382,9 +382,9 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
 
     
-    if (travelledDistance >= meta[blockID.y].maxRange)
+    if (travelledDistance >= meta[blockID.y].maxRange + 17318)
     {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y , meta[blockID.y].startPosition.z);
+        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
         
         
         particle.position = startPosition;
@@ -397,10 +397,35 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
         particle.position = startPosition;
         particle.time = 0.f;
     }
+
+    float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float)index); //+ /*0.5f **/ index);
+    float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);
     
-    particle.position.x = particle.position.x + meta[blockID.y].deltaTime * cos(particle.time) * dt; //cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
-    //particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
-        particle.position.z = particle.position.z + sin(particle.time) * dt; //sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
+    float dirX = cos((float) localIndex / (float) amount * 15.0f) * 30.f;
+    float dirZ = sin((float) localIndex / (float) amount * 15.0f) * 30.f;
+    
+    particle.position.x = particle.position.x + (oscillationX + dirX) * dt;
+    particle.position.z = particle.position.z + (oscillationZ + dirZ) * dt;
+
+    
+    
+    
+        
+    //float pulsateRadius = 1.0f + 0.5f * sin(2.0f * PI * ((float) localIndex / (float) amount * 720.f));
+    //float pulsateAngle = 2.0f * PI * ((float) localIndex / (float) amount * 360.f);
+    //float sporadicX = 0.1f * (2.0f * meta[OneHundo_TwoFiveFive].deltaTime - 1.0f);
+    //float sporadicZ = 0.1f * (2.0f * meta[OneHundo_TwoFiveFiveInc].deltaTime - 1.0f);
+    
+        
+    //particle.position.x = particle.position.x + pulsateRadius * cos(pulsateAngle) + sporadicX;
+    ////particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
+    //particle.position.z = particle.position.x + pulsateRadius * sin(pulsateAngle) + sporadicZ;
+    
+    
+    //particle.position.x = particle.position.x + ((cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 2.f) * (sporadicX)) * dt;
+    ////particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
+    //particle.position.z = particle.position.z + ((sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 2.f) * (sporadicZ)) * dt;
+    
     
     //if (localIndex % 2 == 0)
     //{
