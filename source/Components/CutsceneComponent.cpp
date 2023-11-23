@@ -14,7 +14,7 @@ void MainMenuIntroCutscene(EntityID& entity, const int& index)
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(enemy);
 		pointX = transform->positionX;
 		pointZ = transform->positionZ;
-		if (rand()%2)
+		if (rand()%16)
 		{
 			break;
 		}

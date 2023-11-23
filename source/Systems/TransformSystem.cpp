@@ -4,6 +4,7 @@
 #include "Registry.h"
 #include "Particles.h"
 #include "DeltaTime.h"
+#include "States\StateManager.h"
 
 bool TransformSystem::Update()
 {
@@ -26,4 +27,23 @@ bool TransformSystem::Update()
 	//	Particles::UpdateMetadata(particles->metadataSlot, tc->positionX, tc->positionY, tc->positionZ);
 	//}
 	return true;
+}
+
+void NormalizeFacing(TransformComponent* f)
+{
+	float len = sqrtf(f->facingX * f->facingX + f->facingZ * f->facingZ + f->facingY * f->facingY);
+	f->facingX /= len;
+	f->facingY /= len;
+	f->facingZ /= len;
+}
+
+TransformComponent* GetPlayerTransform()
+{
+	if (stateManager.player.index != -1)
+	{
+		return registry.GetComponent<TransformComponent>(stateManager.player);
+	}
+	
+
+	return nullptr;
 }

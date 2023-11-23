@@ -24,6 +24,12 @@ private:
 	// Used to alter speed when performing actions such as attacking
 	float m_speedMult = 1.0f;
 
+	// Dash
+	// Base dash value
+	float m_baseDashValue = 2.5f;
+	// Bonus dash value
+	float m_bonusDashValue = 0.f;
+
 
 
 //Weapon stats
@@ -110,6 +116,11 @@ public:
 	void UpdateBonusSpeed(const float delta);
 	// Set the entity's speed mult
 	void SetSpeedMult(const float mult);
+	
+	// Get the current dash distance
+	float GetDashDistance() const;
+	// Update Bonus Dash
+	void UpdateBonusDashDistance(const float delta);
 
 // Offensive
 	// Get the base damage of the entity
@@ -146,6 +157,7 @@ public:
 	int killingSpree = 0;
 	int killThreshold = 0;
 	bool portalCreated = false;
+	bool isDashing = false;
 
 	//New additions because of player attack chains
 	float timeSinceLastAttack = -1.0f;
@@ -156,6 +168,10 @@ public:
 	//New additions because of player heavy attacks
 	float currentCharge = 0.0f;
 	float maxCharge = 1.0f; 
+
+	//Dash variables
+	float dashCooldown = 1.0f;
+	float dashCounter = 0.0f; //When this is 0.0f we can dash, and when we dash it's plus'd by dashCooldown
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
@@ -213,3 +229,8 @@ struct EnemyComponent
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
+
+void SetGodModeFactor(float value);
+float GetGodModeFactor();
+bool GetGodModePortal();
+void SetGodModePortal(bool createPortal);

@@ -299,7 +299,7 @@ void Camera::ResetCamera()
 	SetPosition(CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, false);
 	SetLookAt(0.f, 0.f, 0.f);
 	SetUp(0.f, 1.f, 0.f);
-
+	SetOffset(0.0f, 0.0f, 0.0f);
 	SetRotation(0.f, 0.f, 0.f);
 	SetFOV(CAMERA_FOV);
 

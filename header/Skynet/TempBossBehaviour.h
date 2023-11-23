@@ -50,6 +50,7 @@ struct TempBossBehaviour
 	float dazeCounter = 0.f;
 	bool isDazed = false;
 	bool isAttacking = false; // please for the love of god, DO NOT TOUCH THIS
+	bool isBlinking = false; //For telegraphing the shockwave
 
 
 	TempBossBehaviour(int deathCount, int hitID) : deathCounter(deathCount), hitBoxID(hitID) {}

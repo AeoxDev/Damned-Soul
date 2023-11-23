@@ -148,7 +148,17 @@ void SquashStretch(EntityID& entity, const int& index)
 		transform->offsetScaleZ = scaleZ + dz * acceleratingTime;
 	}
 }
-
+void TPose(EntityID& entity, const int& index)
+{
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim != nullptr)
+	{
+		anim->aAnimIdx = 0;
+		anim->aAnim = ANIMATION_DEATH;
+		anim->aAnimTime = 0.01f;;
+	}
+	
+}
 void ResetSquashStretch(EntityID& entity, const int& index)
 {
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);

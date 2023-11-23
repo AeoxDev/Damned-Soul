@@ -46,13 +46,13 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 		(FLAME_WEAPON_DOT_FRACTION * input->CollapseDamage()) / FLAME_WEAPON_DOT_DURATION,
 		FLAME_WEAPON_DOT_DURATION
 	);
-	DebuffComponent* EnemyDebuff = registry.GetComponent<DebuffComponent>(input->defender);
-	if (nullptr == EnemyDebuff)
+	DebuffComponent* debuff = registry.GetComponent<DebuffComponent>(input->defender);
+	if (nullptr == debuff)
 	{
 		registry.AddComponent<DebuffComponent>(input->defender, DamageOverTime::BURN, newDoT);
 	}
-	else if (EnemyDebuff->m_dots[DamageOverTime::BURN].LessThan(newDoT))
+	else if (debuff->m_dots[DamageOverTime::BURN].LessThan(newDoT))
 	{
-		EnemyDebuff->m_dots[DamageOverTime::BURN] = newDoT;
+		debuff->m_dots[DamageOverTime::BURN] = newDoT;
 	}
 }

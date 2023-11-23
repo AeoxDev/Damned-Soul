@@ -6,6 +6,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "ConfigManager.h"
+#include "TransformComponent.h"
 
 #include "MemLib/ML_String.hpp"
 #include "DebugTests.h" // <-- ALL TEST ARE IN HERE

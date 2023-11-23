@@ -15,7 +15,7 @@
 
 #include "UIComponents.h"
 
-#define SOFT_COLLISION_FACTOR 0.5f
+#define SOFT_COLLISION_FACTOR 0.25f
 
 
 void NoCollision(OnCollisionParameters &params)
@@ -28,6 +28,7 @@ void SoftCollision(OnCollisionParameters& params)
 	//Take both entities transform
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
 	
@@ -76,9 +77,20 @@ void HardCollision(OnCollisionParameters& params)
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
+	if (transform1->positionX == transform2->positionX && transform1->positionZ == transform2->positionZ)
+	{
+		float positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionX += positionOffset;
+		positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionZ += positionOffset;
 
+
+	}
 	float radius1 = 0.0f;
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	--hitbox1->nrMoveableCollisions;
 
 	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
 	{
@@ -359,8 +371,18 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	float frictionKnockbackFactor1 = stat1->m_acceleration / stat1->m_baseAcceleration;
 	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));
+	
+	float massFactor = std::sqrt(transform1->mass / transform2->mass);
+	float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
+	float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
+	float dx, dz;
+	CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
+
+	AddKnockBack(params.entity1, selfKnockback * dx, selfKnockback * dz);
+	AddKnockBack(params.entity2, appliedKnockback * dx, appliedKnockback * dz);
+
+	/*AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));*/
 }
 
 void PlayHitSound(OnCollisionParameters& params)
@@ -536,7 +558,11 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 			return;
 		}
 	}
-
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (hitbox2->circularFlags[params.hitboxID2].canTakeDamage == false)
+	{
+		return;
+	}
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 

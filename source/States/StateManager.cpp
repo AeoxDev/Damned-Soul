@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "Glow.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -66,6 +67,7 @@ void SetInPause(bool value)
 		currentStates = (State)(currentStates | State::InPause);
 		TimedEventIgnoreGamespeed(false);
 		gameSpeed = 0.0f;
+		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera from moving during pause.
 	}
 	else
 	{
@@ -117,6 +119,9 @@ void SetInCredits(bool value)
 
 int StateManager::Setup()
 {
+#ifdef _DEBUG
+	visualizeStage = true;
+#endif
 	bool loaded = Setup3dGraphics();
 	if (!loaded)
 	{
@@ -143,6 +148,8 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Glow::Initialize();
+	//SetupTestHitbox();
 	RedrawUI();
 	
 
@@ -154,13 +161,18 @@ int StateManager::Setup()
 	// Render/GPU
 	
 	systems.push_back(new ParticleSystemCPU());
-	
+
+
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
+
 
 	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
+	systems.push_back(new GlowSystem());
+
+	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
@@ -188,6 +200,7 @@ int StateManager::Setup()
 	systems.push_back(new ImpBehaviourSystem());
 	systems.push_back(new ZacBehaviourSystem());
 	systems.push_back(new TransformSystem()); //Must be before controller
+	systems.push_back(new FollowerSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new EventSystem());//Must be after controller system for correct animations
 	systems.push_back(new GeometryIndependentSystem());
