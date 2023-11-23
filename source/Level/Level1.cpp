@@ -39,10 +39,9 @@ void LoadLevel1()
 	SetGISpawnPosition(-0.0f, -0.0f);
 	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	/*SetupEnemy(EnemyType::skeleton, -224.f, 0.f, -32.f);
+	SetupEnemy(EnemyType::skeleton, -224.f, 0.f, -32.f);
 	SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);*/
-
+	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -205.0f, 0.f, 88.f);
@@ -50,6 +49,11 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);
 	SetupEnemy(EnemyType::skeleton, -94.0f, 0.f, 54.f);
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
+
+	
+
+
+	
 
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
 	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);
@@ -85,5 +89,5 @@ void LoadLevel1()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	//AddTimedEventComponentStart(cutsceneEnemy, 0.0f, Stage1IntroScene, 0, 1);
-	Stage1IntroScene(cutsceneEnemy, 0);
+	//Stage1IntroScene(cutsceneEnemy, 0);
 }

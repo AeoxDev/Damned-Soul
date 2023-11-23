@@ -47,7 +47,7 @@ void BossShockwaveEnd(EntityID& entity, const int& index);
 void BossBlinkBeforeShockwave(EntityID& entity, const int& index);
 void BossResetBeforeShockwave(EntityID& entity, const int& index);
 void CreateNewSplitZac(EntityID& entity, const int& index);
-
+void CreateLandingIndicator(EntityID& entity, const int& index);
 
 //Enemy Combat functions
 void EnemyAttackFlash(EntityID& entity, const int& index);
@@ -75,6 +75,7 @@ void BlinkColor(EntityID& entity, const int& index);
 void ResetColor(EntityID& entity, const int& index);
 void SquashStretch(EntityID& entity, const int& index);
 void ResetSquashStretch(EntityID& entity, const int& index);
+void ChargeColorFlash(EntityID& entity, const int& index);
 void TPose(EntityID& entity, const int& index);
 
 

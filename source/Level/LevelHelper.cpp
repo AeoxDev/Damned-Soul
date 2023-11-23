@@ -182,6 +182,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 40.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			mass = 80.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			mass = 666.f;
@@ -212,6 +216,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			health = 18.f;
+		}
+		else if (eType == EnemyType::minotaur)
+		{
+			health = 120.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -283,6 +291,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 3.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			moveSpeed = 12.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			moveSpeed = 20.f; //starting speed
@@ -334,6 +346,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 13.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			damage = 15.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			damage = 30.f;
@@ -379,6 +395,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.8f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			attackSpeed = 3.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.25f;
@@ -405,7 +425,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (soulWorth == 6969.f)
 	{
-		if (eType == EnemyType::eye)
+		if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
 			soulWorth = 1;
 		}
@@ -413,11 +433,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 1;
 		}
-		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
+		else if (eType == EnemyType::eye)
 		{
 			soulWorth = 1;
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
+		{
+			soulWorth = 1;
+		}
+		else if (eType == EnemyType::minotaur)
 		{
 			soulWorth = 1;
 		}
@@ -461,26 +485,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	//Model
 
 	ModelSkeletonComponent* model = nullptr;
-
-	if (eType == EnemyType::hellhound)
-	{
-		stat->hazardModifier = 0.0f;
-		stat->baseHazardModifier = 0.0f;
-		stat->lavaAccelFactor = 1.0f;
-		stat->lavaAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
-		registry.AddComponent<AnimationComponent>(entity);
-		registry.AddComponent<HellhoundBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
-		//Sounds
-		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(HELLHOUND);
-		if (player)
-		{
-			player->killThreshold++;
-		}
-	}
-	else if (eType == EnemyType::skeleton)
+	if (eType == EnemyType::skeleton)
 	{
 		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
@@ -497,7 +502,24 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		//Orange glow
 		registry.AddComponent<GlowComponent>(entity, .95f, .5f, .0f);
-		
+	}
+	else if (eType == EnemyType::hellhound)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<HellhoundBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(HELLHOUND);
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::eye)
 	{
@@ -558,6 +580,24 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (player)
 		{
 			player->killThreshold += 1;
+		}
+	}
+	else if (eType == EnemyType::minotaur)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<MinotaurBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::minotaur);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(MINOTAUR);
+		if (player)
+		{
+			player->killThreshold++;
 		}
 	}
 	else if (eType == EnemyType::tempBoss)
