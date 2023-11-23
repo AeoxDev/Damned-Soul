@@ -358,7 +358,21 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 	{
 		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
 		if (tempBoss)
+		{
 			tempBoss->attackTimer = 0.0f;
+			tempBoss->isAttacking = false;
+		}
+	}
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer)
+		{
+			lucifer->attackTimer = 0.0f;
+			lucifer->isAttacking = false;
+		}
+			
 	}
 }
 
@@ -382,6 +396,15 @@ void EnemyBecomeStunned(EntityID& entity, const int& index)
 		if (tempBoss != nullptr)
 		{
 			tempBoss->attackStunDurationCounter = 0.0f;
+		}
+	}
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer != nullptr)
+		{
+			lucifer->attackStunDurationCounter = 0.0f;
 		}
 	}
 }

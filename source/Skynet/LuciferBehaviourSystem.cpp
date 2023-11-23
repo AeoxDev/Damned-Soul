@@ -11,7 +11,8 @@
 #include "EventFunctions.h"
 
 
-void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, LuciferBehaviour* lc, TransformComponent* ltc, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool move)
+void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, LuciferBehaviour* lc, TransformComponent* ltc, 
+	StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool move, AnimationComponent* animComp)
 {
 	if (path)
 	{
@@ -24,7 +25,11 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 		lc->goalDirectionZ = playerTransformCompenent->positionZ - ltc->positionZ;
 	}
 
-
+	animComp->aAnim = ANIMATION_WALK;
+	animComp->aAnimIdx = 0;
+	animComp->aAnimTimeFactor = 0.5f;
+	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
+	ANIM_BRANCHLESS(animComp);
 
 
 	lc->goalDirectionX = playerTransformCompenent->positionX - ltc->positionX;
@@ -50,26 +55,59 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 
 
 
-void CombatBehaviour(LuciferBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* ltc, EntityID& ent, AnimationComponent* animComp)
+void CombatBehaviour(LuciferBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, 
+	TransformComponent* ltc, EntityID& ent, AnimationComponent* animComp)
 {
-	sc->attackTimer += GetDeltaTime();// *animComp->aAnimTimeFactor;
-	sc->goalDirectionX = ptc->positionX - ltc->positionX;
-	sc->goalDirectionZ = ptc->positionZ - ltc->positionZ;
-	
-
-	//impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
-	if (sc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
+	if (sc->attackTimer <= 0.0f)
 	{
-		//Set hitbox active here.
-		//Elliot's request: Add Skeleton attack hitbox instead of define
-		SetHitboxActive(ent, sc->attackHitboxID, true);
-		SetHitboxCanDealDamage(ent, sc->attackHitboxID, true);
-		/*SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
-		sfx->Play(Skeleton_Attack, Channel_Base);*/
-		RedrawUI();
-		sc->attackTimer = 0.f;
-		sc->attackStunDurationCounter = 0.f;
+		sc->isAttacking = true;
+		//Increment so we don't immediately get  back in here
+		sc->attackTimer += GetDeltaTime();
+
+		//Animation setup
+		animComp->aAnim = ANIMATION_ATTACK;
+		animComp->aAnimTime = 0.0f;  //0.5 is hammer in ground
+		animComp->aAnimIdx = 0;
+		animComp->aAnimTimePower = 1.0f; // 
+		animComp->aAnimTimeFactor = 1.2f; // how fast animation is
+
+		float PauseThreshold = 0.2f / animComp->aAnimTimeFactor;	//When to pause the animation
+		float AttackStartTime = 0.6f / enemyStats->GetAttackSpeed();//When to continue the animation
+		float AttackActiveTime = AttackStartTime + 0.7f;			//When the entire attack has finished
+
+		//Attack Telegraphing #1: Quick prep + Pause + Blink
+		AddTimedEventComponentStartContinuousEnd(ent, PauseThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, EnemyType::lucifer, 1);
+
+		//Attack Telegraphing #2: Slow prep + Gradual light
+		//animComp->aAnimTimeFactor = 0.5f;
+		//AddTimedEventComponentStartContinuousEnd(ent, 0.0f, nullptr, EnemyAttackGradient, 0.8f, nullptr, skeleton, 1);
+
+		//Actual attack
+		AddTimedEventComponentStartContinuousEnd(ent, AttackStartTime + 0.28f, EnemyBeginAttack, nullptr, AttackActiveTime, EnemyEndAttack, EnemyType::lucifer, 1);
+
+		//Recovery/Daze
+		float AttackTotalTime = AttackActiveTime;//When finished with the attack, become stunned
+		AddTimedEventComponentStart(ent, AttackTotalTime, EnemyBecomeStunned, EnemyType::lucifer, 1);
 	}
+	// OLD COMBAT BEHAVIOUR
+	//sc->attackTimer += GetDeltaTime();// *animComp->aAnimTimeFactor;
+	//sc->goalDirectionX = ptc->positionX - ltc->positionX;
+	//sc->goalDirectionZ = ptc->positionZ - ltc->positionZ;
+	//
+
+	////impose timer so they cannot run and hit at the same time (frame shit) also not do a million damage per sec
+	//if (sc->attackTimer >= enemyStats->GetAttackSpeed()) // yes, we can indeed attack. 
+	//{
+	//	//Set hitbox active here.
+	//	//Elliot's request: Add Skeleton attack hitbox instead of define
+	//	SetHitboxActive(ent, sc->attackHitboxID, true);
+	//	SetHitboxCanDealDamage(ent, sc->attackHitboxID, true);
+	//	/*SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+	//	sfx->Play(Skeleton_Attack, Channel_Base);*/
+	//	RedrawUI();
+	//	sc->attackTimer = 0.f;
+	//	sc->attackStunDurationCounter = 0.f;
+	//}
 }
 
 
@@ -147,6 +185,12 @@ bool LuciferBehaviourSystem::Update()
 			float distance = Calculate2dDistance(luciferTransformComponent->positionX, luciferTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			luciferComponent->attackStunDurationCounter += GetDeltaTime();
 
+			if (distance > 100.f)
+			{
+				luciferComponent->dazeCounter = 0.f;
+				luciferComponent->isDazed = true;
+			}
+
 
 			//charging?
 			if (luciferComponent->isChargeCharge)
@@ -177,10 +221,25 @@ bool LuciferBehaviourSystem::Update()
 				}
 				else
 				{
-					SetHitboxActive(enemyEntity, luciferComponent->attackHitboxID, false); // to not make player rage
-					SetHitboxCanDealDamage(enemyEntity, luciferComponent->attackHitboxID, false);
+					luciferComponent->heroLandingCounter += GetDeltaTime();
+
+					if (luciferComponent->heroLandingCounter < 0.65f)
+					{
+						enemyAnim->aAnim = ANIMATION_WALK;
+						enemyAnim->aAnimIdx = 2;
+						enemyAnim->aAnimTimeFactor = 1.0f;
+
+						enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+						ANIM_BRANCHLESS(enemyAnim);
+					}
+					else
+					{
+						luciferTransformComponent->positionY = 0.f;
+					}
+					//SetHitboxActive(enemyEntity, luciferComponent->hitBoxID, false); // to not make player rage
+					//SetHitboxCanDealDamage(enemyEntity, luciferComponent->hitBoxID, false);
 					continue; // skip, do nothing. Just stand still and be dazed
-					//maybe play dazed anymation in this scope?
+					////maybe play dazed anymation in this scope?
 				}
 			}
 
@@ -188,20 +247,20 @@ bool LuciferBehaviourSystem::Update()
 			{
 				// do nothing, stand like a bad doggo and be ashamed
 				//Elliot: When finished, reset attack timer and hitbox
-				luciferComponent->attackTimer = 0.0f;
+				//luciferComponent->attackTimer = 0.0f;
 				//enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
 				//Turn yellow for opening:
-				
+				//rotate here
 				continue;
 			}
 			else//Elliot: Turn off attack hitbox to not make player rage.
 			{
-				SetHitboxActive(enemyEntity, luciferComponent->attackHitboxID, false);
-				SetHitboxCanDealDamage(enemyEntity, luciferComponent->attackHitboxID, false);
+			/*	SetHitboxActive(enemyEntity, luciferComponent->hitBoxID, false);
+				SetHitboxCanDealDamage(enemyEntity, luciferComponent->hitBoxID, false);*/
 				
 			}
 
-			if (luciferComponent->nextSpecialIsSpawn) // SPAWN ENEMIES
+			if (luciferComponent->nextSpecialIsSpawn && luciferComponent->isAttacking == false) // SPAWN ENEMIES
 			{
 				luciferComponent->nextSpecialIsSpawn = false;
 				//spawn an ice enemy
@@ -231,7 +290,7 @@ bool LuciferBehaviourSystem::Update()
 				}
 				continue;
 			}
-			else if (luciferComponent->isChargeCharge  == false && luciferComponent->isJumpJump == false)
+			else if (luciferComponent->isChargeCharge  == false && luciferComponent->isJumpJump == false && luciferComponent->isAttacking == false)
 			{
 				luciferComponent->chargeBehevCounter = 0.f;
 				int whichAttack = rand() % 10 + 1; // 1 - 10
@@ -240,12 +299,12 @@ bool LuciferBehaviourSystem::Update()
 					luciferComponent->isChargeCharge = true;
 					// runs towards the player dealing
 					// damage if player is close.
-					// Ends after 10 seconds or
+					// Ends after 15 seconds or
 					// if taken enough damage
 
 					float percent = enemyStats->GetMaxHealth() / 5.f;
 					luciferComponent->limitHP = (float)enemyStats->GetMaxHealth();
-					while (luciferComponent->limitHP >= enemyStats->GetHealth())
+					while (luciferComponent->limitHP >= enemyStats->GetHealth() || luciferComponent->limitHP + percent > enemyStats->GetHealth())
 					{
 						luciferComponent->limitHP = luciferComponent->limitHP - percent;
 					}
@@ -254,6 +313,7 @@ bool LuciferBehaviourSystem::Update()
 				else // jump jump
 				{
 					luciferComponent->isJumpJump = true;
+					enemyAnim->aAnimTime = 0;
 					luciferComponent->flyCounter = 0.f;
 					luciferComponent->hasLandingPos = false;
 					// jumps out of the playspace and lands
@@ -268,9 +328,19 @@ bool LuciferBehaviourSystem::Update()
 				}
 				//after either one of these, the boss goes into a daze and then summons enemies!
 			}
-			else if (luciferComponent->isJumpJump) // this is the fly up in air thing. jump jump
+			else if (luciferComponent->isJumpJump && luciferComponent->isAttacking == false) // this is the fly up in air thing. jump jump
 			{
 				luciferComponent->flyCounter += GetDeltaTime();
+
+				if (luciferComponent->flyCounter < 0.35f)
+				{
+					enemyAnim->aAnim = ANIMATION_WALK;
+					enemyAnim->aAnimIdx = 1;
+					enemyAnim->aAnimTimeFactor = 1.5f;
+					enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+					ANIM_BRANCHLESS(enemyAnim);
+					continue;
+				}
 				if (luciferComponent->flyCounter <= luciferComponent->flyTime) // fly up in the air
 				{
 					luciferTransformComponent->positionY += enemyStats->GetSpeed() * 7.f * GetDeltaTime();
@@ -279,6 +349,7 @@ bool LuciferBehaviourSystem::Update()
 				{
 					if (playerComponent != nullptr && updateGridOnce && luciferComponent->hasLandingPos == false)
 					{
+						luciferComponent->heroLandingCounter = 0.f;
 						updateGridOnce = false;
 						CalculateGlobalMapValuesLuciferJump(valueGrid); //generate a gridmap
 						if (valueGrid->cost[0][0] == -69.f)
@@ -291,6 +362,8 @@ bool LuciferBehaviourSystem::Update()
 						luciferTransformComponent->positionX = landingPosition.positionX; //teleport in the air basically
 						luciferTransformComponent->positionZ = landingPosition.positionZ; // happens once
 					}
+					
+
 					if (luciferTransformComponent->positionY > 0.f) // still in the air
 					{
 						luciferTransformComponent->positionY -= enemyStats->GetSpeed() * 12.f * GetDeltaTime();
@@ -303,7 +376,7 @@ bool LuciferBehaviourSystem::Update()
 						SetHitboxActive(enemyEntity, 0, true);
 						SetHitboxActive(enemyEntity, 1, true);
 						SetHitboxActive(enemyEntity, 2, true);
-						luciferTransformComponent->positionY = 0.f;
+						luciferTransformComponent->positionY = 00.f;
 						luciferComponent->nextSpecialIsSpawn = true;
 
 
@@ -357,7 +430,7 @@ bool LuciferBehaviourSystem::Update()
 				}
 
 				ChaseBehaviour(playerComponent, playerTransformCompenent, luciferComponent, luciferTransformComponent, enemyStats, 
-					enemyAnim, luciferComponent->dirX, luciferComponent->dirZ, luciferComponent->followPath, true);
+					enemyAnim, luciferComponent->dirX, luciferComponent->dirZ, luciferComponent->followPath, true, enemyAnim);
 			}
 
 
@@ -371,6 +444,8 @@ bool LuciferBehaviourSystem::Update()
 			//IdleBehaviour(playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim);
 		}
 		TransformDecelerate(enemyEntity);
+		//Increment animation AFTER everything has been calculated
+		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	}
 
 	// pop the value map

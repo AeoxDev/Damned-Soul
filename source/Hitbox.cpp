@@ -429,7 +429,7 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (!GetHitboxCanDealDamage(entity, hitboxID))
+	if (!GetHitboxCanDealDamage(entity, hitboxID) && setFlag == true)
 	{
 		ResetAttackTrackerFlags(entity);
 	}
@@ -591,7 +591,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		break;
 
 	case EnemyType::lucifer:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 3.0f, 0.f, radius * -4.2f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
