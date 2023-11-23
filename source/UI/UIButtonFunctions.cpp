@@ -27,47 +27,136 @@ void UIFunc::LoadNextLevel(void* args, int a)
 		backgroundMusic->Stop(Channel_Extra);
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
+
+		PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
+		UIPlayerSoulsComponent* playerSouls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
+		EntityID selectedID;
+		if (playerSouls != nullptr)
+		{
+			if (playerSouls->spentThisShop == 0)
+			{
+				for (auto onClick : View<OnClickComponent>(registry))
+				{
+					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
+					if (shopBuy != nullptr)
+					{
+						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+						{
+							if (shopBuy->onClickFunctions[i] == UIFunc::BuyRelic) //Purchase button found
+							{
+								selectedID = onClick;
+							}
+						}
+					}
+				}
+			}
+			playerSouls->spentThisShop = 0;
+			playerSouls->spentThisShopOnRelics = 0;
+		}
+		
+
 		switch (stateManager.activeLevel)
 		{
-		case 2:
+		case 2: //To stage 2
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
 			break;
-		case 4:
+		case 4: //To stage 3
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
 			break;
-		case 6:
+		case 6: //To stage 4
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+			if (sfx != nullptr)
+			{
+				int soundToPlay = rand() % 2;
+				switch (soundToPlay) //Play player boss encounter sound
+				{
+				case 0:
+					sfx->Play(Player_BringItOn, Channel_Extra);
+					break;
+				case 1:
+					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
+					break;
+				}
+			}
 			backgroundMusic->Play(Music_Boss, Channel_Base);
 			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
 			break;
-		case 8:
+		}
+		case 8: //To stage 5
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
 			break;
-		case 10:
+		case 10: //To stage 6
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
 			break;
-		case 12:
+		case 12: //To stage 7
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
 			backgroundMusic->Play(Music_Cold, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
-		case 14:
+		case 14: //To stage 8
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
 			backgroundMusic->Play(Music_Cold, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
-		case 16:
+		case 16: //To stage 9
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+			if (sfx != nullptr)
+			{
+				int soundToPlay = rand() % 2;
+				switch (soundToPlay) //Play player boss encounter sound
+				{
+				case 0:
+					sfx->Play(Player_BringItOn, Channel_Extra);
+					break;
+				case 1:
+					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
+					break;
+				}
+			}
 			backgroundMusic->Play(Music_Boss, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
+		}
 		}
 		audioJungle->HandleSound();
 	}
 
 
 	LoadLevel(++stateManager.activeLevel);
-	//LoadLevel(2);
 }
 
 void UIFunc::MainMenu_Start(void* args, int a)
@@ -350,6 +439,7 @@ void UIFunc::SelectRelic(void* args, int index)
 void UIFunc::BuyRelic(void* args, int index)
 {
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 	UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
 	UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
 	OnHoverComponent* playerHover = registry.GetComponent<OnHoverComponent>(stateManager.player);
@@ -358,6 +448,22 @@ void UIFunc::BuyRelic(void* args, int index)
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+
+		//First relic purchase
+		UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
+		if (playerRelics->currentRelics == 0)
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+			if (sfx != nullptr) sfx->Play(Shop_FirstPurchase, Channel_Extra);
+		}
+		else if (stateManager.activeLevel == 6 || stateManager.activeLevel == 16)
+		{
+			if (souls->spentThisShopOnRelics == 0)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+				if (sfx != nullptr) sfx->Play(Shop_PurchaseBeforeBoss, Channel_Extra);
+			}
+		}
 
 		for (int i = 0; i < 2; i++)
 		{
@@ -399,32 +505,59 @@ void UIFunc::BuyRelic(void* args, int index)
 				}
 
 				int soundToPlay = rand() % 16;
+				AudioEngineComponent* audioJungle = nullptr;
+				for (auto jungle : View<AudioEngineComponent>(registry))
+				{
+					audioJungle = registry.GetComponent<AudioEngineComponent>(jungle);
+				}
+				bool isPlaying = false;
+
 				if (soundToPlay == 0)
 				{
-					//Player voice line
-					SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
-					soundToPlay = rand() % 2;
-					if (soundToPlay == 0)
+					if (audioJungle != nullptr)
 					{
-						if (sfx != nullptr) sfx->Play(Player_BetterWork, Channel_Extra);
-					}
-					else
-					{
-						if (sfx != nullptr) sfx->Play(Player_SomethingPositive, Channel_Extra);
+						//Player voice line
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+						if (sfx != nullptr)
+						{
+							audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+							if (!isPlaying)
+							{
+								soundToPlay = rand() % 2;
+								if (soundToPlay == 0)
+								{
+									if (sfx != nullptr) sfx->Play(Player_BetterWork, Channel_Extra);
+								}
+								else
+								{
+									if (sfx != nullptr) sfx->Play(Player_SomethingPositive, Channel_Extra);
+								}
+							}
+						}
 					}
 				}
 				else if (soundToPlay == 1)
 				{
-					//Imp voice line
-					SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-					soundToPlay = rand() % 2;
-					if (soundToPlay == 0)
+					if (audioJungle != nullptr)
 					{
-						if (sfx != nullptr) sfx->Play(Shop_RelicPurchase, Channel_Extra);
-					}
-					else
-					{
-						if (sfx != nullptr) sfx->Play(Shop_RelicPurchase2, Channel_Extra);
+						//Imp voice line
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+						if (sfx != nullptr)
+						{
+							audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+							if (!isPlaying)
+							{
+								soundToPlay = rand() % 2;
+								if (soundToPlay == 0)
+								{
+									if (sfx != nullptr) sfx->Play(Shop_RelicPurchase, Channel_Extra);
+								}
+								else
+								{
+									if (sfx != nullptr) sfx->Play(Shop_RelicPurchase2, Channel_Extra);
+								}
+							}
+						}
 					}
 				}
 
@@ -432,6 +565,8 @@ void UIFunc::BuyRelic(void* args, int index)
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 				if (sfx != nullptr) sfx->Play(Shop_Buy, Channel_Base);
 
+				souls->spentThisShop += relicWindow->shopRelics[i]->m_price;
+				souls->spentThisShopOnRelics += relicWindow->shopRelics[i]->m_price;
 				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 				break;
 			}
@@ -443,13 +578,10 @@ void UIFunc::BuyRelic(void* args, int index)
 
 void UIFunc::LockRelic(void* args, int index)
 {
-	PlayerComponent* player = nullptr;
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 
-	for (auto entity : View<PlayerComponent>(registry))
-		player = registry.GetComponent<PlayerComponent>(entity);
-
-
-	if (player->GetSouls() < 0)
+	if (player != nullptr && player->GetSouls() < 0)
 		return;
 	
 	for (auto entity : View<UIShopRelicComponent>(registry))
@@ -468,6 +600,8 @@ void UIFunc::LockRelic(void* args, int index)
 				//Normal lock sound
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 				if (sfx != nullptr) sfx->Play(Shop_Dibs, Channel_Base);
+
+				souls->spentThisShop += 0;
 				break;
 			}
 		}
@@ -480,21 +614,19 @@ void UIFunc::RerollRelic(void* args, int index)
 {
 	UIShopRerollComponent* uiReroll = nullptr;
 
-	PlayerComponent* player = nullptr;
-
-	for (auto entity : View<PlayerComponent>(registry))
-		player = registry.GetComponent<PlayerComponent>(entity);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 
 	for (auto entity : View<UIShopRerollComponent>(registry))
 		uiReroll = registry.GetComponent<UIShopRerollComponent>(entity);
 
-	if (index == -1)
+	if (uiReroll != nullptr && index == -1)
 		uiReroll->locked = false;
 
-	if (!uiReroll->locked)
+	if (uiReroll != nullptr && !uiReroll->locked)
 	{
 
-		if (player->GetSouls() < 0)
+		if (player != nullptr && player->GetSouls() < 0)
 			return;
 		
 		for (auto entity : View<UIShopRelicComponent>(registry))
@@ -537,6 +669,7 @@ void UIFunc::RerollRelic(void* args, int index)
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 		if (sfx != nullptr) sfx->Play(Shop_Reroll, Channel_Base);
 
+		souls->spentThisShop += 0;
 		player->UpdateSouls(0);
 
 		if (index != -1)
@@ -561,6 +694,7 @@ void UIFunc::HealPlayer(void* args, int index)
 	for (auto entity : View<PlayerComponent, StatComponent>(registry))
 	{
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 
 		if (player->GetSouls() < 2)
@@ -577,6 +711,7 @@ void UIFunc::HealPlayer(void* args, int index)
 
 		stats->ApplyHealing(heal);
 
+		souls->spentThisShop += 2;
 		player->UpdateSouls(-2);
 	}
 }

@@ -226,6 +226,23 @@ void LoadShop()
 	CreateSingleWindows();
 
 	SetInShop(true);
+
+	for (auto entity : View<OnClickComponent>(registry))
+	{
+		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
+		if (shopBuy != nullptr)
+		{
+			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+			{
+				if (shopBuy->onClickFunctions[i] == UIFunc::BuyRelic) //Purchase button found, play the first imp voice line.
+				{
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+					if (sfx != nullptr) sfx->Play(Shop_FirstMeet, Channel_Extra);
+				}
+			}
+		}
+	}
+
 }
 
 void ReloadShop()
@@ -239,6 +256,75 @@ void ReloadShop()
 		UIFunc::RerollRelic((void*)&entity, -1);
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Stop(Channel_Base);
+	}
+
+	for (auto entity : View<OnClickComponent>(registry))
+	{
+		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
+		if (shopBuy != nullptr)
+		{
+			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+			{
+				if (shopBuy->onClickFunctions[i] == UIFunc::BuyRelic) //Purchase button found, play the correct sound based on the level.
+				{
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+					if (sfx != nullptr)
+					{
+						switch (stateManager.activeLevel)
+						{
+						case 4:
+							sfx->Play(Shop_BeforeLava, Channel_Extra);
+							break;
+						case 6:
+							sfx->Play(Shop_BeforeSplitBoss, Channel_Extra);
+							break;
+						case 8:
+						{
+							StatComponent* currentStats = registry.GetComponent<StatComponent>(stateManager.player);
+							if (currentStats != nullptr)
+							{
+								if (currentStats->GetHealthFraction() <= 0.25)
+								{
+									sfx->Play(Shop_LowHealth, Channel_Extra);
+								}
+							}
+							break;
+						}
+						case 10:
+						{
+							StatComponent* currentStats = registry.GetComponent<StatComponent>(stateManager.player);
+							if (currentStats != nullptr)
+							{
+								if (currentStats->GetHealthFraction() <= 0.25)
+								{
+									sfx->Play(Shop_LowHealth, Channel_Extra);
+								}
+							}
+							break;
+						}
+						case 12:
+							sfx->Play(Shop_BeforeIce, Channel_Extra);
+							break;
+						case 14:
+						{
+							StatComponent* currentStats = registry.GetComponent<StatComponent>(stateManager.player);
+							if (currentStats != nullptr)
+							{
+								if (currentStats->GetHealthFraction() <= 0.25)
+								{
+									sfx->Play(Shop_LowHealth, Channel_Extra);
+								}
+							}
+							break;
+						}
+						case 16:
+							sfx->Play(Shop_BeforeLastBoss, Channel_Extra);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

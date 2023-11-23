@@ -51,7 +51,7 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Music/LavaCave.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/Shop.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
+	this->volumes.push_back(Volume(0.1f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/Ice.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/PatrickPlankton.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
@@ -254,31 +254,31 @@ void AudioEngineComponent::Setup(int& ID)
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 		//Voice (13/18)
 	this->system->createSound("SFX/Shop/Voice/FirstMeet.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeSplitBoss.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BuyingNothing.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/FirstPurchase.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/PurchaseBeforeBoss.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/LowHealth.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/RelicPurchase.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/RelicPurchase2.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/UpgradeWeapon.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/UpgradeWeapon2.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeLava.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeIce.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeLastBoss.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 }
 
 void AudioEngineComponent::HandleSound()
@@ -576,6 +576,10 @@ void SoundComponent::Play(const int SoundIndex, const int SelectedChannel)
 	else
 	{
 		this->soundIndex[SelectedChannel] = (this->soundIndices.size() - 1);
+		if (this->soundIndex[SelectedChannel] == -1)
+		{
+			this->playSound[SelectedChannel] = false;
+		}
 	}
 }
 

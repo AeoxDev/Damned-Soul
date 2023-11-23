@@ -272,31 +272,31 @@ void HurtSound(EntityID& entity, const int& index)
 		case EnemyType::hellhound:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
+				sfx->Play(Hellhound_Hurt, Channel_Extra);
 			}
 			break;
 		case EnemyType::eye:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
-				sfx->Play(Eye_Hurt, Channel_Base);
+				sfx->Play(Eye_Hurt, Channel_Extra);
 			}
 			break;
 		case EnemyType::skeleton:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
+				sfx->Play(Skeleton_Hurt, Channel_Extra);
 			}
 			break;
 		case EnemyType::imp:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
-				sfx->Play(Imp_Hurt, Channel_Base);
+				sfx->Play(Imp_Hurt, Channel_Extra);
 			}
 			break;
 		case EnemyType::minotaur:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
-				sfx->Play(Minotaur_Hurt, Channel_Base);
+				sfx->Play(Minotaur_Hurt, Channel_Extra);
 			}
 			break;
 		}

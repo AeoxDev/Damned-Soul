@@ -117,6 +117,26 @@ bool OnClickSystem::Update()
 						{
 							//Play sound in the function itself
 						}
+						else if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
+						{
+							for (auto entity : View<AudioEngineComponent>(registry))
+							{
+								AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+								audioJungle->HandleSound();
+								audioJungle->StopAllSounds();
+							}
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunc::Game_MainMenu)
+						{
+							//Stop all the previous sounds (except music) to mute for example the dog breath
+							for (auto entity : View<AudioEngineComponent>(registry))
+							{
+								AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+								audioJungle->HandleSound();
+								audioJungle->StopAllSounds();
+							}
+							sound->Play(Button_Press, Channel_Base);
+						}
 						//else if (comp->onClickFunctions[comp->index] == UIFunc::UpgradeWeapon) //Add this when the function for upgrading weapon has been included.
 						else if (comp->onClickFunctions[comp->index] != UIFunc::EmptyOnClick)
 						{

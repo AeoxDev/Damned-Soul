@@ -243,7 +243,45 @@ int PlayerComponent::UpdateSouls(const int delta)
 	}
 
 	if (delta > 0)
+	{
 		this->totalSouls += delta;
+
+		//Play sound effect occasionally when we get a new soul.
+		int playerSoundEffect = rand() % 16;
+		if (playerSoundEffect == 0)
+		{
+			for (auto entity : View<PlayerComponent>(registry))
+			{
+				bool isPlaying = false;
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+				AudioEngineComponent* audioJungle = nullptr;
+				for (auto jungle : View<AudioEngineComponent>(registry))
+				{
+					audioJungle = registry.GetComponent<AudioEngineComponent>(jungle);
+				}
+
+				if (audioJungle != nullptr)
+				{
+					if (sfx != nullptr)
+					{
+						audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+						if (!isPlaying)
+						{
+							playerSoundEffect = rand() % 2;
+							if (playerSoundEffect == 0)
+							{
+								sfx->Play(Player_BetterLuck, Channel_Extra);
+							}
+							else
+							{
+								sfx->Play(Player_AnotherSoul, Channel_Extra);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	this->souls += delta;
 	return this->souls;

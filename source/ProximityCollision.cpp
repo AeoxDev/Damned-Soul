@@ -1,6 +1,7 @@
 #include "Physics\Backend\ProximityCollision.h"
 #include "Physics\Backend\Collision.h"
 #include "Registry.h"
+#include "DeltaTime.h"
 //include <algorithm>
 #define maxVar(a,b)            (((a) > (b)) ? (a) : (b))
 #define minVar(a,b)            (((a) < (b)) ? (a) : (b))
@@ -69,7 +70,7 @@ bool IntersectionOnLine(float& line1x1, float line1x2, float& line1z1, float lin
 	return false;
 }
 
-void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& previousX, float& previousZ)
+void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& previousX, float& previousZ, float& speedX, float& speedZ)
 {
 	ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(wall);
 
@@ -146,25 +147,57 @@ void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& 
 
 			if ((abs(x) >= abs(B.x) - 0.001f) && (abs(x) <= abs(B.x) + 0.001f)) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
 			{
-				if ((previousX - B.x) <= 0)
+				if (!first)
 				{
-					x -= 0.001f;
+					//Check B->C line X.
+					if ((previousX < B.x) && (previousX < C.x))
+					{
+						x -= 0.01f;
+					}
+					else
+					{
+						x += 0.01f;
+					}
 				}
-				else
+				if (!second)
 				{
-					x += 0.001f;
+					//Check B->A line X.
+					if ((previousX < B.x) && (previousX < A.x))
+					{
+						x -= 0.01f;
+					}
+					else
+					{
+						x += 0.01f;
+					}
 				}
 			}
 			
 			if((abs(z) >= abs(B.z) - 0.001f) && (abs(z) <= abs(B.z) + 0.001f)) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
 			{
-				if ((previousZ - B.z) <= 0)
+				if (!first)
 				{
-					z -= 0.01f;
+					//Check B->C line Z.
+					if ((previousZ < B.z) && (previousZ < C.z))
+					{
+						z -= 0.01f;
+					}
+					else
+					{
+						z += 0.01f;
+					}
 				}
-				else
+				if (!second)
 				{
-					z += 0.01f;
+					//Check B->A line Z.
+					if ((previousZ < B.z) && (previousZ < A.z))
+					{
+						z -= 0.01f;
+					}
+					else
+					{
+						z += 0.01f;
+					}
 				}
 			}
 		}
