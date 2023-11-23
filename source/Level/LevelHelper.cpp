@@ -770,6 +770,9 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->positionX = positionX;
 	playerTransform->positionY = positionY;
 	playerTransform->positionZ = positionZ;
+	playerTransform->scaleX = 2.3f;
+	playerTransform->scaleY = 2.3f;
+	playerTransform->scaleZ = 2.3f;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(stateManager.player);
@@ -868,6 +871,9 @@ void ReloadPlayerNonGlobals()
 	playerTransform->positionX = 0.0f;
 	playerTransform->positionZ = 0.0f;
 	playerTransform->positionY = 0.0f;
+	playerTransform->scaleX = 2.3f;
+	playerTransform->scaleY = 2.3f;
+	playerTransform->scaleZ = 2.3f;
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)

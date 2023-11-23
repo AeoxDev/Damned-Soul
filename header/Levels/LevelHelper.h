@@ -17,8 +17,8 @@ EntityID SetUpStage(StageSetupVariables& stageVars);
 EntityID SetUpHazard(const StaticHazardType& type, const float scale, const float ra, const float ga, const float ba, const float rm, const float gm, const float bm, const float gamma);
 
 EntityID SetupEnemy(EnemyType eType, float positionX = 0.f, float positionY = 0.f, float positionZ = 0.f, float mass = 6969.f,
-	float health = 6969.f, float moveSpeed = 6969.f, float damage = 6969.f, float attackSpeed = 6969.f, int soulWorth = 6969, float scaleX = 1.f,
-	float scaleY = 1.f, float scaleZ = 1.f, float facingX = 0.f, float facingY = 0.f, float facingZ = -1.f, bool zacIndex1 = true, bool zacIndex2 = true, bool zacIndex3 = true,
+	float health = 6969.f, float moveSpeed = 6969.f, float damage = 6969.f, float attackSpeed = 6969.f, int soulWorth = 6969, float scaleX = 2.3f,
+	float scaleY = 2.3f, float scaleZ = 2.3f, float facingX = 0.f, float facingY = 0.f, float facingZ = -1.f, bool zacIndex1 = true, bool zacIndex2 = true, bool zacIndex3 = true,
 	bool zacIndex4 = true, bool zacIndex5 = true);
 
 void CreatePlayer(float positionX = 0.f, float positionY = 0.f, float positionZ = 0.f, float mass = 1.f,
