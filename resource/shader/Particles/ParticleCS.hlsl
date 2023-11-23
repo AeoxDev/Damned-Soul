@@ -151,7 +151,7 @@ inline void SmokeMovement(in uint3 DTid, in uint3 blockID)
 
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
-    // -- SAME FOR ALL FUNCTIONS -- //
+// -- Calculate the index and get the right particle to change -- //
     uint amount = meta[blockID.y].end - meta[blockID.y].start;
     uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     uint localIndex = (index - meta[blockID.y].start) % amount;
@@ -177,8 +177,6 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
         One_OneHundo = 1;
     
     int OneHundo_TwoFiveFive = One_OneHundo + 155;
-    
-    float directionRandom = normalize(float((DTid.x % 84.0) / 84.0f - 0.5f));
     // ------------------------------------------------------ //
             
     
@@ -204,24 +202,24 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 
     float v0ToParticle_len = length(v0ToParticle);
     float middleVector_len = length(middleVector);
+
     
     if (v0ToParticle_len < middleVector_len)
     {
         particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 10.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
-        particle.position.y = particle.position.y + directionRandom * dt / meta[OneHundo_TwoFiveFive].deltaTime; // +(((float) DTid.x - 127) / 128) * dt;  //titta på vilka värden
+        particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
         particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 10.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
     }
     else
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
-    }
 
-    particle.patterns = 3; //is currently used to define pattern in PS-Shader for flipAnimations
-      // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
-    particle.rgb.r = 0.0f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
-    
+        particle.position = startPosition;
+        particle.time = 0.f;
+        particle.size = 0.5f;
+    }
+    //float directionRandom = normalize(float((DTid.x % 84.0) / 84.0f - 0.5f));
+    //particle.position.y = particle.position.y + directionRandom * dt / meta[OneHundo_TwoFiveFive].deltaTime; // +(((float) DTid.x - 127) / 128) * dt;  //titta på vilka värden
     outputParticleData[index] = particle;
 }
 
