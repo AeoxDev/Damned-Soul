@@ -317,11 +317,11 @@ bool LuciferBehaviourSystem::Update()
 				CalculateGlobalMapValuesHellhound(valueGrid);
 				for (int i = 0; i < levelOfDamage; i++)
 				{
-					TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
 					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ); 
-					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
 					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ);
-					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 8.f, 60.f);
+					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
 					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ);
 				}
 				continue;
