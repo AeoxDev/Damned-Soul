@@ -685,7 +685,7 @@ bool HellhoundBehaviourSystem::Update()
 			//	hellhoundComponent->lastPositionZ = hellhoundTransformComponent->positionZ;
 			//	FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent, enemyEntity); //set a target for the ranged attack
 			//}
-			else if (distance < 50) //hunting distance, go chase
+			else if (distance < 80) //hunting distance, go chase
 			{
 				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit)
 				{

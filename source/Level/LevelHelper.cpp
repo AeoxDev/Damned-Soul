@@ -177,8 +177,8 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 	return hazard;
 }
 
-EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , float mass ,
-	float health , float moveSpeed , float damage, float attackSpeed , int soulWorth, float scaleX, float scaleY, float scaleZ, float facingX ,
+EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , int soulWorth, float mass ,
+	float health , float moveSpeed , float damage, float attackSpeed ,  float scaleX, float scaleY, float scaleZ, float facingX ,
 	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4)
 {
 	EntityID entity = registry.CreateEntity();
@@ -246,7 +246,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 0;//400.f;
+			health = 0;//200.f;
 			float partHealth = 40.f; // this times 5 is the full starting strength
 			if (zacIndex0)
 				health += partHealth;
@@ -261,7 +261,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			health = 400.f;
+			health = 800.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -319,7 +319,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			moveSpeed = 10.f;
+			moveSpeed = 20.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{

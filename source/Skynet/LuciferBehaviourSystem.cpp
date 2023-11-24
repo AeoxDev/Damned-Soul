@@ -318,11 +318,11 @@ bool LuciferBehaviourSystem::Update()
 				for (int i = 0; i < levelOfDamage; i++)
 				{
 					TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ); 
+					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ, 0); 
 					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ);
+					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ, 0);
 					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ);
+					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ, 0);
 				}
 				continue;
 			}
