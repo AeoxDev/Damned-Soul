@@ -51,7 +51,7 @@ struct LuciferBehaviour
 	float attackTimer = 0.f; //used as counter
 	float attackStunDurationCounter = 0.8f;
 	const float attackStunDuration = 0.8f;
-	float meleeDistance = 6.5f;
+	float meleeDistance = 14.5f;
 	int attackHitboxID = 3;
 
 	// variables for jump jump 

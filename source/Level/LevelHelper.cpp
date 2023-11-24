@@ -184,7 +184,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			mass = 80.f;
+			mass = 300.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -192,11 +192,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 	}
 	if (health == 6969.f)
@@ -472,9 +472,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::lucifer)
 	{
-		scaleX = 2;
-		scaleY = 2;
-		scaleZ = 2;
+		scaleX = 3.f;
+		scaleY = 3.f;
+		scaleZ = 3.f;
 	}
 
 	transform.mass = mass;

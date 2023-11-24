@@ -397,6 +397,7 @@ bool LuciferBehaviourSystem::Update()
 						luciferComponent->hasLandingPos = true;
 						luciferTransformComponent->positionX = landingPosition.positionX; //teleport in the air basically
 						luciferTransformComponent->positionZ = landingPosition.positionZ; // happens once
+						AddTimedEventComponentStart(enemyEntity, 0.0f, CreateLandingIndicator, EnemyType::lucifer);
 					}
 					
 
