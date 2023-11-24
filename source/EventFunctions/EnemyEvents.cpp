@@ -104,7 +104,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
 	
 	
-	transComp.mass = transform->mass * 0.8f;
+	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp); 
 	int soulWorth = 2;
 
@@ -374,7 +374,11 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 	{
 		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
 		if (tempBoss)
+		{
 			tempBoss->attackTimer = 0.0f;
+			tempBoss->isAttacking = false;
+		}
+
 	}
 
 	else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Reset big dog knockback after hit
@@ -385,6 +389,18 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 		if (stats)
 			stats->SetKnockbackMultiplier(1.0f);
+	}
+
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer)
+		{
+			lucifer->attackTimer = 0.0f;
+			lucifer->isAttacking = false;
+		}
+			
 	}
 }
 
@@ -417,6 +433,15 @@ void EnemyBecomeStunned(EntityID& entity, const int& index)
 		if (doggo != nullptr)
 		{
 			doggo->attackStunDurationCounter = 0.0f;
+		}
+	}
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer != nullptr)
+		{
+			lucifer->attackStunDurationCounter = 0.0f;
 		}
 	}
 }
@@ -537,16 +562,22 @@ void RemoveLandingIndicator(EntityID& entity, const int& index)
 	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
 }
 
-void IncreaseLandingIndicator(EntityID& entity, const int& index)
+void IncreaseLandingIndicatorMinotaur(EntityID& entity, const int& index)
 {
 	TransformComponent* landingTransform = registry.GetComponent<TransformComponent>(entity);
 	landingTransform->positionY += 3.0f * GetDeltaTime();
 }
 
+void IncreaseLandingIndicatorLucifer(EntityID& entity, const int& index)
+{
+	TransformComponent* landingTransform = registry.GetComponent<TransformComponent>(entity);
+	landingTransform->positionY += 5.0f * GetDeltaTime();
+}
+
 void CreateLandingIndicator(EntityID& entity, const int& index)
 {
 	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
-
+	int condition = GetTimedEventCondition(entity, index);
 	EntityID landingSpot = registry.CreateEntity();
 	TransformComponent* landingTransform = registry.AddComponent<TransformComponent>(landingSpot);
 	landingTransform->positionX = origin->positionX;
@@ -555,7 +586,20 @@ void CreateLandingIndicator(EntityID& entity, const int& index)
 
 	CreateSpotLight(landingSpot, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 30);
 	//AddTimedEventComponentStartEnd(landingSpot, 0.0f, nullptr, 2.0f, RemoveLandingIndicator);
-	AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicator, 2.0f, RemoveLandingIndicator);
+	switch (condition)
+	{
+	case invalidType:
+		break;
+	case minotaur:
+		AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicatorMinotaur, 2.0f, RemoveLandingIndicator);
+		break;
+	case lucifer:
+		AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicatorLucifer, 2.5f, RemoveLandingIndicator);
+		break;
+	default:
+		break;
+	}
+	
 }
 
 void RemoveEnemy(EntityID& entity, const int& index)
