@@ -190,6 +190,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 40.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			mass = 80.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			mass = 666.f;
@@ -220,6 +224,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::imp)
 		{
 			health = 18.f;
+		}
+		else if (eType == EnemyType::minotaur)
+		{
+			health = 120.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -291,6 +299,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 3.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			moveSpeed = 12.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			moveSpeed = 20.f; //starting speed
@@ -342,6 +354,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 13.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			damage = 15.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			damage = 30.f;
@@ -387,6 +403,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.8f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			attackSpeed = 3.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.25f;
@@ -413,7 +433,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (soulWorth == 6969.f)
 	{
-		if (eType == EnemyType::eye)
+		if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
 			soulWorth = 1;
 		}
@@ -421,11 +441,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			soulWorth = 1;
 		}
-		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
+		else if (eType == EnemyType::eye)
 		{
 			soulWorth = 1;
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
+		{
+			soulWorth = 1;
+		}
+		else if (eType == EnemyType::minotaur)
 		{
 			soulWorth = 1;
 		}
@@ -448,6 +472,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scaleY = 4;
 		scaleZ = 4;
 	}
+	else if (eType == EnemyType::hellhound || eType == EnemyType::frozenHellhound || eType == EnemyType::empoweredHellhound)
+	{
+		scaleX = 1.f;
+		scaleY = 1.f;
+		scaleZ = 1.f;
+	}
 
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
@@ -469,26 +499,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	//Model
 
 	ModelSkeletonComponent* model = nullptr;
-
-	if (eType == EnemyType::hellhound)
-	{
-		stat->hazardModifier = 0.0f;
-		stat->baseHazardModifier = 0.0f;
-		stat->lavaAccelFactor = 1.0f;
-		stat->lavaAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
-		registry.AddComponent<AnimationComponent>(entity);
-		registry.AddComponent<HellhoundBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
-		//Sounds
-		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(HELLHOUND);
-		if (player)
-		{
-			player->killThreshold++;
-		}
-	}
-	else if (eType == EnemyType::skeleton)
+	if (eType == EnemyType::skeleton)
 	{
 		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
@@ -505,7 +516,24 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		//Orange glow
 		registry.AddComponent<GlowComponent>(entity, .95f, .5f, .0f);
-		
+	}
+	else if (eType == EnemyType::hellhound)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<HellhoundBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(HELLHOUND);
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::eye)
 	{
@@ -566,6 +594,24 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (player)
 		{
 			player->killThreshold += 1;
+		}
+	}
+	else if (eType == EnemyType::minotaur)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<MinotaurBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::minotaur);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(MINOTAUR);
+		if (player)
+		{
+			player->killThreshold++;
 		}
 	}
 	else if (eType == EnemyType::tempBoss)
@@ -778,9 +824,9 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->positionX = positionX;
 	playerTransform->positionY = positionY;
 	playerTransform->positionZ = positionZ;
-	playerTransform->scaleX = 2.3f;
-	playerTransform->scaleY = 2.3f;
-	playerTransform->scaleZ = 2.3f;
+	playerTransform->scaleX = scaleX; //We never actually set these before :)
+	playerTransform->scaleY = scaleY;
+	playerTransform->scaleZ = scaleZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(stateManager.player);
@@ -872,16 +918,14 @@ void ReloadPlayerNonGlobals()
 	if (playerTransform == nullptr)
 	{
 		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
-		playerTransform->mass = 3.0f;
+		playerTransform->mass = 80.0f; //We set this to 80 normally, but here this was 3, oof
+		playerTransform->scaleX = playerTransform->scaleY = playerTransform->scaleZ = 1.f;
 	}
 	playerTransform->currentSpeedX = 0.0f;
 	playerTransform->currentSpeedZ = 0.0f;
 	playerTransform->positionX = 0.0f;
 	playerTransform->positionZ = 0.0f;
 	playerTransform->positionY = 0.0f;
-	playerTransform->scaleX = 2.3f;
-	playerTransform->scaleY = 2.3f;
-	playerTransform->scaleZ = 2.3f;
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
