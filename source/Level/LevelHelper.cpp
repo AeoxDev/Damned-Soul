@@ -464,6 +464,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scaleY = 4;
 		scaleZ = 4;
 	}
+	else if (eType == EnemyType::hellhound || eType == EnemyType::frozenHellhound || eType == EnemyType::empoweredHellhound)
+	{
+		scaleX = 1.f;
+		scaleY = 1.f;
+		scaleZ = 1.f;
+	}
 
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
@@ -810,6 +816,9 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->positionX = positionX;
 	playerTransform->positionY = positionY;
 	playerTransform->positionZ = positionZ;
+	playerTransform->scaleX = scaleX; //We never actually set these before :)
+	playerTransform->scaleY = scaleY;
+	playerTransform->scaleZ = scaleZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(stateManager.player);
@@ -901,7 +910,8 @@ void ReloadPlayerNonGlobals()
 	if (playerTransform == nullptr)
 	{
 		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
-		playerTransform->mass = 3.0f;
+		playerTransform->mass = 80.0f; //We set this to 80 normally, but here this was 3, oof
+		playerTransform->scaleX = playerTransform->scaleY = playerTransform->scaleZ = 1.f;
 	}
 	playerTransform->currentSpeedX = 0.0f;
 	playerTransform->currentSpeedZ = 0.0f;
