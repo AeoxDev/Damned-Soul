@@ -80,7 +80,7 @@ void Credits::SetupText()
 		"Erik Svensson",
 		"Erika Gustafsson",
 		"Rasmus Fridlund",
-		"Zannie"
+		"Zannie Karlsson"
 	};
 
 	const char CIVnames[4][32] =
