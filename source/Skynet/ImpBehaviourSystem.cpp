@@ -4,6 +4,7 @@
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
 #include "UI/UIRenderer.h"
+#include "EventFunctions.h"
 #include <random>
 
 
@@ -15,8 +16,8 @@ void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformCom
 	//Calculate new teleport breakpoint
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	// Define a uniform distribution for the range [1.0, 5.0]
-	std::uniform_real_distribution<float> distribution(1.0f, 5.0f);
+	// Define a uniform distribution for the range [2.0, 4.0]
+	std::uniform_real_distribution<float> distribution(2.0f, 4.0f);
 	ic->specialBreakpoint = (int)distribution(gen);
 
 	//Teleport
@@ -55,23 +56,12 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 		//calculate the direction away from the player
 		ic->goalDirectionX = -(playerTransformCompenent->positionX - itc->positionX);
 		ic->goalDirectionZ = -(playerTransformCompenent->positionZ - itc->positionZ);
-		float magnitude = sqrt(ic->goalDirectionX * ic->goalDirectionX + ic->goalDirectionZ * ic->goalDirectionZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		ic->goalDirectionX /= magnitude;
-		ic->goalDirectionZ /= magnitude;
-		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
-		float dirX = itc->facingX, dirZ = itc->facingZ;
-		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
+		Normalize(ic->goalDirectionX, ic->goalDirectionZ);
 
-		itc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-		itc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
+
+		itc->positionX += ic->facingX * enemyStats->GetSpeed() * GetDeltaTime();
+		itc->positionZ += ic->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
 	}
 }
 
@@ -86,15 +76,11 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	//rotate imp in order to shoot at the player
 	else if (ic->aimTimer < ic->aimDuration)
 	{
+		if (ic->aimTimer == 0.0f)
+			AddTimedEventComponentStartContinous(entity, 0.0f, nullptr, ic->aimDuration -0.2f, EnemyAttackFlash);
 		ic->goalDirectionX = ptc->positionX - itc->positionX;
 		ic->goalDirectionZ = ptc->positionZ - itc->positionZ;
-		float magnitude = sqrt(ic->goalDirectionX * ic->goalDirectionX + ic->goalDirectionZ * ic->goalDirectionZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		ic->goalDirectionX /= magnitude;
-		ic->goalDirectionZ /= magnitude;
+		Normalize(ic->goalDirectionX, ic->goalDirectionZ);
 
 
 		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
@@ -110,23 +96,19 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ANIM_BRANCHLESS(enemyAnim);
 
 		ic->attackTimer = 0;
-		ic->attackStunDurationCounter = 0;
 		ic->aimTimer = 0;
+		ic->attackStunDurationCounter = 0;
 		ic->specialCounter++; //increase the special counter for special attack
 
 		//set direction for attack
 		float dx = (ptc->positionX - itc->positionX);
 		float dz = (ptc->positionZ - itc->positionZ);
 
-		//normalize initial direction
-		float magnitude = sqrt(dx * dx + dz * dz);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
+		float distanceFromPlayer = sqrt(dx * dx + dz * dz);
+		float rangePercentage = distanceFromPlayer / ic->maxAttackRange;
 
-		dx /= magnitude;
-		dz /= magnitude;
+		//normalize initial direction
+		Normalize(dx, dz);
 
 		//		C		= sqrt(A^2 + B^2)
 		float newDirX = sqrt(ptc->facingX * ptc->facingX + dx * dx);
@@ -139,21 +121,16 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		//limit player movement in case of dash
 		if (playerMovementX > 0.02f)
 			playerMovementX = 0.02f;
+
 		if (playerMovementZ > 0.02f)
 			playerMovementZ = 0.02f;
 
 		//calculate final direction based on how much the player moved plus the player movespeed
-		dx += newDirX * playerMovementX * playerStats->GetSpeed();
-		dz += newDirZ * playerMovementZ * playerStats->GetSpeed();
+		dx += newDirX * playerMovementX * playerStats->GetSpeed() * rangePercentage;
+		dz += newDirZ * playerMovementZ * playerStats->GetSpeed() * rangePercentage;
 
 		//normalize finial direction
-		magnitude = sqrt(dx * dx + dz * dz);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		dx /= magnitude;
-		dz /= magnitude;
+		Normalize(dx, dz);
 
 		ic->goalDirectionX = dx;
 		ic->goalDirectionZ = dz;
@@ -281,7 +258,7 @@ bool ImpBehaviourSystem::Update()
 
 				RepositionBehaviour(impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
 			}
-			else if (distance <= 50.0f + impComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (distance <= impComponent->maxAttackRange) // circle player & attack when possible (WIP)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, playerStats, enemyAnim))
 					IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
