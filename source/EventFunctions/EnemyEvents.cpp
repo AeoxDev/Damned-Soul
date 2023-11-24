@@ -80,7 +80,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage() / 2.f;
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, (health / 2.5f), bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health , bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -222,8 +222,8 @@ void SplitBoss(EntityID& entity, const int& index)
 			partsAlive++;
 		}
 	}
-	health = (float)originalStats->GetMaxHealth();
-	health = health / (float)partsAlive * 5.f;
+	health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
+	health = health / (float)partsAlive;
 
 	for (int i = 0; i < 5; ++i)
 	{

@@ -37,9 +37,6 @@ void LoadLevel4()
 	//**************************************************
 	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -58.f, 0.0f, 72.f);
 
-	SetupEnemy(EnemyType::skeleton, -7.f, 0.0f, 123.f);
-	SetupEnemy(EnemyType::skeleton, -180.f, 0.0f, -10.f);
-	SetupEnemy(EnemyType::skeleton, 15.f, 0.0f, -3.f);
 	
 
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
