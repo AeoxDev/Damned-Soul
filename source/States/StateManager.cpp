@@ -289,6 +289,8 @@ void StateManager::Update()
 		if (systems[i]->timeElapsed >= systems[i]->timeCap)
 		{
 			systems[i]->Update();
+			if (systems.size() == 0)
+				break;
 			systems[i]->timeElapsed -= systems[i]->timeCap;
 		}
 	}

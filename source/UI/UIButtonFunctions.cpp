@@ -54,8 +54,9 @@ void UIFunctions::MainMenu::SetCredits(void* args, int a)
 
 void UIFunctions::MainMenu::Quit(void* args, int a)
 {
-	UnloadEntities();
+	UnloadEntities(ENT_PERSIST_HIGHEST);
 	sdl.quit = true;
+	stateManager.systems.clear();
 }
 
 
