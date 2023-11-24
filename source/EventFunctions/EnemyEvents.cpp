@@ -305,9 +305,12 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 	{
 		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //Reset
 		{
-			skelel->shared.colorAdditiveRed = 0.0f;
-			skelel->shared.colorAdditiveGreen = 0.0f;
-			skelel->shared.colorAdditiveBlue = 0.0f;
+			//skelel->shared.colorAdditiveRed = 0.0f;
+			//skelel->shared.colorAdditiveGreen = 0.0f;
+			//skelel->shared.colorAdditiveBlue = 0.0f;
+			skelel->shared.bcaR_temp = 0.0f;
+			skelel->shared.bcaG_temp = 0.0f;
+			skelel->shared.bcaB_temp = 0.0f;
 
 			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity); //Make animation faster because we're about to schwing
 			if (anim)
@@ -315,10 +318,12 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 		}
 		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.375f) //Only start increasing gradient after 0.3 seconds
 		{
-			skelel->shared.colorAdditiveRed += GetDeltaTime();
-			skelel->shared.colorAdditiveGreen += GetDeltaTime();
-			skelel->shared.colorAdditiveBlue += GetDeltaTime();
-			
+			//skelel->shared.colorAdditiveRed  += GetDeltaTime();
+			//skelel->shared.colorAdditiveGreen+= GetDeltaTime();
+			//skelel->shared.colorAdditiveBlue += GetDeltaTime();
+			skelel->shared.bcaR_temp += GetDeltaTime();
+			skelel->shared.bcaG_temp += GetDeltaTime();
+			skelel->shared.bcaB_temp += GetDeltaTime();
 		}
 	}
 }
@@ -488,13 +493,17 @@ void ChargeColorFlash(EntityID& entity, const int& index)
 	float cosineWave = cosf(GetTimedEventElapsedTime(entity, index) * frequency) * cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->shared.colorAdditiveRed = cosineWave;
-		skelel->shared.colorAdditiveGreen = cosineWave;
+		skelel->shared.bcaR_temp = cosineWave;
+		skelel->shared.bcaG_temp = cosineWave;
+		//skelel->shared.colorAdditiveRed = cosineWave;
+		//skelel->shared.colorAdditiveGreen = cosineWave;
 	}
 	if (bonel)
 	{
-		bonel->shared.colorAdditiveRed = cosineWave;
-		bonel->shared.colorAdditiveGreen = cosineWave;
+		bonel->shared.bcaR_temp = cosineWave;
+		bonel->shared.bcaG_temp = cosineWave;
+		//bonel->shared.colorAdditiveRed = cosineWave;
+		//bonel->shared.colorAdditiveGreen = cosineWave;
 	}
 }
 
@@ -507,9 +516,12 @@ void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		skelel->shared.colorAdditiveRed = 0.8f;
-		skelel->shared.colorAdditiveGreen = 0.8f;
-		skelel->shared.colorAdditiveBlue = 0.5f;
+		skelel->shared.bcaR_temp = 0.8f;
+		skelel->shared.bcaG_temp = 0.8f;
+		skelel->shared.bcaB_temp = 0.5f;
+		//skelel->shared.colorAdditiveRed = 0.8f;
+		//skelel->shared.colorAdditiveGreen = 0.8f;
+		//skelel->shared.colorAdditiveBlue = 0.5f;
 	}
 }
 
