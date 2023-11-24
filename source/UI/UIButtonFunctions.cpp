@@ -11,23 +11,25 @@
 #include "UIRenderer.h"
 #include "UIComponents.h"
 #include "Input.h"
-
+#include "Camera.h"
 #include "MemLib/ML_Map.hpp"
 
 #include <random>
 
+	
 void UIFunctions::MainMenu::Start(void* args, int a)
 {
 	UnloadEntities(ENT_PERSIST_LEVEL);
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
-		backgroundMusic->Stop();
+		backgroundMusic->Stop(Channel_Base);
+		backgroundMusic->Stop(Channel_Extra);
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
 		backgroundMusic->Play(Music_Hot, Channel_Base);
-		//audioJungle->HandleSound();
-		//backgroundMusic->Play(Ambience_Cave, Channel_Extra); Add back when music for combat is good and can fade from one to another.
+		backgroundMusic->Play(Ambience_Cave, Channel_Extra);
+		audioJungle->HandleSound();
 	}
 
 	stateManager.activeLevel = 0;
@@ -62,20 +64,144 @@ void UIFunctions::MainMenu::Quit(void* args, int a)
 void UIFunctions::Game::LoadNextLevel(void* args, int a)
 {
 	UnloadEntities();
+
 	for (auto entity : View<AudioEngineComponent>(registry))
 	{
 		SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
-		backgroundMusic->Stop();
+		backgroundMusic->Stop(Channel_Base);
+		backgroundMusic->Stop(Channel_Extra);
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
-		backgroundMusic->Play(Music_Hot, Channel_Base);
-		//audioJungle->HandleSound();
-		//backgroundMusic->Play(Ambience_Blizzard, Channel_Extra); //Add when we got separate ambient load functions for each level.
+
+		PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
+		UIPlayerSoulsComponent* playerSouls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
+		EntityID selectedID;
+		if (playerSouls != nullptr)
+		{
+			if (playerSouls->spentThisShop == 0)
+			{
+				for (auto onClick : View<OnClickComponent>(registry))
+				{
+					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
+					if (shopBuy != nullptr)
+					{
+						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+						{
+							if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
+							{
+								selectedID = onClick;
+							}
+						}
+					}
+				}
+			}
+			playerSouls->spentThisShop = 0;
+			playerSouls->spentThisShopOnRelics = 0;
+		}
+
+
+		switch (stateManager.activeLevel)
+		{
+		case 2: //To stage 2
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
+			break;
+		case 4: //To stage 3
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
+			break;
+		case 6: //To stage 4
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+			if (sfx != nullptr)
+			{
+				int soundToPlay = rand() % 2;
+				switch (soundToPlay) //Play player boss encounter sound
+				{
+				case 0:
+					sfx->Play(Player_BringItOn, Channel_Extra);
+					break;
+				case 1:
+					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
+					break;
+				}
+			}
+			backgroundMusic->Play(Music_Boss, Channel_Base);
+			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
+			break;
+		}
+		case 8: //To stage 5
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
+			break;
+		case 10: //To stage 6
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
+			backgroundMusic->Play(Music_Hot, Channel_Base);
+			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
+			break;
+		case 12: //To stage 7
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
+			backgroundMusic->Play(Music_Cold, Channel_Base);
+			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
+			break;
+		case 14: //To stage 8
+			if (selectedID.index != -1)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+			}
+			backgroundMusic->Play(Music_Cold, Channel_Base);
+			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
+			break;
+		case 16: //To stage 9
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+			if (sfx != nullptr)
+			{
+				int soundToPlay = rand() % 2;
+				switch (soundToPlay) //Play player boss encounter sound
+				{
+				case 0:
+					sfx->Play(Player_BringItOn, Channel_Extra);
+					break;
+				case 1:
+					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
+					break;
+				}
+			}
+			backgroundMusic->Play(Music_Boss, Channel_Base);
+			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
+			break;
+		}
+		}
+		audioJungle->HandleSound();
 	}
 
 
 	LoadLevel(++stateManager.activeLevel);
-	//LoadLevel(2);
 }
 
 void UIFunctions::Game::SetMainMenu(void* args, int a)
@@ -90,10 +216,11 @@ void UIFunctions::Game::SetMainMenu(void* args, int a)
 
 void UIFunctions::Settings::Back(void* args, int a)
 {
-	SetInMainMenu(true);
-	SetInSettings(false);
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
 	stateManager.settings.Unload();
 	stateManager.menu.Setup();
+	SetInSettings(false);
 }
 
 void UIFunctions::Settings::SetLowRes(void* args, int a)
@@ -203,10 +330,12 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 
 void UIFunctions::Credits_Back(void* args, int a)
 {
-	SetInMainMenu(true);
-	SetInCredits(false);
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
+
 	stateManager.credits.Unload();
 	stateManager.menu.Setup();
+	SetInCredits(false);
 }
 
 
@@ -224,6 +353,11 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		ResetInput();
 
 		UnloadEntities(ENT_PERSIST_PAUSE);
+		if (Camera::InCutscene() == true)
+		{
+			TimedEventIgnoreGamespeed(true);
+			gameSpeed = 0.0f;
+		}
 	}
 	else
 	{
@@ -235,14 +369,20 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
-
+		if (Camera::InCutscene() == true)
+		{
+			TimedEventIgnoreGamespeed(true);
+			gameSpeed = 0.0f;
+		}
 		UnloadEntities(ENT_PERSIST_PAUSE);
 	}
 }
 
 void UIFunctions::Pause::SetSettings(void* args, int a)
 {
-	UIFunctions::OnHover::Image(args, 0, false);
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+
+	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
 	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
@@ -262,7 +402,9 @@ void UIFunctions::Pause::SetSettings(void* args, int a)
 
 void UIFunctions::Pause::Back(void* args, int a)
 {
-	UIFunctions::OnHover::Image(args, 0, false);
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+
+	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
 	for (auto entity : View<UIComponent, UIPauseButtonComponent>(registry))
@@ -282,11 +424,12 @@ void UIFunctions::Pause::Back(void* args, int a)
 
 void UIFunctions::Pause::SetMainMenu(void* args, int a)
 {
-	SetInMainMenu(true);
-	SetInPause(false);
+	//Please check this function cause the Setup sets in main menu to true already.
+	//SetInMainMenu(true);
 	UnloadEntities(ENT_PERSIST_LEVEL);
 	gameSpeed = 1.0f;
 	stateManager.menu.Setup();
+	SetInPause(false);
 }
 
 
@@ -297,7 +440,7 @@ void UIFunctions::OnClick::None(void* args, int index)
 
 void UIFunctions::OnClick::SelectRelic(void* args, int index)
 {
-	UIComponent* uiElement = (UIComponent*)args;
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 
 	int inverseIndex = 0;
 	int imageIndexes[2] = { 0, 0 };
@@ -365,129 +508,10 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 	RedrawUI();
 }
 
-void UIFunctions::OnClick::HealPlayer(void* args, int index)
-{
-	for (auto entity : View<PlayerComponent, StatComponent>(registry))
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-
-		if (player->GetSouls() < 2)
-			break;
-
-		if (stats->GetHealth() == stats->GetMaxHealth())
-			break;
-
-		float heal = stats->GetMaxHealth() * 0.25f;
-
-		stats->ApplyHealing(heal);
-
-		player->UpdateSouls(-2);
-	}
-}
-
-void UIFunctions::OnClick::RerollRelic(void* args, int index)
-{
-	UIComponent* uiElement = (UIComponent*)args;
-	UIShopRerollComponent* uiReroll = nullptr;
-
-	PlayerComponent* player = nullptr;
-
-	for (auto entity : View<PlayerComponent>(registry))
-		player = registry.GetComponent<PlayerComponent>(entity);
-
-	for (auto entity : View<UIShopRerollComponent>(registry))
-		uiReroll = registry.GetComponent<UIShopRerollComponent>(entity);
-
-	if (index == -1)
-		uiReroll->locked = false;
-
-	if (!uiReroll->locked)
-	{
-
-		if (player->GetSouls() < 0)
-			return;
-
-		for (auto entity : View<UIShopRelicComponent>(registry))
-		{
-			UIComponent* uiRelic = registry.GetComponent<UIComponent>(entity);
-			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
-
-			for (int i = 0; i < 2; i++)
-			{
-				bool ignore = false;
-				if (relicWindow->shopSelections[i] == shopState::BOUGHT)
-					ignore = true;
-
-				uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
-				uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
-
-				if (relicWindow->shopSelections[i] == shopState::LOCKED)
-				{
-					relicWindow->shopSelections[i] = shopState::AVALIABLE;
-					continue;
-				}
-
-				if (!ignore)
-					Relics::PutBackRelic(relicWindow->shopRelics[i]);
-
-				relicWindow->shopSelections[i] = shopState::AVALIABLE;
-
-				ML_Map<ML_String, Relics::RELIC_TYPE> type;
-				type.emplace("Offence", Relics::RELIC_OFFENSE);
-				type.emplace("Defence", Relics::RELIC_DEFENSE);
-				type.emplace("Gadget", Relics::RELIC_GADGET);
-
-				const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
-				uiRelic->m_Images[i].SetImage(relic->m_filePath);
-				relicWindow->shopRelics[i] = relic;
-			}
-		}
-
-		player->UpdateSouls(0);
-
-		if (index != -1)
-			uiReroll->locked = true;
-	}
-
-	RedrawUI();
-}
-
-
-void UIFunctions::OnClick::LockRelic(void* args, int index)
-{
-	PlayerComponent* player = nullptr;
-
-	for (auto entity : View<PlayerComponent>(registry))
-		player = registry.GetComponent<PlayerComponent>(entity);
-
-
-	if (player->GetSouls() < 0)
-		return;
-	
-	for (auto entity : View<UIShopRelicComponent>(registry))
-	{
-		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
-
-		for (int i = 0; i < 2; i++)
-		{
-			if (relicWindow->shopSelections[i] == shopState::SELECTED)
-			{
-				relicWindow->shopSelections[i] = shopState::LOCKED;
-				uiElement->m_Images[i + 2].SetImage("RelicIcons\\LockedRelic");
-				player->UpdateSouls(0);
-				break;
-			}
-		}
-	}
-
-	RedrawUI();
-}
-
 void UIFunctions::OnClick::BuyRelic(void* args, int index)
 {
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 	UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
 	UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
 	OnHoverComponent* playerHover = registry.GetComponent<OnHoverComponent>(stateManager.player);
@@ -496,6 +520,22 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+
+		//First relic purchase
+		UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
+		if (playerRelics->currentRelics == 0)
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+			if (sfx != nullptr) sfx->Play(Shop_FirstPurchase, Channel_Extra);
+		}
+		else if (stateManager.activeLevel == 6 || stateManager.activeLevel == 16)
+		{
+			if (souls->spentThisShopOnRelics == 0)
+			{
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+				if (sfx != nullptr) sfx->Play(Shop_PurchaseBeforeBoss, Channel_Extra);
+			}
+		}
 
 		for (int i = 0; i < 2; i++)
 		{
@@ -536,6 +576,69 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 					playerRelics->currentRelics++;
 				}
 
+				int soundToPlay = rand() % 16;
+				AudioEngineComponent* audioJungle = nullptr;
+				for (auto jungle : View<AudioEngineComponent>(registry))
+				{
+					audioJungle = registry.GetComponent<AudioEngineComponent>(jungle);
+				}
+				bool isPlaying = false;
+
+				if (soundToPlay == 0)
+				{
+					if (audioJungle != nullptr)
+					{
+						//Player voice line
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+						if (sfx != nullptr)
+						{
+							audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+							if (!isPlaying)
+							{
+								soundToPlay = rand() % 2;
+								if (soundToPlay == 0)
+								{
+									if (sfx != nullptr) sfx->Play(Player_BetterWork, Channel_Extra);
+								}
+								else
+								{
+									if (sfx != nullptr) sfx->Play(Player_SomethingPositive, Channel_Extra);
+								}
+							}
+						}
+					}
+				}
+				else if (soundToPlay == 1)
+				{
+					if (audioJungle != nullptr)
+					{
+						//Imp voice line
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+						if (sfx != nullptr)
+						{
+							audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+							if (!isPlaying)
+							{
+								soundToPlay = rand() % 2;
+								if (soundToPlay == 0)
+								{
+									if (sfx != nullptr) sfx->Play(Shop_RelicPurchase, Channel_Extra);
+								}
+								else
+								{
+									if (sfx != nullptr) sfx->Play(Shop_RelicPurchase2, Channel_Extra);
+								}
+							}
+						}
+					}
+				}
+
+				//Normal buy sound
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+				if (sfx != nullptr) sfx->Play(Shop_Buy, Channel_Base);
+
+				souls->spentThisShop += relicWindow->shopRelics[i]->m_price;
+				souls->spentThisShopOnRelics += relicWindow->shopRelics[i]->m_price;
 				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 				break;
 			}
@@ -543,6 +646,134 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 	}
 
 	RedrawUI();
+}
+
+void UIFunctions::OnClick::LockRelic(void* args, int index)
+{
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
+
+	if (player != nullptr && player->GetSouls() < 0)
+		return;
+	
+	for (auto entity : View<UIShopRelicComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (relicWindow->shopSelections[i] == shopState::SELECTED)
+			{
+				relicWindow->shopSelections[i] = shopState::LOCKED;
+				uiElement->m_Images[i + 2].SetImage("RelicIcons\\LockedRelic");
+				player->UpdateSouls(0);
+
+				//Normal lock sound
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+				if (sfx != nullptr) sfx->Play(Shop_Dibs, Channel_Base);
+
+				souls->spentThisShop += 0;
+				break;
+			}
+		}
+	}
+}
+
+void UIFunctions::OnClick::RerollRelic(void* args, int index)
+{
+	UIShopRerollComponent* uiReroll = nullptr;
+
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
+
+	for (auto entity : View<UIShopRerollComponent>(registry))
+		uiReroll = registry.GetComponent<UIShopRerollComponent>(entity);
+
+	if (uiReroll != nullptr && index == -1)
+		uiReroll->locked = false;
+
+	if (uiReroll != nullptr && !uiReroll->locked)
+	{
+
+		if (player != nullptr && player->GetSouls() < 0)
+			return;
+
+		for (auto entity : View<UIShopRelicComponent>(registry))
+		{
+			UIComponent* uiRelic = registry.GetComponent<UIComponent>(entity);
+			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+
+			for (int i = 0; i < 2; i++)
+			{
+				bool ignore = false;
+				if (relicWindow->shopSelections[i] == shopState::BOUGHT)
+					ignore = true;
+
+				uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
+				uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
+
+				if (relicWindow->shopSelections[i] == shopState::LOCKED)
+				{
+					relicWindow->shopSelections[i] = shopState::AVALIABLE;
+					continue;
+				}
+
+				if (!ignore)
+					Relics::PutBackRelic(relicWindow->shopRelics[i]);
+
+				relicWindow->shopSelections[i] = shopState::AVALIABLE;
+
+				ML_Map<ML_String, Relics::RELIC_TYPE> type;
+				type.emplace("Offence", Relics::RELIC_OFFENSE);
+				type.emplace("Defence", Relics::RELIC_DEFENSE);
+				type.emplace("Gadget", Relics::RELIC_GADGET);
+
+				const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
+				uiRelic->m_Images[i].SetImage(relic->m_filePath);
+				relicWindow->shopRelics[i] = relic;
+			}
+		}
+
+		//Normal re-reroll sound
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+		if (sfx != nullptr) sfx->Play(Shop_Reroll, Channel_Base);
+
+		souls->spentThisShop += 0;
+		player->UpdateSouls(0);
+
+		if (index != -1)
+			uiReroll->locked = true;
+	}
+
+	RedrawUI();
+}
+
+void UIFunctions::OnClick::HealPlayer(void* args, int index)
+{
+	for (auto entity : View<PlayerComponent, StatComponent>(registry))
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+
+		if (player->GetSouls() < 2)
+			break;
+
+		if (stats->GetHealth() == stats->GetMaxHealth())
+			break;
+
+		float heal = stats->GetMaxHealth() * 0.25f;
+
+		//Normal heal sound
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+		if (sfx != nullptr) sfx->Play(Shop_Heal, Channel_Base);
+
+		stats->ApplyHealing(heal);
+
+		souls->spentThisShop += 2;
+		player->UpdateSouls(-2);
+	}
 }
 
 

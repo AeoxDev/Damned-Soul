@@ -95,6 +95,12 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	//rotate eye in order to shoot at the player
 	else if (ec->aimTimer < ec->aimDuration)
 	{
+		if (ec->aimTimer == 0.0f)
+		{
+			ec->shooting = true;
+			AddTimedEventComponentStartContinous(entity, 0.0f, nullptr, ec->aimDuration - 0.2f, EnemyAttackFlash);
+		}
+
 		if (enemyAnim->aAnim != ANIMATION_ATTACK)
 		{
 			enemyAnim->aAnim = ANIMATION_ATTACK;
@@ -118,7 +124,8 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ec->aimTimer = 0;
 		ec->specialCounter++; //increase the special counter for special attack
 		ec->attackStunTimer = 0;
-		
+		ec->shooting = false;
+
 		enemyAnim->aAnim = ANIMATION_IDLE;
 		enemyAnim->aAnimIdx = 1;
 		enemyAnim->aAnimTime = 0.0f;
@@ -130,6 +137,10 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		Normalize(dx, dz);
 
 		CreateProjectile(entity, dx, dz, eye);
+
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if(sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
+
 		return true;
 	}
 }
@@ -295,7 +306,8 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			eyeComponent->attackTimer = 0;
 			eyeComponent->attackStunTimer = 0;
 			eyeComponent->dealtDamage = false;
-			
+			eyeComponent->aimTimer = 0.0f;
+
 			enemyAnim->aAnimTime = 0.0f;
 			enemyAnim->aAnim = ANIMATION_IDLE;
 			enemyAnim->aAnimIdx = 1;
@@ -378,7 +390,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				//do nothing
 			}
-			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging) // Retreat to safe distance if not charging
+			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging && !eyeComponent->shooting) // Retreat to safe distance if not charging
 			{
 				if (hasUpdatedMap == false)
 				{
@@ -400,7 +412,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp, enemyAnim);
 
 			}
-			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (eyeComponent->shooting || distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
 					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);

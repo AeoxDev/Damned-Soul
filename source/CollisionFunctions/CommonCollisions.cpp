@@ -389,46 +389,6 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));*/
 }
 
-void PlayHitSound(OnCollisionParameters& params)
-{
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy)
-	{
-		enemy->lastPlayer = params.entity1;
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case EnemyType::hellhound:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::eye:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Eye_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::skeleton:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
-			}
-			break;
-		}
-	}
-	else
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(params.entity2);
-		if (player != nullptr)
-		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-			sfx->Play(Player_Hurt, Channel_Base);
-		}
-	}
-}
-
 void DashCollision(OnCollisionParameters& params)
 {
 	//Return out of the function if the damage collision isn't valid (attacker needs to be able to deal damage, defender needs to be able to take damage, etc)
@@ -442,9 +402,6 @@ void DashCollision(OnCollisionParameters& params)
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if(registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -481,9 +438,6 @@ void AttackCollision(OnCollisionParameters& params)
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
 	else
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -531,9 +485,6 @@ void ShockWaveAttackCollision(OnCollisionParameters& params)
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
-	//Play entity hurt sounds
-	PlayHitSound(params);
-
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
@@ -573,9 +524,6 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
-	//Play entity hurt sounds
-	PlayHitSound(params);
-
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
@@ -587,6 +535,16 @@ void LoadNextLevel(OnCollisionParameters& params)
 {
 	if (params.entity2.index == stateManager.player.index)
 	{
+		switch (stateManager.activeLevel)
+		{
+		case 1:
+			CutsceneFallStage1(params.entity2, 0);
+			registry.DestroyEntity(params.entity1);
+			return;
+			break;
+		default:
+			break;
+		}
 		//not final level portal
 		if (stateManager.activeLevel != stateManager.finalLevel)
 		{
@@ -594,42 +552,7 @@ void LoadNextLevel(OnCollisionParameters& params)
 			return;
 		}
 
-		//final level portal
-
-		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
-		playerUI->SetAllVisability(false);
-
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-
-		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
-		{
-			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
-
-			if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-				uiElement->SetAllVisability(true);
-
-			RedrawUI();
-			gameSpeed = 0.0f;
-			SetPaused(true);
-
-			const int amount = 4;
-			ML_String texts[amount] =
-			{
-				GetDigitalMinuteClock().c_str(),
-
-				("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
-				("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
-				("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
-
-			};
-
-			for (int i = 3; i < amount + 3; i++)
-			{
-				uiElement->m_Texts[i].SetText(texts[i - 3].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
-					DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-			}
-		}
+		
 	}
 	
 }

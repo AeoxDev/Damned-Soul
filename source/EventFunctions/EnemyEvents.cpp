@@ -79,9 +79,9 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	//Set stats of new boss based on original
 	//float bossHP = bossStats->GetMaxHealth() / 2.f;
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
-	float bossDamage = bossStats->GetDamage() / 2.f;
+	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, (health / 2.5f), bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health , bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -226,8 +226,8 @@ void SplitBoss(EntityID& entity, const int& index)
 			partsAlive++;
 		}
 	}
-	health = originalStats->GetMaxHealth();
-	health = health / (float)partsAlive * 5.f;
+	health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
+	health = health / (float)partsAlive;
 
 	for (int i = 0; i < 5; ++i)
 	{
@@ -245,12 +245,6 @@ void SplitBoss(EntityID& entity, const int& index)
 		CalculateGlobalMapValuesImp(valueGrid);
 	}
 
-
-	/*CreateMini(entity, 5.f * multiplier, 0.f * multiplier, 0);
-	CreateMini(entity, -5.f * multiplier, -2.f * multiplier, 1);
-	CreateMini(entity, 0.f * multiplier, -5.f * multiplier, 2);
-	CreateMini(entity, 2.f * multiplier, 5.f * multiplier, 3);
-	CreateMini(entity, -5.f * multiplier, 2.f * multiplier, 4);*/
 
 
 	free(valueGrid);
@@ -309,9 +303,12 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 	{
 		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //Reset
 		{
-			skelel->shared.colorAdditiveRed = 0.0f;
-			skelel->shared.colorAdditiveGreen = 0.0f;
-			skelel->shared.colorAdditiveBlue = 0.0f;
+			//skelel->shared.colorAdditiveRed = 0.0f;
+			//skelel->shared.colorAdditiveGreen = 0.0f;
+			//skelel->shared.colorAdditiveBlue = 0.0f;
+			skelel->shared.bcaR_temp = 0.0f;
+			skelel->shared.bcaG_temp = 0.0f;
+			skelel->shared.bcaB_temp = 0.0f;
 
 			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity); //Make animation faster because we're about to schwing
 			if (anim)
@@ -319,10 +316,12 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 		}
 		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.375f) //Only start increasing gradient after 0.3 seconds
 		{
-			skelel->shared.colorAdditiveRed += GetDeltaTime();
-			skelel->shared.colorAdditiveGreen += GetDeltaTime();
-			skelel->shared.colorAdditiveBlue += GetDeltaTime();
-			
+			//skelel->shared.colorAdditiveRed  += GetDeltaTime();
+			//skelel->shared.colorAdditiveGreen+= GetDeltaTime();
+			//skelel->shared.colorAdditiveBlue += GetDeltaTime();
+			skelel->shared.bcaR_temp += GetDeltaTime();
+			skelel->shared.bcaG_temp += GetDeltaTime();
+			skelel->shared.bcaB_temp += GetDeltaTime();
 		}
 	}
 }
@@ -517,13 +516,17 @@ void ChargeColorFlash(EntityID& entity, const int& index)
 	float cosineWave = cosf(GetTimedEventElapsedTime(entity, index) * frequency) * cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->shared.colorAdditiveRed = cosineWave;
-		skelel->shared.colorAdditiveGreen = cosineWave;
+		skelel->shared.bcaR_temp = cosineWave;
+		skelel->shared.bcaG_temp = cosineWave;
+		//skelel->shared.colorAdditiveRed = cosineWave;
+		//skelel->shared.colorAdditiveGreen = cosineWave;
 	}
 	if (bonel)
 	{
-		bonel->shared.colorAdditiveRed = cosineWave;
-		bonel->shared.colorAdditiveGreen = cosineWave;
+		bonel->shared.bcaR_temp = cosineWave;
+		bonel->shared.bcaG_temp = cosineWave;
+		//bonel->shared.colorAdditiveRed = cosineWave;
+		//bonel->shared.colorAdditiveGreen = cosineWave;
 	}
 }
 
@@ -536,9 +539,12 @@ void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		skelel->shared.colorAdditiveRed = 0.8f;
-		skelel->shared.colorAdditiveGreen = 0.8f;
-		skelel->shared.colorAdditiveBlue = 0.5f;
+		skelel->shared.bcaR_temp = 0.8f;
+		skelel->shared.bcaG_temp = 0.8f;
+		skelel->shared.bcaB_temp = 0.5f;
+		//skelel->shared.colorAdditiveRed = 0.8f;
+		//skelel->shared.colorAdditiveGreen = 0.8f;
+		//skelel->shared.colorAdditiveBlue = 0.5f;
 	}
 }
 
@@ -653,28 +659,31 @@ void RemoveEnemy(EntityID& entity, const int& index)
 void SpawnMainMenuEnemy(EntityID& entity, const int& index)
 {
 	int condition = GetTimedEventCondition(entity, index);
-	switch (condition)
-	{
-	case invalidType:
-		break;
-	case hellhound:
-		RandomPlayerEnemy(hellhound);
-		break;
-	case skeleton:
-		RandomPlayerEnemy(skeleton);
-		break;
-	case eye:
-		RandomPlayerEnemy(eye);
-		break;
-	case imp:
-		RandomPlayerEnemy(imp);
-		break;
-	case tempBoss:
-		RandomPlayerEnemy(tempBoss);
-		break;
-	default:
-		break;
-	}
+	
+	RandomPlayerEnemy((EnemyType)condition);
+
+	//switch (condition)
+	//{
+	//case invalidType:
+	//	break;
+	//case hellhound:
+	//	RandomPlayerEnemy(hellhound);
+	//	break;
+	//case skeleton:
+	//	RandomPlayerEnemy(skeleton);
+	//	break;
+	//case eye:
+	//	RandomPlayerEnemy(eye);
+	//	break;
+	//case imp:
+	//	RandomPlayerEnemy(imp);
+	//	break;
+	//case tempBoss:
+	//	RandomPlayerEnemy(tempBoss);
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
@@ -696,10 +705,35 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = eye;
 	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = minotaur;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredSkeleton;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredImp;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredSkeleton;
+	}
 	rarity = rand() % 4096;
 	if (rarity == 0)
 	{
 		type = tempBoss;
+	}
+	rarity = rand() % 4096;
+	if (rarity == 0)
+	{
+		type = lucifer;
 	}
 	float time = 0.05f * (float)(rand() % 64);
 	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);

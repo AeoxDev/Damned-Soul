@@ -45,7 +45,7 @@ bool PointOfInterestSystem::Update()
 	float newPosX = 0;
 	float newPosY = 0;
 	float newPosZ = 0;
-	float points = 1;//The 1 is the camera itself
+	float points = 0;//Weighted average.
 	//DirectX::XMStoreFloat3(&cameraPos, cameraVPos);
 	for (auto entity : View<PointOfInterestComponent, TransformComponent>(registry))
 	{

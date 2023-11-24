@@ -66,12 +66,12 @@ void LoadLevel2()
 	//One to guard the gate:
 	SetupEnemy(EnemyType::skeleton, -230.f, 0.f, 214.f, 1);
 
-	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
+	
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
@@ -92,7 +92,7 @@ void LoadLevel2()
 
 	float redLight = 0.35f;
 
-	SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -101,4 +101,6 @@ void LoadLevel2()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, ImpIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

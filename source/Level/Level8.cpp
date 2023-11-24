@@ -66,7 +66,7 @@ void LoadLevel8()
 	SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f, 2);
 	SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f, 2);
 	SetupEnemy(EnemyType::minotaur, 13.f, 1.f, -12.f, 3); 
-	Stage3IntroScene(cutsceneEnemy, 0);
+	
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player
@@ -95,7 +95,7 @@ void LoadLevel8()
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;
 
-	SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -176,4 +176,6 @@ void LoadLevel8()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

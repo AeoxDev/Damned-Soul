@@ -68,7 +68,27 @@ bool OnHoverSystem::Update()
 				//Set which sound to play
 				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 				OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(entity);
-				if ((sound != nullptr) && (onClick != nullptr)) sound->Play(Button_Hover, Channel_Base);
+
+				//Check if the channel is currently playing a sound or not
+				for (auto entity : View<AudioEngineComponent>(registry))
+				{
+					AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+					bool isPlaying = false;
+					if (sound != nullptr)
+					{
+						audioJungle->channels[sound->channelIndex[0]]->isPlaying(&isPlaying);
+						FMOD::Sound* test = nullptr;
+						audioJungle->channels[sound->channelIndex[0]]->getCurrentSound(&test);
+						if (audioJungle->sounds[MENU1] != test)
+						{
+							if ((onClick != nullptr) && (!isPlaying)) sound->Play(Button_Hover, Channel_Base);
+						}
+						else
+						{
+							if (onClick != nullptr) sound->Play(Button_Hover, Channel_Base);
+						}
+					}
+				}
 
 				RedrawUI();
 				comp->redrawUIChecks[comp->index] = 0;
