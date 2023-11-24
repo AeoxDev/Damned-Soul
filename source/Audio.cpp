@@ -79,7 +79,7 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Player/Constant/Combo3.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 	this->system->createSound("SFX/Player/Constant/HeavyCharge.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Player/Constant/HeavyAttack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 	this->system->createSound("SFX/Player/Constant/Dash.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);

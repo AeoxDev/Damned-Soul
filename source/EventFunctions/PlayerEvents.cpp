@@ -187,16 +187,13 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
 {
-	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 
-	if (!sfx || !anim || !stats || !aac || !player)
+	if (!anim || !stats || !aac || !player)
 		return;
-
-	sfx->Play(Player_Attack1, Channel_Base); //Move this later to do the combo attack sounds
 
 	//Animations have 1 second default duration and as such we scale the speed of the animation here so it fits the duration we pass in
 	//Duration * X = 1.0f

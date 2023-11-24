@@ -34,9 +34,11 @@ bool StageVoiceLineSystem::Update()
 		}
 		
 		bool isPlaying = false;
+		bool isPlaying2 = false;
 		audioEngine->channels[playerSounds->channelIndex[Channel_Extra]]->isPlaying(&isPlaying); //Check if a line is already being played on this channel.
+		audioEngine->channels[playerSounds->channelIndex[Channel_Base]]->isPlaying(&isPlaying2); //Check if a line is already being played on the base channel.
 
-		if ((audioEngine->occasionalVoiceLinesPlayed.size() != 10) && (cooldown >= 15.0f) && (!isPlaying)) //Check to make sure that all available occasioanl sounds are not already played
+		if ((audioEngine->occasionalVoiceLinesPlayed.size() != 10) && (cooldown >= 15.0f) && (!isPlaying) && (!isPlaying2)) //Check to make sure that all available occasioanl sounds are not already played
 		{
 			int chance = rand() % 8192; //Rand controlling whether or not we should play a sound.
 			if (chance == 0)
