@@ -45,10 +45,11 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
-	SetupEnemy(EnemyType::skeleton, -205.0f, 0.f, 88.f);
-
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);
-	SetupEnemy(EnemyType::skeleton, -94.0f, 0.f, 54.f);
+
+	// DO NOT REMOVE THIS BELOW
+	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); TESTCODE FOR TESTING ENEMIES 
+	// LEAVE THE THING ABOVE BE, DO NOT TOUCH
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 
 	

@@ -285,7 +285,7 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 					mc->hasLandingPos = true;
 					mtc->positionX = landingPosition.positionX; //teleport in the air basically
 					mtc->positionZ = landingPosition.positionZ; // happens once
-					AddTimedEventComponentStart(enemy, 0.0f, CreateLandingIndicator);
+					AddTimedEventComponentStart(enemy, 0.0f, CreateLandingIndicator, EnemyType::minotaur);
 				}
 			}
 			if (mtc->positionY >= 0.f) // still in the air

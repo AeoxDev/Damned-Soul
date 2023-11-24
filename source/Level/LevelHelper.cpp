@@ -184,7 +184,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			mass = 80.f;
+			mass = 300.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -192,11 +192,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 	}
 	if (health == 6969.f)
@@ -356,7 +356,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 60.f;
+			damage = 40.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -469,6 +469,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scaleX = 1.f;
 		scaleY = 1.f;
 		scaleZ = 1.f;
+	}
+	else if (eType == EnemyType::lucifer)
+	{
+		scaleX = 3.f;
+		scaleY = 3.f;
+		scaleZ = 3.f;
 	}
 
 	transform.mass = mass;
@@ -625,7 +631,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
 
-		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
+ 		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
 			player->killThreshold+=5;
