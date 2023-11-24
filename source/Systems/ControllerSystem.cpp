@@ -244,6 +244,7 @@ bool ControllerSystem::Update()
 			{
 				anim->anim2.aAnim = ANIMATION_WALK;
 				anim->anim2.aAnimIdx = 0;
+				anim->anim2.aAnimTime = anim->anim1.aAnimTime;
 			}
 
 			float len = controller->goalX * controller->goalX + controller->goalZ * controller->goalZ;
@@ -275,6 +276,7 @@ bool ControllerSystem::Update()
 
 			anim->anim2.aAnim = ANIMATION_IDLE;
 			anim->anim2.aAnimIdx = 0;
+			anim->anim2.aAnimTime = anim->anim1.aAnimTime;
 			
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			TransformDecelerate(entity);
