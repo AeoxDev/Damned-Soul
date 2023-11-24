@@ -59,7 +59,7 @@ void Particles::InitializeParticles()
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particles[i].position = DirectX::XMFLOAT3(9999.f, 99999.f, 99999.f);
+		particles[i].position = DirectX::XMFLOAT3(99999.f, 99999.f, 99999.f);
 		particles[i].time = 0.f;
 		particles[i].velocity = DirectX::XMFLOAT3(1.f, 1.f, 1.f);
 		particles[i].rotationZ = 0.f;
@@ -180,7 +180,7 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	if (data->metadata[metaDataSlot].pattern == 0|| data->metadata[metaDataSlot].pattern == 9)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	if (data->metadata[metaDataSlot].pattern == 0|| data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10*/)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 
 		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture

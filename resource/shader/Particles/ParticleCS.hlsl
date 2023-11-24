@@ -11,6 +11,7 @@ inline void RainMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
 inline void FireMovement(in uint3 DTid, in uint3 blockID);
+//inline void HotPotMovement(in uint3 DTid, in uint3 blockID);
 
 bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
 
@@ -77,6 +78,12 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         {
             FireMovement(DTid, blockID);
         }
+        //// 10 = BOILING
+        //if (meta[blockID.y].pattern == 9)
+        //{
+        //    HotPotMovement(DTid, blockID);
+        //}
+        
     }
 
 }
@@ -179,8 +186,6 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     int OneHundo_TwoFiveFive = One_OneHundo + 155;
     // ------------------------------------------------------ //
             
-    
-    
     // EXLUSIVE FOR FLAME THROWER //
     // THEESE WEIRD VARIABLES ARE MEANT TO BE WEIRD, THEY HOLD VALUES
     float2 v0 = float2(meta[blockID.y].maxRange, meta[blockID.y].positionInfo.x);
@@ -220,6 +225,11 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     }
     //float directionRandom = normalize(float((DTid.x % 84.0) / 84.0f - 0.5f));
     //particle.position.y = particle.position.y + directionRandom * dt / meta[OneHundo_TwoFiveFive].deltaTime; // +(((float) DTid.x - 127) / 128) * dt;  //titta på vilka värden
+    particle.rgb.r = 1.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 0.0f;
+    
+    particle.patterns = 3; //is used to define pattern in PS-Shader for flipAnimations
     outputParticleData[index] = particle;
 }
 
@@ -246,11 +256,8 @@ void RainMovement(in uint3 DTid, in uint3 blockID)
         particle.position = meta[index].startPosition;
     }
     
-    particle.patterns = 5/*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
-    
-    //____________________________________________________________________
-    //test.position = test.position;
+    particle.patterns = 5; //is currently used to define pattern in PS-Shader for flipAnimations
+   
     outputParticleData[DTid.x] = particle;
 }
 
@@ -284,6 +291,11 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = posy;
     particle.position.x = (2 * alpha + beta + 2 * gamma);
     particle.position.z = (alpha + 2 * beta - gamma);
+    particle.rgb.r = 0.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 1.0f;
+    
+    particle.patterns = 7; //is currently used to define pattern in PS-Shader for flipAnimations
     
     outputParticleData[index] = particle;
 }
@@ -297,7 +309,6 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
 
-    
     // --- Set the standard stuff --- //
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
@@ -305,7 +316,6 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     // ------------------------------ //
     
     uint localIndex = (index - meta[blockID.y].start) % amount;
-    
     
     float indexValue = sqrt((10 + localIndex) / 265.f);
     float timeValue = (particle.time / meta[blockID.y].life);
@@ -324,9 +334,8 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     particle.rgb.g = 0.0f;
     particle.rgb.b = 1.0f;
     
-    particle.patterns = 7/*meta[blockID.y].pattern*/; //is currently used to define pattern in PS-Shader for flipAnimations
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
-    
+    particle.patterns = 8; //is used to define pattern in PS-Shader for flipAnimations
+  
     outputParticleData[index] = particle;
 }
 
@@ -349,53 +358,117 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
 
-    
     // --- Set the standard stuff --- //
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt; //
     particle.size = meta[blockID.y].size;
     // ------------------------------ //
-    
-    
-    // ---- Get a "randomized" value to access deltaTime ---- //    
-    float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+   
     
     float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
     
     int One_OneHundo = holder;
     if (One_OneHundo == 0)
         One_OneHundo = 1;
-    
     int OneHundo_TwoFiveFive = One_OneHundo + 155;
-    
-    float directionRandom = normalize(float((DTid.x % 84.0) / 84.0f - 0.5f));
     // ------------------------------------------------------ //
     
+    float timeValue = (particle.time / meta[blockID.y].life);
     
+     // ---- Get a "randomized" value to access deltaTime ---- //    
+    //float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    //???float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
+    
+    //Time differense for variation in animation 
     if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
     {
-        //spawning different variable
         particle.time = 0.0f;
     }
+    else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    {
+        particle.time = meta[index].deltaTime * meta[blockID.y].life;
+        
+
+    }
     
-    float posy = (index % 256) * 0.2f; // 51 / 255
-    float idxFraction = (index % 256) / 255.f;
-    float timeFraction = PI * (1 - (particle.time / meta[blockID.y].life));
-    
-    float alpha = pow(sin(2 * PI * idxFraction + timeFraction), 3); // Pi
-    float beta = pow(sin(4 * 2.71828f * idxFraction + 4 * timeFraction), 3); // Eulers
-    float gamma = pow(sin(6 * sqrt(5) * idxFraction + 9 * timeFraction), 3); // Root(5)
-    
-    particle.position.y = (1 + directionRandom);
-    particle.position.x = (4 * index);
-    particle.position.z = (5 + directionRandom);
-    
-    particle.rgb.r = 0.0f;
+    //Set specified Start position 
+    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    particle.position = startPosition;
+
+    float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
+   
+    particle.position.x = particle.position.x + (index);
+    particle.position.y = 1 + particle.position.y;
+    particle.position.z = particle.position.z + oddEvenFactor * ( 4* meta[index].deltaTime);
+
+    particle.rgb.r = 1.0f;
     particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
+    particle.rgb.b = 0.0f;
     
-    particle.patterns = 9; /*meta[blockID.y].pattern*/ //is currently used to define pattern in PS-Shader for flipAnimations
-// 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    particle.patterns = 9; //is used to define pattern in PS-Shader for flipAnimations
+
+    outputParticleData[index] = particle;
+
+}
+
+void HotPotMovement(in uint3 DTid, in uint3 blockID)
+{
+    // -- SAME FOR ALL FUNCTIONS -- //
+    uint amount = meta[blockID.y].end - meta[blockID.y].start; //particels
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x; //index slots of the 65000
+    uint localIndex = (index - meta[blockID.y].start) % amount;
     
+    Input particle = inputParticleData[index];
+    // -------------------------------------------------------------- // 
+
+    // --- Set the standard stuff --- //
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt; //
+    particle.size = meta[blockID.y].size;
+    // ------------------------------ //
+   
+    
+    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    
+    int One_OneHundo = holder;
+    if (One_OneHundo == 0)
+        One_OneHundo = 1;
+    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    // ------------------------------------------------------ //
+    
+    float timeValue = (particle.time / meta[blockID.y].life);
+    
+     // ---- Get a "randomized" value to access deltaTime ---- //    
+    //float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    //???float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
+    
+    //Time differense for variation in animation 
+    if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
+    {
+        particle.time = 0.0f;
+    }
+    else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    {
+        particle.time = meta[index].deltaTime * meta[blockID.y].life;
+        
+
+    }
+    
+    //Set specified Start position 
+    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    particle.position = startPosition;
+
+    float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
+    particle.size = particle.size + (1*oddEvenFactor);
+    particle.position.x = particle.position.x + (index+4);
+    particle.position.y = 1 + particle.position.y;
+    particle.position.z = particle.position.z + index + (oddEvenFactor * ( /*4*/6 * meta[index].deltaTime));
+
+    particle.rgb.r = 1.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 0.0f;
+    
+    particle.patterns = 9; //is used to define pattern in PS-Shader for flipAnimations
+
     outputParticleData[index] = particle;
 }

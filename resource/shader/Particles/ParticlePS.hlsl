@@ -10,193 +10,14 @@ struct GS_OUT
     int patterns : PATTERNS;
 };
 
-float4 AniRowABCD(float counter, GS_OUT input, int time)////4x4 sections, First Row and Second Row
-{
-    float4 image;
-   
-    if (time % 2 == 0)
-    {
-        if (counter == 1)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.5 + input.uv.y / 4));
-        }
-        else if (counter == 2)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-        }
-        else if (counter == 3)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-        }
-        else if (counter == 4)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-        }
-        else if (counter == 5)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.75 + input.uv.y / 4));
-        }
-        else if (counter == 6)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-        }
-        else if (counter == 7)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-        }
-        else if (counter == 8)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.75 + input.uv.y / 4)); 
-            
-        }   
-    }
-    else
-    {
-        if (counter == 1)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-        }
-        else if (counter == 2)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
-        }
-        else if (counter == 3)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4));
-        }
-        else if (counter == 4)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
-        }
-        else if (counter == 5)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.25 + input.uv.y / 4));
-        }
-        else if (counter == 6)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-        }
-        else if (counter == 7)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-        }
-        else if (counter == 8)
-        {
-            image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-        }
-    }
-        
-    return image;
-}
 
-float4 AniRowAB(float counter, GS_OUT input)////4x4 sections, First Row and Second Row
-{
-    float4 image; 
-    //image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-    
-    if (counter == 1)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 2)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 3)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 4)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 5)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
-    else if (counter == 6)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
-    else if (counter == 7)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
-    else if (counter == 8)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
-    
-   
-    
-    ////float test = ((counter - 1) * 0.25);
-    
-    ////image = flipBookTex.Sample(WrapSampler, float2(test + input.uv.x / 4, input.uv.y / 4));
-   
-    return image;
-}
-
-float4 AniRowCD(float counter, GS_OUT input)////4x4 sections, Third Row and Forth Row
-{
-    float4 image;
-    
-    if (counter == 1)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    else if (counter == 2)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    else if (counter == 3)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    else if (counter == 4)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    else if (counter == 5)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
-    else if (counter == 6)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
-    else if (counter == 7)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
-    else if (counter == 8)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
-    
-    return image;
-
-}
 
 float4 AniRowA(float counter, GS_OUT input)////4x4 sections, First Row 
 {
     float4 image;
+    float rowMovement = ((counter - 1) * 0.25);
     
-    if (counter == 1 || counter == 5)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 2 || counter == 6)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 3 || counter == 7)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, input.uv.y / 4));
-    }
-    else if (counter == 4 || counter == 8)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, input.uv.y / 4));
-    }
+    image = flipBookTex.Sample(WrapSampler, float2(rowMovement + input.uv.x / 4, input.uv.y / 4));
     
     return image;
 
@@ -205,23 +26,9 @@ float4 AniRowA(float counter, GS_OUT input)////4x4 sections, First Row
 float4 AniRowB(float counter, GS_OUT input)////4x4 sections, Second Row 
 {
     float4 image;
+    float rowMovement = ((counter - 1) * 0.25);
     
-    if (counter == 1 || counter == 5)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
-    else if (counter == 2 || counter == 6)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
-    else if (counter == 3 || counter == 7)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
-    else if (counter == 4 || counter == 8)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.25 + input.uv.y / 4));
-    }
+    image = flipBookTex.Sample(WrapSampler, float2(rowMovement + input.uv.x / 4, 0.25 + input.uv.y / 4));
     
     return image;
 }
@@ -229,75 +36,81 @@ float4 AniRowB(float counter, GS_OUT input)////4x4 sections, Second Row
 float4 AniRowC(float counter, GS_OUT input)////4x4 sections, Third Row 
 {
     float4 image;
+    float rowMovement = ((counter - 1) * 0.25);
     
-    if (counter == 1 || counter == 5)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    else if (counter == 2 || counter == 6)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    else if (counter == 3 || counter == 7)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    else if (counter == 4 || counter == 8)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.5 + input.uv.y / 4));
-    }
-    
+    image = flipBookTex.Sample(WrapSampler, float2(rowMovement + input.uv.x / 4, 0.5 + input.uv.y / 4));
+
     return image;
 }
 
 float4 AniRowD(float counter, GS_OUT input)////4x4 sections, Forth Row 
 {
     float4 image;
+    float rowMovement = ((counter - 1) * 0.25);
     
-    if (counter == 1 || counter == 5)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
-    else if (counter == 2 || counter == 6)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.25 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
-    else if (counter == 3 || counter == 7)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
-    else if (counter == 4 || counter == 8)
-    {
-        image = flipBookTex.Sample(WrapSampler, float2(0.75 + input.uv.x / 4, 0.75 + input.uv.y / 4));
-    }
+    image = flipBookTex.Sample(WrapSampler, float2(rowMovement + input.uv.x / 4, 0.75 + input.uv.y / 4));
     
+    return image;
+}
+
+float4 AniRowAB(float counter, GS_OUT input)////4x4 sections, First Row and Second Row
+{
+    float4 image;
+    if(counter >=5)
+    {
+        image = AniRowB(counter, input);
+    }
+    else
+    {
+        image = AniRowA(counter, input);
+    }
+   
+    return image;
+}
+
+float4 AniRowCD(float counter, GS_OUT input)////4x4 sections, Third Row and Forth Row
+{
+    float4 image;
+    if (counter >= 5)
+    {
+        image = AniRowD(counter, input);
+    }
+    else
+    {
+        image = AniRowC(counter, input);
+    }
+
+    
+    return image;
+
+}
+
+float4 AniRowABCD(float counter, GS_OUT input, int time)////4x4 sections, First Row and Second Row
+{
+    float4 image;
+    
+    if (time % 2 == 0)
+    {
+        image = AniRowCD(counter, input);
+
+    }
+    else
+    {
+        image = AniRowAB(counter, input);
+
+    }
+        
     return image;
 }
 
 float4 main(GS_OUT input) : SV_TARGET
 {
+    int pattern = input.patterns;
     int counter = 1;
     float time = 0.0f;
-    int pattern = input.patterns;
     time = (int)input.time;
     
-    ////if (input.time >= (time + 0.25) && input.time < (time + 0.50)) //To slow
-    ////{
-    ////    counter = 1;
-    ////}
-    ////else if (input.time >= (time + 0.50) && input.time < (time + 0.75))
-    ////{
-    ////    counter = 2;
-    ////}
-    ////else if (input.time >= (time + 0.75) && input.time < (time + 0.99))
-    ////{
-    ////    counter = 3;
-    ////}
-    ////else if (input.time >= (time + 0.99) || input.time < (time + 0.249))
-    ////{
-    ////    counter = 4;
-    ////}
-    
+    ///**Counter**/// -sets counter depending on 8 parts of one second.
     if(input.time >= (time + 0.125) && input.time < (time + 0.250))
     {
         counter = 1;
@@ -331,23 +144,32 @@ float4 main(GS_OUT input) : SV_TARGET
         counter = 8;
     }
   
-    
     //Animation
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 
+    //4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
+    //8= CIRCLE_FIELD// 9 =FIRE
+    
+    
     float4 image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
     
-    //Pattern can use animation on Row A,B,C,D or A&B or C&D
-    if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//patterns = //test 0(SMOKE)
+    //Pattern can use animation on Row A,B,C,D or 2Rowes A&B or C&D or FullSheet-4Rowes A&B&C&D
+    //Examples
+    //image = AniRowA(counter, input);
+    //image = AniRowB(counter, input);
+    //image = AniRowC(counter, input);
+    //image = AniRowD(counter, input);
+    //image = AniRowAB(counter, input);
+    //image = AniRowCD(counter, input);
+    //image = AniRowABCD(counter, input, (int) time);
+    
+    if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
     {
         image = AniRowAB(counter, input);
-        //image = AniRowCD(counter, input);
-
     }
-    else if (pattern == 0) //4x4 sections, Third and Forth Row C&D//patterns = test 1(ARCH)
-    {
-        //image = AniRowCD(counter, input);
-        //image = AniRowABCD(counter, input, (int) time);
-    }
+    //else if (pattern == 10) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+    //{
+    //    image = AniRowCD(counter, input);
+    //}
     else
     {
         image = flipBookTex.Sample(WrapSampler, input.uv);
