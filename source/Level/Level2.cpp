@@ -47,7 +47,7 @@ void LoadLevel2()
 
 	SetupEnemy(EnemyType::skeleton, -209.f, 0.f, 214.f);
 	SetupEnemy(EnemyType::skeleton, -64.f, 0.f, 224.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, 92.0f, 0.f, 107.0f);
+	SetupEnemy(EnemyType::skeleton, 92.0f, 0.f, 107.0f);
 
 	SetupEnemy(EnemyType::skeleton, 78.f, 0.f, 14.f);
 	SetupEnemy(EnemyType::skeleton, -158.f, 0.f, 34.f);
@@ -56,8 +56,7 @@ void LoadLevel2()
 
 	SetupEnemy(EnemyType::imp, -189.f, 0.f, 179.f);
 	SetupEnemy(EnemyType::imp, -181.0f, 0.f, 67.f);
-	SetupEnemy(EnemyType::imp, 46.f, 0.f, 145.f);
-
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 46.f, 0.f, 145.f);
 	SetupEnemy(EnemyType::imp, -67.f, 0.f, 148.f);
 
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
@@ -86,7 +85,7 @@ void LoadLevel2()
 
 	float redLight = 0.35f;
 
-	SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);

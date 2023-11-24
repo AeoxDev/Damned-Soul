@@ -66,7 +66,7 @@ void LoadLevel4()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	SetDirectionLight(1.0f, 0.666f, .466f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.65f, 0.55f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, 0.38f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, 0.38f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);

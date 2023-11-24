@@ -30,6 +30,7 @@ void Menu::Setup()
 	Camera::ResetCamera();
 
 	ResetRunTime();
+	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
 	int random = rand() % 10;//Level 1 thorugh 9
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
@@ -42,7 +43,6 @@ void Menu::Setup()
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
 
 
-	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
 
 	/*char ctexture[] = "3-1C.png";
 	char ltexture[] = "3-1L.png";

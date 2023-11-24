@@ -73,7 +73,7 @@ void LoadLevel9()
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;
 
-	SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);

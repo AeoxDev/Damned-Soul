@@ -24,51 +24,66 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
 
 		break;
 	case 1:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 2:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV2Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV2Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV2Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 3:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV3Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV3Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV3Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.7f, .5f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 4:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV4Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV4Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV4Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.666f, .466f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 5:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV5Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
+		SetDirectionLight(0.666f, 1.0f, .666f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 6:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV6Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV6Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
+		SetDirectionLight(0.666f, 0.666f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	case 7:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV7Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV7Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV7Hitbox.mdl"));
+		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	case 8:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV8Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV8Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV8Hitbox.mdl"));
+		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	case 9:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV9Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV9Hitbox.mdl"));
+		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	default:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
