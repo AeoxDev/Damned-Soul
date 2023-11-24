@@ -29,7 +29,7 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
-	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
+	//animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 
 	SmoothRotation(skeletonTransformComponent, skeletonComponent->goalDirectionX, skeletonComponent->goalDirectionZ);
@@ -53,7 +53,7 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
-	animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
+	//animComp->aAnimTime += GetDeltaTime() * animComp->aAnimTimeFactor;
 	ANIM_BRANCHLESS(animComp);
 	bool okayDirection = false;
 	int limit = 128;
