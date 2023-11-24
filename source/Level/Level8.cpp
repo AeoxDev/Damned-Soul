@@ -40,32 +40,37 @@ void LoadLevel8()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
+	SetupEnemy(EnemyType::empoweredImp, -164.f, 1.f, 185.f);
+	SetupEnemy(EnemyType::empoweredImp, -110.f, 1.f, 185.f);
+	SetupEnemy(EnemyType::empoweredImp, -278.f, 1.f, -166.f);
+	SetupEnemy(EnemyType::empoweredImp, -1013.f, 1.f, 448.f);
+
+	SetupEnemy(EnemyType::empoweredHellhound, -342.f, 1.f, -150.f);
+	SetupEnemy(EnemyType::empoweredHellhound, -221.f, 1.f, -150.f);
+	SetupEnemy(EnemyType::empoweredHellhound, -945.f, 1.f, -326.f);
+
+	SetupEnemy(EnemyType::minotaur, -432.f, 1.f, 170.f);// make minitaur
+
+	SetupEnemy(EnemyType::eye, -444.f, 1.f, 242.f);
+	SetupEnemy(EnemyType::eye, -1045.f, 1.f, 327.f);
+
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::tempBoss, -992.f, 0.f, 393.f);
+
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::tempBoss, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::skeleton, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, -55.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::skeleton, -32.f, 1.f, 28.f);
-	SetupEnemy(EnemyType::skeleton, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::imp, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f);
-	SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f);
-	//SetupEnemy(EnemyType::, 13.f, 1.f, -12.f); make minitaur
+	SetupEnemy(EnemyType::empoweredSkeleton, -138.f, 0.f, 93.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -106.f, 0.f, 132.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -174.f, 0.f, 131.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -400.f, 0.f, 135.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -479.f, 0.f, 176.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -415.f, 0.f, 219.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -899.f, 0.f, 393.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -949.f, 1.f, 277.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -1037.f, 1.f, 284.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -1074.f, 1.f, 424.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -730.f, 1.f, 360.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -603.f, 1.f, 316.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -397.f, 1.f, 21.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, -283.f, 1.f, -38.f);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player

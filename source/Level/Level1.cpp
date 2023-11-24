@@ -43,13 +43,13 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);*/
 
-	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
-	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
-	SetupEnemy(EnemyType::skeleton, -205.0f, 0.f, 88.f);
+	SetupEnemy(EnemyType::skeleton, -204.0f, 0.f, 82.f);
+	SetupEnemy(EnemyType::skeleton, -222.0f, 0.f, 28.f);
+	SetupEnemy(EnemyType::skeleton, -230.0f, 0.f, -26.f);
 
-	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);
-	SetupEnemy(EnemyType::skeleton, -94.0f, 0.f, 54.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
+	SetupEnemy(EnemyType::skeleton, -180.0f, 0.f, -24.f);
+	SetupEnemy(EnemyType::skeleton, -121.0f, 0.f, 61.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -111.0f, 0.f, 104.f);
 
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
 	//registry.AddComponent<ParticleComponent>(stage, 5.0f, 10.f, 0.5f, 0.0f, 0.0f, 1.0f, SMOKE);

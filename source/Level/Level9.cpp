@@ -55,7 +55,7 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
 	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);*/
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969, 2.f, 2.f, 2.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969, 2.f, 2.f, 2.f);
 	
 
 	//Player

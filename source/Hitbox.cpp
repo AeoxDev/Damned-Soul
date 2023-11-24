@@ -927,7 +927,7 @@ void ResetAttackTrackerFlags(EntityID& entity)
 }
 
 
-void RenderGeometryIndependentCollision(EntityID& stageFloor, EntityID& walls, EntityID& hitbox)
+void RenderGeometryIndependentCollision(EntityID& stageFloor, EntityID& gate, EntityID& hitbox)
 {
 	AddGeometryIndependentComponent(stageFloor);
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stageFloor);
@@ -937,11 +937,11 @@ void RenderGeometryIndependentCollision(EntityID& stageFloor, EntityID& walls, E
 	//	//char ltexture[] = "2-1L.png";
 	//	//char emptyTexture[] = "";
 	//	//AddStaticHazardTexture(m, ctexture, ltexture, emptyTexture);
-	//	RenderGeometryIndependentCollisionToTexture(stageFloor, walls, hitbox);
+	//	RenderGeometryIndependentCollisionToTexture(stageFloor, gate, hitbox);
 	//	Present();
 	//}
 
-	RenderGeometryIndependentCollisionToTexture(stageFloor, walls, hitbox);
+	RenderGeometryIndependentCollisionToTexture(stageFloor, gate, hitbox);
 	ReleaseGI(stageFloor);
 	return;
 }
