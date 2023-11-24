@@ -126,6 +126,13 @@ void SettingsState::SetupButtons()
 			{ 0.4f, -0.3f },
 		};
 
+		AudioEngineComponent* audioComp = nullptr;
+
+		for (auto audio : View<AudioEngineComponent>(registry))
+		{
+			audioComp = registry.GetComponent<AudioEngineComponent>(audio);
+		}
+
 		for (int i = 0; i < sliderAmount; i++)
 		{
 			auto button = registry.CreateEntity();
@@ -136,8 +143,58 @@ void SettingsState::SetupButtons()
 			uiElement->Setup("SliderBackground2", texts[i], positions[i]);
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
-			slider->currentPosition = uiElement->m_Images[0].baseUI.GetPosition().x;
 
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
+
+			if (slider->currentPosition >= maxRightPosition - 0.13f)
+				slider->currentPosition = maxRightPosition - 0.13f;
+
+			if (slider->currentPosition <= maxLeftPosition + 0.13f)
+				slider->currentPosition = maxLeftPosition + 0.13f;
+
+			float sliderWidth = abs(maxRightPosition - 0.13f) - abs(maxLeftPosition + 0.13f);
+
+			if (audioComp != nullptr)
+			{
+				float volume = 0;
+
+				if (uiElement->m_BaseText.m_Text == "Master Volume")
+				{
+					audioComp->groups[MASTER_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Voice Volume")
+				{
+					audioComp->groups[VOICE_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "SFX Volume")
+				{
+					audioComp->groups[SFX_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Music Volume")
+				{
+					audioComp->groups[MUSIC_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Ambient Volume")
+				{
+					audioComp->groups[AMBIENCE_GROUP]->getVolume(&volume);
+				}
+
+				if (volume < 0.5f)
+				{
+					uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(uiElement->m_Images[0].baseUI.GetPosition().x - (sliderWidth * (0.5f - volume)), uiElement->m_BaseImage.baseUI.GetPosition().y));
+					slider->currentPercentage = volume;
+				}
+
+				if (volume > 0.5f)
+				{
+					uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(uiElement->m_Images[0].baseUI.GetPosition().x + (sliderWidth * (volume - 0.5f)), uiElement->m_BaseImage.baseUI.GetPosition().y));
+					slider->currentPercentage = volume;
+				}
+			}
+
+
+			slider->currentPosition = uiElement->m_Images[0].baseUI.GetPosition().x;
 			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Settings::Volume::Press, UIFunctions::Settings::Volume::Release);
 
 		}

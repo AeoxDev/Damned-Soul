@@ -211,8 +211,18 @@ bool UIRunTimeSystem::Update()
 	return true;
 }
 
+
+#include <iostream>
 bool UISliderSystem::Update()
 {
+	AudioEngineComponent* audioComp = nullptr;
+
+	for (auto audio : View<AudioEngineComponent>(registry))
+	{
+		audioComp = registry.GetComponent<AudioEngineComponent>(audio);
+	}
+
+
 	for (auto entity : View<UISettingsSliderComponent, UIComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
@@ -223,8 +233,6 @@ bool UISliderSystem::Update()
 
 		if (slider->holding)
 		{
-			DSFLOAT2 offsetSliderPixelCoords = { abs(uiElement->m_BaseImage.baseUI.GetPosition().x + 32.0f) ,
-						   abs(uiElement->m_BaseImage.baseUI.GetPosition().y + 32.0f) };
 
 			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
 			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
@@ -239,20 +247,46 @@ bool UISliderSystem::Update()
 
 			if (uiMouseCoords.x > slider->currentPosition && slider->currentPosition < maxRightPosition - 0.13f)
 			{
-				slider->currentPercentage += 1;
+				slider->currentPercentage += 0.01f;
 				slider->currentPosition += (sliderWidth * 0.01f);
+
 				RedrawUI();
 			}
 
-			if (uiMouseCoords.x  < slider->currentPosition && slider->currentPosition > maxLeftPosition + 0.13f)
+			if (uiMouseCoords.x < slider->currentPosition && slider->currentPosition > maxLeftPosition + 0.13f)
 			{
-				slider->currentPercentage -= 1;
+				slider->currentPercentage -= 0.01f;
 				slider->currentPosition -= (sliderWidth * 0.01f);
 				RedrawUI();
 			}
 
+			if (audioComp != nullptr)
+			{
+				if (uiElement->m_BaseText.m_Text == "Master Volume")
+				{
+					audioComp->groups[MASTER_GROUP]->setVolume(slider->currentPercentage);
+				}
+				if (uiElement->m_BaseText.m_Text == "Voice Volume")
+				{
+					audioComp->groups[VOICE_GROUP]->setVolume(slider->currentPercentage);
+				}
+				if (uiElement->m_BaseText.m_Text == "SFX Volume")
+				{
+					audioComp->groups[SFX_GROUP]->setVolume(slider->currentPercentage);
+				}
+				if (uiElement->m_BaseText.m_Text == "Music Volume")
+				{
+					audioComp->groups[MUSIC_GROUP]->setVolume(slider->currentPercentage);
+				}
+				if (uiElement->m_BaseText.m_Text == "Ambient Volume")
+				{
+					audioComp->groups[AMBIENCE_GROUP]->setVolume(slider->currentPercentage);
+				}
+
+			}
 		}
 
+		std::cout << "Position: " << slider->currentPosition << " | " << slider->currentPercentage * 100.0f << "%" << std::endl;
 		uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(slider->currentPosition, uiElement->m_Images[0].baseUI.GetPosition().y));
 	}
 

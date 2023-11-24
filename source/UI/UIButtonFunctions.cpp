@@ -200,13 +200,11 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 	}
 }
 
-#include <iostream>
 void UIFunctions::Settings::Volume::Press(void* args, int a)
 {
 	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
 
 	slider->holding = true;
-	std::cout << "Press: " << slider->holding << std::endl;
 }
 
 void UIFunctions::Settings::Volume::Release(void* args, int a)
@@ -214,7 +212,6 @@ void UIFunctions::Settings::Volume::Release(void* args, int a)
 	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
 
 	slider->holding = false;
-	std::cout << "Release: " << slider->holding << std::endl;
 }
 
 void UIFunctions::Credits_Back(void* args, int a)
