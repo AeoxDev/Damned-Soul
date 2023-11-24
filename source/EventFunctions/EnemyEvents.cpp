@@ -78,7 +78,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	//Set stats of new boss based on original
 	//float bossHP = bossStats->GetMaxHealth() / 2.f;
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
-	float bossDamage = bossStats->GetDamage() / 2.f;
+	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
 	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health , bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
@@ -242,12 +242,6 @@ void SplitBoss(EntityID& entity, const int& index)
 		CalculateGlobalMapValuesImp(valueGrid);
 	}
 
-
-	/*CreateMini(entity, 5.f * multiplier, 0.f * multiplier, 0);
-	CreateMini(entity, -5.f * multiplier, -2.f * multiplier, 1);
-	CreateMini(entity, 0.f * multiplier, -5.f * multiplier, 2);
-	CreateMini(entity, 2.f * multiplier, 5.f * multiplier, 3);
-	CreateMini(entity, -5.f * multiplier, 2.f * multiplier, 4);*/
 
 
 	free(valueGrid);

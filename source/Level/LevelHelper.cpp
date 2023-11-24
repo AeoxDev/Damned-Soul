@@ -359,11 +359,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			damage = 30.f;
+			damage = 20.f;
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 40.f;
+			damage = 30.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
