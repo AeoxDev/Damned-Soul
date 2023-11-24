@@ -55,7 +55,7 @@ void LoadLevel6()
 	SetupEnemy(EnemyType::minotaur, -50.f, 1.f, 25.f, 2);
 	SetupEnemy(EnemyType::minotaur, -40.f, 1.f, 25.f, 2);
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
-	Stage3IntroScene(cutsceneEnemy, 0);
+	
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));

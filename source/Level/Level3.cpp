@@ -65,7 +65,7 @@ void LoadLevel3()
 	//Doggo to guard the gate
 	SetupEnemy(EnemyType::skeleton, -263, 0.f, 138.f, 0);
 	SetupEnemy(EnemyType::imp, -260.f, 0.f, 134.f, 1);
-	Stage2IntroScene(cutsceneEnemy, 0);
+	
 
 	//Small arena:
 	SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f, 1);

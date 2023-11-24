@@ -58,7 +58,7 @@ void LoadLevel7()
 	SetupEnemy(EnemyType::empoweredImp, -45.f, 1.f, -35.f, 1);
 	SetupEnemy(EnemyType::empoweredHellhound, -32.f, 1.f, 28.f, 2);// make stronger version
 	SetupEnemy(EnemyType::empoweredHellhound, 13.f, 1.f, -12.f, 1);// make stronger version
-	Stage3IntroScene(cutsceneEnemy, 0);
+
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player
