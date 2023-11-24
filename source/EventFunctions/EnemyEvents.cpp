@@ -708,7 +708,7 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = eye;
 	}
-	rarity = rand() % 4;
+	rarity = rand() % 64;
 	if (rarity == 0)
 	{
 		type = minotaur;
