@@ -617,28 +617,31 @@ void RemoveEnemy(EntityID& entity, const int& index)
 void SpawnMainMenuEnemy(EntityID& entity, const int& index)
 {
 	int condition = GetTimedEventCondition(entity, index);
-	switch (condition)
-	{
-	case invalidType:
-		break;
-	case hellhound:
-		RandomPlayerEnemy(hellhound);
-		break;
-	case skeleton:
-		RandomPlayerEnemy(skeleton);
-		break;
-	case eye:
-		RandomPlayerEnemy(eye);
-		break;
-	case imp:
-		RandomPlayerEnemy(imp);
-		break;
-	case tempBoss:
-		RandomPlayerEnemy(tempBoss);
-		break;
-	default:
-		break;
-	}
+	
+	RandomPlayerEnemy((EnemyType)condition);
+
+	//switch (condition)
+	//{
+	//case invalidType:
+	//	break;
+	//case hellhound:
+	//	RandomPlayerEnemy(hellhound);
+	//	break;
+	//case skeleton:
+	//	RandomPlayerEnemy(skeleton);
+	//	break;
+	//case eye:
+	//	RandomPlayerEnemy(eye);
+	//	break;
+	//case imp:
+	//	RandomPlayerEnemy(imp);
+	//	break;
+	//case tempBoss:
+	//	RandomPlayerEnemy(tempBoss);
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
@@ -660,10 +663,35 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = eye;
 	}
+	rarity = rand() % 4;
+	if (rarity == 0)
+	{
+		type = minotaur;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredSkeleton;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredImp;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredSkeleton;
+	}
 	rarity = rand() % 4096;
 	if (rarity == 0)
 	{
 		type = tempBoss;
+	}
+	rarity = rand() % 4096;
+	if (rarity == 0)
+	{
+		type = lucifer;
 	}
 	float time = 0.05f * (float)(rand() % 64);
 	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
