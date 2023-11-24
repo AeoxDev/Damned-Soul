@@ -184,7 +184,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			mass = 80.f;
+			mass = 300.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -192,11 +192,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 	}
 	if (health == 6969.f)
@@ -356,7 +356,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 60.f;
+			damage = 40.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -463,6 +463,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scaleX = 4;
 		scaleY = 4;
 		scaleZ = 4;
+	}
+	else if (eType == EnemyType::hellhound || eType == EnemyType::frozenHellhound || eType == EnemyType::empoweredHellhound)
+	{
+		scaleX = 1.f;
+		scaleY = 1.f;
+		scaleZ = 1.f;
+	}
+	else if (eType == EnemyType::lucifer)
+	{
+		scaleX = 3.f;
+		scaleY = 3.f;
+		scaleZ = 3.f;
 	}
 
 	transform.mass = mass;
@@ -619,7 +631,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
 
-		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
+ 		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
 			player->killThreshold+=5;
@@ -810,6 +822,9 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->positionX = positionX;
 	playerTransform->positionY = positionY;
 	playerTransform->positionZ = positionZ;
+	playerTransform->scaleX = scaleX; //We never actually set these before :)
+	playerTransform->scaleY = scaleY;
+	playerTransform->scaleZ = scaleZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(stateManager.player);
@@ -901,7 +916,8 @@ void ReloadPlayerNonGlobals()
 	if (playerTransform == nullptr)
 	{
 		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
-		playerTransform->mass = 3.0f;
+		playerTransform->mass = 80.0f; //We set this to 80 normally, but here this was 3, oof
+		playerTransform->scaleX = playerTransform->scaleY = playerTransform->scaleZ = 1.f;
 	}
 	playerTransform->currentSpeedX = 0.0f;
 	playerTransform->currentSpeedZ = 0.0f;

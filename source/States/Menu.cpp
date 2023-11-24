@@ -57,33 +57,6 @@ void Menu::Setup()
 	SetHitboxIsPlayer(enemy, 1, true);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);*/
 
-	//Randomize enemies on screen max 12 of each'
-	for (size_t i = 0; i < 12; i++)
-	{
-		if (rand() % 16 == 0)//Dog, rare
-			RandomPlayerEnemy(hellhound);
-	}
-	//Randomize enemies on screen max 6 of each'
-	for (size_t i = 0; i < 12; i++)
-	{
-		if (rand() % 8 == 0)//imp, uncommon
-			RandomPlayerEnemy(imp);
-	}
-
-	for (size_t i = 0; i < 12; i++)
-	{
-		if (rand() % 32 == 0)//Eye, very rare
-			RandomPlayerEnemy(eye);
-	}
-
-	for (size_t i = 0; i < 12; i++)
-	{
-		if (rand() % 2 == 0)//Skeleton, common
-			RandomPlayerEnemy(skeleton);
-	}
-	if (rand() % 4096 == 0)//Boss, Pokemon Shiny rarity :)
-		RandomPlayerEnemy(tempBoss);
-	
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
