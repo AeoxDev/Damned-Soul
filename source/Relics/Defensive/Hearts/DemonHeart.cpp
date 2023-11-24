@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_HEART_HEALTH_INCREASE 40
+#define DEMON_HEART_HEALTH_INCREASE 45
 
 EntityID DEMON_HEART::_OWNER;
 

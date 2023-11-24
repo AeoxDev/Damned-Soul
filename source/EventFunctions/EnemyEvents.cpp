@@ -237,7 +237,8 @@ void SplitBoss(EntityID& entity, const int& index)
 	for (int i = 0; i < 3; ++i)
 	{
 		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
-		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ);
+		// These skeletons should NOT produce souls
+		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 		CalculateGlobalMapValuesImp(valueGrid);
 	}
 
