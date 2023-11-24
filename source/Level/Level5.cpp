@@ -41,21 +41,24 @@ void LoadLevel5()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f); // make stronger skeleton
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -40.f, 0.f, -45.f); // make stronger skeleton
-	SetupEnemy(EnemyType::hellhound, 35.f, 0.f, 25.f);  
-	SetupEnemy(EnemyType::hellhound, 15.f, 0.f, -45.f); 
-	SetupEnemy(EnemyType::hellhound, 35.f, 1.f, 45.f); 
-	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f); 
-	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::empoweredSkeleton, 40.f, 0.f, 64.f); // make stronger skeleton
+	SetupEnemy(EnemyType::empoweredSkeleton, -69.f, 0.f, 34.f); // make stronger skeleton
+	SetupEnemy(EnemyType::empoweredSkeleton, -105.f, 0.f, 100.f); // make stronger skeleton
+	SetupEnemy(EnemyType::empoweredSkeleton, -144.f, 0.f, 204.f); // make stronger skeleton
+	SetupEnemy(EnemyType::empoweredSkeleton, -281.f, 0.f, 19.f); // make stronger skeleton
+	SetupEnemy(EnemyType::empoweredSkeleton, -295.f, 0.f, 12.f); // make stronger skeleton
+
+	SetupEnemy(EnemyType::hellhound, -115.f, 0.f, 173.f); // make stronger skeleton
+	SetupEnemy(EnemyType::hellhound, -2.f, 0.f, 169.f); // make stronger skeleton
+	SetupEnemy(EnemyType::hellhound, -38.f, 0.f, 66.f); // make stronger skeleton
+
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -.4f, 0.f, 75.f); // make stronger skeleton
+	SetupEnemy(EnemyType::eye, -333.f, 0.f, 118.f); // make stronger skeleton
+	SetupEnemy(EnemyType::eye, -347.f, 0.f, 196.f); // make stronger skeleton
+
+
 	
 
-	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -86,7 +89,7 @@ void LoadLevel5()
 	float greenLight = 0.05f;
 	float blueLight = 0.05f;
 
-	SetDirectionLight(0.666f, 1.0f, .666f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -135,4 +138,6 @@ void LoadLevel5()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

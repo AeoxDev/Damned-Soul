@@ -27,9 +27,7 @@ void SetInMainMenu(bool value)
 {
 	if (value)
 	{
-		currentStates = (State)(currentStates | State::InMainMenu);
-
-		if (currentStates != (State)(currentStates | State::InSettings))
+		if (currentStates != (State)(currentStates | State::InSettings) && currentStates != (State)(currentStates | State::InCredits)) //All main menu specific states.
 		{
 			for (auto entity : View<AudioEngineComponent>(registry))
 			{
@@ -39,8 +37,11 @@ void SetInMainMenu(bool value)
 				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 				audioJungle->HandleSound();
 				backgroundMusic->Play(Music_Title, Channel_Base);
+				audioJungle->HandleSound();
 			}
 		}
+
+		currentStates = (State)(currentStates | State::InMainMenu);
 	}
 	else
 	{
@@ -98,6 +99,16 @@ void SetInShop(bool value)
 	if (value)
 	{
 		currentStates = (State)(currentStates | State::InShop);
+		for (auto entity : View<AudioEngineComponent>(registry))
+		{
+			SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+			backgroundMusic->Stop(Channel_Base);
+			backgroundMusic->Stop(Channel_Extra);
+			AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+			audioJungle->HandleSound();
+			backgroundMusic->Play(Music_Shop, Channel_Base);
+			audioJungle->HandleSound();
+		}
 	}
 	else
 	{
@@ -139,7 +150,6 @@ int StateManager::Setup()
 	// Background OST
 	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
 	titleTheme->Load(MUSIC);
-	titleTheme->Play(Music_Title, Channel_Base);
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
@@ -214,6 +224,7 @@ int StateManager::Setup()
 	systems.push_back(new PointOfInterestSystem());
 
 	//Audio (Needs to be close to last)
+	systems.push_back(new StageVoiceLineSystem());
 	systems.push_back(new AudioSystem());
 
 	// Updating UI Elements (Needs to be last)

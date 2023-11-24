@@ -35,5 +35,6 @@ void MEMBERSHIP::Discount(void* data)
 	// Get the input
 	RelicInput::OnPriceCalculation* input = (RelicInput::OnPriceCalculation*)data;
 
-	input->everythingCostMult *= MEMBERSHIP_COST_MULT;
+	input->healCostMult *= MEMBERSHIP_COST_MULT;
+	input->upgradeCost *= MEMBERSHIP_COST_MULT;
 }

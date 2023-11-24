@@ -13,52 +13,77 @@
 EntityID SetUpStage(StageSetupVariables& stageVars)
 {
 	EntityID stage = registry.CreateEntity();
-	EntityID wall = registry.CreateEntity();
 	EntityID hitbox = registry.CreateEntity();
 	EntityID gate = registry.CreateEntity();
-	EntityID noclip = registry.CreateEntity();//Decorations
 	ModelBonelessComponent* stageModel;
-	ModelBonelessComponent* wallModel;
 	ModelBonelessComponent* hitboxModel;
 	ModelBonelessComponent* gateModel;
-	ModelBonelessComponent* noclipModel;
 	switch (stageVars.stageNr)
 	{
 	case 0:
-		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Floor.mdl"));
-		wallModel = registry.AddComponent<ModelBonelessComponent>(wall, LoadModel("LV1Walls.mdl"));
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
-		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV1Noclip.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
 
 		break;
 	case 1:
-		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Floor.mdl"));
-		wallModel = registry.AddComponent<ModelBonelessComponent>(wall, LoadModel("LV1Walls.mdl"));
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
-		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV1Noclip.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 2:
-		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV2Floor.mdl"));
-		wallModel = registry.AddComponent<ModelBonelessComponent>(wall, LoadModel("LV2Wall.mdl"));
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV2Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV2Gate.mdl"));
-		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV2Noclip.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV2Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 3:
-		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV3Floor.mdl"));
-		wallModel = registry.AddComponent<ModelBonelessComponent>(wall, LoadModel("LV3Walls.mdl"));
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV3Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV3Gate.mdl"));
-		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV3Noclip.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV3Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.7f, .5f, -1.6f, -3.0f, 1.0f);
+		
 		break;
 	case 4:
-		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV4Floor.mdl"));
-		wallModel = nullptr;
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV4Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV4Gate.mdl"));
-		noclipModel = registry.AddComponent<ModelBonelessComponent>(noclip, LoadModel("LV4Noclip.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV4Hitbox.mdl"));
+		SetDirectionLight(1.0f, 0.666f, .466f, -1.6f, -3.0f, 1.0f);
+		
+		break;
+	case 5:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV5Geo.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
+		SetDirectionLight(0.666f, 1.0f, .666f, -1.6f, -3.0f, 1.0f);
+		
+		break;
+	case 6:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV6Geo.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV6Gate.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
+		SetDirectionLight(0.666f, 0.666f, 1.0f, -1.6f, -3.0f, 1.0f);
+		break;
+	case 7:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV7Geo.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV7Gate.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV7Hitbox.mdl"));
+		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
+		break;
+	case 8:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV8Geo.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV8Gate.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV8Hitbox.mdl"));
+		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
+		break;
+	case 9:
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV9Geo.mdl"));
+		gateModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV9Hitbox.mdl"));
+		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	default:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
@@ -86,11 +111,9 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	transform->positionX = stageVars.offsetX;
 	transform->positionY = stageVars.offsetY;
 	transform->positionZ = stageVars.offsetZ;
-	TransformComponent* transformW = registry.AddComponent<TransformComponent>(wall, transform);
 	TransformComponent* transformG = registry.AddComponent<TransformComponent>(gate, transform);
-	TransformComponent* transformN = registry.AddComponent<TransformComponent>(noclip, transform);
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
-	RenderGeometryIndependentCollision(stage, wall, hitbox);
+	RenderGeometryIndependentCollision(stage, gate, hitbox);
 
 	
 	
@@ -184,7 +207,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			mass = 80.f;
+			mass = 300.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -192,11 +215,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
-			mass = 500.f;
+			mass = 666.f;
 		}
 	}
 	if (health == 6969.f)
@@ -256,22 +279,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 61.f; //same as eye fuck it
 		}
-	}
-	else if (eType == EnemyType::tempBoss) // if we want a weaker version of the boss later in game, we can specify the health
-	{
-		
-		float partHealth = health / 5.f; // this times 5 is the full starting strength
-		health = 0;
-		if (zacIndex0)
-			health += partHealth;
-		if (zacIndex1)
-			health += partHealth;
-		if (zacIndex2)
-			health += partHealth;
-		if (zacIndex3)
-			health += partHealth;
-		if (zacIndex4)
-			health += partHealth;
 	}
 	if (moveSpeed == 6969.f)
 	{
@@ -356,7 +363,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 60.f;
+			damage = 40.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -463,6 +470,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scaleX = 4;
 		scaleY = 4;
 		scaleZ = 4;
+	}
+	else if (eType == EnemyType::hellhound || eType == EnemyType::frozenHellhound || eType == EnemyType::empoweredHellhound)
+	{
+		scaleX = 1.f;
+		scaleY = 1.f;
+		scaleZ = 1.f;
+	}
+	else if (eType == EnemyType::lucifer)
+	{
+		scaleX = 3.f;
+		scaleY = 3.f;
+		scaleZ = 3.f;
 	}
 
 	transform.mass = mass;
@@ -619,7 +638,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(SKELETON);
 
-		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
+ 		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
 		{
 			player->killThreshold+=5;
@@ -673,6 +692,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(HELLHOUND);
 		if (eType == EnemyType::frozenHellhound)
 		{
 			behev->type = EnemyType::frozenHellhound;
@@ -685,7 +705,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			behev->type = EnemyType::frozenEye;
 		}
-		scp->Load(HELLHOUND);
 	}
 	else if (eType == EnemyType::empoweredHellhound)
 	{
@@ -810,6 +829,9 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->positionX = positionX;
 	playerTransform->positionY = positionY;
 	playerTransform->positionZ = positionZ;
+	playerTransform->scaleX = scaleX; //We never actually set these before :)
+	playerTransform->scaleY = scaleY;
+	playerTransform->scaleZ = scaleZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(stateManager.player);
@@ -901,12 +923,14 @@ void ReloadPlayerNonGlobals()
 	if (playerTransform == nullptr)
 	{
 		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
-		playerTransform->mass = 3.0f;
+		playerTransform->mass = 80.0f; //We set this to 80 normally, but here this was 3, oof
+		playerTransform->scaleX = playerTransform->scaleY = playerTransform->scaleZ = 1.f;
 	}
 	playerTransform->currentSpeedX = 0.0f;
 	playerTransform->currentSpeedZ = 0.0f;
 	playerTransform->positionX = 0.0f;
 	playerTransform->positionZ = 0.0f;
+	playerTransform->positionY = 0.0f;
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(stateManager.player);
 	if (controller == nullptr)
@@ -921,7 +945,11 @@ void ReloadPlayerNonGlobals()
 		cameraPoint->weight = 10.0f;
 	}
 	ReleaseTimedEvents(stateManager.player);
-	registry.GetComponent<TimedEventComponent>(stateManager.player);
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
+	if (hitbox)
+	{
+		registry.RemoveComponent<HitboxComponent>(stateManager.player);
+	}
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
 
@@ -942,8 +970,10 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	}
 	do
 	{
-		gridPos.x = (int)(((float)GI_TEXTURE_DIMENSIONS * 0.33f) + ((float)(rand() % GI_TEXTURE_DIMENSIONS) * 0.33f));
-		gridPos.z = (int)(((float)GI_TEXTURE_DIMENSIONS * 0.33f) + ((float)(rand() % GI_TEXTURE_DIMENSIONS) * 0.33f));
+		//gridPos.x = (int)(((float)GI_TEXTURE_DIMENSIONS * 0.33f) + ((float)(rand() % GI_TEXTURE_DIMENSIONS) * 0.33f));
+		//gridPos.z = (int)(((float)GI_TEXTURE_DIMENSIONS * 0.33f) + ((float)(rand() % GI_TEXTURE_DIMENSIONS) * 0.33f));
+		gridPos.x = rand() % GI_TEXTURE_DIMENSIONS;
+		gridPos.z = rand() % GI_TEXTURE_DIMENSIONS;
 		
 		pixelValue = giTexture->texture[gridPos.z][gridPos.x];
 	} while (pixelValue != 1);

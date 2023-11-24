@@ -28,7 +28,7 @@ struct MinotaurBehaviour
 	float jumpBuildUpDuration = 0.4f;
 	float jumpBuildUpTimer = 0.0f;
 
-	float jumpStunDuration = 1.5f;
+	float jumpStunDuration = 2.0f;
 	float jumpStunTimer = jumpStunDuration;
 
 	//used for determening how long the minotaur has been in the air and for how long he should be in the air

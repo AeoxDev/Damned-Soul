@@ -14,7 +14,8 @@ struct ImpBehaviour
 	float aimDuration = 0.4f;
 	float facingX = 0.0f;
 	float facingZ = 0.0f;
-
+	float maxAttackRange = 50.f;
+	
 	int specialCounter = 0;		//how many attacks since last special
 	int specialBreakpoint = 4;	//how many attacks are needed for next special
 

@@ -17,7 +17,7 @@ namespace Combat
 	void DashHitInteraction(EntityID& attacker, StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats);
 
 	// Damage an entity and apply a damage flash. No relics are applied.
-	void HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage);
+	void HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage, float time = 1.0f, bool isPlayer = false);
 
 	// Apply a damage flash according to an instance of (hypothetical) damage
 	void DamageFlash(EntityID& defender, const float damage);

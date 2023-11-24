@@ -7,10 +7,12 @@
 enum StaticHazardType
 {
 	NO_HAZARD_TYPE,
+	HAZARD_WALL = 0,
 	HAZARD_LAVA = 2,
 	HAZARD_CRACK = 3,
 	HAZARD_ACID = 4,
-	HAZARD_ICE = 5
+	HAZARD_ICE = 5,
+	HAZARD_GATE = 6
 };
 
 //This does not need to be in the same entity for GI to see it.

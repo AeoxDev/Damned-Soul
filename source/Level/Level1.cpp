@@ -37,20 +37,18 @@ void LoadLevel1()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 	SetGISpawnPosition(-0.0f, -0.0f);
-	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -224.f, 0.f, -32.f);
-	SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
-	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
-	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
-	SetupEnemy(EnemyType::skeleton, -205.0f, 0.f, 88.f);
+	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
 
-	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);
-	SetupEnemy(EnemyType::skeleton, -94.0f, 0.f, 54.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
+	SetupEnemy(EnemyType::skeleton, -204.0f, 0.f, 82.f);
+	SetupEnemy(EnemyType::skeleton, -222.0f, 0.f, 28.f);
+	SetupEnemy(EnemyType::skeleton, -230.0f, 0.f, -26.f);
 
-	
+	SetupEnemy(EnemyType::skeleton, -180.0f, 0.f, -24.f);
+	SetupEnemy(EnemyType::skeleton, -121.0f, 0.f, 61.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -111.0f, 0.f, 104.f);
+
+	//CutsceneFallStage1(stateManager.player, 0);
 
 
 	
@@ -71,7 +69,7 @@ void LoadLevel1()
 	mousePointOfInterset->mode = POI_MOUSE;
 
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
-	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
@@ -88,6 +86,6 @@ void LoadLevel1()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.0f, Stage1IntroScene, 0, 1);
-	//Stage1IntroScene(cutsceneEnemy, 0);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f+0.3f+0.1f, Stage1IntroScene,CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }
