@@ -310,7 +310,7 @@ void PlayerAttack(EntityID& entity, const int& index)
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
 	}
-	else
+	else if(animTime >= HITBOX_START_TIME)
 	{
 		float softCollisionRadius = GetHitboxRadius(entity, 1);
 		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);

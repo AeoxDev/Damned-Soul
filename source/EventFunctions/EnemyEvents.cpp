@@ -222,7 +222,7 @@ void SplitBoss(EntityID& entity, const int& index)
 			partsAlive++;
 		}
 	}
-	health = originalStats->GetMaxHealth();
+	health = (float)originalStats->GetMaxHealth();
 	health = health / (float)partsAlive * 5.f;
 
 	for (int i = 0; i < 5; ++i)

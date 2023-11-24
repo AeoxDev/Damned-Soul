@@ -245,7 +245,7 @@ void CalculateGlobalMapValuesZac(PathfindingMap* map)
 	//return returnMap;
 }
 
-float CalculateEuclideanDistanceWorldSpace(int x, int z, Node goal)
+float CalculateEuclideanDistanceWorldSpace(float x, float z, Node goal)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 	GridPosition nodePos;
@@ -499,7 +499,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace((int)temporaryTransform->positionX, (int)temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
 	}
 	
 	
@@ -543,7 +543,7 @@ TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent*
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace((int)temporaryTransform->positionX, (int)temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
 	}
 
 

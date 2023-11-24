@@ -40,22 +40,26 @@ void LoadLevel6()
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, 1.5f, 1.f, 192.f); // make minitaur
+	SetupEnemy(EnemyType::minotaur, -280.f, 1.f, 378.f);// make minitaur
+	SetupEnemy(EnemyType::minotaur, -446.f, 1.f, 285.f);// make minitaur and cutscene 
+
+	SetupEnemy(EnemyType::eye, -387.f, 0.f, 357.f);
+	SetupEnemy(EnemyType::eye, 244.f, 0.f, 170.f);
+
+	SetupEnemy(EnemyType::empoweredImp, -379.f, 1.f, 404.f); //  stronger version incoming
+	SetupEnemy(EnemyType::empoweredImp, -441.f, 1.f, 357.f); //  stronger version incoming
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::imp, 35.f, 1.f, 45.f); //  stronger version incoming
-	SetupEnemy(EnemyType::imp, -25.f, 1.f, -35.f); //  stronger version incoming
-	//SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f); // make minitaur
-	//SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);// make minitaur
-	//SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);// make minitaur and cutscene
-	Stage3IntroScene(cutsceneEnemy, 0);
+	SetupEnemy(EnemyType::skeleton, -32.f, 0.f, 52.f);
+	SetupEnemy(EnemyType::skeleton, 9.f, 0.f, 52.f);
+	SetupEnemy(EnemyType::skeleton, -289.f, 0.f, 245.f);
+	SetupEnemy(EnemyType::skeleton, 341.f, 0.f, 179.f);
+	SetupEnemy(EnemyType::skeleton, -457.f, 0.f, 185.f);
+	SetupEnemy(EnemyType::skeleton, -303.f, 0.f, 331.f);
+
+
+
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -87,7 +91,7 @@ void LoadLevel6()
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;
 
-	SetDirectionLight(0.666f, 0.666f, 1.0f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -168,4 +172,6 @@ void LoadLevel6()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

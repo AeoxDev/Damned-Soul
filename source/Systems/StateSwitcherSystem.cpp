@@ -4,6 +4,7 @@
 #include "Registry.h"
 #include "EventFunctions.h"
 #include "States\StateManager.h"
+#include "CollisionFunctions.h"
 
 
 bool StateSwitcherSystem::Update()
@@ -94,7 +95,7 @@ bool StateSwitcherSystem::Update()
 						case 2:
 							otherSfx->Play(Player_HellYeah, Channel_Extra);
 							break;
-						}
+						}	
 					}
 					break;
 				}
@@ -136,10 +137,20 @@ bool StateSwitcherSystem::Update()
 		}
 		if (/*playersComp->killingSpree >= playersComp->killThreshold*/(GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop))
 		{
-			playersComp->portalCreated = true;
-			EntityID portal = registry.CreateEntity();
 			SetGodModePortal(false);
-			AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
+			playersComp->portalCreated = true;
+			if (stateManager.activeLevel == stateManager.finalLevel)//Final stage
+			{
+				OnCollisionParameters c = { 0 };
+				c.entity2 = stateManager.player;
+				LoadNextLevel(c);
+			}
+			else
+			{
+				EntityID portal = registry.CreateEntity();
+				AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
+
+			}
 
 			//If it's on the split boss stage play a voice line from the player.
 			if (stateManager.activeLevel == 7)

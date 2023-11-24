@@ -11,7 +11,7 @@
 #include "UIRenderer.h"
 #include "UIComponents.h"
 #include "Input.h"
-
+#include "Camera.h"
 #include "MemLib/ML_Map.hpp"
 
 #include <random>
@@ -353,6 +353,11 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		ResetInput();
 
 		UnloadEntities(ENT_PERSIST_PAUSE);
+		if (Camera::InCutscene() == true)
+		{
+			TimedEventIgnoreGamespeed(true);
+			gameSpeed = 0.0f;
+		}
 	}
 	else
 	{
@@ -364,7 +369,11 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
-
+		if (Camera::InCutscene() == true)
+		{
+			TimedEventIgnoreGamespeed(true);
+			gameSpeed = 0.0f;
+		}
 		UnloadEntities(ENT_PERSIST_PAUSE);
 	}
 }

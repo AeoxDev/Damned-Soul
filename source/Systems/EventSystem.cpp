@@ -284,9 +284,10 @@ void ReleaseTimedEvents(EntityID& entity)
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
 	if (comp)
 	{
-		//registry.RemoveComponent<TimedEventComponent>(entity);
 		comp->timedEvents.~ML_Vector();
+		registry.RemoveComponent<TimedEventComponent>(entity);
 	}
+	
 }
 
 void HardResetTimedEvents(EntityID& entity)

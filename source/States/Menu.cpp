@@ -30,7 +30,8 @@ void Menu::Setup()
 	Camera::ResetCamera();
 
 	ResetRunTime();
-	int random = rand() % 5;//Level 1, 2, 3, 4
+	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
+	int random = rand() % 10;//Level 1 thorugh 9
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;
@@ -42,7 +43,6 @@ void Menu::Setup()
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
 
 
-	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
 
 	/*char ctexture[] = "3-1C.png";
 	char ltexture[] = "3-1L.png";
@@ -110,6 +110,17 @@ void Menu::Setup()
 		stageP->height = -0.2f * CAMERA_OFFSET_Y;
 		poiPoint->positionX = -142.0f;
 		poiPoint->positionZ = 72.0f;
+		break;
+	case 4://level 3
+		CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+		CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		stageP->rotationRadius = -0.8f * CAMERA_OFFSET_Z;
+		stageP->height = -0.2f * CAMERA_OFFSET_Y;
+		poiPoint->positionX = -103.666f;
+		poiPoint->positionZ = 66.6f;
 		break;
 	default:
 		CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level

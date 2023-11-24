@@ -281,7 +281,7 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 						updateGridOnce = true; //illegal grid
 						return;
 					}
-					TransformComponent landingPosition = FindRetreatTile(valueGrid, ptc, 10.f, 20.f); // where to land
+					TransformComponent landingPosition = FindRetreatTile(valueGrid, ptc, 10.f, 35.f); // where to land
 					mc->hasLandingPos = true;
 					mtc->positionX = landingPosition.positionX; //teleport in the air basically
 					mtc->positionZ = landingPosition.positionZ; // happens once
