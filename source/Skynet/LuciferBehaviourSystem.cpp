@@ -185,6 +185,8 @@ bool LuciferBehaviourSystem::Update()
 			float distance = Calculate2dDistance(luciferTransformComponent->positionX, luciferTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			luciferComponent->attackStunDurationCounter += GetDeltaTime();
 
+			
+
 			if (distance > 100.f)
 			{
 				luciferComponent->dazeCounter = 0.f;
@@ -201,7 +203,7 @@ bool LuciferBehaviourSystem::Update()
 			
 
 			//time to stop charging?
-			if (luciferComponent->chargeBehevCounter >= luciferComponent->chargeBehevCounterTiming || enemyStats->GetHealth() <= luciferComponent->limitHP)
+			if ((luciferComponent->chargeBehevCounter >= luciferComponent->chargeBehevCounterTiming || enemyStats->GetHealth() <= luciferComponent->limitHP) && luciferComponent->isAttacking == false)
 			{
 				luciferComponent->isChargeCharge = false;
 				luciferComponent->chargeBehevCounter = 0.f;
@@ -223,7 +225,7 @@ bool LuciferBehaviourSystem::Update()
 				{
 					luciferComponent->heroLandingCounter += GetDeltaTime();
 
-					if (luciferComponent->heroLandingCounter < 0.65f)
+					if (luciferComponent->heroLandingCounter < 0.65f && luciferComponent->dazedFromFly)
 					{
 						enemyAnim->aAnim = ANIMATION_WALK;
 						enemyAnim->aAnimIdx = 2;
@@ -235,12 +237,40 @@ bool LuciferBehaviourSystem::Update()
 					else
 					{
 						luciferTransformComponent->positionY = 0.f;
+						enemyAnim->aAnim = ANIMATION_IDLE;
+						enemyAnim->aAnimIdx = 1;
+						enemyAnim->aAnimTimeFactor = 1.0f;
+
+						enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+						ANIM_BRANCHLESS(enemyAnim);
+						luciferComponent->dazedFromFly = false;
 					}
 					//SetHitboxActive(enemyEntity, luciferComponent->hitBoxID, false); // to not make player rage
 					//SetHitboxCanDealDamage(enemyEntity, luciferComponent->hitBoxID, false);
 					continue; // skip, do nothing. Just stand still and be dazed
 					////maybe play dazed anymation in this scope?
 				}
+			}
+
+			if (luciferComponent->isSpawning)
+			{
+				luciferComponent->spawnTimer += GetDeltaTime();
+
+				if (luciferComponent->spawnTimer < luciferComponent->spawnTimeLimit)
+				{
+					enemyAnim->aAnim = ANIMATION_IDLE;
+					enemyAnim->aAnimIdx = 0;
+					enemyAnim->aAnimTimeFactor = 1.0f;
+
+					enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+					ANIM_BRANCHLESS(enemyAnim);
+				}
+				else
+				{
+					luciferComponent->isSpawning = false;
+				}
+
+				continue;
 			}
 
 			if (luciferComponent->attackStunDurationCounter <= luciferComponent->attackStunDuration) 
@@ -251,6 +281,10 @@ bool LuciferBehaviourSystem::Update()
 				//enemyAnim->aAnimTime += (float)(enemyAnim->aAnimTime < 1.0f) * GetDeltaTime();
 				//Turn yellow for opening:
 				//rotate here
+				luciferComponent->goalDirectionX = playerTransformCompenent->positionX - luciferTransformComponent->positionX;
+				luciferComponent->goalDirectionZ = playerTransformCompenent->positionZ - luciferTransformComponent->positionZ;
+				SmoothRotation(luciferTransformComponent, luciferComponent->goalDirectionX, luciferComponent->goalDirectionZ, 4.f);
+
 				continue;
 			}
 			else//Elliot: Turn off attack hitbox to not make player rage.
@@ -263,6 +297,8 @@ bool LuciferBehaviourSystem::Update()
 			if (luciferComponent->nextSpecialIsSpawn && luciferComponent->isAttacking == false) // SPAWN ENEMIES
 			{
 				luciferComponent->nextSpecialIsSpawn = false;
+				luciferComponent->spawnTimer = 0.f;
+				luciferComponent->isSpawning = true;
 				//spawn an ice enemy
 				int levelOfDamage = 0;
 
@@ -373,10 +409,11 @@ bool LuciferBehaviourSystem::Update()
 						//reset variables to beheaviour. No more jump, get dazed
 						luciferComponent->isJumpJump = false;
 						luciferComponent->isDazed = true;
+						luciferComponent->dazedFromFly = true;
 						SetHitboxActive(enemyEntity, 0, true);
 						SetHitboxActive(enemyEntity, 1, true);
 						SetHitboxActive(enemyEntity, 2, true);
-						luciferTransformComponent->positionY = 00.f;
+						luciferTransformComponent->positionY = 0.f;
 						luciferComponent->nextSpecialIsSpawn = true;
 
 
@@ -389,7 +426,7 @@ bool LuciferBehaviourSystem::Update()
 			{
 				CombatBehaviour(luciferComponent, enemyStats, playerStats, playerTransformCompenent, luciferTransformComponent, enemyEntity, enemyAnim);
 			}
-			else if(luciferComponent->isChargeCharge) // chase behaviour or jump jump
+			else if(luciferComponent->isChargeCharge && luciferComponent->isAttacking == false) // chase behaviour or jump jump
 			{
 				if (luciferComponent->updatePathCounter >= luciferComponent->updatePathLimit)
 				{

@@ -41,7 +41,10 @@ struct LuciferBehaviour
 	//special attacks variables
 	bool nextSpecialIsSpawn = true;
 	bool isChargeCharge = false;
-	bool isJumpJump = false; 
+	bool isJumpJump = false;
+	bool isSpawning = false;
+	float spawnTimeLimit = 1.f;
+	float spawnTimer = 0.f;
 
 
 	// MELEE VARIABLES
@@ -57,6 +60,7 @@ struct LuciferBehaviour
 	bool hasLandingPos = false;
 	float heroLandingTiming = 0.2f;
 	float heroLandingCounter = 0.f;
+	bool dazedFromFly = false;
 
 	bool isAttacking = false; // please for the love of god, DO NOT TOUCH THIS
 	
