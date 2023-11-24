@@ -211,25 +211,19 @@ bool UIRunTimeSystem::Update()
 	return true;
 }
 
-
-#include <iostream>
 bool UISliderSystem::Update()
 {
 	AudioEngineComponent* audioComp = nullptr;
 
 	for (auto audio : View<AudioEngineComponent>(registry))
-	{
 		audioComp = registry.GetComponent<AudioEngineComponent>(audio);
-	}
-
 
 	for (auto entity : View<UISettingsSliderComponent, UIComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(entity);
 
-		DSFLOAT2 uiMouseCoords = { (((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)) / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-							-1 * ((((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+		float uiMouseCoords = (((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)) / (0.5f * sdl.BASE_WIDTH)) - 1.0f;
 
 		if (slider->holding)
 		{
@@ -245,7 +239,7 @@ bool UISliderSystem::Update()
 			if (slider->currentPosition <= maxLeftPosition + 0.13f)
 				slider->currentPosition = maxLeftPosition + 0.13f;
 
-			if (uiMouseCoords.x > slider->currentPosition && slider->currentPosition < maxRightPosition - 0.13f)
+			if (uiMouseCoords > slider->currentPosition && slider->currentPosition < maxRightPosition - 0.13f)
 			{
 				slider->currentPercentage += 0.01f;
 				slider->currentPosition += (sliderWidth * 0.01f);
@@ -253,10 +247,11 @@ bool UISliderSystem::Update()
 				RedrawUI();
 			}
 
-			if (uiMouseCoords.x < slider->currentPosition && slider->currentPosition > maxLeftPosition + 0.13f)
+			if (uiMouseCoords < slider->currentPosition && slider->currentPosition > maxLeftPosition + 0.13f)
 			{
 				slider->currentPercentage -= 0.01f;
 				slider->currentPosition -= (sliderWidth * 0.01f);
+
 				RedrawUI();
 			}
 
@@ -286,7 +281,6 @@ bool UISliderSystem::Update()
 			}
 		}
 
-		std::cout << "Position: " << slider->currentPosition << " | " << slider->currentPercentage * 100.0f << "%" << std::endl;
 		uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(slider->currentPosition, uiElement->m_Images[0].baseUI.GetPosition().y));
 	}
 
