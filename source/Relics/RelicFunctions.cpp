@@ -43,6 +43,7 @@
 
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
+#include "Relics\Gadget\GaleAmulet.h"
 #include "Relics\Gadget\LightningGod.h"
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
@@ -50,6 +51,7 @@
 #include "Relics\Gadget\FrozenMaul.h"
 #include "Relics\Gadget\Discount\ExploitableCoupon.h"
 #include "Relics\Gadget\Discount\Membership.h"
+#include "Relics\Gadget\Discount\SuccubusCharm.h"
 #include "Relics\Gadget\Discount\SeeingDouble.h"
 #include "Relics\Gadget\DashFlash.h"
 #include "Relics\Gadget\QuickReflexes.h"
@@ -138,7 +140,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Cracked Lense",
 				/*Filepath*/	"RelicIcons\\Cracked_Lense",
 				/*Description*/	CRACKED_LENSE::Description(),
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	CRACKED_LENSE::Initialize
 			),
@@ -162,7 +164,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Life Steal",
 				/*Filepath*/	"RelicIcons\\Life_Steal",
 				/*Description*/	LIFE_STEAL::Description(),//"You heal for 15% of the damage you deal",
-				/*Price*/		10,
+				/*Price*/		12,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	LIFE_STEAL::Initialize
 			),
@@ -218,7 +220,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Power Strike",
 				/*Filepath*/	"RelicIcons\\Power_Strike",
 				/*Description*/	POWER_STRIKE::Description(),
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	POWER_STRIKE::Initialize
 			),
@@ -230,7 +232,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Demon Heart",
 				/*Filepath*/	"RelicIcons\\Demon_Heart",
 				/*Description*/	DEMON_HEART::Description(),//"Increases your Maximum Health by 25",
-				/*Price*/		10,
+				/*Price*/		12,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_HEART::Initialize
 			),
@@ -246,7 +248,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Molten Heart",
 				/*Filepath*/	"RelicIcons\\Molten_Heart",
 				/*Description*/	MOLTEN_HEART::Description(),//"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	MOLTEN_HEART::Initialize
 			),
@@ -254,7 +256,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Mummified Heart",
 				/*Filepath*/	"RelicIcons\\Mummified_Heart",
 				/*Description*/	MUMMIFIED_HEART::Description(),//"Increases your Maximum Health by 15",
-				/*Price*/		5,
+				/*Price*/		4,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	MUMMIFIED_HEART::Initialize
 			),
@@ -302,7 +304,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Pain Mirror",
 				/*Filepath*/	"RelicIcons\\Pain_Mirror",
 				/*Description*/	PAIN_MIRROR::Description(),//"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
-				/*Price*/		10,
+				/*Price*/		9,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	PAIN_MIRROR::Initialize
 			),
@@ -334,7 +336,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Last Stand",
 				/*Filepath*/	"RelicIcons\\Last_Stand",
 				/*Description*/	LAST_STAND::Description(),//"While below 50% health, you block 50% of damage taken from attacks up to once every 2 seconds",
-				/*Price*/		10,
+				/*Price*/		15,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	LAST_STAND::Initialize
 			),
@@ -346,9 +348,17 @@ void _validateMasterRelicList()
 				/*Name*/		"Speedy Little Devil",
 				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil",
 				/*Description*/	SPEEDY_LITTLE_DEVIL::Description(),//"Increases your Movespeed by 4 when obtained",
-				/*Price*/		5,
+				/*Price*/		4,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SPEEDY_LITTLE_DEVIL::Initialize
+			),
+			RelicData(
+				/*Name*/		"Gale Amulet",
+				/*Filepath*/	"RelicIcons\\Gale_Amulet",
+				/*Description*/	GALE_AMULET::Description(),//"Increases your Movespeed by 4 when obtained",
+				/*Price*/		6,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	GALE_AMULET::Initialize
 			),
 			RelicData(
 				/*Name*/		"Lightning God",
@@ -378,7 +388,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Icy Blade",
 				/*Filepath*/	"RelicIcons\\Icy_Blade",
 				/*Description*/	ICY_BLADE::Description(),//"You gain a bonus to your speed equal to your souls",
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	ICY_BLADE::Initialize
 			),
@@ -386,7 +396,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Frozen Maul",
 				/*Filepath*/	"RelicIcons\\Frozen_Maul",
 				/*Description*/	FROZEN_MAUL::Description(),//"You gain a bonus to your speed equal to your souls",
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	FROZEN_MAUL::Initialize
 			),
@@ -394,9 +404,17 @@ void _validateMasterRelicList()
 				/*Name*/		"Exploitable Coupon",
 				/*Filepath*/	"RelicIcons\\Exploitable_Coupon",
 				/*Description*/	EXPLOITABLE_COUPON::Description(),
-				/*Price*/		5,
+				/*Price*/		6,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	EXPLOITABLE_COUPON::Initialize
+			),
+			RelicData(
+				/*Name*/		"Succubus Charm",
+				/*Filepath*/	"RelicIcons\\Succubus_Charm",
+				/*Description*/	SUCCUBUS_CHARM::Description(),
+				/*Price*/		10,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	SUCCUBUS_CHARM::Initialize
 			),
 			RelicData(
 				/*Name*/		"Membership",
@@ -426,7 +444,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Quick Reflexes",
 				/*Filepath*/	"RelicIcons\\Quick_Reflexes",
 				/*Description*/	QUICK_REFLEXES::Description(),
-				/*Price*/		10,
+				/*Price*/		12,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	QUICK_REFLEXES::Initialize
 			),
@@ -501,7 +519,7 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 			if (currentRelic->m_typeFlag & type) {
 				// Set weight inversely by price and add level (cheaper relics more common early on)
 				// After a fairly large number of levels, this weight system will give everything an equal chance
-				currentTotalWeight += CLAMP_SUB(5, CLAMP_SUB(currentRelic->m_price, stateManager.activeLevel)) + stateManager.activeLevel;
+				currentTotalWeight += CLAMP_SUB(5, CLAMP_SUB(currentRelic->m_price, stateManager.activeLevel * 2)) + stateManager.activeLevel;
 				// Emplace with the combined weights of previous selection possibilities
 				possibleSelection.emplace(currentTotalWeight, currentRelic);
 				// Erase current, no need to increment

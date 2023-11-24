@@ -220,7 +220,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Gadget\Discount\ExploitableCoupon.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\Membership.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\SeeingDouble.cpp" />
+    <ClCompile Include="source\Relics\Gadget\Discount\SuccubusCharm.cpp" />
     <ClCompile Include="source\Relics\Gadget\FrozenMaul.cpp" />
+    <ClCompile Include="source\Relics\Gadget\GaleAmulet.cpp" />
     <ClCompile Include="source\Relics\Gadget\QuickReflexes.cpp" />
     <ClCompile Include="source\Relics\Gadget\IcyBlade.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
@@ -611,7 +613,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Gadget\Discount\ExploitableCoupon.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\Membership.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\SeeingDouble.h" />
+    <ClInclude Include="header\Relics\Gadget\Discount\SuccubusCharm.h" />
     <ClInclude Include="header\Relics\Gadget\FrozenMaul.h" />
+    <ClInclude Include="header\Relics\Gadget\GaleAmulet.h" />
     <ClInclude Include="header\Relics\Gadget\QuickReflexes.h" />
     <ClInclude Include="header\Relics\Gadget\IcyBlade.h" />
     <ClInclude Include="header\Relics\Offensive\AdrenalineRush.h" />
