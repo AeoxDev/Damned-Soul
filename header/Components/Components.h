@@ -33,6 +33,7 @@
 #include "Skynet\HellhoundBehaviour.h"
 #include "Skynet\EyeBehaviour.h"
 #include "Skynet\ImpBehaviour.h"
+#include "Skynet\MinotaurBehaviour.h"
 #include "Skynet\TempBossBehaviour.h"
 #include "Skynet\LuciferBehaviour.h"
 #include "Skynet\FrozenBehaviour.h"

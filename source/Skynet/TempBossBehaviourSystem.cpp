@@ -97,6 +97,7 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 {
 	if (bc->attackTimer <= 0.0f) // yes, we can indeed attack. (bc->attackTimer >= enemyStats->GetAttackSpeed())
 	{
+		bc->isAttacking = true;
 		//Increment so we don't immediately get  back in here
 		bc->attackTimer += GetDeltaTime();
 
