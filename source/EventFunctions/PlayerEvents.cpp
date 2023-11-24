@@ -209,6 +209,12 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	anim->anim2.aAnimTimeFactor = speedDiff; //Cracked
 	anim->anim2.aAnimTime = 0.0f; //reset animation
 
+	if (!player->isMoving)
+	{
+		anim->anim1.aAnimTimeFactor = speedDiff; //Cracked
+		anim->anim1.aAnimTime = 0.0f; //reset animation
+	}
+
 	stats->SetSpeedMult(0.6f); //Move slower while attacking
 	player->isAttacking = true;
 	ResetAttackTrackerFlags(entity);

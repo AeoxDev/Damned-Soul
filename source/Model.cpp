@@ -342,7 +342,7 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uin
 			//if (i == 0) copy = frame.vertex[i];		//0  Control_Joint
 			if (i == 15) copy = frame.vertex[i];		//15 FootL_Joint
 			else if (i == 16) copy = frame.vertex[i];	//16 FootR_Joint
-			else if (i == 20) copy = frame.vertex[i];	//20 Hip_Joint
+			//else if (i == 20) copy = frame.vertex[i];	//20 Hip_Joint
 			else if (i == 21) copy = frame.vertex[i];	//21 KneeL_Joint
 			else if (i == 22) copy = frame.vertex[i];	//22 KneeR_Joint
 			//else if (i == 24) copy = frame.vertex[i];	//24 Root_Joint
@@ -358,11 +358,6 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uin
 			{
 				copy = frame2.vertex[i];
 			}
-			
-
-
-
-
 
 			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copy));
 			DirectX::XMMATRIX copyR = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 1.f));

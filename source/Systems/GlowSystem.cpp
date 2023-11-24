@@ -48,6 +48,8 @@ bool GlowSystem::Update()
 
 		ModelSkeletonComponent* skel_comp = registry.GetComponent<ModelSkeletonComponent>(entity);
 		AnimationComponent* anim_comp = registry.GetComponent<AnimationComponent>(entity);
+
+		BlendAnimationComponent* blendAnim_comp = registry.GetComponent<BlendAnimationComponent>(entity);
 		if (skel_comp && trans_comp && anim_comp)
 		{
 			if (!prepped)
@@ -73,6 +75,35 @@ bool GlowSystem::Update()
 
 			// Render with data
 			LOADED_MODELS[skel_comp->model].RenderAllSubmeshes(anim_comp->aAnim, anim_comp->aAnimIdx, anim_comp->aAnimTime);
+
+			UnsetGeometryShader();
+			drawn = true;
+		}
+		else if (skel_comp && trans_comp && blendAnim_comp)
+		{
+			if (!prepped)
+			{
+				// Prepare for glow pass.
+				Glow::PrepareGlowPass();
+				Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
+				prepped = true;
+			}
+			// Draw models with skeleton.
+			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+			SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
+			if (trans_comp->offsetX != 0.0f)
+			{
+				trans_comp->offsetY = 0.0f;
+			}
+			SetWorldMatrix(trans_comp->positionX + trans_comp->offsetX, trans_comp->positionY + trans_comp->offsetY, trans_comp->positionZ + trans_comp->offsetZ,
+				trans_comp->facingX, trans_comp->facingY, -trans_comp->facingZ,
+				trans_comp->scaleX * trans_comp->offsetScaleX, trans_comp->scaleY * trans_comp->offsetScaleY, trans_comp->scaleZ * trans_comp->offsetScaleZ,
+				SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[skel_comp->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[skel_comp->model].m_indexBuffer);
+
+			// Render with data
+			LOADED_MODELS[skel_comp->model].RenderAllSubmeshes(blendAnim_comp->anim2.aAnim, blendAnim_comp->anim2.aAnimIdx, blendAnim_comp->anim2.aAnimTime);
 
 			UnsetGeometryShader();
 			drawn = true;
