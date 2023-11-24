@@ -359,7 +359,6 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uin
 				copy = frame2.vertex[i];
 			}
 			
-			copy = frame2.vertex * 0.2
 
 
 

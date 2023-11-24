@@ -208,6 +208,7 @@ void HazardAttackCollision(OnCollisionParameters& params)
 	TransformComponent* p = registry.GetComponent<TransformComponent>(params.entity2);
 	HitboxComponent* h = registry.GetComponent<HitboxComponent>(params.entity2);
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(params.entity2);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(params.entity2);
 	if (HitboxCanHitGI(params.entity2))
 	{
 		int r = hazard->type;//PixelValueOnPosition(geoCo, p);
@@ -230,6 +231,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->lavaAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
+			else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->anim2.aAnimTimeFactor = stat->lavaAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
 
 			HazardDamageHelper(params.entity2, 25.f);
@@ -250,6 +256,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->acidAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
+			else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->anim2.aAnimTimeFactor = stat->acidAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
 			HazardDamageHelper(params.entity2, 20.f);
@@ -259,6 +270,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
 			{
 				anim->aAnimTimeFactor = stat->iceAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->anim2.aAnimTimeFactor = stat->iceAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;

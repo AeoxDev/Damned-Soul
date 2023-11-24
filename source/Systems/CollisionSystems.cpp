@@ -119,6 +119,7 @@ bool GeometryIndependentSystem::Update()
 			HitboxComponent* h = registry.GetComponent<HitboxComponent>(entity);
 			StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+			BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 			//We have found a player component with a transform
 			//Now take position and translate to pixel on texture and check if stage, if not, reset pos for now
 			if (HitboxCanHitGI(entity))
@@ -256,11 +257,22 @@ bool GeometryIndependentSystem::Update()
 								NormalizeFacing(p);
 								float punishTime = 0.3f;
 								AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+								BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 								if (anim != nullptr)
 								{
 									anim->aAnimIdx = 0;
 									anim->aAnim = ANIMATION_DEATH;
 									anim->aAnimTime = 0.01f;
+								}
+								else if (blendAnim != nullptr)
+								{
+									blendAnim->anim1.aAnimIdx = 0;
+									blendAnim->anim1.aAnim = ANIMATION_DEATH;
+									blendAnim->anim1.aAnimTime = 0.01f;
+
+									blendAnim->anim2.aAnimIdx = 0;
+									blendAnim->anim2.aAnim = ANIMATION_DEATH;
+									blendAnim->anim2.aAnimTime = 0.01f;
 								}
 								player->isDashing = false;
 								AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PauseAnimation, TPose, punishTime, ContinueAnimation, 0, 2);
@@ -290,6 +302,13 @@ bool GeometryIndependentSystem::Update()
 						anim->aAnimTimeFactor = stat->lavaAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
+
+					else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+					{
+						blendAnim->anim2.aAnimTimeFactor = stat->lavaAnimFactor;
+						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
+					}
+
 					stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
 
 					HazardDamageHelper(entity, 25.f);
@@ -332,6 +351,11 @@ bool GeometryIndependentSystem::Update()
 						anim->aAnimTimeFactor = stat->acidAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
+					else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+					{
+						blendAnim->anim2.aAnimTimeFactor = stat->acidAnimFactor;
+						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
+					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
 					HazardDamageHelper(entity, 50.f);
@@ -341,6 +365,11 @@ bool GeometryIndependentSystem::Update()
 					if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
 					{
 						anim->aAnimTimeFactor = stat->iceAnimFactor;
+						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
+					}
+					else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+					{
+						blendAnim->anim2.aAnimTimeFactor = stat->iceAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;

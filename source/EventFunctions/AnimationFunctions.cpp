@@ -8,29 +8,46 @@
 void PauseAnimation(EntityID& entity, const int& index)
 {
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (anim != nullptr)
 	{
 		anim->aAnimTimeFactor = 0.0f;
+	}
+	else if (blendAnim != nullptr)
+	{
+		blendAnim->anim1.aAnimTimeFactor = 0.0f;
+		blendAnim->anim2.aAnimTimeFactor = 0.0f;
 	}
 }
 
 void ContinueAnimation(EntityID& entity, const int& index)
 {
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (anim != nullptr)
 	{
 		anim->aAnimTimeFactor = 1.0f;
+	}
+	else if (blendAnim != nullptr)
+	{
+		blendAnim->anim1.aAnimTimeFactor = 1.0f;
+		blendAnim->anim2.aAnimTimeFactor = 1.0f;
 	}
 }
 
 void ResetAnimation(EntityID& entity, const int& index)
 {
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (anim != nullptr)
 	{
 		anim->aAnimTime = 0.0f;
 	}
-	
+	else if (blendAnim != nullptr)
+	{
+		blendAnim->anim1.aAnimTime = 0.0f;
+		blendAnim->anim2.aAnimTime = 0.0f;
+	}
 }
 
 void BlinkColor(EntityID& entity, const int& index)
