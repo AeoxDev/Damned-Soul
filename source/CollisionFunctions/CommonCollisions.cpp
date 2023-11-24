@@ -539,7 +539,6 @@ void LoadNextLevel(OnCollisionParameters& params)
 		{
 		case 1:
 			CutsceneFallStage1(params.entity2, 0);
-			registry.DestroyEntity(params.entity1);
 			return;
 			break;
 		default:
