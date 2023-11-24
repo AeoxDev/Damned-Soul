@@ -232,9 +232,9 @@ void LoadShop()
 		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
 		if (shopBuy != nullptr)
 		{
-			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+			for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
 			{
-				if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
+				if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr) sfx->Play(Shop_FirstMeet, Channel_Extra);
@@ -263,9 +263,9 @@ void ReloadShop()
 		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
 		if (shopBuy != nullptr)
 		{
-			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+			for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
 			{
-				if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
+				if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr)

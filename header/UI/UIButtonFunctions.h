@@ -68,13 +68,13 @@ namespace UIFunctions
 
 		void SelectRelic(void* args, int index);
 
-		void HealPlayer(void* args, int index);
-
-		void RerollRelic(void* args, int index);
+		void BuyRelic(void* args, int index);
 
 		void LockRelic(void* args, int index);
 
-		void BuyRelic(void* args, int index);
+		void RerollRelic(void* args, int index);
+
+		void HealPlayer(void* args, int index);
 	}
 
 	namespace OnHover

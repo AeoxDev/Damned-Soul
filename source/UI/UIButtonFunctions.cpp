@@ -86,9 +86,9 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
 					if (shopBuy != nullptr)
 					{
-						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+						for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
 						{
-							if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
+							if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
 							{
 								selectedID = onClick;
 							}
@@ -395,7 +395,6 @@ void UIFunctions::Pause::Resume(void* args, int a)
 void UIFunctions::Pause::SetSettings(void* args, int a)
 {
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
-
 	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
@@ -417,7 +416,6 @@ void UIFunctions::Pause::SetSettings(void* args, int a)
 void UIFunctions::Pause::Back(void* args, int a)
 {
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
-
 	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
