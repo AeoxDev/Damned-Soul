@@ -45,32 +45,32 @@ void LoadLevel3()
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 
 	//Upper right corner:
-	SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f);
-	SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f);
-	SetupEnemy(EnemyType::imp, -40.f, 0.f, 103.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -13.f, 0.f, 80.f);
+	SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
+	SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f, 1);
+	SetupEnemy(EnemyType::imp, -40.f, 0.f, 103.f, 1);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -13.f, 0.f, 80.f, 1);
 
 	//Under ribs
-	SetupEnemy(EnemyType::skeleton, -188.f, 0.f, 24.f);
-	SetupEnemy(EnemyType::skeleton, -181.f, 0.f, 33.f);
-	SetupEnemy(EnemyType::skeleton, -194.f, 0.f, 13.f);
-	SetupEnemy(EnemyType::imp, -202.f, 0.f, 39.f);
+	SetupEnemy(EnemyType::skeleton, -188.f, 0.f, 24.f, 1);
+	SetupEnemy(EnemyType::skeleton, -181.f, 0.f, 33.f, 1);
+	SetupEnemy(EnemyType::skeleton, -194.f, 0.f, 13.f, 0);
+	SetupEnemy(EnemyType::imp, -202.f, 0.f, 39.f, 1);
 
 	//North of big bone 
-	SetupEnemy(EnemyType::hellhound, -144.0f, 0.f, 168.f);
-	SetupEnemy(EnemyType::skeleton, -150.f, 0.f, 199.f);
-	SetupEnemy(EnemyType::imp, -184.f, 0.f, 166.f);
-	SetupEnemy(EnemyType::imp, -162.f, 0.f, 154.f);
+	SetupEnemy(EnemyType::hellhound, -144.0f, 0.f, 168.f, 1);
+	SetupEnemy(EnemyType::skeleton, -150.f, 0.f, 199.f, 0);
+	SetupEnemy(EnemyType::imp, -184.f, 0.f, 166.f, 1);
+	SetupEnemy(EnemyType::imp, -162.f, 0.f, 154.f, 1);
 
 	//Doggo to guard the gate
-	SetupEnemy(EnemyType::skeleton, -263, 0.f, 138.f);
-	SetupEnemy(EnemyType::imp, -260.f, 0.f, 134.f);
+	SetupEnemy(EnemyType::skeleton, -263, 0.f, 138.f, 0);
+	SetupEnemy(EnemyType::imp, -260.f, 0.f, 134.f, 1);
 	Stage2IntroScene(cutsceneEnemy, 0);
 
 	//Small arena:
-	SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f);
-	SetupEnemy(EnemyType::imp, -158.f, 0.f, 94.f);
-	SetupEnemy(EnemyType::skeleton, -158.f, 0.f, 72.f);
+	SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f, 1);
+	SetupEnemy(EnemyType::imp, -158.f, 0.f, 94.f, 1);
+	SetupEnemy(EnemyType::skeleton, -158.f, 0.f, 72.f, 0);
 	//13 souls + 5 souls level 1 = 18 souls total
 
 

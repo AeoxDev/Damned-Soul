@@ -41,23 +41,23 @@ void LoadLevel7()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -40.f, 0.f, -45.f); // make stronger version
-	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::imp, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::imp, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::imp, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::imp, -55.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::imp, -65.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::imp, -45.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);// make stronger version
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);// make stronger version
+	SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 1);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -40.f, 0.f, -45.f, 1); // make stronger version
+	SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, 15.f, 0.f, -45.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 1.f, 45.f, 1);
+	SetupEnemy(EnemyType::empoweredImp, -25.f, 1.f, -35.f, 1);
+	SetupEnemy(EnemyType::empoweredImp, -50.f, 1.f, 25.f, 1);
+	SetupEnemy(EnemyType::empoweredImp, -40.f, 1.f, 25.f, 1);
+	SetupEnemy(EnemyType::empoweredImp, -55.f, 1.f, -35.f, 1);
+	SetupEnemy(EnemyType::empoweredImp, -65.f, 1.f, -35.f, 1);
+	SetupEnemy(EnemyType::empoweredImp, -45.f, 1.f, -35.f, 1);
+	SetupEnemy(EnemyType::empoweredHellhound, -32.f, 1.f, 28.f, 2);// make stronger version
+	SetupEnemy(EnemyType::empoweredHellhound, 13.f, 1.f, -12.f, 1);// make stronger version
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 

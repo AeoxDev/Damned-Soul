@@ -42,19 +42,19 @@ void LoadLevel6()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::imp, 35.f, 1.f, 45.f); //  stronger version incoming
-	SetupEnemy(EnemyType::imp, -25.f, 1.f, -35.f); //  stronger version incoming
-	//SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f); // make minitaur
-	//SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);// make minitaur
-	//SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);// make minitaur and cutscene
+	SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 1);
+	SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 1);
+	 SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f, 2);
+	SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 1);
+	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f, 2);
+	SetupEnemy(EnemyType::empoweredImp, 35.f, 1.f, 45.f, 1); //  stronger version incoming
+	SetupEnemy(EnemyType::empoweredImp, -25.f, 1.f, -35.f, 1); //  stronger version incoming
+	SetupEnemy(EnemyType::minotaur, -50.f, 1.f, 25.f, 2);
+	SetupEnemy(EnemyType::minotaur, -40.f, 1.f, 25.f, 2);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
 	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 

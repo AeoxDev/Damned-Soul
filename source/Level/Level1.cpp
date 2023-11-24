@@ -86,7 +86,7 @@ void LoadLevel1()
 	uiElement->SetAllVisability(false);
 
 	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
-
+	
 	stateManager.stage = stage;
 	SetInPlay(true);
 	//AddTimedEventComponentStart(cutsceneEnemy, 0.0f, Stage1IntroScene, 0, 1);

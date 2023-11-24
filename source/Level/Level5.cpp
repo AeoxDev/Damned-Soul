@@ -41,18 +41,18 @@ void LoadLevel5()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f); // make stronger skeleton
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f); // make stronger skeleton
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -40.f, 0.f, -45.f); // make stronger skeleton
-	SetupEnemy(EnemyType::hellhound, 35.f, 0.f, 25.f);  
-	SetupEnemy(EnemyType::hellhound, 15.f, 0.f, -45.f); 
-	SetupEnemy(EnemyType::hellhound, 35.f, 1.f, 45.f); 
-	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f); 
-	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
+	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f, 1); // make stronger skeleton
+	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f, 1); // make stronger skeleton
+	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f, 1); // make stronger skeleton
+	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f, 1); // make stronger skeleton
+	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f, 1); // make stronger skeleton
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -40.f, 0.f, -45.f, 1); // make stronger skeleton
+	SetupEnemy(EnemyType::hellhound, 35.f, 0.f, 25.f, 3);
+	SetupEnemy(EnemyType::hellhound, 15.f, 0.f, -45.f, 2);
+	SetupEnemy(EnemyType::hellhound, 35.f, 1.f, 45.f, 2);
+	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f, 1);
+	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f, 1);
+	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f, 1);
 	
 
 	Stage3IntroScene(cutsceneEnemy, 0);
