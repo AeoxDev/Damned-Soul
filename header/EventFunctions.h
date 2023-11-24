@@ -32,6 +32,7 @@ void PlayerEndAttack(EntityID& entity, const int& index);
 //CONTINUOUS
 void PlayerDash(EntityID& entity, const int& index);
 void PlayerDashSound(EntityID& entity, const int& index);
+void HurtSound(EntityID& entity, const int& index);
 void PlayerAttack(EntityID& entity, const int& index);
 /*END OF PLAYER EVENTS*/
 

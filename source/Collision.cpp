@@ -356,7 +356,7 @@ void HandleProximityCollision()
 
 		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
 		{
-			ProximityCorrection(closestWall, index, transformComponent->positionX, transformComponent->positionZ, transformComponent->lastPositionX, transformComponent->lastPositionZ);
+			ProximityCorrection(closestWall, index, transformComponent->positionX, transformComponent->positionZ, transformComponent->lastPositionX, transformComponent->lastPositionZ, transformComponent->currentSpeedX, transformComponent->currentSpeedZ);
 		}
 	}
 }

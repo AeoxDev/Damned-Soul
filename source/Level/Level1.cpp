@@ -37,8 +37,8 @@ void LoadLevel1()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 	SetGISpawnPosition(-0.0f, -0.0f);
-	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
+	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
 	SetupEnemy(EnemyType::skeleton, -224.f, 0.f, -32.f);
 	SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);

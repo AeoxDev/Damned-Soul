@@ -4,10 +4,11 @@
 #include "DeltaTime.h"
 #include "Skynet\BehaviourHelper.h"
 #include "UI/UIRenderer.h"
+#include "EventFunctions.h"
 #include <random>
 
 
-void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformComponent* ptc, PathfindingMap* valueGrid)
+void RepositionBehaviour(EntityID& entity, ImpBehaviour* ic, TransformComponent* itc, TransformComponent* ptc, PathfindingMap* valueGrid)
 {
 	//Reset teleport counter
 	ic->specialCounter = 0;
@@ -15,8 +16,8 @@ void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformCom
 	//Calculate new teleport breakpoint
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	// Define a uniform distribution for the range [1.0, 5.0]
-	std::uniform_real_distribution<float> distribution(1.0f, 5.0f);
+	// Define a uniform distribution for the range [2.0, 4.0]
+	std::uniform_real_distribution<float> distribution(2.0f, 4.0f);
 	ic->specialBreakpoint = (int)distribution(gen);
 
 	//Teleport
@@ -26,9 +27,12 @@ void RepositionBehaviour(ImpBehaviour* ic, TransformComponent* itc, TransformCom
 	TransformComponent newTransform = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
 	itc->positionX = newTransform.positionX;
 	itc->positionZ = newTransform.positionZ;
+
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	if (sfx != nullptr) sfx->Play(Imp_Teleport, Channel_Base);
 }
 
-void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
+void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
 	// Regular walk
 	enemyAnim->aAnim = ANIMATION_WALK;
@@ -48,34 +52,23 @@ void RetreatBehaviour(PlayerComponent* playerComponent, TransformComponent* play
 			CalculateGlobalMapValuesHellhound(valueGrid);
 		}
 
-		RepositionBehaviour(ic, itc, playerTransformCompenent, valueGrid);
+		RepositionBehaviour(entity, ic, itc, playerTransformCompenent, valueGrid);
 	}
 	else
 	{
 		//calculate the direction away from the player
 		ic->goalDirectionX = -(playerTransformCompenent->positionX - itc->positionX);
 		ic->goalDirectionZ = -(playerTransformCompenent->positionZ - itc->positionZ);
-		float magnitude = sqrt(ic->goalDirectionX * ic->goalDirectionX + ic->goalDirectionZ * ic->goalDirectionZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		ic->goalDirectionX /= magnitude;
-		ic->goalDirectionZ /= magnitude;
-		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
-		float dirX = itc->facingX, dirZ = itc->facingZ;
-		magnitude = sqrt(dirX * dirX + dirZ * dirZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
+		Normalize(ic->goalDirectionX, ic->goalDirectionZ);
 
-		itc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-		itc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
+
+		itc->positionX += ic->facingX * enemyStats->GetSpeed() * GetDeltaTime();
+		itc->positionZ += ic->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
 	}
 }
 
-bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, ImpBehaviour*& ic, TransformComponent*& itc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
+bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*& ptc, ImpBehaviour*& ic, TransformComponent*& itc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
 	//if you just attacked go back to circle behaviour
 	if (ic->attackTimer < enemyStats->GetAttackSpeed())
@@ -86,15 +79,15 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	//rotate imp in order to shoot at the player
 	else if (ic->aimTimer < ic->aimDuration)
 	{
+		if (ic->aimTimer == 0.0f) //Play the charging attack sound
+		{
+			AddTimedEventComponentStartContinous(entity, 0.0f, nullptr, ic->aimDuration - 0.2f, EnemyAttackFlash);
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+			if (sfx != nullptr) sfx->Play(Imp_AttackCharge, Channel_Base);
+		}
 		ic->goalDirectionX = ptc->positionX - itc->positionX;
 		ic->goalDirectionZ = ptc->positionZ - itc->positionZ;
-		float magnitude = sqrt(ic->goalDirectionX * ic->goalDirectionX + ic->goalDirectionZ * ic->goalDirectionZ);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		ic->goalDirectionX /= magnitude;
-		ic->goalDirectionZ /= magnitude;
+		Normalize(ic->goalDirectionX, ic->goalDirectionZ);
 
 
 		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
@@ -110,23 +103,19 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ANIM_BRANCHLESS(enemyAnim);
 
 		ic->attackTimer = 0;
-		ic->attackStunDurationCounter = 0;
 		ic->aimTimer = 0;
+		ic->attackStunDurationCounter = 0;
 		ic->specialCounter++; //increase the special counter for special attack
 
 		//set direction for attack
 		float dx = (ptc->positionX - itc->positionX);
 		float dz = (ptc->positionZ - itc->positionZ);
 
-		//normalize initial direction
-		float magnitude = sqrt(dx * dx + dz * dz);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
+		float distanceFromPlayer = sqrt(dx * dx + dz * dz);
+		float rangePercentage = distanceFromPlayer / ic->maxAttackRange;
 
-		dx /= magnitude;
-		dz /= magnitude;
+		//normalize initial direction
+		Normalize(dx, dz);
 
 		//		C		= sqrt(A^2 + B^2)
 		float newDirX = sqrt(ptc->facingX * ptc->facingX + dx * dx);
@@ -139,32 +128,30 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		//limit player movement in case of dash
 		if (playerMovementX > 0.02f)
 			playerMovementX = 0.02f;
+
 		if (playerMovementZ > 0.02f)
 			playerMovementZ = 0.02f;
 
 		//calculate final direction based on how much the player moved plus the player movespeed
-		dx += newDirX * playerMovementX * playerStats->GetSpeed();
-		dz += newDirZ * playerMovementZ * playerStats->GetSpeed();
+		dx += newDirX * playerMovementX * playerStats->GetSpeed() * rangePercentage;
+		dz += newDirZ * playerMovementZ * playerStats->GetSpeed() * rangePercentage;
 
 		//normalize finial direction
-		magnitude = sqrt(dx * dx + dz * dz);
-		if (magnitude < 0.001f)
-		{
-			magnitude = 0.001f;
-		}
-		dx /= magnitude;
-		dz /= magnitude;
+		Normalize(dx, dz);
 
 		ic->goalDirectionX = dx;
 		ic->goalDirectionZ = dz;
 
 		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
 		CreateProjectile(entity, dx, dz, imp);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx != nullptr) sfx->Play(Imp_AttackThrow, Channel_Base);
+
 		return true;
 	}
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
+void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
 	//idle just do animation
 	enemyAnim->aAnim = ANIMATION_IDLE;
@@ -183,7 +170,7 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 			CalculateGlobalMapValuesHellhound(valueGrid);
 		}
 
-		RepositionBehaviour(ic, itc, itc, valueGrid);
+		RepositionBehaviour(entity, ic, itc, itc, valueGrid);
 	}
 }
 
@@ -269,7 +256,7 @@ bool ImpBehaviourSystem::Update()
 			}
 			else if (distance < 15.0f && !impComponent->charging) // try to retreat to a safe distance if not charging
 			{
-				RetreatBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
+				RetreatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 			else if (impComponent->specialCounter >= impComponent->specialBreakpoint) //if special is ready teleport
 			{
@@ -279,24 +266,24 @@ bool ImpBehaviourSystem::Update()
 					CalculateGlobalMapValuesImp(valueGrid);
 				}
 
-				RepositionBehaviour(impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
+				RepositionBehaviour(enemyEntity, impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
 			}
-			else if (distance <= 50.0f + impComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (distance <= impComponent->maxAttackRange) // circle player & attack when possible (WIP)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, playerStats, enemyAnim))
-					IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
+					IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 			else // idle
 			{
 				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
+				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 		}
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
+			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 		}
 		TransformDecelerate(enemyEntity);
 	}

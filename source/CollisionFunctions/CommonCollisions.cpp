@@ -342,6 +342,8 @@ bool IsDamageCollisionValid(OnCollisionParameters& params)
 
 void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 {
+	//transform 1 is the one hitting
+	// transform 2 is getting hit 
 	//Get relevant components
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
@@ -367,62 +369,24 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 
 	//Knockback
+	
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	float frictionKnockbackFactor1 = stat1->m_acceleration / stat1->m_baseAcceleration;
 	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	
-	float massFactor = std::sqrt(transform1->mass / transform2->mass);
-	float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
-	float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
-	float dx, dz;
-	CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
+	if (transform2->mass != 666.f)
+	{
+		float massFactor = std::sqrt(transform1->mass / transform2->mass);
+		float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
+		float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
+		float dx, dz;
+		CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
-	AddKnockBack(params.entity1, selfKnockback * dx, selfKnockback * dz);
-	AddKnockBack(params.entity2, appliedKnockback * dx, appliedKnockback * dz);
-
+		AddKnockBack(params.entity1, selfKnockback * dx, selfKnockback * dz);
+		AddKnockBack(params.entity2, appliedKnockback * dx, appliedKnockback * dz);
+	}
 	/*AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
 	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));*/
-}
-
-void PlayHitSound(OnCollisionParameters& params)
-{
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy)
-	{
-		enemy->lastPlayer = params.entity1;
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case EnemyType::hellhound:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::eye:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Eye_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::skeleton:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
-			}
-			break;
-		}
-	}
-	else
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(params.entity2);
-		if (player != nullptr)
-		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-			sfx->Play(Player_Hurt, Channel_Base);
-		}
-	}
 }
 
 void DashCollision(OnCollisionParameters& params)
@@ -438,9 +402,6 @@ void DashCollision(OnCollisionParameters& params)
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if(registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -477,9 +438,6 @@ void AttackCollision(OnCollisionParameters& params)
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
 	else
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -527,9 +485,6 @@ void ShockWaveAttackCollision(OnCollisionParameters& params)
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
-	//Play entity hurt sounds
-	PlayHitSound(params);
-
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
@@ -568,9 +523,6 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
