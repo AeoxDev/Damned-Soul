@@ -961,7 +961,6 @@ void ReloadPlayerNonGlobals()
 		cameraPoint->weight = 10.0f;
 	}
 	ReleaseTimedEvents(stateManager.player);
-	registry.GetComponent<TimedEventComponent>(stateManager.player);
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
 	if (hitbox)
 	{

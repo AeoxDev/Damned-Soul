@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Input.h"
 #include "MemLib\ML_Vector.hpp"
+#include "States\StateManager.h"
 #include <assert.h>
 
 bool ignoreGameSpeed = false;
@@ -55,7 +56,7 @@ bool EventSystem::Update()
 	//Make sure continuous events aren't updating while the game is paused
 	if (gameSpeed == 0.0f && ignoreGameSpeed == false)
 		return true;
-
+	int level = stateManager.activeLevel;
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
 		auto comp = registry.GetComponent<TimedEventComponent>(entity);
@@ -77,13 +78,13 @@ bool EventSystem::Update()
 			if (comp->timedEvents[i].startFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer)
 			{
 				comp->timedEvents[i].startFunction(comp->timedEvents[i].eventity, i);
-				if (i < comp->timedEvents.size())
+				if (level == stateManager.activeLevel && i < comp->timedEvents.size())
 				{
 					comp->timedEvents[i].startFunction = nullptr;
 				}
 				else
 				{
-					continue;
+					break;
 				}
 			}
 			if (comp->timedEvents[i].continousFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer && comp->timedEvents[i].timer < comp->timedEvents[i].endTime)

@@ -43,7 +43,7 @@ void LoadLevel2()
 
 	SetupEnemy(EnemyType::skeleton, -241.f, 0.f, 24.f);
 	SetupEnemy(EnemyType::skeleton, -229.0f, 0.f, 117.f);
-	SetupEnemy(EnemyType::imp, 85.f, -236.f, 174.f);
+	SetupEnemy(EnemyType::skeleton, -236.0f, 0.f, 174.f);
 
 	SetupEnemy(EnemyType::skeleton, -209.f, 0.f, 214.f);
 	SetupEnemy(EnemyType::skeleton, -64.f, 0.f, 224.f);
@@ -55,8 +55,8 @@ void LoadLevel2()
 	SetupEnemy(EnemyType::skeleton, -77.f, 0.f, 14.f);
 
 	SetupEnemy(EnemyType::imp, -189.f, 0.f, 179.f);
-	SetupEnemy(EnemyType::imp, -181.0f, 0.f, 67.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 46.f, 0.f, 145.f);
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, -181.0f, 0.f, 67.f);
+	SetupEnemy(EnemyType::imp, 46.f, 0.f, 145.f);
 	SetupEnemy(EnemyType::imp, -67.f, 0.f, 148.f);
 
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss

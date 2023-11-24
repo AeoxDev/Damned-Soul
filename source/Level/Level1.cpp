@@ -39,9 +39,6 @@ void LoadLevel1()
 	SetGISpawnPosition(-0.0f, -0.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
-	SetupEnemy(EnemyType::skeleton, -224.f, 0.f, -32.f);
-	SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
 
 	SetupEnemy(EnemyType::skeleton, -204.0f, 0.f, 82.f);
 	SetupEnemy(EnemyType::skeleton, -222.0f, 0.f, 28.f);
@@ -51,7 +48,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -121.0f, 0.f, 61.f);
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -111.0f, 0.f, 104.f);
 
-	
+	//CutsceneFallStage1(stateManager.player, 0);
 
 
 	
