@@ -264,7 +264,7 @@ bool SkeletonBehaviourSystem::Update()
 			}
 
 			//Pathfinding
-			else if (distance < 50.f) 
+			else if (distance < 80.f) 
 			{
 				
 #ifdef PATH_FINDING_VISUALIZER

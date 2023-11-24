@@ -223,7 +223,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 0;//400.f;
+			health = 0;//200.f;
 			float partHealth = 40.f; // this times 5 is the full starting strength
 			if (zacIndex0)
 				health += partHealth;
@@ -256,22 +256,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 61.f; //same as eye fuck it
 		}
-	}
-	else if (eType == EnemyType::tempBoss) // if we want a weaker version of the boss later in game, we can specify the health
-	{
-		
-		float partHealth = health / 5.f; // this times 5 is the full starting strength
-		health = 0;
-		if (zacIndex0)
-			health += partHealth;
-		if (zacIndex1)
-			health += partHealth;
-		if (zacIndex2)
-			health += partHealth;
-		if (zacIndex3)
-			health += partHealth;
-		if (zacIndex4)
-			health += partHealth;
 	}
 	if (moveSpeed == 6969.f)
 	{
