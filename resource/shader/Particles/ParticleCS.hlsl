@@ -41,7 +41,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
             //ExplosionMovement(DTid, blockID);
         }
         // 3 = FLAMETHROWER
-        if (meta[blockID.y].pattern == 3)
+        if (meta[blockID.y].pattern == 3 || meta[blockID.y].pattern == 11)
         {
             FlamethrowerMovement(DTid, blockID);
         }
@@ -236,6 +236,14 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
         particle.size = 0.5f;
     }
 
+    if (meta[blockID.y].pattern == 11) //Ice ice baby
+    {
+        particle.rgb = float3(.0f, .75f, .95f);
+    }
+    else
+    {
+        particle.rgb = float3(1.f, .0f, .0f);
+    }
     outputParticleData[index] = particle;
 }
 

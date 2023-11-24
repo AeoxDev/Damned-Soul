@@ -170,17 +170,21 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			mass = 50.f;
 		}
-		else if (eType == EnemyType::hellhound)
+		else if (eType == EnemyType::hellhound || eType == EnemyType::empoweredHellhound)
 		{
 			mass = 100.f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
 			mass = 70.f;
 		}
-		else if (eType == EnemyType::imp)
+		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
 		{
 			mass = 40.f;
+		}
+		else if (eType == EnemyType::minotaur)
+		{
+			mass = 80.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -213,6 +217,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			health = 18.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			health = 120.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			health = 0;//400.f;
@@ -235,6 +243,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
 			health = 1.f;
+		}
+		else if (eType == EnemyType::empoweredSkeleton)
+		{
+			health = 75.f;
+		}
+		else if (eType == EnemyType::empoweredHellhound)
+		{
+			health = 90.f;
+		}
+		else if (eType == EnemyType::empoweredImp)
+		{
+			health = 61.f; //same as eye fuck it
 		}
 	}
 	else if (eType == EnemyType::tempBoss) // if we want a weaker version of the boss later in game, we can specify the health
@@ -267,9 +287,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 10.f;
 		}
-		else if (eType == EnemyType::imp)
+		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
 		{
 			moveSpeed = 3.f;
+		}
+		else if (eType == EnemyType::minotaur)
+		{
+			moveSpeed = 12.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -294,6 +318,15 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			moveSpeed = 0.1f;
 		}
+		else if (eType == EnemyType::empoweredHellhound)
+		{
+			moveSpeed = 22.5f; // :)
+		}
+		else if (eType == EnemyType::empoweredSkeleton)
+		{
+			moveSpeed = 15.f;
+		}
+
 	}
 	if (damage == 6969.f)
 	{
@@ -313,6 +346,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 13.f;
 		}
+		else if (eType == EnemyType::minotaur)
+		{
+			damage = 15.f;
+		}
 		else if (eType == EnemyType::tempBoss)
 		{
 			damage = 30.f;
@@ -325,6 +362,18 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			damage = 0.f;
 		}
+		else if (eType == EnemyType::empoweredHellhound)
+		{
+			damage = 24.f;
+		}
+		else if (eType == EnemyType::empoweredSkeleton)
+		{
+			damage = 17.f;
+		}
+		else if (eType == EnemyType::empoweredImp)
+		{
+			damage = 24.f;
+		}
 	}
 	if (attackSpeed == 6969.f)
 	{
@@ -332,19 +381,23 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.5f;
 		}
-		else if (eType == EnemyType::hellhound)
+		else if (eType == EnemyType::hellhound || eType == EnemyType::empoweredHellhound)
 		{
 			attackSpeed = 0.1f;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
 			//NICLAS WAS HERE
 			attackSpeed = 1.0f;
 			//attackSpeed = 0.5f;
 		}
-		else if (eType == EnemyType::imp)
+		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
 		{
 			attackSpeed = 0.8f;
+		}
+		else if (eType == EnemyType::minotaur)
+		{
+			attackSpeed = 3.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -372,19 +425,23 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	if (soulWorth == 6969.f)
 	{
-		if (eType == EnemyType::eye)
+		if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
 			soulWorth = 1;
 		}
-		else if (eType == EnemyType::hellhound)
+		else if (eType == EnemyType::hellhound || eType == EnemyType::empoweredHellhound)
 		{
 			soulWorth = 1;
 		}
-		else if (eType == EnemyType::skeleton)
+		else if (eType == EnemyType::eye)
 		{
 			soulWorth = 1;
 		}
-		else if (eType == EnemyType::imp)
+		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
+		{
+			soulWorth = 1;
+		}
+		else if (eType == EnemyType::minotaur)
 		{
 			soulWorth = 1;
 		}
@@ -407,7 +464,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scaleY = 4;
 		scaleZ = 4;
 	}
-	if (eType == EnemyType::lucifer)
+	else if (eType == EnemyType::hellhound || eType == EnemyType::frozenHellhound || eType == EnemyType::empoweredHellhound)
+	{
+		scaleX = 1.f;
+		scaleY = 1.f;
+		scaleZ = 1.f;
+	}
+	else if (eType == EnemyType::lucifer)
 	{
 		scaleX = 2;
 		scaleY = 2;
@@ -434,26 +497,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	//Model
 
 	ModelSkeletonComponent* model = nullptr;
-
-	if (eType == EnemyType::hellhound)
-	{
-		stat->hazardModifier = 0.0f;
-		stat->baseHazardModifier = 0.0f;
-		stat->lavaAccelFactor = 1.0f;
-		stat->lavaAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
-		registry.AddComponent<AnimationComponent>(entity);
-		registry.AddComponent<HellhoundBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
-		//Sounds
-		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(HELLHOUND);
-		if (player)
-		{
-			player->killThreshold++;
-		}
-	}
-	else if (eType == EnemyType::skeleton)
+	if (eType == EnemyType::skeleton)
 	{
 		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
@@ -467,7 +511,27 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
-		
+
+		//Orange glow
+		registry.AddComponent<GlowComponent>(entity, .95f, .5f, .0f);
+	}
+	else if (eType == EnemyType::hellhound)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<HellhoundBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(HELLHOUND);
+		if (player)
+		{
+			player->killThreshold++;
+		}
 	}
 	else if (eType == EnemyType::eye)
 	{
@@ -530,6 +594,24 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold += 1;
 		}
 	}
+	else if (eType == EnemyType::minotaur)
+	{
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<MinotaurBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::minotaur);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(MINOTAUR);
+		if (player)
+		{
+			player->killThreshold++;
+		}
+	}
 	else if (eType == EnemyType::tempBoss)
 	{
 		stat->hazardModifier = 0.0f;
@@ -574,7 +656,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		if (eType == EnemyType::frozenHellhound)
 		{
-			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
@@ -617,6 +699,96 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		scp->Load(HELLHOUND);
 	}
+	else if (eType == EnemyType::empoweredHellhound)
+	{
+		//Make them immune to ice stuff, but how
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->lavaAccelFactor = 1.0f;
+		stat->lavaAnimFactor = 1.0f;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		HellhoundBehaviour* hhb = registry.AddComponent<HellhoundBehaviour>(entity);
+		hhb->isEmpoweredDoggo = true;
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(HELLHOUND);
+		if (player)
+		{
+			player->killThreshold++;
+		}
+
+		//Hue shift for strongdogs (Darker mult on the red parts, then add blue?)
+		//model->shared.baseColorMultiplicativeRed = 0.3f;
+		model->shared.baseColorMultiplicativeRed = 0.3f;
+		model->shared.baseColorMultiplicativeGreen = 0.7f;
+		model->shared.baseColorMultiplicativeBlue = 0.7f;
+		model->shared.baseColorAdditiveBlue = 0.2f;
+
+		//Gotta do the color, not just base, not sure why
+		model->shared.colorMultiplicativeRed = 0.3f;
+		model->shared.colorMultiplicativeGreen = 0.7f;
+		model->shared.colorMultiplicativeBlue = 0.7f;
+		model->shared.colorAdditiveBlue = 0.2f;
+
+	}
+	else if (eType == EnemyType::empoweredSkeleton)
+	{
+		//registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("Skeleton.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<SkeletonBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.0f, EnemyType::skeleton);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(SKELETON);
+		if (player)
+		{
+			player->killThreshold++;
+		}
+
+		//Reduce the red hue of the base color for skelington (reduce green a little bit to make up for the imbalance)
+		model->shared.colorMultiplicativeRed = 0.6f;
+		model->shared.colorMultiplicativeGreen = 0.8f;
+		//model->shared.colorAdditiveBlue = 0.2f;
+
+		model->shared.colorMultiplicativeRed = 0.6f;
+		model->shared.colorMultiplicativeGreen = 0.8f;
+		//model->shared.baseColorAdditiveBlue = 0.2f;
+
+		//Blue glow instead of orange
+		registry.AddComponent<GlowComponent>(entity, .0f, .75f, .95f);
+	}
+	else if (eType == EnemyType::empoweredImp)
+	{
+		//No need to touch any hazard stuff, sweet
+		stat->hazardModifier = 0.0f;
+		stat->baseHazardModifier = 0.0f;
+		stat->baseCanWalkOnCrack = true;
+		stat->canWalkOnCrack = true;
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		registry.AddComponent<AnimationComponent>(entity);
+		registry.AddComponent<ImpBehaviour>(entity);
+		SetupEnemyCollisionBox(entity, 1.f, EnemyType::imp, false);
+		//Sounds
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(IMP);
+
+		//Same as with doggo
+		model->shared.colorMultiplicativeRed = 0.3f;
+		model->shared.colorAdditiveBlue = 0.2f;
+
+		model->shared.baseColorMultiplicativeRed = 0.3f;
+		model->shared.baseColorAdditiveBlue = 0.2f;
+
+		if (player)
+		{
+			player->killThreshold += 1;
+		}
+	}
+
+
 	if (model != nullptr)
 	{
 		model->shared.gammaCorrection = 1.5f;
@@ -650,6 +822,9 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->positionX = positionX;
 	playerTransform->positionY = positionY;
 	playerTransform->positionZ = positionZ;
+	playerTransform->scaleX = scaleX; //We never actually set these before :)
+	playerTransform->scaleY = scaleY;
+	playerTransform->scaleZ = scaleZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
 	registry.AddComponent<PlayerComponent>(stateManager.player);
@@ -741,7 +916,8 @@ void ReloadPlayerNonGlobals()
 	if (playerTransform == nullptr)
 	{
 		playerTransform = registry.AddComponent<TransformComponent>(stateManager.player);
-		playerTransform->mass = 3.0f;
+		playerTransform->mass = 80.0f; //We set this to 80 normally, but here this was 3, oof
+		playerTransform->scaleX = playerTransform->scaleY = playerTransform->scaleZ = 1.f;
 	}
 	playerTransform->currentSpeedX = 0.0f;
 	playerTransform->currentSpeedZ = 0.0f;

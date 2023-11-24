@@ -6,8 +6,8 @@ struct EyeBehaviour
 	float timeCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	float attackTimer = 0.f;
-	float attackStunTimer = 0.f;
 	float attackStunDuration = 2.0f;
+	float attackStunTimer = attackStunDuration;
 	float chargeTimer = 0.0f;
 	float aimTimer = 0.0f;
 	float aimDuration = 0.4f;
