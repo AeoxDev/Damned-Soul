@@ -429,7 +429,7 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (!GetHitboxCanDealDamage(entity, hitboxID))
+	if (!GetHitboxCanDealDamage(entity, hitboxID) && setFlag == true)
 	{
 		ResetAttackTrackerFlags(entity);
 	}
@@ -525,6 +525,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
+	TransformComponent* transfor = registry.GetComponent<TransformComponent>(entity);
 	int hID = CreateHitbox(entity, radius*0.2f, 0.f, 0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsEnemy(entity, hID);
@@ -589,9 +590,8 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxActive(entity, enemyComp->specialHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
 		break;
-
-	case EnemyType::lucifer:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
+	case EnemyType::minotaur:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 3.f, 0.f, radius * -4.5f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
@@ -600,6 +600,23 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 
 		//Create special hitbox
 		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, 0.f);
+		SetCollisionEvent(entity, enemyComp->specialHitBoxID, ShockWaveAttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
+		//SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
+		break;
+
+	case EnemyType::lucifer:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 3.0f, 0.f, radius * -4.2f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+
+		//Create special hitbox
+		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f * transfor->scaleX, 0.f, 0.f);
 		SetCollisionEvent(entity, enemyComp->specialHitBoxID, ShockWaveAttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
@@ -607,7 +624,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
 		break;
 	case EnemyType::tempBoss:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 4.f, 0.f, radius * -4.5f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.f * transfor->scaleX, 0.f, radius * -1.0f * transfor->scaleX);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
@@ -615,15 +632,25 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 
 		//Create special hitbox
-		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, 0.f);
+		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f * transfor->scaleX, 0.f, 0.f);
 		SetCollisionEvent(entity, enemyComp->specialHitBoxID, ShockWaveAttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
 		//SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
 		break;
+	case EnemyType::zac:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -1.5f * transfor->scaleX);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxIsMoveable(entity, hID, false);
+		SetHitboxIsMoveable(entity, sID, false);
+		break;
 	default:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -1.5f * transfor->scaleX);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
@@ -631,7 +658,9 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 		break;
 	}
+	
 }
+
 
 void SetupLavaCollisionBox(EntityID& entity, float radius)
 {

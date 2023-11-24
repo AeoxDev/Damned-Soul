@@ -104,7 +104,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
 	
 	
-	transComp.mass = transform->mass * 0.8f;
+	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp); 
 	int soulWorth = 2;
 
@@ -268,18 +268,26 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset
+		//Get enemytype
+		uint32_t condition = GetTimedEventCondition(entity, index);
+
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset before the attack
 		{
-			skelel->shared.colorAdditiveRed = 0.0f;
-			skelel->shared.colorAdditiveGreen = 0.0f;
-			skelel->shared.colorAdditiveBlue = 0.0f;
+			skelel->shared.ResetTempColor();
 		}
-			
-		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow
+		
+		else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Hellhound glows immediately because there's no windup on the attack
 		{
-			skelel->shared.colorAdditiveRed = 0.8f;
-			skelel->shared.colorAdditiveGreen = 0.8f;
-			skelel->shared.colorAdditiveBlue = 0.5f;
+			skelel->shared.bcaR_temp = 0.8f;
+			skelel->shared.bcaG_temp = 0.8f;
+			skelel->shared.bcaB_temp = 0.5f;
+		}
+
+		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow halfway through the pause
+		{
+			skelel->shared.bcaR_temp = 0.8f;
+			skelel->shared.bcaG_temp = 0.8f;
+			skelel->shared.bcaB_temp = 0.5f;
 		}	
 	}
 
@@ -333,6 +341,14 @@ void EnemyBeginAttack(EntityID& entity, const int& index)
 		SetHitboxActive(entity, comp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
 	}
+
+	uint32_t condition = GetTimedEventCondition(entity, index);
+	if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Dogs do big knockback on their headbutt
+	{
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+		if(stats)
+			stats->SetKnockbackMultiplier(8.0f);
+	}
 }
 
 void EnemyEndAttack(EntityID& entity, const int& index)
@@ -359,7 +375,33 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 	{
 		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
 		if (tempBoss)
+		{
 			tempBoss->attackTimer = 0.0f;
+			tempBoss->isAttacking = false;
+		}
+
+	}
+
+	else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Reset big dog knockback after hit
+	{
+		HellhoundBehaviour* doggo = registry.GetComponent<HellhoundBehaviour>(entity);
+		if (doggo)
+			doggo->attackTimer = 0.0f;
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+		if (stats)
+			stats->SetKnockbackMultiplier(1.0f);
+	}
+
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer)
+		{
+			lucifer->attackTimer = 0.0f;
+			lucifer->isAttacking = false;
+		}
+			
 	}
 }
 
@@ -385,6 +427,59 @@ void EnemyBecomeStunned(EntityID& entity, const int& index)
 			tempBoss->attackStunDurationCounter = 0.0f;
 		}
 	}
+
+	else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound)
+	{
+		HellhoundBehaviour* doggo = registry.GetComponent<HellhoundBehaviour>(entity);
+		if (doggo != nullptr)
+		{
+			doggo->attackStunDurationCounter = 0.0f;
+		}
+	}
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer != nullptr)
+		{
+			lucifer->attackStunDurationCounter = 0.0f;
+		}
+	}
+}
+
+void DogBeginWait(EntityID& entity, const int& index)
+{
+
+}
+
+void DogEndWait(EntityID& entity, const int& index)
+{
+	HellhoundBehaviour* hc = registry.GetComponent<HellhoundBehaviour>(entity);
+	if (hc)
+	{
+		hc->isWating = false;
+
+		//SetInfiniteDirection() function from HellhoundBehaviourSystem
+		TransformComponent* htc = registry.GetComponent<TransformComponent>(entity);
+		if (htc)
+		{
+			float x = hc->lastPositionX - htc->positionX;
+			float z = hc->lastPositionZ - htc->positionZ;
+			float magnitude = sqrt(x * x + z * z);
+			if (magnitude > 0.001f)
+			{
+				x /= magnitude;
+				z /= magnitude;
+			}
+			hc->cowardDirectionX = x;
+			hc->cowardDirectionZ = z;
+		}
+		
+		hc->retreat = true;
+		hc->updatePathCounter = 20.f;
+		hc->hasMadeADecision = false;
+	}
+	
 }
 
 void BossShockwaveStart(EntityID& entity, const int& index)
@@ -403,11 +498,30 @@ void BossShockwaveExpand(EntityID& entity, const int& index)
 	radius += GetDeltaTime() * growthSpeed;
 	SetHitboxRadius(entity, enemy->specialHitBoxID, radius);
 }
+
 void BossShockwaveEnd(EntityID& entity, const int& index)
 {
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enemy->specialHitBoxID, false);//Set false somewhere
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
+}
+
+void ChargeColorFlash(EntityID& entity, const int& index)
+{
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	float frequency = 10.0f; //Higher frequency = faster flashing lights
+	float cosineWave = cosf(GetTimedEventElapsedTime(entity, index) * frequency) * cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	if (skelel)
+	{
+		skelel->shared.colorAdditiveRed = cosineWave;
+		skelel->shared.colorAdditiveGreen = cosineWave;
+	}
+	if (bonel)
+	{
+		bonel->shared.colorAdditiveRed = cosineWave;
+		bonel->shared.colorAdditiveGreen = cosineWave;
+	}
 }
 
 void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
@@ -438,6 +552,55 @@ void BossResetBeforeShockwave(EntityID& entity, const int& index)
 		skelel->shared.colorAdditiveGreen = 0.0f;
 		skelel->shared.colorAdditiveBlue = 0.0f;
 	}
+}
+
+void RemoveLandingIndicator(EntityID& entity, const int& index)
+{
+	if (entity.isDestroyed == true)
+	{
+		return;
+	}
+	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+}
+
+void IncreaseLandingIndicatorMinotaur(EntityID& entity, const int& index)
+{
+	TransformComponent* landingTransform = registry.GetComponent<TransformComponent>(entity);
+	landingTransform->positionY += 3.0f * GetDeltaTime();
+}
+
+void IncreaseLandingIndicatorLucifer(EntityID& entity, const int& index)
+{
+	TransformComponent* landingTransform = registry.GetComponent<TransformComponent>(entity);
+	landingTransform->positionY += 5.0f * GetDeltaTime();
+}
+
+void CreateLandingIndicator(EntityID& entity, const int& index)
+{
+	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
+	int condition = GetTimedEventCondition(entity, index);
+	EntityID landingSpot = registry.CreateEntity();
+	TransformComponent* landingTransform = registry.AddComponent<TransformComponent>(landingSpot);
+	landingTransform->positionX = origin->positionX;
+	landingTransform->positionY = 1.0f;
+	landingTransform->positionZ = origin->positionZ;
+
+	CreateSpotLight(landingSpot, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 30);
+	//AddTimedEventComponentStartEnd(landingSpot, 0.0f, nullptr, 2.0f, RemoveLandingIndicator);
+	switch (condition)
+	{
+	case invalidType:
+		break;
+	case minotaur:
+		AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicatorMinotaur, 2.0f, RemoveLandingIndicator);
+		break;
+	case lucifer:
+		AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicatorLucifer, 2.5f, RemoveLandingIndicator);
+		break;
+	default:
+		break;
+	}
+	
 }
 
 void RemoveEnemy(EntityID& entity, const int& index)
