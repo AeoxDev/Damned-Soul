@@ -305,7 +305,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->lavaAccelFactor = 1.0f;
 		stat->lavaAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("PHDoggo.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::hellhound);

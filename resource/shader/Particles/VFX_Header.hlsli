@@ -30,3 +30,9 @@ float4 AlphaBlend(in float4 backBuffer, in float alphaMaskOrValue, in float3 dif
 
     return float4(saturate(blendResults.rgb), 1.0f);
 }
+
+// Samples from the color gradient texture.
+float3 SampleColorRamp(in Texture2D colorRampTexture, in sampler samplerState, in float4 grayScaleTexture)
+{    
+    return colorRampTexture.Sample(samplerState, float2(clamp(grayScaleTexture.x, 0.01f, 0.99f), 0.5f)).rgb;
+}

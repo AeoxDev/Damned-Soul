@@ -1,14 +1,13 @@
 #include "VFX_Header.hlsli"
 
-sampler diffuseSampler_in : register(s3);
+sampler vfxSampler_in : register(s3);
 Texture2D backbufferTexture_in : register(t0);
 
 Texture2D colorRampTexture_in : register(t1);
-Texture2D diffuseTexture_in : register(t2);
-Texture2D vornoiTexture_in : register(t3);
-Texture2D noiseTexture_in : register(t4);
-Texture2D shapeTexture_in : register(t5);
-Texture2D maskTexture_in : register(t6);
+Texture2D vornoiTexture_in : register(t2);
+Texture2D noiseTexture_in : register(t3);
+Texture2D shapeTexture_in : register(t4);
+Texture2D maskTexture_in : register(t5);
 
 cbuffer pannerInput : register(b0)
 {
@@ -18,23 +17,47 @@ cbuffer pannerInput : register(b0)
 };
 
 // ######## PREDEFINED VFX BEHAVIORS, TINY TWEAKABILITY #########
-float4 VFXFire(
+
+
+// FIRE REQUIRES: Backbuffer, VFX_Vornoi, VFX_gNoise, VFX_FireGradient & VFX_SoftCircle
+float4 VFXFire( 
 in float4 backBuffer,
 in float time,
 in float2 uv,
-in float fireMultiplier = 8.0f,
-in float3 fireColor = float3(1.0f, 0.45f, 0.0f),
+in float fireMultiplier = 1.0f,
+in float3 fireColor = float3(0.0f, 0.0f, 0.0f),
 in float distortionVornoi = 0.0132f,
 in float distortionNoise = 0.15f
 )
 {
-    float4 vornoiTexture    = vornoiTexture_in.Sample(diffuseSampler_in, UVPan(offsetXY_in, panSpeed_in * 1.f, time, uv * 0.5f));
-    float4 gNoiseTexture    = noiseTexture_in.Sample(diffuseSampler_in, UVPan(offsetXY_in, panSpeed_in * 0.8f, time, uv));
-    float4 vornoiDiffuse    = vornoiTexture_in.Sample(diffuseSampler_in, UVPan(offsetXY_in, panSpeed_in, time, uv));
+    float4 vornoiTexture = vornoiTexture_in.Sample(vfxSampler_in, UVPan(offsetXY_in, panSpeed_in * 1.f, time, uv * 0.5f));
+    float4 gNoiseTexture = noiseTexture_in.Sample(vfxSampler_in, UVPan(offsetXY_in, panSpeed_in * 0.8f, time, uv));
+    float4 vornoiDiffuse = vornoiTexture_in.Sample(vfxSampler_in, UVPan(offsetXY_in, panSpeed_in, time, uv));
     
     
     float2 distortedUV = distortUV(distortionNoise, distortUV(distortionVornoi, uv, pow(vornoiTexture, 1.2f)), gNoiseTexture);
-    float4 fireDistort = shapeTexture_in.Sample(diffuseSampler_in, distortedUV);
+    float4 fireDistort = shapeTexture_in.Sample(vfxSampler_in, distortedUV);
+    float3 color = SampleColorRamp(colorRampTexture_in, vfxSampler_in, fireDistort);
     
-    return AlphaBlend(backBuffer, fireDistort.r, pow(vornoiDiffuse.rgb, 1.0f), fireColor * fireMultiplier);
+    return AlphaBlend(backBuffer, fireDistort.r, color + (fireColor * fireMultiplier));
+}
+
+
+// SWORDSS REQUIRES: Backbuffer, VFX_Vornoi, VFX_gNoise
+float4 VFXSwordSlash(
+float4 backBuffer,
+float time,
+float2 uv
+)
+{
+    float4 vornoiTexture = vornoiTexture_in.Sample(vfxSampler_in, 0.5f * uv);
+    float4 gNoiseTexture = noiseTexture_in.Sample(vfxSampler_in, uv);
+    float4 innerGTexture = shapeTexture_in.Sample(vfxSampler_in, uv);
+    float4 gMaskTexture = maskTexture_in.Sample(vfxSampler_in, uv);
+    
+    
+    sin(time);
+    
+    return vornoiTexture;  //(gMaskTexture * pow(vornoiTexture, 2.0f + sin(time))).rgb, 1.0f;
+
 }

@@ -25,7 +25,6 @@ SMP_IDX VFXSampler;
 
 SRV_IDX VFXBackBufferSRV; // Difference between SRV and TX is that SRV are textures created by the pipeline.
 TX_IDX VFXColorRampTX;
-TX_IDX VFXDiffuseTX;
 TX_IDX VFXVornoiTX;
 TX_IDX VFXNoiseTX;
 TX_IDX VFXShapeTX;
@@ -71,12 +70,12 @@ void Particles::InitializeParticles()
 
 	VFXSampler =		CreateSamplerState();
 	VFXBackBufferSRV =	CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
-	VFXColorRampTX =	LoadTexture("\\VFX_GradientRamp.png");
-	VFXDiffuseTX =		LoadTexture("\\LavaPlaceholder.png");
+	VFXColorRampTX =	LoadTexture("\\VFX_FireGradient.png");
 	VFXVornoiTX =		LoadTexture("\\VFX_Vornoi.png");
-	VFXNoiseTX =		LoadTexture("\\VFX_GaussianNoise.png");
-	VFXShapeTX =		LoadTexture("\\VFX_SoftCircle.png");
-	VFXMaskTX =			LoadTexture("\\VFX_Black.png");
+	VFXNoiseTX =		LoadTexture("\\VFX_gNoise.png");
+	//VFXShapeTX =		LoadTexture("\\VFX_InnerGradient.png"); // VFX_SwordSlash
+	VFXShapeTX =		LoadTexture("\\VFX_CircleSoft.png"); // VFX_Fire
+	VFXMaskTX =			LoadTexture("\\VFX_GradientMask.png");
 // ## EO ALEX CODE ##
 
 	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));
@@ -209,11 +208,10 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 	SetConstantBuffer(VFXConstantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 	SetShaderResourceView(VFXBackBufferSRV, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 	SetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
-	SetTexture(VFXDiffuseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
-	SetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
-	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
-	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 6);
+	SetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
+	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
 	SetSamplerState(VFXSampler, 3);
 
 	// ## EO ALEX CODE ##
@@ -240,11 +238,10 @@ void Particles::FinishParticlePass()
 	UnsetShaderResourceView(SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 
 	UnsetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
-	UnsetTexture(VFXDiffuseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
-	UnsetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
-	UnsetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	UnsetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
-	UnsetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 6);
+	UnsetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	UnsetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	UnsetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
+	UnsetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
 
 	SetTopology(TRIANGLELIST);
 
