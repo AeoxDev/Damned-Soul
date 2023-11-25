@@ -98,6 +98,12 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 	//rotate eye in order to shoot at the player
 	else if (ec->aimTimer < ec->aimDuration)
 	{
+		if (ec->aimTimer == 0.0f)
+		{
+			ec->shooting = true;
+			AddTimedEventComponentStartContinous(entity, 0.0f, nullptr, ec->aimDuration - 0.2f, EnemyAttackFlash);
+		}
+
 		if (enemyAnim->aAnim != ANIMATION_ATTACK)
 		{
 			enemyAnim->aAnim = ANIMATION_ATTACK;
@@ -123,7 +129,8 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ec->aimTimer = 0;
 		ec->specialCounter++; //increase the special counter for special attack
 		ec->attackStunTimer = 0;
-		
+		ec->shooting = false;
+
 		enemyAnim->aAnim = ANIMATION_IDLE;
 		enemyAnim->aAnimIdx = 1;
 		enemyAnim->aAnimTime = 0.0f;
@@ -134,7 +141,11 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		
 		Normalize(dx, dz);
 
-		CreateProjectile(entity, dx, dz, 1);
+		CreateProjectile(entity, dx, dz, eye);
+
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if(sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
+
 		return true;
 	}
 }
@@ -174,7 +185,7 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
-void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
 	if (enemyAnim->aAnim != ANIMATION_IDLE)
 	{
@@ -183,7 +194,6 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		enemyAnim->aAnimTime = 0.0f;
 	}
 
-	eyeComponent->timeCounter += GetDeltaTime();
 	if (eyeComponent->timeCounter >= eyeComponent->updateInterval)
 	{
 		eyeComponent->timeCounter = 0.f;
@@ -199,28 +209,10 @@ void IdleBehaviour(PlayerComponent* playerComponent, TransformComponent* playerT
 		eyeComponent->updateInterval = randomInterval(gen);
 	}
 
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
-
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
-}
-
-void ChargeColorFlash(EntityID& entity, const int& index)
-{
-	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
-	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
-	if (skelel)
-	{
-		skelel->colorAdditiveRed = cosineWave;
-		skelel->colorAdditiveGreen = cosineWave;
-	}
-	if (bonel)
-	{
-		bonel->colorAdditiveRed = cosineWave;
-		bonel->colorAdditiveGreen = cosineWave;
-	}
+	eyeComponent->timeCounter += GetDeltaTime();
 }
 
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp, AnimationComponent* enemyAnim)
@@ -320,7 +312,8 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			eyeComponent->attackTimer = 0;
 			eyeComponent->attackStunTimer = 0;
 			eyeComponent->dealtDamage = false;
-			
+			eyeComponent->aimTimer = 0.0f;
+
 			enemyAnim->aAnimTime = 0.0f;
 			enemyAnim->aAnim = ANIMATION_IDLE;
 			enemyAnim->aAnimIdx = 1;
@@ -376,6 +369,7 @@ bool EyeBehaviourSystem::Update()
 	StatComponent* enemyStats = nullptr;
 	StatComponent* playerStats = nullptr;
 	EnemyComponent* enemComp = nullptr;
+	DebuffComponent* debuff = nullptr;
 
 	bool hasUpdatedMap = false;
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
@@ -390,6 +384,14 @@ bool EyeBehaviourSystem::Update()
 		enemyHitbox = registry.GetComponent<HitboxComponent>(enemyEntity);
 		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
+
+		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
+		if (debuff && debuff->m_frozen)
+		{
+			TransformDecelerate(enemyEntity);//Always decelerate
+			continue; // frozen, won't do behavior stuff
+		}
+
 
 		//Find a player to kill.
 		if (enemComp->lastPlayer.index == -1)
@@ -431,7 +433,7 @@ bool EyeBehaviourSystem::Update()
 			{
 				//do nothing
 			}
-			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging) // Retreat to safe distance if not charging
+			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging && !eyeComponent->shooting) // Retreat to safe distance if not charging
 			{
 				if (hasUpdatedMap == false)
 				{
@@ -453,7 +455,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp, enemyAnim);
 
 			}
-			else if (distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (eyeComponent->shooting || distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
 					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
@@ -461,7 +463,7 @@ bool EyeBehaviourSystem::Update()
 			else // idle
 			{
 				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
 			
 			if (!eyeComponent->charging)
@@ -473,7 +475,7 @@ bool EyeBehaviourSystem::Update()
 		else if (enemyStats->GetHealth() > 0.0f)
 		{
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-			IdleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 		}
 
 		eyeComponent->attackStunTimer += GetDeltaTime();

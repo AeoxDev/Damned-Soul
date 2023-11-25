@@ -10,6 +10,8 @@ namespace SOUL_POWER
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
+	void Consume(void* input);
+
 	// The modify damage function
 	void ModifyStrength(void* data);
 }

@@ -17,7 +17,7 @@
 #define SHOP_RELIC_WINDOWS (3)
 #define SHOP_SINGLE_WINDOWS (6)
 
-void CreateUIRelics(UIComponent& uiComp, UIRelicWindowComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
+void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
 {
 	ML_Array<float, 2> xPos;
 	xPos[0] = pos.x - 0.05f;
@@ -40,48 +40,50 @@ void CreateUIRelics(UIComponent& uiComp, UIRelicWindowComponent& uiRelicComp, co
 
 void CreateRelicWindows()
 {
-	const char const texts[SHOP_RELIC_WINDOWS][32] =
+	const char texts[SHOP_RELIC_WINDOWS][32] =
 	{
 		"Offence",
 		"Defence",
 		"Gadget"
 	};
 
-	const DSFLOAT2 const positions[SHOP_RELIC_WINDOWS] =
+	const DSFLOAT2 positions[SHOP_RELIC_WINDOWS] =
 	{
 		{ SHOP_POSITION_X, 0.6f }, 
 		{ SHOP_POSITION_X, 0.3f }, 
 		{ SHOP_POSITION_X, 0.0f }
 	};
 
-	const Relics::RELIC_TYPE const type[SHOP_RELIC_WINDOWS] =
+	const Relics::RELIC_TYPE type[SHOP_RELIC_WINDOWS] =
 	{
-		Relics::RELIC_UNTYPED,
-		Relics::RELIC_UNTYPED,
-		Relics::RELIC_UNTYPED
+		Relics::RELIC_OFFENSE,
+		Relics::RELIC_DEFENSE,
+		Relics::RELIC_GADGET
 	};
 
 	for (int i = 0; i < SHOP_RELIC_WINDOWS; i++)
 	{
 		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
-		uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i]);
+		uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-		UIRelicWindowComponent* uiRelicWindow = registry.AddComponent<UIRelicWindowComponent>(relicWindow);
+		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
 		CreateUIRelics(*uiElement, *uiRelicWindow, type[i], positions[i]);
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 
-		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunc::EmptyOnClick);
-		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
-		uiOnClick->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunc::SelectRelic);
+		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunctions::OnClick::None);
+		uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunctions::OnClick::SelectRelic);
+		uiOnClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunctions::OnClick::SelectRelic);
 
-		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::EmptyOnHover);
-		uiOnHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunc::HoverShopRelic);
-		uiOnHover->Setup(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunc::HoverShopRelic);
+		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::None);
+		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
+		uiOnHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
 
+		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
+		sfx->Load(SHOP);
 	}
 
 };
@@ -89,7 +91,7 @@ void CreateRelicWindows()
 void CreateSingleWindows()
 {
 
-	const char const texts[SHOP_SINGLE_WINDOWS][32] =
+	const char texts[SHOP_SINGLE_WINDOWS][32] =
 	{
 		"Heal",
 		"Reroll",
@@ -99,7 +101,7 @@ void CreateSingleWindows()
 		""
 	};
 
-	const DSFLOAT2 const positions[SHOP_SINGLE_WINDOWS] =
+	const DSFLOAT2 positions[SHOP_SINGLE_WINDOWS] =
 	{
 		{SHOP_OFFSET_X, 0.6f},
 		{SHOP_OFFSET_X, 0.3f},
@@ -107,17 +109,6 @@ void CreateSingleWindows()
 		{SHOP_OFFSET_X, -0.3f},
 		{SHOP_POSITION_X, -0.3f},
 		{0.8f, -0.75f }
-	};
-
-	//doesnt work in setup image, "" != "" is true
-	const char const baseFilenames[SHOP_SINGLE_WINDOWS][32] =
-	{
-		"",
-		"",
-		"",
-		"",
-		"TempRelicFlavorHolder",
-		"TempRelicFlavorHolder"
 	};
 
 	const char const filenames[SHOP_SINGLE_WINDOWS][32] =
@@ -132,13 +123,44 @@ void CreateSingleWindows()
 
 	void(*const functions[SHOP_SINGLE_WINDOWS])(void*, int)  =
 	{
-		UIFunc::HealPlayer,
-		UIFunc::RerollRelic,
-		UIFunc::LockRelic,
-		UIFunc::BuyRelic,
-		UIFunc::EmptyOnClick,
-		UIFunc::LoadNextLevel
+		UIFunctions::OnClick::HealPlayer,
+		UIFunctions::OnClick::RerollRelic,
+		UIFunctions::OnClick::LockRelic,
+		UIFunctions::OnClick::BuyRelic,
+		UIFunctions::OnClick::None,
+		UIFunctions::Game::LoadNextLevel
 	};
+
+	const char const name[SHOP_SINGLE_WINDOWS][32] =
+	{
+		"Heal",
+		"Reroll",
+		"Lock",
+		"Buy",
+		"Upgrade Weapon",
+		""
+	};
+
+	const char const description[SHOP_SINGLE_WINDOWS][64] =
+	{
+		"Recover 25% of max Health",
+		"Reroll a new set of relics",
+		"Lock the selected relic until the next reroll or shop",
+		"Buy the selected relic",
+		"Upgrade your weapon",
+		"Leave the shop"
+	};
+
+	uint8_t price[SHOP_SINGLE_WINDOWS] =
+	{
+		2,
+		0,
+		0,
+		0,
+		0,
+		0,
+	};
+
 
 	for (int i = 0; i < SHOP_SINGLE_WINDOWS; i++)
 	{
@@ -146,64 +168,163 @@ void CreateSingleWindows()
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 
 		if (i == 4)
-			uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i]);
+			uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		else
-			uiElement->Setup("", texts[i], positions[i]);
+			uiElement->Setup("", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 		uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
 
 		if (i == 5)
 			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
-		if (i == 1)
-			registry.AddComponent<UIRerollComponent>(relicWindow);
-		else
-			registry.AddComponent<UIShopButtonComponent>(relicWindow);
+		if (i == 0)
+			registry.AddComponent<UIShopHealComponent>(relicWindow);
+		else if (i == 1)
+			registry.AddComponent<UIShopRerollComponent>(relicWindow);
 
+		UIShopButtonComponent* button = registry.AddComponent<UIShopButtonComponent>(relicWindow);
+		button->Setup(name[i], description[i], price[i]);
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 
-		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunc::EmptyOnClick);
+		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunctions::OnClick::None);
 		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, functions[i]);
 
-		if (i != 5)
-		{
-			OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
-			uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
-		}
+		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
+		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::ShopButton);
+
+		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
+		sfx->Load(SHOP);
 	}
 }
 
-void LoadShop()
+void CreateTextWindows()
 {
-
-	EntityID shopTitle = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	EntityID impText = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	EntityID shopTitle = registry.CreateEntity();
+	EntityID impText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("TempShopTitle", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.8f });
+	uiTitle->Setup("TempShopTitle", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.8f }, DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	uiTitle->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
-	
-	CreateRelicWindows();
-
-	CreateSingleWindows();
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("TempRelicHolder", "\n\nHello There", { 0.3f, 0.1f }, { 2.0f, 2.0f });
+	uiImpText->Setup("TempRelicHolder", "Hello There", { 0.3f, 0.1f }, { 2.0f, 2.0f }, 20.0f);
 	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
 
 	registry.AddComponent<UIShopImpComponent>(impText);
 
+}
+
+void LoadShop()
+{
+	CreateTextWindows();
+
+	CreateRelicWindows();
+
+	CreateSingleWindows();
+
 	SetInShop(true);
+
+	for (auto entity : View<OnClickComponent>(registry))
+	{
+		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
+		if (shopBuy != nullptr)
+		{
+			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+			{
+				if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
+				{
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+					if (sfx != nullptr) sfx->Play(Shop_FirstMeet, Channel_Extra);
+				}
+			}
+		}
+	}
+
 }
 
 void ReloadShop()
 {
-	SetInShop(true);
-	void* a = {};
-	UIFunc::RerollRelic(a, -1);
+	CreateTextWindows();
 
+	SetInShop(true);
+
+	for (auto entity : View<UIShopRerollComponent>(registry))
+	{
+		UIFunctions::OnClick::RerollRelic((void*)&entity, -1);
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx != nullptr) sfx->Stop(Channel_Base);
+	}
+
+	for (auto entity : View<OnClickComponent>(registry))
+	{
+		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
+		if (shopBuy != nullptr)
+		{
+			for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+			{
+				if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
+				{
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+					if (sfx != nullptr)
+					{
+						switch (stateManager.activeLevel)
+						{
+						case 4:
+							sfx->Play(Shop_BeforeLava, Channel_Extra);
+							break;
+						case 6:
+							sfx->Play(Shop_BeforeSplitBoss, Channel_Extra);
+							break;
+						case 8:
+						{
+							StatComponent* currentStats = registry.GetComponent<StatComponent>(stateManager.player);
+							if (currentStats != nullptr)
+							{
+								if (currentStats->GetHealthFraction() <= 0.25)
+								{
+									sfx->Play(Shop_LowHealth, Channel_Extra);
+								}
+							}
+							break;
+						}
+						case 10:
+						{
+							StatComponent* currentStats = registry.GetComponent<StatComponent>(stateManager.player);
+							if (currentStats != nullptr)
+							{
+								if (currentStats->GetHealthFraction() <= 0.25)
+								{
+									sfx->Play(Shop_LowHealth, Channel_Extra);
+								}
+							}
+							break;
+						}
+						case 12:
+							sfx->Play(Shop_BeforeIce, Channel_Extra);
+							break;
+						case 14:
+						{
+							StatComponent* currentStats = registry.GetComponent<StatComponent>(stateManager.player);
+							if (currentStats != nullptr)
+							{
+								if (currentStats->GetHealthFraction() <= 0.25)
+								{
+									sfx->Play(Shop_LowHealth, Channel_Extra);
+								}
+							}
+							break;
+						}
+						case 16:
+							sfx->Play(Shop_BeforeLastBoss, Channel_Extra);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 

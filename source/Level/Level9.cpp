@@ -15,8 +15,22 @@
 
 void LoadLevel9()
 {
-	//This is the eye stage. Lots of acid in a grey environment.
-	EntityID stage = registry.CreateEntity();
+	float redAdd = 0.0f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.1f;
+	float redMult = 1.0f;
+	float greenMult = 1.0f;
+	float blueMult = 1.1f;
+
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 9;
+	EntityID stage = SetUpStage(stageVars);
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -32,7 +46,6 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
 	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
 	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
@@ -42,59 +55,25 @@ void LoadLevel9()
 	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
 	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
 	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);*/
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
-	Stage3IntroScene(cutsceneEnemy, 0);
-	//22 souls + 18 souls level 1,2 = 40 souls total before boss
-
-	float redAdd = 0.0f;
-	float greenAdd = 0.0f;
-	float blueAdd = 0.1f;
-	float redMult = 1.0f;
-	float greenMult = 1.0f;
-	float blueMult = 1.1f;
-
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = redMult;
-	stageModel->colorMultiplicativeGreen = greenMult;
-	stageModel->colorMultiplicativeBlue = blueMult;
-	stageModel->colorAdditiveBlue = blueAdd;
-	stageModel->colorAdditiveRed = redAdd;
-
-	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
-
-	// Stage (Default)
-	registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
+	
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
-	PointOfInterestComponent poic;
-	poic.weight = 10.0f;
-	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
+	SetScoreboardUI(stage);
 
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-
-
+	//Mouse
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+	//Light
 	float redLight = 0.05f;
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;
 
-	SetDirectionLight(1.0f, 1.1f, 1.0f, -1.6f, -2.0f, 1.0f);
+
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -105,7 +84,8 @@ void LoadLevel9()
 	int nrHazards = 8;
 	for (size_t i = 0; i < nrHazards; i++)
 	{
-		bool succeded = false;
+		SetUpHazard(HAZARD_ACID, 1.f, 0.f, 0.5f, 0.f, 0.2f, 1.2f, 0.2f, 1.5f);
+		/*bool succeded = false;
 		while (!succeded)
 		{
 			float randX = (float)(rand() % 100) - 50.0f;
@@ -116,13 +96,13 @@ void LoadLevel9()
 				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
 				EntityID hazard = registry.CreateEntity();
 				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->colorAdditiveRed = 0.0f;
-				hazardModel->colorAdditiveGreen = 0.5f;
-				hazardModel->colorAdditiveBlue = 0.0f;
-				hazardModel->colorMultiplicativeRed = 0.2f;
-				hazardModel->colorMultiplicativeGreen = 1.2f;
-				hazardModel->colorMultiplicativeBlue = 0.2f;
-				hazardModel->gammaCorrection = 1.5f;
+				hazardModel->shared.colorAdditiveRed = 0.0f;
+				hazardModel->shared.colorAdditiveGreen = 0.5f;
+				hazardModel->shared.colorAdditiveBlue = 0.0f;
+				hazardModel->shared.colorMultiplicativeRed = 0.2f;
+				hazardModel->shared.colorMultiplicativeGreen = 1.2f;
+				hazardModel->shared.colorMultiplicativeBlue = 0.2f;
+				hazardModel->shared.gammaCorrection = 1.5f;
 				hazardModel->castShadow = false;
 				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 				hazardTransform->positionX = randX;
@@ -137,25 +117,26 @@ void LoadLevel9()
 
 				succeded = true;
 			}
-		}
+		}*/
 	}
 	nrHazards = 1;//Big ice sheet
 	for (size_t i = 0; i < nrHazards; i++)
 	{
-		bool succeded = false;
+		SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
+		/*bool succeded = false;
 		float randX = (float)(rand() % 32) - 16.0f;
 		float randZ = (float)(rand() % 32) - 16.0f;
 		float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
 		float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
 		EntityID hazard = registry.CreateEntity();
 		ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-		hazardModel->colorAdditiveRed = 0.1f;
-		hazardModel->colorAdditiveGreen = 0.1f;
-		hazardModel->colorAdditiveBlue = 0.5f;
-		hazardModel->colorMultiplicativeRed = 0.5f;
-		hazardModel->colorMultiplicativeGreen = 0.5f;
-		hazardModel->colorMultiplicativeBlue = 1.5f;
-		hazardModel->gammaCorrection = 1.5f;
+		hazardModel->shared.colorAdditiveRed = 0.1f;
+		hazardModel->shared.colorAdditiveGreen = 0.1f;
+		hazardModel->shared.colorAdditiveBlue = 0.5f;
+		hazardModel->shared.colorMultiplicativeRed = 0.5f;
+		hazardModel->shared.colorMultiplicativeGreen = 0.5f;
+		hazardModel->shared.colorMultiplicativeBlue = 1.5f;
+		hazardModel->shared.gammaCorrection = 1.5f;
 		hazardModel->castShadow = false;
 		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 		hazardTransform->positionX = randX;
@@ -168,10 +149,11 @@ void LoadLevel9()
 		hazardTransform->facingZ = sinf((float)rand());
 		AddStaticHazard(hazard, HAZARD_ICE);
 
-		succeded = true;
+		succeded = true;*/
 	}
-	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

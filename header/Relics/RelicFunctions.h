@@ -17,6 +17,10 @@ namespace Relics
 		// arguments: foo(EntityID, StatComponent*)
 		FUNC_ON_STAT_CALC,
 
+		// Called when calculating the player's specific bonus stats
+		// arguments: foo(EntityID, PlayerComopnent*)
+		FUNC_ON_PLAYER_STAT_CALC,
+
 		// Called when damage is calculated
 		//arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
 		FUNC_ON_DAMAGE_CALC,
@@ -48,6 +52,10 @@ namespace Relics
 		// Called when entity dashes
 		//arguments: foo(AttackerEntity, DefenderEntity, damageBase, damageMultInc, damageMultDec, damageAdd, damageSub)
 		FUNC_ON_DASH,
+
+		// Called when prices are calculated
+		//arguments: foo(cost_all, cost_relics, cost_heal, cost_reroll, upgrade_cost)
+		FUNC_ON_PRICE_CALC,
 
 		// Used to iterate, not to give functionality to relics
 		FUNC_END_OF_TYPES

@@ -20,6 +20,9 @@ bool OnClickSystem::Update()
 
 		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 
+		if (comp->mouseStates.size() == 0 || comp->onClickFunctions.size() == 0)
+			continue;
+
 		if (comp->mouseStates[comp->index] == 0)
 		{
 			if (mouseButtonPressed[MouseButton::left] == pressed)
@@ -39,21 +42,7 @@ bool OnClickSystem::Update()
 							continue;
 					}
 
-					//Set which sound to play
-					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-					if (sound != nullptr)
-					{
-						if (comp->onClickFunctions[comp->index] == UIFunc::LoadNextLevel)
-						{
-							sound->Play(Button_Start, Channel_Base);
-						}
-						else
-						{
-							sound->Play(Button_Press, Channel_Base);
-						}
-					}
-
-					comp->onClickFunctions[comp->index](uiElement, comp->index);
+					comp->onClickFunctions[comp->index]((void*)&entity, comp->index);
 					return true;
 				}
 			}
@@ -93,7 +82,69 @@ bool OnClickSystem::Update()
 							continue;
 					}
 
-					comp->onClickFunctions[comp->index](uiElement, comp->index);
+					//Set which sound to play
+					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
+					if (sound != nullptr)
+					{
+						if (comp->onClickFunctions[comp->index] == UIFunctions::MainMenu::Start)
+						{
+							//Stop all the previous sounds (except music) to mute for example the dog breath
+							for (auto entity : View<AudioEngineComponent>(registry))
+							{
+								AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+								audioJungle->HandleSound();
+								audioJungle->StopAllSounds();
+							}
+							sound->Play(Button_Start, Channel_Base);
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::SelectRelic)
+						{
+							sound->Play(Shop_Press, Channel_Base);
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::BuyRelic)
+						{
+							//Play sound in the function itself
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::HealPlayer)
+						{
+							//Play sound in the function itself
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::LockRelic)
+						{
+							//Play sound in the function itself
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::RerollRelic)
+						{
+							//Play sound in the function itself
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::Game::LoadNextLevel)
+						{
+							for (auto entity : View<AudioEngineComponent>(registry))
+							{
+								AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+								audioJungle->HandleSound();
+								audioJungle->StopAllSounds();
+							}
+						}
+						else if (comp->onClickFunctions[comp->index] == UIFunctions::Game::SetMainMenu)
+						{
+							//Stop all the previous sounds (except music) to mute for example the dog breath
+							for (auto entity : View<AudioEngineComponent>(registry))
+							{
+								AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+								audioJungle->HandleSound();
+								audioJungle->StopAllSounds();
+							}
+							sound->Play(Button_Press, Channel_Base);
+						}
+						//else if (comp->onClickFunctions[comp->index] == UIFunc::UpgradeWeapon) //Add this when the function for upgrading weapon has been included.
+						else if (comp->onClickFunctions[comp->index] != UIFunctions::OnClick::None)
+						{
+							sound->Play(Button_Press, Channel_Base);
+						}
+					}
+
+					comp->onClickFunctions[comp->index]((void*)&entity, comp->index);
 					return true;
 				}
 			}

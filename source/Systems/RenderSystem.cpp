@@ -11,19 +11,33 @@
 #include "Model.h"
 #include "RenderDepthPass.h"
 
-void RenderModels(bool isShadowPass)
+enum RenderPass
 {
+	ShadowPass, DepthPass, LightPass
+};
+
+void Render(RenderPass renderPass)
+{
+
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
-		if (isShadowPass && mc->castShadow == false)
+		if (renderPass  == ShadowPass && mc->castShadow == false)
 		{
 			continue;
 		}
-		Light::SetGammaCorrection(mc->gammaCorrection);
-		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
-			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+		
+		// If this isn't a shadow pass, update colors (and reset temp colors)
+		if (LightPass == renderPass)
+		{
+			Light::SetGammaCorrection(mc->shared.gammaCorrection);
+			Light::SetColorHue(mc->shared.GetRedMult(), mc->shared.GetGreenMult(), mc->shared.GetBlueMult(),
+				mc->shared.GetRedAdd(), mc->shared.GetGreenAdd(), mc->shared.GetBlueAdd());
+			Light::UpdateLight();
+			mc->shared.ResetTempColor();
+		}
+
 		if (tc->offsetX != 0.0f)
 		{
 			tc->offsetY = 0.0f;
@@ -40,13 +54,20 @@ void RenderModels(bool isShadowPass)
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, AnimationComponent>(registry))
 	{
-		
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
 		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
-		Light::SetGammaCorrection(mc->gammaCorrection);
-		Light::SetColorHue(mc->colorMultiplicativeRed, mc->colorMultiplicativeGreen, mc->colorMultiplicativeBlue,
-			mc->colorAdditiveRed, mc->colorAdditiveGreen, mc->colorAdditiveBlue);
+
+		// If this isn't a shadow pass, update colors (and reset temp colors)
+		if (LightPass == renderPass)
+		{
+			Light::SetGammaCorrection(mc->shared.gammaCorrection);
+			Light::SetColorHue(mc->shared.GetRedMult(), mc->shared.GetGreenMult(), mc->shared.GetBlueMult(),
+				mc->shared.GetRedAdd(), mc->shared.GetGreenAdd(), mc->shared.GetBlueAdd());
+			Light::UpdateLight();
+			mc->shared.ResetTempColor();
+		}
+
 		if (tc->offsetX != 0.0f)
 		{
 			tc->offsetY = 0.0f;
@@ -75,13 +96,13 @@ bool ShadowSystem::Update()
 	DirectX::XMFLOAT3 cameraLookAt;
 	DirectX::XMStoreFloat3(&cameraLookAt, cameraV);
 	Camera::ToggleProjection();
-	float dist = 80.0f;
+	float dist = 128.0f;
 	Camera::SetPosition(cameraLookAt.x + -dir.x * dist, cameraLookAt.y + -dir.y * dist, cameraLookAt.z + -dir.z * dist + 16.0f, false);//Set this to center of stage offset upwards
 	Camera::SetLookAt(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z + 16.0f);//Set to center of stage
 	Camera::SetUp(0.0f, 1.0f, 0.0f);
-	Camera::SetWidth(640.0f * Camera::GetFOV());//Set width (x) of orthogonal based on stage
-	Camera::SetHeight(640.0f * Camera::GetFOV());//Set height (z) of orthogonal based on stage
-	Camera::SetOrthographicDepth(256.0f);
+	Camera::SetWidth(700.0f * Camera::GetFOV());//Set width (x) of orthogonal based on stage
+	Camera::SetHeight(700.0f * Camera::GetFOV());//Set height (z) of orthogonal based on stage
+	Camera::SetOrthographicDepth(300.0f);
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	Camera::SaveToShadowMapCamera();
@@ -96,7 +117,7 @@ bool ShadowSystem::Update()
 	SetShadowmap(true);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	
-	RenderModels(true);
+	Render(ShadowPass);
 
 	//Return the camera
 	Camera::ToggleProjection();
@@ -128,7 +149,7 @@ bool RenderSystem::Update()
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetPixelShader(GetDepthPassPixelShader());
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
-	RenderModels(false);
+	Render(DepthPass);
 	ClearBackBuffer();
 	// Render UI
 	RenderUI();
@@ -147,7 +168,7 @@ bool RenderSystem::Update()
 	// Set Geometry Shader used for normalmapping
 	SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 	// Render
-	RenderModels(false);
+	Render(LightPass);
 	// Unset geometry shader
 	UnsetGeometryShader();
 	//UpdateGlobalShaderBuffer();
@@ -166,7 +187,7 @@ bool RenderSystem::Update()
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		HitboxVisualComponent* hitboxV = registry.GetComponent<HitboxVisualComponent>(entity);
-		for (size_t i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
+		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
 		{
 			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{
@@ -184,7 +205,7 @@ bool RenderSystem::Update()
 			}
 			
 		}
-		for (size_t i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
+		for (int i = SAME_TYPE_HITBOX_LIMIT; i < SAME_TYPE_HITBOX_LIMIT + SAME_TYPE_HITBOX_LIMIT; i++)
 		{
 			if (hitboxV->GetNrVertices(entity, i) > 0)
 			{

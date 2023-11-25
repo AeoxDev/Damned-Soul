@@ -1,7 +1,14 @@
 #pragma once
+#include "MemLib/ML_String.hpp"
 
 struct UIPauseRelicTextComponent
 {
-	char* name;
-	char* description;
+	ML_String name;
+	ML_String description;
+
+	void Release()
+	{
+		name.~ML_String();
+		description.~ML_String();
+	};
 };

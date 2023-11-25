@@ -4,22 +4,29 @@
 //Mode to indicate what actions to make
 enum CutsceneMode
 {
+	Cutscene_Nothing = 0b0,
 	Transition_Position = 0b1, //Transition of position between two points, 
-	Transition_LookAt = 0b01, //Transition of look at between two points
+	Transition_LookAt = 0b10, //Transition of look at between two points
 
-	Cutscene_Linear = 0b001
+	Cutscene_Linear = 0b100,
+	Cutscene_Accelerating = 0b1000,
+	Cutscene_Character_Walk = 0b10000,//Walk from point to point
+	Cutscene_Character_Fall = 0b100000//Fall from point to point
 };
 
 //This component functions as arguments
 //Use timed events for cutscene components
 struct CutsceneComponent
 {
-	CutsceneMode mode;
+	CutsceneMode mode = Cutscene_Nothing;
 	float startPositionX, startPositionY, startPositionZ;
 	float goalPositionX, goalPositionY, goalPositionZ;
 
 	float startLookAtX, startLookAtY, startLookAtZ;
 	float goalLookAtX, goalLookAtY, goalLookAtZ;
 };
+
+void CutsceneSetPosition(EntityID& entity, float startX, float startY, float startZ, float goalX, float goalY, float goalZ);
+void CutsceneSetLookAt(EntityID& entity, float startX, float startY, float startZ, float goalX, float goalY, float goalZ);
 
 void CutsceneNPCIntro1NoText(EntityID& entity);

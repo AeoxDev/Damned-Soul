@@ -49,10 +49,10 @@ void LoadEyeChallenge()
 
 
 	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = 0.75f;
-	stageModel->colorMultiplicativeGreen = 0.75f;
-	stageModel->colorMultiplicativeBlue = 0.75f;
-	stageModel->gammaCorrection = 0.9f;
+	stageModel->shared.colorMultiplicativeRed = 0.75f;
+	stageModel->shared.colorMultiplicativeGreen = 0.75f;
+	stageModel->shared.colorMultiplicativeBlue = 0.75f;
+	stageModel->shared.gammaCorrection = 0.9f;
 	//stageModel->colorAdditiveRed = 0.1f;
 
 	// Stage (Default)
@@ -63,8 +63,6 @@ void LoadEyeChallenge()
 	/*char ctexture[] = "1-1C.png";
 	char emptyTexture[] = "";
 	AddStaticHazardTexture(stage, ctexture, emptyTexture, emptyTexture);*/
-
-	RenderGeometryIndependentCollision(stage);
 
 	//Finally set the collision boxes
 
@@ -85,7 +83,7 @@ void LoadEyeChallenge()
 	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
-	UIRunTimeComponent* runtime = registry.AddComponent<UIRunTimeComponent>(timeEntity);
+	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
 
 	stateManager.stage = stage;

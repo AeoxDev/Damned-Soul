@@ -11,7 +11,7 @@ EntityID CRACKED_LENSE::_OWNER;
 const char* CRACKED_LENSE::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Increases your strength by %ld", PERCENT(CRACKED_LENSE_INCREASE_STRENGTH));
+	sprintf_s(temp, "Increases your Attack Damage by %ld%% of your Base Weapon Damage", PERCENT(CRACKED_LENSE_INCREASE_STRENGTH));
 #pragma warning(suppress : 4172)
 	return temp;
 }

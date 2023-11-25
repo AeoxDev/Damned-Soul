@@ -41,6 +41,7 @@ RS_IDX hitboxRasterizerState;
 CB_IDX hitboxConstantBuffer;
 
 bool hitboxVisualizerActive[SAME_TYPE_HITBOX_LIMIT * 2];
+bool visualizeStage = false;
 
 struct CircularConvexReturn
 {
@@ -355,7 +356,7 @@ void HandleProximityCollision()
 
 		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
 		{
-			ProximityCorrection(closestWall, index, transformComponent->positionX, transformComponent->positionZ, transformComponent->lastPositionX, transformComponent->lastPositionZ);
+			ProximityCorrection(closestWall, index, transformComponent->positionX, transformComponent->positionZ, transformComponent->lastPositionX, transformComponent->lastPositionZ, transformComponent->currentSpeedX, transformComponent->currentSpeedZ);
 		}
 	}
 }
@@ -462,7 +463,7 @@ int8_t GetHitboxRasterizerState()
 {
 	return hitboxRasterizerState;
 }
-int8_t GetHitboxConstantBuffer()
+int16_t GetHitboxConstantBuffer()
 {
 	return hitboxConstantBuffer;
 }
@@ -477,6 +478,10 @@ bool CollisionSystem::Update()
 float GetHitboxRadius(const EntityID& entity, int hitBoxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return -1.0f;
+	}
 	if (hitBoxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		return hitbox->circleHitbox[hitBoxID].radius;
@@ -596,6 +601,10 @@ void StopVisualizeHitbox(EntityID& entity)
 int HitboxVisualComponent::GetNrVertices(EntityID& entity, int hitboxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return 0;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		if (hitbox->circularFlags[hitboxID].active)
@@ -625,35 +634,35 @@ void HitboxVisualComponent::UpdateHitboxConstantBuffer(EntityID& entity, int hit
 }
 
 
-EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
-	const float& positionX, const float& positionY, const float& positionZ,
-	const float& scaleX, const float& scaleY, const float& scaleZ,
-	const float& colorAddR,const float& colorAddG,const float& colorAddB,
-	const float& colorMulR, const float& colorMulG, const float& colorMulB, 
-	const float& gammaCorrection, const float& facingX, const float& facingZ)
-{
-	EntityID hazard = registry.CreateEntity();
-	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel(model));
-	hazardModel->colorAdditiveRed = colorAddR;
-	hazardModel->colorAdditiveGreen = colorAddG;
-	hazardModel->colorAdditiveBlue = colorAddB;
-	hazardModel->colorMultiplicativeRed = colorMulR;
-	hazardModel->colorMultiplicativeGreen = colorMulG;
-	hazardModel->colorMultiplicativeBlue = colorMulB;
-	hazardModel->gammaCorrection = gammaCorrection;
-	hazardModel->castShadow = false;
-	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-	hazardTransform->positionX = positionX;
-	hazardTransform->positionY = positionY;
-	hazardTransform->positionZ = positionZ;
-	hazardTransform->scaleX = scaleX;
-	hazardTransform->scaleY = scaleY;
-	hazardTransform->scaleZ = scaleZ;
-	hazardTransform->facingX = facingX;
-	hazardTransform->facingZ = facingZ;
-	AddStaticHazard(hazard, type);
-	return hazard;
-}
+//EntityID CreateStaticHazard(const StaticHazardType& type, const char* model,
+//	const float& positionX, const float& positionY, const float& positionZ,
+//	const float& scaleX, const float& scaleY, const float& scaleZ,
+//	const float& colorAddR,const float& colorAddG,const float& colorAddB,
+//	const float& colorMulR, const float& colorMulG, const float& colorMulB, 
+//	const float& gammaCorrection, const float& facingX, const float& facingZ)
+//{
+//	EntityID hazard = registry.CreateEntity();
+//	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel(model));
+//	hazardModel->colorAdditiveRed = colorAddR;
+//	hazardModel->colorAdditiveGreen = colorAddG;
+//	hazardModel->colorAdditiveBlue = colorAddB;
+//	hazardModel->colorMultiplicativeRed = colorMulR;
+//	hazardModel->colorMultiplicativeGreen = colorMulG;
+//	hazardModel->colorMultiplicativeBlue = colorMulB;
+//	hazardModel->gammaCorrection = gammaCorrection;
+//	hazardModel->castShadow = false;
+//	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+//	hazardTransform->positionX = positionX;
+//	hazardTransform->positionY = positionY;
+//	hazardTransform->positionZ = positionZ;
+//	hazardTransform->scaleX = scaleX;
+//	hazardTransform->scaleY = scaleY;
+//	hazardTransform->scaleZ = scaleZ;
+//	hazardTransform->facingX = facingX;
+//	hazardTransform->facingZ = facingZ;
+//	AddStaticHazard(hazard, type);
+//	return hazard;
+//}
 
 void SetHitboxRadius(const EntityID& entity, int hitBoxID, const float r)
 {

@@ -39,11 +39,20 @@ void BlinkColor(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);// *std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	cosineWave *= cosineWave;
 	if (skelel)
-		skelel->colorAdditiveRed = cosineWave;
+	{
+		skelel->shared.bcmB_temp *= 1 - cosineWave;
+		skelel->shared.bcmG_temp *= 1 - cosineWave;
+		skelel->shared.bcaR_temp += cosineWave;
+	}
 	if (bonel)
-		bonel->colorAdditiveRed = cosineWave;
+	{
+		bonel->shared.bcmB_temp *= 1 - cosineWave;
+		bonel->shared.bcmG_temp *= 1 - cosineWave;
+		bonel->shared.bcaR_temp += cosineWave;
+	}
 
 }
 
@@ -56,16 +65,16 @@ void ResetColor(EntityID& entity, const int& index)
 	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->colorAdditiveRed = skelel->baseColorAdditiveRed;
-		skelel->colorAdditiveGreen = skelel->baseColorAdditiveGreen;
-		skelel->colorAdditiveBlue = skelel->baseColorAdditiveBlue;
+		skelel->shared.colorAdditiveRed = skelel->shared.baseColorAdditiveRed;
+		skelel->shared.colorAdditiveGreen = skelel->shared.baseColorAdditiveGreen;
+		skelel->shared.colorAdditiveBlue = skelel->shared.baseColorAdditiveBlue;
 
 	}
 	if (bonel)
 	{
-		bonel->colorAdditiveRed = bonel->baseColorAdditiveRed;
-		bonel->colorAdditiveGreen = bonel->baseColorAdditiveGreen;
-		bonel->colorAdditiveBlue = bonel->baseColorAdditiveBlue;
+		bonel->shared.colorAdditiveRed = bonel->shared.baseColorAdditiveRed;
+		bonel->shared.colorAdditiveGreen = bonel->shared.baseColorAdditiveGreen;
+		bonel->shared.colorAdditiveBlue = bonel->shared.baseColorAdditiveBlue;
 	}
 
 }
@@ -139,7 +148,17 @@ void SquashStretch(EntityID& entity, const int& index)
 		transform->offsetScaleZ = scaleZ + dz * acceleratingTime;
 	}
 }
-
+void TPose(EntityID& entity, const int& index)
+{
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim != nullptr)
+	{
+		anim->aAnimIdx = 0;
+		anim->aAnim = ANIMATION_DEATH;
+		anim->aAnimTime = 0.01f;;
+	}
+	
+}
 void ResetSquashStretch(EntityID& entity, const int& index)
 {
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
@@ -164,4 +183,13 @@ SquashStretchComponent* AddSquashStretch(EntityID& entity, const SquashStretchTy
 	component->startScaleY = startY;
 	component->startScaleZ = startZ;
 	return component;
+}
+
+void LoopFallingAnimation(EntityID& entity, const int& index)
+{
+
+}
+void FallingAnimation(EntityID& entity, const int& index)
+{
+
 }

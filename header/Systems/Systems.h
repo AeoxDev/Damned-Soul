@@ -18,6 +18,14 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
+class GlowSystem : public System	// NOTE: Might need a separate blur system for future readability.
+{
+	bool Update();
+};
+class GlowApplySystem : public System
+{
+	bool Update();
+};
 class OnClickSystem : public System
 {
 	bool Update();
@@ -46,6 +54,10 @@ class AudioSystem : public System
 {
 	bool Update();
 };
+class StageVoiceLineSystem : public System
+{
+	bool Update();
+};
 
 class UIRenderSystem : public System
 {
@@ -56,10 +68,6 @@ class UIHealthSystem : public System
 	bool Update();
 };
 class UIPlayerSoulsSystem : public System
-{
-	bool Update();
-};
-class UIRelicsSystem : public System
 {
 	bool Update();
 };
@@ -80,7 +88,10 @@ class TransformSystem : public System
 {
 	bool Update();
 };
-
+class FollowerSystem : public System
+{
+	bool Update();
+};
 class ParticleSystemGPU : public System
 {
 	bool Update();
@@ -94,7 +105,7 @@ class ParticleSystem : public System
 	bool Update();
 };
 
-class DamageOverTimeSystem : public System
+class DebuffSystem : public System
 {
 	bool Update();
 };
@@ -119,10 +130,15 @@ class ImpBehaviourSystem : public System
 	bool Update();
 };
 
-//class MinotaurBehaviourSystem : public System
-//{
-//	bool Update();
-//};
+class MinotaurBehaviourSystem : public System
+{
+	bool Update();
+};
+
+class ZacBehaviourSystem : public System
+{
+	bool Update();
+};
 
 class TempBossBehaviourSystem : public System
 {
