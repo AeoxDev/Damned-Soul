@@ -294,12 +294,7 @@ bool SkeletonBehaviourSystem::Update()
 					skeletonComponent->coolVec.clear();
 					skeletonComponent->counterForTest = 0;
 #endif // TEST
-					if (finalPath.size() > 2)
-					{
-						skeletonComponent->fx = finalPath[0].fx;
-						skeletonComponent->fz = finalPath[0].fz;
-						skeletonComponent->followPath = true;
-					}
+				
 					
 #ifdef PATH_FINDING_VISUALIZER
 					for (int p = 0; p < finalPath.size(); p++)
@@ -311,8 +306,10 @@ bool SkeletonBehaviourSystem::Update()
 					}
 #endif // TEST
 					// goal (next node) - current
-					if (finalPath.size() > 2 && skeletonComponent->followPath)
+					if (finalPath.size() > 2)
 					{
+						skeletonComponent->fx = finalPath[0].fx;
+						skeletonComponent->fz = finalPath[0].fz;
 						skeletonComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
 						skeletonComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
 						skeletonComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;

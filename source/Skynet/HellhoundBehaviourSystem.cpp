@@ -46,17 +46,22 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 }
 
 
-void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
+void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool retreat)
 {
 	if (path)
 	{
 		hellhoundComponent->goalDirectionX = goalDirectionX;
 		hellhoundComponent->goalDirectionZ = goalDirectionZ;
 	}
-	else
+	else if(retreat == false)
 	{
 		hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 		hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
+	}
+	else if (retreat == true)
+	{
+		hellhoundComponent->goalDirectionX = -(playerTransformCompenent->positionX - hellhoundTransformComponent->positionX);
+		hellhoundComponent->goalDirectionZ = -(playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ);
 	}
 
 	//enemyAnim->aAnim = hellhoundComponent->charge ? ANIMATION_ATTACK : ANIMATION_WALK;
@@ -80,7 +85,7 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 
 	//speed set to 10.0f, use enemy component later
 	float speedMultiplier = 1.f;
-	if (hellhoundComponent->charge)
+	if (hellhoundComponent->charge && retreat == false)
 	{
 		hellhoundComponent->chargeCounter += GetDeltaTime();
 		if (hellhoundComponent->chargeCounter >= hellhoundComponent->chargeTimeLimit)
@@ -526,7 +531,7 @@ bool HellhoundBehaviourSystem::Update()
 			//Retreat behaviour
 			if (hellhoundComponent->retreat)
 			{
-				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit )
+				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit * 3.f)
 				{
 					hellhoundComponent->updatePathCounter = 0;
 					if (playerComponent != nullptr && updateGridOnce)
@@ -541,12 +546,13 @@ bool HellhoundBehaviourSystem::Update()
 					}
 
 					
-					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent, 40.f, 50.f);
+					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent, 20.f, 50.f);
 					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, &tran);
 					
+				
 
 					// goal (next node) - current
-					if (finalPath.size() > 2 && hellhoundComponent->followPath)
+					if (finalPath.size() > 2 )
 					{
 						
 						hellhoundComponent->fx = finalPath[0].fx;
@@ -563,7 +569,7 @@ bool HellhoundBehaviourSystem::Update()
 					}
 				}
 
-				if (hellhoundComponent->followPath == true && hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit / 2.f)
+				if (hellhoundComponent->followPath == true && hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit * 3.f / 2.f)
 				{
 					hellhoundComponent->dirX = hellhoundComponent->dir2X;
 					hellhoundComponent->dirZ = hellhoundComponent->dir2Z;
@@ -572,6 +578,8 @@ bool HellhoundBehaviourSystem::Update()
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
 				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
 				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
+				/*ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, 
+					enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath, true);*/
 			}
 
 			//Charging ranged attack, getting ready to shoot
@@ -683,7 +691,8 @@ bool HellhoundBehaviourSystem::Update()
 						hellhoundComponent->followPath = false;
 					}
 
-					ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
+					ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, 
+						enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath, false);
 				}
 			}
 			else if (hellhoundComponent->hasMadeADecision && hellhoundComponent->wantsToShoot) // shoot
@@ -693,7 +702,7 @@ bool HellhoundBehaviourSystem::Update()
 				FixShootingTargetPosition(playerTransformCompenent, hellhoundTransformComponent, hellhoundComponent, enemyEntity); //set a target for the ranged attack
 			
 			}
-			else if (distance <= 17 && hellhoundComponent->hasMadeADecision == false) // time to make a decision
+			else if (distance <= 25 && hellhoundComponent->hasMadeADecision == false) // time to make a decision
 			{
 				MakeBehaviourDecision(hellhoundTransformComponent, playerTransformCompenent, hellhoundComponent);
 			}
@@ -721,16 +730,12 @@ bool HellhoundBehaviourSystem::Update()
 
 					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, playerTransformCompenent);
 
+
+					// goal (next node) - current
 					if (finalPath.size() > 2)
 					{
 						hellhoundComponent->fx = finalPath[0].fx;
 						hellhoundComponent->fz = finalPath[0].fz;
-						hellhoundComponent->followPath = true;
-					}
-
-					// goal (next node) - current
-					if (finalPath.size() > 2 && hellhoundComponent->followPath)
-					{
 						hellhoundComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
 						hellhoundComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
 						hellhoundComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
@@ -755,7 +760,8 @@ bool HellhoundBehaviourSystem::Update()
 				}
 
 				
-				ChaseBehaviour(enemyEntity ,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
+				ChaseBehaviour(enemyEntity ,playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, 
+					enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath, false);
 			}
 			else // idle
 			{
