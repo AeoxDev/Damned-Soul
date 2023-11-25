@@ -40,7 +40,7 @@ void LoadLevel2()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-
+	
 	//Enemies to the right:
 
 	SetupEnemy(EnemyType::skeleton, 88.f, 0.f, 50.f, 0);
