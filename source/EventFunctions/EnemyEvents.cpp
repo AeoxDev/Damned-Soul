@@ -109,7 +109,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	registry.AddComponent<TransformComponent>(newMini, transComp); 
 	int soulWorth = 1;
 
-	if(stateManager.activeLevel == 7)
+	if(stateManager.activeLevel < 10)
 		int soulWorth = 3;
 	
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
@@ -208,7 +208,6 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 
 void SplitBoss(EntityID& entity, const int& index)
 {
-	float radius = 30.f;
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
 	CalculateGlobalMapValuesImp(valueGrid);
 	TransformComponent* aiTransform = nullptr;
