@@ -89,6 +89,7 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 			hellhoundComponent->charge = false;
 			hellhoundComponent->chargeCounter = 0.f;
 			hellhoundComponent->retreat = true;
+			hellhoundComponent->updatePathCounter = 20.f;
 		}
 		speedMultiplier = 2.0f; 
 		enemyStats->SetSpeedMult(speedMultiplier);
@@ -322,6 +323,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		}
 		hc->hasMadeADecision = false;
 		hc->retreat = true;
+		hc->updatePathCounter = 20.f;
 	}
 }
 
@@ -340,16 +342,31 @@ void SetInfiniteDirection(TransformComponent* htc, HellhoundBehaviour* hc)
 }
 
 
-void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim)
+void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
 {
+	if (path)
+	{
+		hc->cowardDirectionX = goalDirectionX;
+		hc->cowardDirectionZ = goalDirectionZ;
+	}
+	else
+	{
+		hc->cowardDirectionX =  htc->positionX - htc->lastPositionX;
+		hc->cowardDirectionZ = htc->positionZ - htc->lastPositionZ;
+	}
 	enemyAnim->aAnim = ANIMATION_WALK;
 	enemyAnim->aAnimIdx = 0;
 	//enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
-	float newGoalX = hc->dirX; //htc->positionX + hc->cowardDirectionX * 100.f;
-	float newGoalZ = hc->dirZ; // htc->positionZ + hc->cowardDirectionZ * 100.f; 
-	SmoothRotation(htc, newGoalX, newGoalZ, 35.f);
+	SmoothRotation(htc, hc->cowardDirectionX, hc->cowardDirectionZ, 35.f);
+	float dirX = htc->facingX, dirZ = htc->facingZ;
+	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
+	if (magnitude > 0.001f)
+	{
+		dirX /= magnitude;
+		dirZ /= magnitude;
+	}
 
 	//htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
 	//htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
@@ -509,7 +526,7 @@ bool HellhoundBehaviourSystem::Update()
 			//Retreat behaviour
 			if (hellhoundComponent->retreat)
 			{
-				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit * 3.f)
+				if (hellhoundComponent->updatePathCounter >= hellhoundComponent->updatePathLimit )
 				{
 					hellhoundComponent->updatePathCounter = 0;
 					if (playerComponent != nullptr && updateGridOnce)
@@ -524,13 +541,14 @@ bool HellhoundBehaviourSystem::Update()
 					}
 
 					
-					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent, 20.f, 40.f);
+					TransformComponent tran = FindRetreatTile(valueGrid, hellhoundTransformComponent, 40.f, 50.f);
 					finalPath = CalculateAStarPath(valueGrid, hellhoundTransformComponent, &tran);
 					
 
 					// goal (next node) - current
 					if (finalPath.size() > 2 && hellhoundComponent->followPath)
 					{
+						
 						hellhoundComponent->fx = finalPath[0].fx;
 						hellhoundComponent->fz = finalPath[0].fz;
 						hellhoundComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
@@ -553,7 +571,7 @@ bool HellhoundBehaviourSystem::Update()
 
 				SetHitboxCanDealDamage(enemyEntity, enmComp->attackHitBoxID, false);
 				SetHitboxActive(enemyEntity, enmComp->attackHitBoxID, false);
-				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim);
+				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 			}
 
 			//Charging ranged attack, getting ready to shoot
