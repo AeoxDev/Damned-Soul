@@ -5,11 +5,15 @@
 #include "Skynet\BehaviourHelper.h"
 #include "UI/UIRenderer.h"
 #include "EventFunctions.h"
-#include <random>
+#include "States\StateManager.h"
 
+#include <algorithm>
+#include <random>
 #include <iostream>
 
-void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid)
+#define OBSTACLE_RANGE 5
+
+void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, ObstacleMap* valueGrid)
 {
 	// Regular walk
 	if (enemyAnim->aAnim != ANIMATION_WALK)
@@ -321,8 +325,120 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 }
 
-void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc)
+void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<GridPosition>& openList, ML_Vector<GridPosition>& closedList, GridPosition direction)
 {
+	if (direction.x == 0)
+	{
+		//create new points
+		GridPosition p1 = { currentPos.x + 1, currentPos.z };
+		GridPosition p2 = { currentPos.x - 1, currentPos.z };
+		GridPosition p3 = { currentPos.x, currentPos.z + direction.z };
+		
+		bool addP1 = true;
+		bool addP2 = true;
+		bool addP3 = true;
+
+		//check distance
+		if (sqrt(p1.x - startPos.x * p1.x - startPos.x + p1.z - startPos.z * p1.z - startPos.z) > OBSTACLE_RANGE)
+			addP1 = false;
+		if (sqrt(p2.x - startPos.x * p2.x - startPos.x + p2.z - startPos.z * p2.z - startPos.z) > OBSTACLE_RANGE)
+			addP2 = false;
+		if (sqrt(p3.x - startPos.x * p3.x - startPos.x + p3.z - startPos.z * p3.z - startPos.z) > OBSTACLE_RANGE)
+			addP3 = false;
+
+		//are they in the closedlist?
+		for (int i = 0; i < closedList.size(); ++i)
+		{
+			if (addP1)
+			{
+				if (p1.x == closedList[i].x && p1.z == closedList[i].z)
+				{
+					addP1 = false;
+				}
+			}
+			if (addP2)
+			{
+				if (p2.x == closedList[i].x && p2.z == closedList[i].z)
+				{
+					addP2 = false;
+				}
+			}
+			if (addP3)
+			{
+				if (p3.x == closedList[i].x && p3.z == closedList[i].z)
+				{
+					addP3 = false;
+				}
+			}
+		}
+
+		//add the legal tiles to openlist
+		if(addP1)
+			openList.push_back(p1);
+		if(addP2)
+			openList.push_back(p2);
+		if(addP3)
+			openList.push_back(p3);
+	}
+	else // direction.z == 0
+	{
+		//create new points
+		GridPosition p1 = { currentPos.x, currentPos.z + 1};
+		GridPosition p2 = { currentPos.x, currentPos.z - 1};
+		GridPosition p3 = { currentPos.x + direction.x, currentPos.z};
+
+		bool addP1 = true;
+		bool addP2 = true;
+		bool addP3 = true;
+
+		//check distance
+		if (sqrt(p1.x - startPos.x * p1.x - startPos.x + p1.z - startPos.z * p1.z - startPos.z) > OBSTACLE_RANGE)
+			addP1 = false;
+		if (sqrt(p2.x - startPos.x * p2.x - startPos.x + p2.z - startPos.z * p2.z - startPos.z) > OBSTACLE_RANGE)
+			addP2 = false;
+		if (sqrt(p3.x - startPos.x * p3.x - startPos.x + p3.z - startPos.z * p3.z - startPos.z) > OBSTACLE_RANGE)
+			addP3 = false;
+
+		//are they in the closedlist?
+		for (int i = 0; i < closedList.size(); ++i)
+		{
+			if (addP1)
+			{
+				if (p1.x == closedList[i].x && p1.z == closedList[i].z)
+				{
+					addP1 = false;
+				}
+			}
+			if (addP2)
+			{
+				if (p2.x == closedList[i].x && p2.z == closedList[i].z)
+				{
+					addP2 = false;
+				}
+			}
+			if (addP3)
+			{
+				if (p3.x == closedList[i].x && p3.z == closedList[i].z)
+				{
+					addP3 = false;
+				}
+			}
+		}
+
+		//add the legal tiles to openlist
+		if (addP1)
+			openList.push_back(p1);
+		if (addP2)
+			openList.push_back(p2);
+		if (addP3)
+			openList.push_back(p3);
+	}
+}
+
+void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* valueGrid)
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	
 	float eyeMovementX = etc->positionX - etc->lastPositionX;
 	float eyeMovementZ = etc->positionZ - etc->lastPositionZ;
 
@@ -333,29 +449,63 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc)
 
 	Normalize(eyeMovementX, eyeMovementZ);
 
-	double deltaAngle = (3.14159265) / (ec->rayCount - 1);
+	GridPosition startPos = PositionOnGrid(GIcomponent, etc, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
 
-	double startAngle = deltaAngle * -((ec->rayCount - 1) / 2.0f);
-	double endAngle = -startAngle;
+	float dirX = startPos.x + eyeMovementX;
+	float dirZ = startPos.z + eyeMovementZ;
 
-	std::cout << " Start Dir: " << eyeMovementX << ", " << eyeMovementZ << std::endl;
+	GridPosition direction = { 0.0f, 0.0f };
 
-	for (double angle = startAngle; angle <= endAngle; angle += deltaAngle)
+	float magX = sqrt(dirX * dirX);
+	float magZ = sqrt(dirZ * dirZ);
+
+	if (magX > magZ)
 	{
-		// Rotate current ray direction based on angle
-		float rayDirX = eyeMovementX * cos(angle) - eyeMovementZ * sin(angle);
-		float rayDirZ = eyeMovementX * sin(angle) + eyeMovementZ * cos(angle);
-		
-		std::cout << rayDirX << ", " << rayDirZ << std::endl;
-
-
-		for (auto enemyEntity : View<TransformComponent, HitboxComponent, EnemyComponent>(registry))
+		if (magX > 0.0f)
 		{
-
+			direction.x = 1.0f;
+		}
+		else 
+		{
+			direction.x = -1.0f;
+		}
+	}
+	else
+	{
+		if (magZ > 0.0f)
+		{
+			direction.z = 1.0f;
+		}
+		else
+		{
+			direction.z = -1.0f;
 		}
 	}
 
+	ML_Vector<GridPosition> openList;
+	ML_Vector<GridPosition> closedList;
 
+	closedList.push_back(startPos);
+
+	GetNeighbours(startPos, startPos, openList, closedList, direction);
+
+	while (openList.size() > 0)
+	{
+		//are you wall?
+		GridPosition currentTile = openList[0];
+		closedList.push_back(currentTile);
+		openList.erase(0);
+
+		if (valueGrid->cost[currentTile.x][currentTile.z] >= 10000) //wall
+		{
+			//apply force
+			std::cout << "APPLY FORCE" << std::endl;
+		}
+		else 
+		{
+			GetNeighbours(currentTile, startPos, openList, closedList, direction);
+		}
+	}
 }
 
 bool EyeBehaviourSystem::Update()
@@ -372,7 +522,7 @@ bool EyeBehaviourSystem::Update()
 	DebuffComponent* debuff = nullptr;
 
 	bool hasUpdatedMap = false;
-	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
+	ObstacleMap* valueGrid = (ObstacleMap*)malloc(sizeof(ObstacleMap));
 	
 	//Find available entity
 	for (auto enemyEntity : View<EyeBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
@@ -438,7 +588,7 @@ bool EyeBehaviourSystem::Update()
 				if (hasUpdatedMap == false)
 				{
 					hasUpdatedMap = true;
-					CalculateGlobalMapValuesImp(valueGrid);
+					CalculateGlobalMapValuesEye(valueGrid);
 				}
 				RetreatBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim, valueGrid);
 			}
@@ -468,7 +618,12 @@ bool EyeBehaviourSystem::Update()
 			
 			if (!eyeComponent->charging)
 			{
-				ObstacleAvoidance(eyeComponent, eyeTransformComponent);
+				if (hasUpdatedMap == false)
+				{
+					hasUpdatedMap = true;
+					CalculateGlobalMapValuesEye(valueGrid);
+				}
+				ObstacleAvoidance(eyeComponent, eyeTransformComponent, valueGrid);
 			}
 		}
 		//Idle if there are no players on screen.

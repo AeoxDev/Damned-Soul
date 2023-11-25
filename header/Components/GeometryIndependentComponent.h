@@ -2,6 +2,8 @@
 #include <cinttypes>
 #define GI_TEXTURE_DIMENSIONS 2048
 #define GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING 128
+#define GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE 256
+
 struct EntityID;
 
 struct GeometryIndependentComponent;
@@ -39,8 +41,8 @@ struct Coordinate2D
 	float z;
 };
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent* transform, bool pathfinding);
-Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, bool pathfinding);
+GridPosition PositionOnGrid(GeometryIndependentComponent*& giComponent, TransformComponent* transform, int dimensions = GI_TEXTURE_DIMENSIONS);
+Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, int dimensions = GI_TEXTURE_DIMENSIONS);
 GITexture* GetMapTexture(EntityID& entity);
 
 void SetGISpawnPosition(float x, float z);

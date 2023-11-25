@@ -336,7 +336,7 @@ bool SkeletonBehaviourSystem::Update()
 					coorde.fx = skeletonComponent->fx;
 					coorde.fz = skeletonComponent->fz;
 
-					gridOnPos = GridOnPosition(coorde, ggg, true);
+					gridOnPos = GridOnPosition(coorde, ggg, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
 					doggoT->positionX = gridOnPos.x;
 					doggoT->positionZ = gridOnPos.z;
 
