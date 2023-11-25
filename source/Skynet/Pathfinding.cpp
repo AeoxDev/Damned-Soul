@@ -600,7 +600,6 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 {
 	ML_Vector<Node> theWay;
 	ML_Vector<Node> theReverseWay; // trust me, we need this. temp
-	ML_Vector<TransformComponent> testWay;
 
 	Node tempNode = endNode;
 
@@ -610,7 +609,6 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 		tempNode = nodeMap[tempNode.parentX][tempNode.parentZ];
 	}
 	theWay.push_back(start);
-	//GridOnPosition
 	for (int i = theReverseWay.size() - 1; i >= 0; i--)
 	{
 		theWay.push_back(theReverseWay[i]);
