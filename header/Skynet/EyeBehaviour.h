@@ -11,13 +11,15 @@ struct EyeBehaviour
 	float chargeTimer = 0.0f;
 	float aimTimer = 0.0f;
 	float aimDuration = 0.4f;
-	float facingX = 0.0f;
-	float facingZ = 0.0f;
 	float targetX = 0.0f;
 	float targetZ = 0.0f;
 	float chargeDirX = 0.0f;
 	float chargeDirZ = 0.0f;
-	
+
+	//Obstacle Avoidance
+	float correcitonDirX = 0.0f;
+	float correcitonDirZ = 0.0f;
+
 	const int rayCount = 5; //assumed to be odd
 	const float rayDistance = 5.0f;
 	

@@ -60,13 +60,14 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 		ec->targetX = newTile.positionX;
 		ec->targetZ = newTile.positionZ;
 
-		ec->goalDirectionX = dirToNewTileX;
-		ec->goalDirectionZ = dirToNewTileZ;
+		//adjust facing based on obstacle avoidance
+		ec->goalDirectionX = dirToNewTileX + ec->correcitonDirX;
+		ec->goalDirectionZ = dirToNewTileZ + ec->correcitonDirX;
 		
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 
-		etc->positionX += dirToNewTileX * enemyStats->GetSpeed() * GetDeltaTime();
-		etc->positionZ += dirToNewTileZ * enemyStats->GetSpeed() * GetDeltaTime();
+		etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
+		etc->positionZ += etc->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
 	}
 	else if(ec->chargeTimer < 1.5f)
 	{
@@ -75,8 +76,8 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 		{
 
 			SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
-			etc->positionX += ec->goalDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
-			etc->positionZ += ec->goalDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
+			etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
+			etc->positionZ += etc->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
 		}
 		else
 		{
@@ -164,29 +165,24 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	}
 
 	float magnitude = 0.f;
-	float dirX = 0.f;
-	float dirZ = 0.f;
 
 	if (ec->clockwiseCircle) //clockwise
 	{
-		dirX = -ec->goalDirectionZ;
-		dirZ = ec->goalDirectionX;
+		ec->goalDirectionZ *= -1;
 	}
 	else // counter clockwise
 	{
-		dirX = ec->goalDirectionZ;
-		dirZ = -ec->goalDirectionX;
+		ec->goalDirectionX *= -1;
 	}
-
-	Normalize(dirX, dirZ);
-
-	ec->goalDirectionX = ptc->positionX - etc->positionX;
-	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 	
+	//adjust facing based on obstacle avoidance
+	ec->goalDirectionX += ec->correcitonDirX;
+	ec->goalDirectionZ += ec->correcitonDirZ;
+
 	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 
-	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+	etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
+	etc->positionZ += etc->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
 }
 
 void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
@@ -209,11 +205,17 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 		float randomZ = distribution(gen);
 		eyeComponent->goalDirectionX = randomX;
 		eyeComponent->goalDirectionZ = randomZ;
-		std::uniform_real_distribution<float> randomInterval(0.6f, 1.2f);
+		std::uniform_real_distribution<float> randomInterval(1.0f, 1.5f);
 		eyeComponent->updateInterval = randomInterval(gen);
 	}
 
-	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
+	//adjust facing based on obstacle avoidance
+	eyeComponent->goalDirectionX += eyeComponent->correcitonDirX;
+	eyeComponent->goalDirectionZ += eyeComponent->correcitonDirZ;
+
+	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 5.0f);
+
+
 	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	eyeComponent->timeCounter += GetDeltaTime();
@@ -327,132 +329,120 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 
 void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<GridPosition>& openList, ML_Vector<GridPosition>& closedList, GridPosition direction)
 {
+	GridPosition p1 = currentPos;
+	GridPosition p2 = currentPos;
+	GridPosition p3 = currentPos;
+	
 	if (direction.x == 0)
 	{
 		//create new points
-		GridPosition p1 = { currentPos.x + 1, currentPos.z };
-		GridPosition p2 = { currentPos.x - 1, currentPos.z };
-		GridPosition p3 = { currentPos.x, currentPos.z + direction.z };
+		p1.x += 1;
+		p2.x -= 1;
+		p3.z += direction.z;
 		
-		bool addP1 = true;
-		bool addP2 = true;
-		bool addP3 = true;
-
-		//check distance
-		if (sqrt(p1.x - startPos.x * p1.x - startPos.x + p1.z - startPos.z * p1.z - startPos.z) > OBSTACLE_RANGE)
-			addP1 = false;
-		if (sqrt(p2.x - startPos.x * p2.x - startPos.x + p2.z - startPos.z * p2.z - startPos.z) > OBSTACLE_RANGE)
-			addP2 = false;
-		if (sqrt(p3.x - startPos.x * p3.x - startPos.x + p3.z - startPos.z * p3.z - startPos.z) > OBSTACLE_RANGE)
-			addP3 = false;
-
-		//are they in the closedlist?
-		for (int i = 0; i < closedList.size(); ++i)
-		{
-			if (addP1)
-			{
-				if (p1.x == closedList[i].x && p1.z == closedList[i].z)
-				{
-					addP1 = false;
-				}
-			}
-			if (addP2)
-			{
-				if (p2.x == closedList[i].x && p2.z == closedList[i].z)
-				{
-					addP2 = false;
-				}
-			}
-			if (addP3)
-			{
-				if (p3.x == closedList[i].x && p3.z == closedList[i].z)
-				{
-					addP3 = false;
-				}
-			}
-		}
-
-		//add the legal tiles to openlist
-		if(addP1)
-			openList.push_back(p1);
-		if(addP2)
-			openList.push_back(p2);
-		if(addP3)
-			openList.push_back(p3);
+		
 	}
 	else // direction.z == 0
 	{
 		//create new points
-		GridPosition p1 = { currentPos.x, currentPos.z + 1};
-		GridPosition p2 = { currentPos.x, currentPos.z - 1};
-		GridPosition p3 = { currentPos.x + direction.x, currentPos.z};
+		p1.z += 1;
+		p2.z -= 1;
+		p3.x += direction.x;
+	}
 
-		bool addP1 = true;
-		bool addP2 = true;
-		bool addP3 = true;
+	bool addP1 = true;
+	bool addP2 = true;
+	bool addP3 = true;
 
-		//check distance
-		if (sqrt(p1.x - startPos.x * p1.x - startPos.x + p1.z - startPos.z * p1.z - startPos.z) > OBSTACLE_RANGE)
-			addP1 = false;
-		if (sqrt(p2.x - startPos.x * p2.x - startPos.x + p2.z - startPos.z * p2.z - startPos.z) > OBSTACLE_RANGE)
-			addP2 = false;
-		if (sqrt(p3.x - startPos.x * p3.x - startPos.x + p3.z - startPos.z * p3.z - startPos.z) > OBSTACLE_RANGE)
-			addP3 = false;
+	//check distance
+	if (sqrt((p1.x - startPos.x) * (p1.x - startPos.x) + (p1.z - startPos.z) * (p1.z - startPos.z)) > OBSTACLE_RANGE)
+		addP1 = false;
+	if (sqrt((p2.x - startPos.x) * (p2.x - startPos.x) + (p2.z - startPos.z) * (p2.z - startPos.z)) > OBSTACLE_RANGE)
+		addP2 = false;
+	if (sqrt((p3.x - startPos.x) * (p3.x - startPos.x) + (p3.z - startPos.z) * (p3.z - startPos.z)) > OBSTACLE_RANGE)
+		addP3 = false;
 
-		//are they in the closedlist?
-		for (int i = 0; i < closedList.size(); ++i)
+	//are they in the closedlist?
+	for (int i = 0; i < closedList.size(); ++i)
+	{
+		if (addP1)
 		{
-			if (addP1)
+			if (closedList[i].x == p1.x && closedList[i].z == p1.z)
 			{
-				if (p1.x == closedList[i].x && p1.z == closedList[i].z)
-				{
-					addP1 = false;
-				}
-			}
-			if (addP2)
-			{
-				if (p2.x == closedList[i].x && p2.z == closedList[i].z)
-				{
-					addP2 = false;
-				}
-			}
-			if (addP3)
-			{
-				if (p3.x == closedList[i].x && p3.z == closedList[i].z)
-				{
-					addP3 = false;
-				}
+				addP1 = false;
 			}
 		}
-
-		//add the legal tiles to openlist
-		if (addP1)
-			openList.push_back(p1);
 		if (addP2)
-			openList.push_back(p2);
+		{
+			if (closedList[i].x == p2.x && closedList[i].z == p2.z)
+			{
+				addP2 = false;
+			}
+		}
 		if (addP3)
-			openList.push_back(p3);
+		{
+			if (closedList[i].x == p3.x && closedList[i].z == p3.z)
+			{
+				addP3 = false;
+			}
+		}
 	}
+
+	for (int i = 0; i < openList.size(); ++i)
+	{
+		if (addP1)
+		{
+			if (openList[i].x == p1.x && openList[i].z == p1.z)
+			{
+				addP1 = false;
+			}
+		}
+		if (addP2)
+		{
+			if (openList[i].x == p2.x && openList[i].z == p2.z)
+			{
+				addP2 = false;
+			}
+		}
+		if (addP3)
+		{
+			if (openList[i].x == p3.x && openList[i].z == p3.z)
+			{
+				addP3 = false;
+			}
+		}
+	}
+
+	//add the legal tiles to openlist
+	if (addP1)
+		openList.push_back(p1);
+	if (addP2)
+		openList.push_back(p2);
+	if (addP3)
+		openList.push_back(p3);
 }
 
 void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* valueGrid)
 {
-	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	ec->correcitonDirX = 0.0f;
+	ec->correcitonDirZ = 0.0f;
 	
-	float eyeMovementX = etc->positionX - etc->lastPositionX;
-	float eyeMovementZ = etc->positionZ - etc->lastPositionZ;
+	if (etc->lastPositionX == 0 && etc->lastPositionZ == 0)
+		return;
+
+	//float eyeMovementX = etc->positionX - etc->lastPositionX;
+	//float eyeMovementZ = etc->positionZ - etc->lastPositionZ;
+
+	float eyeMovementX = etc->facingX;
+	float eyeMovementZ = etc->facingZ;
 
 	if (eyeMovementX == 0 && eyeMovementZ == 0)
 		return;
 
-	float magnitude = sqrt(eyeMovementX * eyeMovementX + eyeMovementZ * eyeMovementZ);
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 
-	Normalize(eyeMovementX, eyeMovementZ);
-
-	GridPosition startPos = PositionOnGrid(GIcomponent, etc, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
-
-	float dirX = startPos.x + eyeMovementX;
-	float dirZ = startPos.z + eyeMovementZ;
+	float dirX = eyeMovementX;
+	float dirZ = eyeMovementZ;
 
 	GridPosition direction = { 0.0f, 0.0f };
 
@@ -461,7 +451,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 
 	if (magX > magZ)
 	{
-		if (magX > 0.0f)
+		if (dirX > 0.0f)
 		{
 			direction.x = 1.0f;
 		}
@@ -472,16 +462,18 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 	}
 	else
 	{
-		if (magZ > 0.0f)
-		{
-			direction.z = 1.0f;
-		}
-		else
+		if (dirZ > 0.0f)
 		{
 			direction.z = -1.0f;
 		}
+		else
+		{
+			direction.z = 1.0f;
+		}
 	}
 
+	GridPosition startPos = PositionOnGrid(GIcomponent, etc, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+	
 	ML_Vector<GridPosition> openList;
 	ML_Vector<GridPosition> closedList;
 
@@ -489,6 +481,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 
 	GetNeighbours(startPos, startPos, openList, closedList, direction);
 
+	Coordinate2D finalDirection = { 0.0f ,0.0f };
 	while (openList.size() > 0)
 	{
 		//are you wall?
@@ -496,16 +489,43 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 		closedList.push_back(currentTile);
 		openList.erase(0);
 
-		if (valueGrid->cost[currentTile.x][currentTile.z] >= 10000) //wall
+		float cost = valueGrid->cost[currentTile.x][currentTile.z];
+
+		if ( cost >= 5000) //is it wall or an enemy
 		{
 			//apply force
-			std::cout << "APPLY FORCE" << std::endl;
+
+			Coordinate2D tileWorldPos = GridOnPosition(currentTile, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+			float pushbackX = etc->positionX - tileWorldPos.x;
+			float pushbackZ = etc->positionZ - tileWorldPos.z;
+			//Normalize(pushbackX, pushbackZ);
+			
+			float distance = Calculate2dDistance(currentTile.x, currentTile.z, startPos.x, startPos.z);
+
+			float multiplier = 1 - (distance / OBSTACLE_RANGE);
+
+			if (cost < 10000) //if tile is an enemy
+				multiplier *= 0.5f;
+
+			finalDirection.x += pushbackX * multiplier;
+			finalDirection.z += pushbackZ * multiplier;
 		}
 		else 
 		{
 			GetNeighbours(currentTile, startPos, openList, closedList, direction);
 		}
 	}
+	//Normalize(finalDirection.x, finalDirection.z);
+
+	Normalize(finalDirection.x, finalDirection.z);
+	std::cout << "fir: (" << finalDirection.x << ", " << finalDirection.z << ")" << std::endl;
+
+	std::cout << "mov: (" << eyeMovementX << ", " << eyeMovementZ << ")" << std::endl;
+
+	std::cout << "dir: (" << direction.x << ", " << direction.z << ")" << std::endl;
+
+	ec->correcitonDirX = finalDirection.x;
+  	ec->correcitonDirZ = finalDirection.z;
 }
 
 bool EyeBehaviourSystem::Update()
@@ -579,6 +599,8 @@ bool EyeBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
+			//distance = 10000;
+
 			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
 			{
 				//do nothing

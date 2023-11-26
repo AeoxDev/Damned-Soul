@@ -443,7 +443,7 @@ void CalculateGlobalMapValuesEye(ObstacleMap* map)
 
 		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE && pos.z < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE)
 		{
-			map->cost[pos.x][pos.z] += 10000;
+			map->cost[pos.x][pos.z] += 5000;
 		}
 		else
 		{
@@ -526,8 +526,8 @@ void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map)
 TransformComponent FindRetreatTile(ObstacleMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
-	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position
-	if (aiPos.x > GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING || aiPos.z > GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING ||
+	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE); // grid position
+	if (aiPos.x > GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE || aiPos.z > GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE ||
 		aiPos.x < 0 || aiPos.z < 0)
 	{
 		return TransformComponent();
@@ -541,8 +541,8 @@ TransformComponent FindRetreatTile(ObstacleMap* gridValues, TransformComponent* 
 		bool legal = false;
 		while (!legal)
 		{
-			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
-			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE;
+			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE;
 
 			if (gridValues->cost[x][z] < 10000)
 			{
@@ -561,7 +561,7 @@ TransformComponent FindRetreatTile(ObstacleMap* gridValues, TransformComponent* 
 	temp.z = returnNode.z;
 	temp.fx = 0.f;
 	temp.fz = 0.f;
-	Coordinate2D retreatCoord = GridOnPosition(temp, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+	Coordinate2D retreatCoord = GridOnPosition(temp, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
 	TransformComponent retreatPosition;
 	retreatPosition.positionX = retreatCoord.x;
 	retreatPosition.positionZ = retreatCoord.z;
