@@ -402,8 +402,8 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
     particle.position.z = particle.position.z + oddEvenFactor * ( 4* meta[index].deltaTime);
 
     particle.rgb.r = 1.0f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 0.0f;
+    particle.rgb.g = 1.0f;
+    particle.rgb.b = 1.0f;
     
     particle.patterns = 9; //is used to define pattern in PS-Shader for flipAnimations
 
