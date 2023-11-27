@@ -115,7 +115,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
 	RenderGeometryIndependentCollision(stage, gate, hitbox);
 
-	
+	stateManager.gate = gate;
 	
 #ifndef _DEBUG
 	registry.DestroyEntity(hitbox);

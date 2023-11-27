@@ -536,10 +536,63 @@ void LoadNextLevel(OnCollisionParameters& params)
 	if (params.entity2.index == stateManager.player.index)
 	{
 		CancelTimedEvents(params.entity2);
+		FallofComponent* fallof = registry.AddComponent<FallofComponent>(params.entity2);
 		switch (stateManager.activeLevel)
 		{
-		case 1:
-			CutsceneFallStage1(params.entity2, 0);
+		case 1://Levl1
+			fallof->fallofX = -317.f;
+			fallof->fallofZ = 137.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 3://Level 2
+			fallof->fallofX = -318;
+			fallof->fallofZ = 347.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 5://Level 3
+			fallof->fallofX = -299.f;
+			fallof->fallofZ = 164.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 7://Level 4
+			fallof->fallofX = -160.f;
+			fallof->fallofZ = 120.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 9://Level 5
+			fallof->fallofX = -395.f;
+			fallof->fallofZ = 245.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 11://Level 6
+			fallof->fallofX = -477.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 13://Level 7
+			fallof->fallofX = -321.f;
+			fallof->fallofZ = 394.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 15://Level 8
+			fallof->fallofX = -1303.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
 			return;
 			break;
 		default:
