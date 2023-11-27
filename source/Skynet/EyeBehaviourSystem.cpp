@@ -388,38 +388,47 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 		}
 	}
 
-	for (int i = 0; i < openList.size(); ++i)
-	{
-		if (addP1)
-		{
-			if (openList[i].x == p1.x && openList[i].z == p1.z)
-			{
-				addP1 = false;
-			}
-		}
-		if (addP2)
-		{
-			if (openList[i].x == p2.x && openList[i].z == p2.z)
-			{
-				addP2 = false;
-			}
-		}
-		if (addP3)
-		{
-			if (openList[i].x == p3.x && openList[i].z == p3.z)
-			{
-				addP3 = false;
-			}
-		}
-	}
+	//for (int i = 0; i < openList.size(); ++i)
+	//{
+	//	if (addP1)
+	//	{
+	//		if (openList[i].x == p1.x && openList[i].z == p1.z)
+	//		{
+	//			addP1 = false;
+	//		}
+	//	}
+	//	if (addP2)
+	//	{
+	//		if (openList[i].x == p2.x && openList[i].z == p2.z)
+	//		{
+	//			addP2 = false;
+	//		}
+	//	}
+	//	if (addP3)
+	//	{
+	//		if (openList[i].x == p3.x && openList[i].z == p3.z)
+	//		{
+	//			addP3 = false;
+	//		}
+	//	}
+	//}
 
 	//add the legal tiles to openlist
 	if (addP1)
+	{
 		openList.push_back(p1);
+		closedList.push_back(p1);
+	}
 	if (addP2)
+	{
 		openList.push_back(p2);
+		closedList.push_back(p2);
+	}
 	if (addP3)
+	{
 		openList.push_back(p3);
+		closedList.push_back(p3);
+	}
 }
 
 void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* valueGrid)
@@ -486,7 +495,6 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 	{
 		//are you wall?
 		GridPosition currentTile = openList[0];
-		closedList.push_back(currentTile);
 		openList.erase(0);
 
 		float cost = valueGrid->cost[currentTile.x][currentTile.z];
@@ -498,11 +506,10 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 			Coordinate2D tileWorldPos = GridOnPosition(currentTile, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
 			float pushbackX = etc->positionX - tileWorldPos.x;
 			float pushbackZ = etc->positionZ - tileWorldPos.z;
-			//Normalize(pushbackX, pushbackZ);
 			
 			float distance = Calculate2dDistance(currentTile.x, currentTile.z, startPos.x, startPos.z);
 
-			float multiplier = 1 - (distance / OBSTACLE_RANGE);
+			float multiplier = 1 - pow(distance / OBSTACLE_RANGE, 2);
 
 			if (cost < 10000) //if tile is an enemy
 				multiplier *= 0.5f;
@@ -515,14 +522,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 			GetNeighbours(currentTile, startPos, openList, closedList, direction);
 		}
 	}
-	//Normalize(finalDirection.x, finalDirection.z);
-
 	Normalize(finalDirection.x, finalDirection.z);
-	std::cout << "fir: (" << finalDirection.x << ", " << finalDirection.z << ")" << std::endl;
-
-	std::cout << "mov: (" << eyeMovementX << ", " << eyeMovementZ << ")" << std::endl;
-
-	std::cout << "dir: (" << direction.x << ", " << direction.z << ")" << std::endl;
 
 	ec->correcitonDirX = finalDirection.x;
   	ec->correcitonDirZ = finalDirection.z;
