@@ -10,8 +10,13 @@ struct GS_OUT
     int patterns : PATTERNS;
 };
 
-float4 AniRow(GS_OUT input, float animaVertStart,bool singleRow)////4x4 sections, First Row and Second Row
+float4 AniRow(GS_OUT input, float animaVertStart, bool singleRow, float animaSpeed = 8)////4x4 sections, First Row and Second Row
 {
+    float framesPerSecond = animaSpeed;
+    float sampelSize = 1 / framesPerSecond; //-sets counter depending on 8 parts of one second. = 1/8 = 0.125
+    
+    float devideVarible = framesPerSecond / 8;
+    
     float4 image;
     int counter = 1;
     float time = 0.0f;
@@ -21,49 +26,49 @@ float4 AniRow(GS_OUT input, float animaVertStart,bool singleRow)////4x4 sections
     bool singleRowAni = singleRow;
 
     ///**Counter**/// -sets counter depending on 8 parts of one second.
-    if (input.time >= (time + 0.125) && input.time < (time + 0.250))
+    if (input.time >= (time + sampelSize /*0.125*/)  && input.time < (time + (sampelSize * devideVarible) * 2) /*0.250*/)
     {
         counter = 1;
         rowMovement = 0.0f;
 
     }
-    else if (input.time >= (time + 0.250) && input.time < (time + 0.375))
+    else if (input.time >= (time + (sampelSize * 2) /*0.250*/) && input.time < (time + (sampelSize * devideVarible) * 3) /*0.375*/)
     {
         counter = 2;
         rowMovement = 0.25f;
 
     }
-    else if (input.time >= (time + 0.375) && input.time < (time + 0.50))
+    else if (input.time >= (time + (sampelSize * 3) /*0.375*/) && input.time < (time + (sampelSize * devideVarible) * 4) /*0.50*/)
     {
         counter = 3;
         rowMovement = 0.50f;
 
     }
-    else if (input.time >= (time + 0.50) && input.time < (time + 0.625))
+    else if (input.time >= (time + (sampelSize * 4) /*0.50*/) && input.time < (time + (sampelSize * devideVarible) * 5) /*0.625*/)
     {
         counter = 4;
         rowMovement = 0.75f;
 
     }
-    else if (input.time >= (time + 0.625) && input.time < (time + 0.75))
+    else if (input.time >= (time + (sampelSize * 5) /*0.625*/) && input.time < (time + (sampelSize * devideVarible) * 6) /*0.75*/)
     {
         counter = 5;
         rowMovement = 0.0f;
 
     }
-    else if (input.time >= (time + 0.75) && input.time < (time + 0.875))
+    else if (input.time >= (time + (sampelSize * 6) /*0.75*/) && input.time < (time + (sampelSize * devideVarible) * 7) /*0.875*/)
     {
         counter = 6;
         rowMovement = 0.25f;
 
     }
-    else if (input.time >= (time + 0.875) && input.time < (time + 0.99))
+    else if (input.time >=(time + (sampelSize * devideVarible) * 7) /*0.875*/ && input.time < (time + 0.99))
     {
         counter = 7;
         rowMovement = 0.50f;
 
     }
-    else if (input.time >= (time + 0.99) || input.time < (time + 0.125))
+    else if (input.time >= (time + 0.99) || input.time < (time + sampelSize /*0.125*/))
     {
         counter = 8;
         rowMovement = 0.75f;
@@ -116,11 +121,13 @@ float4 main(GS_OUT input) : SV_TARGET
     //Examples
     //image = AniRow(input, 0.0f, true);    // Single row animation:: Top row= 0.0, SecondRow = 0.25 ,Third = 0.50 or bottom Row = 0.75
     //image = AniRow(input, 0.0f, false);   // DubbleRow animation:: Top rows= 0.0, bottom Rows = 0.5
+    ///////// AniRow(input, 0.0f, false, specify animation speed- defalt is 8);
     //image = AniFullSheet(input);
+    // AniRow(input, 0.0f, false, specify animation speed- defalt is 8);
 
     if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
     {
-        image = AniRow(input, 0.0f, false);/*AniFullSheet(input);*//*flipBookTex.Sample(WrapSampler, float2(horizontalSampPos + input.uv.x / 4, dubbleRowVertSP + input.uv.y / 4));*//*AniRowAB(counter, input);*/
+        image = AniRow(input, 0.0f, false);/*AniFullSheet(input);*/
     }
     //else if (pattern == 10) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
     //{

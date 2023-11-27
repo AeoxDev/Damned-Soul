@@ -185,8 +185,8 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 	if (data->metadata[metaDataSlot].pattern == 0|| data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10*/)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 
-		//SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
-		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
+		//SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
 		
 
 	}
