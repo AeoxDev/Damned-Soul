@@ -14,6 +14,6 @@ float4 main(GS_OUT gs_in) : SV_Target
     float4 backBuffer = SampleBackbuffer(gs_in.position, screenResolution_in, backbufferTexture_in, vfxSampler_in);
     // 
     
-    return VFXFire(backBuffer, gs_in.time, gs_in.uv); // Default Red Fire //VFXSwordSlash(backBuffer, gs_in.time, gs_in.uv);
+    return VFXAcidSpit(backBuffer, gs_in.time, gs_in.uv); // Default Red Fire //VFXSwordSlash(backBuffer, gs_in.time, gs_in.uv);
 }
 
