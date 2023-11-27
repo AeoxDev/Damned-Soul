@@ -280,6 +280,16 @@ void CancelTimedEvent(EntityID& entity, const int& timedEventSlot)
 	}
 }
 
+void CancelTimedEvents(EntityID& entity)
+{
+	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
+	if (comp)
+	{
+		//registry.RemoveComponent<TimedEventComponent>(entity);
+		comp->timedEvents.clear();
+	}
+}
+
 void ReleaseTimedEvents(EntityID& entity)
 {
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);

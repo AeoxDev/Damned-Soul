@@ -535,6 +535,7 @@ void LoadNextLevel(OnCollisionParameters& params)
 {
 	if (params.entity2.index == stateManager.player.index)
 	{
+		CancelTimedEvents(params.entity2);
 		switch (stateManager.activeLevel)
 		{
 		case 1:
