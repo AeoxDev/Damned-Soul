@@ -9,6 +9,7 @@
 #include "Levels\LevelHelper.h"
 #include "Skynet\BehaviourHelper.h"
 #include "UIComponents.h"
+#include "States\StateManager.h"
 
 #define BOSS_RESPAWN_TIME 8.f;
 
@@ -106,8 +107,11 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	
 	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp); 
-	int soulWorth = 2;
+	int soulWorth = 1;
 
+	if(stateManager.activeLevel == 7)
+		int soulWorth = 3;
+	
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
 
@@ -194,8 +198,8 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 	
 	if (shouldSpawn)
 	{
-		SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f,
-			1.f, 0.f, 1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4]);
+		SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 0, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f,
+			0.f, 0.f, -1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4]);
 	}
 
 
@@ -237,8 +241,7 @@ void SplitBoss(EntityID& entity, const int& index)
 	for (int i = 0; i < 3; ++i)
 	{
 		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
-		// These skeletons should NOT produce souls
-		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 0);
+		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ, 0);
 		CalculateGlobalMapValuesImp(valueGrid);
 	}
 
