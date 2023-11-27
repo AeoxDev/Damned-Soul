@@ -59,7 +59,7 @@ void MainMenuIntroCutscene(EntityID& entity, const int& index)
 	cutscene->goalLookAtX = randX;
 	cutscene->goalLookAtY = randY;
 	cutscene->goalLookAtZ = randZ;
-	cutscene->mode = (CutsceneMode)(CutsceneMode::Cutscene_Linear | CutsceneMode::Transition_Position | Transition_LookAt);
+	cutscene->mode = (CutsceneMode)(CutsceneMode::Cutscene_Linear | CutsceneMode::Transition_Position | Transition_LookAt | Cutscene_Camera);
 	float randTime = (float)(rand() % 16) + 8.0f;
 	float randTime2 = (float)(rand() % 16) + 8.0f;
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, randTime, EndCutscene, 0, 2);
@@ -79,7 +79,7 @@ void StageIntroFall(EntityID& entity, const int& index)
 	//Move camera to view point and background from a lower angle
 	EntityID cutscene1 = registry.CreateEntity();
 	CutsceneComponent* sidewaysCut = registry.AddComponent<CutsceneComponent>(cutscene1);
-	sidewaysCut->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Linear);
+	sidewaysCut->mode = (CutsceneMode)(Cutscene_Camera | CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Linear);
 	CutsceneSetLookAt(cutscene1, 0.0f, fallHeight, 0.0f, 0.0f, 0.0f, 0.0f);
 	CutsceneSetPosition(cutscene1, 0.0f, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, 0.0f, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z);
 	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginCutscene, CutsceneTransition, fallTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
@@ -93,7 +93,7 @@ void StageIntroFall(EntityID& entity, const int& index)
 
 	EntityID returnCamera = registry.CreateEntity();
 	CutsceneComponent* returnCutscene = registry.AddComponent<CutsceneComponent>(returnCamera);
-	returnCutscene->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Linear);
+	returnCutscene->mode = (CutsceneMode)(Cutscene_Camera | CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Linear);
 	CutsceneSetPosition(returnCamera, 0.0f, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z);
 	CutsceneSetLookAt(returnCamera, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	
@@ -180,7 +180,7 @@ void CutsceneNPCIntro1NoText(EntityID& entity)
 	cutscene->startLookAtX = transform->positionX;
 	cutscene->startLookAtY = transform->scaleY * (transform->positionY + 6.0f);
 	cutscene->startLookAtZ = transform->positionZ;
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	float cameraXOffset = transform->facingX * 15.0f;
 	float cameraYOffset = 0.0f;
 	float cameraZOffset = transform->facingZ * 15.0f;
@@ -195,7 +195,7 @@ void CutsceneNPCIntro1NoText(EntityID& entity)
 
 	EntityID additionalCutscene = registry.CreateEntity();
 	cutscene = registry.AddComponent<CutsceneComponent>(additionalCutscene);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transform->positionX;
 	cutscene->goalLookAtY = transform->scaleY * (transform->positionY + 2.0f);
 	cutscene->goalLookAtZ = transform->positionZ;
@@ -218,7 +218,7 @@ void CutsceneNPCIntro1NoText(EntityID& entity)
 	//Zoom into the enemy
 	additionalCutscene = registry.CreateEntity();
 	cutscene = registry.AddComponent<CutsceneComponent>(additionalCutscene);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transform->positionX;
 	cutscene->goalLookAtY = transform->scaleY * (transform->positionY + 4.5f);
 	cutscene->goalLookAtZ = transform->positionZ;
@@ -238,7 +238,7 @@ void CutsceneNPCIntro1NoText(EntityID& entity)
 	EntityID returnTransition = stateManager.player;
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transformPlayer->positionX;
 	cutscene->goalLookAtY = transformPlayer->positionY;
 	cutscene->goalLookAtZ = transformPlayer->positionZ;
@@ -274,7 +274,7 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 	float cameraZOffset = transform->scaleZ * transform->facingZ * 15.0f;
 
 	//Zoom into the enemy
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transform->positionX;
 	cutscene->goalLookAtY = transform->positionY + cameraYOffset;
 	cutscene->goalLookAtZ = transform->positionZ;
@@ -293,7 +293,7 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 
 	EntityID additionalCutscene = registry.CreateEntity();
 	cutscene = registry.AddComponent<CutsceneComponent>(additionalCutscene);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transform->positionX;
 	cutscene->goalLookAtY = transform->positionY + 2.0f;
 	cutscene->goalLookAtZ = transform->positionZ;
@@ -318,7 +318,7 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 	EntityID returnTransition = stateManager.player;
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transformPlayer->positionX;
 	cutscene->goalLookAtY = transformPlayer->positionY;
 	cutscene->goalLookAtZ = transformPlayer->positionZ;
@@ -354,7 +354,7 @@ void CutsceneNPCIntro3NoText(EntityID& entity)
 	cutscene->startLookAtX = transform->positionX;
 	cutscene->startLookAtY = transform->positionY;
 	cutscene->startLookAtZ = transform->positionZ;
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	float cameraXOffset = transform->scaleX * transform->facingX * 15.0f;
 	float cameraYOffset = transform->scaleY * 0.0f;
 	float cameraZOffset = transform->scaleZ * transform->facingZ * 15.0f;
@@ -369,7 +369,7 @@ void CutsceneNPCIntro3NoText(EntityID& entity)
 
 	EntityID additionalCutscene = registry.CreateEntity();
 	cutscene = registry.AddComponent<CutsceneComponent>(additionalCutscene);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transform->positionX;
 	cutscene->goalLookAtY = transform->positionY + transform->scaleY * 2.0f;
 	cutscene->goalLookAtZ = transform->positionZ;
@@ -392,7 +392,7 @@ void CutsceneNPCIntro3NoText(EntityID& entity)
 	//Zoom into the enemy
 	additionalCutscene = registry.CreateEntity();
 	cutscene = registry.AddComponent<CutsceneComponent>(additionalCutscene);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transform->positionX;
 	cutscene->goalLookAtY = transform->positionY + transform->scaleY * 2.5f;
 	cutscene->goalLookAtZ = transform->positionZ;
@@ -412,7 +412,7 @@ void CutsceneNPCIntro3NoText(EntityID& entity)
 	EntityID returnTransition = stateManager.player;
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transformPlayer->positionX;
 	cutscene->goalLookAtY = transformPlayer->positionY;
 	cutscene->goalLookAtZ = transformPlayer->positionZ;
@@ -447,7 +447,7 @@ void CutsceneNPCIntro4NoText(EntityID& entity)
 	float cameraZOffset = transform->facingZ * 15.0f;
 
 	//Look sideways, then look up on the boss
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(entity, transform->positionX, transform->positionX + cameraYOffset, transform->positionZ, transform->positionX + 50.0f, transform->positionY + cameraYOffset, transform->positionZ);
 	//Do one cutscene, then the other
 	cutscene->startPositionX = transform->positionX + transform->facingX * 3.0f;
@@ -461,7 +461,7 @@ void CutsceneNPCIntro4NoText(EntityID& entity)
 
 	EntityID additionalCutscene = registry.CreateEntity();
 	cutscene = registry.AddComponent<CutsceneComponent>(additionalCutscene);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transform->positionX;
 	cutscene->goalLookAtY = transform->positionY + cameraYOffset;
 	cutscene->goalLookAtZ = transform->positionZ;
@@ -482,7 +482,7 @@ void CutsceneNPCIntro4NoText(EntityID& entity)
 	EntityID returnTransition = stateManager.player;
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
-	cutscene->mode = (CutsceneMode)(Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transformPlayer->positionX;
 	cutscene->goalLookAtY = transformPlayer->positionY;
 	cutscene->goalLookAtZ = transformPlayer->positionZ;
@@ -514,7 +514,7 @@ void CutsceneFallStage1(EntityID& entity, const int& index)
 	registry.RemoveComponent<HitboxComponent>(entity);//Remove GI constraints
 	EntityID cutscene1 = registry.CreateEntity();
 	CutsceneComponent* sidewaysCut = registry.AddComponent<CutsceneComponent>(cutscene1);
-	sidewaysCut->mode = (CutsceneMode)0b111;
+	sidewaysCut->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(cutscene1, -250.0f, 0.0f, 81.0f, -321.6f - 30.0f, 0.0f, 133.14f + 30.0f);
 	CutsceneSetPosition(cutscene1, -250.0f, 90.0f, -80.0f, -300.0f, 90.0f, -20.0f);
 	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginPortalCutscene, CutsceneTransition, endTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
@@ -560,7 +560,7 @@ void CutsceneFallStage(EntityID& entity, const int& index)
 	registry.RemoveComponent<HitboxComponent>(entity);//Remove GI constraints
 	EntityID cutscene1 = registry.CreateEntity();
 	CutsceneComponent* sidewaysCut = registry.AddComponent<CutsceneComponent>(cutscene1);
-	sidewaysCut->mode = (CutsceneMode)0b1011;
+	sidewaysCut->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Accelerating | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(cutscene1, portalX, 0.0f, portalZ, fallofX, 0.0f, fallofZ);
 	CutsceneSetPosition(cutscene1, portalX, CAMERA_OFFSET_Y* cameraZoom, portalZ + CAMERA_OFFSET_Z * cameraZoom, portalX + distX, portalHeight, portalZ + distZ );
 	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginPortalCutscene, CutsceneTransition, cameraToPortalTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
@@ -568,7 +568,7 @@ void CutsceneFallStage(EntityID& entity, const int& index)
 	//Stay at portal.
 	EntityID cutscene2 = registry.CreateEntity();
 	CutsceneComponent* portalShot = registry.AddComponent<CutsceneComponent>(cutscene2);
-	portalShot->mode = (CutsceneMode)0b111;
+	portalShot->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(cutscene2, fallofX, 0.0f, fallofZ, fallofX, 0.0f, fallofZ);
 	CutsceneSetPosition(cutscene2, portalX + distX, portalHeight, portalZ + distZ, portalX + distX, portalHeight, portalZ + distZ);
 	AddTimedEventComponentStartContinuousEnd(cutscene2, cameraToPortalTime, BeginPortalCutscene, CutsceneTransition, fallTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
@@ -592,7 +592,7 @@ void CutscenePlayerFallDown(EntityID& entity, const int& index)
 	gameSpeed = 0.0f;
 	float endTime = 2.0f;
 	float jumpForwardDist = 40.0f;
-	float jumpDepth = 200.0f;
+	float jumpDepth = 100.0f;
 	EntityID player = stateManager.player;
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(player);
 	CutsceneComponent* downwardsFall = registry.AddComponent<CutsceneComponent>(player);
