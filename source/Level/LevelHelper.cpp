@@ -94,7 +94,7 @@ bool SetupAllEnemies(std::string filePath)
 					// we got the string
 					if (!SetValueForEnemy(&theInfo, counter, term))
 					{
-						continue; // invalid values, probably type. DO NOT DO ANYTHING; READ NEXT LINE
+						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
 					}
 					//reset
 					term = "";
@@ -108,10 +108,8 @@ bool SetupAllEnemies(std::string filePath)
 			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
 		}
 	}
-	else
-	{
-		return false;
-	}
+		
+
 
 	return true;
 }
