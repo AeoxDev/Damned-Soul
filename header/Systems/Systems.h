@@ -18,7 +18,11 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
-class GlowSystem : public System	// NOTE: Might need a separate blur system for future readability.
+class GlowSystem : public System
+{
+	bool Update();
+};
+class AntiAliasingSystem : public System	// DOING
 {
 	bool Update();
 };

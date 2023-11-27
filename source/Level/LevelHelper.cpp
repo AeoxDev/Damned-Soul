@@ -336,9 +336,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	StatComponent* stat = registry.AddComponent<StatComponent>(entity, health, moveSpeed, damage, attackSpeed);
 	registry.AddComponent<EnemyComponent>(entity, soulWorth, eType);
 
-	// TODO: set color based on enemy (or other factors)
-	registry.AddComponent<GlowComponent>(entity, 0, 1, 1);
-
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
