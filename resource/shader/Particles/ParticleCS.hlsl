@@ -9,6 +9,9 @@ inline void RainMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
 inline void ShockWaveMovement(in uint3 DTid, in uint3 blockID);
+// Doesnt really work yet, might get deprecated
+inline void SpawnParticle(in uint3 DTid, in uint3 blockID);
+
 
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
@@ -67,10 +70,15 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         {
             SpiralFieldMovement(DTid, blockID);
         }
-        // 9 = PULSE
-        if (meta[blockID.y].pattern == 9)
+        // 10 = PULSE
+        if (meta[blockID.y].pattern == 10)
         {
             ShockWaveMovement(DTid, blockID);
+        }
+        // 11 = SPAWN
+        if (meta[blockID.y].pattern == 12)
+        {
+            SpawnParticle(DTid, blockID);
         }
     }
 
@@ -285,6 +293,7 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     // -- Calculate the index and get the right particle to change -- //
     int amount = meta[blockID.y].end - meta[blockID.y].start;
     int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    int localIndex = (index - meta[blockID.y].start) % amount;
     
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
@@ -295,8 +304,6 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.time = particle.time + dt;
     particle.size = meta[blockID.y].size;
     // ------------------------------ //
-    
-    int localIndex = (index - meta[blockID.y].start) % amount;
     
     
     float posy = localIndex * 0.2f; // 51 / 255
@@ -319,6 +326,7 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     // -- Calculate the index and get the right particle to change -- //
     int amount = meta[blockID.y].end - meta[blockID.y].start;
     int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    int localIndex = (index - meta[blockID.y].start) % amount;
     
     Input particle = inputParticleData[index];
     // -------------------------------------------------------------- // 
@@ -330,17 +338,16 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     particle.size = meta[blockID.y].size;
     // ------------------------------ //
     
-    int localIndex = (index - meta[blockID.y].start) % amount;
     
     
-    float indexValue = sqrt((10 + localIndex) / 265.f);
+    float indexValue = sqrt((10.f + (float) localIndex) / (10.f + (float) amount));
     float timeValue = (particle.time / meta[blockID.y].life);
     // "Uneven" circlings with a bit over 8 laps
     float piFraction = ((indexValue) * PI * 50.f) + timeValue * timeValue;
     // Expanding outwards
-    float radius = meta[blockID.y].morePositionInfo.x * indexValue * sqrt(timeValue);
+    float radius = meta[blockID.y].maxRange * indexValue * sqrt(timeValue);
     
-    particle.size = meta[blockID.y].size * /*sqrt*/(1 - timeValue);
+    //particle.size = meta[blockID.y].size * /*sqrt*/(1 - timeValue);
     
     particle.position.x = cos(piFraction) * radius;
     particle.position.y = timeValue * indexValue;
@@ -406,40 +413,92 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     
     particle.position.x = particle.position.x + (oscillationX + dirX) * dt;
     particle.position.z = particle.position.z + (oscillationZ + dirZ) * dt;
+    
+    outputParticleData[index] = particle;
+}
+
+void SpawnParticle(in uint3 DTid, in uint3 blockID)
+{
+        // -- Calculate the index and get the right particle to change -- //
+    int amount = meta[blockID.y].end - meta[blockID.y].start;
+    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    int localIndex = (index - meta[blockID.y].start) % amount;
+    
+    Input particle = inputParticleData[index];
+    // -------------------------------------------------------------- // 
 
     
+    // --- Set the standard stuff --- //
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
+    // ------------------------------ //
     
     
+    // ---- Get a "randomized" value to access deltaTime ---- //    
+    float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    
+    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    
+    int One_OneHundo = holder;
+    if (One_OneHundo == 0)
+        One_OneHundo = 1;
+    
+    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    // ------------------------------------------------------ //
+    
+    float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
+
+    
+    if (travelledDistance >= meta[blockID.y].maxRange)
+    {
+        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
         
-    //float pulsateRadius = 1.0f + 0.5f * sin(2.0f * PI * ((float) localIndex / (float) amount * 720.f));
-    //float pulsateAngle = 2.0f * PI * ((float) localIndex / (float) amount * 360.f);
-    //float sporadicX = 0.1f * (2.0f * meta[OneHundo_TwoFiveFive].deltaTime - 1.0f);
-    //float sporadicZ = 0.1f * (2.0f * meta[OneHundo_TwoFiveFiveInc].deltaTime - 1.0f);
-    
         
-    //particle.position.x = particle.position.x + pulsateRadius * cos(pulsateAngle) + sporadicX;
-    ////particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
-    //particle.position.z = particle.position.x + pulsateRadius * sin(pulsateAngle) + sporadicZ;
-    
-    
-    //particle.position.x = particle.position.x + ((cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 2.f) * (sporadicX)) * dt;
-    ////particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
-    //particle.position.z = particle.position.z + ((sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 2.f) * (sporadicZ)) * dt;
-    
-    
-    //if (localIndex % 2 == 0)
-    //{
-    //    particle.position.x = particle.position.x + cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
-    //    particle.position.y = particle.position.y + 0.2f * sin(particle.time * 128.f);
-    //    particle.position.z = particle.position.z + sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
-    //}
-    //else
-    //{
-    //    particle.position.x = particle.position.x - cos(((float) localIndex / (float) amount) * PI) * particle.velocity.x * 30.f * dt;
-    //    particle.position.y = particle.position.y - 0.2f * sin(particle.time * 128.f);
-    //    particle.position.z = particle.position.z - sin(((float) localIndex / (float) amount) * PI) * particle.velocity.z * 30.f * dt;
-    //}
-    
-    
-        outputParticleData[index] = particle;
+        particle.position = startPosition;
+        particle.time = 0.f;
     }
+    if (particle.time >= meta[blockID.y].life)
+    {
+        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+
+        particle.position = startPosition;
+        particle.time = 0.f;
+    }
+    
+    
+    float3 tempVelocity = particle.velocity;
+    if ((meta[blockID.y].life - particle.time) >= (meta[blockID.y].life - 0.8f))
+    {
+        tempVelocity = (tempVelocity * 6.f) * meta[One_OneHundo].deltaTime;
+    }
+    
+    if (meta[One_OneHundo].deltaTime > 0.25f && meta[One_OneHundo].deltaTime <= 0.49f)
+    {
+        tempVelocity.x = tempVelocity.x * -1.0f * meta[One_OneHundo].deltaTime;
+        tempVelocity.y = tempVelocity.y * -1.0f * meta[One_OneHundo].deltaTime;
+    }
+    else if (meta[One_OneHundo].deltaTime > 0.5f && meta[One_OneHundo].deltaTime <= 0.74f)
+    {
+        tempVelocity.x = tempVelocity.x * -1.0f * meta[One_OneHundo].deltaTime;
+    }
+    else if (meta[One_OneHundo].deltaTime > 0.75f)
+    {
+        tempVelocity.y = tempVelocity.y * -1.0f * meta[One_OneHundo].deltaTime;
+    }
+
+    
+    //float oddEvenFactor = ((index % 2) - 0.5f) * 2;
+    //oddEvenFactor * (4 * meta[index].deltaTime);
+    
+    //particle.position.x = particle.position.x + tempVelocity.x * dt;
+    //particle.position.y = particle.position.y + tempVelocity.y * dt;
+    particle.position += pow(tempVelocity, 2) * dt;
+    
+    
+    //particle.position.x = particle.position.x + 0.001f * dt;
+    //particle.position.y = particle.position.y + 0.001f * dt;
+    //particle.position.z = particle.position.z;
+    
+    outputParticleData[index] = particle;
+}

@@ -12,7 +12,9 @@ enum ComputeShaders
 	SINUS = 6,
 	LIGHTNING = 7,
 	CIRCLE_FIELD = 8,
-	PULSE = 9
+	PULSE = 10,
+	// Doesnt really work yet, might get deprecated
+	SPAWN = 12
 };
 
 struct ParticleComponent

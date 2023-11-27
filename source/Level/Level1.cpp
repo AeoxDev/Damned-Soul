@@ -34,7 +34,7 @@ void LoadLevel1()
 	//SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 45.f);
 	//SetupEnemy(EnemyType::skeleton, -40.f, 0.f, 35.f);
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
-	registry.AddComponent<ParticleComponent>(stage, 5.0f, 20.f, 0.5f, 0.0f, 0.0f, 1.0f, 1000, PULSE);
+	registry.AddComponent<ParticleComponent>(stage, 3.0f, 100.f, 1.0f, 0.0f, 5.0f, 1.0f, 32, SPAWN);
 	//5 souls total
 	
 	/*char ctexture[] = "1-1C.png";
