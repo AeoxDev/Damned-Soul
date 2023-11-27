@@ -552,9 +552,9 @@ void CutsceneFallStage(EntityID& entity, const int& index)
 	float cameraZoom = 1.0f;
 	float cameraToPortalTime = 0.5f;
 	distX /= dist;
-	distX *= 65.0f;
+	distX *= 55.0f;
 	distZ /= dist;
-	distZ *= 65.0f;
+	distZ *= 55.0f;
 	float portalHeight = 12.0f;
 	//Move camera to view point and background from a lower angle
 	registry.RemoveComponent<HitboxComponent>(entity);//Remove GI constraints

@@ -34,6 +34,7 @@ struct TimedEventComponent
 	TimedEventComponent()
 	{
 		timedEvents.Initialize();
+		timedEvents.clear();
 	};
 };
 
@@ -138,6 +139,7 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 	{
 		tc = registry.AddComponent<TimedEventComponent>(entityID);
 		tc->timedEvents.Initialize();
+		tc->timedEvents.clear();
 	}
 	TimedEvent timedEvent;
 	timedEvent.condition = condition;
@@ -162,6 +164,7 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 	{
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
 		tc->timedEvents.Initialize();
+		tc->timedEvents.clear();
 	}
 	TimedEvent timedEvent;
 	
@@ -188,6 +191,7 @@ int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, vo
 	{
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
 		tc->timedEvents.Initialize();
+		tc->timedEvents.clear();
 	}
 	TimedEvent timedEvent;
 	timedEvent.id = (unsigned long long)startFunction + (unsigned long long)continousFunction;
@@ -214,6 +218,7 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 	{
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
 		tc->timedEvents.Initialize();
+		tc->timedEvents.clear();
 	}
 	
 	TimedEvent timedEvent;
@@ -295,6 +300,7 @@ void ReleaseTimedEvents(EntityID& entity)
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
 	if (comp)
 	{
+		comp->timedEvents.clear();
 		comp->timedEvents.~ML_Vector();
 		registry.RemoveComponent<TimedEventComponent>(entity);
 	}
