@@ -12,6 +12,17 @@ struct StageSetupVariables
 	float scaleX = 1.0f, scaleY = 1.0f, scaleZ = 1.0f;
 	float offsetX = .0f, offsetY = .0f, offsetZ = .0f;
 };
+
+struct ModelTextRead
+{
+	EnemyType eType;
+	float positionX;
+	float positionZ;
+	int soulValue;
+};
+
+bool SetupAllEnemies(std::string filePath);
+
 EntityID SetUpStage(StageSetupVariables& stageVars);
 
 EntityID SetUpHazard(const StaticHazardType& type, const float scale, const float ra, const float ga, const float ba, const float rm, const float gm, const float bm, const float gamma);

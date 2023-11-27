@@ -9,6 +9,112 @@
 #include "UIButtonFunctions.h"
 #include "SDLHandler.h"
 
+#include <iostream>
+#include <fstream>
+
+bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiece) // help function for setupAllEnemies. DO NOT TOUCH
+{
+	if (index == 0) // enemy type
+	{
+		if (infoPiece == "SkeletonWeak")
+		{
+			infoStruct->eType = EnemyType::skeleton;
+		}
+		else if (infoPiece == "ImpWeak")
+		{
+			infoStruct->eType = EnemyType::imp;
+		}
+		else if (infoPiece == "HoundWeak")
+		{
+			infoStruct->eType = EnemyType::hellhound;
+		}
+		else if (infoPiece == "SkeletonStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredSkeleton;
+		}
+		else if (infoPiece == "Eye")
+		{
+			infoStruct->eType = EnemyType::eye;
+		}
+		else if (infoPiece == "Minotaur")
+		{
+			infoStruct->eType = EnemyType::minotaur;
+		}
+		else if (infoPiece == "ImpStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredImp;
+		}
+		else if (infoPiece == "HoundStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredHellhound;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (index == 1) // position x
+	{
+		infoStruct->positionX = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 2) // position z, THIS SHOULD ALWAYS BE THE NEGATIVE VALUE FROM WHAT WE ARE READING
+	{
+		infoStruct->positionZ = std::stof(infoPiece) * (-1); // converts string to float and multiplies with -1 because of reason above
+	}
+	else if (index == 3) // souls
+	{
+		infoStruct->soulValue = std::stoi(infoPiece); // converts string to int
+	}
+	return true;
+}
+
+bool SetupAllEnemies(std::string filePath)
+{
+	std::string name = "EnemyMaps\\";
+	name.append(filePath);
+
+	std::ifstream myFile;
+	myFile.open(name.c_str());
+	std::string line = "";
+	std::string term = "";
+	if (myFile.is_open())
+	{
+		while (std::getline(myFile, line))
+		{
+			ModelTextRead theInfo;
+			int counter = 0; // by format:
+			// 0 = enemyType
+			// 1 = positionX
+			// 2 = positionZ
+			// 3 = soulCount
+			for (auto t : line)
+			{
+				if (t == ',')
+				{
+					// we got the string
+					if (!SetValueForEnemy(&theInfo, counter, term))
+					{
+						continue; // invalid values, probably type. DO NOT DO ANYTHING; READ NEXT LINE
+					}
+					//reset
+					term = "";
+					counter++;
+				}
+				else
+				{
+					term += t; //add char to string
+				}
+			}
+			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+		}
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
 
 EntityID SetUpStage(StageSetupVariables& stageVars)
 {
