@@ -41,6 +41,7 @@ RS_IDX hitboxRasterizerState;
 CB_IDX hitboxConstantBuffer;
 
 bool hitboxVisualizerActive[SAME_TYPE_HITBOX_LIMIT * 2];
+bool visualizeStage = false;
 
 struct CircularConvexReturn
 {
@@ -355,7 +356,7 @@ void HandleProximityCollision()
 
 		if (closestWall.index != -1) //If an entity has been assigned as the closestWall
 		{
-			ProximityCorrection(closestWall, index, transformComponent->positionX, transformComponent->positionZ, transformComponent->lastPositionX, transformComponent->lastPositionZ);
+			ProximityCorrection(closestWall, index, transformComponent->positionX, transformComponent->positionZ, transformComponent->lastPositionX, transformComponent->lastPositionZ, transformComponent->currentSpeedX, transformComponent->currentSpeedZ);
 		}
 	}
 }
@@ -462,7 +463,7 @@ int8_t GetHitboxRasterizerState()
 {
 	return hitboxRasterizerState;
 }
-int8_t GetHitboxConstantBuffer()
+int16_t GetHitboxConstantBuffer()
 {
 	return hitboxConstantBuffer;
 }
@@ -477,6 +478,10 @@ bool CollisionSystem::Update()
 float GetHitboxRadius(const EntityID& entity, int hitBoxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return -1.0f;
+	}
 	if (hitBoxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		return hitbox->circleHitbox[hitBoxID].radius;
@@ -596,6 +601,10 @@ void StopVisualizeHitbox(EntityID& entity)
 int HitboxVisualComponent::GetNrVertices(EntityID& entity, int hitboxID)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return 0;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		if (hitbox->circularFlags[hitboxID].active)

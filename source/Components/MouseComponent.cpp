@@ -39,7 +39,7 @@ void MouseComponentUpdateDirection(EntityID entityID,const bool& isPerspective)
 	toScreenSpace = XMVector3Transform(toScreenSpace,Camera::GetView());
 	toScreenSpace = XMVector3Transform(toScreenSpace,Camera::GetPerspective());
 	MouseComponent* mouseComponent = registry.GetComponent<MouseComponent>(entityID);
-	assert(transformComponent != nullptr);//The mouse requires its component to update its direction!
+	assert(mouseComponent != nullptr);//The mouse requires its component to update its direction!
 	XMFLOAT3 toFloat;
 	XMStoreFloat3(&toFloat, toScreenSpace);
 	mouseComponent->directionX = mousePosX - toFloat.x / toFloat.z;
@@ -47,6 +47,9 @@ void MouseComponentUpdateDirection(EntityID entityID,const bool& isPerspective)
 	float len = sqrtf(mouseComponent->directionX * mouseComponent->directionX + mouseComponent->directionZ * mouseComponent->directionZ);
 	mouseComponent->directionX /= len;
 	mouseComponent->directionZ /= -len;
+
+	/*mouseComponent->directionX = mousePosX;
+	mouseComponent->directionZ = -mousePosY;*/
 }
 
 float MouseComponentGetDirectionX(MouseComponent*& mouseComponent)

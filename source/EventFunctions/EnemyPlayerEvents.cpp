@@ -25,8 +25,9 @@ void BeginHit(EntityID& entity, const int& index)
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats/*, condition == CONDITION_CHARGE*/);
 
 	//Disable damage taken until EndHit if we're the player (enemy i-frames make faster attacks useless)
-	if(registry.GetComponent<PlayerComponent>(entity) != nullptr)
-		SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+	auto player = registry.GetComponent<PlayerComponent>(entity);
+	if(player)
+		SetHitboxCanTakeDamage(entity, player->softHitboxID, false); //Only disables for like 0.3 seconds but it's better than nothing, you got reaction times
 
 	//I want to play a sound that's just a straight-up *smack* for better hit feedback
 }
@@ -43,7 +44,9 @@ void DashBeginHit(EntityID& entity, const int& index)
 	Combat::DashHitInteraction(cpc->params.entity1, attackerStats, cpc->params.entity2, defenderStats);
 
 	//Disable damage taken until EndHit
-	SetHitboxCanTakeDamage(entity, 1, false); //We know soft hitbox is always id 1
+	auto player = registry.GetComponent<PlayerComponent>(entity);
+	if(player)
+		SetHitboxCanTakeDamage(entity, player->softHitboxID, false);
 }
 
 void MiddleHit(EntityID& entity, const int& index)
@@ -65,8 +68,9 @@ void MiddleHit(EntityID& entity, const int& index)
 void EndHit(EntityID& entity, const int& index)
 {
 	//Enable damage taken again for the player
-	if (registry.GetComponent<PlayerComponent>(entity) != nullptr)
-		SetHitboxCanTakeDamage(entity, 1, true);
+	auto player = registry.GetComponent<PlayerComponent>(entity);
+	if (player)
+		SetHitboxCanTakeDamage(entity, player->softHitboxID, true);
 
 	//Make sure we're back to our regular color
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
@@ -82,42 +86,6 @@ void EndHit(EntityID& entity, const int& index)
 
 void HazardBeginHit(EntityID& entity, const int& index)
 {
-	//Player sound of hurt entity
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
-	if (enemy != nullptr)
-	{
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-		switch (enemy->type)
-		{
-		case EnemyType::hellhound:
-			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
-			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::eye:
-			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
-			{
-				sfx->Play(Eye_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::skeleton:
-			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
-			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
-			}
-			break;
-		}
-	}
-	else
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-		if (player != nullptr)
-		{
-			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Base);
-		}
-	}
-
 	//Get relevant components
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 

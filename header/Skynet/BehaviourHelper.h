@@ -32,6 +32,7 @@ void Normalize(float& X, float& Z);
 float Calculate2dDistance(float pos1X, float pos1Z, float pos2X, float pos2Z);
 //void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 5.1f);
 void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform);
+void CalculateGlobalMapValuesZac(PathfindingMap* map);
 void CalculateGlobalMapValuesHellhound(PathfindingMap* map);
 void CalculateGlobalMapValuesImp(PathfindingMap* map);
 void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map);
@@ -43,4 +44,4 @@ TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent*
 ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponent* enemyTransform, TransformComponent* playerTransform);
 
 
-void CreateProjectile(EntityID entity, float directionX, float directionZ, int type);
+void CreateProjectile(EntityID entity, float directionX, float directionZ, EnemyType type);

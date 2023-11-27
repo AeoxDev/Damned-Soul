@@ -12,7 +12,9 @@ enum ComputeShaders
 	SINUS = 6,
 	LIGHTNING = 7,
 	CIRCLE_FIELD = 8,
+	FIRE = 9,
 	PULSE = 10,
+	ICETHROWER = 11,
 	// Doesnt really work yet, might get deprecated
 	SPAWN = 12
 };

@@ -7,37 +7,64 @@
 #include "EventFunctions.h"
 #include "States\StateManager.h"
 #include "Camera.h"
+#include "Model.h"
+#include "Level.h"
 
 bool ControllerSystem::Update()
 {
 	//Controller for player during play
-	if ((keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[MouseButton::left] == pressed
-		|| mouseButtonPressed[MouseButton::right] == pressed))
+	if ((keyState[SCANCODE_SPACE] == pressed))
 	{
-		if (!(currentStates & InMainMenu) && Camera::InCutscene() && !(currentStates & InCredits) && !(currentStates & InSettings))
+		if (!(currentStates & InMainMenu) && Camera::InCutscene() > 0 && !(currentStates & InCredits) && !(currentStates & InSettings))
 		{
-			for (auto entity : View<TimedEventComponent>(registry))
+			if (Camera::InCutscene() == 1)
 			{
-				ReleaseTimedEvents(entity);
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				//Reset player transform for safety:
+				TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+				PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+				if (player != nullptr)
+				{
+					player->isAttacking = false;//Bugfix to prevent getting stuck doing no attacks.
+				}
+				
+				if (transform != nullptr)
+				{
+					transform->positionY = 0.0f;//Bugfix to prevent player from getting stuck above or under the stage.
+				}
 			}
-			AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-			AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+			else if (Camera::InCutscene() == 2)
+			{
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				LoadLevel(++stateManager.activeLevel);
+			}
 			
 		}
-		if ((currentStates & InMainMenu) == true)
+		
+	}
+	if ((currentStates & InMainMenu) == true && (keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[left] == pressed))
+	{
+		ReleaseTimedEvents(stateManager.stage);
+
+		AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+		if (keyState[SCANCODE_SPACE] == pressed)
 		{
-			ReleaseTimedEvents(stateManager.stage);
-			
-			AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
-			if (keyState[SCANCODE_SPACE] == pressed)
-			{
-				AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
-				Camera::SetCutsceneMode(false);
-			}
-			else
-			{
-				AddTimedEventComponentStart(stateManager.stage, 0.0f, MainMenuIntroCutscene, 0, 8);
-			}
+			AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
+			Camera::SetCutsceneMode(false);
+		}
+		else
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, MainMenuIntroCutscene, 0, 8);
 		}
 	}
 #ifdef _DEBUG
@@ -49,13 +76,17 @@ bool ControllerSystem::Update()
 		}
 		else if (keyState[SCANCODE_2] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, hellhound, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, imp, 256);
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, hellhound, 256);
 		}
 		else if (keyState[SCANCODE_4] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+		}
+		else if (keyState[SCANCODE_5] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
 		}
@@ -64,7 +95,7 @@ bool ControllerSystem::Update()
 	{
 		if (keyState[SCANCODE_A] == pressed)
 		{
-			for (size_t i = 0; i < 8; i++)
+			for (int i = 0; i < 8; i++)
 			{
 				hitboxVisualizerActive[i] = true;
 				for (auto entity : View<HitboxComponent>(registry))
@@ -72,6 +103,40 @@ bool ControllerSystem::Update()
 					VisualizeHitbox(entity, i);
 				}
 			}
+		}
+		if (keyState[SCANCODE_S] == pressed)
+		{
+			if (stateManager.hitboxVis.index == -1)
+			{
+				stateManager.hitboxVis = registry.CreateEntity();
+				ModelBonelessComponent* stageHitbox;
+				TransformComponent* transform;
+				visualizeStage = true;
+				switch (stateManager.activeLevel)
+				{
+					case 1://Level 1
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV1Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 3://Level 2
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV2Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 5://Level 3
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV3Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+					case 7://Level 4
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV4Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						break;
+				default:
+					break;
+				}
+			}
+			
+			
+			
 		}
 		if (keyState[SCANCODE_0] == pressed)
 		{
@@ -123,6 +188,13 @@ bool ControllerSystem::Update()
 			{
 				hitboxVisualizerActive[i] = false;
 			}
+			if (stateManager.hitboxVis.index != -1)
+			{
+				registry.DestroyEntity(stateManager.hitboxVis);
+				stateManager.hitboxVis.index = -1;
+				visualizeStage = false;
+			}
+
 		}
 	}
 #endif // _DEBUG
@@ -142,6 +214,9 @@ bool ControllerSystem::Update()
 		StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		MouseComponent* mouseComponent = registry.GetComponent<MouseComponent>(entity);
+
+		//PlayerComponent now stores a bunch of variables for cooldowns and animation timings so we need access to it early
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 
 		if (controller->enabled == -1)
 			break;
@@ -180,7 +255,11 @@ bool ControllerSystem::Update()
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
-		MouseComponentUpdateDirection(entity);
+
+		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
+		if(!player->isAttacking)
+			MouseComponentUpdateDirection(entity);
+
 		if (moving)
 		{
 			anim->aAnim = ANIMATION_WALK;
@@ -217,15 +296,21 @@ bool ControllerSystem::Update()
 		}
 
 		/*COMBAT INPUT*/
+		/*DASH*/
+		//Decrement and clamp
+		player->DashCooldown(GetDeltaTime());
+
 		//Dash in the direction you're moving, defaults to dashing backwards if you're not moving. Gives i-frames for the duration
-		if (keyState[SCANCODE_SPACE] == pressed)
+		if (keyState[SCANCODE_SPACE] == pressed && player->ConsumeDash())
 		{
+			//player->dashCounter = player->dashCooldown; // Not handled in ConsumeDash()
+			//Putting cooldown on these dashes, PlayerComponent has the variables in charge of both current counter and the max-value
 			if (moving)
 			{
 				//Set facing direction to dash direction when moving
 				transform->facingX = controller->goalX;
 				transform->facingZ = controller->goalZ;
-				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
+				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, player->GetDashValue());
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
 				AddSquashStretch(entity, Linear, 0.8f, 0.8f, 1.5f, true, 1.2f, 1.2f, 0.8f);
@@ -233,21 +318,19 @@ bool ControllerSystem::Update()
 			}
 			else
 			{
-				//Default dash goes backwards
+				//Default dash goes forwards
+				//Set facing direction to dash direction when moving
+				registry.AddComponent<DashArgumentComponent>(entity, transform->facingX, transform->facingZ, 2.5f);
 				AddTimedEventComponentStart(entity, 0.0f, PlayerDashSound, CONDITION_DASH);
-				transform->facingX = -MouseComponentGetDirectionX(mouseComponent);
-				transform->facingZ = -MouseComponentGetDirectionZ(mouseComponent);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerLoseControl, PlayerDash, 0.2f, PlayerRegainControl, CONDITION_DASH);
+				AddSquashStretch(entity, Linear, 0.8f, 0.8f, 1.5f, true, 1.2f, 1.2f, 0.8f);
+				int squashStretch = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, ResetSquashStretch, SquashStretch, 0.2f, ResetSquashStretch, 0, 1);
 				break;
 			}
 		}
 
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
-		//Need: Variable storing time between inputs. If an attack happens within a certain time after another, the next attack in the chain. So also need a variable 
-		//keeping track of which attack in the chain we did last
-		//PlayerComponent now stores these two values, so we need to get access to it early
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-		
 		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
 		if(player->isAttacking == false)
 			player->timeSinceLastAttack += GetDeltaTime();
@@ -259,6 +342,9 @@ bool ControllerSystem::Update()
 			player->timeSinceLastAttack = 0.0f;
 		}
 
+		//Get our sound component so we can play sounds when we attack
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+
 		//Schwing (Now with 50% less carpal tunnel)
 		if (mouseButtonDown[0] == down && player->isAttacking == false)
 		{
@@ -268,6 +354,7 @@ bool ControllerSystem::Update()
 			//Todo (if we get more weapons): Let there be some WeaponComponent that has its own attack chains and animation timings so it doesn't get hard-coded here
 			if (player->attackChainIndex == 0) //First attack in the chain
 			{
+				if (sfx) sfx->Play(Player_Attack1, Channel_Base); //Attack1
 				player->attackChainIndex = 1;
 				attackDuration = 0.5f;
 				//attackDuration = 0.6f;
@@ -276,11 +363,13 @@ bool ControllerSystem::Update()
 			{
 				if (player->attackChainIndex == 1) //Second attack in the chain
 				{
+					if(sfx) sfx->Play(Player_Attack2, Channel_Base); //Attack2
 					player->attackChainIndex = 2;
 					attackDuration = 0.4f;
 				}
 				else //Third and final attack in the chain, resets attackChainIndex
 				{
+					if (sfx) sfx->Play(Player_Attack3, Channel_Base); //Attack3
 					player->attackChainIndex = 0;
 					attackDuration = 0.7f;
 					//attackDuration = 0.8f;
@@ -292,8 +381,21 @@ bool ControllerSystem::Update()
 			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
 			AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack); //Esketit xd
 		}
-		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge)
+		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge && player->isAttacking != true)
 		{
+			for (auto audio : View<AudioEngineComponent>(registry))
+			{
+				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
+				FMOD::Sound* test = nullptr;
+				if (sfx)
+				{
+					audioJungle->channels[sfx->channelIndex[Channel_Base]]->getCurrentSound(&test);
+					if (audioJungle->sounds[PLAYER4] != test)
+					{
+						sfx->Play(Player_AttackHeavyCharge, Channel_Base);
+					}
+				}
+			}
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)
 				stats->SetSpeedMult(0.2f);
@@ -307,6 +409,8 @@ bool ControllerSystem::Update()
 			if (player->currentCharge > 0.0f)
 			{
 				//it's time
+				player->currentCharge = 0.0f;
+				if (sfx) sfx->Play(Player_HeavyAttack, Channel_Base);
 				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
 				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
@@ -321,18 +425,24 @@ bool ControllerSystem::Update()
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(stateManager.player);
 			hitbox->circleHitbox[2].radius = 100.0f;
-			if (pStats->hazardModifier > -100.0f)
+			if (GetGodModeFactor() <= 1.0f)
 			{
-				transform->mass += 100.0f;
+				transform->mass += 1000.0f;
 				player->killingSpree = 10000;
 				player->UpdateSouls(1000);
 				hitbox->circleHitbox[2].radius += 100.0f;
+				SetGodModeFactor(100.0f);
 			}
 			else
 			{
-				transform->mass -= 100.0f;
+				transform->mass -= 1000.0f;
 				hitbox->circleHitbox[2].radius -= 100.0f;
+				SetGodModeFactor(1.0f);
 			}
+		}
+		if (keyState[SCANCODE_P] == pressed)
+		{
+			SetGodModePortal(true);
 		}
 #endif // _DEBUG
 

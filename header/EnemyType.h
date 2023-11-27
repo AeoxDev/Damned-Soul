@@ -12,5 +12,10 @@ enum EnemyType
 	lucifer,
 	frozenHellhound, 
 	frozenImp, 
-	frozenEye
+	frozenEye,
+	zac,
+	empoweredSkeleton,
+	empoweredHellhound,
+	empoweredImp,
+	//no empoweredEye, please for the love of god
 };
