@@ -52,6 +52,7 @@ void LoadLevel1()
 	transform->facingZ = -1.0f;
 	transform->facingX = 0.1f;
 	NormalizeFacing(transform);
+	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
 
 
 	if (SetupAllEnemies("LV1Enemies.dss") == false)

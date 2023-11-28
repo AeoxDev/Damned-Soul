@@ -123,13 +123,9 @@ void ImpIntroScene(EntityID& entity, const int& index)
 }
 
 void CutsceneNPCIntro4NoText(EntityID& entity);
-void Stage4IntroScene(EntityID& entity, const int& index)
+void SplitBossIntroScene(EntityID& entity, const int& index)
 {
-	if ((rand() % 16) == 0)
-	{
-		CutsceneNPCIntro4NoText(entity);
-	}
-	CutsceneNPCIntro1NoText(entity);
+	CutsceneNPCIntro4NoText(entity);
 }
 
 
@@ -643,5 +639,5 @@ void CutscenePlayerFallInPlace(EntityID& entity, const int& index)
 	CutsceneComponent* downwardsFall = registry.AddComponent<CutsceneComponent>(player);
 	downwardsFall->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Cutscene_Character_Fall);
 	CutsceneSetPosition(entity, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, transform->positionY, transform->positionZ);
-	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, 10.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, CutsceneTransition, 10.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }

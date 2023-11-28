@@ -73,7 +73,7 @@ void SetInPause(bool value)
 	else
 	{
 		currentStates = (State)(currentStates & (~State::InPause));
-		if (Camera::InCutscene() == true)
+		if (Camera::InCutscene() > 0)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;

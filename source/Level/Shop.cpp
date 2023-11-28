@@ -130,7 +130,7 @@ void CreateSingleWindows()
 		UIFunctions::OnClick::LockRelic,
 		UIFunctions::OnClick::BuyRelic,
 		UIFunctions::OnClick::None,
-		UIFunctions::Game::LoadNextLevel
+		UIFunctions::Game::ExitShopCutscene
 	};
 
 	const char const name[SHOP_SINGLE_WINDOWS][32] =
@@ -255,9 +255,9 @@ void LoadShop()
 	EntityID impCutscene = registry.CreateEntity();
 	CutsceneComponent* rotateImp = registry.AddComponent<CutsceneComponent>(imp);
 	rotateImp->mode = (CutsceneMode)(Cutscene_Character_Idle | Transition_LookAt | Cutscene_Accelerating);
-	CutsceneSetLookAt(imp, 1.0f, 0.0f, -1.0f, -1.0f, 0.0f, -2.0f);
+	CutsceneSetLookAt(imp, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f, 2.0f);
 
-	AddTimedEventComponentStartContinuousEnd(imp, 0.0f, BeginCutscene, CutsceneTransition, 5.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(imp, 0.0f, BeginShopCutscene, CutsceneTransition, 5.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	
 	//Cutscene
 	EntityID cutscene = registry.CreateEntity();
@@ -265,15 +265,13 @@ void LoadShop()
 	stillShot->mode = (CutsceneMode)(Cutscene_Camera | Transition_LookAt | Transition_Position | Cutscene_Linear);
 	CutsceneSetLookAt(cutscene, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	CutsceneSetPosition(cutscene, CAMERA_OFFSET_X, CAMERA_OFFSET_Y * 0.0f, CAMERA_OFFSET_Z *0.5f, CAMERA_OFFSET_X, CAMERA_OFFSET_Y * 0.0f, CAMERA_OFFSET_Z * 0.5f);
-	AddTimedEventComponentStartContinuousEnd(cutscene, 0.0f, BeginCutscene, CutsceneTransition, 99999999999999.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(cutscene, 0.0f, BeginShopCutscene, CutsceneTransition, 99999999999999.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//Move player
-	
 	CutsceneComponent* playerFallIn = registry.AddComponent<CutsceneComponent>(stateManager.player);
-	playerFallIn->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_LookAt | Transition_Position | Cutscene_Decelerating);
-	CutsceneSetLookAt(stateManager.player, -1.0f, 0.0, 0.0, 1.0f, 0.0f, 1.0f);
-	CutsceneSetPosition(stateManager.player, 7.0f, 18.0f, 0.0, 7.0f, 5.0f, 0.0f);
-	AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginCutscene, CutsceneTransition, 2.0f, LoopCutscenePlayerFallInPlace, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	playerFallIn->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_Position | Cutscene_Decelerating);
+	CutsceneSetPosition(stateManager.player, 7.0f, 18.0f, 0.0f, 7.0f, 5.0f, 0.0f);
+	AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginShopCutscene, CutsceneTransition, 2.0f, LoopCutscenePlayerFallInPlace, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
 	stats->SetSpeedMult(0.0f);
 	
@@ -361,5 +359,36 @@ void ReloadShop()
 			}
 		}
 	}
+
+	//Create the imp
+	EntityID imp = registry.CreateEntity();
+	registry.AddComponent<ModelBonelessComponent>(imp, LoadModel("EyePlaceholder.mdl"));
+	TransformComponent* transform = registry.AddComponent<TransformComponent>(imp);
+	transform->positionX = 13.0f;
+	transform->positionZ = -25.0f;
+
+	EntityID impCutscene = registry.CreateEntity();
+	CutsceneComponent* rotateImp = registry.AddComponent<CutsceneComponent>(imp);
+	rotateImp->mode = (CutsceneMode)(Cutscene_Character_Idle | Transition_LookAt | Cutscene_Accelerating);
+	CutsceneSetLookAt(imp, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f, 2.0f);
+
+	AddTimedEventComponentStartContinuousEnd(imp, 0.0f, BeginCutscene, CutsceneTransition, 5.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Cutscene
+	EntityID cutscene = registry.CreateEntity();
+	CutsceneComponent* stillShot = registry.AddComponent<CutsceneComponent>(cutscene);
+	stillShot->mode = (CutsceneMode)(Cutscene_Camera | Transition_LookAt | Transition_Position | Cutscene_Linear);
+	CutsceneSetLookAt(cutscene, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	CutsceneSetPosition(cutscene, CAMERA_OFFSET_X, CAMERA_OFFSET_Y * 0.0f, CAMERA_OFFSET_Z * 0.5f, CAMERA_OFFSET_X, CAMERA_OFFSET_Y * 0.0f, CAMERA_OFFSET_Z * 0.5f);
+	AddTimedEventComponentStartContinuousEnd(cutscene, 0.0f, BeginCutscene, CutsceneTransition, 99999999999999.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Move player
+	CutsceneComponent* playerFallIn = registry.AddComponent<CutsceneComponent>(stateManager.player);
+	playerFallIn->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_Position | Cutscene_Decelerating);
+	CutsceneSetPosition(stateManager.player, 7.0f, 18.0f, 0.0f, 7.0f, 5.0f, 0.0f);
+	AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginCutscene, CutsceneTransition, 2.0f, LoopCutscenePlayerFallInPlace, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+	stats->SetSpeedMult(0.0f);
+
 }
 

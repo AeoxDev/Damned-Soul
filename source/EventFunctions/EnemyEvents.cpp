@@ -623,7 +623,11 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	{
 		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
 		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
-		pc->UpdateSouls(ec->soulCount);
+		if (ec != nullptr)
+		{
+			pc->UpdateSouls(ec->soulCount);
+		}
+ 		
 	}
 	
 	// I am inevitable 

@@ -13,7 +13,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "MemLib/ML_Map.hpp"
-
+#include "EventFunctions.h"
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
 
 #include <random>
@@ -211,6 +211,18 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 	LoadLevel(++stateManager.activeLevel);
 }
 
+void UIFunctions::Game::ExitShopCutscene(void* args, int a)
+{
+	//Make the player fall
+	CancelTimedEvents(stateManager.player);
+	CutsceneComponent* fallDown = registry.AddComponent<CutsceneComponent>(stateManager.player);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+	fallDown->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_Position | Cutscene_Accelerating);
+	CutsceneSetPosition(stateManager.player, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, -33.0f, transform->positionZ);
+	AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginPortalCutscene, CutsceneTransition, 5.0f, EventShopLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	
+}
+
 void UIFunctions::Game::SetMainMenu(void* args, int a)
 {
 	SetInMainMenu(true);
@@ -360,7 +372,7 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		ResetInput();
 
 		UnloadEntities(ENT_PERSIST_PAUSE);
-		if (Camera::InCutscene() == true)
+		if (Camera::InCutscene() > 0)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;
@@ -376,7 +388,7 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
-		if (Camera::InCutscene() == true)
+		if (Camera::InCutscene() > true)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;

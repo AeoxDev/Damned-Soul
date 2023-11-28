@@ -44,6 +44,10 @@ bool ControllerSystem::Update()
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				LoadLevel(++stateManager.activeLevel);
 			}
+			else if (Camera::InCutscene() == 3)
+			{
+				//Nothing. Not a skippable cutscene.
+			}
 			
 		}
 		

@@ -10,6 +10,7 @@
 #include "Level.h"
 #include "Input.h"
 #include "SDLHandler.h"
+#include "UIButtonFunctions.h"
 
 void CutsceneCreateLinearTransition(EntityID& entity, const int& index)
 {
@@ -46,6 +47,10 @@ void BeginCutscene(EntityID& entity, const int& index)
 void BeginPortalCutscene(EntityID& entity, const int& index)
 {
 	Camera::SetCutsceneMode(2);
+}
+void BeginShopCutscene(EntityID& entity, const int& index)
+{
+	Camera::SetCutsceneMode(3);
 }
 void EndCutscene(EntityID& entity, const int& index)
 {
@@ -229,4 +234,9 @@ void SetGameSpeedDefault(EntityID& entity, const int& index)
 void EventLoadNextLevel(EntityID& entity, const int& index)
 {
 	LoadLevel(++stateManager.activeLevel);
+}
+
+void EventShopLoadNextLevel(EntityID& entity, const int& index)
+{
+	UIFunctions::Game::LoadNextLevel(nullptr, 0);
 }
