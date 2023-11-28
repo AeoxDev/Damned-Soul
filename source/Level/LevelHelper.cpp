@@ -283,7 +283,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , int soulWorth, float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed ,  float scaleX, float scaleY, float scaleZ, float facingX ,
-	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4)
+	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4, bool worthLess)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
@@ -731,6 +731,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+		tempBossComponent->worthLess = worthLess;
 		
 		tempBossComponent->parts[0] = zacIndex0; // this is needed, DO NOT TOUCH
 		tempBossComponent->parts[1] = zacIndex1;
