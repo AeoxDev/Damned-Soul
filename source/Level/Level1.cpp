@@ -46,11 +46,14 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 
-	if (SetupAllEnemies("LV1Enemies.dss") == false)
-	{
-		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
-	}
+
+	SetupEnemy(EnemyType::imp, -122.0f, 0.f, 61.f);
+
+	//if (SetupAllEnemies("LV1Enemies.dss") == false)
+	//{
+	//	//something went wrong, could not open file
+	//	assert("Could not read file: LV1Enemies");
+	//}
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 

@@ -68,7 +68,6 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 
 		etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
 		etc->positionZ += etc->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
-		enemyAnim->aAnimTime += GetDeltaTime();
 	}
 	else if(ec->chargeTimer < 1.5f)
 	{
@@ -79,7 +78,6 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 			SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 			etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
 			etc->positionZ += etc->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
-			enemyAnim->aAnimTime += GetDeltaTime();
 		}
 		else
 		{
@@ -129,7 +127,6 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		
 		ec->aimTimer += GetDeltaTime();
 		ec->attackTimer += GetDeltaTime();
-		enemyAnim->aAnimTime += GetDeltaTime();
 		return true;
 	}
 	else // yes, we can indeed attack. 
@@ -199,8 +196,6 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	Normalize(ec->goalDirectionX, ec->goalDirectionZ);
 
 	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
-
-	enemyAnim->aAnimTime += GetDeltaTime();
 }
 
 void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
@@ -237,8 +232,6 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	eyeComponent->timeCounter += GetDeltaTime();
-	enemyAnim->aAnimTime += GetDeltaTime();
-
 }
 
 void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, StatComponent* playerStats, HitboxComponent* enemyHitbox, EntityID eID, EnemyComponent* enemComp, AnimationComponent* enemyAnim)
@@ -286,7 +279,6 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 30.f);
 		eyeComponent->aimTimer += GetDeltaTime();
 		eyeComponent->attackTimer += GetDeltaTime();
-		enemyAnim->aAnimTime += GetDeltaTime();
 	}
 	else 
 	{
@@ -311,7 +303,6 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//scalar between the current direction and the original chagre direction
 		float scalar = dirX * eyeComponent->chargeDirX + dirZ * eyeComponent->chargeDirZ;
 
-		enemyAnim->aAnimTime += GetDeltaTime();
 		//If charging scalar point direction > 0.0, charge
 		if (scalar > 0 && eyeComponent->chargeTimer < 1.0f)
 		{
@@ -608,7 +599,6 @@ bool EyeBehaviourSystem::Update()
 					enemyAnim->aAnimIdx = 1;
 					enemyAnim->aAnimTime = 0.0f;
 				}
-				enemyAnim->aAnimTime += GetDeltaTime();
 			}
 			else if ((distance < eyeComponent->range/6.0f || eyeComponent->retreating) && !eyeComponent->charging && !eyeComponent->shooting) // Retreat to safe distance if not charging
 			{
