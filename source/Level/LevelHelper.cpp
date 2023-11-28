@@ -94,6 +94,7 @@ bool SetupAllEnemies(std::string filePath)
 					// we got the string
 					if (!SetValueForEnemy(&theInfo, counter, term))
 					{
+						myFile.close();
 						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
 					}
 					//reset
@@ -109,7 +110,7 @@ bool SetupAllEnemies(std::string filePath)
 		}
 	}
 		
-
+	myFile.close();
 
 	return true;
 }
@@ -1006,6 +1007,9 @@ void LoadPlayerSounds()
 void ReloadPlayerNonGlobals()
 
 {
+	if (registry.GetComponent<PlayerComponent>(stateManager.player) == nullptr)
+		return; //Ain't no way we doing this function if player doesn't exist yet
+
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{

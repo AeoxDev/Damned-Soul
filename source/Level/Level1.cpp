@@ -38,22 +38,20 @@ void LoadLevel1()
 	EntityID lightholderForth = registry.CreateEntity();
 	SetGISpawnPosition(-0.0f, -0.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 10000.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
+	//CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
+	ReloadPlayerNonGlobals();
 
 	/*SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
-
-
-	SetupEnemy(EnemyType::imp, -122.0f, 0.f, 11.f);
-
-	//if (SetupAllEnemies("LV1Enemies.dss") == false)
-	//{
-	//	//something went wrong, could not open file
-	//	assert("Could not read file: LV1Enemies");
-	//}
+	//SetupEnemy(EnemyType::minotaur, -122.0f, 0.f, 61.f);
+	if (SetupAllEnemies("LV1Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Enemies");
+	}
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 

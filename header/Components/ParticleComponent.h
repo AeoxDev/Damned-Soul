@@ -14,7 +14,7 @@ enum ComputeShaders
 	CIRCLE_FIELD = 8,
 	FIRE = 9,
 	PULSE = 10,
-	ICETHROWER = 11,
+	ICETHROWER = 11
 };
 
 struct ParticleComponent
@@ -31,6 +31,7 @@ struct ParticleComponent
 	int FindSlot();
 
 	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern);
+	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float speed, int amount, ComputeShaders pattern);
 
 	// Overload for FlameThrower
 	// Flamethrower does not use max max distance therefore we store one of the triangles vertices x-position there.
