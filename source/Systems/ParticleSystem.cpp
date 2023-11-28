@@ -14,6 +14,7 @@ bool ParticleSystem::Update()
 
 	SetVertexShader(renderStates[Particles::RenderSlot].vertexShaders[1]);
 	SetPixelShader(renderStates[Particles::RenderSlot].pixelShaders[1]);
+	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
 
 	SetVertexBuffer(renderStates[backBufferRenderSlot].vertexBuffer);
 	SetIndexBuffer(renderStates[backBufferRenderSlot].indexBuffer);

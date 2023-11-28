@@ -799,6 +799,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	if (model != nullptr)
 	{
 		model->shared.gammaCorrection = 1.5f;
+		model->shared.hasOutline = true;
 	}
 	CreatePointLight(entity, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 	return entity;
@@ -814,6 +815,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->shared.colorMultiplicativeGreen = 1.25f;
 	model->shared.colorMultiplicativeBlue = 1.25f;
 	model->shared.gammaCorrection = 1.5f;
+	model->shared.hasOutline = true;
 	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
 	animation->aAnim = ANIMATION_IDLE;
 	animation->aAnimTime = 0.5f;

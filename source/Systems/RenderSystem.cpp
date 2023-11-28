@@ -13,12 +13,11 @@
 
 enum RenderPass
 {
-	ShadowPass, DepthPass, LightPass
+	ShadowPass, DepthPass, LightPass, OutlinePass
 };
 
 void Render(RenderPass renderPass)
 {
-
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
@@ -57,6 +56,11 @@ void Render(RenderPass renderPass)
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
 		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
+
+		if (OutlinePass == renderPass && false == mc->shared.hasOutline)
+		{
+			continue;
+		}
 
 		// If this isn't a shadow pass, update colors (and reset temp colors)
 		if (LightPass == renderPass)
@@ -229,5 +233,76 @@ bool RenderSystem::Update()
 #endif // _DEBUG
 
 	
+	return true;
+}
+
+#include "OutlineHelper.h"
+
+bool OutlineSystem::Update()
+{
+	// Validate outline resources
+	ValidateOutlineResources();
+	// Prepare the outline pixel shader
+	SetPixelShader(outlinePixelShader);
+	// Prepare the ountline resources
+	SetRenderTargetViewAndDepthStencil(outlineRTV, outlineDSV);
+
+	UnsetGeometryShader();
+	ClearRenderTargetView(outlineRTV);
+	ClearDepthStencilView(outlineDSV);
+
+	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
+
+		if (false == mc->shared.hasOutline)
+			continue;
+
+		if (tc->offsetX != 0.0f)
+		{
+			tc->offsetY = 0.0f;
+		}
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+		LOADED_MODELS[mc->model].RenderAllSubmeshes();
+	}
+
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
+	for (auto entity : View<TransformComponent, ModelSkeletonComponent, AnimationComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
+		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
+
+		if (false == mc->shared.hasOutline)
+			continue;
+
+		if (tc->offsetX != 0.0f)
+		{
+			tc->offsetY = 0.0f;
+		}
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+		// Render with data
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+	}
+
+	//// Set back the geometry shader
+	//SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+	// Unsure if this is supposed to be 0 or 1
+	SetPixelShader(renderStates[backBufferRenderSlot].pixelShaders[0]);
+	// Unset, they are needed elsewhere
+	UnsetRenderTargetViewAndDepthStencil();
+
 	return true;
 }
