@@ -46,7 +46,7 @@ void LoadLevel8()
 	if (SetupAllEnemies("LV8Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV8Enemies");
 	}
 	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 0);

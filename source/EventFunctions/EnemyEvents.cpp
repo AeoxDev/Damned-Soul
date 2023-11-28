@@ -511,6 +511,13 @@ void BossShockwaveEnd(EntityID& entity, const int& index)
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enemy->specialHitBoxID, false);//Set false somewhere
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
+
+	ParticleComponent* pc = registry.GetComponent<ParticleComponent>(entity);
+	if (pc != nullptr)
+	{
+		pc->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
 }
 
 void ChargeColorFlash(EntityID& entity, const int& index)
