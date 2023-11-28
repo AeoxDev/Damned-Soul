@@ -610,7 +610,7 @@ bool EyeBehaviourSystem::Update()
 				}
 				enemyAnim->aAnimTime += GetDeltaTime();
 			}
-			else if ((distance < 15.0f || eyeComponent->retreating) && !eyeComponent->charging && !eyeComponent->shooting) // Retreat to safe distance if not charging
+			else if ((distance < eyeComponent->range/6.0f || eyeComponent->retreating) && !eyeComponent->charging && !eyeComponent->shooting) // Retreat to safe distance if not charging
 			{
 				if (hasUpdatedMap == false)
 				{
@@ -632,7 +632,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp, enemyAnim);
 
 			}
-			else if (eyeComponent->shooting || distance <= 45.0f) // circle player & attack when possible (WIP)
+			else if (eyeComponent->shooting || distance <= eyeComponent->range/2.0f) // circle player & attack when possible
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
 					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
