@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Level.h"
+#include "Levels\LevelHelper.h"
 
 bool ControllerSystem::Update()
 {
@@ -19,24 +20,14 @@ bool ControllerSystem::Update()
 		{
 			if (Camera::InCutscene() == 1)
 			{
+				//Skip the cutscene
 				for (auto entity : View<TimedEventComponent>(registry))
 				{
 					ReleaseTimedEvents(entity);
 				}
+				ReloadPlayerNonGlobals();
 				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-				//Reset player transform for safety:
-				TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
-				PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-				if (player != nullptr)
-				{
-					player->isAttacking = false;//Bugfix to prevent getting stuck doing no attacks.
-				}
-				
-				if (transform != nullptr)
-				{
-					transform->positionY = 0.0f;//Bugfix to prevent player from getting stuck above or under the stage.
-				}
 			}
 			else if (Camera::InCutscene() == 2)
 			{

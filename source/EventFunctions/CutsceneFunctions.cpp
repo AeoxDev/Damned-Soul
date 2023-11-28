@@ -156,6 +156,38 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 		ANIM_BRANCHLESS(animation);
 	}
+	if (cutscene->mode & Cutscene_Character_Idle)
+	{
+		if (cutscene->mode & Cutscene_Accelerating)
+			scalar *= scalar;
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		float facingDifX = cutscene->goalLookAtX - cutscene->startLookAtX;
+		float facingDifY = cutscene->goalLookAtY - cutscene->startLookAtY;
+		float facingDifZ = cutscene->goalLookAtZ - cutscene->startLookAtZ;
+		float newFacingX = facingDifX * scalar + cutscene->startLookAtX;
+		float newFacingY = facingDifY * scalar + cutscene->startLookAtY;
+		float newFacingZ = facingDifZ * scalar + cutscene->startLookAtZ;
+
+		//Set the facing towards the goal
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
+		{
+			transform->facingX = newFacingX;
+			transform->facingY = newFacingY;
+			transform->facingZ = newFacingZ;
+			NormalizeFacing(transform);
+		}
+
+		//Loop the idle animation
+		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		if (animation != nullptr)
+		{
+			animation->aAnim = ANIMATION_IDLE;
+			animation->aAnimIdx = 0;
+			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS(animation);
+		}
+		
+	}
 	
 }
 
