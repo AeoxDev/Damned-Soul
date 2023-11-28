@@ -160,6 +160,10 @@ bool GeometryIndependentSystem::Update()
 					proj = registry.GetComponent<ProjectileComponent>(entity);
 					if (proj != nullptr)
 					{
+						if (proj->type == eye)
+						{
+							CreateAcidHazard(entity, 0);
+						}
 						registry.DestroyEntity(entity);
 					}
 					{

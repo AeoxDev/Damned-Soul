@@ -739,7 +739,7 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponen
 	start.fx = enemyPos.fx;
 	start.fz = enemyPos.fz;
 	
-	float maximumAllowedDistance = CalculateEuclideanDistance(start.x, start.z, goal) * 1.25f;
+	float maximumAllowedDistance = CalculateEuclideanDistance(start.x, start.z, goal) * 2.0f;
 
 
 
