@@ -49,6 +49,7 @@ void SettingsState::SetupButtons()
 	const int amount = 6;
 	const int sliderAmount = 5;
 
+	//Buttons
 	{
 		const char const texts[amount][32] =
 		{
@@ -107,6 +108,7 @@ void SettingsState::SetupButtons()
 		}
 	}
 
+	//Sliders
 	{
 		const char const texts[sliderAmount][32] =
 		{
@@ -146,12 +148,6 @@ void SettingsState::SetupButtons()
 
 			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
 			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
-
-			if (slider->currentPosition >= maxRightPosition - 0.13f)
-				slider->currentPosition = maxRightPosition - 0.13f;
-
-			if (slider->currentPosition <= maxLeftPosition + 0.13f)
-				slider->currentPosition = maxLeftPosition + 0.13f;
 
 			float sliderWidth = abs(maxRightPosition - 0.13f) - abs(maxLeftPosition + 0.13f);
 

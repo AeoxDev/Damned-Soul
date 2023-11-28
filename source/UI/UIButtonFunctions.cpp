@@ -326,6 +326,8 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 
 		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualTimer());
 	}
+
+	RedrawUI();
 }
 
 void UIFunctions::Settings::Volume::Press(void* args, int a)
