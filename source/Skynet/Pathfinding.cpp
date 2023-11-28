@@ -286,7 +286,7 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 		}
 	}
 
-	float lavaPunish = 6; // Never used ??
+	
 
 	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 
@@ -600,7 +600,6 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 {
 	ML_Vector<Node> theWay;
 	ML_Vector<Node> theReverseWay; // trust me, we need this. temp
-	
 
 	Node tempNode = endNode;
 

@@ -38,17 +38,20 @@ void LoadLevel1()
 	EntityID lightholderForth = registry.CreateEntity();
 	SetGISpawnPosition(-0.0f, -0.0f);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f,		10.0f,	1.0f,		 1,			0.0f, 0.0, -1.0f);
+	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 
-	SetupEnemy(EnemyType::skeleton, -204.0f, 0.f, 82.f);
-	SetupEnemy(EnemyType::skeleton, -222.0f, 0.f, 28.f);
-	SetupEnemy(EnemyType::skeleton, -230.0f, 0.f, -26.f);
+	SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
+	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
+	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
+	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
+	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);
 
-	SetupEnemy(EnemyType::skeleton, -180.0f, 0.f, -24.f);
-	SetupEnemy(EnemyType::skeleton, -121.0f, 0.f, 61.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -111.0f, 0.f, 104.f);
+	// DO NOT REMOVE THIS BELOW
+	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 
+	// LEAVE THE THING ABOVE BE, DO NOT TOUCH
+	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 
-	//CutsceneFallStage1(stateManager.player, 0);
+	
 
 
 	
@@ -83,7 +86,7 @@ void LoadLevel1()
 	uiElement->SetAllVisability(false);
 
 	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
-
+	
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);

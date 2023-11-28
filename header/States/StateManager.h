@@ -31,6 +31,7 @@ struct StateManager
 	EntityID player;
 	EntityID weapon;
 	EntityID stage;
+	EntityID gate;
 	EntityID hitboxVis;
 
 

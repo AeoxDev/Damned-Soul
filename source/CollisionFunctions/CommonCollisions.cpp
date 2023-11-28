@@ -535,11 +535,64 @@ void LoadNextLevel(OnCollisionParameters& params)
 {
 	if (params.entity2.index == stateManager.player.index)
 	{
+		CancelTimedEvents(params.entity2);
+		FallofComponent* fallof = registry.AddComponent<FallofComponent>(params.entity2);
 		switch (stateManager.activeLevel)
 		{
-		case 1:
-			CutsceneFallStage1(params.entity2, 0);
-			registry.DestroyEntity(params.entity1);
+		case 1://Levl1
+			fallof->fallofX = -317.f;
+			fallof->fallofZ = 137.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 3://Level 2
+			fallof->fallofX = -318;
+			fallof->fallofZ = 347.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 5://Level 3
+			fallof->fallofX = -299.f;
+			fallof->fallofZ = 164.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 7://Level 4
+			fallof->fallofX = -160.f;
+			fallof->fallofZ = 120.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 9://Level 5
+			fallof->fallofX = -395.f;
+			fallof->fallofZ = 245.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 11://Level 6
+			fallof->fallofX = -477.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 13://Level 7
+			fallof->fallofX = -321.f;
+			fallof->fallofZ = 394.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 15://Level 8
+			fallof->fallofX = -1303.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
 			return;
 			break;
 		default:
@@ -553,34 +606,41 @@ void LoadNextLevel(OnCollisionParameters& params)
 		}
 
 		//final level portal
+
 		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
 		playerUI->SetAllVisability(false);
+
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+
 		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
+
 			if (!uiElement->m_BaseImage.baseUI.GetVisibility())
 				uiElement->SetAllVisability(true);
+
 			RedrawUI();
 			gameSpeed = 0.0f;
 			SetPaused(true);
+
 			const int amount = 4;
 			ML_String texts[amount] =
 			{
 				GetDigitalMinuteClock().c_str(),
+
 				("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
 				("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
 				("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
+
 			};
+
 			for (int i = 3; i < amount + 3; i++)
 			{
 				uiElement->m_Texts[i].SetText(texts[i - 3].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
 					DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			}
 		}
-
-		
 	}
 	
 }
