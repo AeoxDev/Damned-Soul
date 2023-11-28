@@ -14,9 +14,7 @@ enum ComputeShaders
 	CIRCLE_FIELD = 8,
 	FIRE = 9,
 	PULSE = 10,
-	ICETHROWER = 11,
-	// Doesnt really work yet, might get deprecated
-	SPAWN = 12
+	ICETHROWER = 11
 };
 
 struct ParticleComponent
@@ -27,6 +25,7 @@ struct ParticleComponent
 	// The mesh VFX
 	uint64_t model;
 	float meshMiddle[3];
+	
 
 	// -- Functions defined in Particles.cpp --//
 	// Finds the index of the metadata for this component

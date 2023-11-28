@@ -37,6 +37,8 @@ bool ParticleSystemCPU::Update()
 			RenderOffset((Particles::GetMetadataAtIndex(pComp->metadataSlot).end - Particles::GetMetadataAtIndex(pComp->metadataSlot).start),0);
 		}
 
+		SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
+
 		if (pComp->modelUse)
 		{
 			//Set all the shaders for the VFX
