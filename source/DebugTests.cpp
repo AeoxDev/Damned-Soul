@@ -28,7 +28,12 @@ void SimulateGame(std::string& title, int sim, int total)
 {
 	for (unsigned int i = 0; i < total; ++i)
 	{
-		UIFunc::LoadNextLevel(nullptr, i);
+		if (i % 18 == 0)
+		{
+			UIFunctions::MainMenu::Start(nullptr, i);
+		}
+
+		UIFunctions::Game::LoadNextLevel(nullptr, i);
 		for (size_t j = 0; j < sim; j++)
 		{
 			CountDeltaTime();
@@ -44,7 +49,7 @@ void SimulateGame(std::string& title, int sim, int total)
 	}
 
 	gameSpeed = 1.0f;
-	UIFunc::Game_MainMenu(nullptr, 0);
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
 
 }
 
@@ -56,7 +61,7 @@ void SimulateUI(std::string& title, int total)
 {
 	for (unsigned int i = 0; i < total; ++i)
 	{
-		UIFunc::MainMenu_Settings(nullptr, i);
+		UIFunctions::MainMenu::SetSettings(nullptr, i);
 		CountDeltaTime();
 
 		//Show the amount of reloads we've done up in the window title. No real reason
@@ -67,7 +72,7 @@ void SimulateUI(std::string& title, int total)
 
 		MemLib::pdefrag();
 
-		UIFunc::Settings_Back(nullptr, i);
+		UIFunctions::Settings::Back(nullptr, i);
 	}
 
 	gameSpeed = 1.0f;
@@ -113,11 +118,11 @@ void SimulateParticleLevel(std::string& title, int total)
 		}
 
 		stateManager.activeLevel = 0;
-		UIFunc::LoadNextLevel(nullptr, i);
+		UIFunctions::Game::LoadNextLevel(nullptr, i);
 	}
 	
 	gameSpeed = 1.0f;
-	UIFunc::Game_MainMenu(nullptr, 0);
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
 }
 
 #endif // PARTICLE_TEST
