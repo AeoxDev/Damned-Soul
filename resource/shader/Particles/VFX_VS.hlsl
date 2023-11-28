@@ -36,13 +36,24 @@ VS_OUT main(Input inval)
     float3 up = float3(0.f, 1.f, 0.f);
     float3 right = cross(up, look);
     
-    inval.position.z = 1.f;
-    retval.position = mul(float4(inval.position, 1.0f), world);
-    retval.position.xyz += right + up;
+    //inval.position.z = 1.f;
+    //retval.position.xyz += right + up;
     
-    retval.position = mul(retval.position, view);
-    retval.position = mul(retval.position, projection);
+    //retval.position = mul(float4(inval.position, 1.0f), world);
+    //retval.position = mul(retval.position, view);
+    //retval.position = mul(retval.position, projection);
+
+    
+    matrix worldView = mul(world, view);
+    //float4 pos = float4(inval.position, 1.0f);
+    //float4 WV = float4(worldView[3].xyz, 0.0f);
+    
+    retval.position = mul((float4(inval.position, 1.0f) + float4(worldView[3].xyz, 0.0f)), projection);
+
+    
 	
+    retval.position /= retval.position.w;
+    
     retval.rgb = float4(inval.rgb, 1.f);
     //retval.worldPosition = mul(retval.position, world);
     //retval.rotationZ = inval.rotationZ;

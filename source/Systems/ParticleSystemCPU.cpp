@@ -46,11 +46,17 @@ bool ParticleSystemCPU::Update()
 			// Update the constant buffer to include mesh mid
 			Particles::UpdateMid(pComp->meshMiddle);
 
+
+			// Check if offset can be teaked
+			//SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
+
 			SetVertexBuffer(LOADED_MODELS[pComp->model].m_vertexBuffer);
 			SetIndexBuffer(LOADED_MODELS[pComp->model].m_indexBuffer);
-			RenderIndexed(6);
 
-			//LOADED_MODELS[pComp->model].RenderAllSubmeshes();
+			//int indices = (int)LOADED_MODELS[pComp->model].m_data->GetIndices();
+			//RenderIndexed(indices);
+
+			LOADED_MODELS[pComp->model].RenderAllSubmeshes();
 		}
 	}
 	Particles::FinishParticlePass();
