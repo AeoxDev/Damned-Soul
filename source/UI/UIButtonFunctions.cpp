@@ -13,6 +13,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "MemLib/ML_Map.hpp"
+#include "Relics/Utility/RelicFuncInputTypes.h"
 
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
 
@@ -562,8 +563,17 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 		{
 			if (relicWindow->shopSelections[i] == shopState::SELECTED)
 			{
-				if (player->GetSouls() < relicWindow->shopRelics[i]->m_price)
+				RelicInput::OnPriceCalculation priceCalc;
+
+				for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+					func(&priceCalc);
+
+				if (player->GetSouls() < priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC))
 					return;
+
+				souls->spentThisShop += priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC);
+				souls->spentThisShopOnRelics += priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC);
+				player->UpdateSouls(-priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC));
 
 				relicWindow->shopSelections[i] = shopState::BOUGHT;
 
@@ -658,9 +668,6 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 				if (sfx != nullptr) sfx->Play(Shop_Buy, Channel_Base);
 
-				souls->spentThisShop += relicWindow->shopRelics[i]->m_price;
-				souls->spentThisShopOnRelics += relicWindow->shopRelics[i]->m_price;
-				player->UpdateSouls(-relicWindow->shopRelics[i]->m_price);
 				break;
 			}
 		}
@@ -701,100 +708,114 @@ void UIFunctions::OnClick::LockRelic(void* args, int index)
 	}
 }
 
+void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
+{
+	UIShopButtonComponent* uiWeapon = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+
+	RelicInput::OnPriceCalculation priceCalc;
+
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+		func(&priceCalc);
+
+	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE))
+		return;
+
+	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
+	stats->UpdateBaseDamage(uiWeapon->m_price - 2);
+}
+
 void UIFunctions::OnClick::RerollRelic(void* args, int index)
 {
-	UIShopRerollComponent* uiReroll = nullptr;
+	UIShopButtonComponent* uiReroll = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
 
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 
-	for (auto entity : View<UIShopRerollComponent>(registry))
-		uiReroll = registry.GetComponent<UIShopRerollComponent>(entity);
+	RelicInput::OnPriceCalculation priceCalc;
 
-	if (uiReroll != nullptr && index == -1)
-		uiReroll->locked = false;
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+		func(&priceCalc);
 
-	if (uiReroll != nullptr && !uiReroll->locked)
+	if (player != nullptr && player->GetSouls() < priceCalc.GetCostOf(uiReroll->m_price, RelicInput::OnPriceCalculation::REROLL))
+		return;
+
+
+	for (auto entity : View<UIShopRelicComponent>(registry))
 	{
+		UIComponent* uiRelic = registry.GetComponent<UIComponent>(entity);
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 
-		if (player != nullptr && player->GetSouls() < 0)
-			return;
-
-		for (auto entity : View<UIShopRelicComponent>(registry))
+		for (int i = 0; i < 2; i++)
 		{
-			UIComponent* uiRelic = registry.GetComponent<UIComponent>(entity);
-			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+			bool ignore = false;
+			if (relicWindow->shopSelections[i] == shopState::BOUGHT)
+				ignore = true;
 
-			for (int i = 0; i < 2; i++)
+			uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
+			uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
+
+			if (relicWindow->shopSelections[i] == shopState::LOCKED)
 			{
-				bool ignore = false;
-				if (relicWindow->shopSelections[i] == shopState::BOUGHT)
-					ignore = true;
-
-				uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
-				uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
-
-				if (relicWindow->shopSelections[i] == shopState::LOCKED)
-				{
-					relicWindow->shopSelections[i] = shopState::AVALIABLE;
-					continue;
-				}
-
-				if (!ignore)
-					Relics::PutBackRelic(relicWindow->shopRelics[i]);
-
 				relicWindow->shopSelections[i] = shopState::AVALIABLE;
-
-				ML_Map<ML_String, Relics::RELIC_TYPE> type;
-				type.emplace("Offence", Relics::RELIC_OFFENSE);
-				type.emplace("Defence", Relics::RELIC_DEFENSE);
-				type.emplace("Gadget", Relics::RELIC_GADGET);
-
-				const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
-				uiRelic->m_Images[i].SetImage(relic->m_filePath);
-				relicWindow->shopRelics[i] = relic;
+				continue;
 			}
+
+			if (!ignore)
+				Relics::PutBackRelic(relicWindow->shopRelics[i]);
+
+			relicWindow->shopSelections[i] = shopState::AVALIABLE;
+
+			ML_Map<ML_String, Relics::RELIC_TYPE> type;
+			type.emplace("Offence", Relics::RELIC_OFFENSE);
+			type.emplace("Defence", Relics::RELIC_DEFENSE);
+			type.emplace("Gadget", Relics::RELIC_GADGET);
+
+			const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
+			uiRelic->m_Images[i].SetImage(relic->m_filePath);
+			relicWindow->shopRelics[i] = relic;
 		}
-
-		//Normal re-reroll sound
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-		if (sfx != nullptr) sfx->Play(Shop_Reroll, Channel_Base);
-
-		souls->spentThisShop += 0;
-		player->UpdateSouls(0);
-
-		if (index != -1)
-			uiReroll->locked = true;
 	}
+
+	//Normal re-reroll sound
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+	if (sfx != nullptr) sfx->Play(Shop_Reroll, Channel_Base);
+
+	souls->spentThisShop += priceCalc.GetCostOf(uiReroll->m_price, RelicInput::OnPriceCalculation::REROLL);
+	player->UpdateSouls(-priceCalc.GetCostOf(uiReroll->m_price, RelicInput::OnPriceCalculation::REROLL));
 
 	RedrawUI();
 }
 
 void UIFunctions::OnClick::HealPlayer(void* args, int index)
 {
-	for (auto entity : View<PlayerComponent, StatComponent>(registry))
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
-		UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
-		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	UIShopButtonComponent* uiHeal = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
+	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
 
-		if (player->GetSouls() < 2)
-			break;
+	RelicInput::OnPriceCalculation priceCalc;
 
-		if (stats->GetHealth() == stats->GetMaxHealth())
-			break;
+	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+		func(&priceCalc);
 
-		float heal = stats->GetMaxHealth() * 0.25f;
+	if (player->GetSouls() < priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL))
+		return;
 
-		//Normal heal sound
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-		if (sfx != nullptr) sfx->Play(Shop_Heal, Channel_Base);
+	if (stats->GetHealth() == stats->GetMaxHealth())
+		return;
 
-		stats->ApplyHealing(heal);
+	float heal = stats->GetMaxHealth() * 0.25f;
 
-		souls->spentThisShop += 2;
-		player->UpdateSouls(-2);
-	}
+	//Normal heal sound
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+	if (sfx != nullptr) sfx->Play(Shop_Heal, Channel_Base);
+
+	stats->ApplyHealing(heal);
+
+	souls->spentThisShop += priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL);
+	player->UpdateSouls(-priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL));
 }
 
 
@@ -871,7 +892,26 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 	{
 		uiImpText->name = shopButton->m_name;
 		uiImpText->description = shopButton->m_description;
-		uiImpText->price = shopButton->m_price;
+		
+		RelicInput::OnPriceCalculation priceCalc;
+
+		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+			func(&priceCalc);
+
+		if (shopButton->m_name == "Heal")
+		{
+			uiImpText->price = priceCalc.GetCostOf(shopButton->m_price, RelicInput::OnPriceCalculation::HEAL);
+		}
+		else if (shopButton->m_name == "Reroll")
+		{
+			uiImpText->price = priceCalc.GetCostOf(shopButton->m_price, RelicInput::OnPriceCalculation::REROLL);
+		}
+		else if (shopButton->m_name == "Upgrade Weapon")
+		{
+			uiImpText->price = priceCalc.GetCostOf(shopButton->m_price, RelicInput::OnPriceCalculation::UPGRADE);
+		}
+		else
+			uiImpText->price = shopButton->m_price;
 
 		ML_String buttonText = uiImpText->name;
 
@@ -881,7 +921,15 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 			buttonText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
 		}
 		else
-			buttonText.append("\n");
+		{
+			if (shopButton->m_name == "Lock" || shopButton->m_name == "Buy")
+			{
+				buttonText.append("\n");
+			}
+			else
+				buttonText.append("\nPrice: Free\n");
+
+		}
 
 		buttonText.append(uiImpText->description);
 
@@ -939,17 +987,24 @@ void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 
 		uiImpText->name = relicWindow->shopRelics[index - 1]->m_relicName;
 		uiImpText->description = relicWindow->shopRelics[index - 1]->m_description;
-		uiImpText->price = relicWindow->shopRelics[index - 1]->m_price;
+
+		RelicInput::OnPriceCalculation priceCalc;
+
+		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+			func(&priceCalc);
+
+		uiImpText->price = priceCalc.GetCostOf(relicWindow->shopRelics[index - 1]->m_price, RelicInput::OnPriceCalculation::RELIC);
 
 		ML_String relicText = uiImpText->name;
 
 		if (uiImpText->price > 0)
 		{
+			
 			relicText.append("\nPrice: ");
 			relicText.append((std::to_string(uiImpText->price) + " Souls\n").c_str());
 		}
 		else
-			relicText.append("\n");
+			relicText.append("\nPrice: Free\n");
 
 		relicText.append(uiImpText->description);
 

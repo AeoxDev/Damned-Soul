@@ -127,7 +127,7 @@ void CreateSingleWindows()
 		UIFunctions::OnClick::RerollRelic,
 		UIFunctions::OnClick::LockRelic,
 		UIFunctions::OnClick::BuyRelic,
-		UIFunctions::OnClick::None,
+		UIFunctions::OnClick::UpgradeWeapon,
 		UIFunctions::Game::LoadNextLevel
 	};
 
@@ -154,10 +154,10 @@ void CreateSingleWindows()
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
 		2,
+		5,
 		0,
 		0,
-		0,
-		0,
+		5,
 		0,
 	};
 

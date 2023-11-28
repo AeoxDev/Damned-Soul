@@ -29,3 +29,20 @@ float RelicInput::OnDamageCalculation::CollapseNoCap()
     // Return the damage
     return retVal;
 }
+
+int32_t RelicInput::OnPriceCalculation::GetCostOf(const int32_t initial, const PRICE_TYPES type)
+{
+    float finalMod = everythingCostMult;
+    if (type & RELIC)
+        finalMod *= relicCostMult;
+    if (type & HEAL)
+        finalMod *= healCostMult;
+    if (type & REROLL)
+        finalMod *= rerollCostMult;
+    if (type & UPGRADE)
+        finalMod *= upgradeCost;
+
+    int32_t retVal = std::max(0, int32_t(.5f + initial * finalMod));
+
+    return retVal;
+}
