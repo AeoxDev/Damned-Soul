@@ -73,11 +73,6 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         {
             ShockWaveMovement(DTid, blockID);
         }
-        // 11 = SPAWN
-        if (meta[blockID.y].pattern == 12)
-        {
-            SpawnParticle(DTid, blockID);
-        }
     }
 
 }
