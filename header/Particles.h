@@ -27,6 +27,7 @@ struct Particle
 	DirectX::XMFLOAT3 rgb;
 	float size;
 	int patterns;
+	int particlePatterns;
 };
 
 struct ParticleMetadata
