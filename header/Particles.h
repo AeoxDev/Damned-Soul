@@ -81,7 +81,7 @@ namespace Particles
 	void PrepareParticlePass(RenderSetupComponent renderStates[8], int metaDataSlot);
 	void FinishParticlePass();
 
-	void PrepareVFXPass();
+	void PrepareVFXPass(RenderSetupComponent renderStates[8], int metaDataSlot);
 	void FinishVFXPass();
 
 	void UpdateSingularMetadata(int& metadataSlot);

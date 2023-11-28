@@ -213,22 +213,8 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
-	//SetGeometryShader(renderStates[RenderSlot].geometryShader);
-	//SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
-
-	// ## ALEX CODE ##
-	SetGeometryShader(tempUVPanningGS);
-	SetPixelShader(VFXPixelShader);
-	SetConstantBuffer(VFXConstantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
-	SetShaderResourceView(VFXBackBufferSRV, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
-	SetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
-	SetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
-	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
-	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
-	SetSamplerState(VFXSampler, 3);
-
-	// ## EO ALEX CODE ##
+	SetGeometryShader(renderStates[RenderSlot].geometryShader);
+	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
 
 	// The constant buffer for vertex is set outside of this function, in the ParticleSystemCPU Update() call
 	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
@@ -238,35 +224,36 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	if (data->metadata[metaDataSlot].pattern == 0|| data->metadata[metaDataSlot].pattern == 9 || data->metadata[metaDataSlot].pattern == 12)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	if (data->metadata[metaDataSlot].pattern == 0 || data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10*/)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 
 		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
 		//SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
-		
-
-	}
-	else if (data->metadata[metaDataSlot].pattern == 13)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
-	{
-
-		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
 
 
 	}
-	else if(data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	//else if (data->metadata[metaDataSlot].pattern == 15)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	//{
+
+	//	SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+
+
+	//}
+	else if (data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 
 		SetTexture(textureParticle, BIND_PIXEL, 2); //Set texture
-		
-		
+
+
 	}
 	else
 	{
-		
+
 		SetTexture(noTextureParticle, BIND_PIXEL, 2); //Set texture
-		
+
 	}
 	SetSamplerState(sampler, 2); //Set sampler
+
 
 }
 
@@ -275,17 +262,6 @@ void Particles::FinishParticlePass()
 	UnsetVertexShader();
 	UnsetGeometryShader();
 	UnsetPixelShader();
-
-	// Alex Code
-	UnsetConstantBuffer(BIND_PIXEL, 0);
-	UnsetSamplerState(3);
-	UnsetShaderResourceView(SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
-
-	UnsetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
-	UnsetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
-	UnsetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
-	UnsetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	UnsetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
 
 	SetTopology(TRIANGLELIST);
 
@@ -300,7 +276,7 @@ void Particles::FinishParticlePass()
 	UnsetSamplerState(2); //Unset sampler 
 }
 
-void Particles::PrepareVFXPass()
+void Particles::PrepareVFXPass(RenderSetupComponent renderStates[8], int metaDataSlot)
 {
 	SetTopology(POINTLIST);
 
