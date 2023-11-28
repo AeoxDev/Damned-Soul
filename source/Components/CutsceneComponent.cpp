@@ -101,7 +101,7 @@ void StageIntroFall(EntityID& entity, const int& index)
 	AddTimedEventComponentStart(entity, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
-void Stage1IntroScene(EntityID& entity, const int& index)
+void SkeletonIntroScene(EntityID& entity, const int& index)
 {
 	//Look at skeletons!
 	//Then spawn player

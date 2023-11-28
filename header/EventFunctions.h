@@ -107,7 +107,7 @@ void CutsceneTransition(EntityID& entity, const int& index);
 void EndCutscene(EntityID& entity, const int& index);
 void MainMenuIntroCutscene(EntityID& entity, const int& index);
 void StageIntroFall(EntityID& entity, const int& index);
-void Stage1IntroScene(EntityID& entity, const int& index);
+void SkeletonIntroScene(EntityID& entity, const int& index);
 void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
 void SplitBossIntroScene(EntityID& entity, const int& index);
