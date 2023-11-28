@@ -275,16 +275,16 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 		
 		else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Hellhound glows immediately because there's no windup on the attack
 		{
-			skelel->shared.bcaR_temp = 0.8f;
-			skelel->shared.bcaG_temp = 0.8f;
-			skelel->shared.bcaB_temp = 0.5f;
+			skelel->shared.bcaR_temp += 0.8f;
+			skelel->shared.bcaG_temp += 0.8f;
+			skelel->shared.bcaB_temp += 0.5f;
 		}
 
 		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow halfway through the pause
 		{
-			skelel->shared.bcaR_temp = 0.8f;
-			skelel->shared.bcaG_temp = 0.8f;
-			skelel->shared.bcaB_temp = 0.5f;
+			skelel->shared.bcaR_temp += 0.8f;
+			skelel->shared.bcaG_temp += 0.8f;
+			skelel->shared.bcaB_temp += 0.5f;
 		}	
 	}
 
@@ -306,9 +306,9 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 			//skelel->shared.colorAdditiveRed = 0.0f;
 			//skelel->shared.colorAdditiveGreen = 0.0f;
 			//skelel->shared.colorAdditiveBlue = 0.0f;
-			skelel->shared.bcaR_temp = 0.0f;
+			/*skelel->shared.bcaR_temp = 0.0f;
 			skelel->shared.bcaG_temp = 0.0f;
-			skelel->shared.bcaB_temp = 0.0f;
+			skelel->shared.bcaB_temp = 0.0f;*/
 
 			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity); //Make animation faster because we're about to schwing
 			if (anim)
@@ -516,15 +516,15 @@ void ChargeColorFlash(EntityID& entity, const int& index)
 	float cosineWave = cosf(GetTimedEventElapsedTime(entity, index) * frequency) * cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->shared.bcaR_temp = cosineWave;
-		skelel->shared.bcaG_temp = cosineWave;
+		skelel->shared.bcaR_temp += cosineWave;
+		skelel->shared.bcaG_temp += cosineWave;
 		//skelel->shared.colorAdditiveRed = cosineWave;
 		//skelel->shared.colorAdditiveGreen = cosineWave;
 	}
 	if (bonel)
 	{
-		bonel->shared.bcaR_temp = cosineWave;
-		bonel->shared.bcaG_temp = cosineWave;
+		bonel->shared.bcaR_temp += cosineWave;
+		bonel->shared.bcaG_temp += cosineWave;
 		//bonel->shared.colorAdditiveRed = cosineWave;
 		//bonel->shared.colorAdditiveGreen = cosineWave;
 	}
@@ -539,12 +539,9 @@ void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		skelel->shared.bcaR_temp = 0.8f;
-		skelel->shared.bcaG_temp = 0.8f;
-		skelel->shared.bcaB_temp = 0.5f;
-		//skelel->shared.colorAdditiveRed = 0.8f;
-		//skelel->shared.colorAdditiveGreen = 0.8f;
-		//skelel->shared.colorAdditiveBlue = 0.5f;
+		skelel->shared.bcaR_temp += 0.8f;
+		skelel->shared.bcaG_temp += 0.8f;
+		skelel->shared.bcaB_temp += 0.5f;
 	}
 }
 
@@ -557,9 +554,9 @@ void BossResetBeforeShockwave(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		skelel->shared.colorAdditiveRed = 0.0f;
+		/*skelel->shared.colorAdditiveRed = 0.0f;
 		skelel->shared.colorAdditiveGreen = 0.0f;
-		skelel->shared.colorAdditiveBlue = 0.0f;
+		skelel->shared.colorAdditiveBlue = 0.0f;*/
 	}
 }
 
