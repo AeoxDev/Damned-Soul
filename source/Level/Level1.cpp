@@ -46,7 +46,18 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
-	//SetupEnemy(EnemyType::minotaur, -122.0f, 0.f, 61.f);
+
+	// For particle testing, don't touch, Arian gets angy.
+	//EntityID particles = registry.CreateEntity();
+	//registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 3000.0f, NO_MOVEMENT);
+	//
+	//TransformComponent tComp;
+	//tComp.positionX = -122.0f;
+	//tComp.positionY = 0.0f;
+	//tComp.positionZ = 61.0f;
+	//registry.AddComponent<TransformComponent>(particles, tComp);
+
+
 	if (SetupAllEnemies("LV1Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
