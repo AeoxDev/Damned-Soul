@@ -11,10 +11,20 @@
 
 void LoadParticleLevel()
 {
-	float redMult = .75f;
-	float greenMult = .75f;
-	float blueMult = .75f;
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, 0.0f, 0.0f, 0.0f, 0.9f);
+	float redMult = 1.0f;
+	float greenMult = 1.0f;
+	float blueMult = 1.0f;
+	StageSetupVariables stageVars;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 1;
+	stageVars.scaleX = 1.0f;
+	stageVars.scaleY = 1.0f;
+	stageVars.scaleZ = 1.0f;
+	stageVars.offsetY = -0.1f;
+
+	EntityID stage = SetUpStage(stageVars);
 
 	srand(0);
 
@@ -42,8 +52,6 @@ void LoadParticleLevel()
 			rand() % 40 + (-30), rand() % 40 + (-30), rand() % 40 + (-30), rand() % (5000 - 1 + 1) + 1, cShad);
 		
 	}
-
-	RenderGeometryIndependentCollision(stage);
 
 	stateManager.stage = stage;
 	SetInPlay(true);
