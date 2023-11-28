@@ -65,7 +65,44 @@ bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiec
 	{
 		infoStruct->soulValue = std::stoi(infoPiece); // converts string to int
 	}
+	else
+	{
+		return false;
+	}
 	return true;
+}
+
+
+bool SetValueForEnemy(VFXTextRead* infoStruct, int index, std::string infoPiece) // help function for SetupVFXTorches. DO NOT TOUCH
+{
+	if (index == 0) //posX
+	{
+		infoStruct->positionX = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 1) // posY
+	{
+		infoStruct->positionY = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 2) // posz
+	{
+		infoStruct->positionZ = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 3) // red
+	{
+		infoStruct->r = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 4) // green
+	{
+		infoStruct->g = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 5) // blue
+	{
+		infoStruct->b = std::stof(infoPiece); // converts string to float
+	}
+	else
+	{
+		return false; //something went wrong
+	}
 }
 
 bool SetupAllEnemies(std::string filePath)
@@ -110,6 +147,55 @@ bool SetupAllEnemies(std::string filePath)
 		}
 	}
 		
+	myFile.close();
+
+	return true;
+}
+
+bool SetupVFXTorches(std::string filePath)
+{
+	std::string name = "VFX\\";
+	name.append(filePath);
+
+	std::ifstream myFile;
+	myFile.open(name.c_str());
+	std::string line = "";
+	std::string term = "";
+	if (myFile.is_open())
+	{
+		while (std::getline(myFile, line))
+		{
+			VFXTextRead theInfo;
+			int counter = 0; // by format:
+			// 0 = positionX
+			// 1 = positionY
+			// 2 = positionZ
+			// 3 = r
+			// 4 = g
+			// 5 = r
+			for (auto t : line)
+			{
+				if (t == ',')
+				{
+					// we got the string
+					if (!SetValueForEnemy(&theInfo, counter, term))
+					{
+						myFile.close();
+						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
+					}
+					//reset
+					term = "";
+					counter++;
+				}
+				else
+				{
+					term += t; //add char to string
+				}
+			}
+			//SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+		}
+	}
+
 	myFile.close();
 
 	return true;
