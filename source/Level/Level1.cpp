@@ -47,7 +47,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 
 
-	SetupEnemy(EnemyType::imp, -122.0f, 0.f, 61.f);
+	SetupEnemy(EnemyType::imp, -122.0f, 0.f, 11.f);
 
 	//if (SetupAllEnemies("LV1Enemies.dss") == false)
 	//{
