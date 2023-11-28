@@ -14,9 +14,7 @@ enum ComputeShaders
 	CIRCLE_FIELD = 8,
 	FIRE = 9,
 	PULSE = 10,
-	ICETHROWER = 11,
-	// Doesnt really work yet, might get deprecated
-	SPAWN = 12
+	ICETHROWER = 11
 };
 
 struct ParticleComponent
