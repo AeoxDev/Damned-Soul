@@ -66,6 +66,8 @@ namespace UIFunctions
 
 		void LockRelic(void* args, int index);
 
+		void UpgradeWeapon(void* args, int index);
+
 		void BuyRelic(void* args, int index);
 	}
 
