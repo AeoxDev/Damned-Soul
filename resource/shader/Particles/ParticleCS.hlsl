@@ -219,27 +219,19 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     float2 middlePoint = v1 + (legThree * 0.5f);
     float2 middleVector = middlePoint - v0;
     
+    float2 calcPosition = float2(particle.position.x - meta[blockID.y].startPosition.x, particle.position.z - meta[blockID.y].startPosition.z);
     
-        particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 12.5f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
     float2 v0ToParticle = calcPosition - v0;
-        particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 12.5f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
 
     float v0ToParticle_len = length(v0ToParticle);
     float middleVector_len = length(middleVector);
     
     if (v0ToParticle_len < middleVector_len)
     {
-        particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 4.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+        particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 12.5f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
         particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
-        particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 4.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+        particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 12.5f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
 
-    if (meta[blockID.y].pattern == 11) //Ice ice baby
-    {
-        particle.rgb = float3(.0f, .75f, .95f);
-    }
-    else
-    {
-        particle.rgb = float3(1.f, .0f, .0f);
     }
     else
     {
@@ -250,6 +242,15 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
         particle.size = 0.5f;
     }
 
+    
+    if (meta[blockID.y].pattern == 11) //Ice ice baby
+    {
+        particle.rgb = float3(.0f, .75f, .95f);
+    }
+    else
+    {
+        particle.rgb = float3(1.f, .0f, .0f);
+    }
     outputParticleData[index] = particle;
 }
 
@@ -337,7 +338,6 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     
     
     
-    float indexValue = sqrt((10 + localIndex) / 265.f);
     float timeValue = (particle.time / meta[blockID.y].life);
     // "Uneven" circlings with a bit over 8 laps
     float piFraction = ((indexValue) * PI * 50.f) + timeValue * timeValue;
@@ -413,7 +413,8 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     
         float dirX = cos((float) localIndex / (float) amount * 15.0f) * 30.f;
         float dirZ = sin((float) localIndex / (float) amount * 15.0f) * 30.f;
-        output[localIndex] = particle;
+        
+    outputParticleData[localIndex] = particle;
     //float degree = dot(particleVector, triangleVector) / length(triangleVector);
 }
     void FireMovement(in uint3 DTid, in uint3 blockID)
@@ -620,7 +621,7 @@ void SparkMovement(in uint3 DTid, in uint3 blockID)
     particle.patterns = 13; //is used to define pattern in PS-Shader for flipAnimations
 
     outputParticleData[index] = particle;
-}}
+}
 
 void NoMovement(in uint3 DTid, in uint3 blockID)
 {
