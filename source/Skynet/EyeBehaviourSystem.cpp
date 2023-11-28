@@ -191,8 +191,8 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	ec->goalDirectionX = ptc->positionX - etc->positionX;
 	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 	
-	ec->goalDirectionX += ec->correcitonDirX;
-	ec->goalDirectionZ += ec->correcitonDirZ;
+	/*ec->goalDirectionX += ec->correcitonDirX;
+	ec->goalDirectionZ += ec->correcitonDirZ;*/
 	Normalize(ec->goalDirectionX, ec->goalDirectionZ);
 
 	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
@@ -337,7 +337,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 	}
 }
 
-void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<GridPosition>& openList, ML_Vector<GridPosition>& closedList, GridPosition direction)
+void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<GridPosition>& openList, ML_Vector<GridPosition>& closedList, Coordinate2D direction)
 {
 	GridPosition p1 = currentPos;
 	GridPosition p2 = currentPos;
@@ -373,7 +373,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 		addP3 = false;
 
 	//are they in the closedlist?
-	for (int i = 0; i < closedList.size(); ++i)
+	for (unsigned int i = 0; i < closedList.size(); ++i)
 	{
 		if (addP1)
 		{
@@ -438,7 +438,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 	float dirX = eyeMovementX;
 	float dirZ = eyeMovementZ;
 
-	GridPosition direction = { 0.0f, 0.0f };
+	Coordinate2D direction = { 0.0f, 0.0f };
 
 	float magX = sqrt(dirX * dirX);
 	float magZ = sqrt(dirZ * dirZ);
@@ -492,9 +492,9 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 			float pushbackX = etc->positionX - tileWorldPos.x;
 			float pushbackZ = etc->positionZ - tileWorldPos.z;
 			
-			float distance = Calculate2dDistance(currentTile.x, currentTile.z, startPos.x, startPos.z);
+			float distance = Calculate2dDistance((float)currentTile.x, (float)currentTile.z, (float)startPos.x, (float)startPos.z);
 
-			float multiplier = 1 - pow(distance / OBSTACLE_RANGE, 2);
+			float multiplier = (float)(1 - pow(distance / OBSTACLE_RANGE, 2));
 
 			if (cost < 10000) //if tile is an enemy
 				multiplier *= 0.5f;
@@ -514,7 +514,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 
 	if (finalDirection.x > 0.0)
 		ec->clockwiseCircle = true;
-	else
+	else if(finalDirection.x < 0.0)
 		ec->clockwiseCircle = false;
 }
 
@@ -622,7 +622,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp, enemyAnim);
 
 			}
-			else if (eyeComponent->shooting || distance <= eyeComponent->range/2.0f) // circle player & attack when possible
+			else if (eyeComponent->shooting || distance <= eyeComponent->range/1.5f) // circle player & attack when possible
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
 					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);

@@ -15,7 +15,7 @@ struct ImpBehaviour
 	float maxAttackRange = 50.f;
 	
 	int specialCounter = 0;		//how many attacks since last special
-	int specialBreakpoint = 400000000000000;	//how many attacks are needed for next special
+	int specialBreakpoint = 4;	//how many attacks are needed for next special
 
 	bool clockwiseCircle = true;
 	bool circleBehaviour = false;

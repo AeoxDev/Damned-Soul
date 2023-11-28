@@ -17,17 +17,19 @@ void RepositionBehaviour(EntityID& entity, ImpBehaviour* ic, TransformComponent*
 	//Calculate new teleport breakpoint
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	// Define a uniform distribution for the range [2.0, 4.0]
-	std::uniform_real_distribution<float> distribution(2.0f, 4.0f);
+	// Define a uniform distribution for the range [2.0, 5.0]
+	std::uniform_real_distribution<float> distribution(2.0f, 5.0f);
 	ic->specialBreakpoint = (int)distribution(gen);
 
 	//Teleport
-	float minRange = 10.0f;
+	float minRange = 15.0f;
 	float maxRange = 40.0f;
 
 	TransformComponent newTransform = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
 	itc->positionX = newTransform.positionX;
 	itc->positionZ = newTransform.positionZ;
+
+	//ADD POOF
 
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 	if (sfx != nullptr) sfx->Play(Imp_Teleport, Channel_Base);
@@ -43,7 +45,6 @@ void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transf
 		enemyAnim->aAnimTime = 0.0f;
 	}
 
-
 	ic->chaseCounter += GetDeltaTime();
 	//if the player has chased the imp for too long, teleport away
 	if (ic->chaseCounter >= ic->chaseTimer)
@@ -55,6 +56,9 @@ void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transf
 			hasUpdatedMap = true;
 			CalculateGlobalMapValuesHellhound(valueGrid);
 		}
+
+		//ADD POOF
+
 
 		RepositionBehaviour(entity, ic, itc, playerTransformCompenent, valueGrid);
 	}
@@ -118,18 +122,18 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		float dz = (ptc->positionZ - itc->positionZ);
 
 		float distanceFromPlayer = sqrt(dx * dx + dz * dz);
-		float rangePercentage = 1.f; //distanceFromPlayer / ic->maxAttackRange;
+		float rangePercentage = distanceFromPlayer / ic->maxAttackRange;
 
 		//how much the player moved since last frame
 		float playerMovementX = ptc->positionX - ptc->lastPositionX;
 		float playerMovementZ = ptc->positionZ - ptc->lastPositionZ;
 
 		//limit player movement in case of dash
-		if (playerMovementX > 0.03f)
-			playerMovementX = 0.03f;
+		if (playerMovementX > 0.05f)
+			playerMovementX = 0.05f;
 
-		if (playerMovementZ > 0.03f)
-			playerMovementZ = 0.03f;
+		if (playerMovementZ > 0.05f)
+			playerMovementZ = 0.05f;
 
 		//		C		= sqrt(A^2 + B^2)	
 		float newDirX = sqrt(playerMovementX * playerMovementX + dx * dx);
@@ -219,6 +223,9 @@ bool ImpBehaviourSystem::Update()
 		enemComp = registry.GetComponent<EnemyComponent>(enemyEntity);
 		AnimationComponent* enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
 
+		if (enemComp == nullptr)
+			continue;
+
 		debuff = registry.GetComponent<DebuffComponent>(enemyEntity);
 		if (debuff && debuff->m_frozen)
 		{
@@ -274,7 +281,7 @@ bool ImpBehaviourSystem::Update()
 			}
 			else if (distance < 15.0f && !impComponent->charging) // try to retreat to a safe distance if not charging
 			{
-				//RetreatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
+				RetreatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 			else if (impComponent->specialCounter >= impComponent->specialBreakpoint) //if special is ready teleport
 			{
@@ -283,20 +290,27 @@ bool ImpBehaviourSystem::Update()
 					hasUpdatedMap = true;
 					CalculateGlobalMapValuesImp(valueGrid);
 				}
+				//ADD POOF ?
 
-				//RepositionBehaviour(enemyEntity, impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
+
+
+				RepositionBehaviour(enemyEntity, impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
 			}
 			else if (distance <= impComponent->maxAttackRange) // circle player & attack when possible (WIP)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, playerStats, enemyAnim))
-					int x = 2 + 2;
-					//IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
+					IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
 			else // idle
 			{
 				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-				//IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
+				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
+
+			impComponent->attackStunTimer += GetDeltaTime();
+			enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+			ANIM_BRANCHLESS(enemyAnim);
+			TransformDecelerate(enemyEntity);
 		}
 		//Idle if there are no players on screen.
 		else if (enemyStats->GetHealth() > 0.0f)
@@ -304,11 +318,6 @@ bool ImpBehaviourSystem::Update()
 			enemComp->lastPlayer.index = -1;//Search for a new player to hit.
 			IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 		}
-		impComponent->attackStunTimer += GetDeltaTime();
-		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
-		ANIM_BRANCHLESS(enemyAnim);
-		TransformDecelerate(enemyEntity);
-
 	}
 	
 	free(valueGrid);

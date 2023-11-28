@@ -505,7 +505,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
 		{
-			attackSpeed = 0.08f;
+			attackSpeed = 0.8f;
 		}
 		else if (eType == EnemyType::minotaur)
 		{
