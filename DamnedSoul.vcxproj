@@ -573,6 +573,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\UIComponents\UIPauseRelicTextComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPauseSettingsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UISettingsSliderComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopButtonComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameTimeComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />

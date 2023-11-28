@@ -190,7 +190,7 @@ void Menu::SetupButtons()
 
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], 30.0f);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);

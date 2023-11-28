@@ -63,8 +63,9 @@ void UIFunctions::MainMenu::SetCredits(void* args, int a)
 
 void UIFunctions::MainMenu::Quit(void* args, int a)
 {
-	UnloadEntities();
+	UnloadEntities(ENT_PERSIST_HIGHEST);
 	sdl.quit = true;
+	stateManager.systems.clear();
 }
 
 
@@ -92,9 +93,9 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
 					if (shopBuy != nullptr)
 					{
-						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+						for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
 						{
-							if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
+							if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
 							{
 								selectedID = onClick;
 							}
@@ -332,8 +333,23 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 
 		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualTimer());
 	}
+
+	RedrawUI();
 }
 
+void UIFunctions::Settings::Volume::Press(void* args, int a)
+{
+	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
+
+	slider->holding = true;
+}
+
+void UIFunctions::Settings::Volume::Release(void* args, int a)
+{
+	UISettingsSliderComponent* slider = registry.GetComponent<UISettingsSliderComponent>(*(EntityID*)args);
+
+	slider->holding = false;
+}
 
 void UIFunctions::Credits_Back(void* args, int a)
 {
@@ -388,7 +404,6 @@ void UIFunctions::Pause::Resume(void* args, int a)
 void UIFunctions::Pause::SetSettings(void* args, int a)
 {
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
-
 	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
@@ -410,7 +425,6 @@ void UIFunctions::Pause::SetSettings(void* args, int a)
 void UIFunctions::Pause::Back(void* args, int a)
 {
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
-
 	UIFunctions::OnHover::Image(uiElement, 0, false);
 
 	RedrawUI();
@@ -1017,4 +1031,3 @@ void UIFunctions::OnHover::PlayerRelic(void* args, int index, bool hover)
 
 	}
 }
-

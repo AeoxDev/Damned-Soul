@@ -47,63 +47,154 @@ void SettingsState::Input()
 void SettingsState::SetupButtons()
 {
 	const int amount = 6;
+	const int sliderAmount = 5;
 
-	const char const texts[amount][32] =
+	//Buttons
 	{
-		"1280x720",
-		"1600x900",
-		"1920x1080",
-		"Fullscreen",
-		"Back",
-		"Enable Game Timer"
-	};
+		const char const texts[amount][32] =
+		{
+			"Fullscreen",
+			"1920x1080",
+			"1600x900",
+			"1280x720",
+			"Enable Game Timer",
+			"Back",
+		};
 
-	const DSFLOAT2 const positions[amount] =
+		const DSFLOAT2 const positions[amount] =
+		{
+			{ -0.4f, 0.3f },
+			{ -0.4f, 0.2f },
+			{ -0.4f, 0.1f },
+			{ -0.4f, 0.0f },
+			{ -0.375f, -0.2f },
+			{ -0.5f, -0.45f },
+		};
+
+		const DSFLOAT2 const scales[amount] =
+		{
+			{ 0.5f, 0.15f },
+			{ 0.5f, 0.15f },
+			{ 0.5f, 0.15f },
+			{ 0.5f, 0.15f },
+			{ 0.3f, 0.3f },
+			{ 0.2f, 0.2f },
+		};
+
+		void(* const functions[amount])(void*, int) =
+		{
+			UIFunctions::Settings::SetFullscreen,
+			UIFunctions::Settings::SetHighRes,
+			UIFunctions::Settings::SetMediumRes,
+			UIFunctions::Settings::SetLowRes,
+			UIFunctions::Settings::SwitchTimer,
+			UIFunctions::Settings::Back,
+		};
+
+		for (int i = 0; i < amount; i++)
+		{
+			auto button = registry.CreateEntity();
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+
+			uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
+
+			SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+			buttonSound->Load(MENU);
+		}
+	}
+
+	//Sliders
 	{
-		{ -0.375f, 0.2f },
-		{ -0.125f, 0.2f },	
-		{ 0.125f, 0.2f },
-		{ 0.375f, 0.2f },
-		{ -0.81f, -0.8f },
-		{ -0.375f, -0.2f },
-	};
+		const char const texts[sliderAmount][32] =
+		{
+			"Master Volume",
+			"Voice Volume",
+			"SFX Volume",
+			"Music Volume",
+			"Ambient Volume",
+		};
 
-	const DSFLOAT2 const scales[amount] =
-	{
-		{ 0.6f, 0.6f },
-		{ 0.6f, 0.6f },
-		{ 0.6f, 0.6f },
-		{ 0.6f, 0.6f },
-		{ 0.5f, 0.6f },
-		{ 0.6f, 0.6f },
-	};
+		const DSFLOAT2 const positions[sliderAmount] =
+		{
+			{ 0.4f, 0.3f },
+			{ 0.4f, 0.15f },
+			{ 0.4f, 0.0f },
+			{ 0.4f, -0.15f },
+			{ 0.4f, -0.3f },
+		};
 
-	void(* const functions[amount])(void*, int) =
-	{
-		UIFunctions::Settings::SetLowRes,
-		UIFunctions::Settings::SetMediumRes,
-		UIFunctions::Settings::SetHighRes,
-		UIFunctions::Settings::SetFullscreen,
-		UIFunctions::Settings::Back,
-		UIFunctions::Settings::SwitchTimer,
-	};
+		AudioEngineComponent* audioComp = nullptr;
 
-	for (int i = 0; i < amount; i++)
-	{
-		auto button = registry.CreateEntity();
-		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
-		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+		for (auto audio : View<AudioEngineComponent>(registry))
+		{
+			audioComp = registry.GetComponent<AudioEngineComponent>(audio);
+		}
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+		for (int i = 0; i < sliderAmount; i++)
+		{
+			auto button = registry.CreateEntity();
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
-		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
+			uiElement->Setup("SliderBackground2", texts[i], positions[i]);
+			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
+			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
-		buttonSound->Load(MENU);
-	}	
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
 
+			float sliderWidth = abs(maxRightPosition - 0.13f) - abs(maxLeftPosition + 0.13f);
+
+			if (audioComp != nullptr)
+			{
+				float volume = 0;
+
+				if (uiElement->m_BaseText.m_Text == "Master Volume")
+				{
+					audioComp->groups[MASTER_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Voice Volume")
+				{
+					audioComp->groups[VOICE_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "SFX Volume")
+				{
+					audioComp->groups[SFX_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Music Volume")
+				{
+					audioComp->groups[MUSIC_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Ambient Volume")
+				{
+					audioComp->groups[AMBIENCE_GROUP]->getVolume(&volume);
+				}
+
+				if (volume < 0.5f)
+				{
+					uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(uiElement->m_Images[0].baseUI.GetPosition().x - (sliderWidth * (0.5f - volume)), uiElement->m_BaseImage.baseUI.GetPosition().y));
+					slider->currentPercentage = volume;
+				}
+
+				if (volume > 0.5f)
+				{
+					uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(uiElement->m_Images[0].baseUI.GetPosition().x + (sliderWidth * (volume - 0.5f)), uiElement->m_BaseImage.baseUI.GetPosition().y));
+					slider->currentPercentage = volume;
+				}
+			}
+
+
+			slider->currentPosition = uiElement->m_Images[0].baseUI.GetPosition().x;
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Settings::Volume::Press, UIFunctions::Settings::Volume::Release);
+
+		}
+	}
 }
 
 void SettingsState::SetupImages()
@@ -111,7 +202,7 @@ void SettingsState::SetupImages()
 	// Settings backdrop panel
 	auto settingsPanel = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsPanel);
-	uiElement->Setup("ExMenu/ButtonBackgroundHover", "", { 0.0f, 0.0f }, { 2.5f, 2.5f });
+	uiElement->Setup("ExMenu/ButtonBackgroundHover", "", { 0.0f, 0.0f }, { 3.0f, 3.0f });
 
 }
 
@@ -121,7 +212,7 @@ void SettingsState::SetupText()
 	// Settings Text Header
 	auto settingsHeader = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsHeader);
-	uiElement->Setup("TempShopTitle", "Settings", { 0.0f, 0.43f }, DSFLOAT2(1.0f, 1.0f), 30.0f);
+	uiElement->Setup("TempShopTitle", "Settings", { 0.0f, 0.5f }, DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 	
 }

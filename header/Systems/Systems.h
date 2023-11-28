@@ -75,7 +75,11 @@ class UIShopSystem : public System
 {
 	bool Update();
 };
-class UIRunTime : public System
+class UIRunTimeSystem : public System
+{
+	bool Update();
+};
+class UISliderSystem : public System
 {
 	bool Update();
 };

@@ -604,7 +604,7 @@ void LoadNextLevel(OnCollisionParameters& params)
 			LoadLevel(++stateManager.activeLevel);
 			return;
 		}
-		//Final portal stuff
+
 		//final level portal
 
 		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);

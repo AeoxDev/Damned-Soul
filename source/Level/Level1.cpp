@@ -90,7 +90,10 @@ void LoadLevel1()
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
 	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
-	uiElement->SetAllVisability(false);
+	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	if (!GetVisualTimer())
+		uiElement->m_BaseText.baseUI.SetVisibility(false);
+	
 
 	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 	

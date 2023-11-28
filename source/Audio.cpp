@@ -35,6 +35,11 @@ void AudioEngineComponent::Setup(int& ID)
 	system->createChannelGroup("Ambient Group", &this->groups[AMBIENCE_GROUP]);
 	this->groups[MASTER_GROUP]->addGroup(this->groups[AMBIENCE_GROUP]);
 
+	for (int i = 0; i < 5; i++)
+	{
+		this->groups[i]->setVolume(0.5f); //Initialize all sliders to 50%
+	}
+
 	//Load all sounds to use in the game
 	FMOD::Sound* toAdd = nullptr;
 	this->sounds.clear();

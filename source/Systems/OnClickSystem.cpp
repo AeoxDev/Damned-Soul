@@ -20,56 +20,50 @@ bool OnClickSystem::Update()
 
 		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 
-		if (comp->mouseStates.size() == 0 || comp->onClickFunctions.size() == 0)
+		if (comp->onClickFunctionsPressed.size() == 0 || comp->onClickFunctionsReleased.size() == 0)
 			continue;
 
-		if (comp->mouseStates[comp->index] == 0)
+		if (mouseButtonPressed[MouseButton::left] == pressed)
 		{
-			if (mouseButtonPressed[MouseButton::left] == pressed)
+			if (index > -1)
 			{
 
-				if (index > -1)
+				if (index == 0) //baseimage intersect
 				{
+					if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+						continue;
+				}
+				else if (index > 0) //images intersect, higher number = later added image
+				{
+					if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
+						continue;
+				}
 
-					if (index == 0) //baseimage intersect
-					{
-						if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-							continue;
-					}
-					else if (index > 0) //images intersect, higher number = later added image
-					{
-						if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
-							continue;
-					}
-
-					comp->onClickFunctions[comp->index]((void*)&entity, comp->index);
+					comp->onClickFunctionsPressed[comp->index](&entity, comp->index);
 					return true;
 				}
 			}
 			else if (mouseButtonPressed[MouseButton::right] == pressed)
 			{
 
-				if (index > -1)
-				{
-
-				}
-			}
-			else if (mouseButtonPressed[MouseButton::middle] == pressed)
+			if (index > -1)
 			{
 
-				if (index > -1)
-				{
-
-				}
 			}
 		}
-		else if (comp->mouseStates[comp->index] == 1)
+		else if (mouseButtonPressed[MouseButton::middle] == pressed)
 		{
-			if (mouseButtonPressed[MouseButton::left] == released)
+
+			if (index > -1)
 			{
 
-				if (index > -1)
-				{
+			}
+		}
+
+		if (mouseButtonPressed[MouseButton::left] == released)
+		{
+			if (index > -1)
+			{
 
 					if (index == 0) //baseimage intersect
 					{
@@ -86,7 +80,7 @@ bool OnClickSystem::Update()
 					SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
 					if (sound != nullptr)
 					{
-						if (comp->onClickFunctions[comp->index] == UIFunctions::MainMenu::Start)
+						if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::MainMenu::Start)
 						{
 							//Stop all the previous sounds (except music) to mute for example the dog breath
 							for (auto entity : View<AudioEngineComponent>(registry))
@@ -97,27 +91,27 @@ bool OnClickSystem::Update()
 							}
 							sound->Play(Button_Start, Channel_Base);
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::SelectRelic)
+						else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::OnClick::SelectRelic)
 						{
 							sound->Play(Shop_Press, Channel_Base);
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::BuyRelic)
+						else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::OnClick::BuyRelic)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::HealPlayer)
+						else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::OnClick::HealPlayer)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::LockRelic)
+						else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::OnClick::LockRelic)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunctions::OnClick::RerollRelic)
+						else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::OnClick::RerollRelic)
 						{
 							//Play sound in the function itself
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunctions::Game::LoadNextLevel)
+						else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::Game::LoadNextLevel)
 						{
 							for (auto entity : View<AudioEngineComponent>(registry))
 							{
@@ -126,7 +120,7 @@ bool OnClickSystem::Update()
 								audioJungle->StopAllSounds();
 							}
 						}
-						else if (comp->onClickFunctions[comp->index] == UIFunctions::Game::SetMainMenu)
+						else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::Game::SetMainMenu)
 						{
 							//Stop all the previous sounds (except music) to mute for example the dog breath
 							for (auto entity : View<AudioEngineComponent>(registry))
@@ -137,32 +131,31 @@ bool OnClickSystem::Update()
 							}
 							sound->Play(Button_Press, Channel_Base);
 						}
-						//else if (comp->onClickFunctions[comp->index] == UIFunc::UpgradeWeapon) //Add this when the function for upgrading weapon has been included.
-						else if (comp->onClickFunctions[comp->index] != UIFunctions::OnClick::None)
+						//else if (comp->onClickFunctionsReleased[comp->index] == UIFunc::UpgradeWeapon) //Add this when the function for upgrading weapon has been included.
+						else if (comp->onClickFunctionsReleased[comp->index] != UIFunctions::OnClick::None)
 						{
 							sound->Play(Button_Press, Channel_Base);
 						}
 					}
 
-					comp->onClickFunctions[comp->index]((void*)&entity, comp->index);
+					comp->onClickFunctionsReleased[comp->index](&entity, comp->index);
 					return true;
 				}
 			}
 			else if (mouseButtonPressed[MouseButton::right] == released)
 			{
 
-				if (index > -1)
-				{
-
-				}
-			}
-			else if (mouseButtonPressed[MouseButton::middle] == released)
+			if (index > -1)
 			{
 
-				if (index > -1)
-				{
+			}
+		}
+		else if (mouseButtonPressed[MouseButton::middle] == released)
+		{
 
-				}
+			if (index > -1)
+			{
+
 			}
 		}
 
