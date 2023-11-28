@@ -28,6 +28,12 @@ struct Particle
 	float size;
 };
 
+struct ExtraData
+{
+	float meshMid[3];
+	int start;
+};
+
 struct ParticleMetadata
 {
 	int start = -1; 
@@ -74,9 +80,11 @@ namespace Particles
 	void FinishParticleCompute(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to set the shaders and resources requiered for the particle pass
 	void PrepareParticlePass(RenderSetupComponent renderStates[8]);
+	void PrepareVFXPass(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
 	void FinishParticlePass();
 
-	void UpdateSingularMetadata(int& metadataSlot);
+	void UpdateStart(int& metadataSlot);
+	void UpdateMid(float* meshMid);
 }
 
