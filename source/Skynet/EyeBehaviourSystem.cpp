@@ -170,25 +170,36 @@ void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour*
 	}
 
 	float magnitude = 0.f;
+	float dirX = 0.f;
+	float dirZ = 0.f;
 
 	if (ec->clockwiseCircle) //clockwise
 	{
-		ec->goalDirectionZ *= -1;
+		dirX = -ec->goalDirectionZ;
+		dirZ = ec->goalDirectionX;
 	}
 	else // counter clockwise
 	{
-		ec->goalDirectionX *= -1;
+		dirX = ec->goalDirectionZ;
+		dirZ = -ec->goalDirectionX;
 	}
+
+	dirX += ec->correcitonDirX;
+	dirZ += ec->correcitonDirZ;
+
+	Normalize(dirX, dirZ);
+
+	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+	ec->goalDirectionX = ptc->positionX - etc->positionX;
+	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
 	
-	//adjust facing based on obstacle avoidance
 	ec->goalDirectionX += ec->correcitonDirX;
 	ec->goalDirectionZ += ec->correcitonDirZ;
 	Normalize(ec->goalDirectionX, ec->goalDirectionZ);
 
 	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 
-	etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
-	etc->positionZ += etc->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
 	enemyAnim->aAnimTime += GetDeltaTime();
 }
 
@@ -245,11 +256,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		std::uniform_real_distribution<float> distribution(2.0f, 5.0f);
 		eyeComponent->specialBreakpoint = (int)distribution(gen);
 
-
-		//while charging disable hitboxes
-		SetHitboxIsMoveable(eID, 0, false);
-		SetHitboxIsMoveable(eID, 1, false);
-		enemyStats->SetKnockbackMultiplier(2.0f);
+		enemyStats->SetKnockbackMultiplier(1.5f);
 		//direction from the enemy towards the player
 		float dirX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
 		float dirZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
@@ -264,7 +271,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		eyeComponent->chargeDirZ = dirZ; 
 
 		//change what direction the eye is circling after each dash
-		(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
+		//(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
 
 		SmoothRotation(eyeTransformComponent, eyeComponent->chargeDirX, eyeComponent->chargeDirZ, 40.0f);
 		AddTimedEventComponentStartContinuousEnd(eID, 0.0f, nullptr, ChargeColorFlash, eyeComponent->aimDuration - 0.2f, ResetColor);
@@ -288,6 +295,11 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 			enemyAnim->aAnim = ANIMATION_ATTACK;
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime = 0.0f;
+
+			SetHitboxActive(eID, enemComp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, true);
+			SetHitboxIsEnemy(eID, 0, false);
+			SetHitboxIsEnemy(eID, 1, false);
 		}
 		
 		//calculate the current direction towards player
@@ -299,25 +311,23 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//scalar between the current direction and the original chagre direction
 		float scalar = dirX * eyeComponent->chargeDirX + dirZ * eyeComponent->chargeDirZ;
 
+		enemyAnim->aAnimTime += GetDeltaTime();
 		//If charging scalar point direction > 0.0, charge
-		if (scalar > 0 && eyeComponent->chargeTimer < 3.0f)
+		if (scalar > 0 && eyeComponent->chargeTimer < 1.0f)
 		{
 			eyeComponent->chargeTimer += GetDeltaTime();
 			SmoothRotation(eyeTransformComponent, eyeComponent->chargeDirX, eyeComponent->chargeDirZ, 30.0f);
 
 			eyeTransformComponent->positionX += eyeComponent->chargeDirX * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
 			eyeTransformComponent->positionZ += eyeComponent->chargeDirZ * enemyStats->GetSpeed() * 6.f * GetDeltaTime();
-
-			SetHitboxActive(eID, enemComp->attackHitBoxID, true);
-			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, true);
-			enemyAnim->aAnimTime += GetDeltaTime();
+			
 		}
 		else //else charge is finished
 		{
 			enemyStats->SetKnockbackMultiplier(1.0f);
-			//reenable hitboxes
-			SetHitboxIsMoveable(eID, 0, true);
-			SetHitboxIsMoveable(eID, 1, true);
+			////reenable hitboxes
+			SetHitboxIsEnemy(eID, 0, true);
+			SetHitboxIsEnemy(eID, 1, true);
 			SetHitboxActive(eID, enemComp->attackHitBoxID, false);
 			SetHitboxCanDealDamage(eID, enemComp->attackHitBoxID, false);
 
@@ -510,6 +520,11 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 
 	ec->correcitonDirX = finalDirection.x;
   	ec->correcitonDirZ = finalDirection.z;
+
+	if (finalDirection.x > 0.0)
+		ec->clockwiseCircle = true;
+	else
+		ec->clockwiseCircle = false;
 }
 
 bool EyeBehaviourSystem::Update()
@@ -617,7 +632,7 @@ bool EyeBehaviourSystem::Update()
 				ChargeBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyHitbox, enemyEntity, enemComp, enemyAnim);
 
 			}
-			else if (eyeComponent->shooting || distance <= 45.0f + eyeComponent->circleBehaviour) // circle player & attack when possible (WIP)
+			else if (eyeComponent->shooting || distance <= 45.0f) // circle player & attack when possible (WIP)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
 					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);

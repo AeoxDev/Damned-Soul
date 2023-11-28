@@ -15,7 +15,7 @@ struct EyeBehaviour
 	float targetZ = 0.0f;
 	float chargeDirX = 0.0f;
 	float chargeDirZ = 0.0f;
-
+	float range = 80.f;
 	//Obstacle Avoidance
 	float correcitonDirX = 0.0f;
 	float correcitonDirZ = 0.0f;
@@ -28,7 +28,7 @@ struct EyeBehaviour
 
 	bool shooting = false;
 	bool clockwiseCircle = true;
-	bool circleBehaviour = false;
+	//bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
 	bool retreating = false;	//bool to check if the eye is currently retreating
 	bool dealtDamage = false;
