@@ -77,6 +77,8 @@ namespace UIFunctions
 		void UpgradeWeapon(void* args, int index);
 
 		void BuyRelic(void* args, int index);
+
+		void HealPlayer(void* args, int index);
 	}
 
 	namespace OnHover
