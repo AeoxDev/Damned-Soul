@@ -29,6 +29,7 @@ uint32_t GetTimedEventCondition(TimedEventComponent*& comp, const int& timedEven
 float GetTimedEventElapsedTime(EntityID& entityID, const int& timedEventSlot);
 float GetTimedEventTotalTime(EntityID& entityID, const int& timedEventSlot);
 void CancelTimedEvent(EntityID& entityID, const int& timedEventSlot);
+void CancelTimedEvents(EntityID& entityID);//Cancels all timed events on entity.
 void ReleaseTimedEvents(EntityID& entity);
 
 void TimedEventIgnoreGamespeed(bool ignore);

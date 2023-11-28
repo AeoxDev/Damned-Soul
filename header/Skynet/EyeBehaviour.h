@@ -6,8 +6,8 @@ struct EyeBehaviour
 	float timeCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	float attackTimer = 0.f;
-	float attackStunTimer = 0.f;
 	float attackStunDuration = 2.0f;
+	float attackStunTimer = attackStunDuration;
 	float chargeTimer = 0.0f;
 	float aimTimer = 0.0f;
 	float aimDuration = 0.4f;
@@ -22,6 +22,7 @@ struct EyeBehaviour
 	int specialCounter = 0;		//how many attacks since last special
 	int specialBreakpoint = 4;	//how many attacks are needed for next special
 
+	bool shooting = false;
 	bool clockwiseCircle = true;
 	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not

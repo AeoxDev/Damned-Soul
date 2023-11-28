@@ -54,6 +54,10 @@ class AudioSystem : public System
 {
 	bool Update();
 };
+class StageVoiceLineSystem : public System
+{
+	bool Update();
+};
 
 class UIRenderSystem : public System
 {
@@ -126,15 +130,15 @@ class ImpBehaviourSystem : public System
 	bool Update();
 };
 
-class ZacBehaviourSystem : public System
+class MinotaurBehaviourSystem : public System
 {
 	bool Update();
 };
 
-//class MinotaurBehaviourSystem : public System
-//{
-//	bool Update();
-//};
+class ZacBehaviourSystem : public System
+{
+	bool Update();
+};
 
 class TempBossBehaviourSystem : public System
 {

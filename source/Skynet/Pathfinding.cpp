@@ -245,7 +245,7 @@ void CalculateGlobalMapValuesZac(PathfindingMap* map)
 	//return returnMap;
 }
 
-float CalculateEuclideanDistanceWorldSpace(int x, int z, Node goal)
+float CalculateEuclideanDistanceWorldSpace(float x, float z, Node goal)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 	GridPosition nodePos;
@@ -286,7 +286,7 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 		}
 	}
 
-	float lavaPunish = 6; // Never used ??
+	
 
 	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 
@@ -499,7 +499,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace((int)temporaryTransform->positionX, (int)temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
 	}
 	
 	
@@ -543,7 +543,7 @@ TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent*
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace((int)temporaryTransform->positionX, (int)temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
 	}
 
 
@@ -600,7 +600,6 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 {
 	ML_Vector<Node> theWay;
 	ML_Vector<Node> theReverseWay; // trust me, we need this. temp
-	
 
 	Node tempNode = endNode;
 
@@ -641,7 +640,7 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponen
 	start.fx = enemyPos.fx;
 	start.fz = enemyPos.fz;
 	
-	float maximumAllowedDistance = CalculateEuclideanDistance(start.x, start.z, goal) * 1.25f;
+	float maximumAllowedDistance = CalculateEuclideanDistance(start.x, start.z, goal) * 2.0f;
 
 
 

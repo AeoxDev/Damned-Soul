@@ -43,32 +43,38 @@ void LoadLevel3()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
+	if (SetupAllEnemies("LV3Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV3Enemies");
+	}
+	////Upper right corner:
+	//SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f, 1);
+	//SetupEnemy(EnemyType::imp, -40.f, 0.f, 103.f, 1);
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -13.f, 0.f, 80.f, 1);
 
-	//Upper right corner:
-	SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f);
-	SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -13.f, 0.f, 80.f);
+	////Under ribs
+	//SetupEnemy(EnemyType::skeleton, -188.f, 0.f, 24.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -181.f, 0.f, 33.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -194.f, 0.f, 13.f, 0);
+	//SetupEnemy(EnemyType::imp, -202.f, 0.f, 39.f, 1);
 
-	//Under ribs
-	SetupEnemy(EnemyType::hellhound, -188.f, 0.f, 24.f);
-	SetupEnemy(EnemyType::hellhound, -181.f, 0.f, 33.f);
-	SetupEnemy(EnemyType::hellhound, -194.f, 0.f, 13.f);
-	SetupEnemy(EnemyType::skeleton, -202.f, 0.f, 39.f);
+	////North of big bone 
+	//SetupEnemy(EnemyType::hellhound, -144.0f, 0.f, 168.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -150.f, 0.f, 199.f, 0);
+	//SetupEnemy(EnemyType::imp, -184.f, 0.f, 166.f, 1);
+	//SetupEnemy(EnemyType::imp, -162.f, 0.f, 154.f, 1);
 
-	//North of big bone 
-	SetupEnemy(EnemyType::hellhound, -144.0f, 0.f, 168.f);
-	SetupEnemy(EnemyType::imp, -150.f, 0.f, 199.f);
-	SetupEnemy(EnemyType::imp, -184.f, 0.f, 166.f);
-	SetupEnemy(EnemyType::imp, -162.f, 0.f, 154.f);
+	////Doggo to guard the gate
+	//SetupEnemy(EnemyType::skeleton, -263, 0.f, 138.f, 0);
+	//SetupEnemy(EnemyType::imp, -260.f, 0.f, 134.f, 1);
+	//
 
-	//Doggo to guard the gate
-	SetupEnemy(EnemyType::hellhound, -263, 0.f, 138.f);
-	Stage2IntroScene(cutsceneEnemy, 0);
-
-	//Small arena:
-	SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f);
-	SetupEnemy(EnemyType::imp, -158.f, 0.f, 94.f);
-	SetupEnemy(EnemyType::skeleton, -158.f, 0.f, 72.f);
+	////Small arena:
+	//SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f, 1);
+	//SetupEnemy(EnemyType::imp, -158.f, 0.f, 94.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -158.f, 0.f, 72.f, 0);
 	//13 souls + 5 souls level 1 = 18 souls total
 
 
@@ -98,7 +104,7 @@ void LoadLevel3()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	SetDirectionLight(1.0f, 0.7f, .5f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -107,4 +113,7 @@ void LoadLevel3()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, HellhoundIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

@@ -184,3 +184,12 @@ SquashStretchComponent* AddSquashStretch(EntityID& entity, const SquashStretchTy
 	component->startScaleZ = startZ;
 	return component;
 }
+
+void LoopFallingAnimation(EntityID& entity, const int& index)
+{
+
+}
+void FallingAnimation(EntityID& entity, const int& index)
+{
+
+}

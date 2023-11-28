@@ -16,6 +16,28 @@ SRV_IDX particleSRV;
 
 PoolPointer<ParticleMetadataBuffer> data;
 
+// ## ALEX CODE ##
+GS_IDX tempUVPanningGS;
+PS_IDX VFXPixelShader;
+CB_IDX VFXConstantBuffer;
+
+SMP_IDX VFXSampler;
+
+SRV_IDX VFXBackBufferSRV; // Difference between SRV and TX is that SRV are textures created by the pipeline.
+TX_IDX VFXColorRampTX;
+TX_IDX VFXVornoiTX;
+TX_IDX VFXNoiseTX;
+TX_IDX VFXShapeTX;
+TX_IDX VFXMaskTX;
+
+
+struct VFXBufferData
+{
+	DirectX::XMFLOAT2 offsetXY_in; // Offset of the uv coordinates in x ( u ) and y ( v ). Clamped between 1 and -1 since its illogial to do other ones.
+	DirectX::XMFLOAT2 resolution_in; // Offset of the uv coordinates in x ( u ) and y ( v ). Clamped between 1 and -1 since its illogial to do other ones.
+	float panSpeed_in; // How fast do you want the panning to be. A multiplier.
+};
+// ## EO ALEX CODE ##
 
 int Particles::RenderSlot;
 
@@ -42,6 +64,26 @@ void Particles::SwitchInputOutput()
 
 void Particles::InitializeParticles()
 {
+// ## ALEX CODE ##
+	VFXPixelShader = LoadPixelShader("VFXPixel.cso");
+	tempUVPanningGS = LoadGeometryShader("VFXGeometry.cso");
+
+	VFXBufferData VFXData = {
+		DirectX::XMFLOAT2(0.0f, 1.0f),
+		DirectX::XMFLOAT2(sdl.WIDTH,sdl.HEIGHT),
+		0.75f };
+	VFXConstantBuffer = CreateConstantBuffer((void*)&VFXData, sizeof(VFXBufferData));
+
+	VFXSampler =		CreateSamplerState();
+	VFXBackBufferSRV =	CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
+	VFXColorRampTX =	LoadTexture("\\VFX_FireGradient.png");
+	VFXVornoiTX =		LoadTexture("\\VFX_Vornoi.png");
+	VFXNoiseTX =		LoadTexture("\\VFX_gNoise.png");
+	//VFXShapeTX =		LoadTexture("\\VFX_InnerGradient.png"); // VFX_SwordSlash
+	VFXShapeTX =		LoadTexture("\\VFX_CircleSoft.png"); // VFX_Fire
+	VFXMaskTX =			LoadTexture("\\VFX_GradientMask.png");
+// ## EO ALEX CODE ##
+
 	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));
 	m_readBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
 	m_writeBuffer = MemLib::palloc(sizeof(ParticleInputOutput));
@@ -171,8 +213,22 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
-	SetGeometryShader(renderStates[RenderSlot].geometryShader);
-	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
+	//SetGeometryShader(renderStates[RenderSlot].geometryShader);
+	//SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
+
+	// ## ALEX CODE ##
+	SetGeometryShader(tempUVPanningGS);
+	SetPixelShader(VFXPixelShader);
+	SetConstantBuffer(VFXConstantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetShaderResourceView(VFXBackBufferSRV, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+	SetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
+	SetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
+	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
+	SetSamplerState(VFXSampler, 3);
+
+	// ## EO ALEX CODE ##
 
 	// The constant buffer for vertex is set outside of this function, in the ParticleSystemCPU Update() call
 	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
@@ -219,6 +275,17 @@ void Particles::FinishParticlePass()
 	UnsetVertexShader();
 	UnsetGeometryShader();
 	UnsetPixelShader();
+
+	// Alex Code
+	UnsetConstantBuffer(BIND_PIXEL, 0);
+	UnsetSamplerState(3);
+	UnsetShaderResourceView(SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
+
+	UnsetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
+	UnsetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	UnsetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	UnsetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
+	UnsetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
 
 	SetTopology(TRIANGLELIST);
 
@@ -292,6 +359,55 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 			break;
 		}
 		
+	}
+}
+
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float speed, int amount, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+	//Calculate how many groups are requiered to write to all particles
+	float groups = (float)amount / (float)THREADS_PER_GROUP;
+	if (groups == (int)groups)
+		groupsRequiered = groups;
+	else
+		groupsRequiered = groups + 1;
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
+	data->metadata[metadataSlot].pattern = pattern;
+
+	data->metadata[metadataSlot].positionInfo.x = speed; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
+	data->metadata[metadataSlot].reset = false;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+
+	// We need to find "amount" of particles free in the physical buffer
+	// so we can allocate it for the ParticleComponents logical buffer
+	int freeConsecutively = 0;
+	int counter = 0;
+	for (int i : Particles::m_unoccupiedParticles)
+	{
+		counter++;
+
+		if (i == -1)
+			freeConsecutively++;
+		else
+			freeConsecutively = 0;
+
+		if (freeConsecutively >= amount)
+		{
+			data->metadata[metadataSlot].start = counter - amount;
+			data->metadata[metadataSlot].end = counter - 1;
+
+
+			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			break;
+		}
+
 	}
 }
 

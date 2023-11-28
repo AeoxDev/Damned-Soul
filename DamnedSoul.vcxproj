@@ -216,9 +216,14 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Defensive\SecondWind.cpp" />
     <ClCompile Include="source\Relics\Defensive\UndeadFortitude.cpp" />
     <ClCompile Include="source\EventFunctions\CutsceneFunctions.cpp" />
+    <ClCompile Include="source\Relics\Gadget\DashFlash.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\ExploitableCoupon.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\Membership.cpp" />
     <ClCompile Include="source\Relics\Gadget\Discount\SeeingDouble.cpp" />
+    <ClCompile Include="source\Relics\Gadget\Discount\SuccubusCharm.cpp" />
+    <ClCompile Include="source\Relics\Gadget\FrozenMaul.cpp" />
+    <ClCompile Include="source\Relics\Gadget\GaleAmulet.cpp" />
+    <ClCompile Include="source\Relics\Gadget\QuickReflexes.cpp" />
     <ClCompile Include="source\Relics\Gadget\IcyBlade.cpp" />
     <ClCompile Include="source\Relics\Offensive\AdrenalineRush.cpp" />
     <ClCompile Include="source\Level\ParticleLevel.cpp" />
@@ -234,6 +239,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\LuciferBehaviourSystem.cpp" />
+    <ClCompile Include="source\Skynet\MinotaurBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\ZacBehaviourSystem.cpp" />
     <ClCompile Include="source\States\Credits.cpp" />
     <ClCompile Include="source\Systems\FollowerSystem.cpp" />
@@ -241,6 +247,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\GlowSystem.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\Components\UIComponent.cpp" />
+    <ClCompile Include="source\Systems\StageVoiceLineSystem.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MummifiedHeart.cpp" />
@@ -444,6 +451,18 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\Particles\VFXGeometry.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+    </FxCompile>
+    <FxCompile Include="resource\shader\Particles\VFXPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -604,9 +623,14 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\PainMirror.h" />
     <ClInclude Include="header\Relics\Defensive\SecondWind.h" />
     <ClInclude Include="header\Relics\Defensive\UndeadFortitude.h" />
+    <ClInclude Include="header\Relics\Gadget\DashFlash.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\ExploitableCoupon.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\Membership.h" />
     <ClInclude Include="header\Relics\Gadget\Discount\SeeingDouble.h" />
+    <ClInclude Include="header\Relics\Gadget\Discount\SuccubusCharm.h" />
+    <ClInclude Include="header\Relics\Gadget\FrozenMaul.h" />
+    <ClInclude Include="header\Relics\Gadget\GaleAmulet.h" />
+    <ClInclude Include="header\Relics\Gadget\QuickReflexes.h" />
     <ClInclude Include="header\Relics\Gadget\IcyBlade.h" />
     <ClInclude Include="header\Relics\Offensive\AdrenalineRush.h" />
     <ClInclude Include="header\Relics\Offensive\AdvancedFighting.h" />
@@ -640,11 +664,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Gadget\SoulSpeed.h" />
     <ClInclude Include="header\Relics\Gadget\SpeedyLittleDevil.h" />
     <ClInclude Include="header\Relics\Defensive\SpikedSkin.h" />
+    <ClInclude Include="header\Relics\Utility\SoulRelicHelper.h" />
     <ClInclude Include="header\RenderDepthPass.h" />
     <ClInclude Include="header\Skynet\ImpBehaviour.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\FrozenBehaviour.h" />
     <ClInclude Include="header\Skynet\LuciferBehaviour.h" />
+    <ClInclude Include="header\Skynet\MinotaurBehaviour.h" />
     <ClInclude Include="header\Skynet\TempBossBehaviour.h" />
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
@@ -691,6 +717,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <None Include="bin\SDL2.dll" />
     <None Include="lib\SDL2\lib\x64\SDL2.dll" />
+    <None Include="resource\shader\Particles\VFX_Header.hlsli" />
+    <None Include="resource\shader\Particles\VFX_Patterns.hlsli" />
     <None Include="resource\shader\RenderPipelineHeader.hlsli" />
     <None Include="resource\shader\Particles\ParticleHeader.hlsli" />
   </ItemGroup>

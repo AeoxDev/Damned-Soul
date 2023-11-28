@@ -19,7 +19,7 @@ void StatComponent::ZeroBonusStats()
 	m_bonusHealth = 0;
 	m_damageReduction = 1.f; // Since this is a multiplier, setting it to 1.0 is equivalent to setting the bonus to 0
 	m_bonusMoveSpeed = 0;
-	m_bonusDashValue = 0;
+	//m_bonusDashValue = 0;
 	m_bonusDamage = 0;
 	m_bonusAttackSpeed = 0;
 	m_bonusKnockback = 0;
@@ -149,6 +149,16 @@ float StatComponent::GetSpeed() const
 	return speed * (0.f < speed); // Branchlessly put a lower limit of zero on speed
 }
 
+float StatComponent::GetBaseSpeed() const
+{
+	return m_baseMoveSpeed;
+}
+
+float StatComponent::GetBonusSpeed() const
+{
+	return GetSpeed() - m_baseMoveSpeed;
+}
+
 void StatComponent::UpdateBonusSpeed(const float delta)
 {
 	m_bonusMoveSpeed += delta;
@@ -159,15 +169,15 @@ void StatComponent::SetSpeedMult(const float mult)
 	m_speedMult = mult;
 }
 
-float StatComponent::GetDashDistance() const
-{
-	return m_baseDashValue + m_bonusDashValue;
-}
-
-void StatComponent::UpdateBonusDashDistance(const float delta)
-{
-	m_bonusDashValue += delta;
-}
+//float StatComponent::GetDashDistance() const
+//{
+//	return m_baseDashValue + m_bonusDashValue;
+//}
+//
+//void StatComponent::UpdateBonusDashDistance(const float delta)
+//{
+//	m_bonusDashValue += delta;
+//}
 
 float StatComponent::GetBaseDamage() const
 {
@@ -243,7 +253,45 @@ int PlayerComponent::UpdateSouls(const int delta)
 	}
 
 	if (delta > 0)
+	{
 		this->totalSouls += delta;
+
+		//Play sound effect occasionally when we get a new soul.
+		int playerSoundEffect = rand() % 16;
+		if (playerSoundEffect == 0)
+		{
+			for (auto entity : View<PlayerComponent>(registry))
+			{
+				bool isPlaying = false;
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+				AudioEngineComponent* audioJungle = nullptr;
+				for (auto jungle : View<AudioEngineComponent>(registry))
+				{
+					audioJungle = registry.GetComponent<AudioEngineComponent>(jungle);
+				}
+
+				if (audioJungle != nullptr)
+				{
+					if (sfx != nullptr)
+					{
+						audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+						if (!isPlaying)
+						{
+							playerSoundEffect = rand() % 2;
+							if (playerSoundEffect == 0)
+							{
+								sfx->Play(Player_BetterLuck, Channel_Extra);
+							}
+							else
+							{
+								sfx->Play(Player_AnotherSoul, Channel_Extra);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	this->souls += delta;
 	return this->souls;
@@ -257,4 +305,43 @@ int PlayerComponent::GetSouls() const
 int PlayerComponent::GetTotalSouls() const
 {
 	return this->totalSouls;
+}
+
+void PlayerComponent::UpdateBonusDashScaling(const float delta)
+{
+	m_bonusDashValue += delta;
+}
+
+void PlayerComponent::UpdateBonusDashes(const int delta)
+{
+	m_bonusDashes += delta;
+}
+
+bool PlayerComponent::ConsumeDash()
+{
+	if (m_remainingDashes == m_baseDashes + m_bonusDashes)
+		m_dashCounter = m_dashCooldown;
+	return 0 <= --m_remainingDashes;
+}
+
+void PlayerComponent::DashCooldown(const float dt)
+{
+	if (m_dashCounter < dt)
+	{
+		m_dashCounter = 0;
+		m_remainingDashes = m_baseDashes + m_bonusDashes;
+	}
+	else if (0 < m_dashCounter)
+		m_dashCounter -= dt;
+}
+
+float PlayerComponent::GetDashValue()
+{
+	return m_baseDashValue + m_bonusDashValue;
+}
+
+void PlayerComponent::ZeroBonusStats()
+{
+	m_bonusDashes = 0;
+	m_bonusDashValue = 0;
 }
