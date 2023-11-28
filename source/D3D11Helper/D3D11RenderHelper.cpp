@@ -78,7 +78,7 @@ RTV_IDX CreateBackBuffer()
 		return -2;
 	}
 	rtvHolder->rtv_map.emplace(currentIdx, tempBB);
-	rtvHolder->tx_map.emplace(currentIdx, backBuffer);
+	//rtvHolder->tx_map.emplace(currentIdx, backBuffer);
 	//backBuffer->Release();
 
 	return currentIdx;
