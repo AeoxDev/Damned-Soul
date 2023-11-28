@@ -1006,6 +1006,9 @@ void LoadPlayerSounds()
 void ReloadPlayerNonGlobals()
 
 {
+	if (registry.GetComponent<PlayerComponent>(stateManager.player) == nullptr)
+		return; //Ain't no way we doing this function if player doesn't exist yet
+
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{

@@ -264,11 +264,11 @@ bool GeometryIndependentSystem::Update()
 								p->positionX += p->currentSpeedX * GetDeltaTime();
 								p->positionZ += p->currentSpeedZ * GetDeltaTime();
 								//Squish
-								AddSquashStretch(entity, Constant, 1.35f, 1.35f, 0.3f, false, 1.0f, 1.0f, 1.0f);
+								AddSquashStretch(entity, Constant, 1.1f, 1.1f, 0.8f, false, 1.0f, 1.0f, 1.0f);
 								p->facingX = -sumX;
 								p->facingZ = -sumZ;
 								NormalizeFacing(p);
-								float punishTime = 0.3f;
+								float punishTime = 0.05f;
 								AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 								if (anim != nullptr)
 								{
