@@ -9,6 +9,7 @@ inline void RainMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
 inline void ShockWaveMovement(in uint3 DTid, in uint3 blockID);
+inline void NoMovement(in uint3 DTid, in uint3 blockID);
 
 
 [numthreads(NUM_THREADS, 1, 1)]
@@ -72,6 +73,13 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         if (meta[blockID.y].pattern == 10)
         {
             ShockWaveMovement(DTid, blockID);
+        }
+        // 11 SHARES SPOT WITH 3
+        
+        // 12 = NO MOVEMENT
+        if (meta[blockID.y].pattern == 12)
+        {
+            NoMovement(DTid, blockID);
         }
     }
 
@@ -414,6 +422,33 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     
     particle.position.x = particle.position.x + (oscillationX + dirX) * dt;
     particle.position.z = particle.position.z + (oscillationZ + dirZ) * dt;
+    
+    outputParticleData[index] = particle;
+}
+
+void NoMovement(in uint3 DTid, in uint3 blockID)
+{
+    // -- Calculate the index and get the right particle to change -- //
+    int amount = meta[blockID.y].end - meta[blockID.y].start;
+    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    int localIndex = (index - meta[blockID.y].start) % amount;
+    
+    Input particle = inputParticleData[index];
+    // -------------------------------------------------------------- // 
+
+    
+    // --- Set the standard stuff --- //
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
+    //particle.pattern = PATTERN;
+    //particle.rgb = RGB;
+    // ------------------------------ //
+    
+    
+    particle.position.x = particle.position.x;
+    particle.position.y = particle.position.y;
+    particle.position.z = particle.position.z;
     
     outputParticleData[index] = particle;
 }

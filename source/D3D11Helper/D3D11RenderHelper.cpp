@@ -65,6 +65,7 @@ RTV_IDX CreateBackBuffer()
 	{
 		return -1;
 	}
+	rtvHolder->tx_map.emplace(currentIdx, backBuffer);
 
 	// use the back buffer address to create the render target
 	// null as description to base it on the backbuffers values
@@ -77,7 +78,7 @@ RTV_IDX CreateBackBuffer()
 		return -2;
 	}
 	rtvHolder->rtv_map.emplace(currentIdx, tempBB);
-	rtvHolder->tx_map.emplace(currentIdx, backBuffer);
+	//rtvHolder->tx_map.emplace(currentIdx, backBuffer);
 	//backBuffer->Release();
 
 	return currentIdx;
