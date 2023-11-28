@@ -61,8 +61,13 @@ bool EventSystem::Update()
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
 		auto comp = registry.GetComponent<TimedEventComponent>(entity);
-		for (unsigned i = 0; i < comp->timedEvents.size(); i++)
+		int size = comp->timedEvents.size();
+		for (unsigned i = 0; i < size; i++)
 		{
+			if (size != comp->timedEvents.size())
+			{
+				break;
+			}
 			if (!comp->timedEvents[i].isActive)
 			{
 				continue;
