@@ -44,6 +44,12 @@ int Particles::RenderSlot;
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
 
+TX_IDX flipBookTexture = -1; /// create holder for texture
+TX_IDX flipBookTextureTwo = -1; /// create holder for texture
+TX_IDX textureParticle = -1; /// create holder for texture
+TX_IDX noTextureParticle = -1; /// create holder for texture
+SMP_IDX sampler = -1; //create holder for sampler
+
 void Particles::SwitchInputOutput()
 {
 	SRV_IDX readSRV = m_readBuffer->SRV;
@@ -88,15 +94,23 @@ void Particles::InitializeParticles()
 	Particle* particles;
 	particles = (Particle*)MemLib::spush(sizeof(Particle) * MAX_PARTICLES);
 
+	flipBookTexture = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
+	flipBookTextureTwo = LoadTexture("\\SpriteSmokeSpark.png");//created texture resource 
+	textureParticle = LoadTexture("\\LavaPlaceholderAlpha.png");
+	noTextureParticle = LoadTexture("\\DefaultParticle.png");
+
+	sampler = CreateSamplerState(); //created sampler resource
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particles[i].position = DirectX::XMFLOAT3(9999.f, 99999.f, 99999.f);
+		particles[i].position = DirectX::XMFLOAT3(99999.f, 99999.f, 99999.f);
 		particles[i].time = 0.f;
 		particles[i].velocity = DirectX::XMFLOAT3(1.f, 1.f, 1.f);
 		particles[i].rotationZ = 0.f;
 		particles[i].rgb = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 		particles[i].size = 0.f;
+		particles[i].patterns= -1;
+
 	}
 
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
@@ -192,7 +206,7 @@ void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 }
 
-void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
+void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int metaDataSlot)
 {
 	SetTopology(POINTLIST);
 
@@ -224,6 +238,36 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8])
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
+	if (data->metadata[metaDataSlot].pattern == 0|| data->metadata[metaDataSlot].pattern == 9 || data->metadata[metaDataSlot].pattern == 12)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	{
+
+		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
+		//SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+		
+
+	}
+	else if (data->metadata[metaDataSlot].pattern == 13)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	{
+
+		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+
+
+	}
+	else if(data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	{
+
+		SetTexture(textureParticle, BIND_PIXEL, 2); //Set texture
+		
+		
+	}
+	else
+	{
+		
+		SetTexture(noTextureParticle, BIND_PIXEL, 2); //Set texture
+		
+	}
+	SetSamplerState(sampler, 2); //Set sampler
+
 }
 
 void Particles::FinishParticlePass()
@@ -251,6 +295,9 @@ void Particles::FinishParticlePass()
 	UnsetShaderResourceView(BIND_VERTEX, 0);
 
 	UnsetRasterizerState();
+
+	//UnsetTexture missing//			   //Unset texture 
+	UnsetSamplerState(2); //Unset sampler 
 }
 
 void Particles::UpdateSingularMetadata(int& metadataSlot)
@@ -483,7 +530,7 @@ void ParticleComponent::Release()
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].end = 0.f;
 	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
 	data->metadata[metadataSlot].morePositionInfo.x = 99999.f; data->metadata[metadataSlot].morePositionInfo.y = 99999.f;
@@ -537,7 +584,7 @@ void ParticleComponent::ResetBuffer()
 	data->metadata[metadataSlot].maxRange = -1.f;
 	data->metadata[metadataSlot].size = -1.f;
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1.f;
+	data->metadata[metadataSlot].pattern = -1;
 	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].start = 0.f;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
