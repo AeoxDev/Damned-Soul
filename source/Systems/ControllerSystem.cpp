@@ -409,12 +409,12 @@ bool ControllerSystem::Update()
 			if (player->currentCharge > 0.0f)
 			{
 				//it's time
-				player->currentCharge = 0.0f;
 				if (sfx) sfx->Play(Player_HeavyAttack, Channel_Base);
 				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
 				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
+				player->currentCharge = 0.0f;
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack);
 			}
 		}
