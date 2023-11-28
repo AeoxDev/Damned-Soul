@@ -13,7 +13,8 @@ enum ComputeShaders
 	LIGHTNING = 7,
 	CIRCLE_FIELD = 8,
 	FIRE = 9,
-	/*BOILING = 10*/
+	BOILING = 12,
+	SPARK = 13
 };
 
 //(entity, float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)

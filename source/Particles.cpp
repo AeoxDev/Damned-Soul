@@ -182,7 +182,7 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	if (data->metadata[metaDataSlot].pattern == 0|| data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10*/)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	if (data->metadata[metaDataSlot].pattern == 0|| data->metadata[metaDataSlot].pattern == 9 || data->metadata[metaDataSlot].pattern == 12)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 
 		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
@@ -190,13 +190,13 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 		
 
 	}
-	//else if (data->metadata[metaDataSlot].pattern == 15)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
-	//{
+	else if (data->metadata[metaDataSlot].pattern == 13)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	{
 
-	//	SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
+		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
 
 
-	//}
+	}
 	else if(data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
 	{
 

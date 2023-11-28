@@ -129,10 +129,14 @@ float4 main(GS_OUT input) : SV_TARGET
     {
         image = AniRow(input, 0.0f, false);/*AniFullSheet(input);*/
     }
-    //else if (pattern == 10) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
-    //{
-    //    
-    //}
+    else if (pattern == 12) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+    {
+        image = AniRow(input, 0.50f, false);
+    }
+    else if (pattern == 13) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+    {
+        image = AniRow(input, 0.50f, false, 16);
+    }
     else
     {
         image = flipBookTex.Sample(WrapSampler, input.uv);

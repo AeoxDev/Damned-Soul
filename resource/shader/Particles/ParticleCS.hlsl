@@ -11,7 +11,8 @@ inline void RainMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
 inline void FireMovement(in uint3 DTid, in uint3 blockID);
-//inline void HotPotMovement(in uint3 DTid, in uint3 blockID);
+inline void HotPotMovement(in uint3 DTid, in uint3 blockID);
+inline void SparkMovement(in uint3 DTid, in uint3 blockID);
 
 bool IsPointInTriangle(float2 particleVector, float2 triangleVector);
 
@@ -78,11 +79,16 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         {
             FireMovement(DTid, blockID);
         }
-        //// 10 = BOILING
-        //if (meta[blockID.y].pattern == 9)
-        //{
-        //    HotPotMovement(DTid, blockID);
-        //}
+        //// 12 = BOILING
+        if (meta[blockID.y].pattern == 12)
+        {
+            HotPotMovement(DTid, blockID);
+        }
+        //// 13 = SPARK
+        if (meta[blockID.y].pattern == 13)
+        {
+            SparkMovement(DTid, blockID);
+        }
         
     }
 
@@ -207,7 +213,6 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 
     float v0ToParticle_len = length(v0ToParticle);
     float middleVector_len = length(middleVector);
-
     
     if (v0ToParticle_len < middleVector_len)
     {
@@ -364,7 +369,6 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
     particle.size = meta[blockID.y].size;
     // ------------------------------ //
    
-    
     float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
     
     int One_OneHundo = holder;
@@ -468,7 +472,89 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     particle.rgb.g = 0.0f;
     particle.rgb.b = 0.0f;
     
-    particle.patterns = 9; //is used to define pattern in PS-Shader for flipAnimations
+    particle.patterns = 12; //is used to define pattern in PS-Shader for flipAnimations
+
+    outputParticleData[index] = particle;
+}
+
+void SparkMovement(in uint3 DTid, in uint3 blockID)
+{
+    // -- SAME FOR ALL FUNCTIONS -- //
+    uint amount = meta[blockID.y].end - meta[blockID.y].start; //particels
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x; //index slots of the 65000
+    uint localIndex = (index - meta[blockID.y].start) % amount;
+    
+    Input particle = inputParticleData[index];
+    // -------------------------------------------------------------- // 
+
+    // --- Set the standard stuff --- //
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt; //
+    particle.size = meta[blockID.y].size;
+    // ------------------------------ //
+   
+    
+    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    
+    int One_OneHundo = holder;
+    if (One_OneHundo == 0)
+        One_OneHundo = 1;
+    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    // ------------------------------------------------------ //
+    
+    float timeValue = (particle.time / meta[blockID.y].life);
+    
+     // ---- Get a "randomized" value to access deltaTime ---- //    
+    //float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    //???float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
+    
+    //Time differense for variation in animation 
+
+    if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    {
+        particle.time = meta[index].deltaTime * meta[blockID.y].life;
+        
+
+    }
+    else if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
+    {
+        particle.time = 0.0f;
+    }
+    
+    
+    //Set specified Start position 
+    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    particle.position = startPosition;
+
+    float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
+    particle.size = particle.size + (1 * oddEvenFactor);
+    if (index %2 == 1)
+    {
+        particle.position.x = (particle.position.x + ((index / meta[blockID.y].maxRange) * meta[blockID.y].maxRange) * -1);
+    }
+    else
+    {
+        particle.position.x = (particle.position.x + (index / meta[blockID.y].maxRange) * meta[blockID.y].maxRange);
+
+    }
+  
+    particle.position.y = particle.position.y + (index * particle.time);
+    //////fire waterfall ??  particle.position.y = particle.position.y + (index / particle.time);
+    particle.position.z = particle.position.z  /*+ (oddEvenFactor * ( 6 * meta[index].deltaTime)*/;
+    
+    float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
+    
+    //if (travelledDistance >= (meta[blockID.y].maxRange + 1))
+    //{
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
+  
+    particle.rgb.r = 1.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 0.0f;
+    
+    particle.patterns = 13; //is used to define pattern in PS-Shader for flipAnimations
 
     outputParticleData[index] = particle;
 }
