@@ -418,12 +418,12 @@ void CalculateGlobalMapValuesEye(ObstacleMap* map)
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; z++)
 		{
 			// is it walkable?
-			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_GATE || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
 				map->cost[x][z] += 10000;
 			}
-			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground
 			{
 				map->cost[x][z] += 1;
 			}

@@ -102,6 +102,7 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 
 	}
 }
+
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
 	if (sc->attackTimer <= 0.0f)
