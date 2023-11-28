@@ -14,6 +14,8 @@
 #include "Camera.h"
 #include "MemLib/ML_Map.hpp"
 
+#include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
+
 #include <random>
 
 	
@@ -32,7 +34,12 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 		audioJungle->HandleSound();
 	}
 
-	stateManager.activeLevel = 0;
+
+	//Create player when we start the game instead, rather than specifically when Level1 starts (reason: debug later levels without having to run through everything)
+	//Niclas was here :)
+	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
+
+	stateManager.activeLevel = 0; //Level actually being loaded: activeLevel / 2 + 1
 	LoadLevel(++stateManager.activeLevel);
 
 	SetPaused(false);
