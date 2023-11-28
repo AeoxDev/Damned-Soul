@@ -892,6 +892,10 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 		{
 			uiImpText->price = priceCalc.GetCostOf(shopButton->m_price, RelicInput::OnPriceCalculation::REROLL);
 		}
+		else if (shopButton->m_name == "Upgrade Weapon")
+		{
+			uiImpText->price = priceCalc.GetCostOf(shopButton->m_price, RelicInput::OnPriceCalculation::UPGRADE);
+		}
 		else
 			uiImpText->price = shopButton->m_price;
 
@@ -904,12 +908,12 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 		}
 		else
 		{
-			if (shopButton->m_name == "Heal" || shopButton->m_name == "Reroll")
+			if (shopButton->m_name == "Lock" || shopButton->m_name == "Buy")
 			{
-				buttonText.append("\nPrice: Free\n");
+				buttonText.append("\n");
 			}
 			else
-				buttonText.append("\n");
+				buttonText.append("\nPrice: Free\n");
 
 		}
 
