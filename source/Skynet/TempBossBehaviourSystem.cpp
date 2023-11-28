@@ -253,17 +253,16 @@ bool TempBossBehaviourSystem::Update()
 					tempBossComponent->shockwaveChanceCounter = 0.f;
 					tempBossComponent->shockwaveChargeCounter += GetDeltaTime();
 
-					if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown) // Dew it..
+					if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown * 0.8f && tempBossComponent->isBlinking == false)
+					{
+						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, nullptr, BossBlinkBeforeShockwave, tempBossComponent->shockWaveChargeCooldown * 0.2f, BossResetBeforeShockwave);
+					}
+					else if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown) // Dew it..
 					{
 						TransformDecelerate(enemyEntity);
 						tempBossComponent->isDazed = true;
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
-					}
-
-					else if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown * 0.8f && tempBossComponent->isBlinking == false)
-					{
-						AddTimedEventComponentStartEnd(enemyEntity, 0.0f, BossBlinkBeforeShockwave, tempBossComponent->shockWaveChargeCooldown * 0.2f, BossResetBeforeShockwave);
 					}
 
 					TransformDecelerate(enemyEntity);
