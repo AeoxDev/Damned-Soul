@@ -94,6 +94,7 @@ bool SetupAllEnemies(std::string filePath)
 					// we got the string
 					if (!SetValueForEnemy(&theInfo, counter, term))
 					{
+						myFile.close();
 						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
 					}
 					//reset
@@ -109,7 +110,7 @@ bool SetupAllEnemies(std::string filePath)
 		}
 	}
 		
-
+	myFile.close();
 
 	return true;
 }

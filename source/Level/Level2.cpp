@@ -44,7 +44,7 @@ void LoadLevel2()
 	if (SetupAllEnemies("LV2Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV2Enemies");
 	}
 
 	//Enemies to the right:

@@ -44,7 +44,7 @@ void LoadLevel7()
 	if (SetupAllEnemies("LV7Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV7Enemies");
 	}
 
 	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
