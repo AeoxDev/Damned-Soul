@@ -31,6 +31,8 @@ void LoadLevel5()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 5;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level5"); //Proximity hitbox (Added by Joaquin)
 
 	EntityID mouse = registry.CreateEntity();
 

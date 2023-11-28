@@ -104,6 +104,16 @@ bool ControllerSystem::Update()
 				}
 			}
 		}
+		if (keyState[SCANCODE_G] == pressed)
+		{
+			SetHitboxIsMoveable(stateManager.player, 0, false);
+			SetHitboxIsMoveable(stateManager.player, 1, false);
+		}
+		if (keyState[SCANCODE_I] == pressed)
+		{
+			SetHitboxIsMoveable(stateManager.player, 0, true);
+			SetHitboxIsMoveable(stateManager.player, 1, true);
+		}
 		if (keyState[SCANCODE_S] == pressed)
 		{
 			if (stateManager.hitboxVis.index == -1)

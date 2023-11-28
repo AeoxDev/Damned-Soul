@@ -28,6 +28,8 @@ void LoadLevel1()
 	stageVars.offsetY = -0.1f;
 	//stageVars.offsetX = 16.f;
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level1"); //Proximity hitbox (Added by Joaquin)
 
 	EntityID mouse = registry.CreateEntity();
 
