@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "Glow.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -26,9 +27,7 @@ void SetInMainMenu(bool value)
 {
 	if (value)
 	{
-		currentStates = (State)(currentStates | State::InMainMenu);
-
-		if (currentStates != (State)(currentStates | State::InSettings))
+		if (currentStates != (State)(currentStates | State::InSettings) && currentStates != (State)(currentStates | State::InCredits)) //All main menu specific states.
 		{
 			for (auto entity : View<AudioEngineComponent>(registry))
 			{
@@ -38,8 +37,11 @@ void SetInMainMenu(bool value)
 				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 				audioJungle->HandleSound();
 				backgroundMusic->Play(Music_Title, Channel_Base);
+				audioJungle->HandleSound();
 			}
 		}
+
+		currentStates = (State)(currentStates | State::InMainMenu);
 	}
 	else
 	{
@@ -66,6 +68,7 @@ void SetInPause(bool value)
 		currentStates = (State)(currentStates | State::InPause);
 		TimedEventIgnoreGamespeed(false);
 		gameSpeed = 0.0f;
+		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera from moving during pause.
 	}
 	else
 	{
@@ -96,6 +99,16 @@ void SetInShop(bool value)
 	if (value)
 	{
 		currentStates = (State)(currentStates | State::InShop);
+		for (auto entity : View<AudioEngineComponent>(registry))
+		{
+			SoundComponent* backgroundMusic = registry.GetComponent<SoundComponent>(entity);
+			backgroundMusic->Stop(Channel_Base);
+			backgroundMusic->Stop(Channel_Extra);
+			AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+			audioJungle->HandleSound();
+			backgroundMusic->Play(Music_Shop, Channel_Base);
+			audioJungle->HandleSound();
+		}
 	}
 	else
 	{
@@ -117,6 +130,9 @@ void SetInCredits(bool value)
 
 int StateManager::Setup()
 {
+#ifdef _DEBUG
+	visualizeStage = true;
+#endif
 	bool loaded = Setup3dGraphics();
 	if (!loaded)
 	{
@@ -134,7 +150,6 @@ int StateManager::Setup()
 	// Background OST
 	SoundComponent* titleTheme = registry.AddComponent<SoundComponent>(audioJungle);
 	titleTheme->Load(MUSIC);
-	titleTheme->Play(Music_Title, Channel_Base);
 
 	backBufferRenderSlot = SetupGameRenderer();
 	currentStates = InMainMenu;
@@ -143,6 +158,8 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Glow::Initialize();
+	//SetupTestHitbox();
 	RedrawUI();
 	
 
@@ -157,10 +174,15 @@ int StateManager::Setup()
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
 
+
 	//systems[2]->timeCap = 1.f / 60.f;
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new ParticleSystem());
+	//systems[6]->timeCap = 1.f / 30.f;
+	systems.push_back(new GlowSystem());
+
+	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
@@ -177,15 +199,19 @@ int StateManager::Setup()
 	systems.push_back(new SkeletonBehaviourSystem());
 	systems.push_back(new HellhoundBehaviourSystem());
 	systems.push_back(new EyeBehaviourSystem());
+	systems.push_back(new MinotaurBehaviourSystem());
 	systems.push_back(new TempBossBehaviourSystem());
 	systems.push_back(new FrozenBehaviourSystem());
 	systems.push_back(new LuciferBehaviourSystem());
 	systems.push_back(new ProjectileSystem());
+	
 	//ORDER VERY IMPORTANT
 	systems.push_back(new KnockBackSystem());
 	systems.push_back(new CollisionSystem()); //Check collision before moving the player (Otherwise last position is wrong)
-	systems.push_back(new ImpBehaviourSystem());
+	systems.push_back(new ImpBehaviourSystem()); //Imp behavior needs to come after collision
+	systems.push_back(new ZacBehaviourSystem());
 	systems.push_back(new TransformSystem()); //Must be before controller
+	systems.push_back(new FollowerSystem());
 	systems.push_back(new ControllerSystem());
 	systems.push_back(new EventSystem());//Must be after controller system for correct animations
 	systems.push_back(new GeometryIndependentSystem());
@@ -198,12 +224,12 @@ int StateManager::Setup()
 	systems.push_back(new PointOfInterestSystem());
 
 	//Audio (Needs to be close to last)
+	systems.push_back(new StageVoiceLineSystem());
 	systems.push_back(new AudioSystem());
 
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
-	systems.push_back(new UIRelicsSystem());
 	
 	systems.push_back(new UIShopSystem());
 
@@ -224,7 +250,7 @@ void StateManager::Input()
 		// :)
 		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
 		//{
-		//	//öhö
+		//	//ï¿½hï¿½
 		//	SetInMainMenu(false);
 		//	SetInPlay(true);
 		//	SetInShop(false);

@@ -250,14 +250,20 @@ bool DeleteD3D11SRV(const SRV_IDX idx);
 void CopyToVertexBuffer(const CB_IDX destination, const SRV_IDX source);
 // Copies the data in source SRV to destination SRV
 void CopySRVtoSRV(const SRV_IDX destination, const SRV_IDX source);
+// Copies the data in a SRV resource to a UAV resource;
+void CopySRVToUAV(const UAV_IDX destination, const SRV_IDX source);
+// Copies the data in a UAV resource to a SRV resource;
+void CopyUAVToSRV(const SRV_IDX destination, const UAV_IDX source);
+
 
 // Create a shader resource view that holds a buffer
 SRV_IDX CreateUnorderedAccessViewBuffer(const void* data, const size_t& size, const int amount, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags);
 // Overload to create a Unordered Access View with an already existing buffer from a Shader Resource View
 SRV_IDX CreateUnorderedAccessViewBuffer(const size_t& size, const int amount, const int16_t idx);
 // Create a shader resource view that holds a texture 
-// NOT DEFINED, WILL BE DEFINED IF NEEDED
-SRV_IDX CreateUnorderedAccessViewTexture(const RESOURCES& resource, RESOURCE_FLAGS resourceFlags, const CPU_FLAGS& CPUFlags, const size_t& width, const size_t& height);
+SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& height);
+// Overload to create an Unordered Access View with an already existing texture
+SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& height, const int16_t idx);
 // Set an active unordered access view buffer by index (shader and slot data contained in buffer)
 bool SetUnorderedAcessView(const UAV_IDX idx, uint8_t slot);
 // Sets unordered access view of parameter slot to NULL in the shader of parameter bindto

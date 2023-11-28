@@ -1,6 +1,7 @@
 #include "Physics\Backend\ProximityCollision.h"
 #include "Physics\Backend\Collision.h"
 #include "Registry.h"
+#include "DeltaTime.h"
 //include <algorithm>
 #define maxVar(a,b)            (((a) > (b)) ? (a) : (b))
 #define minVar(a,b)            (((a) < (b)) ? (a) : (b))
@@ -22,7 +23,7 @@ void FindIntersection(float& x, float& z, ProximityPoint& p1, ProximityPoint& p2
 	z = (a1 * c2 - a2 * c1) / determinant;
 }
 
-bool IntersectionOnLine(float& line1x1, float& line1x2, float& line1z1, float& line1z2, float& line2x1, float& line2x2, float& line2z1, float& line2z2)
+bool IntersectionOnLine(float& line1x1, float line1x2, float& line1z1, float line1z2, float& line2x1, float& line2x2, float& line2z1, float& line2z2)
 {
 	//Calculates where an intersection occured
 	float a1 = line1z1 - line1z2;
@@ -44,21 +45,21 @@ bool IntersectionOnLine(float& line1x1, float& line1x2, float& line1z1, float& l
 		float x = (b2 * c1 - b1 * c2) / determinant;
 		if (x < line1x1 && x < line1x2)
 		{
-			x += 0.0001f;
+			x += 0.001f;
 		}
 		else if (x > line1x1 && x > line1x2)
 		{
-			x -= 0.0001f;
+			x -= 0.001f;
 		}
 
 		float z = (a1 * c2 - a2 * c1) / determinant;
 		if (z < line1z1 && z < line1z2)
 		{
-			z += 0.0001f;
+			z += 0.001f;
 		}
 		else if (z > line1z1 && z > line1z2)
 		{
-			z -= 0.0001f;
+			z -= 0.001f;
 		}
 
 		if (x <= maxVar(line1x1, line1x2) && x >= minVar(line1x1, line1x2) && z <= maxVar(line1z1, line1z2) && z >= minVar(line1z1, line1z2))
@@ -69,7 +70,7 @@ bool IntersectionOnLine(float& line1x1, float& line1x2, float& line1z1, float& l
 	return false;
 }
 
-void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& previousX, float& previousZ)
+void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& previousX, float& previousZ, float& speedX, float& speedZ)
 {
 	ProximityHitboxComponent* wallHitbox = registry.GetComponent<ProximityHitboxComponent>(wall);
 
@@ -143,76 +144,60 @@ void ProximityCorrection(EntityID& wall, int& index, float& x, float& z, float& 
 					ProximityMove(B, C, x, z);
 				}
 			}
-		}
 
-
-	}
-	else
-	{
-		B = wallHitbox->pointList[index];
-		if (index == 0) //First point is at 1, last at list.size() - 1.
-		{
-			A = wallHitbox->pointList[1];
-			C = wallHitbox->pointList[(int)(wallHitbox->pointList.size() - 1)];
-		}
-		else if (index == (wallHitbox->pointList.size() - 1)) //First point is at 0, last is at index - 1;
-		{
-			A = wallHitbox->pointList[0];
-			C = wallHitbox->pointList[index - 1];
-		}
-		else //First point is at index + 1, last is at index - 1.
-		{
-			A = wallHitbox->pointList[index + 1];
-			C = wallHitbox->pointList[index - 1];
-		}
-
-		//Check if (x,z) is to the left of the two lines
-		bool first, second;
-		if (((x - A.x) * (B.z - A.z) - (z - A.z) * (B.x - A.x)) <= 0)
-		{
-			first = true; //Left side or on the line
-		}
-		else
-		{
-			first = false; //Right side
-		}
-
-		if (((x - B.x) * (C.z - B.z) - (z - B.z) * (C.x - B.x)) <= 0)
-		{
-			second = true; //Left side or on the line
-		}
-		else
-		{
-			second = false; //Right side
-		}
-
-		if (first && second)
-		{
-			return; //Do nothing
-		}
-		else if (!first && !second)
-		{
-			ProximityStepChart(A, B, C, x, z, previousX, previousZ); //Go through step chart.
-		}
-		else
-		{
-			//Check if C -> (x,z) intersects with A -> B. If it does, then the "second" result is wrong and "first" is correct. If it does not intersect then it's vice versa.
-			bool intersect = IntersectionOnLine(C.x, x, C.z, z, A.x, B.x, A.z, B.z);
-
-			if (intersect)
+			if ((abs(x) >= abs(B.x) - 0.001f) && (abs(x) <= abs(B.x) + 0.001f)) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
 			{
 				if (!first)
 				{
-					//Move using A -> B
-					ProximityMove(A, B, x, z);
+					//Check B->C line X.
+					if ((previousX < B.x) && (previousX < C.x))
+					{
+						x -= 0.01f;
+					}
+					else
+					{
+						x += 0.01f;
+					}
 				}
-			}
-			else
-			{
 				if (!second)
 				{
-					//Move using B -> C
-					ProximityMove(B, C, x, z);
+					//Check B->A line X.
+					if ((previousX < B.x) && (previousX < A.x))
+					{
+						x -= 0.01f;
+					}
+					else
+					{
+						x += 0.01f;
+					}
+				}
+			}
+			
+			if((abs(z) >= abs(B.z) - 0.001f) && (abs(z) <= abs(B.z) + 0.001f)) //Please don't place the entity on the line cause it will mess things up in 90 degree corners.
+			{
+				if (!first)
+				{
+					//Check B->C line Z.
+					if ((previousZ < B.z) && (previousZ < C.z))
+					{
+						z -= 0.01f;
+					}
+					else
+					{
+						z += 0.01f;
+					}
+				}
+				if (!second)
+				{
+					//Check B->A line Z.
+					if ((previousZ < B.z) && (previousZ < A.z))
+					{
+						z -= 0.01f;
+					}
+					else
+					{
+						z += 0.01f;
+					}
 				}
 			}
 		}
@@ -283,9 +268,8 @@ void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C,
 	//Step 3: Split into cases based on which line intersected
 	if (step1 && step2)
 	{
-		//Step 4a: Move entity to position of B
-		x = B.x;
-		z = B.z;
+		//Step 4a: Handle the corner case.
+		ProximityCornerMove(A, B, C, x, z);
 	}
 	else if (!step1 && !step2)
 	{
@@ -308,4 +292,31 @@ void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C,
 		}
 	}
 
+}
+
+void ProximityCornerMove(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C, float& x, float& z)
+{
+	//Find the two normals. Move along both the normals.
+	float difABX = B.x - A.x;
+	float difABZ = B.z - A.z;
+	
+	float difBCX = C.x - B.x;
+	float difBCZ = C.z - B.z;
+
+	float normalABX = -difABZ;
+	float normalABZ = difABX;
+
+	float normalBCX = -difBCZ;
+	float normalBCZ = difBCX;
+
+	//Normalize the normals
+	float len = sqrtf((normalABX * normalABX) + (normalABZ * normalABZ));
+	normalABX /= len;
+	normalABZ /= len;
+	len = sqrtf((normalBCX * normalBCX) + (normalBCZ * normalBCZ));
+	normalBCX /= len;
+	normalBCZ /= len;
+
+	x = B.x - 0.1f * (normalABX + normalBCX);
+	z = B.z - 0.1f * (normalABZ + normalBCZ);
 }

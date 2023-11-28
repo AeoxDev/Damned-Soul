@@ -16,8 +16,8 @@ enum shopState
 
 struct UIShopRelicComponent
 {
-	shopState shopSelections[2] = {};
-	const RelicData* shopRelics[2] = {};
+	ML_Array<shopState, 2> shopSelections;
+	ML_Array<const RelicData*, 2> shopRelics;
 
 	UIShopRelicComponent()
 	{
@@ -25,4 +25,9 @@ struct UIShopRelicComponent
 		shopSelections[1] = AVALIABLE;
 	};
 
+	void Release()
+	{
+		shopSelections.~ML_Array();
+		shopRelics.~ML_Array();
+	};
 };

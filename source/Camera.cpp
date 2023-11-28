@@ -32,7 +32,7 @@ struct CameraStruct
 	//If this is true, the camera will update the persepctive matrix on update call
 	//if it is false, the camera will update the orthographic matrix on call.
 	bool m_projectionType;
-	bool m_CutsceneMode = false;//True: Force the camera to do nothing, let others take over the camera.
+	int m_CutsceneMode = 0;//0, play; 1, intro, 2, portal
 };
 
 struct CameraConstantBuffer
@@ -237,12 +237,12 @@ const DirectX::XMMATRIX Camera::GetOrthographic()
 	return DirectX::XMLoadFloat4x4(&GameCamera->m_orthographic);
 }
 
-void Camera::SetCutsceneMode(bool inCutscene)
+void Camera::SetCutsceneMode(int inCutscene)
 {
 	GameCamera->m_CutsceneMode = inCutscene;
 }
 
-bool Camera::InCutscene()
+int Camera::InCutscene()
 {
 	return GameCamera->m_CutsceneMode;
 }
@@ -299,7 +299,7 @@ void Camera::ResetCamera()
 	SetPosition(CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, false);
 	SetLookAt(0.f, 0.f, 0.f);
 	SetUp(0.f, 1.f, 0.f);
-
+	SetOffset(0.0f, 0.0f, 0.0f);
 	SetRotation(0.f, 0.f, 0.f);
 	SetFOV(CAMERA_FOV);
 

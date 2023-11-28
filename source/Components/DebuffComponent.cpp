@@ -15,26 +15,33 @@ void DamageOverTime::AlterModelColor(void* model, const DOT_TYPE& type)
 	// Both model components have the relevant data at the same place, typecast between them shouldn't matter in this case
 	ModelSkeletonComponent* cast = (ModelSkeletonComponent*)model;
 
-	if (BURN == type)
+	float power = std::min(damagePerSecond * remainingTime / 10.f, 1.f);
+	if (POISON == type)
 	{
-		float power = std::min(damagePerSecond * remainingTime / 10.f, 1.f);
+		// Multiplicative
+		cast->shared.bcmR_temp *= (1 + (.15f + .4f * power));
+		cast->shared.bcmB_temp *= (1 + (.1f + .4f * power));
+		// Additive
+		cast->shared.bcaR_temp += .1f + .4f * power;
+		cast->shared.bcaB_temp += .4f * power;
+	}
+	else if (BURN == type)
+	{
 		// Multiplicative
 		cast->shared.bcmR_temp /= (1 + (.25f + power));
-		//characterModel->shared.bcmG_temp /= (1 + (1.f + power));
 		cast->shared.bcmB_temp /= (1 + (1.f * power));
 		// Additive
 		cast->shared.bcaR_temp += .1f + power;
 		cast->shared.bcaG_temp += power;
-		//characterModel->shared.bcaB_temp += .15f + 0.8f * ft;
 	}
 }
 
 #define E (2.71828f)
-#define PRIMTIVE_POINT_NINE_POW_X(x) (-9.49122*std::powf(0.9,(x)))
+#define PRIMTIVE_POINT_NINE_POW_X(x) (-9.49122f*std::powf(0.9f,(x)))
 float DamageOverTime::WeightedPower() const
 {
 	float P_X = PRIMTIVE_POINT_NINE_POW_X(remainingTime);
-	float P_0 = PRIMTIVE_POINT_NINE_POW_X(0);
+	float P_0 = PRIMTIVE_POINT_NINE_POW_X(0.0f);
 	float weightedDuration = P_X - P_0;
 	return weightedDuration * damagePerSecond;
 }

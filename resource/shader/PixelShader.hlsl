@@ -142,22 +142,26 @@ float4 main(GS_OUT input) : SV_TARGET
     //Shadow map is 1024
     int2 loadPos = (int) (1024.0f * samplePos.xy);
     float shadowDepth = shadowTexture.Sample(ShadowClampSampler, samplePos.xy).x;
-    //float shadowDepth = shadowTexture.Load(int3(loadPos.x, loadPos.y, 0.0f));
-    if (depth < shadowDepth + 0.004f || shadowDepth == 0.0f) //Closer when 0
+    float shadowStrength = 0.5f;
+    
+    if (depth < shadowDepth + 0.0025f || shadowDepth == 0.0f) //Closer when 0
     {
+        shadowStrength = 1.0f;
+    //float shadowDepth = shadowTexture.Load(int3(loadPos.x, loadPos.y, 0.0f));
+    }
         float3 invertedDirLightDirection = -dirLightDirection.xyz; //rätt?
         float dirLightIntesity = saturate(dot(trueNormal, invertedDirLightDirection));
         if (dirLightIntesity > 0.0f)
         {
-            diffuseDir += (dirLightColor * dirLightIntesity).rgb;
+            diffuseDir += shadowStrength * (dirLightColor * dirLightIntesity).rgb;
             saturate(diffuseDir);
 
             dirReflection = normalize(2 * dirLightIntesity * trueNormal - invertedDirLightDirection);
             dirSpecular = dirLightColor.xyz;
-            dirSpecular *= pow(saturate(dot(dirReflection * materialSpecular.xyz, input.base.camToWorldObject.xyz)), materialShininess.x);
+            dirSpecular *= shadowStrength * pow(saturate(dot(dirReflection * materialSpecular.xyz, input.base.camToWorldObject.xyz)), materialShininess.x);
             specular += dirSpecular;
         }
-    }
+   
     for (int i = 0; i < LIGHT_COMPONENT_ARRAY_LIMIT; i++)
     {
         if (lights[i].type != 0)

@@ -29,7 +29,12 @@ struct StateManager
 	PauseState pause;
 	Credits credits;
 	EntityID player;
+	EntityID weapon;
 	EntityID stage;
+	EntityID gate;
+	EntityID hitboxVis;
+
+
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind
 	/// </summary>
