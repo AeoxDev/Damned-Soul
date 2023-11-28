@@ -1,10 +1,47 @@
+// NOTE: REQUIRED in the pixel shader for Alpha Blending
+//float4 backBuffer = SampleBackbuffer(gs_in.position, screenResolution_in, backbufferTexture_in, vfxSampler_in);
+
+
 // Function to UV Pan coordinates according to constant buffer values and based on time.
 float2 UVPan(in float2 offsetXY, in float panSpeed, in float time, in float2 originalUVCoordinates)
 {
     return float2(originalUVCoordinates.x + frac(offsetXY.x * panSpeed * time),
-                originalUVCoordinates.y + frac(offsetXY.y * panSpeed * time));
+                  originalUVCoordinates.y + frac(offsetXY.y * panSpeed * time));
 }
 
+// Function to rotate the UV coordinates around the center.
+float2 UVRotate(in float2 ogUVCoord, in float angle) // NOTE: REQUIRES WRAPPING TEXTURES, NO CLIPPING
+{
+    float x = (ogUVCoord.x - 0.5f) * cos(angle) - (ogUVCoord.y - 0.5f) * sin(angle);
+    float y = (ogUVCoord.x - 0.5f) * sin(angle) + (ogUVCoord.y - 0.5f) * cos(angle);
+    
+    return float2(x, y);
+}
+
+// Gets the screen space derivatives. Used to overwrite mipmaps.
+float4 UVddxddy(in float2 uv)
+{
+    return float4(ddx(uv), ddy(uv));
+}
+
+// Function to produce polar coordinates.
+float2 UVPolarCoordinates(in float2 ogUVCoord, in float radius, in float rotation, in float scaleTexture = 1.0f)
+{
+    float2 uv = (ogUVCoord * scaleTexture - (0.5f * scaleTexture)) * 2.0f;
+    
+    float r = length(uv) + frac(radius);
+    float theta = atan2(uv.y, uv.x) + rotation;
+    
+    float2 polarCoord = float2(theta / radians(360.0f), r);
+    return frac(polarCoord.xy);
+}
+
+// Easier function for who want to do polarCoordinates but doesnt know the workflow.
+float4 SamplePolarCoordinateTexture(in Texture2D polarTexture, in sampler polarSampler, in float time, in float2 uv, in float rotationSpeed = 0.0f, in float panSpeed = 0.0f, in float scaleTexture = 1.0f)
+{
+    float4 dd = UVddxddy(uv);
+    return polarTexture.SampleGrad(polarSampler, UVPolarCoordinates(uv, time * panSpeed, time * rotationSpeed, scaleTexture), dd.xy, dd.zw);
+}
 // Function to distort the UV based on an existing texture.
 float2 distortUV(in float distortionAmount, in float2 uvCoordinates, in float4 distortionTexture)
 {

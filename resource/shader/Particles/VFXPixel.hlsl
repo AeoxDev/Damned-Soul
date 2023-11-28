@@ -12,8 +12,7 @@ float4 main(GS_OUT gs_in) : SV_Target
 {
     // NOTE: REQUIRED for Alpha Blending
     float4 backBuffer = SampleBackbuffer(gs_in.position, screenResolution_in, backbufferTexture_in, vfxSampler_in);
-    // 
-    
+
     return VFXAcidSpit(backBuffer, gs_in.time, gs_in.uv); // Default Red Fire //VFXSwordSlash(backBuffer, gs_in.time, gs_in.uv);
 }
 

@@ -63,7 +63,12 @@ in float distortionNoise = 0.01f
     float4 vornoiDiffuse = vornoiTexture_in.Sample(vfxSampler_in, UVPan(float2( 0.0f, -0.1f), 0.5f, time, uv * 0.75));
     float3 color = SampleColorRamp(colorRampTexture_in, vfxSampler_in, fireDistort);
     
-    return AlphaBlend(backBuffer, fireDistort.r, (color + (vornoiDiffuse.rgb * (fireColor * fireMultiplier))));
+
+    float4 vornoiRotate = SamplePolarCoordinateTexture(vornoiTexture_in, vfxSampler_in, time, uv, 0.0f, -0.25f, 0.25f);
+    
+    return vornoiRotate;
+    
+    //return AlphaBlend(backBuffer, fireDistort.r, (color + (vornoiDiffuse.rgb * (fireColor * fireMultiplier))));
 }
 
 
