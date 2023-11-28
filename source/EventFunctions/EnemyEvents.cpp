@@ -9,6 +9,7 @@
 #include "Levels\LevelHelper.h"
 #include "Skynet\BehaviourHelper.h"
 #include "UIComponents.h"
+#include "States\StateManager.h"
 
 #define BOSS_RESPAWN_TIME 8.f;
 
@@ -78,9 +79,9 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	//Set stats of new boss based on original
 	//float bossHP = bossStats->GetMaxHealth() / 2.f;
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
-	float bossDamage = bossStats->GetDamage() / 2.f;
+	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, (health / 2.5f), bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health , bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -104,10 +105,14 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	transComp.scaleZ = transform->scaleZ * newScaleSize;
 	
 	
-	transComp.mass = transform->mass * 0.8f;
+	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp); 
-	int soulWorth = 2;
+	int soulWorth = 3;
 
+	if (bossBehev->worthLess)
+	{
+		soulWorth = 1;
+	}
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
 
@@ -178,6 +183,7 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 	zacTransform = registry.GetComponent<TransformComponent>(ent);
 	bool zacIndex[5] = { false, false, false, false, false };
 	bool shouldSpawn = false;
+	bool worthless = true;
 	for (auto enemyEntity : View<ZacBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
 		StatComponent* enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
@@ -186,6 +192,10 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 			ZacBehaviour* zacComponent = registry.GetComponent<ZacBehaviour>(enemyEntity);
 			zacIndex[zacComponent->zacIndex] = true;
 			EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+			if (enemyComp->soulCount == 3)
+			{
+				worthless = false;
+			}
 			enemyComp->soulCount = 0;
 			RemoveEnemy(enemyEntity, 69);
 			shouldSpawn = true;
@@ -194,8 +204,8 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 	
 	if (shouldSpawn)
 	{
-		SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f,
-			1.f, 0.f, 1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4]);
+		SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 0, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f,
+			0.f, 0.f, -1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4], worthless);
 	}
 
 
@@ -204,7 +214,6 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 
 void SplitBoss(EntityID& entity, const int& index)
 {
-	float radius = 30.f;
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
 	CalculateGlobalMapValuesImp(valueGrid);
 	TransformComponent* aiTransform = nullptr;
@@ -222,8 +231,8 @@ void SplitBoss(EntityID& entity, const int& index)
 			partsAlive++;
 		}
 	}
-	health = originalStats->GetMaxHealth();
-	health = health / (float)partsAlive * 5.f;
+	health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
+	health = health / (float)partsAlive;
 
 	for (int i = 0; i < 5; ++i)
 	{
@@ -237,16 +246,10 @@ void SplitBoss(EntityID& entity, const int& index)
 	for (int i = 0; i < 3; ++i)
 	{
 		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
-		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ);
+		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ, 0);
 		CalculateGlobalMapValuesImp(valueGrid);
 	}
 
-
-	/*CreateMini(entity, 5.f * multiplier, 0.f * multiplier, 0);
-	CreateMini(entity, -5.f * multiplier, -2.f * multiplier, 1);
-	CreateMini(entity, 0.f * multiplier, -5.f * multiplier, 2);
-	CreateMini(entity, 2.f * multiplier, 5.f * multiplier, 3);
-	CreateMini(entity, -5.f * multiplier, 2.f * multiplier, 4);*/
 
 
 	free(valueGrid);
@@ -267,18 +270,26 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset
+		//Get enemytype
+		uint32_t condition = GetTimedEventCondition(entity, index);
+
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.9f) //Reset before the attack
 		{
-			skelel->shared.colorAdditiveRed = 0.0f;
-			skelel->shared.colorAdditiveGreen = 0.0f;
-			skelel->shared.colorAdditiveBlue = 0.0f;
+			skelel->shared.ResetTempColor();
 		}
-			
-		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow
+		
+		else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Hellhound glows immediately because there's no windup on the attack
 		{
-			skelel->shared.colorAdditiveRed = 0.8f;
-			skelel->shared.colorAdditiveGreen = 0.8f;
-			skelel->shared.colorAdditiveBlue = 0.5f;
+			skelel->shared.bcaR_temp = 0.8f;
+			skelel->shared.bcaG_temp = 0.8f;
+			skelel->shared.bcaB_temp = 0.5f;
+		}
+
+		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.5f) //Glow halfway through the pause
+		{
+			skelel->shared.bcaR_temp = 0.8f;
+			skelel->shared.bcaG_temp = 0.8f;
+			skelel->shared.bcaB_temp = 0.5f;
 		}	
 	}
 
@@ -297,9 +308,12 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 	{
 		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //Reset
 		{
-			skelel->shared.colorAdditiveRed = 0.0f;
-			skelel->shared.colorAdditiveGreen = 0.0f;
-			skelel->shared.colorAdditiveBlue = 0.0f;
+			//skelel->shared.colorAdditiveRed = 0.0f;
+			//skelel->shared.colorAdditiveGreen = 0.0f;
+			//skelel->shared.colorAdditiveBlue = 0.0f;
+			skelel->shared.bcaR_temp = 0.0f;
+			skelel->shared.bcaG_temp = 0.0f;
+			skelel->shared.bcaB_temp = 0.0f;
 
 			AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity); //Make animation faster because we're about to schwing
 			if (anim)
@@ -307,10 +321,12 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 		}
 		else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.375f) //Only start increasing gradient after 0.3 seconds
 		{
-			skelel->shared.colorAdditiveRed += GetDeltaTime();
-			skelel->shared.colorAdditiveGreen += GetDeltaTime();
-			skelel->shared.colorAdditiveBlue += GetDeltaTime();
-			
+			//skelel->shared.colorAdditiveRed  += GetDeltaTime();
+			//skelel->shared.colorAdditiveGreen+= GetDeltaTime();
+			//skelel->shared.colorAdditiveBlue += GetDeltaTime();
+			skelel->shared.bcaR_temp += GetDeltaTime();
+			skelel->shared.bcaG_temp += GetDeltaTime();
+			skelel->shared.bcaB_temp += GetDeltaTime();
 		}
 	}
 }
@@ -331,6 +347,14 @@ void EnemyBeginAttack(EntityID& entity, const int& index)
 	{
 		SetHitboxActive(entity, comp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+	}
+
+	uint32_t condition = GetTimedEventCondition(entity, index);
+	if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Dogs do big knockback on their headbutt
+	{
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+		if(stats)
+			stats->SetKnockbackMultiplier(8.0f);
 	}
 }
 
@@ -358,7 +382,33 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 	{
 		TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
 		if (tempBoss)
+		{
 			tempBoss->attackTimer = 0.0f;
+			tempBoss->isAttacking = false;
+		}
+
+	}
+
+	else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Reset big dog knockback after hit
+	{
+		HellhoundBehaviour* doggo = registry.GetComponent<HellhoundBehaviour>(entity);
+		if (doggo)
+			doggo->attackTimer = 0.0f;
+		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+		if (stats)
+			stats->SetKnockbackMultiplier(1.0f);
+	}
+
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer)
+		{
+			lucifer->attackTimer = 0.0f;
+			lucifer->isAttacking = false;
+		}
+			
 	}
 }
 
@@ -384,6 +434,59 @@ void EnemyBecomeStunned(EntityID& entity, const int& index)
 			tempBoss->attackStunDurationCounter = 0.0f;
 		}
 	}
+
+	else if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound)
+	{
+		HellhoundBehaviour* doggo = registry.GetComponent<HellhoundBehaviour>(entity);
+		if (doggo != nullptr)
+		{
+			doggo->attackStunDurationCounter = 0.0f;
+		}
+	}
+
+	else if (condition == EnemyType::lucifer)
+	{
+		LuciferBehaviour* lucifer = registry.GetComponent<LuciferBehaviour>(entity);
+		if (lucifer != nullptr)
+		{
+			lucifer->attackStunDurationCounter = 0.0f;
+		}
+	}
+}
+
+void DogBeginWait(EntityID& entity, const int& index)
+{
+
+}
+
+void DogEndWait(EntityID& entity, const int& index)
+{
+	HellhoundBehaviour* hc = registry.GetComponent<HellhoundBehaviour>(entity);
+	if (hc)
+	{
+		hc->isWating = false;
+
+		//SetInfiniteDirection() function from HellhoundBehaviourSystem
+		TransformComponent* htc = registry.GetComponent<TransformComponent>(entity);
+		if (htc)
+		{
+			float x = hc->lastPositionX - htc->positionX;
+			float z = hc->lastPositionZ - htc->positionZ;
+			float magnitude = sqrt(x * x + z * z);
+			if (magnitude > 0.001f)
+			{
+				x /= magnitude;
+				z /= magnitude;
+			}
+			hc->cowardDirectionX = x;
+			hc->cowardDirectionZ = z;
+		}
+		
+		hc->retreat = true;
+		hc->updatePathCounter = 20.f;
+		hc->hasMadeADecision = false;
+	}
+	
 }
 
 void BossShockwaveStart(EntityID& entity, const int& index)
@@ -402,11 +505,34 @@ void BossShockwaveExpand(EntityID& entity, const int& index)
 	radius += GetDeltaTime() * growthSpeed;
 	SetHitboxRadius(entity, enemy->specialHitBoxID, radius);
 }
+
 void BossShockwaveEnd(EntityID& entity, const int& index)
 {
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enemy->specialHitBoxID, false);//Set false somewhere
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
+}
+
+void ChargeColorFlash(EntityID& entity, const int& index)
+{
+	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+	float frequency = 10.0f; //Higher frequency = faster flashing lights
+	float cosineWave = cosf(GetTimedEventElapsedTime(entity, index) * frequency) * cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+	if (skelel)
+	{
+		skelel->shared.bcaR_temp = cosineWave;
+		skelel->shared.bcaG_temp = cosineWave;
+		//skelel->shared.colorAdditiveRed = cosineWave;
+		//skelel->shared.colorAdditiveGreen = cosineWave;
+	}
+	if (bonel)
+	{
+		bonel->shared.bcaR_temp = cosineWave;
+		bonel->shared.bcaG_temp = cosineWave;
+		//bonel->shared.colorAdditiveRed = cosineWave;
+		//bonel->shared.colorAdditiveGreen = cosineWave;
+	}
 }
 
 void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
@@ -418,9 +544,12 @@ void BossBlinkBeforeShockwave(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	if (skelel)
 	{
-		skelel->shared.colorAdditiveRed = 0.8f;
-		skelel->shared.colorAdditiveGreen = 0.8f;
-		skelel->shared.colorAdditiveBlue = 0.5f;
+		skelel->shared.bcaR_temp = 0.8f;
+		skelel->shared.bcaG_temp = 0.8f;
+		skelel->shared.bcaB_temp = 0.5f;
+		//skelel->shared.colorAdditiveRed = 0.8f;
+		//skelel->shared.colorAdditiveGreen = 0.8f;
+		//skelel->shared.colorAdditiveBlue = 0.5f;
 	}
 }
 
@@ -437,6 +566,55 @@ void BossResetBeforeShockwave(EntityID& entity, const int& index)
 		skelel->shared.colorAdditiveGreen = 0.0f;
 		skelel->shared.colorAdditiveBlue = 0.0f;
 	}
+}
+
+void RemoveLandingIndicator(EntityID& entity, const int& index)
+{
+	if (entity.isDestroyed == true)
+	{
+		return;
+	}
+	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+}
+
+void IncreaseLandingIndicatorMinotaur(EntityID& entity, const int& index)
+{
+	TransformComponent* landingTransform = registry.GetComponent<TransformComponent>(entity);
+	landingTransform->positionY += 3.0f * GetDeltaTime();
+}
+
+void IncreaseLandingIndicatorLucifer(EntityID& entity, const int& index)
+{
+	TransformComponent* landingTransform = registry.GetComponent<TransformComponent>(entity);
+	landingTransform->positionY += 5.0f * GetDeltaTime();
+}
+
+void CreateLandingIndicator(EntityID& entity, const int& index)
+{
+	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
+	int condition = GetTimedEventCondition(entity, index);
+	EntityID landingSpot = registry.CreateEntity();
+	TransformComponent* landingTransform = registry.AddComponent<TransformComponent>(landingSpot);
+	landingTransform->positionX = origin->positionX;
+	landingTransform->positionY = 1.0f;
+	landingTransform->positionZ = origin->positionZ;
+
+	CreateSpotLight(landingSpot, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 30);
+	//AddTimedEventComponentStartEnd(landingSpot, 0.0f, nullptr, 2.0f, RemoveLandingIndicator);
+	switch (condition)
+	{
+	case invalidType:
+		break;
+	case minotaur:
+		AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicatorMinotaur, 2.0f, RemoveLandingIndicator);
+		break;
+	case lucifer:
+		AddTimedEventComponentStartContinuousEnd(landingSpot, 0.0f, nullptr, IncreaseLandingIndicatorLucifer, 2.5f, RemoveLandingIndicator);
+		break;
+	default:
+		break;
+	}
+	
 }
 
 void RemoveEnemy(EntityID& entity, const int& index)
@@ -486,28 +664,31 @@ void RemoveEnemy(EntityID& entity, const int& index)
 void SpawnMainMenuEnemy(EntityID& entity, const int& index)
 {
 	int condition = GetTimedEventCondition(entity, index);
-	switch (condition)
-	{
-	case invalidType:
-		break;
-	case hellhound:
-		RandomPlayerEnemy(hellhound);
-		break;
-	case skeleton:
-		RandomPlayerEnemy(skeleton);
-		break;
-	case eye:
-		RandomPlayerEnemy(eye);
-		break;
-	case imp:
-		RandomPlayerEnemy(imp);
-		break;
-	case tempBoss:
-		RandomPlayerEnemy(tempBoss);
-		break;
-	default:
-		break;
-	}
+	
+	RandomPlayerEnemy((EnemyType)condition);
+
+	//switch (condition)
+	//{
+	//case invalidType:
+	//	break;
+	//case hellhound:
+	//	RandomPlayerEnemy(hellhound);
+	//	break;
+	//case skeleton:
+	//	RandomPlayerEnemy(skeleton);
+	//	break;
+	//case eye:
+	//	RandomPlayerEnemy(eye);
+	//	break;
+	//case imp:
+	//	RandomPlayerEnemy(imp);
+	//	break;
+	//case tempBoss:
+	//	RandomPlayerEnemy(tempBoss);
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
@@ -529,10 +710,35 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = eye;
 	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = minotaur;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredSkeleton;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredImp;
+	}
+	rarity = rand() % 64;
+	if (rarity == 0)
+	{
+		type = empoweredSkeleton;
+	}
 	rarity = rand() % 4096;
 	if (rarity == 0)
 	{
 		type = tempBoss;
+	}
+	rarity = rand() % 4096;
+	if (rarity == 0)
+	{
+		type = lucifer;
 	}
 	float time = 0.05f * (float)(rand() % 64);
 	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
@@ -591,9 +797,7 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	SetHitboxActive(acidHazard, hitboxID);
 	SetHitboxCanDealDamage(acidHazard, hitboxID, true);
 	
-
-	AddTimedEventComponentStart(acidHazard, 5.0f, DestroyAcidHazard);
-	//AddTimedEventComponentStartEnd(acidHazard, 5.0f, DestroyAcidHazard, 5.5f, EndDestroyProjectile, 0, 2);
+	AddTimedEventComponentStartEnd(acidHazard, 5.0f, DestroyAcidHazard, 5.5f, EndDestroyProjectile, 0, 2);//Double destroy hazard for bug fixing.
 }
 
 void BeginDestroyProjectile(EntityID& entity, const int& index)

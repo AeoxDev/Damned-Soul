@@ -40,38 +40,44 @@ void LoadLevel2()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
+	
+	if (SetupAllEnemies("LV2Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Enemies");
+	}
 
 	//Enemies to the right:
 
-	SetupEnemy(EnemyType::skeleton, 88.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 68.0f, 0.f, 46.f);
-	SetupEnemy(EnemyType::imp, 85.f, 0.f, 23.f);
+	//SetupEnemy(EnemyType::skeleton, 88.f, 0.f, 50.f, 0);
+	//SetupEnemy(EnemyType::skeleton, 68.0f, 0.f, 46.f, 1 );
+	//SetupEnemy(EnemyType::imp, 85.f, 0.f, 23.f, 1);
 
-	//Enemies to the north:
-	SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f);
-	SetupEnemy(EnemyType::skeleton, 28.f, 0.f, 145.f);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 20.0f, 0.f, 160.0f);
+	////Enemies to the north:
+	//SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f, 1);
+	//SetupEnemy(EnemyType::skeleton, 28.f, 0.f, 145.f, 1);
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 20.0f, 0.f, 160.0f, 1);
 
-	//Enemies in ruins
-	SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f);
-	SetupEnemy(EnemyType::skeleton, -84.f, 0.f, 154.f);
-	SetupEnemy(EnemyType::skeleton, -96.f, 0.f, 213.f);
-	SetupEnemy(EnemyType::skeleton, -143.f, 0.f, 127.f);
+	////Enemies in ruins
+	//SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -84.f, 0.f, 154.f, 0);
+	//SetupEnemy(EnemyType::skeleton, -96.f, 0.f, 213.f, 0);
+	//SetupEnemy(EnemyType::skeleton, -143.f, 0.f, 127.f, 1);
 
-	//Enemies on the left side:
-	SetupEnemy(EnemyType::skeleton, -219.f, 0.f, 34.f);
-	SetupEnemy(EnemyType::skeleton, -235.0f, 0.f, 48.f);
-	SetupEnemy(EnemyType::imp, -237.f, 0.f, 18.f);
+	////Enemies on the left side:
+	//SetupEnemy(EnemyType::skeleton, -219.f, 0.f, 34.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -235.0f, 0.f, 48.f, 0);
+	//SetupEnemy(EnemyType::imp, -237.f, 0.f, 18.f, 1);
 
-	//One to guard the gate:
-	SetupEnemy(EnemyType::skeleton, -230.f, 0.f, 214.f);
+	////One to guard the gate:
+	//SetupEnemy(EnemyType::skeleton, -230.f, 0.f, 214.f, 1);
 
-	Stage3IntroScene(cutsceneEnemy, 0);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
+	
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
@@ -92,7 +98,7 @@ void LoadLevel2()
 
 	float redLight = 0.35f;
 
-	SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -101,4 +107,6 @@ void LoadLevel2()
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, ImpIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

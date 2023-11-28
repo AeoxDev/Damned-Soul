@@ -32,6 +32,7 @@ void PlayerEndAttack(EntityID& entity, const int& index);
 //CONTINUOUS
 void PlayerDash(EntityID& entity, const int& index);
 void PlayerDashSound(EntityID& entity, const int& index);
+void HurtSound(EntityID& entity, const int& index);
 void PlayerAttack(EntityID& entity, const int& index);
 /*END OF PLAYER EVENTS*/
 
@@ -47,7 +48,7 @@ void BossShockwaveEnd(EntityID& entity, const int& index);
 void BossBlinkBeforeShockwave(EntityID& entity, const int& index);
 void BossResetBeforeShockwave(EntityID& entity, const int& index);
 void CreateNewSplitZac(EntityID& entity, const int& index);
-
+void CreateLandingIndicator(EntityID& entity, const int& index);
 
 //Enemy Combat functions
 void EnemyAttackFlash(EntityID& entity, const int& index);
@@ -56,6 +57,11 @@ void EnemyAttack(EntityID& entity, const int& index);
 void EnemyBeginAttack(EntityID& entity, const int& index);
 void EnemyEndAttack(EntityID& entity, const int& index);
 void EnemyBecomeStunned(EntityID& entity, const int& index);
+
+void CreateAcidHazard(EntityID& entity, const int& index);
+
+void DogBeginWait(EntityID& entity, const int& index);
+void DogEndWait(EntityID& entity, const int& index);
 
 //Loop static hazard hitbox
 void LoopHitbox(EntityID& entity, const int& index);
@@ -72,8 +78,10 @@ void BlinkColor(EntityID& entity, const int& index);
 void ResetColor(EntityID& entity, const int& index);
 void SquashStretch(EntityID& entity, const int& index);
 void ResetSquashStretch(EntityID& entity, const int& index);
+void ChargeColorFlash(EntityID& entity, const int& index);
 void TPose(EntityID& entity, const int& index);
-
+void LoopFallingAnimation(EntityID& entity, const int& index);
+void FallingAnimation(EntityID& entity, const int& index);
 
 //Stats
 void SetSpeedZero(EntityID& entity, const int& index);
@@ -93,16 +101,28 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index);
 void CutsceneCreateLinearTransition(EntityID& entity, const int& index);
 //Do the given cutscene components arguments over time
 void BeginCutscene(EntityID& entity, const int& index);
+void BeginPortalCutscene(EntityID& entity, const int& index);
 void CutsceneTransition(EntityID& entity, const int& index);
 void EndCutscene(EntityID& entity, const int& index);
 void MainMenuIntroCutscene(EntityID& entity, const int& index);
+void StageIntroFall(EntityID& entity, const int& index);
 void Stage1IntroScene(EntityID& entity, const int& index);
-void Stage2IntroScene(EntityID& entity, const int& index);
-void Stage3IntroScene(EntityID& entity, const int& index);
+void HellhoundIntroScene(EntityID& entity, const int& index);
+void ImpIntroScene(EntityID& entity, const int& index);
 void Stage4IntroScene(EntityID& entity, const int& index);
 
-void BeginDestroyProjectile(EntityID& entity, const int& index); 
+void CutsceneFallStage1(EntityID& entity, const int& index);
+void CutsceneFallStage(EntityID& entity, const int& index);
+void CutscenePlayerFallDown(EntityID& entity, const int& index);
+void LoopCutscenePlayerFallInPlace(EntityID& entity, const int& index);
+void CutscenePlayerFallInPlace(EntityID& entity, const int& index);
+
+void BeginDestroyProjectile(EntityID& entity, const int& index);
 void EndDestroyProjectile(EntityID& entity, const int& index);
+
 
 //Game speed
 void SetGameSpeedDefault(EntityID& entity, const int& index);
+
+//Game level
+void EventLoadNextLevel(EntityID& entity, const int& index);

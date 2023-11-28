@@ -33,7 +33,14 @@ bool DebuffSystem::Update()
 				float remainingTime = debuff->m_dots[i].GetTime();
 
 				// Flat hit using the damage and time calculated
-				Combat::HitFlat(entity, stats, remainingTime * effectiveDPS);
+				if (registry.GetComponent<PlayerComponent>(entity) != nullptr)
+				{
+					Combat::HitFlat(entity, stats, remainingTime * effectiveDPS, remainingTime, true);
+				}
+				else
+				{
+					Combat::HitFlat(entity, stats, remainingTime * effectiveDPS);
+				}
 
 				debuff->m_dots[i].AlterModelColor(characterModel, DamageOverTime::DOT_TYPE(i));
 			}

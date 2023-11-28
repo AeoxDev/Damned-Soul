@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define CORRUPTED_HEART_HEALTH_INCREASE (25)
+#define CORRUPTED_HEART_HEALTH_INCREASE (20)
 #define CORRUPTED_HEART_DAMAGE_CONVERT_MOD (0.8f)
 #define CORRUPTED_HEART_DURATION (1.f)
 

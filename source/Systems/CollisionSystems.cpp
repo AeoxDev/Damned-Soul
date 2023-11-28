@@ -8,6 +8,7 @@
 #include "CombatFunctions.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "States\StateManager.h"
+#include "CollisionFunctions.h"
 
 float giSpawnPosX = 0.0f;
 float giSpawnPosZ = 0.0f;
@@ -111,6 +112,12 @@ bool GeometryIndependentSystem::Update()
 		geoCo = registry.GetComponent<GeometryIndependentComponent>(entity);
 	}
 	//Then check the position of all players and enemies:
+	PlayerComponent* player = nullptr;
+	if (stateManager.player.index != -1)
+	{
+		player = registry.GetComponent<PlayerComponent>(stateManager.player);
+
+	}
 	if (geoCo != nullptr)
 	{
 		for (auto entity : View<TransformComponent, HitboxComponent, StatComponent>(registry))
@@ -126,7 +133,10 @@ bool GeometryIndependentSystem::Update()
 				int r = PixelValueOnPosition(geoCo,p);
 				int takeDamage = 0;
 				ProjectileComponent* proj = nullptr;
-
+				if (player != nullptr && r == HAZARD_GATE && player->portalCreated == false)
+				{
+					r = HAZARD_WALL;
+				}
 				switch (r)
 				{
 				case -1:
@@ -150,6 +160,10 @@ bool GeometryIndependentSystem::Update()
 					proj = registry.GetComponent<ProjectileComponent>(entity);
 					if (proj != nullptr)
 					{
+						if (proj->type == eye)
+						{
+							CreateAcidHazard(entity, 0);
+						}
 						registry.DestroyEntity(entity);
 					}
 					{
@@ -347,6 +361,20 @@ bool GeometryIndependentSystem::Update()
 
 					//HazardDamageHelper(entity, 25.f);
 					//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+					break;
+				case HAZARD_GATE:
+				{
+					if (entity.index == stateManager.player.index)
+					{
+						OnCollisionParameters params = { 0 };
+						params.entity2 = stateManager.player;
+						LoadNextLevel(params);
+						player->portalCreated = false;
+					}
+					
+				}
+				
+					
 					break;
 				default:
 					break;

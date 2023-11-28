@@ -7,6 +7,7 @@
 #include "Registry.h"
 #include "Components.h"
 #include "UIButtonFunctions.h"
+#include "Input.h"
 #include <time.h>
 
 void LoadLevel(int level)

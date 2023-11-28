@@ -62,7 +62,7 @@ int main(int argc, char* args[])
 
 		stateManager.EndFrame();
 
-		//MemLib::pdefrag();
+		MemLib::pdefrag();
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

@@ -41,7 +41,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
             //ExplosionMovement(DTid, blockID);
         }
         // 3 = FLAMETHROWER
-        if (meta[blockID.y].pattern == 3)
+        if (meta[blockID.y].pattern == 3 || meta[blockID.y].pattern == 11)
         {
             FlamethrowerMovement(DTid, blockID);
         }
@@ -223,9 +223,9 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     
     if (v0ToParticle_len < middleVector_len)
     {
-        particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 4.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+        particle.position.x = particle.position.x + dirVec.x * (particle.velocity.x * 12.5f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
         particle.position.y = particle.position.y; // +(((float) DTid.x - 127) / 128) * dt;
-        particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 4.f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
+        particle.position.z = particle.position.z + dirVec.y * (particle.velocity.z * 12.5f) * dt * meta[OneHundo_TwoFiveFive].deltaTime;
     }
     else
     {
@@ -236,6 +236,14 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
         particle.size = 0.5f;
     }
 
+    if (meta[blockID.y].pattern == 11) //Ice ice baby
+    {
+        particle.rgb = float3(.0f, .75f, .95f);
+    }
+    else
+    {
+        particle.rgb = float3(1.f, .0f, .0f);
+    }
     outputParticleData[index] = particle;
 }
 
