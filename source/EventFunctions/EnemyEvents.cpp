@@ -107,11 +107,12 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	
 	transComp.mass = transform->mass;
 	registry.AddComponent<TransformComponent>(newMini, transComp); 
-	int soulWorth = 1;
+	int soulWorth = 3;
 
-	if(stateManager.activeLevel == 7)
-		int soulWorth = 3;
-	
+	if (bossBehev->worthLess)
+	{
+		soulWorth = 1;
+	}
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
 
@@ -182,6 +183,7 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 	zacTransform = registry.GetComponent<TransformComponent>(ent);
 	bool zacIndex[5] = { false, false, false, false, false };
 	bool shouldSpawn = false;
+	bool worthless = true;
 	for (auto enemyEntity : View<ZacBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
 	{
 		StatComponent* enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
@@ -190,6 +192,10 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 			ZacBehaviour* zacComponent = registry.GetComponent<ZacBehaviour>(enemyEntity);
 			zacIndex[zacComponent->zacIndex] = true;
 			EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(enemyEntity);
+			if (enemyComp->soulCount == 3)
+			{
+				worthless = false;
+			}
 			enemyComp->soulCount = 0;
 			RemoveEnemy(enemyEntity, 69);
 			shouldSpawn = true;
@@ -199,7 +205,7 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 	if (shouldSpawn)
 	{
 		SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 0, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f,
-			0.f, 0.f, -1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4]);
+			0.f, 0.f, -1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4], worthless);
 	}
 
 
@@ -208,7 +214,6 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 
 void SplitBoss(EntityID& entity, const int& index)
 {
-	float radius = 30.f;
 	PathfindingMap* valueGrid = (PathfindingMap*)malloc(sizeof(PathfindingMap));
 	CalculateGlobalMapValuesImp(valueGrid);
 	TransformComponent* aiTransform = nullptr;

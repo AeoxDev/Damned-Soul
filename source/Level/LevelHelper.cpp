@@ -9,6 +9,110 @@
 #include "UIButtonFunctions.h"
 #include "SDLHandler.h"
 
+#include <iostream>
+#include <fstream>
+
+bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiece) // help function for setupAllEnemies. DO NOT TOUCH
+{
+	if (index == 0) // enemy type
+	{
+		if (infoPiece == "SkeletonWeak")
+		{
+			infoStruct->eType = EnemyType::skeleton;
+		}
+		else if (infoPiece == "ImpWeak")
+		{
+			infoStruct->eType = EnemyType::imp;
+		}
+		else if (infoPiece == "HoundWeak")
+		{
+			infoStruct->eType = EnemyType::hellhound;
+		}
+		else if (infoPiece == "SkeletonStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredSkeleton;
+		}
+		else if (infoPiece == "Eye")
+		{
+			infoStruct->eType = EnemyType::eye;
+		}
+		else if (infoPiece == "Minotaur")
+		{
+			infoStruct->eType = EnemyType::minotaur;
+		}
+		else if (infoPiece == "ImpStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredImp;
+		}
+		else if (infoPiece == "HoundStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredHellhound;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (index == 1) // position x
+	{
+		infoStruct->positionX = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 2) // position z, THIS SHOULD ALWAYS BE THE NEGATIVE VALUE FROM WHAT WE ARE READING
+	{
+		infoStruct->positionZ = std::stof(infoPiece) * (-1); // converts string to float and multiplies with -1 because of reason above
+	}
+	else if (index == 3) // souls
+	{
+		infoStruct->soulValue = std::stoi(infoPiece); // converts string to int
+	}
+	return true;
+}
+
+bool SetupAllEnemies(std::string filePath)
+{
+	std::string name = "EnemyMaps\\";
+	name.append(filePath);
+
+	std::ifstream myFile;
+	myFile.open(name.c_str());
+	std::string line = "";
+	std::string term = "";
+	if (myFile.is_open())
+	{
+		while (std::getline(myFile, line))
+		{
+			ModelTextRead theInfo;
+			int counter = 0; // by format:
+			// 0 = enemyType
+			// 1 = positionX
+			// 2 = positionZ
+			// 3 = soulCount
+			for (auto t : line)
+			{
+				if (t == ',')
+				{
+					// we got the string
+					if (!SetValueForEnemy(&theInfo, counter, term))
+					{
+						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
+					}
+					//reset
+					term = "";
+					counter++;
+				}
+				else
+				{
+					term += t; //add char to string
+				}
+			}
+			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+		}
+	}
+		
+
+
+	return true;
+}
 
 EntityID SetUpStage(StageSetupVariables& stageVars)
 {
@@ -179,7 +283,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , int soulWorth, float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed ,  float scaleX, float scaleY, float scaleZ, float facingX ,
-	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4)
+	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4, bool worthLess)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
@@ -627,6 +731,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+		tempBossComponent->worthLess = worthLess;
 		
 		tempBossComponent->parts[0] = zacIndex0; // this is needed, DO NOT TOUCH
 		tempBossComponent->parts[1] = zacIndex1;

@@ -40,16 +40,29 @@ void LoadLevel1()
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 
-	SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
+	/*SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
-	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);
+	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
+
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -226.0f, 0.f, 83.f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = 0.1f;
+	NormalizeFacing(transform);
+
+
+	if (SetupAllEnemies("LV1Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Enemies");
+	}
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 
 	// LEAVE THE THING ABOVE BE, DO NOT TOUCH
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 
 	
 
@@ -90,5 +103,5 @@ void LoadLevel1()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(cutsceneEnemy, 0.85f+0.3f+0.1f, Stage1IntroScene,CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f+0.3f+0.04f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

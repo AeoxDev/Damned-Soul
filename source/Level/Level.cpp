@@ -20,7 +20,7 @@ void LoadLevel(int level)
 
 	RedrawUI();
 	Camera::ResetCamera();
-
+	SetGodModePortal(false);
 	UnloadEntities(ENT_PERSIST_LOWEST);
 	//Bugfix: Reset current speed to stop sliding during shop.
 	if (stateManager.player.index != -1)

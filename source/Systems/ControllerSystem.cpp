@@ -26,6 +26,11 @@ bool ControllerSystem::Update()
 					ReleaseTimedEvents(entity);
 				}
 				ReloadPlayerNonGlobals();
+				if (stateManager.cutsceneEnemy.index != -1)
+				{
+					registry.DestroyEntity(stateManager.cutsceneEnemy);
+					stateManager.cutsceneEnemy.index = -1;
+				}
 				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 			}
