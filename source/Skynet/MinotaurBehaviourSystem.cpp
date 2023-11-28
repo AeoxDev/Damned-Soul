@@ -311,7 +311,8 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 					mtc->positionY = 0.f;
 
 					//shockwave here
-					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, 1.0f, BossShockwaveEnd, 0, 1);
+					mc->attackStunTimer = 0;
+					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, mc->attackStunDuration, BossShockwaveEnd, 0, 1);
 					mc->jumpCounter++;
 				}
 			}
