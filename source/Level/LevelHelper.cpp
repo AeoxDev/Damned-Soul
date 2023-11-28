@@ -433,7 +433,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			health = 120.f;
+			health = 171.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -452,7 +452,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			health = 800.f;
+			health = 1000.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -460,11 +460,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
-			health = 75.f;
+			health = 101.f;
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			health = 90.f;
+			health = 131.f;
 		}
 		else if (eType == EnemyType::empoweredImp)
 		{
@@ -510,7 +510,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			moveSpeed = 20.f;
+			moveSpeed = 30.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -518,11 +518,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			moveSpeed = 22.5f; // :)
+			moveSpeed = 28.5f; // :)
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
-			moveSpeed = 15.f;
+			moveSpeed = 22.f;
 		}
 
 	}
@@ -542,11 +542,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::imp)
 		{
-			damage = 13.f;
+			damage = 15.f;
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			damage = 15.f;
+			damage = 25.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -554,7 +554,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 30.f;
+			damage = 40.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -562,7 +562,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			damage = 24.f;
+			damage = 26.f;
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
@@ -583,10 +583,16 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.1f;
 		}
-		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
+		else if (eType == EnemyType::skeleton)
 		{
 			//NICLAS WAS HERE
 			attackSpeed = 1.0f;
+			//attackSpeed = 0.5f;
+		}
+		else if (eType == EnemyType::empoweredSkeleton)
+		{
+			//NICLAS WAS HERE
+			attackSpeed = 2.0f;
 			//attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
@@ -600,7 +606,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.25f;
-			float partSpeed = 0.05f; // each alive part makes it this much slower
+			float partSpeed = 0.1f; // each alive part makes it this much slower
 			if (zacIndex0)
 				attackSpeed += partSpeed;
 			if (zacIndex1)
@@ -614,7 +620,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			attackSpeed = 0.8f;
+			attackSpeed = 1.2f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
