@@ -8,6 +8,8 @@
 #include "States\StateManager.h"
 #include "CollisionFunctions.h"
 #include "Level.h"
+#include "Input.h"
+#include "SDLHandler.h"
 
 void CutsceneCreateLinearTransition(EntityID& entity, const int& index)
 {
@@ -64,6 +66,10 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		if (cutscene->mode & Cutscene_Accelerating)
 		{
 			scalar *= scalar;
+		}
+		if (cutscene->mode & Cutscene_Decelerating)
+		{
+			scalar = sqrtf(scalar);
 		}
 		if (cutscene->mode & CutsceneMode::Transition_Position)
 		{
@@ -130,15 +136,34 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
 		if (cutscene->mode & Cutscene_Accelerating)
 			scalar *= scalar;
+		if (cutscene->mode & Cutscene_Decelerating)
+		{
+			scalar = sqrtf(scalar);
+		}
 		float newPosY = posDifY * scalar + cutscene->startPositionY;
 	
+		float facingDifX = cutscene->goalLookAtX - cutscene->startLookAtX;
+		float facingDifY = cutscene->goalLookAtY - cutscene->startLookAtY;
+		float facingDifZ = cutscene->goalLookAtZ - cutscene->startLookAtZ;
+		float newFacingX = facingDifX * scalar + cutscene->startLookAtX;
+		float newFacingY = facingDifY * scalar + cutscene->startLookAtY;
+		float newFacingZ = facingDifZ * scalar + cutscene->startLookAtZ;
+
 		//Set the facing towards the goal
 		if (cutscene->mode & CutsceneMode::Transition_LookAt)
 		{
-			transform->facingX = posDifX;
-			transform->facingY = posDifY;
-			transform->facingZ = posDifZ;
+			transform->facingX = newFacingX;
+			transform->facingY = newFacingY;
+			transform->facingZ = newFacingZ;
 			NormalizeFacing(transform);
+		}
+		else
+		{
+			//Smooth rotation towards mouse
+			float mousePosX = -0.13f + ((float)mouseX / (float)sdl.WIDTH);//Down to 0.0f to 1.0f
+			mousePosX = (mousePosX - 0.5f) * 2.0f;//From -1.0f to 1.0f;
+			
+			SmoothRotationIgnoreTime(transform, mousePosX, -0.33f, 1.0f);
 		}
 
 		//Move the character
@@ -160,6 +185,10 @@ void CutsceneTransition(EntityID& entity, const int& index)
 	{
 		if (cutscene->mode & Cutscene_Accelerating)
 			scalar *= scalar;
+		if (cutscene->mode & Cutscene_Decelerating)
+		{
+			scalar = sqrtf(scalar);
+		}
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		float facingDifX = cutscene->goalLookAtX - cutscene->startLookAtX;
 		float facingDifY = cutscene->goalLookAtY - cutscene->startLookAtY;

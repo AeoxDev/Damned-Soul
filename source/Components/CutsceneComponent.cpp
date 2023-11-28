@@ -631,7 +631,7 @@ void LoopCutscenePlayerFallInPlace(EntityID& entity, const int& index)
 {
 	//Loop every second
 
-	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, CutscenePlayerFallInPlace, nullptr, 1.0f, LoopCutscenePlayerFallInPlace, 0, 2);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, CutscenePlayerFallInPlace, nullptr, 1.0f, LoopCutscenePlayerFallInPlace, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 void CutscenePlayerFallInPlace(EntityID& entity, const int& index)
@@ -643,5 +643,5 @@ void CutscenePlayerFallInPlace(EntityID& entity, const int& index)
 	CutsceneComponent* downwardsFall = registry.AddComponent<CutsceneComponent>(player);
 	downwardsFall->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Cutscene_Character_Fall);
 	CutsceneSetPosition(entity, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, transform->positionY, transform->positionZ);
-	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, 10.0f, EndCutscene, 0, 2);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, 10.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }

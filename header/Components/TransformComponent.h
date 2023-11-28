@@ -27,6 +27,7 @@ struct TransformComponent
 float DistanceBetweenTransforms(TransformComponent* f, TransformComponent* s);
 
 void SmoothRotation(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 10.1f);
+void SmoothRotationIgnoreTime(TransformComponent* ptc, float goalX, float goalZ, float rotationFactor = 10.1f);
 
 //This already takes statcomponent into account
 void TransformDecelerate(EntityID& entity);
