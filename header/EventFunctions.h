@@ -58,6 +58,8 @@ void EnemyBeginAttack(EntityID& entity, const int& index);
 void EnemyEndAttack(EntityID& entity, const int& index);
 void EnemyBecomeStunned(EntityID& entity, const int& index);
 
+void CreateAcidHazard(EntityID& entity, const int& index);
+
 void DogBeginWait(EntityID& entity, const int& index);
 void DogEndWait(EntityID& entity, const int& index);
 

@@ -792,9 +792,7 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	SetHitboxActive(acidHazard, hitboxID);
 	SetHitboxCanDealDamage(acidHazard, hitboxID, true);
 	
-
-	AddTimedEventComponentStart(acidHazard, 5.0f, DestroyAcidHazard);
-	//AddTimedEventComponentStartEnd(acidHazard, 5.0f, DestroyAcidHazard, 5.5f, EndDestroyProjectile, 0, 2);
+	AddTimedEventComponentStartEnd(acidHazard, 5.0f, DestroyAcidHazard, 5.5f, EndDestroyProjectile, 0, 2);//Double destroy hazard for bug fixing.
 }
 
 void BeginDestroyProjectile(EntityID& entity, const int& index)
