@@ -406,8 +406,8 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
         particle.time = 0.f;
     }
 
-    float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float)index); //+ /*0.5f **/ index);
-    float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);
+    float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * meta[blockID.y].positionInfo.x * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float)index); //+ /*0.5f **/ index);
+    float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * meta[blockID.y].positionInfo.x * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);
     
     float dirX = cos((float) localIndex / (float) amount * 15.0f) * 30.f;
     float dirZ = sin((float) localIndex / (float) amount * 15.0f) * 30.f;
