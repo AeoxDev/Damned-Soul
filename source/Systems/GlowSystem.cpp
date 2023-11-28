@@ -27,9 +27,10 @@ bool GlowSystem::Update()
 			{
 				// Prepare for glow pass.
 				Glow::PrepareGlowPass();
-				Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
+				//Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
 				prepped = true;
 			}
+			Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
 			// Draw boneless models.
 			if (trans_comp->offsetX != 0.0f)
 			{
@@ -54,9 +55,10 @@ bool GlowSystem::Update()
 			{
 				// Prepare for glow pass.
 				Glow::PrepareGlowPass();
-				Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
+				//Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
 				prepped = true;
 			}
+			Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
 			// Draw models with skeleton.
 			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 			SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
