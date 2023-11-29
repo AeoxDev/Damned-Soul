@@ -99,7 +99,7 @@ GITexture* GetMapTexture(EntityID& entity)
 }
 
 
-void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID& walls, EntityID& hitbox)
+void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID& gate, EntityID& hitbox)
 {
 	if (giTexture == nullptr)
 	{
@@ -187,8 +187,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	Camera::SetLookAt(GIcomponent->offsetX, smallestY, GIcomponent->offsetZ);//Set to center of stage
 	Camera::SetUp(0.0f, 0.0f, 1.0f);
 	Camera::SetWidth(GIcomponent->width);//Set width (x) of orthogonal based on stage
-	Camera::SetHeight(GIcomponent->height);//Set height (z) of orthogonal based on stage
-	Camera::SetOrthographicDepth(greatestY - smallestY + 8.f);
+	Camera::SetHeight(GIcomponent->height + 10.0f);//Set height (z) of orthogonal based on stage
+	Camera::SetOrthographicDepth(greatestY - smallestY + 18.f);
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	int16_t cameraIdx = Camera::GetCameraBufferIndex();
@@ -269,13 +269,15 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	//Render texture to RTV
 	LOADED_MODELS[model->model].RenderAllSubmeshes();
 
-	//Render walls
-	if (walls.index != -1)
+	
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	//Render hitbox
+	if (hitbox.index != -1)
 	{
-		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(walls);
+		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(hitbox);
 		if (model != nullptr)
 		{
-			GIcomponent->shaderData.idValue = (float)0;
+			GIcomponent->shaderData.idValue = (float)HAZARD_WALL;
 			UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 			SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
@@ -286,13 +288,13 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 		
 	}
 	ClearDepthStencilView(GIcomponent->depthStencil);
-	//Render hitbox
-	if (hitbox.index != -1)
+	//Render gate
+	if (gate.index != -1)
 	{
-		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(hitbox);
+		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(gate);
 		if (model != nullptr)
 		{
-			GIcomponent->shaderData.idValue = (float)0;
+			GIcomponent->shaderData.idValue = (float)StaticHazardType::HAZARD_GATE;
 			UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
 			SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
@@ -300,9 +302,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 			//Render texture to RTV
 			LOADED_MODELS[model->model].RenderAllSubmeshes();
 		}
-		
-	}
 
+	}
 
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;
@@ -535,7 +536,7 @@ GeometryIndependentComponent::~GeometryIndependentComponent()
 int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent* transform)
 {
 	//Calculate size per pixel:
-	GridPosition pixelPos = PositionOnGrid(gi, transform, false);
+	GridPosition pixelPos = PositionOnGrid(gi, transform);
 	//Coordinate2D testPos = GridOnPosition(pixelPos, gi);
 	//Check if pixel in bounds
 	if (pixelPos.x < GI_TEXTURE_DIMENSIONS && pixelPos.x >= 0)
@@ -552,18 +553,12 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent* 
 	return -1;
 }
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent* transform, bool pathfinding)
+GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent* transform, int dimensions)
 {
-	int dimension = GI_TEXTURE_DIMENSIONS;
-	if (pathfinding)
-	{
-		dimension = GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
-	}
-
 	GridPosition toReturn;
 	//Calculate size per pixel:
-	float pixelX = gi->width / dimension;
-	float pixelZ = gi->height / dimension;
+	float pixelX = gi->width / dimensions;
+	float pixelZ = gi->height / dimensions;
 	//Calculate offset:
 	float offX = gi->width * 0.5f - gi->offsetX;
 	float offZ = gi->height * 0.5f + gi->offsetZ;
@@ -580,22 +575,16 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 	return toReturn;
 }
 
-Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, bool pathfinding)
+Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, int dimensions)
 {
-	int dimension = GI_TEXTURE_DIMENSIONS;
-	if (pathfinding)
-	{
-		dimension = GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
-	}
-
 	Coordinate2D toReturn;
 	toReturn.x = (float)gridPos.x + gridPos.fx;
 	toReturn.z = (float)gridPos.z + gridPos.fz;
 	// posx = px * pixelX - offX
 	// posz = -(pz * pixelZ - offZ)
 
-	float pixelX = gi->width / dimension;
-	float pixelZ = gi->height / dimension;
+	float pixelX = gi->width / dimensions;
+	float pixelZ = gi->height / dimensions;
 	float offX = gi->width * 0.5f - gi->offsetX;//In world
 	float offZ = gi->height * 0.5f + gi->offsetZ;//In world
 

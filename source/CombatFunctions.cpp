@@ -11,10 +11,16 @@ void Combat::DamageFlash(EntityID& defender, const float damage)
 	AddTimedEventComponentStartContinuousEnd(defender, 0.f, nullptr, BlinkColor, FLASH_TIME(damage), ResetColor, 0, 5);
 }
 
-void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage)
+void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const float damage, float time, bool isPlayer)
 {
 	// Update health
 	defenderStats->ApplyDamage(damage, false); // Edit later?
+
+	//Play sound when hit by hazard
+	if (time == 1.0f || !isPlayer)
+	{
+		AddTimedEventComponentStartEnd(defender, 0.0f, HurtSound, 0.25f, nullptr, 0, 1);
+	}
 
 	// Update UI
 	RedrawUI();

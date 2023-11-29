@@ -42,6 +42,8 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 	/*mtc->positionX += mtc->facingX * stats->GetSpeed() * GetDeltaTime();
 	mtc->positionZ += mtc->facingZ * stats->GetSpeed() * GetDeltaTime();*/
 	TransformAccelerate(enemy, dirX, dirZ);
+
+	mc->jumpStunTimer += GetDeltaTime();
 }
 
 void IdleBehaviour(EntityID& enemy, MinotaurBehaviour* mc, TransformComponent* mtc, StatComponent* stats, AnimationComponent* enemyAnim)
@@ -120,7 +122,8 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 
 		SmoothRotation(mtc, mc->goalDirectionZ, mc->goalDirectionZ, 40.0f);
 
-		AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, ChargeColorFlash, mc->aimDuration - 0.2f, ResetColor);
+		//AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, ChargeColorFlash, mc->aimDuration - 0.2f, ResetColor);
+		AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->aimDuration - 0.2, ChargeColorFlash);
 	}
 
 	if (mc->aimTimer < mc->aimDuration)
@@ -236,7 +239,8 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 				enemyAnim->aAnimIdx = 1;
 				enemyAnim->aAnimTime = 0.0f;
 
-				AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, BossBlinkBeforeShockwave, mc->jumpDuration * 0.2f, ResetColor);
+				//AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, BossBlinkBeforeShockwave, mc->jumpDuration * 0.2f, ResetColor);
+				AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->jumpDuration * 0.2f, BossBlinkBeforeShockwave);
 				mc->jumping = true;
 			}
 			mc->jumpBuildUpTimer += GetDeltaTime();
@@ -277,7 +281,7 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 						updateGridOnce = true; //illegal grid
 						return;
 					}
-					TransformComponent landingPosition = FindRetreatTile(valueGrid, ptc, 10.f, 20.f); // where to land
+					TransformComponent landingPosition = FindRetreatTile(valueGrid, ptc, 10.f, 35.f); // where to land
 					mc->hasLandingPos = true;
 					mtc->positionX = landingPosition.positionX; //teleport in the air basically
 					mtc->positionZ = landingPosition.positionZ; // happens once
@@ -305,10 +309,14 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 					SetHitboxActive(enemy, 1, true);
 					SetHitboxActive(enemy, 2, true);
 					mtc->positionY = 0.f;
-
+					//ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float speed, int amount, ComputeShaders pattern);
 					//shockwave here
-					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, 1.0f, BossShockwaveEnd, 0, 1);
+					mc->attackStunTimer = 0;
+					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, mc->attackStunDuration, BossShockwaveEnd, 0, 1);
 					mc->jumpCounter++;
+					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 0.5f,0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+					//30.f is what is growthspeed in bossshockwaveexpand
+					
 				}
 			}
 		}

@@ -16,7 +16,7 @@ struct SkeletonBehaviour
 	float attackStunDurationCounter = attackStunDuration;
 	int attackHitboxID = 2;
 
-	float meleeDistance = 4.5f;
+	float meleeDistance = 6.0f;
 
 	//how often pathfinding
 	float updatePathCounter = 1.8f;

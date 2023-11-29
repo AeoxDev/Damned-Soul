@@ -102,6 +102,7 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 
 	}
 }
+
 void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatComponent* playerStats, TransformComponent* ptc, TransformComponent* stc, EntityID& ent, AnimationComponent* animComp)
 {
 	if (sc->attackTimer <= 0.0f)
@@ -264,7 +265,7 @@ bool SkeletonBehaviourSystem::Update()
 			}
 
 			//Pathfinding
-			else if (distance < 50.f) 
+			else if (distance < 80.f) 
 			{
 				
 #ifdef PATH_FINDING_VISUALIZER
@@ -294,12 +295,7 @@ bool SkeletonBehaviourSystem::Update()
 					skeletonComponent->coolVec.clear();
 					skeletonComponent->counterForTest = 0;
 #endif // TEST
-					if (finalPath.size() > 2)
-					{
-						skeletonComponent->fx = finalPath[0].fx;
-						skeletonComponent->fz = finalPath[0].fz;
-						skeletonComponent->followPath = true;
-					}
+				
 					
 #ifdef PATH_FINDING_VISUALIZER
 					for (int p = 0; p < finalPath.size(); p++)
@@ -311,8 +307,10 @@ bool SkeletonBehaviourSystem::Update()
 					}
 #endif // TEST
 					// goal (next node) - current
-					if (finalPath.size() > 2 && skeletonComponent->followPath)
+					if (finalPath.size() > 2)
 					{
+						skeletonComponent->fx = finalPath[0].fx;
+						skeletonComponent->fz = finalPath[0].fz;
 						skeletonComponent->dirX = (float)finalPath[1].x - (float)finalPath[0].x;
 						skeletonComponent->dirZ = -(float)(finalPath[1].z - (float)finalPath[0].z);
 						skeletonComponent->dir2X = (float)finalPath[2].x - (float)finalPath[1].x;
@@ -339,7 +337,7 @@ bool SkeletonBehaviourSystem::Update()
 					coorde.fx = skeletonComponent->fx;
 					coorde.fz = skeletonComponent->fz;
 
-					gridOnPos = GridOnPosition(coorde, ggg, true);
+					gridOnPos = GridOnPosition(coorde, ggg, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
 					doggoT->positionX = gridOnPos.x;
 					doggoT->positionZ = gridOnPos.z;
 

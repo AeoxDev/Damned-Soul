@@ -100,6 +100,12 @@ int main(int argc, char* args[])
 	int numReloads = 0;
 	for (unsigned int i = 0; i < MAIN_MENU_FRAMES_TEST; ++i)
 	{
+		//Because player is no longer created specifically in Level1, we have to make sure they're created every time the test goes back to level 1
+		if (i % 18 == 0)
+		{
+			UIFunctions::MainMenu::Start(nullptr, 0);
+		}
+
 		UIFunctions::Game::LoadNextLevel(nullptr, i);
 		for (size_t j = 0; j < SIMULATED_FRAMES; j++)
 		{
@@ -159,7 +165,7 @@ int main(int argc, char* args[])
 
 		stateManager.EndFrame();
 
-		//MemLib::pdefrag();
+		MemLib::pdefrag();
 	}
 	stateManager.UnloadAll();
 	SDL_Quit();

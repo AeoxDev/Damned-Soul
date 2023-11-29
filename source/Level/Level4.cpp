@@ -35,8 +35,12 @@ void LoadLevel4()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
-	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -103.666f, 0.0f, 66.6f);
-	Stage4IntroScene(tempBoss, 0);
+	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -58.f, 0.0f, 72.f, 6969, 6969.f,
+		6969.f, 6969.f, 6969.f, 6969.f,  2.f,
+		 2.f, 2.f, 0.f,  0.f,  -1.f,  true, true,  true,
+		true, true,  false);
+
+	
 
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 	stc->scaleX = 1.0f;
@@ -62,7 +66,7 @@ void LoadLevel4()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	SetDirectionLight(1.0f, 0.666f, .466f, -1.6f, -3.0f, 1.0f);
+
 	CreatePointLight(stage, 0.65f, 0.55f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, 0.38f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, 0.38f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
@@ -71,4 +75,6 @@ void LoadLevel4()
 	
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(tempBoss, 0.85f + 0.3f + 0.1f, Stage4IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

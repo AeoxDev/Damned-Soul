@@ -20,6 +20,7 @@ struct ModelSharedData
 	float bcmR_temp = 1.0f, bcmG_temp = 1.0f, bcmB_temp = 1.0f;
 	float baseColorAdditiveRed = 0.0f, baseColorAdditiveGreen = 0.0f, baseColorAdditiveBlue = 0.0f;
 	float bcaR_temp = 0.0f, bcaG_temp = 0.0f, bcaB_temp = 0.0f;
+	bool hasOutline = false;
 
 	void ResetTempColor();
 	float GetRedMult() const;

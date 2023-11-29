@@ -318,11 +318,11 @@ bool LuciferBehaviourSystem::Update()
 				for (int i = 0; i < levelOfDamage; i++)
 				{
 					TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ); 
+					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ, 0); 
 					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ);
+					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ, 0);
 					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ);
+					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ, 0);
 				}
 				continue;
 			}
@@ -420,6 +420,8 @@ bool LuciferBehaviourSystem::Update()
 
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
+						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 0.5f, 0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+						//30.f is what is growthspeed in bossshockwaveexpand
 					}
 				}
 			}

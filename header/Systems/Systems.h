@@ -26,6 +26,10 @@ class GlowApplySystem : public System
 {
 	bool Update();
 };
+class OutlineSystem : public System
+{
+	bool Update();
+};
 class OnClickSystem : public System
 {
 	bool Update();
@@ -51,6 +55,10 @@ class GeometryIndependentSystem : public System
 	bool Update();
 };
 class AudioSystem : public System
+{
+	bool Update();
+};
+class StageVoiceLineSystem : public System
 {
 	bool Update();
 };

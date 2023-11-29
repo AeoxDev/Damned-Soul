@@ -189,21 +189,19 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
 {
-	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 
-	if (!sfx || !anim || !stats || !aac || !player)
+	if (!anim || !stats || !aac || !player)
 		return;
-
-	sfx->Play(Player_Attack, Channel_Base);
 
 	//Animations have 1 second default duration and as such we scale the speed of the animation here so it fits the duration we pass in
 	//Duration * X = 1.0f
 	//1.0f / Duration = X
-	float speedDiff = stats->GetAttackSpeed() / aac->duration;
+	float speedDiff = 1.0f / aac->duration; //stats->GetAttackSpeed() instead of 1.0f
 
 	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
 	anim->anim2.aAnimTimeFactor = speedDiff; //Cracked
@@ -333,7 +331,7 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
 	}
-	else
+	else if(animTime >= HITBOX_START_TIME)
 	{
 		float softCollisionRadius = GetHitboxRadius(entity, 1);
 		float hitboxTime = (animTime - HITBOX_START_TIME) / (HITBOX_END_TIME - HITBOX_START_TIME);
@@ -363,6 +361,56 @@ void PlayerDashSound(EntityID& entity, const int& index)
 {
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 	sfx->Play(Player_Dash, Channel_Base);
+}
+
+void HurtSound(EntityID& entity, const int& index)
+{
+	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+	if (enemy != nullptr)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		switch (enemy->type)
+		{
+		case EnemyType::hellhound:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::eye:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::skeleton:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::imp:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Imp_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::minotaur:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Minotaur_Hurt, Channel_Extra);
+			}
+			break;
+		}
+	}
+	else
+	{
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+		if (player != nullptr)
+		{
+			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Base);
+		}
+	}
 }
 
 void PlayerDash(EntityID& entity, const int& index)

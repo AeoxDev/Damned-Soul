@@ -8,37 +8,63 @@
 #include "States\StateManager.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Level.h"
 
 bool ControllerSystem::Update()
 {
 	//Controller for player during play
-	if ((keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[MouseButton::left] == pressed
-		|| mouseButtonPressed[MouseButton::right] == pressed))
+	if ((keyState[SCANCODE_SPACE] == pressed))
 	{
-		if (!(currentStates & InMainMenu) && Camera::InCutscene() && !(currentStates & InCredits) && !(currentStates & InSettings))
+		if (!(currentStates & InMainMenu) && Camera::InCutscene() > 0 && !(currentStates & InCredits) && !(currentStates & InSettings))
 		{
-			for (auto entity : View<TimedEventComponent>(registry))
+			if (Camera::InCutscene() == 1)
 			{
-				ReleaseTimedEvents(entity);
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				//Reset player transform for safety:
+				TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+				PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+				if (player != nullptr)
+				{
+					player->isAttacking = false;//Bugfix to prevent getting stuck doing no attacks.
+				}
+				
+				if (transform != nullptr)
+				{
+					transform->positionY = 0.0f;//Bugfix to prevent player from getting stuck above or under the stage.
+				}
 			}
-			AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-			AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+			else if (Camera::InCutscene() == 2)
+			{
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				LoadLevel(++stateManager.activeLevel);
+			}
 			
 		}
-		if ((currentStates & InMainMenu) == true)
+		
+	}
+	if ((currentStates & InMainMenu) == true && (keyState[SCANCODE_SPACE] == pressed || mouseButtonPressed[left] == pressed))
+	{
+		ReleaseTimedEvents(stateManager.stage);
+
+		AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+		if (keyState[SCANCODE_SPACE] == pressed)
 		{
-			ReleaseTimedEvents(stateManager.stage);
-			
-			AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
-			if (keyState[SCANCODE_SPACE] == pressed)
-			{
-				AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
-				Camera::SetCutsceneMode(false);
-			}
-			else
-			{
-				AddTimedEventComponentStart(stateManager.stage, 0.0f, MainMenuIntroCutscene, 0, 8);
-			}
+			AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
+			Camera::SetCutsceneMode(false);
+		}
+		else
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, MainMenuIntroCutscene, 0, 8);
 		}
 	}
 #ifdef _DEBUG
@@ -329,6 +355,9 @@ bool ControllerSystem::Update()
 			player->timeSinceLastAttack = 0.0f;
 		}
 
+		//Get our sound component so we can play sounds when we attack
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+
 		//Schwing (Now with 50% less carpal tunnel)
 		if (mouseButtonDown[0] == down && player->isAttacking == false)
 		{
@@ -338,6 +367,7 @@ bool ControllerSystem::Update()
 			//Todo (if we get more weapons): Let there be some WeaponComponent that has its own attack chains and animation timings so it doesn't get hard-coded here
 			if (player->attackChainIndex == 0) //First attack in the chain
 			{
+				if (sfx) sfx->Play(Player_Attack1, Channel_Base); //Attack1
 				player->attackChainIndex = 1;
 				attackDuration = 0.5f;
 				//attackDuration = 0.6f;
@@ -346,11 +376,13 @@ bool ControllerSystem::Update()
 			{
 				if (player->attackChainIndex == 1) //Second attack in the chain
 				{
+					if(sfx) sfx->Play(Player_Attack2, Channel_Base); //Attack2
 					player->attackChainIndex = 2;
 					attackDuration = 0.4f;
 				}
 				else //Third and final attack in the chain, resets attackChainIndex
 				{
+					if (sfx) sfx->Play(Player_Attack3, Channel_Base); //Attack3
 					player->attackChainIndex = 0;
 					attackDuration = 0.7f;
 					//attackDuration = 0.8f;
@@ -364,6 +396,19 @@ bool ControllerSystem::Update()
 		}
 		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge && player->isAttacking != true)
 		{
+			for (auto audio : View<AudioEngineComponent>(registry))
+			{
+				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
+				FMOD::Sound* test = nullptr;
+				if (sfx)
+				{
+					audioJungle->channels[sfx->channelIndex[Channel_Base]]->getCurrentSound(&test);
+					if (audioJungle->sounds[PLAYER4] != test)
+					{
+						sfx->Play(Player_AttackHeavyCharge, Channel_Base);
+					}
+				}
+			}
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)
 				stats->SetSpeedMult(0.2f);
@@ -377,10 +422,12 @@ bool ControllerSystem::Update()
 			if (player->currentCharge > 0.0f)
 			{
 				//it's time
+				if (sfx) sfx->Play(Player_HeavyAttack, Channel_Base);
 				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
 				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
+				player->currentCharge = 0.0f;
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack);
 			}
 		}
