@@ -13,6 +13,12 @@ void CreatePortal(EntityID& entity, const int& index)
 	registry.AddComponent<PointOfInterestComponent>(entity);
 	TransformComponent* portalTransform = registry.AddComponent<TransformComponent>(entity);
 	CreatePointLight(entity, 0.0f, 6.0f, 5.0f, 0.0f, 2.0f, -1.0f, 64.0f, 10.0f); 
+	if (stateManager.gate.index != -1)
+	{
+		registry.DestroyEntity(stateManager.gate);
+		stateManager.gate.index = -1;
+	}
+	
 	switch (stateManager.activeLevel)
 	{
 	case 1://Level1

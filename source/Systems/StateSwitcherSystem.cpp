@@ -5,7 +5,35 @@
 #include "EventFunctions.h"
 #include "States\StateManager.h"
 #include "CollisionFunctions.h"
+#include "DeltaTime.h"
 
+void StartPlayerDeath(EntityID& entity, const int& index)
+{
+	AnimationComponent* animComp = registry.GetComponent<AnimationComponent>(entity);
+	if (animComp != nullptr)
+	{
+		animComp->aAnim = ANIMATION_DEATH;
+		animComp->aAnimIdx = 0;
+		animComp->aAnimTime = 0.0f;
+	}
+
+	registry.RemoveComponent<ControllerComponent>(entity);
+}
+
+void PlayPlayerDeath(EntityID& entity, const int& index)
+{
+	AnimationComponent* animComp = registry.GetComponent<AnimationComponent>(entity);
+	if (animComp != nullptr)
+	{
+		animComp->aAnim = ANIMATION_DEATH;
+		animComp->aAnimIdx = 0;
+	}
+}
+
+void EndPlayerDeath(EntityID& entity, const int& index)
+{
+	stateManager.GetCurrentLevel().GameOver();
+}
 
 bool StateSwitcherSystem::Update()
 {
@@ -14,13 +42,14 @@ bool StateSwitcherSystem::Update()
 	// Get player entity stat component
 	if (stateManager.player.index != -1)
 	{
-		playersComp = registry.GetComponent<PlayerComponent>(stateManager.player);
-		StatComponent* statComp = registry.GetComponent<StatComponent>(stateManager.player);
+		EntityID player = stateManager.player;
+		playersComp = registry.GetComponent<PlayerComponent>(player);
+		StatComponent* statComp = registry.GetComponent<StatComponent>(player);
 		if (statComp != nullptr)
 		{
 			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay)
 			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(player);
 				if (sfx != nullptr)
 				{
 					sfx->Play(Player_Death, Channel_Base);
@@ -38,7 +67,8 @@ bool StateSwitcherSystem::Update()
 						break;
 					}
 				}
-				stateManager.GetCurrentLevel().GameOver();
+				//Timed Event for player death animation and state transitioning;
+				AddTimedEventComponentStartContinuousEnd(player, 0.0f, StartPlayerDeath, PlayPlayerDeath, 1.0f, EndPlayerDeath);
 			}
 		}
 	}
