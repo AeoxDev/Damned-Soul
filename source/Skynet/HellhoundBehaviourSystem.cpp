@@ -183,7 +183,11 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 			0.0f, 2.5f, -7.f,
 			2.5f, 1.0f);
 	}
-	//CreatePointLight(dog, 2.0f, 0.40f, 0.1f, 0.0f, 2.5f, -5.0f, 5.0f, 1.3f); //From Zannie and Arian
+
+	//From Zannie and Arian, ask
+	//CreatePointLight(dog, 2.0f, 0.40f, 0.1f, 0.0f, 2.5f, -5.0f, 5.0f, 1.3f);
+
+	//Previous
 	/*CreateSpotLight(dog, 8.0f, 4.0f, 1.0f,
 		0.0f, 1.0f, -0.25f,
 		hc->offsetForward + 1.0f, 1.0f,
