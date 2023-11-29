@@ -407,7 +407,7 @@ void HurtSound(EntityID& entity, const int& index)
 		case EnemyType::lucifer:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
-				sfx->Play(Boss_Hurt, Channel_Extra);
+				//sfx->Play(Boss_Hurt, Channel_Extra);
 			}
 			break;
 		case EnemyType::tempBoss:
