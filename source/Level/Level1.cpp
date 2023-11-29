@@ -46,7 +46,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
 	// For particle testing, don't touch, Arian gets angy.
 	//EntityID particles = registry.CreateEntity();
@@ -111,5 +111,5 @@ void LoadLevel1()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(cutsceneEnemy, 0.85f+0.3f+0.1f, Stage1IntroScene,CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f+0.3f+0.1f, Stage1IntroScene,CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }
