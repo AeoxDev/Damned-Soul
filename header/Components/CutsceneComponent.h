@@ -11,8 +11,10 @@ enum CutsceneMode
 	Cutscene_Camera = 0b100,
 	Cutscene_Linear = 0b1000,
 	Cutscene_Accelerating = 0b10000,
-	Cutscene_Character_Walk = 0b100000,//Walk from point to point
-	Cutscene_Character_Fall = 0b1000000//Fall from point to point
+	Cutscene_Decelerating = 0b100000,
+	Cutscene_Character_Walk = 0b1000000,//Walk from point to point
+	Cutscene_Character_Fall = 0b10000000,//Fall from point to point
+	Cutscene_Character_Idle = 0b100000000,//Fall from point to point
 };
 
 //This component functions as arguments

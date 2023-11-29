@@ -62,7 +62,7 @@ void LoadLevel6()
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
 	
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
-
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
 	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
 
@@ -174,5 +174,5 @@ void LoadLevel6()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

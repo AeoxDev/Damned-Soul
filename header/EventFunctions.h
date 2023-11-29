@@ -102,14 +102,15 @@ void CutsceneCreateLinearTransition(EntityID& entity, const int& index);
 //Do the given cutscene components arguments over time
 void BeginCutscene(EntityID& entity, const int& index);
 void BeginPortalCutscene(EntityID& entity, const int& index);
+void BeginShopCutscene(EntityID& entity, const int& index);
 void CutsceneTransition(EntityID& entity, const int& index);
 void EndCutscene(EntityID& entity, const int& index);
 void MainMenuIntroCutscene(EntityID& entity, const int& index);
 void StageIntroFall(EntityID& entity, const int& index);
-void Stage1IntroScene(EntityID& entity, const int& index);
+void SkeletonIntroScene(EntityID& entity, const int& index);
 void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
-void Stage4IntroScene(EntityID& entity, const int& index);
+void SplitBossIntroScene(EntityID& entity, const int& index);
 
 void CutsceneFallStage1(EntityID& entity, const int& index);
 void CutsceneFallStage(EntityID& entity, const int& index);
@@ -126,3 +127,4 @@ void SetGameSpeedDefault(EntityID& entity, const int& index);
 
 //Game level
 void EventLoadNextLevel(EntityID& entity, const int& index);
+void EventShopLoadNextLevel(EntityID& entity, const int& index);

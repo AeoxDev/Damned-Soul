@@ -53,7 +53,7 @@ void LoadLevel8()
 	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 0);
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::tempBoss, -40.f, 0.f, -45.f);
+	//
 	//SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, 15.f, 0.f, -45.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 1.f, 45.f, 0);
@@ -73,7 +73,7 @@ void LoadLevel8()
 	//SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f, 2);
 	//SetupEnemy(EnemyType::eye, 13.f, 1.f, -12.f, 2);
 	//SetupEnemy(EnemyType::minotaur, 13.f, 1.f, -12.f, 3); 
-	
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::tempBoss, -40.f, 0.f, -45.f);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player
@@ -184,5 +184,5 @@ void LoadLevel8()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

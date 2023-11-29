@@ -1164,10 +1164,13 @@ void ReloadPlayerNonGlobals()
 	MouseComponentAddComponent(stateManager.player);
 
 	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
-	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f,  0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	player->isAttacking = false;
 	player->isDashing = false;
+
+	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+	stats->SetSpeedMult(1.0f);
 }
 
 EntityID RandomPlayerEnemy(EnemyType enemyType) {

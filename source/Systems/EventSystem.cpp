@@ -8,6 +8,8 @@
 #include "States\StateManager.h"
 #include <assert.h>
 
+#define TIMED_EVENT_ARRAY_LIMIT 16
+
 bool ignoreGameSpeed = false;
 
 struct TimedEvent
@@ -29,20 +31,16 @@ struct TimedEvent
 
 struct TimedEventComponent
 {
-	ML_Vector<TimedEvent> timedEvents;
-
-	TimedEventComponent()
-	{
-		timedEvents.Initialize();
-		timedEvents.clear();
-	};
+	//ML_Vector<TimedEvent> timedEvents;
+	TimedEvent timedEvents[TIMED_EVENT_ARRAY_LIMIT] = {0};
+	int size = 0;
 };
 
 int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
 {
 	int amount = 0;
 	//Loop through and check for same function pointer
-	for (unsigned i = 0; i < comp->timedEvents.size(); i++)
+	for (unsigned i = 0; i < comp->size; i++)
 	{
 		if (comp->timedEvents[i].isActive && comp->timedEvents[i].id == id)
 		{
@@ -61,8 +59,13 @@ bool EventSystem::Update()
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
 		auto comp = registry.GetComponent<TimedEventComponent>(entity);
-		for (unsigned i = 0; i < comp->timedEvents.size(); i++)
+		int size = comp->size;
+		for (unsigned i = 0; i < size; i++)
 		{
+			if (size != comp->size)
+			{
+				break;
+			}
 			if (!comp->timedEvents[i].isActive)
 			{
 				continue;
@@ -79,7 +82,7 @@ bool EventSystem::Update()
 			if (comp->timedEvents[i].startFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer)
 			{
 				comp->timedEvents[i].startFunction(comp->timedEvents[i].eventity, i);
-				if (level == stateManager.activeLevel && i < comp->timedEvents.size())
+				if (level == stateManager.activeLevel && i < comp->size)
 				{
 					comp->timedEvents[i].startFunction = nullptr;
 				}
@@ -100,6 +103,10 @@ bool EventSystem::Update()
 			else if (comp->timedEvents[i].endTime < comp->timedEvents[i].timer)
 			{
 				comp->timedEvents[i].isActive = false;
+				if (i == size)
+				{
+					size -= 1;
+				}
 			}
 		}
 		
@@ -116,7 +123,7 @@ int FindAndInit(EntityID& entityID)
 		return -1;
 	}
 	int slot = -1;
-	for (unsigned i = 0; i < tc->timedEvents.size(); i++)
+	for (unsigned i = 0; i < tc->size; i++)
 	{
 		if (tc->timedEvents[i].isActive == false)
 		{
@@ -126,7 +133,8 @@ int FindAndInit(EntityID& entityID)
 	if (slot == -1)
 	{
 		TimedEvent event;
-		slot = (int)tc->timedEvents.push_back(event);
+		slot = (int)tc->size;
+		tc->size += 1;
 	}
 	return slot;
 }
@@ -138,8 +146,6 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 	if (!tc)
 	{
 		tc = registry.AddComponent<TimedEventComponent>(entityID);
-		tc->timedEvents.Initialize();
-		tc->timedEvents.clear();
 	}
 	TimedEvent timedEvent;
 	timedEvent.condition = condition;
@@ -163,8 +169,6 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 	if (!tc)
 	{
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
-		tc->timedEvents.Initialize();
-		tc->timedEvents.clear();
 	}
 	TimedEvent timedEvent;
 	
@@ -190,8 +194,6 @@ int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, vo
 	if (!tc)
 	{
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
-		tc->timedEvents.Initialize();
-		tc->timedEvents.clear();
 	}
 	TimedEvent timedEvent;
 	timedEvent.id = (unsigned long long)startFunction + (unsigned long long)continousFunction;
@@ -217,8 +219,6 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 	if (!tc)
 	{
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
-		tc->timedEvents.Initialize();
-		tc->timedEvents.clear();
 	}
 	
 	TimedEvent timedEvent;
@@ -239,7 +239,7 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 	timedEvent.endFunction = (void(*)(EntityID&, const int&))endFunction;
 	int slot = FindAndInit(eventity);
 	tc->timedEvents[slot] = timedEvent;
-	return tc->timedEvents.size() - 1;
+	return tc->size - 1;
 }
 
 uint32_t GetTimedEventCondition(EntityID& entity, const int& timedEventSlot)
@@ -291,7 +291,7 @@ void CancelTimedEvents(EntityID& entity)
 	if (comp)
 	{
 		//registry.RemoveComponent<TimedEventComponent>(entity);
-		comp->timedEvents.clear();
+		comp = registry.AddComponent<TimedEventComponent>(entity);
 	}
 }
 
@@ -300,16 +300,9 @@ void ReleaseTimedEvents(EntityID& entity)
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
 	if (comp)
 	{
-		comp->timedEvents.clear();
-		comp->timedEvents.~ML_Vector();
 		registry.RemoveComponent<TimedEventComponent>(entity);
 	}
 	
-}
-
-void HardResetTimedEvents(EntityID& entity)
-{
-	//Loop and destroy all existing timed events
 }
 
 void TimedEventIgnoreGamespeed(bool ignore)

@@ -48,22 +48,19 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
-	// For particle testing, don't touch, Arian gets angy.
-	//EntityID particles = registry.CreateEntity();
-	//registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 3000.0f, NO_MOVEMENT);
-	//
-	//TransformComponent tComp;
-	//tComp.positionX = -122.0f;
-	//tComp.positionY = 0.0f;
-	//tComp.positionZ = 61.0f;
-	//registry.AddComponent<TransformComponent>(particles, tComp);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -226.0f, 0.f, 83.f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = 0.1f;
+	NormalizeFacing(transform);
+	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
 
-	SetupEnemy(EnemyType::hellhound, -50.f, 0.f, -10.f);
-	//if (SetupAllEnemies("LV1Enemies.dss") == false)
-	//{
-	//	//something went wrong, could not open file
-	//	assert("Could not read file: LV1Enemies");
-	//}
+
+	if (SetupAllEnemies("LV1Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Enemies");
+	}
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 
@@ -111,5 +108,5 @@ void LoadLevel1()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f+0.3f+0.1f, Stage1IntroScene,CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f+0.3f+0.04f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

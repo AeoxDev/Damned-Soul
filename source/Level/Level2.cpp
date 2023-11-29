@@ -56,7 +56,10 @@ void LoadLevel2()
 	////Enemies to the north:
 	//SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f, 1);
 	//SetupEnemy(EnemyType::skeleton, 28.f, 0.f, 145.f, 1);
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 20.0f, 0.f, 160.0f, 1);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::imp, -237.0f, 0.f, 227.0f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = 0.1f;
 
 	////Enemies in ruins
 	//SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f, 1);
@@ -108,5 +111,5 @@ void LoadLevel2()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, ImpIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.04f, ImpIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }
