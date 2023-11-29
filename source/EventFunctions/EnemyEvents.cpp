@@ -629,7 +629,11 @@ void RemoveEnemy(EntityID& entity, const int& index)
 		}
  		
 	}
-	
+	PlayerComponent* pc = registry.GetComponent<PlayerComponent>(entity);
+	if (pc != nullptr)
+	{
+		registry.RemoveComponent<PlayerComponent>(entity);
+	}
 	// I am inevitable 
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
@@ -661,7 +665,7 @@ void RemoveEnemy(EntityID& entity, const int& index)
 
 	if (entity.index != -1)
 	{
-		registry.DestroyEntity(entity);
+		registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
 	}
 	
 }
@@ -745,8 +749,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = lucifer;
 	}
-	float time = 0.05f * (float)(rand() % 64);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	float time = 0.05f * (float)(rand() % 1024);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }
 
 void DestroyAcidHazard(EntityID& entity, const int& index)

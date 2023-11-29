@@ -194,6 +194,13 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			scalar = sqrtf(scalar);
 		}
+		float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
+		float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
+		float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
+		float newPosX = posDifX * scalar + cutscene->startPositionX;
+		float newPosY = posDifY * scalar + cutscene->startPositionY;
+		float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
+
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		float facingDifX = cutscene->goalLookAtX - cutscene->startLookAtX;
 		float facingDifY = cutscene->goalLookAtY - cutscene->startLookAtY;
@@ -209,6 +216,13 @@ void CutsceneTransition(EntityID& entity, const int& index)
 			transform->facingY = newFacingY;
 			transform->facingZ = newFacingZ;
 			NormalizeFacing(transform);
+		}
+		//Move the character
+		if (cutscene->mode & CutsceneMode::Transition_Position)
+		{
+			transform->positionX = newPosX;
+			transform->positionY = newPosY;
+			transform->positionZ = newPosZ;
 		}
 
 		//Loop the idle animation
