@@ -58,6 +58,10 @@ void RemoveHitbox(EntityID& entity, int hitboxID)
 	// ob0011
 	// ob0101
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{

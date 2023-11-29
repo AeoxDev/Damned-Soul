@@ -56,6 +56,7 @@ void LoadLevel3()
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
 	transform->facingZ = -1.0f;
 	transform->facingX = 0.1f;
+	transform->facingY = 0.0f;
 
 	////Under ribs
 	//SetupEnemy(EnemyType::skeleton, -188.f, 0.f, 24.f, 1);

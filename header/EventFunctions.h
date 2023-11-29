@@ -41,6 +41,7 @@ void CreatePortal(EntityID& entity, const int& index);
 //void EnemyExclusion(EntityID& entity); not needed?
 void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
+void RemoveCutsceneEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
 void BossShockwaveStart(EntityID& entity, const int& index);
 void BossShockwaveExpand(EntityID& entity, const int& index);
@@ -111,6 +112,9 @@ void SkeletonIntroScene(EntityID& entity, const int& index);
 void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
 void SplitBossIntroScene(EntityID& entity, const int& index);
+void EyeIntroScene(EntityID& entity, const int& index);
+void MinotaurIntroScene(EntityID& entity, const int& index);
+void StoredEnemyCutscene(EntityID& entity, const int& index);//Store a cutscene and apply to enemy when relevant.
 
 void CutsceneFallStage1(EntityID& entity, const int& index);
 void CutsceneFallStage(EntityID& entity, const int& index);
