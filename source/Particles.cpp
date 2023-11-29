@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "DeltaTime.h"
 #include "Registry.h"
+#include "Model.h"
 
 PoolPointer<ParticleInputOutput> Particles::m_readBuffer;
 PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
@@ -43,6 +44,8 @@ int Particles::RenderSlot;
 
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
+// Shaders for VFX
+VS_IDX VFX_VS = -1;
 
 TX_IDX flipBookTexture = -1; /// create holder for texture
 TX_IDX flipBookTextureTwo = -1; /// create holder for texture
@@ -125,7 +128,7 @@ void Particles::InitializeParticles()
 
 	MemLib::spop(); // for particles
 
-	startKeeper = CreateConstantBuffer(sizeof(int));
+	startKeeper = CreateConstantBuffer(sizeof(ExtraData));
 
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
@@ -151,6 +154,7 @@ void Particles::InitializeParticles()
 	}
 
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
+	VFX_VS = LoadVertexShader("VFX_VS.cso", PARTICLE);
 	RenderSlot = SetupParticles();
 }
 
@@ -360,10 +364,9 @@ void Particles::FinishVFXPass()
 
 	SetTopology(TRIANGLELIST);
 
-	UnsetConstantBuffer(BIND_GEOMETRY, 1);
 	UnsetConstantBuffer(BIND_VERTEX, 2);
 
-	UnsetShaderResourceView(BIND_VERTEX, 0);
+	UpdateConstantBuffer(startKeeper, &start);
 
 	UnsetRasterizerState();
 
@@ -371,10 +374,14 @@ void Particles::FinishVFXPass()
 	UnsetSamplerState(2); //Unset sampler 
 }
 
-void Particles::UpdateSingularMetadata(int& metadataSlot)
+
+void Particles::UpdateMid(float* meshMid)
 {
-	int start;
-	start = data->metadata[metadataSlot].start;
+	ExtraData start;
+	start.meshMid[0] = meshMid[0];
+	start.meshMid[1] = meshMid[1];
+	start.meshMid[2] = meshMid[2];
+	start.start = 0;
 
 	UnsetConstantBuffer(BIND_VERTEX, 2);
 
@@ -382,6 +389,7 @@ void Particles::UpdateSingularMetadata(int& metadataSlot)
 
 	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 }
+
 
 // -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)

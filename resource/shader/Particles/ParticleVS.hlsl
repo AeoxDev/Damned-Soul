@@ -5,12 +5,6 @@ cbuffer WorldMatrix : register(b0)
     matrix world;
 }
 
-
-cbuffer metadataBuffer : register(b2)
-{
-    int start;
-};
-
 struct VS_OUT
 {
     float4 position : SV_POSITION;

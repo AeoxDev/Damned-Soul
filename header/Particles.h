@@ -30,6 +30,12 @@ struct Particle
 	int particlePatterns;
 };
 
+struct ExtraData
+{
+	float meshMid[3];
+	int start;
+};
+
 struct ParticleMetadata
 {
 	int start = -1; 
@@ -75,15 +81,16 @@ namespace Particles
 	//Calls for D3D11Helper to reset the compute shader and copy the resources of the SRV to vertex buffer
 	void FinishParticleCompute(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to set the shaders and resources requiered for the particle pass
-	/*void PrepareParticlePass(RenderSetupComponent renderStates[8]);*/
+	void PrepareParticlePass(RenderSetupComponent renderStates[8]);
+	void PrepareVFXPass(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
 
 	void PrepareParticlePass(RenderSetupComponent renderStates[8], int metaDataSlot);
 	void FinishParticlePass();
 
+	void UpdateStart(int& metadataSlot);
+	void UpdateMid(float* meshMid);
 	void PrepareVFXPass(RenderSetupComponent renderStates[8], int metaDataSlot);
 	void FinishVFXPass();
-
-	void UpdateSingularMetadata(int& metadataSlot);
 }
 
