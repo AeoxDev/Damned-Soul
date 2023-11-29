@@ -81,7 +81,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health , bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health * 1.5f, bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
