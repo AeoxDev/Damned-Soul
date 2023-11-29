@@ -58,6 +58,8 @@ void EnemyBeginAttack(EntityID& entity, const int& index);
 void EnemyEndAttack(EntityID& entity, const int& index);
 void EnemyBecomeStunned(EntityID& entity, const int& index);
 
+void CreateAcidHazard(EntityID& entity, const int& index);
+
 void DogBeginWait(EntityID& entity, const int& index);
 void DogEndWait(EntityID& entity, const int& index);
 
@@ -108,8 +110,9 @@ void Stage1IntroScene(EntityID& entity, const int& index);
 void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
 void Stage4IntroScene(EntityID& entity, const int& index);
+
 void CutsceneFallStage1(EntityID& entity, const int& index);
-void CutsceneFallStage2(EntityID& entity, const int& index);
+void CutsceneFallStage(EntityID& entity, const int& index);
 void CutscenePlayerFallDown(EntityID& entity, const int& index);
 void LoopCutscenePlayerFallInPlace(EntityID& entity, const int& index);
 void CutscenePlayerFallInPlace(EntityID& entity, const int& index);

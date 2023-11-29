@@ -37,7 +37,10 @@ void LoadLevel4()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
-	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -58.f, 0.0f, 72.f);
+	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -58.f, 0.0f, 72.f, 6969, 6969.f,
+		6969.f, 6969.f, 6969.f, 6969.f,  2.f,
+		 2.f, 2.f, 0.f,  0.f,  -1.f,  true, true,  true,
+		true, true,  false);
 
 	
 

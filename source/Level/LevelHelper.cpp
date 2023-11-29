@@ -9,6 +9,201 @@
 #include "UIButtonFunctions.h"
 #include "SDLHandler.h"
 
+#include <iostream>
+#include <fstream>
+
+bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiece) // help function for setupAllEnemies. DO NOT TOUCH
+{
+	if (index == 0) // enemy type
+	{
+		if (infoPiece == "SkeletonWeak")
+		{
+			infoStruct->eType = EnemyType::skeleton;
+		}
+		else if (infoPiece == "ImpWeak")
+		{
+			infoStruct->eType = EnemyType::imp;
+		}
+		else if (infoPiece == "HoundWeak")
+		{
+			infoStruct->eType = EnemyType::hellhound;
+		}
+		else if (infoPiece == "SkeletonStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredSkeleton;
+		}
+		else if (infoPiece == "Eye")
+		{
+			infoStruct->eType = EnemyType::eye;
+		}
+		else if (infoPiece == "Minotaur")
+		{
+			infoStruct->eType = EnemyType::minotaur;
+		}
+		else if (infoPiece == "ImpStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredImp;
+		}
+		else if (infoPiece == "HoundStrong")
+		{
+			infoStruct->eType = EnemyType::empoweredHellhound;
+		}
+		else if ("SplitBoss")
+		{
+			infoStruct->eType = EnemyType::tempBoss;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (index == 1) // position x
+	{
+		infoStruct->positionX = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 2) // position z, THIS SHOULD ALWAYS BE THE NEGATIVE VALUE FROM WHAT WE ARE READING
+	{
+		infoStruct->positionZ = std::stof(infoPiece) * (-1); // converts string to float and multiplies with -1 because of reason above
+	}
+	else if (index == 3) // souls
+	{
+		infoStruct->soulValue = std::stoi(infoPiece); // converts string to int
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+
+bool SetValueForEnemy(VFXTextRead* infoStruct, int index, std::string infoPiece) // help function for SetupVFXTorches. DO NOT TOUCH
+{
+	if (index == 0) //posX
+	{
+		infoStruct->positionX = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 1) // posY
+	{
+		infoStruct->positionY = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 2) // posz
+	{
+		infoStruct->positionZ = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 3) // red
+	{
+		infoStruct->r = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 4) // green
+	{
+		infoStruct->g = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 5) // blue
+	{
+		infoStruct->b = std::stof(infoPiece); // converts string to float
+	}
+	else
+	{
+		return false; //something went wrong
+	}
+}
+
+bool SetupAllEnemies(std::string filePath)
+{
+	std::string name = "EnemyMaps\\";
+	name.append(filePath);
+
+	std::ifstream myFile;
+	myFile.open(name.c_str());
+	std::string line = "";
+	std::string term = "";
+	if (myFile.is_open())
+	{
+		while (std::getline(myFile, line))
+		{
+			ModelTextRead theInfo;
+			int counter = 0; // by format:
+			// 0 = enemyType
+			// 1 = positionX
+			// 2 = positionZ
+			// 3 = soulCount
+			for (auto t : line)
+			{
+				if (t == ',')
+				{
+					// we got the string
+					if (!SetValueForEnemy(&theInfo, counter, term))
+					{
+						myFile.close();
+						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
+					}
+					//reset
+					term = "";
+					counter++;
+				}
+				else
+				{
+					term += t; //add char to string
+				}
+			}
+			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+		}
+	}
+		
+	myFile.close();
+
+	return true;
+}
+
+bool SetupVFXTorches(std::string filePath)
+{
+	std::string name = "VFX\\";
+	name.append(filePath);
+
+	std::ifstream myFile;
+	myFile.open(name.c_str());
+	std::string line = "";
+	std::string term = "";
+	if (myFile.is_open())
+	{
+		while (std::getline(myFile, line))
+		{
+			VFXTextRead theInfo;
+			int counter = 0; // by format:
+			// 0 = positionX
+			// 1 = positionY
+			// 2 = positionZ
+			// 3 = r
+			// 4 = g
+			// 5 = r
+			for (auto t : line)
+			{
+				if (t == ',')
+				{
+					// we got the string
+					if (!SetValueForEnemy(&theInfo, counter, term))
+					{
+						myFile.close();
+						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
+					}
+					//reset
+					term = "";
+					counter++;
+				}
+				else
+				{
+					term += t; //add char to string
+				}
+			}
+			//SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+		}
+	}
+
+	myFile.close();
+
+	return true;
+}
 
 EntityID SetUpStage(StageSetupVariables& stageVars)
 {
@@ -115,7 +310,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
 	RenderGeometryIndependentCollision(stage, gate, hitbox);
 
-	
+	stateManager.gate = gate;
 	
 #ifndef _DEBUG
 	registry.DestroyEntity(hitbox);
@@ -179,7 +374,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , int soulWorth, float mass ,
 	float health , float moveSpeed , float damage, float attackSpeed ,  float scaleX, float scaleY, float scaleZ, float facingX ,
-	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4)
+	float facingY , float facingZ, bool zacIndex0, bool zacIndex1, bool zacIndex2, bool zacIndex3, bool zacIndex4, bool worthLess)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
@@ -242,7 +437,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			health = 120.f;
+			health = 171.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -261,7 +456,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			health = 800.f;
+			health = 1000.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -269,11 +464,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
-			health = 75.f;
+			health = 101.f;
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			health = 90.f;
+			health = 131.f;
 		}
 		else if (eType == EnemyType::empoweredImp)
 		{
@@ -319,7 +514,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			moveSpeed = 20.f;
+			moveSpeed = 30.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -327,11 +522,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			moveSpeed = 22.5f; // :)
+			moveSpeed = 28.5f; // :)
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
-			moveSpeed = 15.f;
+			moveSpeed = 22.f;
 		}
 
 	}
@@ -351,11 +546,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::imp)
 		{
-			damage = 13.f;
+			damage = 15.f;
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			damage = 15.f;
+			damage = 25.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -363,7 +558,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 30.f;
+			damage = 40.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -371,7 +566,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			damage = 24.f;
+			damage = 26.f;
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
@@ -392,10 +587,16 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.1f;
 		}
-		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
+		else if (eType == EnemyType::skeleton)
 		{
 			//NICLAS WAS HERE
 			attackSpeed = 1.0f;
+			//attackSpeed = 0.5f;
+		}
+		else if (eType == EnemyType::empoweredSkeleton)
+		{
+			//NICLAS WAS HERE
+			attackSpeed = 2.0f;
 			//attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
@@ -409,7 +610,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.25f;
-			float partSpeed = 0.05f; // each alive part makes it this much slower
+			float partSpeed = 0.1f; // each alive part makes it this much slower
 			if (zacIndex0)
 				attackSpeed += partSpeed;
 			if (zacIndex1)
@@ -423,7 +624,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			attackSpeed = 0.8f;
+			attackSpeed = 1.2f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -539,6 +740,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+
+		registry.AddComponent<GlowComponent>(entity, .95f, .5f, .0f);
 	}
 	else if (eType == EnemyType::eye)
 	{
@@ -600,6 +803,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold += 1;
 		}
+
 	}
 	else if (eType == EnemyType::minotaur)
 	{
@@ -627,6 +831,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
 		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+		tempBossComponent->worthLess = worthLess;
 		
 		tempBossComponent->parts[0] = zacIndex0; // this is needed, DO NOT TOUCH
 		tempBossComponent->parts[1] = zacIndex1;
@@ -727,17 +932,19 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 
 		//Hue shift for strongdogs (Darker mult on the red parts, then add blue?)
-		//model->shared.baseColorMultiplicativeRed = 0.3f;
 		model->shared.baseColorMultiplicativeRed = 0.3f;
-		model->shared.baseColorMultiplicativeGreen = 0.7f;
-		model->shared.baseColorMultiplicativeBlue = 0.7f;
-		model->shared.baseColorAdditiveBlue = 0.2f;
+		//model->shared.baseColorMultiplicativeRed = 0.4f;
+		model->shared.baseColorMultiplicativeGreen = 0.65f;
+		//model->shared.baseColorMultiplicativeBlue = 0.7f;
+		//model->shared.baseColorAdditiveBlue = 0.2f;
 
 		//Gotta do the color, not just base, not sure why
 		model->shared.colorMultiplicativeRed = 0.3f;
-		model->shared.colorMultiplicativeGreen = 0.7f;
-		model->shared.colorMultiplicativeBlue = 0.7f;
-		model->shared.colorAdditiveBlue = 0.2f;
+		model->shared.colorMultiplicativeGreen = 0.65f;
+		//model->shared.colorMultiplicativeBlue = 0.7f;
+		//model->shared.colorAdditiveBlue = 0.2f;
+
+		registry.AddComponent<GlowComponent>(entity, .0f, .75f, .95f);
 
 	}
 	else if (eType == EnemyType::empoweredSkeleton)
@@ -756,8 +963,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 
 		//Reduce the red hue of the base color for skelington (reduce green a little bit to make up for the imbalance)
-		model->shared.colorMultiplicativeRed = 0.6f;
-		model->shared.colorMultiplicativeGreen = 0.8f;
+		model->shared.baseColorMultiplicativeRed = 0.6f;
+		model->shared.baseColorMultiplicativeGreen = 0.8f;
 		//model->shared.colorAdditiveBlue = 0.2f;
 
 		model->shared.colorMultiplicativeRed = 0.6f;
@@ -901,6 +1108,9 @@ void LoadPlayerSounds()
 void ReloadPlayerNonGlobals()
 
 {
+	if (registry.GetComponent<PlayerComponent>(stateManager.player) == nullptr)
+		return; //Ain't no way we doing this function if player doesn't exist yet
+
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{
@@ -979,7 +1189,7 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	} while (pixelValue != 1);
 
 	
-	Coordinate2D coords = GridOnPosition(gridPos, geoCo, false);
+	Coordinate2D coords = GridOnPosition(gridPos, geoCo);
 	EntityID enemy = SetupEnemy(enemyType, coords.x, 0.f, coords.z);
 	SetHitboxIsPlayer(enemy, 1, true);
 	registry.AddComponent<PlayerComponent>(enemy);

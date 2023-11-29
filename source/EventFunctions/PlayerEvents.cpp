@@ -198,7 +198,7 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	//Animations have 1 second default duration and as such we scale the speed of the animation here so it fits the duration we pass in
 	//Duration * X = 1.0f
 	//1.0f / Duration = X
-	float speedDiff = stats->GetAttackSpeed() / aac->duration;
+	float speedDiff = 1.0f / aac->duration; //stats->GetAttackSpeed() instead of 1.0f
 
 	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
 	anim->aAnimTimeFactor = speedDiff; //Cracked

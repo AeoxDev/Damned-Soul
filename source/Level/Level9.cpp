@@ -42,21 +42,7 @@ void LoadLevel9()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	/*SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);*/
+
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
 	
 

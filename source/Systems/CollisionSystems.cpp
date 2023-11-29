@@ -160,14 +160,18 @@ bool GeometryIndependentSystem::Update()
 					proj = registry.GetComponent<ProjectileComponent>(entity);
 					if (proj != nullptr)
 					{
+						if (proj->type == eye)
+						{
+							CreateAcidHazard(entity, 0);
+						}
 						registry.DestroyEntity(entity);
 					}
 					{
-						GridPosition pixelPos = PositionOnGrid(geoCo, p, false);
+						GridPosition pixelPos = PositionOnGrid(geoCo, p);
 						TransformComponent lastPos;
 						lastPos.positionX = p->lastPositionX;
 						lastPos.positionZ = p->lastPositionZ;
-						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos, false);
+						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos);
 						//Edge direction
 						if (pixelPos.x >= GI_TEXTURE_DIMENSIONS || pixelPos.x < 0 || pixelPos.z >= GI_TEXTURE_DIMENSIONS || pixelPos.z < 0 ||
 							lastPixelPos.x >= GI_TEXTURE_DIMENSIONS || lastPixelPos.x < 0 || lastPixelPos.z >= GI_TEXTURE_DIMENSIONS || lastPixelPos.z < 0)
@@ -309,11 +313,11 @@ bool GeometryIndependentSystem::Update()
 					if (stat->canWalkOnCrack == false || proj != nullptr)
 					{
 						//Detect edge
-						GridPosition pixelPos = PositionOnGrid(geoCo, p, false);
+						GridPosition pixelPos = PositionOnGrid(geoCo, p);
 						TransformComponent lastPos;
 						lastPos.positionX = p->lastPositionX;
 						lastPos.positionZ = p->lastPositionZ;
-						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos, false);
+						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos);
 						//Edge direction
 						GIFloat2 direction = GetGIadjacentDirections(pixelPos.x, pixelPos.z, HAZARD_CRACK);
 						GIFloat2 lastDirection = GetGIadjacentDirections(lastPixelPos.x, lastPixelPos.z, HAZARD_CRACK);

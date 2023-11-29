@@ -44,19 +44,24 @@ void LoadLevel6()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
-	SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 1);
-	SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 1);
-	SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 1);
-	SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 1);
-	 SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f, 2);
-	SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 1);
-	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f, 2);
-	SetupEnemy(EnemyType::empoweredImp, 35.f, 1.f, 45.f, 1); //  stronger version incoming
-	SetupEnemy(EnemyType::empoweredImp, -25.f, 1.f, -35.f, 1); //  stronger version incoming
-	SetupEnemy(EnemyType::minotaur, -50.f, 1.f, 25.f, 2);
-	SetupEnemy(EnemyType::minotaur, -40.f, 1.f, 25.f, 2);
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
+	 if (SetupAllEnemies("LV6Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV6Enemies");
+	}
+	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 1);
+	// SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f, 2);
+	//SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 1);
+	//SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f, 2);
+	//SetupEnemy(EnemyType::empoweredImp, 35.f, 1.f, 45.f, 1); //  stronger version incoming
+	//SetupEnemy(EnemyType::empoweredImp, -25.f, 1.f, -35.f, 1); //  stronger version incoming
+	//SetupEnemy(EnemyType::minotaur, -50.f, 1.f, 25.f, 2);
+	//SetupEnemy(EnemyType::minotaur, -40.f, 1.f, 25.f, 2);
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
 	
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
@@ -171,5 +176,5 @@ void LoadLevel6()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }
