@@ -16,6 +16,17 @@ void StartPlayerDeath(EntityID& entity, const int& index)
 		animComp->aAnimIdx = 0;
 		animComp->aAnimTime = 0.0f;
 	}
+	BlendAnimationComponent* blendAnimComp = registry.GetComponent<BlendAnimationComponent>(entity);
+	if (blendAnimComp != nullptr)
+	{
+		blendAnimComp->anim1.aAnim = ANIMATION_DEATH;
+		blendAnimComp->anim1.aAnimIdx = 0;
+		blendAnimComp->anim1.aAnimTime = 0.0f;
+
+		blendAnimComp->anim2.aAnim = ANIMATION_DEATH;
+		blendAnimComp->anim2.aAnimIdx = 0;
+		blendAnimComp->anim2.aAnimTime = 0.0f;
+	}
 
 	registry.RemoveComponent<ControllerComponent>(entity);
 }
@@ -27,6 +38,15 @@ void PlayPlayerDeath(EntityID& entity, const int& index)
 	{
 		animComp->aAnim = ANIMATION_DEATH;
 		animComp->aAnimIdx = 0;
+	}
+	BlendAnimationComponent* blendAnimComp = registry.GetComponent<BlendAnimationComponent>(entity);
+	if (blendAnimComp != nullptr)
+	{
+		blendAnimComp->anim1.aAnim = ANIMATION_DEATH;
+		blendAnimComp->anim1.aAnimIdx = 0;
+
+		blendAnimComp->anim2.aAnim = ANIMATION_DEATH;
+		blendAnimComp->anim2.aAnimIdx = 0;
 	}
 }
 
