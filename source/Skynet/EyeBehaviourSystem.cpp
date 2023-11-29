@@ -11,7 +11,8 @@
 #include <random>
 #include <iostream>
 
-#define OBSTACLE_RANGE 5
+//Obstacle range is based on grid dimensions so that changing the grid does not impact the behaviour
+#define OBSTACLE_RANGE (3 * (GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE/128))
 
 void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, ObstacleMap* valueGrid)
 {
@@ -225,6 +226,7 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	//adjust facing based on obstacle avoidance
 	eyeComponent->goalDirectionX += eyeComponent->correcitonDirX;
 	eyeComponent->goalDirectionZ += eyeComponent->correcitonDirZ;
+	Normalize(eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 5.0f);
 
@@ -372,6 +374,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 	if (sqrt((p3.x - startPos.x) * (p3.x - startPos.x) + (p3.z - startPos.z) * (p3.z - startPos.z)) > OBSTACLE_RANGE)
 		addP3 = false;
 
+
 	//are they in the closedlist?
 	for (unsigned int i = 0; i < closedList.size(); ++i)
 	{
@@ -475,10 +478,9 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 
 	GetNeighbours(startPos, startPos, openList, closedList, direction);
 
-	Coordinate2D finalDirection = { 0.0f ,0.0f };
+	Coordinate2D finalDirection = { 0.0f, 0.0f };
 	while (openList.size() > 0)
 	{
-		//are you wall?
 		GridPosition currentTile = openList[0];
 		openList.erase(0);
 
@@ -494,9 +496,9 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 			
 			float distance = Calculate2dDistance((float)currentTile.x, (float)currentTile.z, (float)startPos.x, (float)startPos.z);
 
-			float multiplier = (float)(1 - pow(distance / OBSTACLE_RANGE, 2));
+			float multiplier = (float)(pow(distance / OBSTACLE_RANGE, 2)) * 0.0001f;
 
-			if (cost < 10000) //if tile is an enemy
+  			if (cost < 10000) //if tile is an enemy
 				multiplier *= 0.5f;
 
 			finalDirection.x += pushbackX * multiplier;
@@ -507,7 +509,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 			GetNeighbours(currentTile, startPos, openList, closedList, direction);
 		}
 	}
-	Normalize(finalDirection.x, finalDirection.z);
+	//Normalize(finalDirection.x, finalDirection.z);
 
 	ec->correcitonDirX = finalDirection.x;
   	ec->correcitonDirZ = finalDirection.z;
@@ -589,7 +591,7 @@ bool EyeBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
-			//distance = 10000;
+			distance = 10000;
 
 			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
 			{
