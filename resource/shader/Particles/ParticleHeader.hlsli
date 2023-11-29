@@ -16,6 +16,8 @@ struct Input
     float rotationZ : ROTATIONZ;
     float3 rgb : RGB; // Red Green Blue
     float size : SIZE;
+    int patterns : PATTERNS;
+    int VFXpatterns : VFXPATTERNS;
 };
 
 struct metadata

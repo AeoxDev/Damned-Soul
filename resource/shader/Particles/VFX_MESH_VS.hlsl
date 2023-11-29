@@ -16,7 +16,7 @@ struct VS_OUT
 {
     //float4 position : SV_POSITION;
     //float4 worldPosition : POSITION;
-    //float4 rgb : RGB;
+    //f loat4 rgb : RGB;
     //float rotationZ : ROTATIONZ;
     //float size : SIZE;
     float4 position : SV_POSITION;

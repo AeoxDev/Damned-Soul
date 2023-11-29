@@ -4,8 +4,10 @@ struct GS_OUT
 {
     float4 position : SV_POSITION;
     float4 rgb : RGB;
-    float2 uv : UV_COORDINATES;
+    float2 uv : UV;
     float time : TIME;
+    int patterns : PATTERNS;
+    int VFXpatterns : VFXPATTERNS;
 };
 
 float4 main(GS_OUT gs_in) : SV_Target

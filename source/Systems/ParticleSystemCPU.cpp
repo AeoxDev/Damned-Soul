@@ -15,7 +15,6 @@ bool ParticleSystemCPU::Update()
 	ClearParticles();
 
 
-
 	//Render
 	for (auto pEntity : View<ParticleComponent, TransformComponent>(registry))
 	{
@@ -25,7 +24,7 @@ bool ParticleSystemCPU::Update()
 
 		SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
 
-		if (pComp->metadataSlot >= 0)
+		if (pComp->metadataSlot >= 0 && pComp->)
 		{
 			//Set all the shaders for regular particles
 			Particles::PrepareParticlePass(renderStates);

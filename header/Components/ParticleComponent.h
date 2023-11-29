@@ -32,10 +32,13 @@ struct ParticleComponent
 {
 	int metadataSlot = -1;
 	int groupsRequiered = -1;
+	// indicates if this component uses VFX
+	bool VFX = false;
+	// indicates if this component uses a mesh
 	bool modelUse = false;
 	// The mesh VFX
 	uint64_t model;
-	float meshMiddle[3];
+	float meshOffset[3];
 	
 
 	// -- Functions defined in Particles.cpp --//

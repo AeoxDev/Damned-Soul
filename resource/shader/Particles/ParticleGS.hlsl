@@ -14,6 +14,7 @@ struct GS_IN
     float size : SIZE;
     float time : TIME;
     int patterns : PATTERNS;
+    int VFXpatterns : VFXPATTERNS;
 };
 
 struct GS_OUT
@@ -23,6 +24,7 @@ struct GS_OUT
     float2 uv : UV;
     float time : TIME;
     int patterns : PATTERNS;
+    int VFXpatterns : VFXPATTERNS;
 };
 
 [maxvertexcount(6)]

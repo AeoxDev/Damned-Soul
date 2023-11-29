@@ -14,10 +14,10 @@ struct VS_OUT
     float size : SIZE;
     float time : TIME;
     int patterns : PATTERNS;
+    int VFXpatterns : VFXPATTERNS;
 };
 
 StructuredBuffer<Input> particles : register(t0);
-
 
 VS_OUT main(uint vertexID : SV_VertexID)
 {
