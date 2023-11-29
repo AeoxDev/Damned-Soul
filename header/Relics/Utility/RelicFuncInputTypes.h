@@ -26,6 +26,12 @@ namespace RelicInput
 		void* adressOfStatComonent;
 	};
 
+	struct OnStatCalcInputPlayer
+	{
+		EntityID entity;
+		void* adressOfPlayerComonent;
+	};
+
 	struct OnHitInput
 	{
 		EntityID attacker;
@@ -45,6 +51,7 @@ namespace RelicInput
 		DMG::DAMAGE_TYPE_AND_SOURCE typeSource = DMG::UNDEFINED; // The type and source of damage
 
 		float CollapseDamage();
+		float CollapseNoCap();
 	};
 
 	struct OnHealthUpdate
@@ -61,5 +68,14 @@ namespace RelicInput
 	struct OnTimeUpdate
 	{
 		float timeDelta;
+	};
+
+	struct OnPriceCalculation
+	{
+		float everythingCostMult = 1.f;
+		float relicCostMult = 1.f;
+		float healCostMult = 1.f;
+		float rerollCostMult = 1.f;
+		float upgradeCost = 1.f;
 	};
 }

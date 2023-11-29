@@ -4,9 +4,18 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_BONEMARROW_STRENGTH_INCREASE 15
+#define DEMON_BONEMARROW_STRENGTH_INCREASE (.4f)
 
 EntityID DEMON_BONEMARROW::_OWNER;
+
+const char* DEMON_BONEMARROW::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Increases your Attack Damage by %ld%% of your Base Weapon Damage",
+		PERCENT(DEMON_BONEMARROW_STRENGTH_INCREASE));
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void DEMON_BONEMARROW::Initialize(void* input)
 {	
@@ -33,6 +42,6 @@ void DEMON_BONEMARROW::IncreasePlayerStrength(void* data)
 		// Get stats
 		StatComponent* stats = (StatComponent*)input->adressOfStatComonent;
 		// Increase damage
-		stats->UpdateBonusDamage(+DEMON_BONEMARROW_STRENGTH_INCREASE);
+		stats->UpdateBonusDamage(DEMON_BONEMARROW_STRENGTH_INCREASE * stats->GetBaseDamage());
 	}
 }

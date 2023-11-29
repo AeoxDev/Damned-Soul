@@ -10,7 +10,7 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 	GITexture* mapGrid = giTexture;
 
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
-	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, false); // grid position
+	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform); // grid position
 
 	bool onLava = false;
 	if (playerPos.x >= 0 && playerPos.x < GI_TEXTURE_DIMENSIONS && playerPos.z >= 0 && playerPos.z < GI_TEXTURE_DIMENSIONS)
@@ -50,7 +50,7 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
 			// is it walkable?
-			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
 				map->cost[x][z] += 10000;
@@ -105,7 +105,7 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 		
 		// x z = functionCallFromElliot
 		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
-		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position of an AI, trust the math, we're engineers
 
 		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 		{
@@ -147,19 +147,14 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 }
 
 
-float CalculateEuclideanDistance(int x, int z, Node goal)
-{
-	float dist = (sqrtf((float)(x - goal.x) * (float)(x - goal.x) + (float)(z - goal.z) * (float)(z - goal.z)));
-	return dist;
-}
-
-void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
+void CalculateGlobalMapValuesZac(PathfindingMap* map)
 {
 	GITexture* mapGrid = giTexture;
 
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
 	
 
+	
 
 
 
@@ -167,6 +162,7 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	// 1 = walkable
 	// 2+ = lava
 
+	//PathfindingMap returnMap;
 	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
 	{
 		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
@@ -193,6 +189,121 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 			{
 				map->cost[x][z] += 1;
 			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_LAVA) // is the floor lava?
+			{
+				map->cost[x][z] += 1;
+			}
+		}
+	}
+	float enemyPunish = 20000.f;
+	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
+	{
+		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
+		if (enemyTransformCompenent == nullptr)
+			continue;
+
+		// x z = functionCallFromElliot
+		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position of an AI, trust the math, we're engineers
+
+		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+		{
+			map->cost[pos.x][pos.z] += enemyPunish;
+
+			//RIght column
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x + 1][pos.z + 1] += enemyPunish / 2;
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x + 1][pos.z] += enemyPunish / 2;
+			if (pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && pos.z > 0)
+				map->cost[pos.x + 1][pos.z - 1] += enemyPunish / 2;
+
+			//Middle column
+			if (pos.z > 0)
+				map->cost[pos.x][pos.z - 1] += enemyPunish / 2;
+			if (pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x][pos.z + 1] += enemyPunish / 2;
+
+			//Left column
+
+			if (pos.x > 0 && pos.z > 0)
+				map->cost[pos.x - 1][pos.z - 1] += enemyPunish / 2;
+			if (pos.x > 0)
+				map->cost[pos.x - 1][pos.z] += enemyPunish / 2;
+			if (pos.x > 0 && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+				map->cost[pos.x - 1][pos.z + 1] += enemyPunish / 2;
+		}
+		else
+		{
+			map->cost[0][0] = -69.f;
+			//MemLib::spop();
+			return;// returnMap;
+		}
+	}
+
+	//MemLib::spop();
+	//return returnMap;
+}
+
+float CalculateEuclideanDistanceWorldSpace(float x, float z, Node goal)
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	GridPosition nodePos;
+	nodePos.x = goal.x;
+	nodePos.z = goal.z;
+	nodePos.fx = 0.f;
+	nodePos.fz = 0.f;
+	Coordinate2D world2 = GridOnPosition(nodePos, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+	
+
+
+	float dist = (sqrtf((float)(x - world2.x) * (float)(x - world2.x) + (float)(z - world2.z) * (float)(z - world2.z)));
+	return dist;
+}
+
+
+float CalculateEuclideanDistance(int x, int z, Node goal)
+{
+	float dist = (sqrtf((float)(x - goal.x) * (float)(x - goal.x) + (float)(z - goal.z) * (float)(z - goal.z)));
+	return dist;
+}
+
+void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
+{
+	GITexture* mapGrid = giTexture;
+
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+
+	// 0 = non-walkable 
+	// 1 = walkable
+	// 2+ = lava
+
+	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
+	{
+		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
+		{
+			map->cost[i][j] = 0;
+		}
+	}
+
+	
+
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
+	{
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
+		{
+			// is it walkable?
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
+			{
+				//not walkable, bad number
+				map->cost[x][z] += 10000;
+			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
+			{
+				map->cost[x][z] += 1;
+			}
 			// hound does not care about lava
 		}
 	}
@@ -204,8 +315,8 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 			continue;
 
 		// x z = functionCallFromElliot
-		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
-		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, true); // grid position of an AI, trust the math, we're engineers
+		//GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position of an AI, trust the math, we're engineers
 
 		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
 		{
@@ -222,18 +333,256 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	//return returnMap;
 }
 
-TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform)
+void CalculateGlobalMapValuesImp(PathfindingMap* map)
 {
-	
+	GITexture* mapGrid = giTexture;
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+
+	//initialize grid
+	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
+	{
+		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
+		{
+			map->cost[i][j] = 0;
+		}
+	}
+
+	// 0 = non-walkable 
+	// 1 = walkable
+	// 2+ = lava
+
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
+	{
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
+		{
+			// is it walkable?
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
+			{
+				//not walkable, bad number
+				map->cost[x][z] += 10000;
+			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
+			{
+				map->cost[x][z] += 1;
+			}
+		}
+	}
+
+	// SO YOU DO NOT TELEPORT ON ANOTHER AI
+	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
+	{
+		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
+		if (enemyTransformCompenent == nullptr)
+			continue;
+
+		// x z = functionCallFromElliot
+		//GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position of an AI, trust the math, we're engineers
+
+		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+		{
+			map->cost[pos.x][pos.z] += 10000;
+		}
+		else
+		{
+			map->cost[0][0] = -69.f;
+			return;// returnMap;
+		}
+	}
+}
+
+void CalculateGlobalMapValuesEye(ObstacleMap* map)
+{
+	GITexture* mapGrid = giTexture;
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+
+	//initialize grid
+	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; i++)
+	{
+		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; j++)
+		{
+			map->cost[i][j] = 0;
+		}
+	}
+
+	// 0 = non-walkable 
+	// 1 = walkable
+	// 2+ = lava
+
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE;
+
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; x++)
+	{
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; z++)
+		{
+			// is it walkable?
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_GATE || mapGrid->texture[z * ratio][x * ratio] == -1)
+			{
+				//not walkable, bad number
+				map->cost[x][z] += 10000;
+			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground
+			{
+				map->cost[x][z] += 1;
+			}
+		}
+	}
+
+	// SO YOU DO NOT TELEPORT ON ANOTHER AI
+	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
+	{
+		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
+		if (enemyTransformCompenent == nullptr)
+			continue;
+
+		// x z = functionCallFromElliot
+		//GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE); // grid position of an AI, trust the math, we're engineers
+
+		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE && pos.z < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE)
+		{
+			map->cost[pos.x][pos.z] += 5000;
+		}
+		else
+		{
+			map->cost[0][0] = -69.f;
+			return;// returnMap;
+		}
+	}
+}
+
+void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map)
+{
+	GITexture* mapGrid = giTexture;
 
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
-	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, true); // grid position
 
+
+
+
+
+	// 0 = non-walkable 
+	// 1 = walkable
+	// 2+ = lava
+
+	for (int i = 0; i < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; i++)
+	{
+		for (int j = 0; j < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; j++)
+		{
+			map->cost[i][j] = 0;
+		}
+	}
+
+	float lavaPunish = 6;
+
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+
+	for (int x = 0; x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; x++)
+	{
+		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
+		{
+			// is it walkable?
+			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
+			{
+				//not walkable, bad number
+				map->cost[x][z] += 10000;
+			}
+			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
+			{
+				map->cost[x][z] += 1;
+			}
+			// hound does not care about lava
+		}
+	}
+
+	for (auto enemyEntity : View<EnemyComponent, TransformComponent, StatComponent>(registry))
+	{
+		TransformComponent* enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
+		if (enemyTransformCompenent == nullptr)
+			continue;
+
+		// x z = functionCallFromElliot
+		GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+		GridPosition pos = PositionOnGrid(GIcomponent, enemyTransformCompenent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position of an AI, trust the math, we're engineers
+
+		if (pos.x >= 0 && pos.z >= 0 && pos.x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING && pos.z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING)
+		{
+			map->cost[pos.x][pos.z] += 10000;
+		}
+		else
+		{
+			map->cost[0][0] = -69.f;
+			return;// returnMap;
+		}
+	}
+
+
+	//return returnMap;
+}
+
+
+TransformComponent FindRetreatTile(ObstacleMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange)
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE); // grid position
+	if (aiPos.x > GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE || aiPos.z > GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE ||
+		aiPos.x < 0 || aiPos.z < 0)
+	{
+		return TransformComponent();
+	}
 	int x = 0, z = 0;
 	float distance = 1.f;
-	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
-	while (!(distance > 20.f && distance < 40.f))
+	while (!(distance > minRange && distance < maxRange))
+	{
+		bool legal = false;
+		while (!legal)
+		{
+			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE;
+			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE;
+
+			if (gridValues->cost[x][z] < 10000)
+			{
+				//is legal tile
+				legal = true;
+			}
+		}
+		returnNode.x = x;
+		returnNode.z = z;
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
+	}
+
+
+	GridPosition temp;
+	temp.x = returnNode.x;
+	temp.z = returnNode.z;
+	temp.fx = 0.f;
+	temp.fz = 0.f;
+	Coordinate2D retreatCoord = GridOnPosition(temp, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+	TransformComponent retreatPosition;
+	retreatPosition.positionX = retreatCoord.x;
+	retreatPosition.positionZ = retreatCoord.z;
+
+	return retreatPosition;
+}
+
+TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange)
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position
+	if (aiPos.x > GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING || aiPos.z > GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING ||
+		aiPos.x < 0 || aiPos.z < 0)
+	{
+		return TransformComponent();
+	}
+	int x = 0, z = 0;
+	float distance = 1.f;
+	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	Node returnNode;
+	while (!(distance > minRange && distance < maxRange))
 	{
 		bool legal = false;
 		while (!legal)
@@ -249,7 +598,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistance(aiPos.x, aiPos.z, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
 	}
 	
 	
@@ -258,7 +607,51 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 	temp.z = returnNode.z;
 	temp.fx = 0.f;
 	temp.fz = 0.f;
-	Coordinate2D retreatCoord = GridOnPosition(temp, GIcomponent, true);
+	Coordinate2D retreatCoord = GridOnPosition(temp, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+	TransformComponent retreatPosition;
+	retreatPosition.positionX = retreatCoord.x;
+	retreatPosition.positionZ = retreatCoord.z;
+
+	return retreatPosition;
+}
+
+TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange)
+{
+
+
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
+	GridPosition aiPos = PositionOnGrid(GIcomponent, temporaryTransform, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position
+
+	int x = 0, z = 0;
+	float distance = 1.f;
+	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	Node returnNode;
+	while (!(distance > minRange && distance < maxRange))
+	{
+		bool legal = false;
+		while (!legal)
+		{
+			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+
+			if (gridValues->cost[x][z] == 1)
+			{
+				//is legal tile
+				legal = true;
+			}
+		}
+		returnNode.x = x;
+		returnNode.z = z;
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
+	}
+
+
+	GridPosition temp;
+	temp.x = returnNode.x;
+	temp.z = returnNode.z;
+	temp.fx = 0.f;
+	temp.fz = 0.f;
+	Coordinate2D retreatCoord = GridOnPosition(temp, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
 	TransformComponent retreatPosition;
 	retreatPosition.positionX = retreatCoord.x;
 	retreatPosition.positionZ = retreatCoord.z;
@@ -306,7 +699,6 @@ ML_Vector<Node> TracePath(Node endNode, Node goal, Node nodeMap[GI_TEXTURE_DIMEN
 {
 	ML_Vector<Node> theWay;
 	ML_Vector<Node> theReverseWay; // trust me, we need this. temp
-	
 
 	Node tempNode = endNode;
 
@@ -333,8 +725,8 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponen
 	Node start; 
 	Node goal;
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage); //just need GIcomp
-	GridPosition enemyPos = PositionOnGrid(GIcomponent, enemyTransform, true); // grid position
-	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, true); // grid position
+	GridPosition enemyPos = PositionOnGrid(GIcomponent, enemyTransform, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position
+	GridPosition playerPos = PositionOnGrid(GIcomponent, playerTransform, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING); // grid position
 	GridPosition tempPush; // used for pushing stuff, don't mind this one....but we need it
 
 	
@@ -347,7 +739,7 @@ ML_Vector<Node> CalculateAStarPath(PathfindingMap* gridValues, TransformComponen
 	start.fx = enemyPos.fx;
 	start.fz = enemyPos.fz;
 	
-	float maximumAllowedDistance = CalculateEuclideanDistance(start.x, start.z, goal) * 1.25f;
+	float maximumAllowedDistance = CalculateEuclideanDistance(start.x, start.z, goal) * 2.0f;
 
 
 

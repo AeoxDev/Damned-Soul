@@ -1,13 +1,24 @@
 #include "Relics\Defensive\SoulHealth.h"
 #include "Relics\Utility\RelicInternalHelper.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\SoulRelicHelper.h"
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_HEALTH_SOUL_FACTOR_PLAYER (1.f)
+#define SOUL_HEALTH_SOUL_FACTOR_PLAYER (3.f)
 #define SOUL_HEALTH_SOUL_FACTOR_ENEMY (10.f)
 
 EntityID SOUL_HEALTH::_OWNER;
+
+const char* SOUL_HEALTH::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You gain %.1lf Maximum Health for every soul in your possession, but you lose %ld%% of your current souls (rounded up) at the start of each level",
+		SOUL_HEALTH_SOUL_FACTOR_PLAYER,
+		PERCENT(_SC_FACTOR));
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void SOUL_HEALTH::Initialize(void* input)
 {
@@ -20,8 +31,21 @@ void SOUL_HEALTH::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
+	// Add the consume function
+	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_HEALTH::Consume);
 	// Add the modify health function to the stat calc functions
 	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(SOUL_HEALTH::ModifyHealth);
+}
+
+void SOUL_HEALTH::Consume(void* input)
+{
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(SOUL_HEALTH::_OWNER);
+	if (playerComp && !_SC_IN_SHOP)
+	{
+		int consume = std::ceilf(playerComp->GetSouls() * _SC_FACTOR);
+
+		playerComp->UpdateSouls(-consume);
+	}
 }
 
 void SOUL_HEALTH::ModifyHealth(void* data)

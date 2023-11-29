@@ -12,6 +12,15 @@ float _BACK_SHIELD_COOLDOWN = 0.f;
 
 EntityID BACK_SHIELD::_OWNER;
 
+const char* BACK_SHIELD::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "You are immune to damage dealt by an attack hitting your back up to once every %.1lf seconds", 
+		BACK_SHIELD_COOLDOWN);
+#pragma warning(suppress : 4172)
+	return temp;
+}
+
 void BACK_SHIELD::Initialize(void* input)
 {
 	// Set owner

@@ -9,7 +9,7 @@ enum POI
 	POI_INACTIVE_FOR_X_TIME,//Becomes mode after x seconds
 
 	POI_FORCE, //Force camera to look at this object, disregard all other actives.
-	POI_MOUSE //Special case for mouse cursor
+	POI_MOUSE, //Special case for mouse cursor
 };
 
 struct PointOfInterestComponent

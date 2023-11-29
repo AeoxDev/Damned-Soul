@@ -92,18 +92,24 @@ public:
 			throw std::invalid_argument("Capacity too small! ML_Map.reserve() cannot be called to reduce the capacity of the map!");
 			std::terminate();
 		}
+		else if (m_data.IsNullptr())
+		{
+			m_data = MemLib::palloc(capacity * m_tSize);
+		}
+		else
+		{
+			// Provide a temporary copy of the data
+			std::pair<_tKey, _tVal>* temp = (std::pair<_tKey, _tVal>*)MemLib::spush((m_capacity * (size_t)m_tSize));
+			std::memcpy(temp, &(*m_data), (m_capacity * (size_t)m_tSize));
 
-		// Provide a temporary copy of the data
-		std::pair<_tKey, _tVal>* temp = (std::pair<_tKey, _tVal>*)MemLib::spush((m_capacity * (size_t)m_tSize));
-		std::memcpy(temp, &(*m_data), (m_capacity * (size_t)m_tSize));
+			// Free the old pool pointer and allocate a new one
+			MemLib::pfree(m_data);
+			m_data = MemLib::palloc(capacity * m_tSize);
 
-		// Free the old pool pointer and allocate a new one
-		MemLib::pfree(m_data);
-		m_data = MemLib::palloc(capacity * m_tSize);
-
-		// Copy the data over to the new location and pop the temp from the stack
-		std::memcpy(&(*m_data), temp, (m_capacity * (size_t)m_tSize));
-		MemLib::spop();
+			// Copy the data over to the new location and pop the temp from the stack
+			std::memcpy(&(*m_data), temp, (m_capacity * (size_t)m_tSize));
+			MemLib::spop();
+		}
 
 		// Inform the new capacity
 		return m_capacity = capacity;

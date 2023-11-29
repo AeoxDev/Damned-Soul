@@ -10,17 +10,7 @@
 #include "GameRenderer.h"
 #include "Registry.h"
 #include "EntityFramework.h"
-
 #include "Skynet\BehaviourHelper.h"
-
-HitboxVisualizeVariables hvv;
-
-bool SetupHitboxVisualizer()
-{
-	InitializeBufferAndSRV();
-	CreateShadersLayoutAndRasterState();
-	return true;
-}
 
 int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ)
 {
@@ -47,7 +37,17 @@ int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ)
 	//Look at components to find what bit flags should be used
 	SetCollisionEvent(entity, (int)availableSlot, NoCollision );
 
+	//Visualize hitbox if possible
+#ifdef _DEBUG
+	if (hitboxVisualizerActive[availableSlot])
+	{
+		VisualizeHitbox(entity, availableSlot);
+	}
+#endif // _DEBUG
+
+
 	//Return the chosen slot for the user for further uses.
+	
 	return availableSlot;
 }
 
@@ -232,7 +232,13 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 	collisionComponent->convexFlags[availableSlot].ResetToActive();
 	//Look at components to find what bit flags should be used
 	SetCollisionEvent(entity, (int)availableSlot + SAME_TYPE_HITBOX_LIMIT, NoCollision);
-
+	//Visualize hitbox if possible
+#ifdef _DEBUG
+	if (hitboxVisualizerActive[availableSlot + SAME_TYPE_HITBOX_LIMIT])
+	{
+		VisualizeHitbox(entity, availableSlot +SAME_TYPE_HITBOX_LIMIT);
+	}
+#endif // _DEBUG
 	//Return the chosen slot for the user for further uses.
 	return availableSlot + SAME_TYPE_HITBOX_LIMIT;
 }
@@ -301,194 +307,13 @@ void AddProximityHitboxComponent(EntityID& entity)
 	registry.AddComponent<ProximityHitboxComponent>(entity);
 }
 
-void InitializeBufferAndSRV()
-{
-	hvv.hitboxes.clear();
-	//Loop through the registry, find hitboxComponents, add to a struct and link to a buffer.
-	for (auto entity : View<HitboxComponent>(registry))
-	{
-		HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-
-		for (int i = 0; i < SAME_TYPE_HITBOX_LIMIT; i++)
-		{
-			if (hitbox->circularFlags[i].active != 0)
-			{
-				VisualHitbox vh;
-				vh.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f); //Change color
-				vh.middlePoint = DirectX::XMFLOAT3(hitbox->circleHitbox[i].offsetX, 0.0f, hitbox->circleHitbox[i].offsetZ);
-				vh.radius = hitbox->circleHitbox[i].radius;
-				hvv.hitboxes.push_back(vh);
-			}
-			else if (hitbox->convexFlags[i].active != 0)
-			{
-				VisualHitbox vh;
-				vh.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f); //Change color
-				vh.middlePoint = DirectX::XMFLOAT3(hitbox->convexHitbox[i].centerX, 0.0f, hitbox->convexHitbox[i].centerZ);
-				vh.radius = hitbox->convexHitbox[i].boundingRadius;
-				hvv.hitboxes.push_back(vh);
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
-	//Create the structured buffer description
-	D3D11_BUFFER_DESC buffDesc{};
-	buffDesc.ByteWidth = sizeof(VisualHitbox) * UINT(hvv.hitboxes.size());
-	buffDesc.Usage = D3D11_USAGE_DEFAULT;
-	buffDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	buffDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	buffDesc.StructureByteStride = sizeof(VisualHitbox);
-
-	D3D11_SUBRESOURCE_DATA initialData{};
-	initialData.pSysMem = &hvv.hitboxes[0];
-	initialData.SysMemPitch = 0;
-	initialData.SysMemSlicePitch = 0;
-
-	//Create the SRV description
-	D3D11_SHADER_RESOURCE_VIEW_DESC SRVdesc{};
-	SRVdesc.Format = DXGI_FORMAT_UNKNOWN;
-	SRVdesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-	SRVdesc.Buffer.FirstElement = 0;
-	SRVdesc.Buffer.NumElements = UINT(hvv.hitboxes.size());
-	SRVdesc.Buffer.ElementOffset = 0;
-
-	d3d11Data->device->CreateBuffer(&buffDesc, &initialData, &hvv.hitboxStructuredBuffer);
-	if (hvv.hitboxStructuredBuffer != NULL)
-	{
-		d3d11Data->device->CreateShaderResourceView(hvv.hitboxStructuredBuffer, &SRVdesc, &hvv.hitboxStructuredSRV);
-	}
-}
-
-void UpdateHitboxBuffer( )
-{
-	//Clear previous buffer
-	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
-	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
-
-	InitializeBufferAndSRV();
-}
-
-void DebugRenderHitbox(ID3D11Buffer*& worldMatrix) //ID3D11Buffer*& viewAndProjectionMatrix)
-{
-	//Assuming the backbuffer is bound to the output merger
-	
-	//Clear the input assembly
-	ID3D11Buffer* nullBuffer = nullptr;
-	UINT stride = 0;
-	UINT offset = 0;
-	d3d11Data->deviceContext->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);
-	d3d11Data->deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-	d3d11Data->deviceContext->IASetInputLayout(nullptr);
-
-	//Input assembler
-	d3d11Data->deviceContext->IASetInputLayout(hvv.hitboxInputLayout);
-	d3d11Data->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	d3d11Data->deviceContext->RSSetState(hvv.hitboxWireframeRaster);
-
-	//Vertex Shader
-	d3d11Data->deviceContext->VSSetShader(hvv.vShader, nullptr, 0);
-	d3d11Data->deviceContext->VSSetShaderResources(0, 1, &hvv.hitboxStructuredSRV);
-	//d3d11Data->deviceContext->VSSetConstantBuffers(0, 1, &worldMatrix); //Constant Buffer Filled With World Matrix
-
-	//Geometry Shader
-	d3d11Data->deviceContext->GSSetShader(hvv.gShader, nullptr, 0);
-	d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &worldMatrix); //Technically viewAndProjection
-	//d3d11Data->deviceContext->GSSetConstantBuffers(0, 1, &viewAndProjectionMatrix);
-
-	//Pixel Shader
-	d3d11Data->deviceContext->PSSetShader(hvv.pShader, nullptr, 0);
-
-	//Draw
-	d3d11Data->deviceContext->Draw(UINT(hvv.hitboxes.size()), 0);
-}
-
-void CreateShadersLayoutAndRasterState()
-{
-	//Vertex Shader
-	std::string shaderData;
-	std::ifstream reader;
-	reader.open("../bin/DebugHitboxVertexShader.cso", std::ios::binary | std::ios::ate);
-	assert(reader.is_open());
-
-
-	reader.seekg(0, std::ios::end);
-	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
-	reader.seekg(0, std::ios::beg);
-
-	shaderData.assign((std::istreambuf_iterator<char>(reader)),
-		std::istreambuf_iterator<char>());
-	HRESULT hr = (d3d11Data->device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.vShader));
-	assert(SUCCEEDED(hr));
-	std::string vShaderByteCode = shaderData;
-
-	//Geometry Shader
-	shaderData.clear();
-	reader.close();
-	reader.open("../bin/DebugHitboxGeometryShader.cso", std::ios::binary | std::ios::ate);
-	assert(reader.is_open());
-
-	reader.seekg(0, std::ios::end);
-	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
-	reader.seekg(0, std::ios::beg);
-
-	shaderData.assign((std::istreambuf_iterator<char>(reader)),
-		std::istreambuf_iterator<char>());
-	hr = d3d11Data->device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.gShader);
-	assert(SUCCEEDED(hr));
-
-	//Pixel Shader
-	shaderData.clear();
-	reader.close();
-	reader.open("../bin/DebugHitboxPixelShader.cso", std::ios::binary | std::ios::ate);
-	assert(reader.is_open());
-
-	reader.seekg(0, std::ios::end);
-	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
-	reader.seekg(0, std::ios::beg);
-
-	shaderData.assign((std::istreambuf_iterator<char>(reader)),
-		std::istreambuf_iterator<char>());
-	hr = d3d11Data->device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &hvv.pShader);
-	assert(SUCCEEDED(hr));
-
-	//Input Layout
-	D3D11_INPUT_ELEMENT_DESC inputDesc[1] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-	hr = d3d11Data->device->CreateInputLayout(inputDesc, 1, vShaderByteCode.c_str(), vShaderByteCode.length(), &hvv.hitboxInputLayout);
-	//Array of input descriptions, number of elements, pointer to compiled shader, size of compiled shader, pointer to input-layout.
-	assert(SUCCEEDED(hr));
-
-	//Raster State
-	D3D11_RASTERIZER_DESC rasterDesc{};
-	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
-	rasterDesc.CullMode = D3D11_CULL_NONE;
-	rasterDesc.FrontCounterClockwise = false;
-	d3d11Data->device->CreateRasterizerState(&rasterDesc, &hvv.hitboxWireframeRaster);
-	assert(SUCCEEDED(hr));
-}
-
-void DestroyHitboxVisualizeVariables()
-{
-	//Release COM-objects
-	if (hvv.vShader) hvv.vShader->Release();
-	if (hvv.gShader) hvv.gShader->Release();
-	if (hvv.pShader) hvv.pShader->Release();
-	if (hvv.hitboxInputLayout) hvv.hitboxInputLayout->Release();
-	if (hvv.hitboxWireframeRaster) hvv.hitboxWireframeRaster->Release();
-	if (hvv.hitboxStructuredBuffer) hvv.hitboxStructuredBuffer->Release();
-	if (hvv.hitboxStructuredSRV) hvv.hitboxStructuredSRV->Release();
-	hvv.hitboxes.clear();
-}
-
 void SetHitboxActive(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].active = setFlag;
@@ -503,6 +328,10 @@ void SetHitboxActive(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsStage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isStage = setFlag;
@@ -516,6 +345,10 @@ void SetHitboxIsStage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsWall(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isWall = setFlag;
@@ -529,6 +362,10 @@ void SetHitboxIsWall(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsPlayer(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent *hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isPlayer = setFlag;
@@ -542,6 +379,10 @@ void SetHitboxIsPlayer(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsEnemy(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isEnemy = setFlag;
@@ -555,6 +396,10 @@ void SetHitboxIsEnemy(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isStaticHazard = setFlag;
@@ -568,6 +413,10 @@ void SetHitboxIsStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isDynamicHazard = setFlag;
@@ -581,6 +430,10 @@ void SetHitboxIsDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxIsMoveable(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].isMoveable = setFlag;
@@ -594,6 +447,10 @@ void SetHitboxIsMoveable(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].canTakeDamage = setFlag;
@@ -608,7 +465,11 @@ void SetHitboxCanTakeDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
-	if (!GetHitboxCanDealDamage(entity, hitboxID))
+	if (hitbox == nullptr)
+	{
+		return;
+	}
+	if (!GetHitboxCanDealDamage(entity, hitboxID) && setFlag == true)
 	{
 		ResetAttackTrackerFlags(entity);
 	}
@@ -625,6 +486,10 @@ void SetHitboxCanDealDamage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitStage = setFlag;
@@ -638,6 +503,10 @@ void SetHitboxHitStage(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitWall(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitWall = setFlag;
@@ -651,6 +520,10 @@ void SetHitboxHitWall(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitPlayer(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitPlayer = setFlag;
@@ -664,6 +537,10 @@ void SetHitboxHitPlayer(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitEnemy(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitEnemy = setFlag;
@@ -677,6 +554,10 @@ void SetHitboxHitEnemy(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitStaticHazard = setFlag;
@@ -690,6 +571,10 @@ void SetHitboxHitStaticHazard(EntityID& entity, int hitboxID, bool setFlag)
 void SetHitboxHitDynamicHazard(EntityID& entity, int hitboxID, bool setFlag)
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->circularFlags[hitboxID].hitDynamicHazard = setFlag;
@@ -704,7 +589,8 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
-	int hID = CreateHitbox(entity, radius*0.5f, 0.f, 0.f);
+	TransformComponent* transfor = registry.GetComponent<TransformComponent>(entity);
+	int hID = CreateHitbox(entity, radius*0.2f, 0.f, 0.f);
 	SetCollisionEvent(entity, hID, HardCollision);
 	SetHitboxIsEnemy(entity, hID);
 	SetHitboxHitPlayer(entity, hID);
@@ -737,8 +623,16 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 		break;
 
+	case EnemyType::imp:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.0f, 0.f, radius * 1.0f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+		break;
+
 	case EnemyType::hellhound:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.0f, 0.f, radius * -2.0f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
@@ -760,9 +654,67 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxActive(entity, enemyComp->specialHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
 		break;
+	case EnemyType::minotaur:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 3.f, 0.f, radius * -4.5f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 
+		//Create special hitbox
+		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, 0.f);
+		SetCollisionEvent(entity, enemyComp->specialHitBoxID, ShockWaveAttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
+		//SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
+		break;
+
+	case EnemyType::lucifer:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 3.0f, 0.f, radius * -4.2f);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+
+		//Create special hitbox
+		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f * transfor->scaleX, 0.f, 0.f);
+		SetCollisionEvent(entity, enemyComp->specialHitBoxID, ShockWaveAttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
+		//SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
+		break;
+	case EnemyType::tempBoss:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.f * transfor->scaleX, 0.f, radius * -1.0f * transfor->scaleX);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+
+		//Create special hitbox
+		enemyComp->specialHitBoxID = CreateHitbox(entity, radius * 1.5f * transfor->scaleX, 0.f, 0.f);
+		SetCollisionEvent(entity, enemyComp->specialHitBoxID, ShockWaveAttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
+		//SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
+		break;
+	case EnemyType::zac:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -1.5f * transfor->scaleX);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxIsMoveable(entity, hID, false);
+		SetHitboxIsMoveable(entity, sID, false);
+		break;
 	default:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -1.0f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -2.0f * transfor->scaleX);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
@@ -770,7 +722,9 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 		break;
 	}
+	
 }
+
 
 void SetupLavaCollisionBox(EntityID& entity, float radius)
 {
@@ -789,19 +743,21 @@ void SetupProjectileCollisionBox(EntityID& entity, float radius)
 {
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
-	int hID = CreateHitbox(entity, radius * 0.5f, 0.f, 0.f);
-	SetCollisionEvent(entity, hID, HardCollision);
-	SetHitboxHitPlayer(entity, hID);
-	SetHitboxActive(entity, hID);
-	SetHitboxIsMoveable(entity, hID);
+	//int hID = CreateHitbox(entity, radius * 0.5f, 0.f, 0.f);
+	//SetCollisionEvent(entity, hID, HardCollision);
+	//SetHitboxHitPlayer(entity, hID);
+	//SetHitboxActive(entity, hID);
+	//SetHitboxIsMoveable(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, ProjectileAttackCollision);
 	SetHitboxHitPlayer(entity, sID);
 	SetHitboxActive(entity, sID);
+	SetHitboxIsMoveable(entity, sID);
 	//SetHitboxCanTakeDamage(entity, sID);
 
 	SetHitboxCanDealDamage(entity, sID, true);
+	
 }
 
 bool GetHitboxCanDealDamage(EntityID& entity, int hitboxID)
@@ -831,9 +787,6 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitStage(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
-	
-	SetHitboxCanDealDamage(entity, hID, false);
-	SetHitboxCanTakeDamage(entity, hID, false);
 
 	/*float cornersX[] = { -0.2f, 0.2f, 0.2f, -0.2f };
 	float cornersZ[] = { -4.0f, -4.0f, 2.0f, 2.0f };
@@ -851,31 +804,39 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	SetHitboxHitEnemy(entity, sID);
 	SetHitboxActive(entity, sID);
 	SetHitboxIsMoveable(entity, sID);
-	SetHitboxCanDealDamage(entity, sID, false);
 	SetHitboxCanTakeDamage(entity, sID, true);
 	SetHitboxHitStaticHazard(entity, sID, true);
 	SetHitboxHitStage(entity, sID);
 	playerComp->softHitboxID = sID;
+	VisualizeHitbox(entity, sID);
 
-	playerComp->attackHitboxID = CreateHitbox(entity, radius * 2.f, 0.f, -0.5f);
+	// Attack
+	//playerComp->attackHitboxID = CreateHitbox(entity, radius * 2.f, 0.f, -0.5f);
+	{
+		float cornersX[] = { -.1f,.1f,.1f,-.1f };
+		float cornersZ[] = { -.1f,-.1f,.1f,.1f };
+		int cornerCount = 4;
+		playerComp->attackHitboxID = CreateHitbox(entity, cornerCount, cornersX, cornersZ);
+	}
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);
 	SetHitboxHitEnemy(entity, playerComp->attackHitboxID);
-	SetHitboxActive(entity, playerComp->attackHitboxID);
-	SetHitboxCanTakeDamage(entity, playerComp->attackHitboxID, false);
-	SetHitboxCanDealDamage(entity, playerComp->attackHitboxID, false);
 
-	//dID = 3
-	int dID = CreateHitbox(entity, radius * 2.0f, 0.0f, 0.0f);
-	SetCollisionEvent(entity, dID, DashCollision);
-	SetHitboxHitEnemy(entity, dID);
-	SetHitboxActive(entity, dID);
-	SetHitboxCanTakeDamage(entity, dID, false);
-	SetHitboxCanDealDamage(entity, dID, false);
+	// Dash hitbox
+	playerComp->dashHitboxID = CreateHitbox(entity, radius * 2.0f, 0.0f, 0.0f);
+	SetCollisionEvent(entity, playerComp->dashHitboxID, DashCollision);
+	SetHitboxHitEnemy(entity, playerComp->dashHitboxID);
+	SetHitboxActive(entity, playerComp->dashHitboxID);
+	SetHitboxCanTakeDamage(entity, playerComp->dashHitboxID, false);
+	SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, false);
 }
 
 bool HitboxCanHitGI(EntityID& entity)
 {
 	HitboxComponent* h = registry.GetComponent<HitboxComponent>(entity);
+	if (h == nullptr)
+	{
+		return false;
+	}
 	if ((h->circularFlags[0].isMoveable && h->circularFlags[0].active) || (h->convexFlags[0].isMoveable && h->convexFlags[0].active))
 	{
 		return true;
@@ -887,6 +848,7 @@ void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
 {
 	//Find hitbox
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
 		hitbox->onCircleCollision[hitboxID].CollisionFunction = (void(*)(OnCollisionParameters&))function;
@@ -898,9 +860,25 @@ void SetCollisionEvent(EntityID& entity, int hitboxID, void* function)
 	
 }
 
+ConvexReturnCorners GetHitboxCorners(EntityID& entity, int hitboxID)
+{
+	//Find hitbox
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr || hitboxID < SAME_TYPE_HITBOX_LIMIT)
+	{
+		return { -1, nullptr, nullptr };
+	}
+	else
+	{
+		auto data = hitbox->convexHitbox[hitboxID - SAME_TYPE_HITBOX_LIMIT];
+		return { data.cornerAmount, data.cornerX, data.cornerZ };
+	}
+}
+
 void SetHitboxCorners(EntityID& entity, int hitboxID, int corners, float cornersX[], float cornersZ[])
 {
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+
 	assert(hitboxID >= SAME_TYPE_HITBOX_LIMIT);
 	int slot = hitboxID - SAME_TYPE_HITBOX_LIMIT;
 	//Redo center and bounding radius
@@ -970,6 +948,7 @@ void ResetAttackTrackerFlags(EntityID& entity)
 {
 	//If hitboxID = -1 reset all trackers
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+
 	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
 	{
 		hitbox->hitTracker[i].active = false;
@@ -977,72 +956,21 @@ void ResetAttackTrackerFlags(EntityID& entity)
 }
 
 
-void SetupTestHitbox()
+void RenderGeometryIndependentCollision(EntityID& stageFloor, EntityID& gate, EntityID& hitbox)
 {
-	//Put into scne
-	EntityID player = registry.CreateEntity();
-	AddHitboxComponent(player);
-	int circle = CreateHitbox(  player, 1.0f, 15.0f, 15.0f);
-	SetHitboxIsPlayer(  player, circle);
-	SetHitboxHitEnemy(  player, circle);
-	SetHitboxHitWall(  player, circle);
-	float triangleX[3] = { 0.f, 1.f, 0.5f };
-	float triangleZ[3] = { 0.f, 0.f, 1.f };
-	int triangle = CreateHitbox(  player, 3, triangleX, triangleZ);
-	SetHitboxIsPlayer(  player, triangle);
-	SetHitboxHitEnemy(  player, triangle);
-
-	float convexPentaX[5]{ 0.5f, 1.5f, 1.5f, 1.0f, 0.5f };
-	float convexPentaZ[5]{ -0.5f, -0.5f, .5f, 1.f, .5f };
-
-	EntityID enemy1 =  registry.CreateEntity();
-	AddHitboxComponent(  enemy1);
-	int circle2 = CreateHitbox(  enemy1, 1.0f, -11.0f, 1.0f);
-	SetHitboxIsEnemy(  enemy1, circle2);
-	SetHitboxHitPlayer(  enemy1, circle2);
-	SetHitboxHitWall(  enemy1, circle2);
-	int enemyConvex = CreateHitbox(  enemy1, 5, convexPentaX, convexPentaZ);
-	SetHitboxIsEnemy(  enemy1, enemyConvex);
-	SetHitboxHitPlayer(  enemy1, enemyConvex);
-
-	EntityID wall =  registry.CreateEntity();
-	AddProximityHitboxComponent(  wall);
-	CreateProximityHitbox(  wall);
-	//EntityID enemy2 =  registry.CreateEntity();
-	//AddHitboxComponent( registry, enemy2);
-	//int circle3 = CreateHitbox( registry, enemy2, 1.0f, 2.0f, 2.0f);
-	//SetHitboxIsEnemy( registry, enemy2, circle3);
-	//SetHitboxHitPlayer( registry, enemy2, circle3);
-
-	/*EntityID stage =  registry.CreateEntity();
-	AddGeometryIndependentComponent( registry, stage);
-	GeometryIndependentColliderComponent* GeoIndie =  registry.GetComponent<GeometryIndependentColliderComponent>(stage);
-	SetupGIAll( registry, stage);
-
-	EntityID stageModel =  registry.CreateEntity();
-	 registry.AddComponent<ModelBonelessComponent>(stageModel);
-	ModelBonelessComponent* m =  registry.GetComponent<ModelBonelessComponent>(stageModel);
-	m->model.Load("PlaceholderScene.mdl");
-	RenderGeometryIndependentCollisionToTexture( registry, stage, stageModel);*/
-	
-	//UpdatePhysics( registry);
-}
-
-void RenderGeometryIndependentCollision(EntityID& m)
-{
-	AddGeometryIndependentComponent(m);
-	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(m);
+	AddGeometryIndependentComponent(stageFloor);
+	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stageFloor);
 	//while (true)//Debugging GI
 	//{
-	//	char ctexture[] = "2-1C.png";
-	//	char ltexture[] = "2-1L.png";
-	//	char emptyTexture[] = "";
-	//	AddStaticHazardTexture(m, ctexture, ltexture, emptyTexture);
-	//	RenderGeometryIndependentCollisionToTexture(m);
+	//	//char ctexture[] = "2-1C.png";
+	//	//char ltexture[] = "2-1L.png";
+	//	//char emptyTexture[] = "";
+	//	//AddStaticHazardTexture(m, ctexture, ltexture, emptyTexture);
+	//	RenderGeometryIndependentCollisionToTexture(stageFloor, gate, hitbox);
 	//	Present();
 	//}
 
-	RenderGeometryIndependentCollisionToTexture(m);
-	ReleaseGI(m);
+	RenderGeometryIndependentCollisionToTexture(stageFloor, gate, hitbox);
+	ReleaseGI(stageFloor);
 	return;
 }

@@ -9,6 +9,14 @@
 
 EntityID DASH_ATTACK::_OWNER;
 
+const char* DASH_ATTACK::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Whenever you dash into or through an enemy, you hit them for %ld%% damage", PERCENT(DASH_ATTACK_DAMAGE_MULTIPLIER));
+#pragma warning(suppress : 4172)
+	return temp;
+}
+
 void DASH_ATTACK::Initialize(void* input)
 {
 	// Set owner
@@ -33,6 +41,6 @@ void DASH_ATTACK::DealDamageWhenDashing(void* data)
 	//Halve our damage in calculations when we do the dash relic thing
 	if (input->attacker.index == DASH_ATTACK::_OWNER.index)
 	{
-		input->incMult *= DASH_ATTACK_DAMAGE_MULTIPLIER;
+		input->damage *= DASH_ATTACK_DAMAGE_MULTIPLIER;
 	}
 }

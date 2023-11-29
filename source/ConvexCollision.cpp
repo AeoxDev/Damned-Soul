@@ -2,6 +2,7 @@
 #include "Backend\Collision.h"
 #include "Registry.h"
 #include "Components.h"
+#include <cmath>
 
 bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleID, int convexID)
 {
@@ -103,16 +104,19 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 		(pos2x + RotateOffset(scaling2X * convex->convexHitbox[convexID].centerX, scaling2Z * convex->convexHitbox[convexID].centerZ, convex->offsetXx, convex->offsetXz));
 	convexToCircleZ = (pos1x + RotateOffset(circle->circleHitbox[circleID].offsetZ, circle->circleHitbox[circleID].offsetX, circle->offsetZz, circle->offsetZx)) -
 		(pos2x + RotateOffset(scaling2X * convex->convexHitbox[convexID].centerZ, scaling2Z * convex->convexHitbox[convexID].centerX, convex->offsetZz, convex->offsetZx));
+	
+	float inverseLen = 1.f / std::sqrtf(convexToCircleX * convexToCircleX + convexToCircleZ * convexToCircleZ);
+	
 	if (iShit2)
 	{
 		params.entity1 = entity1;
 		params.entity2 = entity2;
 		params.hitboxID1 = circleID;
 		params.hitboxID2 = convexID + SAME_TYPE_HITBOX_LIMIT;
-		params.normal1X = -convexToCircleX;
-		params.normal1Z = -convexToCircleZ;
-		params.normal2X = convexToCircleX;
-		params.normal2Z = convexToCircleZ;
+		params.normal1X = -convexToCircleX * inverseLen;
+		params.normal1Z = -convexToCircleZ * inverseLen;
+		params.normal2X = convexToCircleX * inverseLen;
+		params.normal2Z = convexToCircleZ * inverseLen;
 		//If circle1 collides with circle2 and has a function:
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
 		circle->onCircleCollision[circleID].CollisionFunction(params);
@@ -123,10 +127,10 @@ bool IsCircularConvexCollision(EntityID& entity1, EntityID& entity2, int circleI
 		params.entity2 = entity1;
 		params.hitboxID1 = convexID + SAME_TYPE_HITBOX_LIMIT;
 		params.hitboxID2 = circleID;
-		params.normal1X = convexToCircleX;
-		params.normal1Z = convexToCircleZ;
-		params.normal2X = -convexToCircleX;
-		params.normal2Z = -convexToCircleZ;
+		params.normal1X = convexToCircleX * inverseLen;
+		params.normal1Z = convexToCircleZ * inverseLen;
+		params.normal2X = -convexToCircleX * inverseLen;
+		params.normal2Z = -convexToCircleZ * inverseLen;
 		//!!!Change normal to make use of lastPos to ensure correct side of circle during collision
 		convex->onConvexCollision[convexID].CollisionFunction(params);
 	}

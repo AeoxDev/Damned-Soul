@@ -24,6 +24,13 @@ private:
 	// Used to alter speed when performing actions such as attacking
 	float m_speedMult = 1.0f;
 
+	//// Dash
+	//// Base dash value
+	//float m_baseDashValue = 2.5f;
+	//// Bonus dash value
+	//float m_bonusDashValue = 0.f;
+
+
 
 //Weapon stats
 	// Damage
@@ -46,7 +53,8 @@ private:
 	// If the entity has bonus stats, used to skip entities in the system
 	bool m_modifiedStats = false;
 public:
-
+	float m_acceleration = 1.0f;//How much of speed to gain over one second
+	float m_baseAcceleration = 1.0f;//How much of speed to gain over one second
 	// for death animation
 	bool performingDeathAnimation = false;
 
@@ -55,9 +63,19 @@ public:
 	float hazardModifier = 1.0f;//Damage/slows and friction from hazards 0.0f or less means not affected.
 	bool baseCanWalkOnCrack = false;//onCrack
 	bool canWalkOnCrack = false;//If the entity can walk on cracks or not.
+	float iceAccelFactor = 0.08f;
+	float iceAnimFactor = 2.5f;
+	float lavaAccelFactor = 0.5f;
+	float lavaAnimFactor = 2.0f;
+	float acidAccelFactor = 0.3f;
+	float acidAnimFactor = 0.5f;
+
 
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
-	{/* m_baseMoveSpeed = m_moveSpeed; */}
+	{/* m_baseMoveSpeed = m_moveSpeed; */
+		m_baseAcceleration = ms;
+		m_acceleration = ms;
+	}
 
 // Metadata
 	// Mark the entity as being modified and having stat bonueses to calculate
@@ -94,12 +112,21 @@ public:
 // Speed
 	// Get the current speed
 	float GetSpeed() const;
+	float GetBaseSpeed() const;
+	float GetBonusSpeed() const;
 	// Update the entity's bonus speed
 	void UpdateBonusSpeed(const float delta);
 	// Set the entity's speed mult
 	void SetSpeedMult(const float mult);
+	
+	//// Get the current dash distance
+	//float GetDashDistance() const;
+	//// Update Bonus Dash
+	//void UpdateBonusDashDistance(const float delta);
 
 // Offensive
+	// Get the base damage of the entity
+	float GetBaseDamage() const;
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage
@@ -124,24 +151,55 @@ struct PlayerComponent
 private:
 	// Set to private since it is important that any update is carried on through UpdateSouls
 	int souls = 0;
+	int totalSouls = 0;
+
+	// Private dash variables
+	int m_remainingDashes = 1;
+	int m_baseDashes = 1;
+	int m_bonusDashes = 0;
+	float m_baseDashValue = 2.5f;
+	float m_bonusDashValue = 0.f;
+	float m_dashCooldown = 1.0f;
+	float m_dashCounter = 0.0f; //When this is 0.0f we can dash, and when we dash it's plus'd by dashCooldown
+
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
+	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
 	bool portalCreated = false;
+	bool isDashing = false;
 
 	//New additions because of player attack chains
 	float timeSinceLastAttack = -1.0f;
 	unsigned int attackChainIndex = 0;
 	bool isAttacking = false;
+	bool hasActivatedHitbox = false;
 
-	
+	//New additions because of player heavy attacks
+	float currentCharge = 0.0f;
+	float maxCharge = 1.0f; 
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
+	int GetTotalSouls() const;
+
+	// Update how much additional dash distance the player get
+	void UpdateBonusDashScaling(const float delta);
+	// Update how many bonus dashes the player has
+	void UpdateBonusDashes(const int delta);
+	// Consume a dash charge if able, and return wether it was succesful
+	bool ConsumeDash();
+	// Reset the number of available dashes
+	void DashCooldown(const float dt);
+	// Get the current dash value
+	float GetDashValue();
+
+	// Zero the player component's bonuses
+	void ZeroBonusStats();
 };
 
 struct ControllerComponent
@@ -172,6 +230,11 @@ struct AttackArgumentComponent
 	float duration = 0.0f;
 };
 
+struct ChargeAttackArgumentComponent
+{
+	float multiplier = 0.0f;
+};
+
 struct CollisionParamsComponent
 {
 	OnCollisionParameters params;
@@ -188,3 +251,8 @@ struct EnemyComponent
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
+
+void SetGodModeFactor(float value);
+float GetGodModeFactor();
+bool GetGodModePortal();
+void SetGodModePortal(bool createPortal);

@@ -32,16 +32,8 @@ bool UIRenderSystem::Update()
 		for (auto entity : View<UIComponent>(registry))
 		{
 			auto uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->DrawAll();
 
-            uiElement->m_BaseImage.Draw();
-
-			for (UIImage image : uiElement->m_Images)
-				image.Draw();
-
-            uiElement->m_BaseText.Draw();
-
-			for (UIText text : uiElement->m_Texts)
-				text.Draw();
 		}
 
         End2dFrame(ui);
@@ -53,16 +45,16 @@ bool UIRenderSystem::Update()
 bool UIHealthSystem::Update()
 {
 	int counter = 0;
-	for (auto entity : View<UIHealthComponent, UIComponent, StatComponent>(registry))
+	for (auto entity : View<UIGameHealthComponent, UIComponent, StatComponent>(registry))
 	{
-		auto health = registry.GetComponent<UIHealthComponent>(entity);
+		auto health = registry.GetComponent<UIGameHealthComponent>(entity);
 		auto uiElement = registry.GetComponent<UIComponent>(entity);
 
 		auto stats = registry.GetComponent<StatComponent>(entity);
-		auto maxHealth = stats->GetMaxHealth();
-		float currentHealth = stats->GetHealth();
+		int64_t maxHealth = stats->GetMaxHealth();
+		int64_t currentHealth = stats->GetHealth();
 
-		float percentageHealth = currentHealth / maxHealth;
+		float percentageHealth = (float)currentHealth / (float)maxHealth;
 
 		health->value = currentHealth;
 		int healthBoundsRight = (int)uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
@@ -71,7 +63,7 @@ bool UIHealthSystem::Update()
 
 		if (entity.index == stateManager.player.index)
 		{
-			uiElement->m_BaseText.SetText(("Health: " + std::to_string((int)health->value)).c_str(), uiElement->m_BaseText.baseUI.GetBounds());
+			uiElement->m_BaseText.SetText(("Health: " + std::to_string(health->value)).c_str(), uiElement->m_BaseText.baseUI.GetBounds());
 			uiElement->m_BaseText.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(),
 				uiElement->m_BaseImage.baseUI.GetRotation(), uiElement->m_BaseImage.baseUI.GetVisibility(), uiElement->m_BaseImage.baseUI.GetOpacity());
 		}
@@ -80,9 +72,9 @@ bool UIHealthSystem::Update()
 #ifdef DEBUG_HP
 			TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 
-			uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.9f - (counter * 0.15f)));
+			uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.75f - (counter * 0.125f)));
 
-			uiElement->m_BaseText.SetText(("Health: " + std::to_string((int)health->value)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+			uiElement->m_BaseText.SetText(("Health: " + std::to_string(health->value)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
 			uiElement->m_BaseText.baseUI.Setup(uiElement->m_Images[0].baseUI.GetPosition(), uiElement->m_Images[0].baseUI.GetScale(),
 				uiElement->m_Images[0].baseUI.GetRotation(), uiElement->m_Images[0].baseUI.GetVisibility(), uiElement->m_Images[0].baseUI.GetOpacity());
 
@@ -124,12 +116,6 @@ bool UIPlayerSoulsSystem::Update()
 	return true;
 }
 
-bool UIRelicsSystem::Update()
-{
-
-    return true;
-}
-
 bool UIShopSystem::Update()
 {
 	if (!(currentStates & State::InShop))
@@ -137,77 +123,31 @@ bool UIShopSystem::Update()
 		for (auto entity : View<UIShopImpComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			
-			uiElement->m_BaseImage.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(false);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(false);
-
+			uiElement->SetAllVisability(false);
 		}
 
 		for (auto entity : View<UIShopTitleImpComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			uiElement->m_BaseImage.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(false);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(false);
+			uiElement->SetAllVisability(false);
 		}
 
-		for (auto entity : View<UIRelicWindowComponent>(registry))
+		for (auto entity : View<UIShopRelicComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			uiElement->m_BaseImage.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(false);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(false);
+			uiElement->SetAllVisability(false);
 		}
 
-		for (auto entity : View<UIRerollComponent>(registry))
+		for (auto entity : View<UIShopRerollComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			uiElement->m_BaseImage.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(false);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(false);
+			uiElement->SetAllVisability(false);
 		}
 
 		for (auto entity : View<UIShopButtonComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			uiElement->m_BaseImage.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(false);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(false);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(false);
+			uiElement->SetAllVisability(false);
 		}
 	}
 	else
@@ -215,34 +155,18 @@ bool UIShopSystem::Update()
 		for (auto entity : View<UIShopImpComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			//uiElement->m_BaseImage.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(true);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(true);
+			uiElement->SetAllVisability(true);
+			//uiElement->m_BaseImage.baseUI.SetVisibility(false);
 		}
 
 		for (auto entity : View<UIShopTitleImpComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			//uiElement->m_BaseImage.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(true);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(true);
+			uiElement->SetAllVisability(true);
+			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 		}
 
-		for (auto entity : View<UIRelicWindowComponent>(registry))
+		for (auto entity : View<UIShopRelicComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 
@@ -257,34 +181,16 @@ bool UIShopSystem::Update()
 				uiElement->m_Texts[i].baseUI.SetVisibility(true);
 		}
 
-		for (auto entity : View<UIRerollComponent>(registry))
+		for (auto entity : View<UIShopRerollComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			uiElement->m_BaseImage.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(true);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(true);
+			uiElement->SetAllVisability(true);
 		}
 
 		for (auto entity : View<UIShopButtonComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-
-			uiElement->m_BaseImage.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Images.size(); i++)
-				uiElement->m_Images[i].baseUI.SetVisibility(true);
-
-			uiElement->m_BaseText.baseUI.SetVisibility(true);
-
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-				uiElement->m_Texts[i].baseUI.SetVisibility(true);
+			uiElement->SetAllVisability(true);
 		}
 	}
 
@@ -295,14 +201,12 @@ bool UIShopSystem::Update()
 bool UIRunTime::Update()
 {
 
-	for (auto entity : View<UIRunTimeComponent, UIComponent>(registry))
+	for (auto entity : View<UIGameTimeComponent, UIComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIRunTimeComponent* runTime = registry.GetComponent<UIRunTimeComponent>(entity);
-
-		runTime->value = GetSeconds();
-
-		uiElement->m_BaseText.SetText(("Time: " + std::to_string(runTime->value)).c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
+		ML_String clock = GetDigitalMinuteClock();
+		uiElement->m_BaseText.SetText(clock.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 	return true;
 }

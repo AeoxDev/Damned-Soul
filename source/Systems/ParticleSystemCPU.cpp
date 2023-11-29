@@ -14,18 +14,24 @@ bool ParticleSystemCPU::Update()
 	ClearParticles();
 
 	//Set all the shaders
-	Particles::PrepareParticlePass(renderStates);
+	/*Particles::PrepareParticlePass(renderStates);*/
+
+	
 	//Render
 	for (auto pEntity : View<ParticleComponent, TransformComponent>(registry))
 	{
 		TransformComponent* tComp = registry.GetComponent<TransformComponent>(pEntity);
 		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
 
+		Particles::PrepareParticlePass(renderStates, pComp->metadataSlot);
+
+		Particles::UpdateSingularMetadata(pComp->metadataSlot);
+
 		SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
 
 		if (pComp->metadataSlot >= 0)
 		{
-			RenderOffset(THREADS_PER_GROUP, pComp->metadataSlot * THREADS_PER_GROUP);
+			RenderOffset((Particles::GetMetadataAtIndex(pComp->metadataSlot).end - Particles::GetMetadataAtIndex(pComp->metadataSlot).start),0);
 		}
 	}
 	Particles::FinishParticlePass();

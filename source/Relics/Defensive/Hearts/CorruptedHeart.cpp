@@ -4,20 +4,22 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define CORRUPTED_HEART_HEALTH_INCREASE (40)
+#define CORRUPTED_HEART_HEALTH_INCREASE (20)
+#define CORRUPTED_HEART_DAMAGE_CONVERT_MOD (0.8f)
+#define CORRUPTED_HEART_DURATION (1.f)
 
 EntityID CORRUPTED_HEART::_OWNER;
 
-//char* CORRUPTED_HEART::GetDescription()
-//{
-//	static ML_String desc;
-//	if (0 == desc.length())
-//	{
-//		// Fill in the description
-//		desc.append("Increases your Maximum Health by ");
-//		desc.append(CORRUPTED_HEART_HEALTH_INCREASE);
-//	}
-//}
+const char* CORRUPTED_HEART::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Increases your health by %ld and converts %ld%% of the immediate damage you would normally take as Damage over Time over the course of %.1lf seconds instead",
+		CORRUPTED_HEART_HEALTH_INCREASE,
+		100 - PERCENT(CORRUPTED_HEART_DAMAGE_CONVERT_MOD),
+		CORRUPTED_HEART_DURATION);
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void CORRUPTED_HEART::Initialize(void* input)
 {
@@ -31,8 +33,51 @@ void CORRUPTED_HEART::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
+	// Reduce instant damage ...
+	(*_RelicFunctions)[FUNC_ON_DAMAGE_CALC].push_back(CORRUPTED_HEART::DamageReduction);
+
+	// ... and take it over time instead
+	(*_RelicFunctions)[FUNC_ON_DAMAGE_APPLY].push_back(CORRUPTED_HEART::ApplyDot);
+
 	// Add it to the list of On Obtain functions
 	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(CORRUPTED_HEART::IncreaseHealth);
+}
+
+void CORRUPTED_HEART::DamageReduction(void* data)
+{
+	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
+
+	// If the damage is instant, reduce it
+	if ((input->defender.index == CORRUPTED_HEART::_OWNER.index) && (RelicInput::DMG::INSTANT & input->typeSource))
+	{
+		input->decMult *= CORRUPTED_HEART_DAMAGE_CONVERT_MOD;
+	}
+}
+
+void CORRUPTED_HEART::ApplyDot(void* data)
+{
+	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
+
+	// If instant damage was taken, potentially apply a new dot equal to the portion shipped off
+	if ((input->defender.index == CORRUPTED_HEART::_OWNER.index) && (RelicInput::DMG::INSTANT & input->typeSource))
+	{
+		// The damage over time to apply
+		DamageOverTime newDoT
+		(
+			((1.f - CORRUPTED_HEART_DAMAGE_CONVERT_MOD) * input->damage) / CORRUPTED_HEART_DURATION,
+			CORRUPTED_HEART_DURATION
+		);
+
+		DebuffComponent* debuff = registry.GetComponent<DebuffComponent>(input->defender);
+		if (nullptr == debuff)
+		{
+			registry.AddComponent<DebuffComponent>(input->defender, DamageOverTime::POISON, newDoT);
+		}
+		else if (debuff->m_dots[DamageOverTime::POISON].LessThan(newDoT))
+		{
+			debuff->m_dots[DamageOverTime::POISON] = newDoT;
+		}
+	}
 }
 
 void CORRUPTED_HEART::IncreaseHealth(void* data)

@@ -14,8 +14,22 @@
 
 void LoadLevel3()
 {
-	EntityID stage = registry.CreateEntity();
+	float redAdd = 0.1f;
+	float greenAdd = 0.0f;
+	float blueAdd = 0.0f;
+	float redMult = 1.4f;
+	float greenMult = 1.2f;
+	float blueMult = 0.8f;
 
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 3;
+	EntityID stage = SetUpStage(stageVars);
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -24,111 +38,82 @@ void LoadLevel3()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::skeleton, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -50.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::skeleton, -40.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::skeleton, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::hellhound, 45.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::hellhound, -35.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::hellhound, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
-	//22 souls + 18 souls level 1,2 = 40 souls total before boss
-
-	float redAdd = 0.0f;
-	float greenAdd = 0.0f;
-	float blueAdd = 0.1f;
-	float redMult = 1.2f;
-	float greenMult = 1.0f;
-	float blueMult = 1.4f;
-
-	ModelBonelessComponent* stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
-	stageModel->colorMultiplicativeRed = redMult;
-	stageModel->colorMultiplicativeGreen = greenMult;
-	stageModel->colorMultiplicativeBlue = blueMult;
-	stageModel->colorAdditiveBlue = blueAdd;
-	
-	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
-
-	// Stage (Default)
-	registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
-
 	//Player
+	//SetPlayerPosition(0.0, 0.0, 30.0f);
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
+
+	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
+	if (SetupAllEnemies("LV3Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV3Enemies");
+	}
+	////Upper right corner:
+	//SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f, 1);
+	//SetupEnemy(EnemyType::imp, -40.f, 0.f, 103.f, 1);
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -13.f, 0.f, 80.f, 1);
+
+	////Under ribs
+	//SetupEnemy(EnemyType::skeleton, -188.f, 0.f, 24.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -181.f, 0.f, 33.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -194.f, 0.f, 13.f, 0);
+	//SetupEnemy(EnemyType::imp, -202.f, 0.f, 39.f, 1);
+
+	////North of big bone 
+	//SetupEnemy(EnemyType::hellhound, -144.0f, 0.f, 168.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -150.f, 0.f, 199.f, 0);
+	//SetupEnemy(EnemyType::imp, -184.f, 0.f, 166.f, 1);
+	//SetupEnemy(EnemyType::imp, -162.f, 0.f, 154.f, 1);
+
+	////Doggo to guard the gate
+	//SetupEnemy(EnemyType::skeleton, -263, 0.f, 138.f, 0);
+	//SetupEnemy(EnemyType::imp, -260.f, 0.f, 134.f, 1);
+	//
+
+	////Small arena:
+	//SetupEnemy(EnemyType::hellhound, -140.0f, 0.f, 80.f, 1);
+	//SetupEnemy(EnemyType::imp, -158.f, 0.f, 94.f, 1);
+	//SetupEnemy(EnemyType::skeleton, -158.f, 0.f, 72.f, 0);
+	//13 souls + 5 souls level 1 = 18 souls total
+
+
+	//Player Sounds
+	//SoundComponent* scp = registry.AddComponent<SoundComponent>(player);
+	//scp->Load(PLAYER);
+	//registry.AddComponent<StatComponent>(player, 50.f, 20.0f, 50.f, 5.0f); //Hp, MoveSpeed, Damage, AttackSpeed
+	//registry.AddComponent<PlayerComponent>(player);
+
+	//registry.AddComponent<ControllerComponent>(player);
 
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
 
 	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
+	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 2);
 	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
 	gameLevelUIc->text.Setup("");*/
 
 	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
 	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
 
-	
+
 
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
-	CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
-	srand((unsigned)(GetDeltaTime() * 100000.0f));
-	//Add static hazards on the where player does not spawn
-	const int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 100) - 50.0f;
-			float randZ = (float)(rand() % 100) - 50.0f;
-			if (randX * randX + randZ * randZ > 80)
-			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard = registry.CreateEntity();
-				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->colorAdditiveRed = redAdd;
-				hazardModel->colorAdditiveGreen = greenAdd;
-				hazardModel->colorAdditiveBlue = blueAdd;
-				hazardModel->colorMultiplicativeRed = redMult;
-				hazardModel->colorMultiplicativeGreen = greenMult;
-				hazardModel->colorMultiplicativeBlue = blueMult;
-				hazardModel->gammaCorrection = 1.5f;
-				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.1f;
-				hazardTransform->positionZ = randZ;
-				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 0.1f;
-				hazardTransform->scaleZ = randScaleZ;
-				hazardTransform->facingX = cosf((float)rand());
-				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_LAVA);
-
-				succeded = true;
-			}
-		}
-	}
-	RenderGeometryIndependentCollision(stage);
+	CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderThree, 0.35f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	CreatePointLight(lightholderForth, 0.35f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	stateManager.stage = stage;
 	SetInPlay(true);
+
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, HellhoundIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

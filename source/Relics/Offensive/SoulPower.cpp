@@ -1,13 +1,24 @@
 #include "Relics\Offensive\SoulPower.h"
 #include "Relics\Utility\RelicInternalHelper.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\SoulRelicHelper.h"
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_POWER_SOUL_FACTOR_PLAYER (1.f)
-#define SOUL_POWER_SOUL_FACTOR_ENEMY (10.f)
+#define SOUL_POWER_SOUL_FACTOR_PLAYER (0.03f)
+#define SOUL_POWER_SOUL_FACTOR_ENEMY (.2f)
 
 EntityID SOUL_POWER::_OWNER;
+
+const char* SOUL_POWER::Description()
+{
+	static char temp[RELIC_DATA_DESC_SIZE];
+	sprintf_s(temp, "Increases your Attack Damage by %ld of your Base Weapon Damage for every soul in your possession, but you lose %ld%% of your current souls (rounded up) at the start of each level",
+		PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER),
+		PERCENT(_SC_FACTOR));
+#pragma warning(suppress : 4172)
+	return temp;
+}
 
 void SOUL_POWER::Initialize(void* input)
 {
@@ -20,8 +31,21 @@ void SOUL_POWER::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
+	// Add the consume function
+	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_POWER::Consume);
 	// Add the modify health function to the stat calc functions
 	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(SOUL_POWER::ModifyStrength);
+}
+
+void SOUL_POWER::Consume(void* input)
+{
+	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(SOUL_POWER::_OWNER);
+	if (playerComp && !_SC_IN_SHOP)
+	{
+		int consume = std::ceilf(playerComp->GetSouls() * _SC_FACTOR);
+
+		playerComp->UpdateSouls(-consume);
+	}
 }
 
 void SOUL_POWER::ModifyStrength(void* data)
@@ -37,12 +61,12 @@ void SOUL_POWER::ModifyStrength(void* data)
 		if (player)
 		{
 			// Increase health based on souls
-			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_PLAYER * player->GetSouls());
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_PLAYER * player->GetSouls() * stats->GetBaseDamage());
 		}
 		else
 		{
 			EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(SOUL_POWER::_OWNER);
-			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_ENEMY * enemy->soulCount);
+			stats->UpdateBonusDamage(SOUL_POWER_SOUL_FACTOR_ENEMY * enemy->soulCount * stats->GetBaseDamage());
 		}
 	}
 }

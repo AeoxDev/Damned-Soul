@@ -49,7 +49,7 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 
-	swapChainDesc.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.OutputWindow = window;
 	swapChainDesc.Windowed = true;

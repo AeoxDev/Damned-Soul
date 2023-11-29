@@ -8,6 +8,7 @@
 #include "Registry.h"
 #include "Hitbox.h"
 #include "Model.h"
+#include "States\StateManager.h"
 
 //480 is the size memlib allows without crashing. 
 
@@ -97,11 +98,13 @@ GITexture* GetMapTexture(EntityID& entity)
 	return (GITexture*)&giTexture;
 }
 
-void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
+
+void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID& gate, EntityID& hitbox)
 {
 	if (giTexture == nullptr)
 	{
-		giTexture = (GITexture*)MemLib::spush(sizeof(char) * TEXTURE_DIMENSIONS * TEXTURE_DIMENSIONS);
+		giTexture = (GITexture*)MemLib::spush(sizeof(char) * GI_TEXTURE_DIMENSIONS * GI_TEXTURE_DIMENSIONS);
+
 	}
 	//Find GI component
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stageEntity);
@@ -184,12 +187,14 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	Camera::SetLookAt(GIcomponent->offsetX, smallestY, GIcomponent->offsetZ);//Set to center of stage
 	Camera::SetUp(0.0f, 0.0f, 1.0f);
 	Camera::SetWidth(GIcomponent->width);//Set width (x) of orthogonal based on stage
-	Camera::SetHeight(GIcomponent->height);//Set height (z) of orthogonal based on stage
-	Camera::SetOrthographicDepth(greatestY - smallestY + 8.f);
+	Camera::SetHeight(GIcomponent->height + 10.0f);//Set height (z) of orthogonal based on stage
+	Camera::SetOrthographicDepth(greatestY - smallestY + 18.f);
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	int16_t cameraIdx = Camera::GetCameraBufferIndex();
-	SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetConstantBuffer(cameraIdx, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 1);
 	SetRasterizerState(GIcomponent->rasterizerState);
 	SetViewport(GIcomponent->viewport);
@@ -197,20 +202,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	//Set VS, PS, RTV, CB
 	SetVertexShader(GIcomponent->vertexShader);
 	SetPixelShader(GIcomponent->pixelShader);
-	ClearDepthStencilView(GIcomponent->depthStencil);
-	ClearRenderTargetView(GIcomponent->renderTargetView, 0.0f, 0.0f, 0.0f, 0.0f);
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
 	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
-	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
-	
-
-	//Update CB
-	GIcomponent->shaderData.idValue = 1.0f;
-	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
-
-	//Render texture to RTV
-	LOADED_MODELS[model->model].RenderAllSubmeshes();
 
 	//Render the static hazard texture if it exists
 	StaticHazardTextureComponent* texture = registry.GetComponent<StaticHazardTextureComponent>(stageEntity);
@@ -257,7 +250,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 		StaticHazardComponent* hazardComponent = registry.GetComponent<StaticHazardComponent>(entity);
 		TransformComponent* hazardTransform = registry.GetComponent<TransformComponent>(entity);
 		SetWorldMatrix(hazardTransform->positionX, hazardTransform->positionY, hazardTransform->positionZ,
-			hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ, 
+			-hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ, 
 			hazardTransform->scaleX, hazardTransform->scaleY, hazardTransform->scaleZ, 
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[hazardModel->model].m_vertexBuffer);
@@ -267,6 +260,51 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 		LOADED_MODELS[hazardModel->model].RenderAllSubmeshes();
 	}
 
+	//Update CB
+	GIcomponent->shaderData.idValue = 1.0f;
+	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+	SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+	//Render texture to RTV
+	LOADED_MODELS[model->model].RenderAllSubmeshes();
+
+	
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	//Render hitbox
+	if (hitbox.index != -1)
+	{
+		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(hitbox);
+		if (model != nullptr)
+		{
+			GIcomponent->shaderData.idValue = (float)HAZARD_WALL;
+			UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+			SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+			//Render texture to RTV
+			LOADED_MODELS[model->model].RenderAllSubmeshes();
+		}
+		
+	}
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	//Render gate
+	if (gate.index != -1)
+	{
+		ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(gate);
+		if (model != nullptr)
+		{
+			GIcomponent->shaderData.idValue = (float)StaticHazardType::HAZARD_GATE;
+			UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+			SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+			SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+			//Render texture to RTV
+			LOADED_MODELS[model->model].RenderAllSubmeshes();
+		}
+
+	}
+
 	//Get texture data from RTV
 	ID3D11Texture2D* RTVResource;
 	GetTextureByType(RTVResource, TEXTURE_HOLDER_TYPE::RENDER_TARGET_VIEW, GIcomponent->renderTargetView);
@@ -274,8 +312,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	GetTextureByType(stagingResource, TEXTURE_HOLDER_TYPE::TEXTURE, GIcomponent->stagingTexture);
 	d3d11Data->deviceContext->CopyResource(stagingResource, RTVResource);
 
-	giCopyTexture* mappingTexture;
-	mappingTexture = (giCopyTexture*)MemLib::spush(sizeof(giCopyTexture));
+	giCopyTexture* mappingTexture = new giCopyTexture();//Does not fit onto the memlib stack :(
+	//mappingTexture = (giCopyTexture*)MemLib::spush(sizeof(giCopyTexture));
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource{0};
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -302,8 +340,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 		}
 	}
 
-	bool succeeded = MemLib::spop();
-
+	//bool succeeded = MemLib::spop();
 	//Set back camera to previous mode
 	Camera::ToggleProjection();
 	DirectX::XMStoreFloat3(&vData, previousPos);
@@ -315,6 +352,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity)
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
+	delete mappingTexture;
 	//RTVResource->Release();
 	//stagingResource->Release();
 	//Return.
@@ -350,6 +388,26 @@ void ReleaseGI(EntityID& entity )
 	DeleteD3D11DepthStencilView(gi->depthStencil);
 	DeleteD3D11RasterizerState(gi->rasterizerState);
 	//Release here
+}
+
+float GetStageGIOffsetX()
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	if (GIcomponent != nullptr)
+	{
+		return GIcomponent->offsetX;
+	}
+	return 0.0f;
+}
+
+float GetStageGIOffsetZ()
+{
+	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	if (GIcomponent != nullptr)
+	{
+		return GIcomponent->offsetZ;
+	}
+	return 0.0f;
 }
 
 RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity)
@@ -475,10 +533,10 @@ GeometryIndependentComponent::~GeometryIndependentComponent()
 	//ReleaseTexture(stagingTexture);
 }
 
-int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*& transform)
+int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent* transform)
 {
 	//Calculate size per pixel:
-	GridPosition pixelPos = PositionOnGrid(gi, transform, false);
+	GridPosition pixelPos = PositionOnGrid(gi, transform);
 	//Coordinate2D testPos = GridOnPosition(pixelPos, gi);
 	//Check if pixel in bounds
 	if (pixelPos.x < GI_TEXTURE_DIMENSIONS && pixelPos.x >= 0)
@@ -492,24 +550,18 @@ int PixelValueOnPosition(GeometryIndependentComponent*& gi, TransformComponent*&
 			return giTexture->texture[pixelPos.z][pixelPos.x];
 		}
 	}
-	return 0;
+	return -1;
 }
 
-GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent*& transform, bool pathfinding)
+GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponent* transform, int dimensions)
 {
-	int dimension = GI_TEXTURE_DIMENSIONS;
-	if (pathfinding)
-	{
-		dimension = GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
-	}
-
 	GridPosition toReturn;
 	//Calculate size per pixel:
-	float pixelX = gi->width / dimension;
-	float pixelZ = gi->height / dimension;
+	float pixelX = gi->width / dimensions;
+	float pixelZ = gi->height / dimensions;
 	//Calculate offset:
 	float offX = gi->width * 0.5f - gi->offsetX;
-	float offZ = gi->height * 0.5f - gi->offsetZ;
+	float offZ = gi->height * 0.5f + gi->offsetZ;
 	//Translate position to pixel using the size.
 	float px = (transform->positionX + offX) / pixelX;
 	float pz = (-transform->positionZ + offZ) / pixelZ;
@@ -523,24 +575,18 @@ GridPosition PositionOnGrid(GeometryIndependentComponent*& gi, TransformComponen
 	return toReturn;
 }
 
-Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, bool pathfinding)
+Coordinate2D GridOnPosition(GridPosition gridPos, GeometryIndependentComponent*& gi, int dimensions)
 {
-	int dimension = GI_TEXTURE_DIMENSIONS;
-	if (pathfinding)
-	{
-		dimension = GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
-	}
-
 	Coordinate2D toReturn;
 	toReturn.x = (float)gridPos.x + gridPos.fx;
 	toReturn.z = (float)gridPos.z + gridPos.fz;
 	// posx = px * pixelX - offX
 	// posz = -(pz * pixelZ - offZ)
 
-	float pixelX = gi->width / dimension;
-	float pixelZ = gi->height / dimension;
+	float pixelX = gi->width / dimensions;
+	float pixelZ = gi->height / dimensions;
 	float offX = gi->width * 0.5f - gi->offsetX;//In world
-	float offZ = gi->height * 0.5f - gi->offsetZ;//In world
+	float offZ = gi->height * 0.5f + gi->offsetZ;//In world
 
 	//Get pixel to world
 	//Pixel 73/64 is 0.0 in world. Put pixel

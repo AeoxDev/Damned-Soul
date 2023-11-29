@@ -11,6 +11,7 @@
 
 //Def to avoid compilation time
 
+
 struct OnCollisionParameters
 { 
 	EntityID entity1;
@@ -148,3 +149,10 @@ void UpdatePhysics();
 
 float RotateOffset(float offsetX, float offsetZ, float xFactor, float zFactor);
 
+int8_t GetHitboxVisVertexShader();
+int8_t GetHitboxVisPixelShader();
+int8_t GetHitboxRasterizerState();
+int16_t GetHitboxConstantBuffer();
+
+extern bool hitboxVisualizerActive[];
+extern bool visualizeStage;

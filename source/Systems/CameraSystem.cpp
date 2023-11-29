@@ -6,6 +6,8 @@
 #include "DeltaTime.h"
 #include "SDLHandler.h"
 #include "Input.h"
+#include "States\StateManager.h"
+#include "Backend\GeometryIndependent.h"
 
 #define CAMERA_MOVESPEED 1.5f
 #define CAMERA_ZOOMSPEED 1.75f
@@ -14,7 +16,7 @@
 
 bool PointOfInterestSystem::Update()
 {
-	if (gameSpeed == 0.0f)
+	if (gameSpeed == 0.0f || Camera::InCutscene())
 		return true;
 
 	//DEBUG Controls
@@ -43,7 +45,7 @@ bool PointOfInterestSystem::Update()
 	float newPosX = 0;
 	float newPosY = 0;
 	float newPosZ = 0;
-	float points = 1;//The 1 is the camera itself
+	float points = 0;//Weighted average.
 	//DirectX::XMStoreFloat3(&cameraPos, cameraVPos);
 	for (auto entity : View<PointOfInterestComponent, TransformComponent>(registry))
 	{
@@ -112,12 +114,14 @@ bool PointOfInterestSystem::Update()
 		}
 		else if (poiCo->mode == POI_FORCE)
 		{
-			poiCo->rotationY += GetDeltaTime() * poiCo->rotationAccel;
+
 			//(0.0, -200) -> (200, 0.0) -> (0.0, 200) -> (-200, 0.0)
 			Camera::SetPosition(tCo->positionX + poiCo->rotationRadius * -sinf(poiCo->rotationY), tCo->positionY + poiCo->height + CAMERA_OFFSET_Y, tCo->positionZ + poiCo->rotationRadius * cosf(poiCo->rotationY), false);
 			Camera::SetLookAt(tCo->positionX, tCo->positionY, tCo->positionZ);
 			Camera::UpdateView();
 			Camera::UpdateProjection();
+			poiCo->rotationY += GetDeltaTime() * poiCo->rotationAccel;
+		
 			return true;
 		}
 		

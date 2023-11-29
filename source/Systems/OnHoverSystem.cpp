@@ -22,12 +22,16 @@ void UndrawHoverInteractable(OnHoverComponent& comp, UIComponent& uiElement, int
 	}
 };
 
+
 bool OnHoverSystem::Update()
 {
 	for (auto entity : View<OnHoverComponent, UIComponent>(registry))
 	{
 		OnHoverComponent* comp = registry.GetComponent<OnHoverComponent>(entity);
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+		if (comp->hasBeenDrawnChecks.size() == 0)
+			continue;
 
 		int index = comp->Intersect({ (int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)), (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) });
 
@@ -37,19 +41,14 @@ bool OnHoverSystem::Update()
 			if (index == -1) //mouse moved to no image
 			{
 				if (comp->hasBeenDrawnChecks[comp->index] == 1)
-				{
 					UndrawHoverInteractable(*comp, *uiElement, comp->index);
-				}
 			}
 			else if (index > -1) //mouse moved to another image
 			{
 				if (comp->hasBeenDrawnChecks[comp->oldIndex] == 1)
-				{
 					UndrawHoverInteractable(*comp, *uiElement, comp->oldIndex);
-				}
 			}
 		}
-
 
 		if (index != -1)
 			comp->oldIndex = index;
@@ -58,21 +57,38 @@ bool OnHoverSystem::Update()
 		if (index == comp->index)
 		{
 			//skip if interactable isnt visible or has no hover function
-			if ((index == 0 && !uiElement->m_BaseImage.baseUI.GetVisibility()) || (index == 0 && comp->onHoverFunctions[index] == UIFunc::EmptyOnHover))
-			{
+			if ((index == 0 && !uiElement->m_BaseImage.baseUI.GetVisibility()) || (index == 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
 				continue;
-			}
-			else if ((index > 0 && !uiElement->m_Images[index - 1].baseUI.GetVisibility()) || (index > 0 && comp->onHoverFunctions[index] == UIFunc::EmptyOnHover))
-			{
+			else if ((index > 0 && !uiElement->m_Images[index - 1].baseUI.GetVisibility()) || (index > 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
 				continue;
-			}
 
 
 			if (comp->hasBeenDrawnChecks[comp->index] == 0 && comp->redrawUIChecks[comp->index] == 1)
 			{
 				//Set which sound to play
 				SoundComponent* sound = registry.GetComponent<SoundComponent>(entity);
-				if (sound != nullptr) sound->Play(Button_Hover, Channel_Base);
+				OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(entity);
+
+				//Check if the channel is currently playing a sound or not
+				for (auto entity : View<AudioEngineComponent>(registry))
+				{
+					AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+					bool isPlaying = false;
+					if (sound != nullptr)
+					{
+						audioJungle->channels[sound->channelIndex[0]]->isPlaying(&isPlaying);
+						FMOD::Sound* test = nullptr;
+						audioJungle->channels[sound->channelIndex[0]]->getCurrentSound(&test);
+						if (audioJungle->sounds[MENU1] != test)
+						{
+							if ((onClick != nullptr) && (!isPlaying)) sound->Play(Button_Hover, Channel_Base);
+						}
+						else
+						{
+							if (onClick != nullptr) sound->Play(Button_Hover, Channel_Base);
+						}
+					}
+				}
 
 				RedrawUI();
 				comp->redrawUIChecks[comp->index] = 0;

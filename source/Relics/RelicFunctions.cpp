@@ -11,16 +11,19 @@
 // Include all relics
 	/*Offense*/
 #include "Relics\Offensive\DemonBonemarrow.h"
+#include "Relics\Offensive\MinotaurHorn.h"
+#include "Relics\Offensive\HoundFang.h"
+#include "Relics\Offensive\CrackedLense.h"
 #include "Relics\Offensive\LifeSteal.h"
+#include "Relics\Offensive\SoulEater.h"
 #include "Relics\Offensive\AdvancedFighting.h"
 #include "Relics\Offensive\SoulPower.h"
 #include "Relics\Offensive\FlameWeapon.h"
-//#include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\DashAttack.h"
 #include "Relics\Offensive\AdrenalineRush.h"
 #include "Relics\Offensive\ThrillSeeker.h"
-//#include "Relics\Offensive\PowerStrike.h"
-
+#include "Relics\Offensive\ExplodingWeapon.h"
+#include "Relics\Offensive\PowerStrike.h"
 
 	/*Defense*/
 #include "Relics\Defensive\Hearts\DemonHeart.h"
@@ -37,11 +40,21 @@
 #include "Relics\Defensive\BackShield.h"
 #include "Relics\Defensive\SecondWind.h"
 #include "Relics\Defensive\LastStand.h"
+
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
+#include "Relics\Gadget\GaleAmulet.h"
 #include "Relics\Gadget\LightningGod.h"
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
+#include "Relics\Gadget\IcyBlade.h"
+#include "Relics\Gadget\FrozenMaul.h"
+#include "Relics\Gadget\Discount\ExploitableCoupon.h"
+#include "Relics\Gadget\Discount\Membership.h"
+#include "Relics\Gadget\Discount\SuccubusCharm.h"
+#include "Relics\Gadget\Discount\SeeingDouble.h"
+#include "Relics\Gadget\DashFlash.h"
+#include "Relics\Gadget\QuickReflexes.h"
 // End of include all relics
 
 #include "Relics\Utility\ML_RelicArray.h"
@@ -102,55 +115,87 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Demon Bonemarrow",
 				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
-				/*Description*/	"Increases your Damage by 15 when obtained.",
-				/*Price*/		10,
+				/*Description*/	DEMON_BONEMARROW::Description(),
+				/*Price*/		15,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DEMON_BONEMARROW::Initialize
 			),
 			RelicData(
+				/*Name*/		"Minotaur Horn Fragment",
+				/*Filepath*/	"RelicIcons\\Minotaur_Horn",
+				/*Description*/	MINOTAUR_HORN::Description(),
+				/*Price*/		5,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	MINOTAUR_HORN::Initialize
+			),
+			RelicData(
+				/*Name*/		"Hound Fang",
+				/*Filepath*/	"RelicIcons\\Hound_Fang",
+				/*Description*/	HOUND_FANG::Description(),
+				/*Price*/		5,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	HOUND_FANG::Initialize
+			),
+			RelicData(
+				/*Name*/		"Cracked Lense",
+				/*Filepath*/	"RelicIcons\\Cracked_Lense",
+				/*Description*/	CRACKED_LENSE::Description(),
+				/*Price*/		8,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	CRACKED_LENSE::Initialize
+			),
+			RelicData(
 				/*Name*/		"Flame Weapon",
 				/*Filepath*/	"RelicIcons\\Flame_Weapon",
-				/*Description*/	"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
-				/*Price*/		3,
+				/*Description*/	FLAME_WEAPON::Description(),//"Whenever you hit an enemy with a weapon attack, they take *Burn* for an additional 65% Damage over 1.75 Seconds.",
+				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	FLAME_WEAPON::Initialize
 			),
 			RelicData(
 				/*Name*/		"Soul Power",
 				/*Filepath*/	"RelicIcons\\Soul_Power",
-				/*Description*/	"You gain a dynamic bonus to your Damage equal to the number of Souls you currently possess",
-				/*Price*/		5,
+				/*Description*/	SOUL_POWER::Description(),//"You gain 1 Strength for every soul in your posession",
+				/*Price*/		15,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	SOUL_POWER::Initialize
 			),
 			RelicData(
 				/*Name*/		"Life Steal",
 				/*Filepath*/	"RelicIcons\\Life_Steal",
-				/*Description*/	"You heal for 15% of the damage you deal",
-				/*Price*/		5,
+				/*Description*/	LIFE_STEAL::Description(),//"You heal for 15% of the damage you deal",
+				/*Price*/		12,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	LIFE_STEAL::Initialize
 			),
 			RelicData(
+				/*Name*/		"Soul Eater",
+				/*Filepath*/	"RelicIcons\\Soul_Eater",
+				/*Description*/	SOUL_EATER::Description(),
+				/*Price*/		15,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	SOUL_EATER::Initialize
+			),
+			RelicData(
 				/*Name*/		"Advanced Fighting",
 				/*Filepath*/	"RelicIcons\\Advanced_Fighting",
-				/*Description*/	"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
-				/*Price*/		5,
+				/*Description*/	ADVANCED_FIGHTING::Description(),//"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
+				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	ADVANCED_FIGHTING::Initialize
 			),
 			RelicData(
 				/*Name*/		"Dash Attack",
 				/*Filepath*/	"RelicIcons\\Dash_Attack",
-				/*Description*/	"Deals 50% of your damage when dashing through an enemy",
-				/*Price*/		5,
+				/*Description*/	DASH_ATTACK::Description(),//"Deals 50% of your damage when dashing through an enemy",
+				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DASH_ATTACK::Initialize
 			),
 			RelicData(
 				/*Name*/		"Adrenaline Rush",
 				/*Filepath*/	"RelicIcons\\Adrenaline_Rush",
-				/*Description*/	"You attack twice as fast for 1 second after being hit",
+				/*Description*/	ADRENALINE_RUSH::Description(),//"You attack twice as fast for 1 second after being hit",
 				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	ADRENALINE_RUSH::Initialize
@@ -158,10 +203,26 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Thrill Seeker",
 				/*Filepath*/	"RelicIcons\\Thrill_Seeker",
-				/*Description*/	"For every % hp lost, gain % damage",
-				/*Price*/		10,
+				/*Description*/	THRILL_SEEKER::Description(),//"For every % hp lost, gain % damage",
+				/*Price*/		15,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	THRILL_SEEKER::Initialize
+			),
+			RelicData(
+				/*Name*/		"Exploding Weapon",
+				/*Filepath*/	"RelicIcons\\Exploding_Weapon",
+				/*Description*/	EXPLODING_WEAPON::Description(),
+				/*Price*/		15,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	EXPLODING_WEAPON::Initialize
+			),
+			RelicData(
+				/*Name*/		"Power Strike",
+				/*Filepath*/	"RelicIcons\\Power_Strike",
+				/*Description*/	POWER_STRIKE::Description(),
+				/*Price*/		8,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	POWER_STRIKE::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 
@@ -170,63 +231,63 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Demon Heart",
 				/*Filepath*/	"RelicIcons\\Demon_Heart",
-				/*Description*/	"Increases your Maximum Health by 25",
-				/*Price*/		6,
+				/*Description*/	DEMON_HEART::Description(),//"Increases your Maximum Health by 25",
+				/*Price*/		12,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Corrupted Heart",
 				/*Filepath*/	"RelicIcons\\Corrupted_Heart",
-				/*Description*/	"Increases your Maximum Health by 40",
-				/*Price*/		9,
+				/*Description*/	CORRUPTED_HEART::Description(),//"Increases your Maximum Health by 40",
+				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	CORRUPTED_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Molten Heart",
 				/*Filepath*/	"RelicIcons\\Molten_Heart",
-				/*Description*/	"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
-				/*Price*/		7,
+				/*Description*/	MOLTEN_HEART::Description(),//"Increases your Maximum Health by 20, and restores 20 Health when first obtained",
+				/*Price*/		8,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	MOLTEN_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Mummified Heart",
 				/*Filepath*/	"RelicIcons\\Mummified_Heart",
-				/*Description*/	"Increases your Maximum Health by 15",
-				/*Price*/		3,
+				/*Description*/	MUMMIFIED_HEART::Description(),//"Increases your Maximum Health by 15",
+				/*Price*/		4,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	MUMMIFIED_HEART::Initialize
 			),
 			RelicData(
 				/*Name*/		"Frost Fire",
 				/*Filepath*/	"RelicIcons\\Frost_Fire",
-				/*Description*/	"Every few seconds, send out a shockwave that knocks back [[and damages?]] nearby enemies",
-				/*Price*/		3,
+				/*Description*/	FROST_FIRE::Description(),//"Every few seconds, send out a shockwave that knocks back [[and damages?]] nearby enemies",
+				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	FROST_FIRE::Initialize
 			),
 			RelicData(
 				/*Name*/		"Soul Health",
 				/*Filepath*/	"RelicIcons\\Soul_Health",
-				/*Description*/	"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
-				/*Price*/		5,
+				/*Description*/	SOUL_HEALTH::Description(),//"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
+				/*Price*/		15,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SOUL_HEALTH::Initialize
 			),
 			RelicData(
 				/*Name*/		"Demon Skin",
 				/*Filepath*/	"RelicIcons\\Demon_Skin",
-				/*Description*/	"Reduces the damage you take by 20%",
-				/*Price*/		5,
+				/*Description*/	DEMON_SKIN::Description(),//"Reduces the damage you take by 20%",
+				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_SKIN::Initialize
 			),
 			RelicData(
 				/*Name*/		"Spiked Skin",
 				/*Filepath*/	"RelicIcons\\Spiked_Skin",
-				/*Description*/	"Whenever an enemy strikes you, it takes 100% of the damage it would deal (before reduction) as irresistable damage",
+				/*Description*/	SPIKED_SKIN::Description(),//"Whenever an enemy strikes you, it takes 100% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SPIKED_SKIN::Initialize
@@ -234,39 +295,39 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Undead Fortitude",
 				/*Filepath*/	"RelicIcons\\Undead_Fortitude",
-				/*Description*/	"Reduces the damage you take by 10%-40%, based on how low your current health is",
-				/*Price*/		5,
+				/*Description*/	UNDEAD_FORTITUDE::Description(),//"Reduces the damage you take by 10%-40%, based on how low your current health is",
+				/*Price*/		15,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	UNDEAD_FORTITUDE::Initialize
 			),
 			RelicData(
 				/*Name*/		"Pain Mirror",
-				/*Filepath*/	"RelicIcons\\Empty_Relic",
-				/*Description*/	"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
-				/*Price*/		8,
+				/*Filepath*/	"RelicIcons\\Pain_Mirror",
+				/*Description*/	PAIN_MIRROR::Description(),//"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
+				/*Price*/		9,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	PAIN_MIRROR::Initialize
 			),
 			RelicData(
 				/*Name*/		"Golden Duck",
 				/*Filepath*/	"RelicIcons\\Golden_Duck",
-				/*Description*/	"You are immune to up to 3 seconds of exposure to damaging hazards. Recharges while not in use",
-				/*Price*/		8,
+				/*Description*/	GOLDEN_DUCK::Description(),//"You are immune to up to 3 seconds of exposure to damaging hazards. Recharges while not in use",
+				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	GOLDEN_DUCK::Initialize
 			),
 			RelicData(
 				/*Name*/		"Back Shield",
 				/*Filepath*/	"RelicIcons\\Shield",
-				/*Description*/	"Up to once every 2 seconds, you nullify the next attack when struck from behind",
-				/*Price*/		8,
+				/*Description*/	BACK_SHIELD::Description(),//"Up to once every 2 seconds, you nullify the next attack when struck from behind",
+				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	BACK_SHIELD::Initialize
 			),
 			RelicData(
 				/*Name*/		"Second Wind",
 				/*Filepath*/	"RelicIcons\\Second_Wind",
-				/*Description*/	"The first time that you would die while holding this relic, your remaining hit points are instead set to 25% of your hit point maximum",
+				/*Description*/	SECOND_WIND::Description(),//"The first time that you would die while holding this relic, your remaining hit points are instead set to 25% of your hit point maximum",
 				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	SECOND_WIND::Initialize
@@ -274,8 +335,8 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Last Stand",
 				/*Filepath*/	"RelicIcons\\Last_Stand",
-				/*Description*/	"While below 50% health, you block 50% of damage taken from attacks up to once every 2 seconds",
-				/*Price*/		6,
+				/*Description*/	LAST_STAND::Description(),//"While below 50% health, you block 50% of damage taken from attacks up to once every 2 seconds",
+				/*Price*/		15,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	LAST_STAND::Initialize
 			),
@@ -286,15 +347,23 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Speedy Little Devil",
 				/*Filepath*/	"RelicIcons\\Speedy_Little_Devil",
-				/*Description*/	"Increases your Movespeed by 4 when obtained",
-				/*Price*/		3,
+				/*Description*/	SPEEDY_LITTLE_DEVIL::Description(),//"Increases your Movespeed by 4 when obtained",
+				/*Price*/		4,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SPEEDY_LITTLE_DEVIL::Initialize
 			),
 			RelicData(
+				/*Name*/		"Gale Amulet",
+				/*Filepath*/	"RelicIcons\\Gale_Amulet",
+				/*Description*/	GALE_AMULET::Description(),//"Increases your Movespeed by 4 when obtained",
+				/*Price*/		6,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	GALE_AMULET::Initialize
+			),
+			RelicData(
 				/*Name*/		"Lightning God",
 				/*Filepath*/	"RelicIcons\\Lightning_God",
-				/*Description*/	"A bolt of lightning strikes a random enemy every few seconds, dealing massive irresistable damage",
+				/*Description*/	LIGHTNING_GOD::Description(),//"Every three seconds, a random enemy is marked for the next three seconds. If a marked enemy is dealt damage by you, it takes an additional 10 damage",
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	LIGHTNING_GOD::Initialize
@@ -302,7 +371,7 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Reckless",
 				/*Filepath*/	"RelicIcons\\Reckless",
-				/*Description*/	"You deal 50% more damage, but also take double damage",
+				/*Description*/	RECKLESS::Description(),//"You deal 50% more damage, but also take double damage",
 				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	RECKLESS::Initialize
@@ -310,10 +379,74 @@ void _validateMasterRelicList()
 			RelicData(
 				/*Name*/		"Soul Speed",
 				/*Filepath*/	"RelicIcons\\Soul_Speed",
-				/*Description*/	"You gain a bonus to your speed equal to your souls",
-				/*Price*/		5,
+				/*Description*/	SOUL_SPEED::Description(),//"You gain a bonus to your speed equal to your souls",
+				/*Price*/		15,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SOUL_SPEED::Initialize
+			),
+			RelicData(
+				/*Name*/		"Icy Blade",
+				/*Filepath*/	"RelicIcons\\Icy_Blade",
+				/*Description*/	ICY_BLADE::Description(),//"You gain a bonus to your speed equal to your souls",
+				/*Price*/		8,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	ICY_BLADE::Initialize
+			),
+			RelicData(
+				/*Name*/		"Frozen Maul",
+				/*Filepath*/	"RelicIcons\\Frozen_Maul",
+				/*Description*/	FROZEN_MAUL::Description(),//"You gain a bonus to your speed equal to your souls",
+				/*Price*/		8,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	FROZEN_MAUL::Initialize
+			),
+			RelicData(
+				/*Name*/		"Exploitable Coupon",
+				/*Filepath*/	"RelicIcons\\Exploitable_Coupon",
+				/*Description*/	EXPLOITABLE_COUPON::Description(),
+				/*Price*/		6,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	EXPLOITABLE_COUPON::Initialize
+			),
+			RelicData(
+				/*Name*/		"Succubus Charm",
+				/*Filepath*/	"RelicIcons\\Succubus_Charm",
+				/*Description*/	SUCCUBUS_CHARM::Description(),
+				/*Price*/		10,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	SUCCUBUS_CHARM::Initialize
+			),
+			RelicData(
+				/*Name*/		"Membership",
+				/*Filepath*/	"RelicIcons\\Membership",
+				/*Description*/	MEMBERSHIP::Description(),
+				/*Price*/		5,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	MEMBERSHIP::Initialize
+			),
+			RelicData(
+				/*Name*/		"Seeing Double",
+				/*Filepath*/	"RelicIcons\\Seeing_Double",
+				/*Description*/	SEEING_DOUBLE::Description(),
+				/*Price*/		1,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	SEEING_DOUBLE::Initialize
+			),
+			RelicData(
+				/*Name*/		"Dash Flash",
+				/*Filepath*/	"RelicIcons\\Dash_Flash",
+				/*Description*/	DASH_FLASH::Description(),
+				/*Price*/		5,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	DASH_FLASH::Initialize
+			),
+			RelicData(
+				/*Name*/		"Quick Reflexes",
+				/*Filepath*/	"RelicIcons\\Quick_Reflexes",
+				/*Description*/	QUICK_REFLEXES::Description(),
+				/*Price*/		12,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	QUICK_REFLEXES::Initialize
 			),
 			//ENDOF: GADGET RELICS
 		};
@@ -386,7 +519,7 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 			if (currentRelic->m_typeFlag & type) {
 				// Set weight inversely by price and add level (cheaper relics more common early on)
 				// After a fairly large number of levels, this weight system will give everything an equal chance
-				currentTotalWeight += CLAMP_SUB(5, CLAMP_SUB(currentRelic->m_price, stateManager.activeLevel)) + stateManager.activeLevel;
+				currentTotalWeight += CLAMP_SUB(5, CLAMP_SUB(currentRelic->m_price, stateManager.activeLevel * 2)) + stateManager.activeLevel;
 				// Emplace with the combined weights of previous selection possibilities
 				possibleSelection.emplace(currentTotalWeight, currentRelic);
 				// Erase current, no need to increment
@@ -397,6 +530,9 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 				++i;
 			}
 		}
+
+		if (currentTotalWeight == 0)
+			return retVal;
 
 		// Randomly selected index from the possible selection
 		uint32_t randomlySelected = 1 + (std::rand() % currentTotalWeight);
@@ -419,7 +555,7 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 				break;
 			}
 		}
-		possibleSelection.erase(randomlySelectedKey);
+		possibleSelection.erase((uint32_t)randomlySelectedKey);
 
 		// Return the relics that weren't picked
 		for (auto& [key, val] : possibleSelection) {

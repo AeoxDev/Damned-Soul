@@ -8,10 +8,23 @@
 
 //GUI
 #include "UIComponents/UIComponent.h"
-#include "UIComponents/UIHealthComponent.h"
-#include "UIComponents/UIPlayerSoulsComponent.h"
-#include "UIComponents/UIRelicWindowComponent.h"
-#include "UIComponents/UIShopImpComponents.h"
+
+//Game Components
+#include "UIComponents/UIGameHealthComponent.h"
 #include "UIComponents/UIGameLevelComponent.h"
-#include "UIComponents/UIRerollComponent.h"
-#include "UIComponents/UIRunTimeComponent.h"
+#include "UIComponents/UIGameTimeComponent.h"
+#include "UIComponents/UIGameScoreboardComponent.h"
+
+//Shop Components
+#include "UIComponents/UIShopImpComponents.h"
+#include "UIComponents/UIShopButtonComponents.h"
+#include "UIComponents/UIShopRelicComponent.h"
+
+//Player Components
+#include "UIComponents/UIPlayerSoulsComponent.h"
+#include "UIComponents/UIPlayerRelicsComponent.h"
+
+//Pause Components
+#include "UIComponents/UIPauseRelicTextComponent.h"
+#include "UIComponents/UIPauseButtonComponent.h"
+#include "UIComponents/UIPauseSettingsComponent.h"

@@ -6,5 +6,16 @@ enum EnemyType
 	hellhound,
 	skeleton,
 	eye,
-	tempBoss
+	imp,
+	minotaur,
+	tempBoss,
+	lucifer,
+	frozenHellhound, 
+	frozenImp, 
+	frozenEye,
+	zac,
+	empoweredSkeleton,
+	empoweredHellhound,
+	empoweredImp,
+	//no empoweredEye, please for the love of god
 };

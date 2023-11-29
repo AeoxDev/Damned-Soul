@@ -1,0 +1,171 @@
+#include "EventFunctions.h"
+#include "TimedEventComponent.h"
+#include "Components.h"
+#include "Registry.h"
+#include "Camera.h"
+#include <assert.h>
+#include "DeltaTime.h"
+#include "States\StateManager.h"
+#include "CollisionFunctions.h"
+#include "Level.h"
+
+void CutsceneCreateLinearTransition(EntityID& entity, const int& index)
+{
+	float transitionTime = GetTimedEventTotalTime(entity, index);
+	CutsceneComponent* cutscene = registry.AddComponent<CutsceneComponent>(entity);
+	DirectX::XMFLOAT3 lookAt = Camera::GetLookAtFloat();
+	cutscene->startLookAtX = lookAt.x;
+	cutscene->startLookAtY = lookAt.y;
+	cutscene->startLookAtZ = lookAt.z;
+
+	DirectX::XMFLOAT3 position = Camera::GetPositionFloat();
+	cutscene->startPositionX = position.x;
+	cutscene->startPositionY = position.y;
+	cutscene->startPositionZ = position.z;
+	 
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	assert(transform != nullptr);
+	cutscene->goalLookAtX = transform->positionX;
+	cutscene->goalLookAtY = transform->positionY;
+	cutscene->goalLookAtZ = transform->positionZ;
+
+	cutscene->goalPositionX = transform->positionX + CAMERA_OFFSET_X * 0.1f;
+	cutscene->goalPositionY = transform->positionY + CAMERA_OFFSET_Y * 0.1f;
+	cutscene->goalPositionZ = transform->positionZ + CAMERA_OFFSET_Z * 0.1f;
+	
+
+
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, transitionTime, EndCutscene);
+}
+void BeginCutscene(EntityID& entity, const int& index)
+{
+	Camera::SetCutsceneMode(1);
+}
+void BeginPortalCutscene(EntityID& entity, const int& index)
+{
+	Camera::SetCutsceneMode(2);
+}
+void EndCutscene(EntityID& entity, const int& index)
+{
+	Camera::SetCutsceneMode(0);
+}
+//Do the given cutscene components arguments over time
+void CutsceneTransition(EntityID& entity, const int& index)
+{
+	CutsceneComponent* cutscene = registry.GetComponent<CutsceneComponent>(entity);
+	assert(cutscene != nullptr);
+	float time = GetTimedEventElapsedTime(entity, index);
+	float totalTime = GetTimedEventTotalTime(entity, index);
+	float scalar = time / totalTime;//From 0 to 1
+
+	
+	if (cutscene->mode & CutsceneMode::Cutscene_Camera)
+	{
+		if (cutscene->mode & Cutscene_Accelerating)
+		{
+			scalar *= scalar;
+		}
+		if (cutscene->mode & CutsceneMode::Transition_Position)
+		{
+			float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
+			float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
+			float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
+			float newPosX = posDifX * scalar + cutscene->startPositionX;
+			float newPosY = posDifY * scalar + cutscene->startPositionY;
+			float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
+			Camera::SetPosition(newPosX, newPosY, newPosZ, false);
+		}
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
+		{
+			float lookAtDifX = cutscene->goalLookAtX - cutscene->startLookAtX;
+			float lookAtDifY = cutscene->goalLookAtY - cutscene->startLookAtY;
+			float lookAtDifZ = cutscene->goalLookAtZ - cutscene->startLookAtZ;
+			float newLookAtX = lookAtDifX * scalar + cutscene->startLookAtX;
+			float newLookAtY = lookAtDifY * scalar + cutscene->startLookAtY;
+			float newLookAtZ = lookAtDifZ * scalar + cutscene->startLookAtZ;
+			Camera::SetLookAt(newLookAtX, newLookAtY, newLookAtZ);
+		}
+	}
+
+	if (cutscene->mode & Cutscene_Character_Walk)
+	{
+		float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
+		float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
+		float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
+		float newPosX = posDifX * scalar + cutscene->startPositionX;
+		float newPosY = posDifY * scalar + cutscene->startPositionY;
+		float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		//Set the facing towards the goal
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
+		{
+			transform->facingX = posDifX;
+			transform->facingY = posDifY;
+			transform->facingZ = posDifZ;
+			NormalizeFacing(transform);
+		}
+		
+		//Move the character
+		if (cutscene->mode & CutsceneMode::Transition_Position)
+		{
+			transform->positionX = newPosX;
+			transform->positionZ = newPosZ;
+		}
+		
+		//Loop the walk animation
+		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		animation->aAnim = ANIMATION_WALK;
+		animation->aAnimIdx = 0;
+		animation->aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS(animation);
+		
+	}
+	if (cutscene->mode & Cutscene_Character_Fall)
+	{
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+		float posDifX = cutscene->goalPositionX - cutscene->startPositionX;
+		float posDifY = cutscene->goalPositionY - cutscene->startPositionY;
+		float posDifZ = cutscene->goalPositionZ - cutscene->startPositionZ;
+		float newPosX = posDifX * scalar + cutscene->startPositionX;
+		float newPosZ = posDifZ * scalar + cutscene->startPositionZ;
+		if (cutscene->mode & Cutscene_Accelerating)
+			scalar *= scalar;
+		float newPosY = posDifY * scalar + cutscene->startPositionY;
+	
+		//Set the facing towards the goal
+		if (cutscene->mode & CutsceneMode::Transition_LookAt)
+		{
+			transform->facingX = posDifX;
+			transform->facingY = posDifY;
+			transform->facingZ = posDifZ;
+			NormalizeFacing(transform);
+		}
+
+		//Move the character
+		if (cutscene->mode & CutsceneMode::Transition_Position)
+		{
+			transform->positionX = newPosX;
+			transform->positionY = newPosY;
+			transform->positionZ = newPosZ;
+		}
+
+		//Loop the walk animation
+		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		animation->aAnim = ANIMATION_IDLE;
+		animation->aAnimIdx = 1;
+		animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS(animation);
+	}
+	
+}
+
+void SetGameSpeedDefault(EntityID& entity, const int& index)
+{
+	gameSpeed = 1.0f;
+	TimedEventIgnoreGamespeed(false);
+}
+
+void EventLoadNextLevel(EntityID& entity, const int& index)
+{
+	LoadLevel(++stateManager.activeLevel);
+}

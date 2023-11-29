@@ -10,8 +10,12 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
+#include <cmath>
+#include <string>
 
-#define SOFT_COLLISION_FACTOR 0.5f
+#include "UIComponents.h"
+
+#define SOFT_COLLISION_FACTOR 0.25f
 
 
 void NoCollision(OnCollisionParameters &params)
@@ -24,6 +28,7 @@ void SoftCollision(OnCollisionParameters& params)
 	//Take both entities transform
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
 	
@@ -72,9 +77,20 @@ void HardCollision(OnCollisionParameters& params)
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
+	if (transform1->positionX == transform2->positionX && transform1->positionZ == transform2->positionZ)
+	{
+		float positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionX += positionOffset;
+		positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionZ += positionOffset;
 
+
+	}
 	float radius1 = 0.0f;
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	--hitbox1->nrMoveableCollisions;
 
 	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
 	{
@@ -184,6 +200,78 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	}
 }
 
+void HazardAttackCollision(OnCollisionParameters& params)
+{
+	StatComponent* stat = registry.GetComponent<StatComponent>(params.entity2);
+	StaticHazardComponent* hazard = registry.GetComponent<StaticHazardComponent>(params.entity1);
+
+	TransformComponent* p = registry.GetComponent<TransformComponent>(params.entity2);
+	HitboxComponent* h = registry.GetComponent<HitboxComponent>(params.entity2);
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(params.entity2);
+	if (HitboxCanHitGI(params.entity2))
+	{
+		int r = hazard->type;//PixelValueOnPosition(geoCo, p);
+		int takeDamage = 0;
+		ProjectileComponent* proj = nullptr;
+
+		switch (r)
+		{
+		case 0:
+			p->positionX = 0.f;
+			p->positionZ = 0.f;
+			break;
+		case 1:
+			//Footstep sound here?
+			stat->m_acceleration = stat->m_baseAcceleration;
+			break;
+		case HAZARD_LAVA:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->lavaAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
+
+			HazardDamageHelper(params.entity2, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		case HAZARD_CRACK:
+			if (!stat->canWalkOnCrack)
+			{
+				//Detect edge
+				//Edge direction
+				p->positionX -= p->facingX * GetDeltaTime() * stat->GetSpeed();
+				p->positionZ -= p->facingZ * GetDeltaTime() * stat->GetSpeed();
+			}
+			break;
+		case HAZARD_ACID://Lava but more damage
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->acidAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
+
+			HazardDamageHelper(params.entity2, 20.f);
+			break;
+		case HAZARD_ICE:
+			//ICE:
+			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
+			{
+				anim->aAnimTimeFactor = stat->iceAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
+
+			//HazardDamageHelper(entity, 25.f);
+			//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 bool IsDamageCollisionValid(OnCollisionParameters& params)
 {
 	//Get the components of the attacker (only stats for dealing damage)
@@ -254,6 +342,8 @@ bool IsDamageCollisionValid(OnCollisionParameters& params)
 
 void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 {
+	//transform 1 is the one hitting
+	// transform 2 is getting hit 
 	//Get relevant components
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
@@ -279,50 +369,24 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 
 	//Knockback
+	
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
+	float frictionKnockbackFactor1 = stat1->m_acceleration / stat1->m_baseAcceleration;
+	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / transform1->mass, stat2->GetKnockback() * params.normal1Z / transform1->mass);
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / transform2->mass, stat1->GetKnockback() * params.normal2Z / transform2->mass);
-}
+	if (transform2->mass != 666.f)
+	{
+		float massFactor = std::sqrt(transform1->mass / transform2->mass);
+		float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
+		float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
+		float dx, dz;
+		CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
-void PlayHitSound(OnCollisionParameters& params)
-{
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy)
-	{
-		enemy->lastPlayer = params.entity1;
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case EnemyType::hellhound:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::eye:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Eye_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::skeleton:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
-			}
-			break;
-		}
+		AddKnockBack(params.entity1, selfKnockback * dx, selfKnockback * dz);
+		AddKnockBack(params.entity2, appliedKnockback * dx, appliedKnockback * dz);
 	}
-	else
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(params.entity2);
-		if (player != nullptr)
-		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-			sfx->Play(Player_Hurt, Channel_Base);
-		}
-	}
+	/*AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));*/
 }
 
 void DashCollision(OnCollisionParameters& params)
@@ -338,9 +402,6 @@ void DashCollision(OnCollisionParameters& params)
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if(registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -372,10 +433,57 @@ void AttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
+	if (charge)
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
+	else
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
 
-	//Play entity hurt sounds
-	PlayHitSound(params);
+	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
+	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
+		RedrawUI();
+
+	// Only hit the first enemy
+	//SetHitboxCanDealDamage(params.entity1, params.hitboxID1, false);
+
+	//Lastly set for hitboxTracker[]
+	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	for (size_t i = 0; i < HIT_TRACKER_LIMIT; i++)
+	{
+		//If already in hit tracker: no proc
+		if (!hitbox1->hitTracker[i].active)
+		{
+			hitbox1->hitTracker[i].active = true;
+			hitbox1->hitTracker[i].entity = params.entity2;
+			return;
+		}
+	}
+}
+
+void ShockWaveAttackCollision(OnCollisionParameters& params)
+{
+	
+	//Return out of the function if the damage collision isn't valid (attacker needs to be able to deal damage, defender needs to be able to take damage, etc)
+	if (IsDamageCollisionValid(params) == false)
+	{
+		return;
+	}
+
+	//Check if within radius
+	//Get distance from center of circle.
+	float dist = sqrtf((params.pos1X - params.pos2X) * (params.pos1X - params.pos2X) + (params.pos1Z - params.pos2Z) * (params.pos1Z - params.pos2Z));
+	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(params.entity1);
+	float sectorWidth = 2.0f;
+	if (dist < hitbox->circleHitbox[params.hitboxID1].radius - sectorWidth)
+	{
+		return;
+	}
+
+	//Apply hit-feedback like camera shake, hitstop and knockback
+	ApplyHitFeedbackEffects(params);
+
+	//Deal damage to the defender and make their model flash red
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -405,29 +513,135 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 			return;
 		}
 	}
-
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (hitbox2->circularFlags[params.hitboxID2].canTakeDamage == false)
+	{
+		return;
+	}
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
-	//Play entity hurt sounds
-	PlayHitSound(params);
-
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
 	
-	AddTimedEventComponentStartEnd(params.entity1, 0.0f, BeginDestroyProjectile, 1.0f, EndDestroyProjectile);
+	AddTimedEventComponentStartEnd(params.entity1, 0.0f, BeginDestroyProjectile, 1.0f, EndDestroyProjectile, 0, 2);
 }
 
 void LoadNextLevel(OnCollisionParameters& params)
 {
-	//next level is shop so we set the paramaters in statemanager as so
-	SetInPlay(false);
-	SetInShop(true);
+	if (params.entity2.index == stateManager.player.index)
+	{
+		CancelTimedEvents(params.entity2);
+		FallofComponent* fallof = registry.AddComponent<FallofComponent>(params.entity2);
+		switch (stateManager.activeLevel)
+		{
+		case 1://Levl1
+			fallof->fallofX = -317.f;
+			fallof->fallofZ = 137.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 3://Level 2
+			fallof->fallofX = -318;
+			fallof->fallofZ = 347.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 5://Level 3
+			fallof->fallofX = -299.f;
+			fallof->fallofZ = 164.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 7://Level 4
+			fallof->fallofX = -160.f;
+			fallof->fallofZ = 120.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 9://Level 5
+			fallof->fallofX = -395.f;
+			fallof->fallofZ = 245.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 11://Level 6
+			fallof->fallofX = -477.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 13://Level 7
+			fallof->fallofX = -321.f;
+			fallof->fallofZ = 394.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 15://Level 8
+			fallof->fallofX = -1303.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		default:
+			break;
+		}
+		//not final level portal
+		if (stateManager.activeLevel != stateManager.finalLevel)
+		{
+			LoadLevel(++stateManager.activeLevel);
+			return;
+		}
+		//Final portal stuff
+		//final level portal
+
+		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
+		playerUI->SetAllVisability(false);
+
+		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+
+		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
+
+			if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+				uiElement->SetAllVisability(true);
+
+			RedrawUI();
+			gameSpeed = 0.0f;
+			SetPaused(true);
+
+			const int amount = 4;
+			ML_String texts[amount] =
+			{
+				GetDigitalMinuteClock().c_str(),
+
+				("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
+				("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
+				("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
+
+			};
+
+			for (int i = 3; i < amount + 3; i++)
+			{
+				uiElement->m_Texts[i].SetText(texts[i - 3].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
+					DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			}
+		}
+	}
 	
-	LoadLevel(++stateManager.activeLevel);
 }
 

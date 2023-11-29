@@ -35,6 +35,11 @@ EntityID Registry::CreateEntity(ENTITY_PERSISTENCY_TIER persistencyTier)
 
 void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER destructionTier)
 {
+	LightComponent* light = registry.GetComponent<LightComponent>(id);
+	if (light)
+	{
+		RemoveLight(id);
+	}
 	//Boneless model
 	ModelBonelessComponent* boneless = registry.GetComponent<ModelBonelessComponent>(id);
 	if (boneless)
@@ -45,20 +50,51 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	if (skeleton)
 		ReleaseModel(skeleton->model);
 
-	//OnClick
-	OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(id);
-	if (onClick)
-		onClick->Release();
+	//Interactives
+	{
+		//OnClick
+		OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(id);
+		if (onClick)
+			onClick->Release();
+
+		//OnHover
+		OnHoverComponent* onHover = registry.GetComponent<OnHoverComponent>(id);
+		if (onHover)
+			onHover->Release();
+	}
 	
-	//OnHover
-	OnHoverComponent* onHover = registry.GetComponent<OnHoverComponent>(id);
-	if (onHover)
-		onHover->Release();
-	
-	//UIComponent
-	UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
-	if(uiElement)
-		uiElement->Release();
+	//UI
+	{
+		//UIComponent
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(id);
+		if (uiElement)
+			uiElement->Release();
+
+		//UIImp1
+		UIShopImpComponent* uiImp1 = registry.GetComponent<UIShopImpComponent>(id);
+		if (uiImp1)
+			uiImp1->Release();
+
+		//UIImp2
+		UIShopTitleImpComponent* uiImp2 = registry.GetComponent<UIShopTitleImpComponent>(id);
+		if (uiImp2)
+			uiImp2->Release();
+
+		//UIPause
+		UIPauseRelicTextComponent* uiPause = registry.GetComponent<UIPauseRelicTextComponent>(id);
+		if (uiPause)
+			uiPause->Release();
+
+		//UIShopButtons
+		UIShopButtonComponent* uiShopButton = registry.GetComponent<UIShopButtonComponent>(id);
+		if (uiShopButton)
+			uiShopButton->Release();
+
+		//UIShopRelics
+		UIShopRelicComponent* uiShopRelic = registry.GetComponent<UIShopRelicComponent>(id);
+		if (uiShopRelic)
+			uiShopRelic->Release();
+	}
 
 	//Proximity Hitbox
 	ProximityHitboxComponent* p = registry.GetComponent<ProximityHitboxComponent>(id);
@@ -103,6 +139,15 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 	if (destructionTier != ENT_PERSIST_PAUSE)
 		Light::FreeLight();
 
+	for (auto entity : View<ParticleComponent>(registry))
+	{
+		if (entity.persistentTier <= destructionTier)
+		{
+			ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
+			pComp->Release();
+		}
+	}
+
 	for (auto entity : View<TimedEventComponent>(registry))
 	{
 		if (destructionTier != ENT_PERSIST_PAUSE)
@@ -111,12 +156,46 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 
 	for (auto entity : View<SoundComponent>(registry))
 	{
+		//Delete sound component from the pause buttons.
+		if (destructionTier == ENT_PERSIST_PAUSE) //Shitty code, for a shitty scenario with the pause menu buttons. If any other entity during pause has an ONCLICK FKING COMPONENT THIS WILL BREAK AND I WILL BREAK YOU.
+		{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			auto button = registry.GetComponent<OnClickComponent>(entity);
+			if ((sound != nullptr) && (button != nullptr))
+			{
+				sound->Unload();
+			}
+		}
+
+		//Delete the sound component from every entity that is not the Player.
 		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
-			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr)
+			auto shopRelicIcon = registry.GetComponent<UIShopRelicComponent>(entity);
+			auto shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) == nullptr && shopRelicIcon == nullptr && shopButton == nullptr)
 				sound->Unload();
 		}
+
+		//Delete the sound component from the player, but not if we are entering the shop or a new stage.
+		if (entity.persistentTier <= destructionTier) //I hate how this code actually works
+		{
+			auto sound = registry.GetComponent<SoundComponent>(entity);
+			auto shopRelicIcon = registry.GetComponent<UIShopRelicComponent>(entity);
+			auto shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+			if (shopRelicIcon != nullptr)
+			{
+				sound->Unload();
+			}
+			else if (shopButton != nullptr)
+			{
+				sound->Unload();
+			}
+
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) != nullptr)
+				sound->Unload();
+		}
+		//comments written by joaking
 	}
 
 	//If the audio engine is the last entity with a sound component, kill
