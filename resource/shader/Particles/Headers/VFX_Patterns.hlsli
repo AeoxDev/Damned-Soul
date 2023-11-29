@@ -1,6 +1,6 @@
 #include "VFX_Header.hlsli"
 
-sampler vfxSampler_in : register(s3);
+sampler WrapSampler : register(s3);
 Texture2D backbufferTexture_in : register(t0);
 
 Texture2D colorRampTexture_in : register(t1);
@@ -30,14 +30,14 @@ in float distortionVornoi = 0.132f,
 in float distortionNoise = 0.1f
 )
 {
-    float4 vornoiTexture = vornoiTexture_in.Sample(vfxSampler_in, UVPan(offsetXY_in, panSpeed_in * 1.f, time, uv * 0.5f));
-    float4 gNoiseTexture = noiseTexture_in.Sample(vfxSampler_in, UVPan(offsetXY_in, panSpeed_in * 0.9f, time, uv));
-    float4 vornoiDiffuse = vornoiTexture_in.Sample(vfxSampler_in, UVPan(offsetXY_in, panSpeed_in, time, uv));
+    float4 vornoiTexture = vornoiTexture_in.Sample(WrapSampler, UVPan(offsetXY_in, panSpeed_in * 1.f, time, uv * 0.5f));
+    float4 gNoiseTexture = noiseTexture_in.Sample(WrapSampler, UVPan(offsetXY_in, panSpeed_in * 0.9f, time, uv));
+    float4 vornoiDiffuse = vornoiTexture_in.Sample(WrapSampler, UVPan(offsetXY_in, panSpeed_in, time, uv));
     
     
     float2 distortedUV = distortUV(distortionNoise, distortUV(distortionVornoi, uv, pow(vornoiTexture, 1.2f)), gNoiseTexture);
-    float4 fireDistort = shapeTexture_in.Sample(vfxSampler_in, distortedUV);
-    float3 color = SampleColorRamp(colorRampTexture_in, vfxSampler_in, fireDistort);
+    float4 fireDistort = shapeTexture_in.Sample(WrapSampler, distortedUV);
+    float3 color = SampleColorRamp(colorRampTexture_in, WrapSampler, fireDistort);
     
     return AlphaBlend(backBuffer, fireDistort.r, color + (fireColor * fireMultiplier));
 }
@@ -54,17 +54,17 @@ in float distortionVornoi = 0.232f,
 in float distortionNoise = 0.01f
 )
 {
-    float4 vornoiTexture = vornoiTexture_in.Sample(vfxSampler_in,   UVPan(float2(0.0f, -1.0f), 1.25f,    time, uv * 0.5f));
-    float4 gNoiseTexture = noiseTexture_in.Sample(vfxSampler_in,    UVPan(float2(0.0f, -1.0f),  1.5f,       time, uv));
+    float4 vornoiTexture = vornoiTexture_in.Sample(WrapSampler, UVPan(float2(0.0f, -1.0f), 1.25f, time, uv * 0.5f));
+    float4 gNoiseTexture = noiseTexture_in.Sample(WrapSampler, UVPan(float2(0.0f, -1.0f), 1.5f, time, uv));
     
     float2 distortedUV = distortUV(distortionNoise, distortUV(distortionVornoi, uv, pow(vornoiTexture, 1.2f)), gNoiseTexture);
-    float4 fireDistort = shapeTexture_in.Sample(vfxSampler_in, distortedUV);
+    float4 fireDistort = shapeTexture_in.Sample(WrapSampler, distortedUV);
     
-    float4 vornoiDiffuse = vornoiTexture_in.Sample(vfxSampler_in, UVPan(float2( 0.0f, -0.1f), 0.5f, time, uv * 0.75));
-    float3 color = SampleColorRamp(colorRampTexture_in, vfxSampler_in, fireDistort);
+    float4 vornoiDiffuse = vornoiTexture_in.Sample(WrapSampler, UVPan(float2(0.0f, -0.1f), 0.5f, time, uv * 0.75));
+    float3 color = SampleColorRamp(colorRampTexture_in, WrapSampler, fireDistort);
     
 
-    float4 vornoiRotate = SamplePolarCoordinateTexture(vornoiTexture_in, vfxSampler_in, time, uv, 0.0f, -0.25f, 0.25f);
+    float4 vornoiRotate = SamplePolarCoordinateTexture(vornoiTexture_in, WrapSampler, time, uv, 0.0f, -0.25f, 0.25f);
     
     return vornoiRotate;
     
@@ -79,10 +79,10 @@ float time,
 float2 uv
 )
 {
-    float4 vornoiTexture = vornoiTexture_in.Sample(vfxSampler_in, 0.5f * uv);
-    float4 gNoiseTexture = noiseTexture_in.Sample(vfxSampler_in, uv);
-    float4 innerGTexture = shapeTexture_in.Sample(vfxSampler_in, uv);
-    float4 gMaskTexture = maskTexture_in.Sample(vfxSampler_in, uv);
+    float4 vornoiTexture = vornoiTexture_in.Sample(WrapSampler, 0.5f * uv);
+    float4 gNoiseTexture = noiseTexture_in.Sample(WrapSampler, uv);
+    float4 innerGTexture = shapeTexture_in.Sample(WrapSampler, uv);
+    float4 gMaskTexture = maskTexture_in.Sample(WrapSampler, uv);
     
     
     sin(time);

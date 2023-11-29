@@ -1,4 +1,9 @@
-#include "ParticleHeader.hlsli"
+#include "../Headers/ParticleHeader.hlsli"
+
+cbuffer startBuff : register(b2)
+{
+    int startIndex;
+};
 
 cbuffer WorldMatrix : register(b0)
 {
@@ -21,7 +26,7 @@ StructuredBuffer<Input> particles : register(t0);
 
 VS_OUT main(uint vertexID : SV_VertexID)
 {
-    int index = (int) vertexID + start;
+    int index = (int) vertexID + startIndex;
     Input inval = particles[index];
     //inval = particles[instanceID];
     VS_OUT retval;
@@ -33,5 +38,6 @@ VS_OUT main(uint vertexID : SV_VertexID)
     retval.size = inval.size;
     retval.time = inval.time;
     retval.patterns = (int)inval.patterns;
+    retval.VFXpatterns = (int) inval.VFXpatterns;
     return retval;
 }

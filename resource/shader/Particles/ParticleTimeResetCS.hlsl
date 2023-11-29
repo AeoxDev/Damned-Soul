@@ -1,4 +1,4 @@
-#include "ParticleHeader.hlsli"
+#include "Headers/ParticleHeader.hlsli"
 
 
 [numthreads(NUM_THREADS, 1, 1)]

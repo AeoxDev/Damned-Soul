@@ -2,22 +2,16 @@
 #define PARTICLE_HEADER
 #define NUM_THREADS 32
 
-cbuffer ExtraData : register(b2)
-{
-    float3 meshMid;
-    int start;
-};
-
 struct Input
 {
-    float3 position : POSITION;
-    float time : TIME; // Time (in seconds) particles has been active
-    float3 velocity : VELOCITY;
-    float rotationZ : ROTATIONZ;
-    float3 rgb : RGB; // Red Green Blue
-    float size : SIZE;
-    int patterns : PATTERNS;
-    int VFXpatterns : VFXPATTERNS;
+    float3 position;
+    float time; // Time (in seconds) particles has been active
+    float3 velocity;
+    float rotationZ;
+    float3 rgb; // Red Green Blue
+    float size;
+    int patterns;
+    int VFXpatterns;
 };
 
 struct metadata

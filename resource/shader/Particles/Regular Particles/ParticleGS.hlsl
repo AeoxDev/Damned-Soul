@@ -89,6 +89,7 @@ void main(
         retappend.uv = uvCord[i];
         retappend.time = inval[0].time;
         retappend.patterns = inval[0].patterns;
+        retappend.VFXpatterns = inval[0].VFXpatterns;
 
         retval.Append(retappend);
 

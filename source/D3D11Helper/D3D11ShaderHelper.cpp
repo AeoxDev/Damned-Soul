@@ -106,6 +106,7 @@ bool CreateInputLayout(const char* vShaderByteCode, const unsigned int& size, ID
 	};
 	Layout particleLayout = { ParticleInputDesc, ARRAYSIZE(ParticleInputDesc) };
 
+
 	//Must correspond to enum layout in d3d11helper.h
 	Layout layouts[] =
 	{

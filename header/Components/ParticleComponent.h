@@ -22,7 +22,7 @@ enum ComputeShaders
 
 enum VFX_PATTERN
 {
-	FIRE = 0,
+	FLAME = 0,
 	ACID = 1,
 	SWORD = 2
 };

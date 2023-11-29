@@ -64,7 +64,6 @@ namespace Particles
 	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
 	extern std::vector<int> m_unoccupiedParticles;
 
-
 	void SwitchInputOutput();
 	void InitializeParticles();
 	void ReleaseParticles();
@@ -76,11 +75,11 @@ namespace Particles
 	ParticleMetadata GetMetadataAtIndex(int metadataSlot);
 
 	//Calls for D3D11Helper to set the compute shader and the resources it requires
-	void PrepareParticleCompute(RenderSetupComponent renderStates[8]);
+	void PrepareParticleCompute();
 	//Calls for D3D11Helper to reset the compute shader and copy the resources of the SRV to vertex buffer
 	void FinishParticleCompute();
 	//Calls for D3D11Helper to set the shaders and resources requiered for the particle pass
-	void PrepareParticlePass(RenderSetupComponent renderStates[8], int metaDataSlot);
+	void PrepareParticlePass(int metadataSlot);
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
 	void FinishParticlePass();
 	//Calls for D3D11Helper to set the shaders and resources requiered for the VFX pass
@@ -88,9 +87,10 @@ namespace Particles
 	//Calls for D3D11Helper to reset the shaders and resources used by the VFX pass
 	void FinishVFXPass();
 
-	void PrepareMeshPass();
+	void PrepareMeshPass(int metadataSlot);
 	void FinishMeshPass();
 
 	void UpdateStart(int& metadataSlot);
+	void UpdateVFXStart(int& metadataSlot);
 }
 
