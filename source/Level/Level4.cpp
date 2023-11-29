@@ -28,7 +28,7 @@ void LoadLevel4()
 	stageVars.stageNr = 4;
 	EntityID stage = SetUpStage(stageVars);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("level4"); //Proximity hitbox (Added by Joaquin)
+	phc->Load("level4Copy"); //Proximity hitbox (Added by Joaquin)
 	//EntityID skeleton = registry.CreateEntity();
 	//EntityID skeleton2 = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
