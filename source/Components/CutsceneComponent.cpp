@@ -265,82 +265,70 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 	TimedEventIgnoreGamespeed(true);
 	gameSpeed = 0.0f;
 
+	float runningTime = 1.5f;
+	float beginReturnTime = 5.0f;
+	float returnEndTime = beginReturnTime + 1.0f;
+	float returnUnpause = returnEndTime + 0.1f;
+
 	TransformComponent* transform;
 	CutsceneComponent* cutscene;
 	transform = registry.GetComponent<TransformComponent>(entity);
 
 	float cameraXOffset = transform->scaleX * transform->facingX * 15.0f;
-	float cameraYOffset = transform->scaleY * 3.5;
+	float cameraYOffset = 10.f + transform->scaleY * 3.5;
 	float cameraZOffset = transform->scaleZ * transform->facingZ * 15.0f;
 
-	//Zoom into the enemy
-	EntityID zoomIn = registry.CreateEntity();
-	cutscene = registry.AddComponent<CutsceneComponent>(zoomIn);
-	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	cutscene->goalLookAtX = transform->positionX;
-	cutscene->goalLookAtY = transform->positionY + cameraYOffset;
-	cutscene->goalLookAtZ = transform->positionZ;
-	cutscene->startLookAtX = transform->positionX;
-	cutscene->startLookAtY = transform->positionY + cameraYOffset;
-	cutscene->startLookAtZ = transform->positionZ;
-	//Do one cutscene, then the other
-	cutscene->startPositionX = transform->positionX + transform->facingX * 60.0f;
-	cutscene->startPositionY = transform->positionY + cameraYOffset;
-	cutscene->startPositionZ = transform->positionZ + transform->facingZ * 60.0f;
-	cutscene->goalPositionX = transform->positionX + transform->facingX * 5.0f;
-	cutscene->goalPositionY = transform->positionY + cameraYOffset;
-	cutscene->goalPositionZ = transform->positionZ + transform->facingZ * 5.0f;
-	AddTimedEventComponentStartContinuousEnd(zoomIn, 0.0f, BeginCutscene, CutsceneTransition, 1.5f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	
+	//Have camera still and let dog run in
+	EntityID stillShot = registry.CreateEntity();
+	CutsceneComponent* stillCameracutscene = registry.AddComponent<CutsceneComponent>(stillShot);
+	stillCameracutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(stillShot, transform->positionX, transform->positionY + cameraYOffset, transform->positionZ,
+		transform->positionX, transform->positionY + cameraYOffset, transform->positionZ);
+	CutsceneSetPosition(stillShot, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
+		transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f);
+	AddTimedEventComponentStartContinuousEnd(stillShot, 0.0f, BeginCutscene, CutsceneTransition, beginReturnTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
-	EntityID additionalCutscene = registry.CreateEntity();
-	cutscene = registry.AddComponent<CutsceneComponent>(additionalCutscene);
-	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	cutscene->goalLookAtX = transform->positionX;
-	cutscene->goalLookAtY = transform->positionY + 2.0f;
-	cutscene->goalLookAtZ = transform->positionZ;
-	cutscene->startLookAtX = transform->positionX;
-	cutscene->startLookAtY = transform->positionY + 2.0f;
-	cutscene->startLookAtZ = transform->positionZ;
+	//Make doggo run in from the side
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	float speedSquared = stats->GetSpeed() * stats->GetSpeed();
+	float distX = runningTime * stats->GetSpeed();
+	float dist = distX;
+	cutscene = registry.AddComponent<CutsceneComponent>(entity);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(entity, -transform->facingZ, 0.0f, transform->facingX,
+		-transform->facingZ, 0.0f, transform->facingX);
+	CutsceneSetPosition(entity, transform->positionX - (-transform->facingZ * dist), 0.0f, transform->positionZ + (transform->facingX * dist),
+		transform->positionX, transform->positionY, transform->positionZ);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, runningTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
-	cameraXOffset = transform->scaleX * transform->facingX * 25.0f;
-	cameraYOffset = transform->scaleY * 4.5f;
-	cameraZOffset = transform->scaleZ * transform->facingZ * 25.0f;
-	//Do one cutscene, then the other
-	cutscene->startPositionX = transform->positionX + cameraXOffset + cameraZOffset;
-	cutscene->startPositionY = transform->positionY + cameraYOffset;
-	cutscene->startPositionZ = transform->positionZ + cameraZOffset;
-	cutscene->goalPositionX = transform->positionX + cameraXOffset - cameraXOffset;
-	cutscene->goalPositionY = transform->positionY + cameraYOffset;
-	cutscene->goalPositionZ = transform->positionZ + cameraZOffset;
-	AddTimedEventComponentStartContinuousEnd(additionalCutscene, 1.6f, BeginCutscene, CutsceneTransition, 3.5f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	//Make doggo attack
+	//To do this. Create a timed event that then adds a cutscene component and creates a timed event for the cutscene
+	//You will need to create an event function for this
 
-	
+	//Make doggo breathe fire
+	//To do this. Create a timed event that then adds a cutscene component and creates a timed event for the cutscene
+	//You will need to create an event function for this
+
+
+	//Return the camera
 	//Return to player
 	EntityID returnTransition = stateManager.player;
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
 	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	cutscene->goalLookAtX = transformPlayer->positionX;
-	cutscene->goalLookAtY = transformPlayer->positionY;
-	cutscene->goalLookAtZ = transformPlayer->positionZ;
-	cutscene->startLookAtX = transform->positionX;
-	cutscene->startLookAtY = transform->positionY + 4.5f;
-	cutscene->startLookAtZ = transform->positionZ;
+	CutsceneSetLookAt(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
+		transformPlayer->positionX, transformPlayer->positionY, transformPlayer->positionZ);
+	CutsceneSetPosition(stillShot, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
+		transformPlayer->positionX + CAMERA_OFFSET_X, transformPlayer->positionY + CAMERA_OFFSET_Y, transformPlayer->positionZ + CAMERA_OFFSET_Z);
+	AddTimedEventComponentStartContinuousEnd(returnTransition, beginReturnTime, BeginCutscene, CutsceneTransition, returnEndTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
-	//Do one cutscene, then the other
-	DirectX::XMFLOAT3 cameraPos = Camera::GetPositionFloat();
-	cutscene->startPositionX = transform->positionX + transform->facingX * 4.0f;
-	cutscene->startPositionY = transform->positionY + cameraYOffset;
-	cutscene->startPositionZ = transform->positionZ + transform->facingZ * 4.0f;
-	cutscene->goalPositionX = transformPlayer->positionX + CAMERA_OFFSET_X;
-	cutscene->goalPositionY = transformPlayer->positionY + CAMERA_OFFSET_Y;
-	cutscene->goalPositionZ = transformPlayer->positionZ + CAMERA_OFFSET_Z;
-	AddTimedEventComponentStartContinuousEnd(returnTransition, 3.6f, BeginCutscene, CutsceneTransition, 5.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	AddTimedEventComponentStart(returnTransition, 5.1f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	cutscene = registry.AddComponent<CutsceneComponent>(entity);
-	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear);
-	AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, CutsceneTransition, 5.5f, RemoveEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStart(returnTransition, returnUnpause, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	
+	//remove the cutscene doggo.
+	//You will neede an event function to do this instead.
+	//cutscene = registry.AddComponent<CutsceneComponent>(entity);
+	//cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear);
+	//AddTimedEventComponentStartContinuousEnd(entity, returnEndTime, nullptr, CutsceneTransition, returnUnpause, RemoveEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 //One overhead to legs, one side to side, one zoom in, then return
