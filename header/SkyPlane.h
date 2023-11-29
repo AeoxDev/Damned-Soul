@@ -17,6 +17,8 @@ extern  VS_IDX m_skyVS;
 extern  PS_IDX m_skyPS;
 extern	CB_IDX m_skyConst;
 extern	BS_IDX m_skyBlend;
+extern SRV_IDX m_backBufferSRV;
+
 
 void InitializeSky();
 void ReleaseSky();

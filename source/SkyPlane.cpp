@@ -6,6 +6,7 @@
 #include "Components\Components.h"
 #include "D3D11Helper\D3D11Helper.h"
 #include "SDLHandler.h"
+#include "GameRenderer.h"
 
 
 EntityID planes[AMOUNT_OF_PLANES];
@@ -20,6 +21,8 @@ VS_IDX m_skyVS;
 PS_IDX m_skyPS;
 CB_IDX m_skyConst;
 BS_IDX m_skyBlend;
+SRV_IDX m_backBufferSRV; 
+
 
 void InitializeSky()
 {
@@ -75,6 +78,8 @@ void InitializeSky()
 	planes[0] = m_basePlane;
 	planes[1] = m_rocksPlane;
 	planes[2] = m_islandPlane;
+
+	m_backBufferSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
 }
 
 void ReleaseSky()

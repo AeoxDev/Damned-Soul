@@ -170,6 +170,9 @@ void RenderSkyPlane()
 
 		SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
 
+
+
+
 		UpdateTransform(loops++);
 		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
 			tc->facingX, tc->facingY, -tc->facingZ,
@@ -180,6 +183,8 @@ void RenderSkyPlane()
 
 		SetVertexShader(m_skyVS);
 		SetPixelShader(m_skyPS);
+
+		SetShaderResourceView(m_backBufferSRV, BIND_PIXEL, 5);
 
 		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 
