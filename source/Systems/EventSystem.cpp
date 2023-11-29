@@ -40,7 +40,7 @@ int CheckDuplicates(TimedEventComponent*& comp, unsigned long long id)
 {
 	int amount = 0;
 	//Loop through and check for same function pointer
-	for (unsigned i = 0; i < comp->size; i++)
+	for (int i = 0; i < comp->size; i++)
 	{
 		if (comp->timedEvents[i].isActive && comp->timedEvents[i].id == id)
 		{
@@ -60,7 +60,7 @@ bool EventSystem::Update()
 	{
 		auto comp = registry.GetComponent<TimedEventComponent>(entity);
 		int size = comp->size;
-		for (unsigned i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 		{
 			if (size != comp->size)
 			{
@@ -123,7 +123,7 @@ int FindAndInit(EntityID& entityID)
 		return -1;
 	}
 	int slot = -1;
-	for (unsigned i = 0; i < tc->size; i++)
+	for (int i = 0; i < tc->size; i++)
 	{
 		if (tc->timedEvents[i].isActive == false)
 		{
@@ -219,6 +219,7 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 	if (!tc)
 	{
 		tc = registry.AddComponent<TimedEventComponent>(eventity);
+
 	}
 	
 	TimedEvent timedEvent;
@@ -251,6 +252,10 @@ uint32_t GetTimedEventCondition(EntityID& entity, const int& timedEventSlot)
 
 uint32_t GetTimedEventCondition(TimedEventComponent*& comp, const int& timedEventSlot)
 {
+	if (comp == nullptr)
+	{
+		return 0;
+	}
 	return comp->timedEvents[timedEventSlot].condition;//Needs to be fixed
 }
 
@@ -290,17 +295,20 @@ void CancelTimedEvents(EntityID& entity)
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
 	if (comp)
 	{
-		//registry.RemoveComponent<TimedEventComponent>(entity);
-		comp = registry.AddComponent<TimedEventComponent>(entity);
+		comp->size = 0;
 	}
 }
 
-void ReleaseTimedEvents(EntityID& entity)
+void ReleaseTimedEvents(EntityID entity)
 {
+	if (entity.index == -1)
+	{
+		return;
+	}
 	TimedEventComponent* comp = registry.GetComponent<TimedEventComponent>(entity);
 	if (comp)
 	{
-		registry.RemoveComponent<TimedEventComponent>(entity);
+		comp->size = 0;
 	}
 	
 }
@@ -309,3 +317,4 @@ void TimedEventIgnoreGamespeed(bool ignore)
 {
 	ignoreGameSpeed = ignore;
 }
+
