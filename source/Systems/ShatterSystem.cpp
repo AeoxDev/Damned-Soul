@@ -11,4 +11,6 @@ bool ShatterSystem::Update()
 		auto comp = registry.GetComponent<ShatterComponent>(entity);
 		comp->time += GetDeltaTime();
 	}
+
+	return true;
 }
