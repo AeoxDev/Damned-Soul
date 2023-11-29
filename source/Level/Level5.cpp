@@ -44,7 +44,7 @@ void LoadLevel5()
 	if (SetupAllEnemies("LV5Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV5Enemies");
 	}
 	// 
 	//SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f, 1); // make stronger skeleton
