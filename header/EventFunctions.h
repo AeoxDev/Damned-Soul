@@ -112,6 +112,7 @@ void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
 void SplitBossIntroScene(EntityID& entity, const int& index);
 void EyeIntroScene(EntityID& entity, const int& index);
+void MinotaurIntroScene(EntityID& entity, const int& index);
 void StoredEnemyCutscene(EntityID& entity, const int& index);//Store a cutscene and apply to enemy when relevant.
 
 void CutsceneFallStage1(EntityID& entity, const int& index);

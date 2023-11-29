@@ -47,24 +47,8 @@ void LoadLevel6()
 		//something went wrong, could not open file
 		assert("Could not read file: LV1Enemies");
 	}
-	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 1);
-	// SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f, 2);
-	//SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 1);
-	//SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f, 2);
-	//SetupEnemy(EnemyType::empoweredImp, 35.f, 1.f, 45.f, 1); //  stronger version incoming
-	//SetupEnemy(EnemyType::empoweredImp, -25.f, 1.f, -35.f, 1); //  stronger version incoming
-	//SetupEnemy(EnemyType::minotaur, -50.f, 1.f, 25.f, 2);
-	//SetupEnemy(EnemyType::minotaur, -40.f, 1.f, 25.f, 2);
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
-	
-	//22 souls + 18 souls level 1,2 = 40 souls total before boss
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
-	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
-	registry.AddComponent<AnimationComponent>(player, AnimationComponent());*/
+
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -216.f, 1.f, -284.f, 0);
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
@@ -98,78 +82,6 @@ void LoadLevel6()
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-
-	//Add static hazards on the where player does not spawn
-	int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_ACID, 1.f, 0.f, 0.5f, 0.f, 0.2f, 1.2f, 0.2f, 1.5f);
-		//bool succeded = false;
-		//while (!succeded)
-		//{
-		//	float randX = (float)(rand() % 100) - 50.0f;
-		//	float randZ = (float)(rand() % 100) - 50.0f;
-		//	if (randX * randX + randZ * randZ > 80)
-		//	{
-		//		float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-		//		float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-		//		EntityID hazard = registry.CreateEntity();
-		//		ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-		//		hazardModel->shared.colorAdditiveRed = 0.0f;
-		//		hazardModel->shared.colorAdditiveGreen = 0.5f;
-		//		hazardModel->shared.colorAdditiveBlue = 0.0f;
-		//		hazardModel->shared.colorMultiplicativeRed = 0.2f;
-		//		hazardModel->shared.colorMultiplicativeGreen = 1.2f;
-		//		hazardModel->shared.colorMultiplicativeBlue = 0.2f;
-		//		hazardModel->shared.gammaCorrection = 1.5f;
-		//		hazardModel->castShadow = false;
-		//		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-		//		hazardTransform->positionX = randX;
-		//		hazardTransform->positionY = 0.5f;
-		//		hazardTransform->positionZ = randZ;
-		//		hazardTransform->scaleX = randScaleX;
-		//		hazardTransform->scaleY = 1.0f;
-		//		hazardTransform->scaleZ = randScaleZ;
-		//		hazardTransform->facingX = cosf((float)rand());
-		//		hazardTransform->facingZ = sinf((float)rand());
-		//		AddStaticHazard(hazard, HAZARD_ACID);
-
-		//		succeded = true;
-		//	}
-		//}
-	}
-	nrHazards = 1;//Big ice sheet
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
-		//bool succeded = false;
-		//float randX = (float)(rand() % 32) - 16.0f;
-		//float randZ = (float)(rand() % 32) - 16.0f;
-		//float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
-		//float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
-		//EntityID hazard = registry.CreateEntity();
-		//ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-		//hazardModel->shared.colorAdditiveRed = 0.1f;
-		//hazardModel->shared.colorAdditiveGreen = 0.1f;
-		//hazardModel->shared.colorAdditiveBlue = 0.5f;
-		//hazardModel->shared.colorMultiplicativeRed = 0.5f;
-		//hazardModel->shared.colorMultiplicativeGreen = 0.5f;
-		//hazardModel->shared.colorMultiplicativeBlue = 1.5f;
-		//hazardModel->shared.gammaCorrection = 1.5f;
-		//hazardModel->castShadow = false;
-		//TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-		//hazardTransform->positionX = randX;
-		//hazardTransform->positionY = 0.4f;
-		//hazardTransform->positionZ = randZ;
-		//hazardTransform->scaleX = randScaleX;
-		//hazardTransform->scaleY = 1.0f;
-		//hazardTransform->scaleZ = randScaleZ;
-		//hazardTransform->facingX = cosf((float)rand());
-		//hazardTransform->facingZ = sinf((float)rand());
-		//AddStaticHazard(hazard, HAZARD_ICE);
-
-		//succeded = true;
-	}
 
 	stateManager.stage = stage;
 	SetInPlay(true);
