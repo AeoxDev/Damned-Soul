@@ -129,11 +129,11 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		float playerMovementZ = ptc->positionZ - ptc->lastPositionZ;
 
 		//limit player movement in case of dash
-		if (playerMovementX > 0.05f)
-			playerMovementX = 0.05f;
-
-		if (playerMovementZ > 0.05f)
-			playerMovementZ = 0.05f;
+		if (playerMovementX > 0.03f)
+			playerMovementX = 0.03f;
+		
+		if (playerMovementZ > 0.03f)
+			playerMovementZ = 0.03f;
 
 		//		C		= sqrt(A^2 + B^2)	
 		float newDirX = sqrt(playerMovementX * playerMovementX + dx * dx);
@@ -269,7 +269,6 @@ bool ImpBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(impTransformComponent->positionX, impTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 
-			impComponent->attackStunTimer += GetDeltaTime();
 			if (impComponent->attackStunTimer <= impComponent->attackStunDuration)
 			{
 				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 1))
