@@ -10,6 +10,7 @@
 #include "Model.h"
 #include "Level.h"
 #include "Levels\LevelHelper.h"
+#include "Levels\LevelLoader.h"
 
 bool ControllerSystem::Update()
 {
@@ -84,11 +85,78 @@ bool ControllerSystem::Update()
 		}
 		else if (keyState[SCANCODE_4] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
 		}
 		else if (keyState[SCANCODE_5] == pressed)
 		{
-			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, tempBoss, 256);
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, eye, 256);
+		}
+		else if (keyState[SCANCODE_6] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, empoweredSkeleton, 256);
+		}
+		else if (keyState[SCANCODE_7] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, minotaur, 256);
+		}
+		else if (keyState[SCANCODE_8] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, empoweredHellhound, 256);
+		}
+		else if (keyState[SCANCODE_9] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, empoweredImp, 256);
+		}
+		else if (keyState[SCANCODE_0] == pressed)
+		{
+			AddTimedEventComponentStart(stateManager.stage, 0.0f, SpawnMainMenuEnemy, lucifer, 256);
+		}
+	}
+	if (keyInput[SCANCODE_L] == down)
+	{
+		if (keyState[SCANCODE_1] == pressed)
+		{
+			LoadLevel(1);
+		}
+		else if (keyState[SCANCODE_2] == pressed)
+		{
+			LoadLevel(3);
+		}
+		else if (keyState[SCANCODE_3] == pressed)
+		{
+			LoadLevel(5);
+		}
+		else if (keyState[SCANCODE_4] == pressed)
+		{
+			LoadLevel(7);
+		}
+		else if (keyState[SCANCODE_5] == pressed)
+		{
+			LoadLevel(9);
+		}
+		else if (keyState[SCANCODE_6] == pressed)
+		{
+			LoadLevel(11);
+		}
+		else if (keyState[SCANCODE_7] == pressed)
+		{
+			LoadLevel(13);
+		}
+		else if (keyState[SCANCODE_8] == pressed)
+		{
+			LoadLevel(15);
+		}
+		else if (keyState[SCANCODE_9] == pressed)
+		{
+			LoadLevel(17);
+		}
+		else if (keyState[SCANCODE_0] == pressed)//Reset shop, do this only once per game
+		{
+			LoadLevel(2);
+		}
+		else if (keyState[SCANCODE_S] == pressed)//Do this many times
+		{
+			LoadLevel(4);
 		}
 	}
 	if (keyInput[SCANCODE_H] == down)
