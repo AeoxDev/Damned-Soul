@@ -20,6 +20,13 @@ enum ComputeShaders
 	NO_MOVEMENT = 14
 };
 
+enum VFX_PATTERN
+{
+	FIRE = 0,
+	ACID = 1,
+	SWORD = 2
+};
+
 //(entity, float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)
 struct ParticleComponent
 {
@@ -34,18 +41,20 @@ struct ParticleComponent
 	// Finds the index of the metadata for this component
 	int FindSlot();
 
-	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern);
-	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float speed, int amount, ComputeShaders pattern);
+	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, ComputeShaders pattern);
+	// Overload for Pulse
+	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, float speed, int amount, ComputeShaders pattern);
+	// Overload for VFX 
+	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern, ComputeShaders pattern);
 
 	// Overload for FlameThrower
 	// Flamethrower does not use max max distance therefore we store one of the triangles vertices x-position there.
-	ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern);
+	ParticleComponent(float seconds, float v0X, float size, float offsetX, float offsetY, float offsetZ, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern);
 	~ParticleComponent();
 
 
 	//void SetupFlamethrower(float seconds, float radius, float size, float x, float y, float z);
 	void Release();
-	void RemoveParticles(EntityID& entity);
 	void ResetBuffer();
 	void ResetVertex();
 

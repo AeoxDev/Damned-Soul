@@ -110,6 +110,7 @@ void Particles::InitializeParticles()
 		particles[i].rgb = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 		particles[i].size = 0.f;
 		particles[i].patterns= -1;
+		particles[i].particlePatterns =  -1;
 
 	}
 
@@ -479,6 +480,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 		}
 
 	}
+}
+
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern, ComputeShaders pattern)
+{
 }
 
 ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern)
