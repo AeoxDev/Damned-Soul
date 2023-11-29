@@ -33,7 +33,7 @@ void LoadLevel6()
 	stageVars.stageNr = 6;
 	EntityID stage = SetUpStage(stageVars);
 	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("level6Copy"); //Proximity hitbox (Added by Joaquin)
+	phc->Load("level6"); //Proximity hitbox (Added by Joaquin)
 
 	EntityID mouse = registry.CreateEntity();
 

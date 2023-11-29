@@ -38,7 +38,7 @@ void AudioEngineComponent::Setup(int& ID)
 	//Load all sounds to use in the game
 	FMOD::Sound* toAdd = nullptr;
 	this->sounds.clear();
-	for (int i = 0; i < 109; i++) //Change x in (i < x) to however many sounds you want to load into the game.
+	for (int i = 0; i < 111; i++) //Change x in (i < x) to however many sounds you want to load into the game.
 	{
 		this->sounds.push_back(toAdd);
 	}
@@ -61,7 +61,7 @@ void AudioEngineComponent::Setup(int& ID)
 	this->volumes.push_back(Volume(0.1f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/Ice.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
-	this->system->createSound("SFX/Music/PatrickPlankton.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
+	this->system->createSound("SFX/Music/Boss.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/CaveAmbience.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(1.0f, AMBIENCE_GROUP));
@@ -225,25 +225,29 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Enemy/Imp/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 
-	//Minotaur (5)
+	//Minotaur (6)
 	this->system->createSound("SFX/Enemy/Minotaur/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Minotaur/Charge.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Jump.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Slam.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 
-	//Miniboss (4)
+	//Miniboss (5)
 	this->system->createSound("SFX/Enemy/Miniboss/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Miniboss/Slam.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Miniboss/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Miniboss/Reassembling.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Miniboss/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 
@@ -535,6 +539,7 @@ void SoundComponent::Load(const int EntityType)
 		this->soundIndices.push_back((int)MINOTAUR3);
 		this->soundIndices.push_back((int)MINOTAUR4);
 		this->soundIndices.push_back((int)MINOTAUR5);
+		this->soundIndices.push_back((int)MINOTAUR6);
 		break;
 	case MINIBOSS:
 		//Push back all indices for the miniboss sounds into soundIndices
@@ -542,6 +547,7 @@ void SoundComponent::Load(const int EntityType)
 		this->soundIndices.push_back((int)MINIBOSS2);
 		this->soundIndices.push_back((int)MINIBOSS3);
 		this->soundIndices.push_back((int)MINIBOSS4);
+		this->soundIndices.push_back((int)MINIBOSS5);
 		break;
 	case BOSS:
 		//Push back all indices for the boss sounds into soundIndices

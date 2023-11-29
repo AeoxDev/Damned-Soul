@@ -116,6 +116,10 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
 
+	//Sounds (Added by Joaquin)
+	SoundComponent* scp = registry.AddComponent<SoundComponent>(newMini);
+	scp->Load(MINIBOSS);
+
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
@@ -374,7 +378,21 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 	{
 		SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
 		if (skeleton)
+		{
 			skeleton->attackTimer = 0.0f;
+
+			//Play Sound Effect (Added by Joaquin)
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+			if (sfx)
+			{
+				for (auto audioEngine : View<AudioEngineComponent>(registry))
+				{
+					bool isPlaying = false;
+					registry.GetComponent<AudioEngineComponent>(audioEngine)->channels[sfx->channelIndex[Channel_Base]]->isPlaying(&isPlaying);
+					if(!isPlaying) sfx->Play(Skeleton_Attack, Channel_Base);
+				}
+			}
+		}
 	}
 
 	else if (condition == EnemyType::tempBoss)
@@ -384,6 +402,18 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 		{
 			tempBoss->attackTimer = 0.0f;
 			tempBoss->isAttacking = false;
+
+			//Play Sound Effect (Added by Joaquin)
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+			if (sfx)
+			{
+				for (auto audioEngine : View<AudioEngineComponent>(registry))
+				{
+					bool isPlaying = false;
+					registry.GetComponent<AudioEngineComponent>(audioEngine)->channels[sfx->channelIndex[Channel_Base]]->isPlaying(&isPlaying);
+					if (!isPlaying) sfx->Play(Skeleton_Attack, Channel_Base);
+				}
+			}
 		}
 
 	}
@@ -494,6 +524,18 @@ void BossShockwaveStart(EntityID& entity, const int& index)
 	SetHitboxActive(entity, enemy->specialHitBoxID, true);//Set false somewhere
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, true);
 	SetHitboxRadius(entity, enemy->specialHitBoxID, 0.0f);
+
+	//Play sound effect (Added by Joaquin)
+	if (enemy->type == EnemyType::tempBoss)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Miniboss_Shockwave, Channel_Base);
+	}
+	else if (enemy->type == EnemyType::minotaur)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Minotaur_Slam, Channel_Base);
+	}
 }
 
 void BossShockwaveExpand(EntityID& entity, const int& index)

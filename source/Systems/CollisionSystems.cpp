@@ -9,6 +9,7 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "States\StateManager.h"
 #include "CollisionFunctions.h"
+#include "Camera.h"
 
 float giSpawnPosX = 0.0f;
 float giSpawnPosZ = 0.0f;
@@ -364,12 +365,11 @@ bool GeometryIndependentSystem::Update()
 					break;
 				case HAZARD_GATE:
 				{
-					if (entity.index == stateManager.player.index)
+					if (Camera::InCutscene() == 0 && entity.index == stateManager.player.index)
 					{
 						OnCollisionParameters params = { 0 };
 						params.entity2 = stateManager.player;
 						LoadNextLevel(params);
-						player->portalCreated = false;
 					}
 					
 				}

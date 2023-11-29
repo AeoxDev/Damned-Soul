@@ -368,6 +368,60 @@ void HurtSound(EntityID& entity, const int& index)
 				sfx->Play(Skeleton_Hurt, Channel_Extra);
 			}
 			break;
+		case EnemyType::empoweredSkeleton:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::empoweredImp:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Imp_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::empoweredHellhound:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::frozenEye:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::frozenHellhound:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::frozenImp:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Imp_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::lucifer:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Boss_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::tempBoss:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Miniboss_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::zac:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Miniboss_Hurt, Channel_Extra);
+			}
+			break;
 		case EnemyType::imp:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{

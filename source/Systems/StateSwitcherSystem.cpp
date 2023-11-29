@@ -6,6 +6,7 @@
 #include "States\StateManager.h"
 #include "CollisionFunctions.h"
 #include "DeltaTime.h"
+#include "Camera.h"
 
 void StartPlayerDeath(EntityID& entity, const int& index)
 {
@@ -79,6 +80,8 @@ bool StateSwitcherSystem::Update()
 		
 		// Get enemy entity stat component
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
+		//Get enemy sound component
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (statComp->GetHealth() <= 0 && statComp->performingDeathAnimation == false)
 		{
 			TempBossBehaviour* tempBossComp = registry.GetComponent<TempBossBehaviour>(entity);
@@ -90,7 +93,6 @@ bool StateSwitcherSystem::Update()
 					playersComp->killingSpree += 1;
 				}
 				// start timed event for MURDER
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 				switch (registry.GetComponent<EnemyComponent>(entity)->type)
 				{
 				case EnemyType::hellhound:
@@ -98,6 +100,27 @@ bool StateSwitcherSystem::Update()
 					break;
 				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
+					break;
+				case EnemyType::empoweredSkeleton:
+					sfx->Play(Skeleton_Death, Channel_Base);
+					break;
+				case EnemyType::empoweredImp:
+					sfx->Play(Imp_Death, Channel_Base);
+					break;
+				case EnemyType::empoweredHellhound:
+					sfx->Play(Hellhound_Death, Channel_Base);
+					break;
+				case EnemyType::frozenEye:
+					sfx->Play(Eye_Death, Channel_Base);
+					break;
+				case EnemyType::frozenHellhound:
+					sfx->Play(Hellhound_Death, Channel_Base);
+					break;
+				case EnemyType::frozenImp:
+					sfx->Play(Imp_Death, Channel_Base);
+					break;
+				case EnemyType::zac:
+					sfx->Play(Miniboss_Death, Channel_Base);
 					break;
 				case EnemyType::eye:
 					sfx->Play(Eye_Death, Channel_Base);
@@ -140,6 +163,8 @@ bool StateSwitcherSystem::Update()
 				}
 				if (tempBossComp->deathCounter < 3) //spawn new mini russian doll skeleton
 				{
+
+					sfx->Play(Miniboss_Reassemble, Channel_Base);
 					// start timed event for new little bossies
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, SplitBoss);
 				}
@@ -165,7 +190,7 @@ bool StateSwitcherSystem::Update()
 			endGameLoop = false;
 			continue;
 		}
-		if (/*playersComp->killingSpree >= playersComp->killThreshold*/(GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop))
+		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop))
 		{
 			SetGodModePortal(false);
 			playersComp->portalCreated = true;
