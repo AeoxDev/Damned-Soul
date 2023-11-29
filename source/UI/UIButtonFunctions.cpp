@@ -214,13 +214,19 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 void UIFunctions::Game::ExitShopCutscene(void* args, int a)
 {
 	//Make the player fall
-	CancelTimedEvents(stateManager.player);
-	CutsceneComponent* fallDown = registry.AddComponent<CutsceneComponent>(stateManager.player);
-	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
-	fallDown->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_Position | Cutscene_Accelerating);
-	CutsceneSetPosition(stateManager.player, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, -33.0f, transform->positionZ);
-	AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginPortalCutscene, CutsceneTransition, 5.0f, EventShopLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	
+	if (Camera::InCutscene() == 3)//If in shop, do the falling
+	{
+		CancelTimedEvents(stateManager.player);
+		CutsceneComponent* fallDown = registry.AddComponent<CutsceneComponent>(stateManager.player);
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+		fallDown->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_Position | Cutscene_Accelerating);
+		CutsceneSetPosition(stateManager.player, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, -33.0f, transform->positionZ);
+		AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginPortalCutscene, CutsceneTransition, 5.0f, EventShopLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	}
+	else //Otherwise (second time clicking) skip the shop cutscene
+	{
+		UIFunctions::Game::LoadNextLevel(nullptr, 0);
+	}
 }
 
 void UIFunctions::Game::SetMainMenu(void* args, int a)
