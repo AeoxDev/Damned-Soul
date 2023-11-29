@@ -13,6 +13,7 @@ struct StageSetupVariables
 	float offsetX = .0f, offsetY = .0f, offsetZ = .0f;
 };
 
+
 struct ModelTextRead
 {
 	EnemyType eType;
@@ -55,3 +56,7 @@ void ReloadPlayerNonGlobals();
 EntityID RandomPlayerEnemy(EnemyType enemyType);
 
 void SetScoreboardUI(EntityID stage);
+
+
+
+void SetupEnemyNavigationHelper();

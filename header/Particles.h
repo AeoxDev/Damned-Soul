@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include "MemLib/PoolPointer.hpp"
-#include "ParticleComponent.h"
+#include "Components.h"
 #include "GameRenderer.h"
 #include "D3D11Helper\IDX_Types.h"
 

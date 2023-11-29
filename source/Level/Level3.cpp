@@ -38,6 +38,8 @@ void LoadLevel3()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+
 	//Player
 	//SetPlayerPosition(0.0, 0.0, 30.0f);
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal

@@ -42,7 +42,8 @@ void LoadLevel9()
 
 
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
-	
+
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal

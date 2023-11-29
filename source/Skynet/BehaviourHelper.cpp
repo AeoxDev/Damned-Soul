@@ -70,6 +70,7 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ, float rota
 	}
 }
 
+
 void TransformDecelerate(EntityID& entity)
 {
 	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
