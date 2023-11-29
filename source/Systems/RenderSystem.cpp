@@ -240,16 +240,18 @@ bool RenderSystem::Update()
 
 bool OutlineSystem::Update()
 {
-	// Validate outline resources
-	ValidateOutlineResources();
+	//Outlines::SwapTargets();
+
+	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
+	SetTopology(TOPOLOGY::TRIANGLELIST);
 	// Prepare the outline pixel shader
-	SetPixelShader(outlinePixelShader);
+	SetPixelShader(Outlines::outlinePixelShader);
 	// Prepare the ountline resources
-	SetRenderTargetViewAndDepthStencil(outlineRTV, outlineDSV);
+	SetRenderTargetViewAndDepthStencil(Outlines::renderTarget, Outlines::depthStencil);
 
 	UnsetGeometryShader();
-	ClearRenderTargetView(outlineRTV);
-	ClearDepthStencilView(outlineDSV);
+	ClearRenderTargetView(Outlines::renderTarget);
+	ClearDepthStencilView(Outlines::depthStencil);
 
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
@@ -297,6 +299,7 @@ bool OutlineSystem::Update()
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
 	}
 
+	//Outlines::SwapBack();
 	//// Set back the geometry shader
 	//SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 	// Unsure if this is supposed to be 0 or 1

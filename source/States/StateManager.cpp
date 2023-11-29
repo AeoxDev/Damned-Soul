@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "OutlineHelper.h"
 #include "Glow.h"
 
 //Cursed
@@ -158,6 +159,7 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Outlines::InitializeOutlines();
 	Glow::Initialize();
 	//SetupTestHitbox();
 	RedrawUI();

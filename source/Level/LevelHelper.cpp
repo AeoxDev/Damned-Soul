@@ -872,6 +872,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	weapon_model->shared.colorMultiplicativeGreen = 1.25f;
 	weapon_model->shared.colorMultiplicativeBlue = 1.25f;
 	weapon_model->shared.gammaCorrection = 1.5f;
+	weapon_model->shared.hasOutline = true;
 
 	AnimationComponent* weapon_animation = registry.AddComponent<AnimationComponent>(stateManager.weapon, AnimationComponent());
 	weapon_animation->aAnim = ANIMATION_IDLE;
