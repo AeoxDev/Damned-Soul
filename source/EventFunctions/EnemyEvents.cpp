@@ -670,6 +670,14 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	
 }
 
+void RemoveCutsceneEnemy(EntityID& entity, const int& index)
+{
+	if (entity.index != -1)
+	{
+		registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+	}
+}
+
 void SpawnMainMenuEnemy(EntityID& entity, const int& index)
 {
 	int condition = GetTimedEventCondition(entity, index);

@@ -41,6 +41,7 @@ void CreatePortal(EntityID& entity, const int& index);
 //void EnemyExclusion(EntityID& entity); not needed?
 void PlayDeathAnimation(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
+void RemoveCutsceneEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
 void BossShockwaveStart(EntityID& entity, const int& index);
 void BossShockwaveExpand(EntityID& entity, const int& index);

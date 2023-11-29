@@ -48,7 +48,7 @@ void LoadLevel6()
 		assert("Could not read file: LV1Enemies");
 	}
 
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -216.f, 1.f, -284.f, 0);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -78.f, 1.f, 108.f, 0);
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
@@ -86,5 +86,5 @@ void LoadLevel6()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, MinotaurIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }
