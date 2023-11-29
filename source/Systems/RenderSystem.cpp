@@ -331,6 +331,30 @@ bool OutlineSystem::Update()
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
 	}
 
+	for (auto entity : View<TransformComponent, ModelSkeletonComponent, BlendAnimationComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
+		BlendAnimationComponent* bac = registry.GetComponent<BlendAnimationComponent>(entity);
+
+		if (false == mc->shared.hasOutline)
+			continue;
+
+		if (tc->offsetX != 0.0f)
+		{
+			tc->offsetY = 0.0f;
+		}
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+		// Render with data
+		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->anim1.aAnim, bac->anim1.aAnimIdx, bac->anim1.GetTimeValue(), bac->anim2.aAnim, bac->anim2.aAnimIdx, bac->anim2.GetTimeValue());
+	}
+
 	//Outlines::SwapBack();
 	//// Set back the geometry shader
 	//SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);

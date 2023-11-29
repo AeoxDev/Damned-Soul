@@ -189,7 +189,7 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
 {
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	//AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
