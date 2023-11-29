@@ -659,7 +659,11 @@ void RemoveEnemy(EntityID& entity, const int& index)
 		ReleaseTimedEvents(entity);
 	}
 
-	registry.DestroyEntity(entity);
+	if (entity.index != -1)
+	{
+		registry.DestroyEntity(entity);
+	}
+	
 }
 
 void SpawnMainMenuEnemy(EntityID& entity, const int& index)

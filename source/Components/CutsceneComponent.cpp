@@ -265,7 +265,7 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 	TimedEventIgnoreGamespeed(true);
 	gameSpeed = 0.0f;
 
-	float runningTime = 1.5f;
+	float runningTime = 2.5f;
 	float beginReturnTime = 5.0f;
 	float returnEndTime = beginReturnTime + 1.0f;
 	float returnUnpause = returnEndTime + 0.1f;
@@ -275,7 +275,7 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 	transform = registry.GetComponent<TransformComponent>(entity);
 
 	float cameraXOffset = transform->scaleX * transform->facingX * 15.0f;
-	float cameraYOffset = 10.f + transform->scaleY * 3.5;
+	float cameraYOffset = 1.f + transform->scaleY * 3.5;
 	float cameraZOffset = transform->scaleZ * transform->facingZ * 15.0f;
 
 	//Have camera still and let dog run in
@@ -295,9 +295,9 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 	float dist = distX;
 	cutscene = registry.AddComponent<CutsceneComponent>(entity);
 	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(entity, -transform->facingZ, 0.0f, transform->facingX,
-		-transform->facingZ, 0.0f, transform->facingX);
-	CutsceneSetPosition(entity, transform->positionX - (-transform->facingZ * dist), 0.0f, transform->positionZ + (transform->facingX * dist),
+	CutsceneSetLookAt(entity, transform->facingZ, 0.0f, -transform->facingX,
+		transform->facingZ, 0.0f, -transform->facingX);
+	CutsceneSetPosition(entity, transform->positionX + (-transform->facingZ * dist), 0.0f, transform->positionZ - (transform->facingX * dist),
 		transform->positionX, transform->positionY, transform->positionZ);
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, runningTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
@@ -318,7 +318,7 @@ void CutsceneNPCIntro2NoText(EntityID& entity)
 	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
 		transformPlayer->positionX, transformPlayer->positionY, transformPlayer->positionZ);
-	CutsceneSetPosition(stillShot, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
+	CutsceneSetPosition(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
 		transformPlayer->positionX + CAMERA_OFFSET_X, transformPlayer->positionY + CAMERA_OFFSET_Y, transformPlayer->positionZ + CAMERA_OFFSET_Z);
 	AddTimedEventComponentStartContinuousEnd(returnTransition, beginReturnTime, BeginCutscene, CutsceneTransition, returnEndTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
