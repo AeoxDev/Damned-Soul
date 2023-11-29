@@ -58,12 +58,12 @@ void LoadLevel1()
 	//tComp.positionZ = 61.0f;
 	//registry.AddComponent<TransformComponent>(particles, tComp);
 
-
-	if (SetupAllEnemies("LV1Enemies.dss") == false)
-	{
-		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
-	}
+	SetupEnemy(EnemyType::hellhound, -50.f, 0.f, -10.f);
+	//if (SetupAllEnemies("LV1Enemies.dss") == false)
+	//{
+	//	//something went wrong, could not open file
+	//	assert("Could not read file: LV1Enemies");
+	//}
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 

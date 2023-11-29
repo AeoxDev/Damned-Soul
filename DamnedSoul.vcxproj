@@ -247,6 +247,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\GlowSystem.cpp" />
     <ClCompile Include="source\Systems\OnHoverSystem.cpp" />
     <ClCompile Include="source\Components\UIComponent.cpp" />
+    <ClCompile Include="source\Systems\ShatterSystem.cpp" />
     <ClCompile Include="source\Systems\StageVoiceLineSystem.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\CorruptedHeart.cpp" />
     <ClCompile Include="source\Relics\Defensive\Hearts\MoltenHeart.cpp" />

@@ -183,6 +183,7 @@ int StateManager::Setup()
 	systems.push_back(new GlowSystem());
 
 	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
+	systems.push_back(new ShatterSystem());
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());

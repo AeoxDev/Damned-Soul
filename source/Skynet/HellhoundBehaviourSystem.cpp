@@ -27,7 +27,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 		//animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 
 		//Timed event time
-		float pauseDuration = .2f;
+		float pauseDuration = .15f;
 		float attackEndTime = 1.f;
 		//Telegraph (We've reached the player, blink and attack)
 		AddTimedEventComponentStartContinuousEnd(ent, 0.0f, PauseAnimation, EnemyAttackFlash, pauseDuration, ContinueAnimation, EnemyType::hellhound);
