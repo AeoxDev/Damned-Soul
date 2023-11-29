@@ -50,7 +50,7 @@ struct ParticleComponent
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, float speed, int amount, ComputeShaders pattern);
 	// Overload for VFX 
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern, ComputeShaders pattern);
-	ParticleComponent(float seconds, float radius, float size, float x, float y, float z, int amount, const char* filename, ComputeShaders pattern);
+	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, const char* filename, ComputeShaders pattern);
 
 	// Overload for FlameThrower
 	// Flamethrower does not use max max distance therefore we store one of the triangles vertices x-position there.

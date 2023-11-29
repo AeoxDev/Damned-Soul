@@ -44,7 +44,7 @@ int Particles::RenderSlot;
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
 // Shaders for VFX
-VS_IDX VFX_VS = -1;
+VS_IDX MeshVS = -1;
 
 TX_IDX flipBookTexture = -1; /// create holder for texture
 TX_IDX flipBookTextureTwo = -1; /// create holder for texture
@@ -111,7 +111,7 @@ void Particles::InitializeParticles()
 		particles[i].rgb = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 		particles[i].size = 0.f;
 		particles[i].patterns= -1;
-		particles[i].particlePatterns =  -1;
+		particles[i].VFX =  -1;
 
 	}
 
@@ -126,7 +126,8 @@ void Particles::InitializeParticles()
 
 	MemLib::spop(); // for particles
 
-	startKeeper = CreateConstantBuffer(sizeof(ExtraData));
+	// Constant buffer that keeps the offset of particle component in the physical buffer for vertex pulling
+	startKeeper = CreateConstantBuffer(sizeof(int));
 
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
@@ -152,7 +153,7 @@ void Particles::InitializeParticles()
 	}
 
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
-	VFX_VS = LoadVertexShader("VFX_MESH_VS.cso", PARTICLE);
+	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", PARTICLE);
 	RenderSlot = SetupParticles();
 }
 
@@ -201,7 +202,7 @@ void Particles::PrepareParticleCompute(RenderSetupComponent renderStates[8])
 	SetUnorderedAcessView(m_readBuffer->UAV, 1);
 }
 
-void Particles::FinishParticleCompute(RenderSetupComponent renderStates[8])
+void Particles::FinishParticleCompute()
 {
 	UnsetComputeShader();
 	UnsetUnorderedAcessView(0);
@@ -219,7 +220,7 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
 
-	// The constant buffer for vertex is set outside of this function, in the ParticleSystemCPU Update() call
+	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 	UnsetVertexBuffer();
@@ -292,11 +293,11 @@ void Particles::PrepareParticlePass(RenderSetupComponent renderStates[8], int me
 
 void Particles::FinishParticlePass()
 {
+	SetTopology(TRIANGLELIST);
+
 	UnsetVertexShader();
 	UnsetGeometryShader();
 	UnsetPixelShader();
-
-	SetTopology(TRIANGLELIST);
 
 	UnsetConstantBuffer(BIND_GEOMETRY, 1);
 	UnsetConstantBuffer(BIND_VERTEX, 2);
@@ -310,7 +311,7 @@ void Particles::FinishParticlePass()
 	UnsetSamplerState(2); //Unset sampler 
 }
 
-void Particles::PrepareVFXPass(RenderSetupComponent renderStates[8], int metaDataSlot)
+void Particles::PrepareVFXPass(RenderSetupComponent renderStates[8])
 {
 	SetTopology(POINTLIST);
 
@@ -347,6 +348,8 @@ void Particles::FinishVFXPass()
 	UnsetGeometryShader();
 	UnsetPixelShader();
 
+	UnsetConstantBuffer(BIND_VERTEX, 2);
+
 	// Alex Code
 	UnsetConstantBuffer(BIND_PIXEL, 0);
 	UnsetSamplerState(3);
@@ -358,26 +361,36 @@ void Particles::FinishVFXPass()
 	UnsetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
 	UnsetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
 
+	UnsetRasterizerState();
+
 	SetTopology(TRIANGLELIST);
+}
 
-	UnsetConstantBuffer(BIND_VERTEX, 2);
+void Particles::PrepareMeshPass()
+{
+	//SetTopology(TRIANGLELIST);
 
+	SetVertexShader(MeshVS);
+	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
+
+	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
+}
+
+void Particles::FinishMeshPass()
+{
+	UnsetVertexShader();
+	UnsetPixelShader();
+
+	UnsetRasterizerState();
 }
 
 
-void Particles::UpdateMid(float* meshMid)
+void Particles::UpdateStart(int& metadataSlot)
 {
-	ExtraData start;
-	start.meshMid[0] = meshMid[0];
-	start.meshMid[1] = meshMid[1];
-	start.meshMid[2] = meshMid[2];
-	start.start = 0;
-
+	int start = data->metadata[metadataSlot].start;
 	UnsetConstantBuffer(BIND_VERTEX, 2);
 
 	UpdateConstantBuffer(startKeeper, &start);
-
-	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 }
 
 
@@ -482,8 +495,107 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern, ComputeShaders pattern)
 {
+	metadataSlot = FindSlot();
+	//Calculate how many groups are requiered to write to all particles
+	float groups = (float)amount / (float)THREADS_PER_GROUP;
+	if (groups == (int)groups)
+		groupsRequiered = groups;
+	else
+		groupsRequiered = groups + 1;
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetX;	data->metadata[metadataSlot].spawnPos.z = offsetX;
+	data->metadata[metadataSlot].pattern = pattern;
+	data->metadata[metadataSlot].morePositionInfo.y = vfxPattern;
+
+	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f;
+	data->metadata[metadataSlot].reset = false;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+
+	// We need to find "amount" of particles free in the physical buffer
+	// so we can allocate it for the ParticleComponents logical buffer
+	int freeConsecutively = 0;
+	int counter = 0;
+	for (int i : Particles::m_unoccupiedParticles)
+	{
+		counter++;
+
+		if (i == -1)
+			freeConsecutively++;
+		else
+			freeConsecutively = 0;
+
+		if (freeConsecutively >= amount)
+		{
+			data->metadata[metadataSlot].start = counter - amount;
+			data->metadata[metadataSlot].end = counter - 1;
+
+
+			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			break;
+		}
+	}
 }
 
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, const char* filename, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+	//Calculate how many groups are requiered to write to all particles
+	float groups = (float)amount / (float)THREADS_PER_GROUP;
+	if (groups == (int)groups)
+		groupsRequiered = groups;
+	else
+		groupsRequiered = groups + 1;
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
+	data->metadata[metadataSlot].pattern = pattern;
+
+	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
+	data->metadata[metadataSlot].reset = false;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+	model = LoadModel(filename);
+	modelUse = true;
+
+
+	meshOffset[0] = offsetX;
+	meshOffset[1] = offsetY;
+	meshOffset[2] = offsetZ;
+
+	// We need to find "amount" of particles free in the physical buffer
+	// so we can allocate it for the ParticleComponents logical buffer
+	int freeConsecutively = 0;
+	int counter = 0;
+	for (int i : Particles::m_unoccupiedParticles)
+	{
+		counter++;
+
+		if (i == -1)
+			freeConsecutively++;
+		else
+			freeConsecutively = 0;
+
+		if (freeConsecutively >= amount)
+		{
+			data->metadata[metadataSlot].start = counter - amount;
+			data->metadata[metadataSlot].end = counter - 1;
+
+
+			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			break;
+		}
+	}
+}
 ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern)
 {
 	metadataSlot = FindSlot();
@@ -612,76 +724,7 @@ void ParticleComponent::Release()
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
 	metadataSlot = -1;
-}
-
-//void ParticleComponent::RemoveParticles(EntityID& entity)
-//{
-//	std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
-//
-//	// Declare to the compute shader that this components particles is to be reset
-//	data->metadata[metadataSlot].reset = true;
-//	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
-//
-//	// Prepare dispatch
-//	SetComputeShader(setToZeroCS);
-//	SetUnorderedAcessView(Particles::m_readBuffer->UAV, 0);
-//	SetUnorderedAcessView(Particles::m_writeBuffer->UAV, 1);
-//	SetConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, BIND_COMPUTE, 0);
-//
-//	// Reset the time values of the particles to a glorious zero
-//	Dispatch(groupsRequiered + 1, metadataSlot + 1, 1); //x * y * z
-//
-//	// Finish dispatch
-//	UnsetComputeShader();
-//	UnsetUnorderedAcessView(0);
-//	UnsetUnorderedAcessView(1);
-//	UnsetConstantBuffer(BIND_COMPUTE, 0);
-//
-//	data->metadata[metadataSlot].life = -1.f;
-//	data->metadata[metadataSlot].maxRange = -1.f;
-//	data->metadata[metadataSlot].size = -1.f;
-//	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-//	data->metadata[metadataSlot].pattern = -1.f;
-//	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].end = 0.f;
-//
-//	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
-//
-//	metadataSlot = -1;
-//
-//	registry.RemoveComponent<ParticleComponent>(entity);
-//}
-
-void ParticleComponent::ResetBuffer()
-{
-	data->metadata[metadataSlot].life = -1.f;
-	data->metadata[metadataSlot].maxRange = -1.f;
-	data->metadata[metadataSlot].size = -1.f;
-	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
-	data->metadata[metadataSlot].pattern = -1;
-	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].start = 0.f;
-
-	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
-
-	metadataSlot = -1;
-	bufferReset = true;
-}
-
-void ParticleComponent::ResetVertex()
-{
-	// Prepare dispatch
-	SetComputeShader(setToZeroCS);
-	SetUnorderedAcessView(Particles::m_readBuffer->UAV, 0);
-	SetUnorderedAcessView(Particles::m_writeBuffer->UAV, 1);
-	SetConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, BIND_COMPUTE, 0);
-
-	// Reset the time values of the particles to a glorious zero
-	Dispatch(groupsRequiered + 1, metadataSlot + 1, 1); //x * y * z
-
-
-	UnsetComputeShader();
-	UnsetUnorderedAcessView(0);
-	UnsetUnorderedAcessView(1);
-	UnsetConstantBuffer(BIND_COMPUTE, 0);
-
-	vertexReset = true;
+	groupsRequiered = -1;
+	VFX = false;
+	modelUse = false;
 }

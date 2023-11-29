@@ -638,14 +638,15 @@ void NoMovement(in uint3 DTid, in uint3 blockID)
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
     particle.size = meta[blockID.y].size;
-    //particle.pattern = PATTERN;
-    //particle.rgb = RGB;
+    
+    //VFX Pattern is stored in morePositionInfo.y to save space
+    particle.VFXpatterns = (int)meta[blockID.y].morePositionInfo.y;
     // ------------------------------ //
     
     
-    particle.position.x = particle.position.x;
-    particle.position.y = particle.position.y;
-    particle.position.z = particle.position.z;
+    particle.position.x = 0.0f;
+    particle.position.y = 0.0f;
+    particle.position.z = 0.0f;
     
     outputParticleData[index] = particle;
 }

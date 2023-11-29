@@ -30,8 +30,7 @@ struct GS_OUT
 [maxvertexcount(6)]
 void main(
 	point GS_IN inval[1], 
-	inout TriangleStream< GS_OUT > retval
-)
+	inout TriangleStream< GS_OUT > retval)
 {
     float3 look = cameraPosition.xyz - inval[0].worldPosition.xyz;
     //look.y = 0.f;
@@ -85,9 +84,7 @@ void main(
     [unroll]
     for (int i = 0; i < 6; i++)
     {
-        retappend.position = mul(float4(verts[i].xyz, 1.0f), viewProj); // times rotationZ here?
-        // INSERT rotate on Z-axis
-        //retappend.position = retappend.position / retappend.position.w;
+        retappend.position = mul(float4(verts[i].xyz, 1.0f), viewProj); 
         retappend.rgb = inval[0].rgb;
         retappend.uv = uvCord[i];
         retappend.time = inval[0].time;
