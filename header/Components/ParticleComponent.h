@@ -14,9 +14,13 @@ enum ComputeShaders
 	CIRCLE_FIELD = 8,
 	FIRE = 9,
 	PULSE = 10,
-	ICETHROWER = 11
+	ICETHROWER = 11,
+	BOILING = 12,
+	SPARK = 13,
+	NO_MOVEMENT = 14
 };
 
+//(entity, float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)
 struct ParticleComponent
 {
 	int metadataSlot = -1;
