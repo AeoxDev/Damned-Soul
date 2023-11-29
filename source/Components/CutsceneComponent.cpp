@@ -101,6 +101,41 @@ void StageIntroFall(EntityID& entity, const int& index)
 	AddTimedEventComponentStart(entity, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
+void StageIntroFallUnskippable(EntityID& entity, const int& index)
+{
+	//Fall from a high place down to 0.
+	TimedEventIgnoreGamespeed(true);
+	gameSpeed = 0.0f;
+	float returnTime = 1.0f;
+	float fallTime = 0.85f;
+	float pauseTime = fallTime + 0.3f;
+	float fallHeight = 60.0f;
+	//Fall of point. -321.6, 133.14
+	//Move camera to view point and background from a lower angle
+	EntityID cutscene1 = registry.CreateEntity();
+	CutsceneComponent* sidewaysCut = registry.AddComponent<CutsceneComponent>(cutscene1);
+	sidewaysCut->mode = (CutsceneMode)(Cutscene_Camera | CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Linear);
+	CutsceneSetLookAt(cutscene1, 0.0f, fallHeight, 0.0f, 0.0f, 0.0f, 0.0f);
+	CutsceneSetPosition(cutscene1, 0.0f, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, 0.0f, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z);
+	AddTimedEventComponentStartContinuousEnd(cutscene1, 0.0f, BeginShopCutscene, CutsceneTransition, fallTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Fall down
+	CutsceneComponent* fall = registry.AddComponent<CutsceneComponent>(entity);
+	fall->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Cutscene_Character_Fall | CutsceneMode::Cutscene_Linear);
+	CutsceneSetPosition(entity, 0.0f, fallHeight, 0.0f, 0.0f, 0.0f, 0.0f);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginShopCutscene, CutsceneTransition, fallTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+
+	EntityID returnCamera = registry.CreateEntity();
+	CutsceneComponent* returnCutscene = registry.AddComponent<CutsceneComponent>(returnCamera);
+	returnCutscene->mode = (CutsceneMode)(Cutscene_Camera | CutsceneMode::Transition_Position | CutsceneMode::Transition_LookAt | CutsceneMode::Cutscene_Linear);
+	CutsceneSetPosition(returnCamera, 0.0f, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z, CAMERA_OFFSET_X, CAMERA_OFFSET_Y, CAMERA_OFFSET_Z);
+	CutsceneSetLookAt(returnCamera, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+	AddTimedEventComponentStartContinuousEnd(returnCamera, fallTime, BeginShopCutscene, CutsceneTransition, pauseTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStart(entity, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+}
+
 void SkeletonIntroScene(EntityID& entity, const int& index)
 {
 	//Look at skeletony!
@@ -262,6 +297,80 @@ void SplitBossIntroScene(EntityID& entity, const int& index)
 	AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, CutsceneTransition, endReturn + 0.1f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
+void SplitBossLevel8IntroScene(EntityID& entity, const int& index)
+{
+	TimedEventIgnoreGamespeed(true);
+	gameSpeed = 0.0f;
+
+	TransformComponent* transform;
+	CutsceneComponent* cutscene;
+	transform = registry.GetComponent<TransformComponent>(entity);
+	transform->facingX = 0.0f;
+	transform->facingZ = -1.0f;
+	NormalizeFacing(transform);
+	cutscene = registry.AddComponent<CutsceneComponent>(entity);
+
+	float cameraYOffset = 3.0f;
+	float cameraFinishLookat = 1.0f;
+	float goToTime = 1.25f;
+	float lookUpTime = 4.0f;
+	float beginReturn = 5.0f;
+	float endReturn = 6.1f;
+
+	//Go to boss
+	EntityID goForwardCutscene = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(goForwardCutscene);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Decelerating | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(goForwardCutscene, transform->positionX, transform->positionY + cameraYOffset, transform->positionZ,
+		transform->positionX, transform->positionY + cameraFinishLookat, transform->positionZ);
+	//Do one cutscene, then the other
+	float distance = 120.0f;
+	float closeUp = 20.0f;
+	CutsceneSetPosition(goForwardCutscene, transform->positionX + transform->facingX * distance, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * distance,
+		transform->positionX + transform->facingX * closeUp, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * closeUp);
+	AddTimedEventComponentStartContinuousEnd(goForwardCutscene, 0.0f, BeginCutscene, CutsceneTransition, goToTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Then look up at boss
+	EntityID lookUp = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(lookUp);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Accelerating | CutsceneMode::Transition_LookAt);
+	float lookUpPosition = transform->scaleY * (transform->positionY + 4.5f);
+	CutsceneSetLookAt(lookUp, transform->positionX, transform->positionY + cameraFinishLookat, transform->positionZ,
+		transform->positionX, transform->positionY + lookUpPosition, transform->positionZ);
+	CutsceneSetPosition(lookUp, transform->positionX + transform->facingX * closeUp, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * closeUp,
+		transform->positionX + transform->facingX * closeUp, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * closeUp);
+	AddTimedEventComponentStartContinuousEnd(lookUp, goToTime, BeginCutscene, CutsceneTransition, lookUpTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Keep looking at boss
+
+	//Return to player
+	EntityID returnTransition = stateManager.player;
+	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
+	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->goalLookAtX = transformPlayer->positionX;
+	cutscene->goalLookAtY = transformPlayer->positionY;
+	cutscene->goalLookAtZ = transformPlayer->positionZ;
+	cutscene->startLookAtX = transform->positionX;
+	cutscene->startLookAtY = transform->positionY + 4.5f;
+	cutscene->startLookAtZ = transform->positionZ;
+
+	//Do one cutscene, then the other
+	DirectX::XMFLOAT3 cameraPos = Camera::GetPositionFloat();
+	cutscene->startPositionX = transform->positionX + transform->facingX * 4.0f;
+	cutscene->startPositionY = transform->positionY + cameraYOffset;
+	cutscene->startPositionZ = transform->positionZ + transform->facingZ * 4.0f;
+	cutscene->goalPositionX = transformPlayer->positionX + CAMERA_OFFSET_X;
+	cutscene->goalPositionY = transformPlayer->positionY + CAMERA_OFFSET_Y;
+	cutscene->goalPositionZ = transformPlayer->positionZ + CAMERA_OFFSET_Z;
+	AddTimedEventComponentStartContinuousEnd(returnTransition, beginReturn, BeginCutscene, CutsceneTransition, endReturn, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStart(returnTransition, endReturn + 0.1f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+
+	cutscene = registry.AddComponent<CutsceneComponent>(entity);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, CutsceneTransition, endReturn + 0.1f, RemoveCutsceneEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+}
+
 //Have eye come in from side to side.
 void EyeIntroScene(EntityID& entity, const int& index)
 {
@@ -357,10 +466,6 @@ void EyeIntroScene(EntityID& entity, const int& index)
 
 	AddTimedEventComponentStart(returnTransition, returnUnpause, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 
-	//remove the cutscene doggo.
-	//You will neede an event function to do this instead.
-	//cutscene = registry.AddComponent<CutsceneComponent>(entity);
-	//cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear);
 	AddTimedEventComponentStartContinuousEnd(entity, returnEndTime, nullptr, nullptr, returnUnpause, RemoveCutsceneEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
@@ -424,11 +529,118 @@ void MinotaurIntroScene(EntityID& entity, const int& index)
 
 	AddTimedEventComponentStart(returnTransition, returnUnpause, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 
-	//remove the cutscene doggo.
-	//You will neede an event function to do this instead.
-	//cutscene = registry.AddComponent<CutsceneComponent>(entity);
-	//cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear);
 	AddTimedEventComponentStartContinuousEnd(entity, returnEndTime, nullptr, nullptr, returnUnpause, RemoveCutsceneEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+}
+
+void FinalBossIntroCutscene(EntityID& entity, const int& index)
+{
+	TimedEventIgnoreGamespeed(true);
+	gameSpeed = 0.0f;
+
+	float playerToBossTime = 3.0f;
+	float pause = 2.0f;
+	float waitingTime = playerToBossTime + pause;
+	float bossVoiceLineAndWalkTime = waitingTime;
+	float bossFinishWalking = bossVoiceLineAndWalkTime + 8.0f;
+	float returnToPlayerTime = bossFinishWalking;
+	float playerReturned = returnToPlayerTime + 1.5f;
+	float returnUnpause = returnToPlayerTime + 0.1f;
+
+	TransformComponent* transform;
+	CutsceneComponent* cutscene;
+	transform = registry.GetComponent<TransformComponent>(entity);
+	EntityID player = stateManager.player;
+	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(player);
+
+	//Have player idle and face the boss
+	EntityID playerIdle = stateManager.player;
+	cutscene = registry.AddComponent<CutsceneComponent>(playerIdle);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(playerIdle, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f);
+
+	CutsceneSetPosition(playerIdle,
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f);
+
+	AddTimedEventComponentStartContinuousEnd(playerIdle, 0.0f, BeginShopCutscene, CutsceneTransition, returnUnpause, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Hide the boss'
+	//Continue the idle animation
+	EntityID storedIdle = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(storedIdle);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Decelerating | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(storedIdle, transform->facingX, 0.0f, transform->facingZ,
+		transform->facingX, 0.0f, transform->facingZ);
+	CutsceneSetPosition(storedIdle, transform->positionX, transform->positionY + 200.0f, transform->positionZ,
+		transform->positionX, transform->positionY + 200.0f, transform->positionZ);
+	AddTimedEventComponentStartContinuousEnd(storedIdle, 0.0f, StoredEnemyCutscene, nullptr, playerToBossTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Go from player to boss
+	//Return to player
+	EntityID toBoss = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(toBoss);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Decelerating | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(toBoss, transformPlayer->positionX, transformPlayer->positionY, transformPlayer->positionZ,
+		transform->positionX, transform->positionY, transform->positionZ);
+
+	CutsceneSetPosition(toBoss,
+		transformPlayer->positionX + CAMERA_OFFSET_X, transformPlayer->positionY + CAMERA_OFFSET_Y, transformPlayer->positionZ + CAMERA_OFFSET_Z,
+		transform->positionX + CAMERA_OFFSET_X, transform->positionY + CAMERA_OFFSET_Y, transform->positionZ + CAMERA_OFFSET_Z);
+
+	AddTimedEventComponentStartContinuousEnd(toBoss, 0.0f, BeginShopCutscene, CutsceneTransition, playerToBossTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Let boss jump down
+	EntityID storedFall = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(storedFall);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_BossLanding | Cutscene_Linear | Transition_Position);
+	CutsceneSetPosition(storedFall, transform->positionX, transform->positionY + 100.0f, transform->positionZ,
+		transform->positionX, transform->positionY - 100.0f, transform->positionZ);
+	AddTimedEventComponentStartContinuousEnd(storedFall, playerToBossTime, StoredEnemyCutscene, nullptr, waitingTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Slam sound upon landing (SOUND)
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, nullptr, waitingTime - 0.5f*pause, PlayBossIntroSlam, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Camera from boss back to player
+	EntityID fromBack = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(fromBack);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(fromBack, transform->positionX, transform->positionY, transform->positionZ * 0.5f,
+		transform->positionX, transform->positionY, transform->positionZ * 0.5f);
+	CutsceneSetPosition(fromBack,
+		30.f, 45.0f, 330.0f,
+		-10.0f, 45.0f, 330.0f);
+	AddTimedEventComponentStartContinuousEnd(fromBack, bossVoiceLineAndWalkTime, nullptr, CutsceneTransition, bossFinishWalking, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Walk towards player
+	//Get speed
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	float length = 0.5f * stats->GetSpeed() * (bossFinishWalking - bossVoiceLineAndWalkTime);
+
+	EntityID storedWalk = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(storedWalk);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | Transition_Position);
+	CutsceneSetPosition(storedWalk, transform->positionX, transform->positionY, transform->positionZ,
+		transform->positionX, transform->positionY, transform->positionZ - length);
+	AddTimedEventComponentStartContinuousEnd(storedWalk, bossVoiceLineAndWalkTime, StoredEnemyCutscene, nullptr, bossFinishWalking, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Say voice line (SOUND)
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, nullptr, bossVoiceLineAndWalkTime, PlayBossIntroVoiceLine, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
+	//Pan back to player
+	//Return the camera
+	//Return to player
+	EntityID returnTransition = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(returnTransition, transform->positionX, transform->positionY, transform->positionZ * 0.5f,
+		transformPlayer->positionX, transformPlayer->positionY, transformPlayer->positionZ);
+	CutsceneSetPosition(returnTransition, -10.0f, 45.0f, 330.0f,
+		transformPlayer->positionX + CAMERA_OFFSET_X, transformPlayer->positionY + CAMERA_OFFSET_Y, transformPlayer->positionZ + CAMERA_OFFSET_Z);
+	AddTimedEventComponentStartContinuousEnd(returnTransition, returnToPlayerTime, BeginShopCutscene, CutsceneTransition, playerReturned, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStart(returnTransition, returnUnpause, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+
+	AddTimedEventComponentStartContinuousEnd(entity, playerReturned, nullptr, nullptr, returnUnpause, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 void StoredEnemyCutscene(EntityID& entity, const int& index)
@@ -445,7 +657,7 @@ void StoredEnemyCutscene(EntityID& entity, const int& index)
 	CutsceneComponent* cutscene = registry.GetComponent<CutsceneComponent>(entity);
 	memcpy(cutsceneTarget, cutscene, sizeof(CutsceneComponent));
 
-	AddTimedEventComponentStartContinuousEnd(stateManager.cutsceneEnemy, 0.0f, BeginCutscene, CutsceneTransition, time, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(stateManager.cutsceneEnemy, 0.0f, nullptr, CutsceneTransition, time, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 

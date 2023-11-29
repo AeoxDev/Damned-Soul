@@ -614,6 +614,17 @@ void CreateLandingIndicator(EntityID& entity, const int& index)
 	
 }
 
+void PlayBossIntroVoiceLine(EntityID& entity, const int& index)
+{
+	//Play sounds here
+}
+
+void PlayBossIntroSlam(EntityID& entity, const int& index)
+{
+	//Play slam sound here when landing
+	int i = 0;
+}
+
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 

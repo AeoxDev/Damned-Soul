@@ -394,7 +394,7 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
-		if (Camera::InCutscene() > true)
+		if (Camera::InCutscene() > 0)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;

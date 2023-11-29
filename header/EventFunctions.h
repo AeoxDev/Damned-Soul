@@ -51,6 +51,10 @@ void BossResetBeforeShockwave(EntityID& entity, const int& index);
 void CreateNewSplitZac(EntityID& entity, const int& index);
 void CreateLandingIndicator(EntityID& entity, const int& index);
 
+//Boss Intro VoiceLines
+void PlayBossIntroVoiceLine(EntityID& entity, const int& index);
+void PlayBossIntroSlam(EntityID& entity, const int& index);
+
 //Enemy Combat functions
 void EnemyAttackFlash(EntityID& entity, const int& index);
 void EnemyAttackGradient(EntityID& entity, const int& index);
@@ -108,12 +112,15 @@ void CutsceneTransition(EntityID& entity, const int& index);
 void EndCutscene(EntityID& entity, const int& index);
 void MainMenuIntroCutscene(EntityID& entity, const int& index);
 void StageIntroFall(EntityID& entity, const int& index);
+void StageIntroFallUnskippable(EntityID& entity, const int& index);
 void SkeletonIntroScene(EntityID& entity, const int& index);
 void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
 void SplitBossIntroScene(EntityID& entity, const int& index);
+void SplitBossLevel8IntroScene(EntityID& entity, const int& index);
 void EyeIntroScene(EntityID& entity, const int& index);
 void MinotaurIntroScene(EntityID& entity, const int& index);
+void FinalBossIntroCutscene(EntityID& entity, const int& index);
 void StoredEnemyCutscene(EntityID& entity, const int& index);//Store a cutscene and apply to enemy when relevant.
 
 void CutsceneFallStage1(EntityID& entity, const int& index);
