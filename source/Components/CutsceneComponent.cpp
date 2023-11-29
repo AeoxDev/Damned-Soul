@@ -103,8 +103,7 @@ void StageIntroFall(EntityID& entity, const int& index)
 
 void SkeletonIntroScene(EntityID& entity, const int& index)
 {
-	//Look at skeletons!
-	//Then spawn player
+	//Look at skeletony!
 	CutsceneNPCIntro1NoText(entity);
 }
 
@@ -236,7 +235,7 @@ void CutsceneNPCIntro1NoText(EntityID& entity)
 	EntityID returnTransition = stateManager.player;
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
-	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Accelerating | CutsceneMode::Transition_LookAt | Transition_Position);
 	cutscene->goalLookAtX = transformPlayer->positionX;
 	cutscene->goalLookAtY = transformPlayer->positionY;
 	cutscene->goalLookAtZ = transformPlayer->positionZ;
