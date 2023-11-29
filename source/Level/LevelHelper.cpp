@@ -1184,7 +1184,7 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	} while (pixelValue != 1);
 
 	
-	Coordinate2D coords = GridOnPosition(gridPos, geoCo, false);
+	Coordinate2D coords = GridOnPosition(gridPos, geoCo);
 	EntityID enemy = SetupEnemy(enemyType, coords.x, 0.f, coords.z);
 	SetHitboxIsPlayer(enemy, 1, true);
 	registry.AddComponent<PlayerComponent>(enemy);
