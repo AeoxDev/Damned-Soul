@@ -395,19 +395,19 @@ void MinotaurIntroScene(EntityID& entity, const int& index)
 		transform->positionX, transform->positionY + cameraYOffset, transform->positionZ);
 	AddTimedEventComponentStartContinuousEnd(stillShot, 0.0f, BeginCutscene, CutsceneTransition, beginReturnTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
-	//Make eye run from right to left
+	//Make minotaur charge at camera
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	float speedSquared = stats->GetSpeed() * stats->GetSpeed();
-	float distX = chargingTime * stats->GetSpeed() * 6.0f;
-	float dist = distX;
+	float distZ = chargingTime * stats->GetSpeed() * 4.0f;
+	float dist = distZ;
 	float sideX = transform->facingZ * dist;
 	float sideZ = -transform->facingX * dist;
 	cutscene = registry.AddComponent<CutsceneComponent>(entity);
-	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(entity, sideX, 0.0f, sideZ,
-		sideX, 0.0f, sideZ);
-	CutsceneSetPosition(entity, transform->positionX - sideX, 0.0f, transform->positionZ - sideZ,
-		transform->positionX + sideX, transform->positionY, transform->positionZ + sideZ);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Attack | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(entity, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f);
+	CutsceneSetPosition(entity, transform->positionX, 0.0f, transform->positionZ + dist,
+		transform->positionX, transform->positionY, transform->positionZ + 5.0f);
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, chargingTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//Return the camera

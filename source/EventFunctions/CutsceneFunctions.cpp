@@ -279,7 +279,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
 		if (animation != nullptr)
 		{
-			animation->aAnim = ANIMATION_IDLE;
+			animation->aAnim = ANIMATION_ATTACK;
 			animation->aAnimIdx = 0;
 			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
