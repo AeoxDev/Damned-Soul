@@ -45,7 +45,6 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 	}
 }
 
-
 void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool retreat)
 {
 	if (path)
@@ -373,7 +372,6 @@ void SetInfiniteDirection(TransformComponent* htc, HellhoundBehaviour* hc)
 	hc->cowardDirectionX = x;
 	hc->cowardDirectionZ = z;
 }
-
 
 void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
 {

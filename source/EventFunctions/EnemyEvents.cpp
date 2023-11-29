@@ -81,7 +81,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health , bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health * 1.5f, bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -208,7 +208,6 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 			0.f, 0.f, -1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4], worthless);
 	}
 
-
 	registry.DestroyEntity(ent);
 }
 
@@ -258,7 +257,7 @@ void SplitBoss(EntityID& entity, const int& index)
 	transformZac->positionX = aiTransform->positionX;
 	transformZac->positionZ = aiTransform->positionZ;
 	float time = (float)BOSS_RESPAWN_TIME;
-	AddTimedEventComponentStart(trashEntity, time - 0.5f, CreateNewSplitZac);
+	AddTimedEventComponentStartEnd(trashEntity, 0.0f, nullptr, time - 0.5f, CreateNewSplitZac, 0, 2);
 
 	RemoveEnemy(entity, index);
 }

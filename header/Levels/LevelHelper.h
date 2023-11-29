@@ -21,7 +21,17 @@ struct ModelTextRead
 	int soulValue;
 };
 
+struct VFXTextRead // this is for torches
+{
+	float positionX;
+	float positionY;
+	float positionZ;
+	float r, g, b;
+};
+
 bool SetupAllEnemies(std::string filePath);
+
+bool SetupVFXTorches(std::string filePath);
 
 EntityID SetUpStage(StageSetupVariables& stageVars);
 

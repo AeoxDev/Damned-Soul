@@ -48,6 +48,10 @@ bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiec
 		{
 			infoStruct->eType = EnemyType::empoweredHellhound;
 		}
+		else if ("SplitBoss")
+		{
+			infoStruct->eType = EnemyType::tempBoss;
+		}
 		else
 		{
 			return false;
@@ -65,7 +69,44 @@ bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiec
 	{
 		infoStruct->soulValue = std::stoi(infoPiece); // converts string to int
 	}
+	else
+	{
+		return false;
+	}
 	return true;
+}
+
+
+bool SetValueForEnemy(VFXTextRead* infoStruct, int index, std::string infoPiece) // help function for SetupVFXTorches. DO NOT TOUCH
+{
+	if (index == 0) //posX
+	{
+		infoStruct->positionX = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 1) // posY
+	{
+		infoStruct->positionY = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 2) // posz
+	{
+		infoStruct->positionZ = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 3) // red
+	{
+		infoStruct->r = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 4) // green
+	{
+		infoStruct->g = std::stof(infoPiece); // converts string to float
+	}
+	else if (index == 5) // blue
+	{
+		infoStruct->b = std::stof(infoPiece); // converts string to float
+	}
+	else
+	{
+		return false; //something went wrong
+	}
 }
 
 bool SetupAllEnemies(std::string filePath)
@@ -110,6 +151,55 @@ bool SetupAllEnemies(std::string filePath)
 		}
 	}
 		
+	myFile.close();
+
+	return true;
+}
+
+bool SetupVFXTorches(std::string filePath)
+{
+	std::string name = "VFX\\";
+	name.append(filePath);
+
+	std::ifstream myFile;
+	myFile.open(name.c_str());
+	std::string line = "";
+	std::string term = "";
+	if (myFile.is_open())
+	{
+		while (std::getline(myFile, line))
+		{
+			VFXTextRead theInfo;
+			int counter = 0; // by format:
+			// 0 = positionX
+			// 1 = positionY
+			// 2 = positionZ
+			// 3 = r
+			// 4 = g
+			// 5 = r
+			for (auto t : line)
+			{
+				if (t == ',')
+				{
+					// we got the string
+					if (!SetValueForEnemy(&theInfo, counter, term))
+					{
+						myFile.close();
+						return false; // invalid values, probably type. DO NOT DO ANYTHING; 
+					}
+					//reset
+					term = "";
+					counter++;
+				}
+				else
+				{
+					term += t; //add char to string
+				}
+			}
+			//SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+		}
+	}
+
 	myFile.close();
 
 	return true;
@@ -347,7 +437,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			health = 120.f;
+			health = 171.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -366,7 +456,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			health = 800.f;
+			health = 1000.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -374,11 +464,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
-			health = 75.f;
+			health = 101.f;
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			health = 90.f;
+			health = 131.f;
 		}
 		else if (eType == EnemyType::empoweredImp)
 		{
@@ -424,7 +514,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			moveSpeed = 20.f;
+			moveSpeed = 30.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -432,11 +522,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			moveSpeed = 22.5f; // :)
+			moveSpeed = 28.5f; // :)
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
-			moveSpeed = 15.f;
+			moveSpeed = 22.f;
 		}
 
 	}
@@ -456,11 +546,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::imp)
 		{
-			damage = 13.f;
+			damage = 15.f;
 		}
 		else if (eType == EnemyType::minotaur)
 		{
-			damage = 15.f;
+			damage = 25.f;
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
@@ -468,7 +558,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 30.f;
+			damage = 40.f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -476,7 +566,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			damage = 24.f;
+			damage = 26.f;
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
@@ -497,10 +587,16 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			attackSpeed = 0.1f;
 		}
-		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
+		else if (eType == EnemyType::skeleton)
 		{
 			//NICLAS WAS HERE
 			attackSpeed = 1.0f;
+			//attackSpeed = 0.5f;
+		}
+		else if (eType == EnemyType::empoweredSkeleton)
+		{
+			//NICLAS WAS HERE
+			attackSpeed = 2.0f;
 			//attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
@@ -514,7 +610,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::tempBoss)
 		{
 			attackSpeed = 0.25f;
-			float partSpeed = 0.05f; // each alive part makes it this much slower
+			float partSpeed = 0.1f; // each alive part makes it this much slower
 			if (zacIndex0)
 				attackSpeed += partSpeed;
 			if (zacIndex1)
@@ -528,7 +624,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			attackSpeed = 0.8f;
+			attackSpeed = 1.2f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -1093,7 +1189,7 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	} while (pixelValue != 1);
 
 	
-	Coordinate2D coords = GridOnPosition(gridPos, geoCo, false);
+	Coordinate2D coords = GridOnPosition(gridPos, geoCo);
 	EntityID enemy = SetupEnemy(enemyType, coords.x, 0.f, coords.z);
 	SetHitboxIsPlayer(enemy, 1, true);
 	registry.AddComponent<PlayerComponent>(enemy);
