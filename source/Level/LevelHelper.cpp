@@ -48,6 +48,10 @@ bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiec
 		{
 			infoStruct->eType = EnemyType::empoweredHellhound;
 		}
+		else if ("SplitBoss")
+		{
+			infoStruct->eType = EnemyType::tempBoss;
+		}
 		else
 		{
 			return false;
