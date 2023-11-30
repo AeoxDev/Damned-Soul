@@ -10,10 +10,10 @@ float2 UVPan(in float2 offsetXY, in float panSpeed, in float time, in float2 ori
 }
 
 // Function to rotate the UV coordinates around the center.
-float2 UVRotate(in float2 ogUVCoord, in float angle) // NOTE: REQUIRES WRAPPING TEXTURES, NO CLIPPING
+float2 UVRotate(in float2 ogUVCoord, in float angle, in float scaleTexture) // NOTE: REQUIRES WRAPPING TEXTURES, NO CLIPPING
 {
-    float x = (ogUVCoord.x - 0.5f) * cos(angle) - (ogUVCoord.y - 0.5f) * sin(angle);
-    float y = (ogUVCoord.x - 0.5f) * sin(angle) + (ogUVCoord.y - 0.5f) * cos(angle);
+    float x = (ogUVCoord.x - (0.5f * scaleTexture)) * cos(angle) - (ogUVCoord.y - (0.5f * scaleTexture)) * sin(angle);
+    float y = (ogUVCoord.x - (0.5f * scaleTexture)) * sin(angle) + (ogUVCoord.y - (0.5f * scaleTexture)) * cos(angle);
     
     return float2(x, y);
 }

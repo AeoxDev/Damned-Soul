@@ -48,14 +48,15 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 
 	// For particle testing, don't touch, Arian gets angy.
-	//EntityID particles = registry.CreateEntity();
-	//registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 3000.0f, NO_MOVEMENT);
-	//
-	//TransformComponent tComp;
-	//tComp.positionX = -122.0f;
-	//tComp.positionY = 0.0f;
-	//tComp.positionZ = 61.0f;
-	//registry.AddComponent<TransformComponent>(particles, tComp);
+	float x = -122.0f, y = 2.0f, z = 61.0f;
+	EntityID particles = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particles, 5.0f, 50.0f, 10.0f, x, y, z, 2.0f, NO_MOVEMENT);
+	
+	TransformComponent tComp;
+	tComp.positionX = x;
+	tComp.positionY = y;
+	tComp.positionZ = z;
+	registry.AddComponent<TransformComponent>(particles, tComp);
 
 
 	if (SetupAllEnemies("LV1Enemies.dss") == false)

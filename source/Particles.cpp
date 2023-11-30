@@ -74,8 +74,10 @@ void Particles::InitializeParticles()
 	VFXVornoiTX =		LoadTexture("\\VFX_Vornoi.png");
 	VFXNoiseTX =		LoadTexture("\\VFX_gNoise.png");
 	//VFXShapeTX =		LoadTexture("\\VFX_InnerGradient.png"); // VFX_SwordSlash
-	VFXShapeTX =		LoadTexture("\\VFX_CircleSoft.png"); // VFX_Fire
-	VFXMaskTX =			LoadTexture("\\VFX_GradientMask.png");
+	//VFXShapeTX =		LoadTexture("\\VFX_Projectile.png"); // Projectile
+	VFXShapeTX =		LoadTexture("\\VFX_CircleSoft_Nomore.png"); // VFX_AcidGround
+	//VFXShapeTX =		LoadTexture("\\VFX_CircleSoft.png"); // VFX_Fire
+	VFXMaskTX =			LoadTexture("\\VFX_Caustic.png");
 // ## EO ALEX CODE ##
 
 	data = MemLib::palloc(sizeof(ParticleMetadataBuffer));

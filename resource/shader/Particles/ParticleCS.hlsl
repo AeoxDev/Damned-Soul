@@ -445,10 +445,21 @@ void NoMovement(in uint3 DTid, in uint3 blockID)
     //particle.rgb = RGB;
     // ------------------------------ //
     
+    if (particle.time >= meta[blockID.y].life)
+    {
+        float3 startPosition = float3(
+        meta[blockID.y].startPosition.x,
+        meta[blockID.y].startPosition.y,
+        meta[blockID.y].startPosition.z);
+
+        particle.position = startPosition;
+        particle.time = 0.f;
+    }
     
-    particle.position.x = particle.position.x;
-    particle.position.y = particle.position.y;
-    particle.position.z = particle.position.z;
+    
+    particle.position.x = meta[blockID.y].startPosition.x;
+    particle.position.y = meta[blockID.y].startPosition.y;
+    particle.position.z = meta[blockID.y].startPosition.z;
     
     outputParticleData[index] = particle;
 }
