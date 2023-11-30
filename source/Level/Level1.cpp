@@ -50,6 +50,10 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
+	SetupEnemy(EnemyType::eye, -122.0f, 0.f, 61.f);
+	SetupEnemy(EnemyType::imp, -122.0f, 0.f, 31.f);
+
+
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
 	/*EntityID particles = registry.CreateEntity();
 	registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 1.5f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::ACID);

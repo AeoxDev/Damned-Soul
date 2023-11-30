@@ -125,34 +125,74 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 
 
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
-		
+
 		ec->aimTimer += GetDeltaTime();
 		ec->attackTimer += GetDeltaTime();
 		return true;
 	}
 	else // yes, we can indeed attack. 
 	{
+		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 1))
+		{
+			enemyAnim->aAnim = ANIMATION_ATTACK;
+			enemyAnim->aAnimIdx = 1;
+			enemyAnim->aAnimTime = 0.0f;
+		}
+
 		ec->attackTimer = 0;
 		ec->aimTimer = 0;
-		ec->specialCounter++; //increase the special counter for special attack
 		ec->attackStunTimer = 0;
-		ec->shooting = false;
-
-		enemyAnim->aAnim = ANIMATION_IDLE;
-		enemyAnim->aAnimIdx = 1;
-		enemyAnim->aAnimTime = 0.0f;
-		enemyAnim->aAnimTimeFactor = 1.0f;
+		ec->specialCounter++; //increase the special counter for special attack
 
 		//set direction for attack
-		float dx = ptc->positionX - etc->positionX;
-		float dz = ptc->positionZ - etc->positionZ;
-		
+		float dx = (ptc->positionX - etc->positionX);
+		float dz = (ptc->positionZ - etc->positionZ);
+
+		float distanceFromPlayer = sqrt(dx * dx + dz * dz);
+		float rangePercentage = 1 - (distanceFromPlayer / (ec->range / 1.5f));
+
+		//how much the player moved since last frame
+		float playerMovementX = ptc->positionX - ptc->lastPositionX;
+		float playerMovementZ = ptc->positionZ - ptc->lastPositionZ;
+
+		//limit player movement in case of dash
+		if (playerMovementX > 0.03f)
+			playerMovementX = 0.03f;
+
+		if (playerMovementZ > 0.03f)
+			playerMovementZ = 0.03f;
+
+		//		C	  = sqrt(A^2 + B^2)	
+		float newDirX = sqrt(playerMovementX * playerMovementX + dx * dx);
+		float newDirZ = sqrt(playerMovementZ * playerMovementZ + dz * dz);
+
+		//calculate final direction based on how much the player moved plus the player movespeed
+		float offsetX = newDirX * playerMovementX * playerStats->GetSpeed() * rangePercentage;
+		float offsetZ = newDirZ * playerMovementZ * playerStats->GetSpeed() * rangePercentage;
+
+		float offsetMag = sqrt(offsetX * offsetX + offsetZ * offsetZ);
+		float baseMag = sqrt(dx * dx + dz * dz);
+
+		if (offsetMag > baseMag)
+		{
+			offsetX *= 0.5f;
+			offsetZ *= 0.5f;
+		}
+
+		dx += offsetX;
+		dz += offsetZ;
+
+		//normalize finial direction
 		Normalize(dx, dz);
 
+		ec->goalDirectionX = dx;
+		ec->goalDirectionZ = dz;
+
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 		CreateProjectile(entity, dx, dz, eye);
 
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-		if(sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
+		if (sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
 
 		return true;
 	}
@@ -437,7 +477,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 	if (eyeMovementX == 0 && eyeMovementZ == 0)
 		return;
 
-	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	GeometryIndependentComponent* Gecomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 
 	float dirX = eyeMovementX;
 	float dirZ = eyeMovementZ;
@@ -470,7 +510,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 		}
 	}
 
-	GridPosition startPos = PositionOnGrid(GIcomponent, etc, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+	GridPosition startPos = PositionOnGrid(Gecomponent, etc, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
 	
 	ML_Vector<GridPosition> openList;
 	ML_Vector<GridPosition> closedList;
@@ -491,7 +531,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 		{
 			//apply force
 
-			Coordinate2D tileWorldPos = GridOnPosition(currentTile, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+			Coordinate2D tileWorldPos = GridOnPosition(currentTile, Gecomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
 			float pushbackX = etc->positionX - tileWorldPos.x;
 			float pushbackZ = etc->positionZ - tileWorldPos.z;
 			
@@ -515,9 +555,9 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 	ec->correcitonDirX = finalDirection.x;
   	ec->correcitonDirZ = finalDirection.z;
 
-	if (finalDirection.x > 0.0)
+	if (finalDirection.x > 0.0f || (finalDirection.x == 0.0f && finalDirection.z < 0.0f))
 		ec->clockwiseCircle = true;
-	else if(finalDirection.x < 0.0)
+	else if (finalDirection.x < 0.0f || (finalDirection.x == 0.0f && finalDirection.z > 0.0f))
 		ec->clockwiseCircle = false;
 }
 
@@ -592,7 +632,8 @@ bool EyeBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
-			distance = 10000;
+			//distance = 10000;
+			enemyAnim->aAnimTimeFactor = 1.0f;// Mattias: time factor is set to 0 somewhere have no clue :S
 
 			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
 			{

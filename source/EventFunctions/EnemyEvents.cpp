@@ -806,11 +806,19 @@ void DestroyAcidHazard(EntityID& entity, const int& index)
 	{
 		return;
 	}
-	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
-	if (model != nullptr)
+	//ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
+	//if (model != nullptr)
+	//{
+	//	ReleaseModel(model->model);
+	//	registry.RemoveComponent<ModelBonelessComponent>(entity);
+	//}
+
+	//Remove Particle
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
 	{
-		ReleaseModel(model->model);
-		registry.RemoveComponent<ModelBonelessComponent>(entity);
+		particle->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
 	}
 
 	RemoveHitbox(entity, 0);
@@ -822,12 +830,15 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
 	
 	EntityID acidHazard = registry.CreateEntity();
-	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(acidHazard, LoadModel("LavaPlaceholder.mdl"));
-	hazardModel->shared.colorAdditiveRed = 0.1f;
-	hazardModel->shared.colorAdditiveGreen = 0.9f;
-	hazardModel->shared.colorAdditiveBlue = 0.2f;
-	hazardModel->shared.gammaCorrection = 1.5f;
-	hazardModel->castShadow = false;
+	//ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(acidHazard, LoadModel("LavaPlaceholder.mdl"));
+	//hazardModel->shared.colorAdditiveRed = 0.1f;
+	//hazardModel->shared.colorAdditiveGreen = 0.9f;
+	//hazardModel->shared.colorAdditiveBlue = 0.2f;
+	//hazardModel->shared.gammaCorrection = 1.5f;
+	//hazardModel->castShadow = false;
+
+	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::ACIDGROUND);
+
 
 	float scaling = 5.0f;
 
@@ -864,13 +875,26 @@ void BeginDestroyProjectile(EntityID& entity, const int& index)
 	{
 		return;
 	}
-	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
-	if (model != nullptr)
-	{
-		ReleaseModel(model->model);
-		registry.RemoveComponent<ModelBonelessComponent>(entity);
-	}
+
+	////Remove Model
+	//ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
+	//if (model != nullptr)
+	//{
+	//	ReleaseModel(model->model);
+	//	registry.RemoveComponent<ModelBonelessComponent>(entity);
+	//}
 	
+	//Remove Particle
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
+
+	//Remove shadow light
+	RemoveLight(entity);
+
 	if (proj->type == eye)
 	{
 		CreateAcidHazard(entity, index);
@@ -889,4 +913,9 @@ void EndDestroyProjectile(EntityID& entity, const int& index)
 		return;
 	}
 	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+}
+
+void SpawnProjectileShadow(EntityID& entity, const int& index)
+{
+	CreateSpotLight(entity, -0.5f, -0.5f, -0.5f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
 }

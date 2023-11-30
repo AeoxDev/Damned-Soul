@@ -37,6 +37,8 @@ void RepositionBehaviour(EntityID& entity, ImpBehaviour* ic, TransformComponent*
 
 void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
+	ic->idleCounter = 0.0f;
+
 	// Regular walk
 	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
 	{
@@ -78,6 +80,8 @@ void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transf
 
 bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*& ptc, ImpBehaviour*& ic, TransformComponent*& itc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
+	ic->idleCounter = 0.0f;
+
 	//if you just attacked go back to circle behaviour
 	if (ic->attackTimer < enemyStats->GetAttackSpeed())
 	{

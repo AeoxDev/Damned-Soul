@@ -14,10 +14,22 @@ void StartPlayerDeath(EntityID& entity, const int& index)
 	{
 		animComp->aAnim = ANIMATION_DEATH;
 		animComp->aAnimIdx = 0;
-		animComp->aAnimTime = 0.0f;
+		animComp->aAnimTime = 0.01f;
 	}
 
-	registry.RemoveComponent<ControllerComponent>(entity);
+	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
+	if (controller)
+	{
+		registry.RemoveComponent<ControllerComponent>(entity);
+	}
+
+	//registry.RemoveComponent<HitboxComponent>(entity);
+	RemoveHitbox(entity, 0);
+	RemoveHitbox(entity, 1);
+	RemoveHitbox(entity, 2);
+	RemoveHitbox(entity, 3);
+	RemoveHitbox(entity, 4);
+	
 }
 
 void PlayPlayerDeath(EntityID& entity, const int& index)
@@ -27,6 +39,12 @@ void PlayPlayerDeath(EntityID& entity, const int& index)
 	{
 		animComp->aAnim = ANIMATION_DEATH;
 		animComp->aAnimIdx = 0;
+		float scalar = 3.0f * GetTimedEventElapsedTime(entity, index) / GetTimedEventTotalTime(entity, index);
+		animComp->aAnimTime = 0.01f + scalar;
+		if (scalar > 1.0f)
+		{
+			animComp->aAnimTime = 0.99999f;
+		}
 	}
 }
 
@@ -45,7 +63,8 @@ bool StateSwitcherSystem::Update()
 		EntityID player = stateManager.player;
 		playersComp = registry.GetComponent<PlayerComponent>(player);
 		StatComponent* statComp = registry.GetComponent<StatComponent>(player);
-		if (statComp != nullptr)
+		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(player);
+		if (statComp != nullptr && controller != nullptr)
 		{
 			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay)
 			{
@@ -68,7 +87,8 @@ bool StateSwitcherSystem::Update()
 					}
 				}
 				//Timed Event for player death animation and state transitioning;
-				AddTimedEventComponentStartContinuousEnd(player, 0.0f, StartPlayerDeath, PlayPlayerDeath, 1.0f, EndPlayerDeath);
+				ReleaseTimedEvents(player);
+				AddTimedEventComponentStartContinuousEnd(player, 0.0f, StartPlayerDeath, PlayPlayerDeath, 3.0f, EndPlayerDeath);
 			}
 		}
 	}

@@ -139,6 +139,7 @@ void CutscenePlayerFallInPlace(EntityID& entity, const int& index);
 
 void BeginDestroyProjectile(EntityID& entity, const int& index);
 void EndDestroyProjectile(EntityID& entity, const int& index);
+void SpawnProjectileShadow(EntityID& entity, const int& index);
 
 
 //Game speed
