@@ -30,6 +30,8 @@ void LoadLevel1()
 	stageVars.offsetY = -0.1f;
 	//stageVars.offsetX = 16.f;
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level1"); //Proximity hitbox (Added by Joaquin)
 
 	if (SetupVFXTorches("LV1Torch.dss", false, false) == false)
 	{
@@ -55,6 +57,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
+
 
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
 	/*EntityID particles = registry.CreateEntity();

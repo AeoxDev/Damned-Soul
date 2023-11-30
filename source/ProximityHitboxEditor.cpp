@@ -11,9 +11,10 @@ void HitboxEditorLoop(const char* fileName, bool clockwise)
 	bool done = false;
 
 	std::string tempFilename = fileName; //Herman Help;
+	std::string tempFilename2 = "HitboxFiles/" + tempFilename + ".box"; //Herman Help;
 
 	//Read hitbox file if it exists
-	fileName = ("HitboxFiles/" + tempFilename + ".box").c_str();
+	fileName = tempFilename2.c_str();
 	std::ifstream file(fileName);
 	if (file.is_open())
 	{

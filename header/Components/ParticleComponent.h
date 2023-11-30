@@ -24,7 +24,9 @@ enum VFX_PATTERN
 {
 	FLAME = 0,
 	ACID = 1,
-	SWORD = 2
+	SWORD = 2,
+	FIREBALL = 3,
+	ACIDGROUND = 4
 };
 
 //(entity, float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)

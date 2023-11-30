@@ -900,7 +900,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(SKELETON);
+		scp->Load(MINIBOSS);
 
  		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
@@ -920,6 +920,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+
+		//Sounds (Added by Joaquin)
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(BOSS);
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
@@ -928,14 +932,23 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (eType == EnemyType::frozenHellhound)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(HELLHOUND);
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(IMP);
 		}
 		if (eType == EnemyType::frozenEye)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Eye.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(EYE);
 		}
 		model->shared.colorMultiplicativeRed = 0.4f;
 		model->shared.colorMultiplicativeBlue = 0.4f;
@@ -953,10 +966,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);   // CHANGE THIS TO FROZEN HELLHOUND
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
 			behev->type = EnemyType::frozenHellhound;

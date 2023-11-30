@@ -32,6 +32,8 @@ void LoadLevel6()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 6;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level6"); //Proximity hitbox (Added by Joaquin)
 
 	if (SetupVFXTorches("LV6Torch.dss", false, false) == false)
 	{
