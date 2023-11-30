@@ -124,6 +124,7 @@ bool ControllerSystem::Update()
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
+			stateManager.activeLevel = 5;
 			LoadLevel(5);
 		}
 		else if (keyState[SCANCODE_4] == pressed)
