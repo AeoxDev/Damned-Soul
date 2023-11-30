@@ -151,7 +151,7 @@ void RenderSkyPlane()
 {
 	int loops = 0;
 
-	for (int i = 0; i < AMOUNT_OF_PLANES; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(planes[i]);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(planes[i]);

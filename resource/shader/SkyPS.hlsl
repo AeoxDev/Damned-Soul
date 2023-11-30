@@ -44,7 +44,7 @@ cbuffer LightComponentShaderBuffer : register(b2)
 
 
 // Backbuffer Sampling for the UV of the particle
-float4 SampleBackbuffer(in float4 position, in float2 screenResolution, in Texture2D backBufferTexture, in sampler samplerUsed)
+float4 SampleBackbuffer(in float4 position, in float2 screenResolution, in Texture2D backBufferTexture, in SamplerState samplerUsed)
 {
     float2 screenSpaceUV = float2((position.x / screenResolution.x), (position.y / screenResolution.y));
     return backBufferTexture.Sample(samplerUsed, screenSpaceUV);
@@ -55,9 +55,9 @@ float4 AlphaBlend(in float4 backBuffer, in float alphaMaskOrValue, in float3 dif
 {
     float4 blendResults =
     {
-        (backBuffer.r * (1 - alphaMaskOrValue.r) + (diffuseTexture.r * colorValue.r * alphaMaskOrValue.r)),
-        (backBuffer.g * (1 - alphaMaskOrValue.r) + (diffuseTexture.g * colorValue.g * alphaMaskOrValue.r)),
-        (backBuffer.b * (1 - alphaMaskOrValue.r) + (diffuseTexture.b * colorValue.b * alphaMaskOrValue.r)),
+        (backBuffer.r * (1 - alphaMaskOrValue) + (diffuseTexture.r * colorValue.r * alphaMaskOrValue)),
+        (backBuffer.g * (1 - alphaMaskOrValue) + (diffuseTexture.g * colorValue.g * alphaMaskOrValue)),
+        (backBuffer.b * (1 - alphaMaskOrValue) + (diffuseTexture.b * colorValue.b * alphaMaskOrValue)),
         1.0f
     };
 
@@ -66,13 +66,31 @@ float4 AlphaBlend(in float4 backBuffer, in float alphaMaskOrValue, in float3 dif
 
 float4 main(VS_OUT input) : SV_TARGET
 {
-    float2 screenRes = float2(SCREEN_X, SCREEN_Y);
-    float4 backbuffer = SampleBackbuffer(input.position, screenRes, backbufferTexture_in, WrapSampler);
+    //float2 screenRes = float2(SCREEN_X, SCREEN_Y);
+    //float4 backbuffer = SampleBackbuffer(input.position.xyzw, screenRes, backbufferTexture_in, WrapSampler);
     
-    AlphaBlend(backbuffer, )
+    //float4 image = diffuseTex.Sample(WrapSampler, input.uv);
+
+    
+    //float4 retVal = AlphaBlend(backbuffer, 1.0f, image.rgb);
+    
+    float screenX = 1600.f;
+    float screenY = 900.f;
+
+    
+    float2 screenSpaceUV = float2((input.position.x / screenX), (input.position.y / screenY));
+    float4 backBuff = backbufferTexture_in.Sample(WrapSampler, input.uv);
     
     float4 image = diffuseTex.Sample(WrapSampler, input.uv);
-    clip(image.a - 0.004f);
-    return image;
+    
+    //float4 retVal = image + (1.0f - image.a) * backBuff;
+    
+    float4 retVal;
+    retVal.r = backBuff.r + image.r * image.a;
+    retVal.g = backBuff.g + image.g * image.a;
+    retVal.b = backBuff.b + image.b * image.a;
+    
+    //clip(image.a - 0.004f);
+    return retVal;
 }
    
