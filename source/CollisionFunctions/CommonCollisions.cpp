@@ -353,9 +353,9 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	//Camera shake
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
 
-	//Hitstop, pause both animations for extra effect
+	//Hitstop, pause both animations for extra effect (Edit: Pauses our own animation, shakes the enemy a bit but no longer pauses them)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
-	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, HitStop, FREEZE_TIME, nullptr, 0);
 
 	//Freeze both entities as they hit eachother for extra effect
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
