@@ -238,7 +238,7 @@ bool LuciferBehaviourSystem::Update()
 					{
 						luciferTransformComponent->positionY = 0.f;
 						enemyAnim->aAnim = ANIMATION_IDLE;
-						enemyAnim->aAnimIdx = 1;
+						enemyAnim->aAnimIdx = 0; // spawn animation, 1 is idle (is used to be)
 						enemyAnim->aAnimTimeFactor = 1.0f;
 
 						enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
