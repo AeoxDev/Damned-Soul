@@ -1,8 +1,13 @@
-RWTexture2D<unorm float4> outputGlowData : register(u0);
-RWTexture2D<unorm float4> inputGlowData : register(u1);
-RWTexture2D<unorm float4> backbuffer : register(u2);
+RWTexture2D<unorm float4> backbuffer : register(u0);
 
 Texture2D<unorm float4> uiSRV : register(t0);
+Texture2D<unorm float4> inputGlowData : register(t1);
+
+cbuffer GlowInfo : register(b0)     // HELP: Unsiure if this is input correctly. Gives strange results compared to "the normal".
+{
+    int windowWidth;
+    int windowHeight;
+}
 
 static const float e = 2.71828f;
 static const float pi = 3.14159f;

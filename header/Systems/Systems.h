@@ -26,10 +26,6 @@ class AntiAliasingSystem : public System	// DOING
 {
 	bool Update();
 };
-class GlowApplySystem : public System
-{
-	bool Update();
-};
 class OnClickSystem : public System
 {
 	bool Update();

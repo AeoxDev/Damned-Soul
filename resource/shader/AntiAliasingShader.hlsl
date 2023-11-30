@@ -1,8 +1,10 @@
-RWTexture2D<unorm float4> backbuffer : register(u2);
+Texture2D<unorm float4> backBufferInput : register(t0);
+Texture2D<unorm float4> uiSRV : register(t1);
 
-Texture2D<unorm float4> uiSRV : register(t0);
+RWTexture2D<unorm float4> backBufferOutput : register(u0);
 
-// blur backbuffercopy to backbuffer, as long as UI isn't in the way
+// blur backbuffer
+// copy to backbuffer, as long as UI isn't in the way
 
 static const float e = 2.71828f;
 static const float pi = 3.14159f;
@@ -38,7 +40,7 @@ void main(uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     float4 output = float4(0, 0, 0, 0);
     
     // Calculate color blend and glow falloff based on pixel distance.
-#define WIDTH_HEIGHT (10)
+#define WIDTH_HEIGHT (1)
 #define SIGMA (6.f)
     for (int y = max(index.y - WIDTH_HEIGHT, 0); y < min(index.y + WIDTH_HEIGHT, 900); ++y)
     {
@@ -47,14 +49,14 @@ void main(uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
             int2 h8t = int2(x, y);
             float temp = Gaussian(index.x - x, index.y - y, SIGMA);
             total += temp;
-            output += inputGlowData[h8t] * temp;
+            output += backBufferInput[h8t] * temp;
         }
     }
     
     //  Add blur "on top of" existing glow texture.
-    float3 tmp = output.rgb / total + inputGlowData[index].rgb * inputGlowData[index].a;
+    float3 tmp = output.rgb / total;
     float4 glow = float4(tmp, output.a);
-    float4 bb_rgba = backbuffer[index];
+    float4 bb_rgba = backBufferInput[index];
     
     // Add glow color on backbuffer, using alpha as a factor.
     float fac_a = glow.a;
@@ -62,6 +64,6 @@ void main(uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     float res_g = bb_rgba.g + glow.g * fac_a;
     float res_b = bb_rgba.b + glow.b * fac_a;
     
-    backbuffer[index] = float4(res_r, res_g, res_b, bb_rgba.a);
+    backBufferOutput[index] = float4(res_r, res_g, res_b, bb_rgba.a);
 
 }

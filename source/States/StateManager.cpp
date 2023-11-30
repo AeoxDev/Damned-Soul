@@ -15,6 +15,7 @@
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
 #include "Glow.h"
+#include "AntiAlias.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -145,6 +146,7 @@ int StateManager::Setup()
 
 	Particles::InitializeParticles();
 	Glow::Initialize();
+	AntiAlias::Initialize();	// NOTE: Erika was here.
 	//SetupTestHitbox();
 	RedrawUI();
 	
@@ -167,8 +169,8 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
+	systems.push_back(new AntiAliasingSystem());
 
-	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
 
 	systems.push_back(new UIRunTime());
 	systems.push_back(new UIRenderSystem());
