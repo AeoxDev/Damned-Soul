@@ -56,21 +56,7 @@ void LoadLevel6()
 		assert("Could not read file: LV6Enemies");
 	}
 	
-	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 1);
-	//SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 1);
-	// SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f, 2);
-	//SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 1);
-	//SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f, 2);
-	//SetupEnemy(EnemyType::empoweredImp, 35.f, 1.f, 45.f, 1); //  stronger version incoming
-	//SetupEnemy(EnemyType::empoweredImp, -25.f, 1.f, -35.f, 1); //  stronger version incoming
-	//SetupEnemy(EnemyType::minotaur, -50.f, 1.f, 25.f, 2);
-	//SetupEnemy(EnemyType::minotaur, -40.f, 1.f, 25.f, 2);
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
-	
-	//22 souls + 18 souls level 1,2 = 40 souls total before boss
+
 
 	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -78.f, 1.f, 108.f, 0);
 
