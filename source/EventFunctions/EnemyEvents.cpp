@@ -149,7 +149,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxHitPlayer(newMini, hID);
 	SetHitboxHitEnemy(newMini, hID);
 	SetHitboxActive(newMini, hID);
-	SetHitboxIsMoveable(newMini, hID);
+	SetHitboxIsMoveable(newMini, hID, false);
 
 	int sID = CreateHitbox(newMini, radius, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
@@ -157,9 +157,9 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxHitPlayer(newMini, sID);
 	SetHitboxHitEnemy(newMini, sID);
 	SetHitboxActive(newMini, sID);
-	SetHitboxIsMoveable(newMini, sID);
-	SetHitboxHitStaticHazard(newMini, sID, true);
-	SetHitboxCanTakeDamage(newMini, sID);
+	SetHitboxIsMoveable(newMini, sID, false);
+	SetHitboxHitStaticHazard(newMini, sID, false);
+	SetHitboxCanTakeDamage(newMini, sID, true);
 
 	SetHitboxCanDealDamage(newMini, sID, false);
 
@@ -168,7 +168,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(newMini, enemyComp->attackHitBoxID);
 	SetHitboxActive(newMini, enemyComp->attackHitBoxID);
-	SetHitboxIsMoveable(newMini, enemyComp->attackHitBoxID);
+	SetHitboxIsMoveable(newMini, enemyComp->attackHitBoxID, false);
 	SetHitboxCanTakeDamage(newMini, enemyComp->attackHitBoxID, false);
 	SetHitboxCanDealDamage(newMini, enemyComp->attackHitBoxID, false);
 

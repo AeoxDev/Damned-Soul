@@ -32,6 +32,12 @@ void LoadLevel8()
 	stageVars.stageNr = 8;
 	EntityID stage = SetUpStage(stageVars);
 
+	if (SetupVFXTorches("LV8Torch.dss", true, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV8Torch\nOr file is not written properly.");
+	}
+
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -40,7 +46,7 @@ void LoadLevel8()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	if (SetupAllEnemies("LV8Enemies.dss") == false)
@@ -48,6 +54,7 @@ void LoadLevel8()
 		//something went wrong, could not open file
 		assert("Could not read file: LV8Enemies");
 	}
+	
 	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 0);

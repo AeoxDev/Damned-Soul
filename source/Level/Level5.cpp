@@ -32,6 +32,10 @@ void LoadLevel5()
 	stageVars.stageNr = 5;
 	EntityID stage = SetUpStage(stageVars);
 
+
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+
+
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights

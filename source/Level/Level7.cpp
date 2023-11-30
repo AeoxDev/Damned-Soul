@@ -40,6 +40,8 @@ void LoadLevel7()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	if (SetupAllEnemies("LV7Enemies.dss") == false)
 	{

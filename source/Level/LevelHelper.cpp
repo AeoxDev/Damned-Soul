@@ -156,7 +156,43 @@ bool SetupAllEnemies(std::string filePath)
 	return true;
 }
 
-bool SetupVFXTorches(std::string filePath)
+void SpawnTorch(float positionX, float positoinY, float positionZ, float red, float green, float blue, bool level8, bool level9)
+{
+	if (level8 == false && level9 == false)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 7.0f, 0.0f, 1.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+	else if (level8 == true && level9 == false)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 18.0f, 0.0f, 3.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+	else if (level8 == false && level9 == true)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 28.0f, 0.0f, 4.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+}
+
+
+
+bool SetupVFXTorches(std::string filePath, bool level8, bool level9)
 {
 	std::string name = "VFX\\";
 	name.append(filePath);
@@ -176,7 +212,7 @@ bool SetupVFXTorches(std::string filePath)
 			// 2 = positionZ
 			// 3 = r
 			// 4 = g
-			// 5 = r
+			// 5 = b
 			for (auto t : line)
 			{
 				if (t == ',')
@@ -196,7 +232,7 @@ bool SetupVFXTorches(std::string filePath)
 					term += t; //add char to string
 				}
 			}
-			//SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+			SpawnTorch( theInfo.positionX, theInfo.positionY, theInfo.positionZ, theInfo.r, theInfo.g, theInfo.b, level8, level9);
 		}
 	}
 
@@ -370,6 +406,29 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 	}
 
 	return hazard;
+}
+
+void SetupEnemyNavigationHelper()
+{
+	EntityID entity = registry.CreateEntity();
+	TransformComponent transform;
+	transform.positionX = 0.f;
+	transform.positionY = 0.3f;
+	transform.positionZ = 0.f;
+	transform.mass = 1.f;
+	transform.facingX = 0.f; transform.facingY = 0.f; transform.facingZ = 0.f;
+	transform.scaleX = 0.420f; transform.scaleY = 0.420f; transform.scaleZ = 0.420f;
+	
+
+	registry.AddComponent<TransformComponent>(entity, transform);
+
+	ModelBonelessComponent* model = nullptr;
+	model = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FixedArrow.mdl"));
+	if (model != nullptr)
+	{
+		model->shared.gammaCorrection = 1.5f;
+	}
+	registry.AddComponent<NavigationTrashComponentYouMustAccept>(entity);
 }
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , int soulWorth, float mass ,
@@ -894,7 +953,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);   // CHANGE THIS TO FROZEN HELLHOUND
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
@@ -1006,6 +1065,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	if (model != nullptr)
 	{
 		model->shared.gammaCorrection = 1.5f;
+		model->shared.hasOutline = true;
 	}
 	CreatePointLight(entity, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 	return entity;
@@ -1021,6 +1081,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->shared.colorMultiplicativeGreen = 1.25f;
 	model->shared.colorMultiplicativeBlue = 1.25f;
 	model->shared.gammaCorrection = 1.5f;
+	model->shared.hasOutline = true;
 	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
 	animation->aAnim = ANIMATION_IDLE;
 	animation->aAnimTime = 0.5f;
@@ -1077,6 +1138,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	weapon_model->shared.colorMultiplicativeGreen = 1.25f;
 	weapon_model->shared.colorMultiplicativeBlue = 1.25f;
 	weapon_model->shared.gammaCorrection = 1.5f;
+	weapon_model->shared.hasOutline = true;
 
 	AnimationComponent* weapon_animation = registry.AddComponent<AnimationComponent>(stateManager.weapon, AnimationComponent());
 	weapon_animation->aAnim = ANIMATION_IDLE;
