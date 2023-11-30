@@ -35,20 +35,6 @@ bool ParticleSystemCPU::Update()
 
 			Particles::FinishParticlePass();
 		}
-		//else if (pComp->metadataSlot >= 0 && pComp->VFX == true)
-		//{
-		//	//SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
-
-		//	// Update the constant buffer to include start
-		//	Particles::UpdateStart(pComp->metadataSlot);
-
-		//	//Set all the shaders for regular particles
-		//	Particles::PrepareVFXPass(renderStates);
-
-		//	RenderOffset((Particles::GetMetadataAtIndex(pComp->metadataSlot).end - Particles::GetMetadataAtIndex(pComp->metadataSlot).start), 0);
-
-		//	Particles::FinishVFXPass();
-		//}
 
 		if (pComp->modelUse)
 		{

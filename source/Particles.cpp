@@ -38,6 +38,8 @@ struct VFXBufferData
 // ## EO ALEX CODE ##
 
 int Particles::RenderSlot;
+SRV_IDX Particles::depthSRV;
+
 
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
@@ -128,7 +130,6 @@ void Particles::InitializeParticles()
 	startKeeper = CreateConstantBuffer(sizeof(int));
 	vfxStartKeeper = CreateConstantBuffer(sizeof(int));
 
-
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
 		data->metadata[i].life = -1.f;
@@ -152,6 +153,9 @@ void Particles::InitializeParticles()
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
 	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", PARTICLE);
 	RenderSlot = SetupParticles();
+
+	//Particles::depthSRV = CreateShaderResourceViewTexture(renderStates[Particles::RenderSlot].depthStencilView, RESOURCE_FLAGS::BIND_DEPTH_STENCIL);
+
 }
 
 void Particles::ReleaseParticles()
@@ -209,6 +213,8 @@ void Particles::FinishParticleCompute()
 
 void Particles::PrepareParticlePass(int metadataSlot)
 {
+	CopyBackBufferToRender();
+
 	SetTopology(POINTLIST);
 
 	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
@@ -316,6 +322,11 @@ void Particles::PrepareMeshPass(int metadataSlot)
 void Particles::FinishMeshPass()
 {
 	FinishParticlePass();
+}
+
+void Particles::CopyBackBufferToRender()
+{
+	CopySRVtoSRV(renderStates[Particles::RenderSlot].shaderResourceView, VFXBackBufferSRV);
 }
 
 

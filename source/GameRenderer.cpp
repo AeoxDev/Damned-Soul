@@ -164,7 +164,7 @@ int SetupParticles()
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
 	renderStates[currentSize].renderTargetView = CreateRenderTargetView(USAGE_DEFAULT, resourceFlags, (CPU_FLAGS)0, sdl.WIDTH, sdl.HEIGHT);
 	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, BIND_RENDER_TARGET);
-	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT, true);
 
 	return currentSize++;
 }
