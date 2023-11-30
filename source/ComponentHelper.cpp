@@ -40,6 +40,11 @@ float StatComponent::GetHealthFraction() const
 	return this->m_currentHealth / GetMaxHealth();
 }
 
+void StatComponent::UpdateBaseHealth(const float delta)
+{
+	m_baseHealth += delta;
+}
+
 float StatComponent::CapHealth()
 {
 	float maxHp = (float)GetMaxHealth();

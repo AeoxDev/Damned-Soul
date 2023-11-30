@@ -9,6 +9,7 @@
 
 #include "MemLib\ML_String.hpp"
 #include "UIComponents.h"
+#include "UI\HP_BarHelper.h"
 #include <iomanip>
 
 #include "States/StateManager.h"
@@ -47,42 +48,43 @@ bool UIHealthSystem::Update()
 	int counter = 0;
 	for (auto entity : View<UIGameHealthComponent, UIComponent, StatComponent>(registry))
 	{
-		auto health = registry.GetComponent<UIGameHealthComponent>(entity);
-		auto uiElement = registry.GetComponent<UIComponent>(entity);
-
-		auto stats = registry.GetComponent<StatComponent>(entity);
-		int64_t maxHealth = stats->GetMaxHealth();
-		int64_t currentHealth = stats->GetHealth();
-
-		float percentageHealth = (float)currentHealth / (float)maxHealth;
-
-		health->value = currentHealth;
-		int healthBoundsRight = (int)uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
-
-		uiElement->m_Images[0].baseUI.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
-
-		if (entity.index == stateManager.player.index)
-		{
-			uiElement->m_BaseText.SetText(("Health: " + std::to_string(health->value)).c_str(), uiElement->m_BaseText.baseUI.GetBounds());
-			uiElement->m_BaseText.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(),
-				uiElement->m_BaseImage.baseUI.GetRotation(), uiElement->m_BaseImage.baseUI.GetVisibility(), uiElement->m_BaseImage.baseUI.GetOpacity());
-		}
-		else
-		{
-#ifdef DEBUG_HP
-			TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
-
-			uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.75f - (counter * 0.125f)));
-
-			uiElement->m_BaseText.SetText(("Health: " + std::to_string(health->value)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
-			uiElement->m_BaseText.baseUI.Setup(uiElement->m_Images[0].baseUI.GetPosition(), uiElement->m_Images[0].baseUI.GetScale(),
-				uiElement->m_Images[0].baseUI.GetRotation(), uiElement->m_Images[0].baseUI.GetVisibility(), uiElement->m_Images[0].baseUI.GetOpacity());
-
-
-			counter++;
-#endif
-			
-		}
+		ScaleAdvancedHealthBar(entity);
+//		auto health = registry.GetComponent<UIGameHealthComponent>(entity);
+//		auto uiElement = registry.GetComponent<UIComponent>(entity);
+//
+//		auto stats = registry.GetComponent<StatComponent>(entity);
+//		int64_t maxHealth = stats->GetMaxHealth();
+//		int64_t currentHealth = stats->GetHealth();
+//
+//		float percentageHealth = (float)currentHealth / (float)maxHealth;
+//
+//		health->value = currentHealth;
+//		int healthBoundsRight = (int)uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
+//
+//		uiElement->m_Images[0].baseUI.m_CurrentBounds.right = healthBoundsRight * percentageHealth;
+//
+//		if (entity.index == stateManager.player.index)
+//		{
+//			uiElement->m_BaseText.SetText(("Health: " + std::to_string(health->value)).c_str(), uiElement->m_BaseText.baseUI.GetBounds());
+//			uiElement->m_BaseText.baseUI.Setup(uiElement->m_BaseImage.baseUI.GetPosition(), uiElement->m_BaseImage.baseUI.GetScale(),
+//				uiElement->m_BaseImage.baseUI.GetRotation(), uiElement->m_BaseImage.baseUI.GetVisibility(), uiElement->m_BaseImage.baseUI.GetOpacity());
+//		}
+//		else
+//		{
+//#ifdef DEBUG_HP
+//			TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+//
+//			uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.75f - (counter * 0.125f)));
+//
+//			uiElement->m_BaseText.SetText(("Health: " + std::to_string(health->value)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+//			uiElement->m_BaseText.baseUI.Setup(uiElement->m_Images[0].baseUI.GetPosition(), uiElement->m_Images[0].baseUI.GetScale(),
+//				uiElement->m_Images[0].baseUI.GetRotation(), uiElement->m_Images[0].baseUI.GetVisibility(), uiElement->m_Images[0].baseUI.GetOpacity());
+//
+//
+//			counter++;
+//#endif
+//			
+//		}
 	}
 
 	return true;

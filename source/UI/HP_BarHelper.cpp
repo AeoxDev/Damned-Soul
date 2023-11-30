@@ -1,0 +1,166 @@
+#include "HP_BarHelper.h"
+#include "UI\UI.h"
+#include "ComponentHelper.h"
+#include "UIComponents.h"
+#include "Registry.h"
+#include "States\StateManager.h"
+
+static DSFLOAT2 bl(-0.73f, 0.85f);
+
+//static uint32_t HP_BG;
+static uint32_t HP_STRETCH;
+static uint32_t HP_EDGE;
+static uint32_t HP_LEFT;
+static uint32_t HP_RIGHT;
+static uint32_t HP_MID;
+static uint32_t HP_START;
+static uint32_t HP_END;
+
+#define BG_X (bl.x + .000f)
+#define LOOP_LEFT_X (bl.x - .055f)
+#define LOOP_RIGHT_X (bl.x + .056f)
+#define LOOP_MID_X (bl.x + .000f)
+#define RIGHT_END_X (bl.x + .132f)
+
+#define _ADVANCED_HP_ROUND_PIXELS_UP(idx)																	\
+uiElement->m_Images[idx].baseUI.m_PixelCoords.x = ceilf(uiElement->m_Images[idx].baseUI.m_PixelCoords.x);	\
+uiElement->m_Images[idx].baseUI.m_PixelCoords.y = ceilf(uiElement->m_Images[idx].baseUI.m_PixelCoords.y);	\
+uiElement->m_Images[idx].baseUI.UpdateTransform();															\
+
+void SetUpAdvancedHealthBar(const EntityID player)
+{
+
+	// UI
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(player);
+
+	//Setup + Health
+	// Set background location!
+	uiElement->Setup   ("HP_Bar/HP_BG", "",			DSFLOAT2(BG_X,			bl.y + .000f));
+	uiElement->m_BaseImage.baseUI.m_PixelCoords.x = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.x);
+	uiElement->m_BaseImage.baseUI.m_PixelCoords.y = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.y);
+	uiElement->m_BaseImage.baseUI.UpdateTransform();
+
+	HP_STRETCH = uiElement->m_Images.size();
+	uiElement->AddImage("HP_Bar/HP_INDICATOR_STRETCH", DSFLOAT2(BG_X, bl.y + .000f));
+	uiElement->m_BaseImage.baseUI.m_PixelCoords.x -= 2;
+	_ADVANCED_HP_ROUND_PIXELS_UP(HP_STRETCH);
+	//HP_EDGE = uiElement->m_Images.size();
+	//uiElement->AddImage("HP_Bar/HP_INDICATOR_END", DSFLOAT2(BG_X, bl.y + .000f));
+	//_ADVANCED_HP_ROUND_PIXELS_UP(HP_EDGE);
+	HP_LEFT = uiElement->m_Images.size();
+	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_LEFT_X,	bl.y + .000f));
+	_ADVANCED_HP_ROUND_PIXELS_UP(HP_LEFT);
+	HP_RIGHT = uiElement->m_Images.size();
+	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_RIGHT_X,	bl.y - .000f));
+	_ADVANCED_HP_ROUND_PIXELS_UP(HP_RIGHT);
+	HP_MID = uiElement->m_Images.size();
+	uiElement->AddImage("HP_Bar/HP_MID",			DSFLOAT2(LOOP_MID_X,	bl.y - .000f));
+	_ADVANCED_HP_ROUND_PIXELS_UP(HP_MID);
+	HP_START = uiElement->m_Images.size();
+	uiElement->AddImage("HP_Bar/HP_LEFT_START",		DSFLOAT2(bl.x - .175f,	bl.y + .000f));
+	_ADVANCED_HP_ROUND_PIXELS_UP(HP_START);
+	// Set HP Text location (I think?)
+	uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.m_PixelCoords;
+	uiElement->m_BaseText.baseUI.UpdateTransform();
+	//uiElement->m_BaseText.baseUI.m_Transform._31 -= 100;
+
+	HP_END = uiElement->m_Images.size();
+	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(RIGHT_END_X,	bl.y + .000f));
+	_ADVANCED_HP_ROUND_PIXELS_UP(HP_END);
+	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(player);
+
+	//Souls
+	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
+	uiElement->AddText(" ", uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
+	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
+
+	//Relics
+	uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
+	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
+}
+
+void ScaleAdvancedHealthBar(const EntityID player)
+{
+	auto health = registry.GetComponent<UIGameHealthComponent>(player);
+	auto uiElement = registry.GetComponent<UIComponent>(player);
+
+	auto stats = registry.GetComponent<StatComponent>(player);
+	int64_t maxHealth = stats->GetMaxHealth();
+	int64_t currentHealth = stats->GetHealth();
+
+	//float percentageHealth = (float)currentHealth / (float)maxHealth;
+
+	health->value = currentHealth;
+	int healthBoundsRight = (int)uiElement->m_Images[0].baseUI.m_OriginalBounds.right;
+
+	uiElement->m_Images[0].baseUI.m_CurrentBounds.right = stats->GetHealth();
+
+	if (player.index == stateManager.player.index)
+	{
+#define EDGE_FLAT_OFFSET (2.f)
+
+		//stats->StealthilyModifyHealth(-0.05f);
+		{
+			UIBase& base = uiElement->m_Images[HP_STRETCH].baseUI;
+			base.m_CurrentBounds.right = /*(base.m_OriginalBounds.right - base.m_OriginalBounds.left)*/200.f * (.01f * stats->GetHealth());
+		}
+		//{
+		//	UIBase& base = uiElement->m_Images[HP_EDGE].baseUI;
+		//	static FLOAT oiriginalX = base.m_PixelCoords.x - 105;
+		//	base.m_PixelCoords.x = oiriginalX + currentHealth * 2;
+		//	base.UpdateTransform();;
+		//}
+
+		// The additional health that the player has obtained
+		float healthFactor = stats->GetMaxHealth() / 100.f;
+		{
+			UIBase& base = uiElement->m_BaseImage.baseUI;
+			base.m_CurrentBounds.right = (base.m_OriginalBounds.right - base.m_OriginalBounds.left - (2.f * EDGE_FLAT_OFFSET)) * healthFactor;
+		}
+		{
+			UIBase& base = uiElement->m_Images[HP_LEFT].baseUI;
+			base.m_CurrentBounds.right = (base.m_OriginalBounds.right - base.m_OriginalBounds.left) * healthFactor;
+		}
+		{
+			UIBase& base = uiElement->m_Images[HP_RIGHT].baseUI;
+			base.m_CurrentBounds.left = base.m_OriginalBounds.left - EDGE_FLAT_OFFSET;
+			base.m_CurrentBounds.right = 2.f * (stats->GetMaxHealth() - EDGE_FLAT_OFFSET) - 100;
+		}
+		{
+			UIBase& base = uiElement->m_Images[HP_MID].baseUI;
+			static FLOAT oiriginalX = base.m_PixelCoords.x - 100;
+			base.m_PixelCoords.x = oiriginalX + stats->GetMaxHealth() - EDGE_FLAT_OFFSET;
+			base.UpdateTransform();
+		}
+		{
+			UIBase& base = uiElement->m_Images[HP_END].baseUI;
+			static FLOAT oiriginalX = base.m_PixelCoords.x - 200;
+			base.m_PixelCoords.x = oiriginalX + 2.f * (stats->GetMaxHealth() - EDGE_FLAT_OFFSET);
+			base.UpdateTransform();
+		}
+
+		char temp[32] = "";
+		sprintf(temp, /*"Health: %lld"*/"%lld", health->value);
+		uiElement->m_BaseText.SetText(temp, uiElement->m_BaseText.baseUI.GetBounds());
+		uiElement->m_BaseText.baseUI.Setup(uiElement->m_Images[HP_START].baseUI.GetPosition(), uiElement->m_Images[HP_START].baseUI.GetScale(),
+										   uiElement->m_Images[HP_START].baseUI.GetRotation(), uiElement->m_Images[HP_START].baseUI.GetVisibility(),
+										   uiElement->m_Images[HP_START].baseUI.GetOpacity());
+	}
+	else
+	{
+#ifdef DEBUG_HP
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+
+		uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(0.75f, 0.75f - (counter * 0.125f)));
+
+		uiElement->m_BaseText.SetText(("Health: " + std::to_string(health->value)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+		uiElement->m_BaseText.baseUI.Setup(uiElement->m_Images[0].baseUI.GetPosition(), uiElement->m_Images[0].baseUI.GetScale(),
+			uiElement->m_Images[0].baseUI.GetRotation(), uiElement->m_Images[0].baseUI.GetVisibility(), uiElement->m_Images[0].baseUI.GetOpacity());
+
+
+		counter++;
+#endif
+
+	}
+}
