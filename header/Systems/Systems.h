@@ -26,6 +26,10 @@ class GlowApplySystem : public System
 {
 	bool Update();
 };
+class OutlineSystem : public System
+{
+	bool Update();
+};
 class OnClickSystem : public System
 {
 	bool Update();
