@@ -520,7 +520,13 @@ void HurtSound(EntityID& entity, const int& index)
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		if (player != nullptr)
 		{
-			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Base);
+			bool isPlaying = false;
+			for (auto audioEngine : View<AudioEngineComponent>(registry))
+			{
+				//Check if sound is currently playing
+				registry.GetComponent<AudioEngineComponent>(audioEngine)->channels[registry.GetComponent<SoundComponent>(entity)->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+			}
+			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Extra);
 		}
 	}
 }
