@@ -50,15 +50,32 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
-	// For particle testing, don't touch, Arian gets angy.
-	//EntityID particles = registry.CreateEntity();
-	//registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 3000.0f, NO_MOVEMENT);
-	//
-	//TransformComponent tComp;
-	//tComp.positionX = -122.0f;
-	//tComp.positionY = 0.0f;
-	//tComp.positionZ = 61.0f;
-	//registry.AddComponent<TransformComponent>(particles, tComp);
+	//// --- For particle testing, don't touch, Arian gets angy. --- //
+	/*EntityID particles = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 1.5f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::ACID);
+	
+	TransformComponent tComp;
+	tComp.positionX = -122.0f;
+	tComp.positionY = 0.0f;
+	tComp.positionZ = 61.0f;
+	registry.AddComponent<TransformComponent>(particles, tComp);
+		
+	EntityID particlesVFX = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particlesVFX, 50.0f, 50.0f, 3.0f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+	
+	tComp.positionX = -102.0f;
+	tComp.positionY = 0.0f;
+	tComp.positionZ = 41.0f;
+	registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+		
+	EntityID particlesMesh = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particlesMesh, 50.0f, 50.0f, 4.f, 0.0f, 0.0f, 1.0f, 32, "\\BackgroundQuad.mdl", VFX_PATTERN::SWORD);
+	
+	tComp.positionX = -122.0f;
+	tComp.positionY = 0.0f;
+	tComp.positionZ = 21.0f;
+	registry.AddComponent<TransformComponent>(particlesMesh, tComp);*/
+	//--- For particle testing, don't touch, Arian gets angy. --- //
 
 
 	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -226.0f, 0.f, 83.f, 0);
