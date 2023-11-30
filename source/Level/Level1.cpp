@@ -68,7 +68,7 @@ void LoadLevel1()
 	}
 
 	// DO NOT REMOVE THIS BELOW
-	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 
+	SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 
 	// LEAVE THE THING ABOVE BE, DO NOT TOUCH
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 

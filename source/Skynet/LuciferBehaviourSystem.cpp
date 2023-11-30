@@ -238,7 +238,7 @@ bool LuciferBehaviourSystem::Update()
 					{
 						luciferTransformComponent->positionY = 0.f;
 						enemyAnim->aAnim = ANIMATION_IDLE;
-						enemyAnim->aAnimIdx = 1;
+						enemyAnim->aAnimIdx = 0; // changing this from 1 to 0
 						enemyAnim->aAnimTimeFactor = 1.0f;
 
 						enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
