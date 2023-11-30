@@ -51,9 +51,17 @@ void BossResetBeforeShockwave(EntityID& entity, const int& index);
 void CreateNewSplitZac(EntityID& entity, const int& index);
 void CreateLandingIndicator(EntityID& entity, const int& index);
 
+
+//Sound effects for cutscenes
 //Boss Intro VoiceLines
 void PlayBossIntroVoiceLine(EntityID& entity, const int& index);
 void PlayBossIntroSlam(EntityID& entity, const int& index);
+//Imp sounds
+void PlayImpIntroTeleport(EntityID& entity, const int& index);
+void PlayImpIntroLaugh(EntityID& entity, const int& index);
+
+//Minotaur sounds
+void PlayMinotaurIntroCharge(EntityID& entity, const int& index);
 
 //Enemy Combat functions
 void EnemyAttackFlash(EntityID& entity, const int& index);

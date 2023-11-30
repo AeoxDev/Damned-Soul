@@ -56,10 +56,10 @@ void LoadLevel2()
 	////Enemies to the north:
 	//SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f, 1);
 	//SetupEnemy(EnemyType::skeleton, 28.f, 0.f, 145.f, 1);
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::imp, -237.0f, 0.f, 227.0f, 0);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::imp, -225.0f, 0.f, 234.0f, 0);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
 	transform->facingZ = -1.0f;
-	transform->facingX = 0.1f;
+	transform->facingX = 0.0f;
 
 	////Enemies in ruins
 	//SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f, 1);
