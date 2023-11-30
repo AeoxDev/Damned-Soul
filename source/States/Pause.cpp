@@ -21,7 +21,7 @@ void PauseState::Setup()
 	SetupButtons();
 	SetupText();
 
-	if (Camera::InCutscene() == true)
+	if (Camera::InCutscene() > 0)
 	{
 		TimedEventIgnoreGamespeed(false);
 	}
@@ -41,13 +41,9 @@ void PauseState::Input()
 			RedrawUI();
 			ResetInput();
 
-			Unload(ENT_PERSIST_PAUSE);
 			gameSpeed = 1.0f;
-			if (Camera::InCutscene() == true)
-			{
-				TimedEventIgnoreGamespeed(true);
-				gameSpeed = 0.0f;
-			}
+			Unload(ENT_PERSIST_PAUSE);
+			
 		}
 		else
 		{
@@ -55,15 +51,9 @@ void PauseState::Input()
 			SetInPlay(true);
 
 			SetPaused(false);
-			gameSpeed = 1.0f;
 			RedrawUI();
-			if (Camera::InCutscene() == true)
-			{
-				TimedEventIgnoreGamespeed(true);
-				gameSpeed = 0.0f;
-			}
 			ResetInput();
-
+			gameSpeed = 1.0f;
 			Unload(ENT_PERSIST_PAUSE);
 		}
 	}
@@ -331,7 +321,7 @@ void PauseState::SetupText()
 void PauseState::Unload(int unloadPersistent)
 {
 	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
-	if (Camera::InCutscene() == true)
+	if (Camera::InCutscene() > 0)
 	{
 		TimedEventIgnoreGamespeed(true);
 		gameSpeed = 0.0f;

@@ -12,6 +12,8 @@
 #include "UIComponents.h"
 #include "States\StateManager.h"
 
+
+
 void LoadLevel1()
 {
 	float redMult = 1.0f;
@@ -46,16 +48,42 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
-	// For particle testing, don't touch, Arian gets angy.
-	//EntityID particles = registry.CreateEntity();
-	//registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 3000.0f, NO_MOVEMENT);
-	//
-	//TransformComponent tComp;
-	//tComp.positionX = -122.0f;
-	//tComp.positionY = 0.0f;
-	//tComp.positionZ = 61.0f;
-	//registry.AddComponent<TransformComponent>(particles, tComp);
+	//// --- For particle testing, don't touch, Arian gets angy. --- //
+	/*EntityID particles = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 1.5f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::ACID);
+	
+	TransformComponent tComp;
+	tComp.positionX = -122.0f;
+	tComp.positionY = 0.0f;
+	tComp.positionZ = 61.0f;
+	registry.AddComponent<TransformComponent>(particles, tComp);
+		
+	EntityID particlesVFX = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particlesVFX, 50.0f, 50.0f, 3.0f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+	
+	tComp.positionX = -102.0f;
+	tComp.positionY = 0.0f;
+	tComp.positionZ = 41.0f;
+	registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+		
+	EntityID particlesMesh = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particlesMesh, 50.0f, 50.0f, 4.f, 0.0f, 0.0f, 1.0f, 32, "\\BackgroundQuad.mdl", VFX_PATTERN::SWORD);
+	
+	tComp.positionX = -122.0f;
+	tComp.positionY = 0.0f;
+	tComp.positionZ = 21.0f;
+	registry.AddComponent<TransformComponent>(particlesMesh, tComp);*/
+	//--- For particle testing, don't touch, Arian gets angy. --- //
+
+
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -226.0f, 0.f, 83.f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = 0.1f;
+	NormalizeFacing(transform);
+	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
 
 
 	if (SetupAllEnemies("LV1Enemies.dss") == false)
@@ -70,8 +98,7 @@ void LoadLevel1()
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 
 	
-
-
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 	
 
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
@@ -89,14 +116,16 @@ void LoadLevel1()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+	//registry.AddComponent<ParticleComponent>(stage, 10, 20, 5, 20, 0, 20, 20, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//registry.AddComponent<ParticleComponent>(stage, 1, 0.5, 5, 20, 0, 20, 18, SPARK); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
 
-	CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	//CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
@@ -111,5 +140,5 @@ void LoadLevel1()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f+0.3f+0.1f, Stage1IntroScene,CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f+0.3f+0.04f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

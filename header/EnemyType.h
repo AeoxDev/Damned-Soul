@@ -17,5 +17,6 @@ enum EnemyType
 	empoweredSkeleton,
 	empoweredHellhound,
 	empoweredImp,
+	ghost,
 	//no empoweredEye, please for the love of god
 };

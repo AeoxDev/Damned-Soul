@@ -11,6 +11,12 @@ struct PathfindingMap //costs of tiles on map
 	~PathfindingMap() = default;
 };
 
+struct ObstacleMap //costs of tiles on map
+{
+	float cost[GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE][GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE] = { 0 };
+
+	~ObstacleMap() = default;
+};
 
 struct Node // to save path
 {
@@ -35,9 +41,11 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 void CalculateGlobalMapValuesZac(PathfindingMap* map);
 void CalculateGlobalMapValuesHellhound(PathfindingMap* map);
 void CalculateGlobalMapValuesImp(PathfindingMap* map);
+void CalculateGlobalMapValuesEye(ObstacleMap* map);
 void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map);
 
 TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponent* tempTransform, float minRange, float maxRange);
+TransformComponent FindRetreatTile(ObstacleMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange);
 
 TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent* temporaryTransform, float minRange, float maxRange);
 
