@@ -33,6 +33,12 @@ void LoadLevel6()
 	stageVars.stageNr = 6;
 	EntityID stage = SetUpStage(stageVars);
 
+	if (SetupVFXTorches("LV6Torch.dss", false, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV6Torch\nOr file is not written properly.");
+	}
+
 	EntityID mouse = registry.CreateEntity();
 
 	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
@@ -44,11 +50,27 @@ void LoadLevel6()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	 if (SetupAllEnemies("LV6Enemies.dss") == false)
+	if (SetupAllEnemies("LV6Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
 		assert("Could not read file: LV6Enemies");
 	}
+	
+	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, 30.f, 0.f, -25.f, 1);
+	//SetupEnemy(EnemyType::empoweredSkeleton, -50.f, 0.f, 45.f, 1);
+	// SetupEnemy(EnemyType::eye, -40.f, 0.f, -45.f, 2);
+	//SetupEnemy(EnemyType::empoweredSkeleton, 35.f, 0.f, 25.f, 1);
+	//SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f, 2);
+	//SetupEnemy(EnemyType::empoweredImp, 35.f, 1.f, 45.f, 1); //  stronger version incoming
+	//SetupEnemy(EnemyType::empoweredImp, -25.f, 1.f, -35.f, 1); //  stronger version incoming
+	//SetupEnemy(EnemyType::minotaur, -50.f, 1.f, 25.f, 2);
+	//SetupEnemy(EnemyType::minotaur, -40.f, 1.f, 25.f, 2);
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -55.f, 1.f, -35.f, 1);
+	
+	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -78.f, 1.f, 108.f, 0);
 

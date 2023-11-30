@@ -23,10 +23,12 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 		tempBossComponent->goalDirectionZ = playerTransformCompenent->positionZ - tempBossTransformComponent->positionZ;
 	}
 	//
+
 	 //
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
+	animComp->aAnimTimeFactor = 0.8f;
 	ANIM_BRANCHLESS(animComp);
 
 	SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ);
