@@ -5,7 +5,7 @@
 #include "D3D11Helper\D3D11Helper.h"
 #include "Particles.h"
 #include "Model.h"
-
+#include "Camera.h"
 
 
 bool ParticleSystemCPU::Update()
@@ -15,11 +15,22 @@ bool ParticleSystemCPU::Update()
 	ClearParticles();
 
 
+	DirectX::XMFLOAT3 cameraPos = Camera::GetPositionFloat();
+
+
 	//Render
 	for (auto pEntity : View<ParticleComponent, TransformComponent>(registry))
 	{
 		TransformComponent* tComp = registry.GetComponent<TransformComponent>(pEntity);
 		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(pEntity);
+
+		float distX = (cameraPos.x - tComp->positionX);
+		float distZ = (cameraPos.z - CAMERA_OFFSET_Z - tComp->positionZ);
+		float dist = (distX * distX) + (distZ * distZ);
+		if (dist > 6400.0f)
+		{
+			continue;
+		}
 
 		if (pComp->metadataSlot >= 0)
 		{
