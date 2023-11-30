@@ -24,6 +24,10 @@ void PlayerLoseControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
 void PlayerBeginAttack(EntityID& entity, const int& index);
 
+//Voiceline
+void PlayBossVictoryOrDeathLine(EntityID& entity, const int& index);
+
+
 //END
 void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);

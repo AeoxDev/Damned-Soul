@@ -32,7 +32,7 @@ void RepositionBehaviour(EntityID& entity, ImpBehaviour* ic, TransformComponent*
 	//ADD POOF
 
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-	if (sfx != nullptr) sfx->Play(Imp_Teleport, Channel_Base);
+	if (sfx != nullptr) sfx->Play(Imp_Teleport, Channel_Extra);
 }
 
 void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)

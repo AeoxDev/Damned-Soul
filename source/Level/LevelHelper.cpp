@@ -156,9 +156,43 @@ bool SetupAllEnemies(std::string filePath)
 	return true;
 }
 
+void SpawnTorch(float positionX, float positoinY, float positionZ, float red, float green, float blue, bool level8, bool level9)
+{
+	if (level8 == false && level9 == false)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 7.0f, 0.0f, 1.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+	else if (level8 == true && level9 == false)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 18.0f, 0.0f, 3.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+	else if (level8 == false && level9 == true)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 28.0f, 0.0f, 4.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+}
 
 
-bool SetupVFXTorches(std::string filePath)
+
+bool SetupVFXTorches(std::string filePath, bool level8, bool level9)
 {
 	std::string name = "VFX\\";
 	name.append(filePath);
@@ -178,7 +212,7 @@ bool SetupVFXTorches(std::string filePath)
 			// 2 = positionZ
 			// 3 = r
 			// 4 = g
-			// 5 = r
+			// 5 = b
 			for (auto t : line)
 			{
 				if (t == ',')
@@ -198,7 +232,7 @@ bool SetupVFXTorches(std::string filePath)
 					term += t; //add char to string
 				}
 			}
-			//SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+			SpawnTorch( theInfo.positionX, theInfo.positionY, theInfo.positionZ, theInfo.r, theInfo.g, theInfo.b, level8, level9);
 		}
 	}
 
@@ -379,7 +413,7 @@ void SetupEnemyNavigationHelper()
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
 	transform.positionX = 0.f;
-	transform.positionY = 0.2f;
+	transform.positionY = 0.3f;
 	transform.positionZ = 0.f;
 	transform.mass = 1.f;
 	transform.facingX = 0.f; transform.facingY = 0.f; transform.facingZ = 0.f;
@@ -866,7 +900,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(SKELETON);
+		scp->Load(MINIBOSS);
 
  		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
@@ -886,6 +920,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+
+		//Sounds (Added by Joaquin)
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(BOSS);
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
@@ -894,14 +932,23 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (eType == EnemyType::frozenHellhound)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(HELLHOUND);
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(IMP);
 		}
 		if (eType == EnemyType::frozenEye)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Eye.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(EYE);
 		}
 		model->shared.colorMultiplicativeRed = 0.4f;
 		model->shared.colorMultiplicativeBlue = 0.4f;
@@ -919,10 +966,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);   // CHANGE THIS TO FROZEN HELLHOUND
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
 			behev->type = EnemyType::frozenHellhound;

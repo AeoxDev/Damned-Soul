@@ -31,6 +31,14 @@ void LoadLevel8()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 8;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level8"); //Proximity hitbox (Added by Joaquin)
+
+	if (SetupVFXTorches("LV8Torch.dss", true, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV8Torch\nOr file is not written properly.");
+	}
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -48,6 +56,7 @@ void LoadLevel8()
 		//something went wrong, could not open file
 		assert("Could not read file: LV8Enemies");
 	}
+	
 	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 0);

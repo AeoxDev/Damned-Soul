@@ -30,7 +30,15 @@ void LoadLevel3()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 3;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level3"); //Proximity hitbox (Added by Joaquin)
 	EntityID mouse = registry.CreateEntity();
+
+	if (SetupVFXTorches("LV3Torch.dss", false, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV3Torch\nOr file is not written properly.");
+	}
 
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
@@ -50,6 +58,7 @@ void LoadLevel3()
 		//something went wrong, could not open file
 		assert("Could not read file: LV3Enemies");
 	}
+	
 	////Upper right corner:
 	//SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
 	//SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f, 1);

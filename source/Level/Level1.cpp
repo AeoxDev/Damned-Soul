@@ -30,6 +30,14 @@ void LoadLevel1()
 	stageVars.offsetY = -0.1f;
 	//stageVars.offsetX = 16.f;
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level1"); //Proximity hitbox (Added by Joaquin)
+
+	if (SetupVFXTorches("LV1Torch.dss", false, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Torch\nOr file is not written properly.");
+	}
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -50,9 +58,6 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
-	SetupEnemy(EnemyType::eye, -122.0f, 0.f, 61.f);
-	SetupEnemy(EnemyType::imp, -122.0f, 0.f, 31.f);
-
 
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
 	/*EntityID particles = registry.CreateEntity();
@@ -62,17 +67,17 @@ void LoadLevel1()
 	tComp.positionX = -122.0f;
 	tComp.positionY = 0.0f;
 	tComp.positionZ = 61.0f;
-	registry.AddComponent<TransformComponent>(particles, tComp);
+	registry.AddComponent<TransformComponent>(particles, tComp);*/
 		
-	EntityID particlesVFX = registry.CreateEntity();
+	/*EntityID particlesVFX = registry.CreateEntity();
 	registry.AddComponent<ParticleComponent>(particlesVFX, 50.0f, 50.0f, 3.0f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::FLAME);
-	
+	TransformComponent tComp;
 	tComp.positionX = -102.0f;
 	tComp.positionY = 0.0f;
 	tComp.positionZ = 41.0f;
-	registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	registry.AddComponent<TransformComponent>(particlesVFX, tComp);*/
 		
-	EntityID particlesMesh = registry.CreateEntity();
+	/*EntityID particlesMesh = registry.CreateEntity();
 	registry.AddComponent<ParticleComponent>(particlesMesh, 50.0f, 50.0f, 4.f, 0.0f, 0.0f, 1.0f, 32, "\\BackgroundQuad.mdl", VFX_PATTERN::SWORD);
 	
 	tComp.positionX = -122.0f;
@@ -90,11 +95,12 @@ void LoadLevel1()
 	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
 
 
-	//if (SetupAllEnemies("LV1Enemies.dss") == false)
-	//{
-	//	//something went wrong, could not open file
-	//	assert("Could not read file: LV1Enemies");
-	//}
+	if (SetupAllEnemies("LV1Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Enemies\nOr file is not written properly.");
+	}
+	
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 

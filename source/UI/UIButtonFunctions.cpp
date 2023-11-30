@@ -150,7 +150,6 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 		audioJungle->HandleSound();
 	}
 
-
 	LoadLevel(++stateManager.activeLevel);
 }
 
