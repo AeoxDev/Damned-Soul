@@ -48,24 +48,42 @@ bool StateSwitcherSystem::Update()
 		StatComponent* statComp = registry.GetComponent<StatComponent>(player);
 		if (statComp != nullptr)
 		{
-			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay)
+			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay && registry.GetComponent<AnimationComponent>(player)->aAnim != ANIMATION_DEATH) //Added a check to see if the player death animation is already playing (Joaquin)
 			{
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(player);
 				if (sfx != nullptr)
 				{
 					sfx->Play(Player_Death, Channel_Base);
-					int soundToPlay = rand() % 3;
-					switch (soundToPlay)
+					if (stateManager.activeLevel != stateManager.finalLevel)
 					{
-					case 0:
-						sfx->Play(Player_NotAgain, Channel_Extra);
-						break;
-					case 1:
-						sfx->Play(Player_GetRevenge, Channel_Extra);
-						break;
-					case 2:
-						sfx->Play(Player_HellSucks, Channel_Extra);
-						break;
+						int soundToPlay = rand() % 3;
+						switch (soundToPlay)
+						{
+						case 0:
+							sfx->Play(Player_NotAgain, Channel_Extra);
+							break;
+						case 1:
+							sfx->Play(Player_GetRevenge, Channel_Extra);
+							break;
+						case 2:
+							sfx->Play(Player_HellSucks, Channel_Extra);
+							break;
+						}
+					}
+					else
+					{
+						for (auto lucifer : View<LuciferBehaviour>(registry))
+						{
+							SoundComponent* otherSfx = registry.GetComponent<SoundComponent>(lucifer);
+							if (otherSfx)
+							{
+								otherSfx->Stop(Channel_Base);
+								otherSfx->Play(Boss_YouveBeenJudged, Channel_Extra);
+							}
+
+							//Player death sound (Make a timed event to play after boss victory sound.)
+							AddTimedEventComponentStart(stateManager.player, 4.0f, PlayBossVictoryOrDeathLine, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+						}
 					}
 				}
 				//Timed Event for player death animation and state transitioning;
@@ -136,23 +154,7 @@ bool StateSwitcherSystem::Update()
 					sfx->Play(Boss_MustNotDie, Channel_Extra);
 
 					//Player victory sound (Make a timed event to play after boss death sound.)
-					SoundComponent* otherSfx = registry.GetComponent<SoundComponent>(stateManager.player);
-					if (otherSfx != nullptr)
-					{
-						int soundToPlay = rand() % 3;
-						switch (soundToPlay)
-						{
-						case 0:
-							otherSfx->Play(Player_SuckOnThat, Channel_Extra);
-							break;
-						case 1:
-							otherSfx->Play(Player_WinnerIs, Channel_Extra);
-							break;
-						case 2:
-							otherSfx->Play(Player_HellYeah, Channel_Extra);
-							break;
-						}	
-					}
+					AddTimedEventComponentStart(stateManager.player, 5.5f, PlayBossVictoryOrDeathLine, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 					break;
 				}
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
@@ -231,7 +233,7 @@ bool StateSwitcherSystem::Update()
 					}
 				}
 			}
-			else
+			else if (stateManager.activeLevel != stateManager.finalLevel)
 			{
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
 				if (sfx != nullptr)

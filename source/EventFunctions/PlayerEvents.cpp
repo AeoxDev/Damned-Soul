@@ -209,6 +209,47 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	ResetAttackTrackerFlags(entity);
 }
 
+void PlayBossVictoryOrDeathLine(EntityID& entity, const int& index)
+{
+	//Do the playing here
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	if (sfx != nullptr)
+	{
+		int soundToPlay = rand() % 3;
+
+		if (registry.GetComponent<StatComponent>(entity)->GetHealth() <= 0.0f)
+		{
+			switch (soundToPlay)
+			{
+			case 0:
+				sfx->Play(Player_NotAgain, Channel_Extra);
+				break;
+			case 1:
+				sfx->Play(Player_GetRevenge, Channel_Extra);
+				break;
+			case 2:
+				sfx->Play(Player_HellSucks, Channel_Extra);
+				break;
+			}
+		}
+		else
+		{
+			switch (soundToPlay)
+			{
+			case 0:
+				sfx->Play(Player_SuckOnThat, Channel_Extra);
+				break;
+			case 1:
+				sfx->Play(Player_WinnerIs, Channel_Extra);
+				break;
+			case 2:
+				sfx->Play(Player_HellYeah, Channel_Extra);
+				break;
+			}
+		}
+	}
+}
+
 void PlayerRegainControl(EntityID& entity, const int& index)
 {
 	//Hitstop fixer
