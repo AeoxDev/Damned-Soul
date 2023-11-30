@@ -130,6 +130,9 @@ void EyeIntroScene(EntityID& entity, const int& index);
 void MinotaurIntroScene(EntityID& entity, const int& index);
 void FinalBossIntroCutscene(EntityID& entity, const int& index);
 void StoredEnemyCutscene(EntityID& entity, const int& index);//Store a cutscene and apply to enemy when relevant.
+void StoredEnemyDogBreathScene(EntityID& entity, const int& index);
+void SpawnCutsceneParticles(EntityID& entity, const int& index);
+void DestroyCutsceneParticles(EntityID& entity, const int& index);
 
 void CutsceneFallStage1(EntityID& entity, const int& index);
 void CutsceneFallStage(EntityID& entity, const int& index);

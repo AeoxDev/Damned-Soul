@@ -17,6 +17,8 @@ enum CutsceneMode
 	Cutscene_Character_Idle = 0b100000000,//Idle 0
 	Cutscene_Character_Attack = 0b1000000000,//Attack 0
 	Cutscene_Character_BossLanding = 0b10000000000,//Walk 2
+	Cutscene_Character_DogBrace = 0b100000000000,
+	Cutscene_Character_DogBreath = 0b1000000000000,
 };
 
 //This component functions as arguments

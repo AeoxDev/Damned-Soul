@@ -147,28 +147,22 @@ void HellhoundIntroScene(EntityID& entity, const int& index)
 	TimedEventIgnoreGamespeed(true);
 	gameSpeed = 0.0f;
 
-	//float runningTime = 1.75f;
-	//float beginReturnTime = 5.0f;
-	//float returnEndTime = beginReturnTime + 1.0f;
-	//float returnUnpause = returnEndTime + 0.1f;
-
 	//Establish variables for the timings of the different parts of the cutscene
-	float runningTime = 1.0f;
-	float waitingTime = runningTime + 0.6f;
-	float runningTime2 = waitingTime + 1.0f;
-	float waitingTime2 = runningTime2 + 0.6f;
-	float flyDownTime = waitingTime2 + 1.0f;
-	float waitingTime3 = flyDownTime + 0.9f;
-	float beginReturnTime = waitingTime3;
-	float returnEndTime = beginReturnTime + 1.0f;
-	float returnUnpause = returnEndTime + 0.1f;
+	float runningTime = 1.75f;					//Dog runs into frame for 2.0 seconds
+	float attackingTime = runningTime + 1.0f;	//After that, dog does an attack for 1.0 seconds
+		
+	float bracingTime = attackingTime + 1.0f;	//Then we make camera pan up while dog braces for a second
 
-	//Get components
+	float breathTime = bracingTime + 1.0f;		//Breathe fire for a second
+
+	float endReturnTime = breathTime + 1.0f;	//Wait a second before returning out of the cutscene
+	float returnUnpause = endReturnTime + 0.1f; //Brief delay before unpausing the game
+
+	//Get dog transform
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	transform->facingX = 0.33f;
 	transform->facingY = 0.0f;
 	transform->facingZ = -1.0f;
-
 
 	float cameraXOffset = transform->scaleX * transform->facingX * 15.0f;
 	float cameraYOffset = 1.f + transform->scaleY * 3.5f;
@@ -177,12 +171,12 @@ void HellhoundIntroScene(EntityID& entity, const int& index)
 	//Create a still camera shot
 	EntityID stillShot = registry.CreateEntity();
 	CutsceneComponent* stillCameracutscene = registry.AddComponent<CutsceneComponent>(stillShot);
-	stillCameracutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	stillCameracutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(stillShot, transform->positionX, transform->positionY + cameraYOffset, transform->positionZ,
 		transform->positionX, transform->positionY + cameraYOffset, transform->positionZ);
 	CutsceneSetPosition(stillShot, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
 		transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f);
-	AddTimedEventComponentStartContinuousEnd(stillShot, 0.0f, BeginCutscene, CutsceneTransition, beginReturnTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(stillShot, 0.0f, BeginCutscene, CutsceneTransition, attackingTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//Have dog run in from the side
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
@@ -190,115 +184,84 @@ void HellhoundIntroScene(EntityID& entity, const int& index)
 	float distX = runningTime * stats->GetSpeed();
 	float dist = distX;
 	CutsceneComponent* cutscene = registry.AddComponent<CutsceneComponent>(entity);
-	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(entity, transform->facingZ, 0.0f, -transform->facingX,
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | Transition_LookAt | Transition_Position);
+	//Set Start and End for camera- and entity-movement
+	CutsceneSetLookAt(entity, transform->facingZ, 0.0f, -transform->facingX, 
 		transform->facingZ, 0.0f, -transform->facingX);
 	CutsceneSetPosition(entity, transform->positionX + (-transform->facingZ * dist), 0.0f, transform->positionZ - (transform->facingX * dist),
 		transform->positionX, transform->positionY, transform->positionZ);
-	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, runningTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, runningTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
-	//Make doggo attack
-	//To do this. Create a timed event that then adds a cutscene component and creates a timed event for the cutscene
-	//You will need to create an event function for this
+	//MAKE DOG ATTACK
+	//Step 1: Create new entity
+	EntityID storedEntity = registry.CreateEntity();
+	//Step 2: Put CutsceneComponent on the entity and set the mode(s)
+	cutscene = registry.AddComponent<CutsceneComponent>(storedEntity);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_Attack | Cutscene_Linear | Transition_LookAt | Transition_Position);
+	//Step 3: Set where the camera's look-vector and the entity's position is at the Start and End of the cutscene (I think)
+	CutsceneSetLookAt(storedEntity, 
+		transform->facingZ, 0.0f, -transform->facingX,
+		transform->facingZ, 0.0f, -transform->facingX);
+	CutsceneSetPosition(storedEntity, 
+		transform->positionX, transform->positionY, transform->positionZ,
+		transform->positionX, transform->positionY, transform->positionZ);
+	//Step 4: Make timed event SPECIFICALLY using the StoredEnemyCutscene function (memcpy of relevant cutscene information from the last entity into storedEntity)
+	AddTimedEventComponentStartContinuousEnd(storedEntity, runningTime, StoredEnemyCutscene, nullptr, attackingTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	
+	//MAKE CAMERA PAN UP AND DOG BRACE FOR SWOOSH
+	EntityID panShot = registry.CreateEntity();
+	CutsceneComponent* panCameraCutscene = registry.AddComponent<CutsceneComponent>(panShot);
+	panCameraCutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | Transition_LookAt | Transition_Position);
+	//Camera keeps looking at the dog
+	CutsceneSetLookAt(panShot,
+		transform->positionX, transform->positionY + cameraYOffset, transform->positionZ,
+		transform->positionX, transform->positionY + cameraYOffset, transform->positionZ);
+	//Camera moves upwards over the course of the cut
+	CutsceneSetPosition(panShot,
+		transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
+		transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset * 12.0f, transform->positionZ + transform->facingZ * 60.0f);
+	AddTimedEventComponentStartContinuousEnd(panShot, attackingTime, BeginCutscene, CutsceneTransition, bracingTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
-	//Make doggo breathe fire
-	//To do this. Create a timed event that then adds a cutscene component and creates a timed event for the cutscene
-	//You will need to create an event function for this
+	storedEntity = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(storedEntity);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_DogBrace | Cutscene_Linear | Transition_LookAt | Transition_Position);
+	//Keep NOT moving the dog
+	CutsceneSetLookAt(storedEntity,
+		transform->facingZ, 0.0f, -transform->facingX,
+		transform->facingZ, 0.0f, -transform->facingX);
+	CutsceneSetPosition(storedEntity,
+		transform->positionX, transform->positionY, transform->positionZ,
+		transform->positionX, transform->positionY, transform->positionZ);
+	AddTimedEventComponentStartContinuousEnd(storedEntity, attackingTime, StoredEnemyCutscene, nullptr, bracingTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
+	//MAKE DOG BREATHE FIRE
+	storedEntity = registry.CreateEntity();
+	cutscene = registry.AddComponent<CutsceneComponent>(storedEntity);
+	cutscene->mode = (CutsceneMode)(Cutscene_Character_DogBreath | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	CutsceneSetLookAt(storedEntity,
+		transform->facingZ, 0.0f, -transform->facingX,
+		transform->facingZ, 0.0f, -transform->facingX);
+	CutsceneSetPosition(storedEntity,
+		transform->positionX, transform->positionY, transform->positionZ,
+		transform->positionX, transform->positionY, transform->positionZ);
+	AddTimedEventComponentStartContinuousEnd(storedEntity, bracingTime, StoredEnemyDogBreathScene, nullptr, breathTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//Return the camera and return to player
 	EntityID returnTransition = stateManager.player;
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
-	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
+	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
 		transformPlayer->positionX, transformPlayer->positionY, transformPlayer->positionZ);
 	CutsceneSetPosition(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
 		transformPlayer->positionX + CAMERA_OFFSET_X, transformPlayer->positionY + CAMERA_OFFSET_Y, transformPlayer->positionZ + CAMERA_OFFSET_Z);
-	AddTimedEventComponentStartContinuousEnd(returnTransition, beginReturnTime, BeginCutscene, CutsceneTransition, returnEndTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStartContinuousEnd(returnTransition, breathTime, BeginCutscene, CutsceneTransition, endReturnTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
-	AddTimedEventComponentStart(returnTransition, returnUnpause, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	//Unpause the game tchee
+	AddTimedEventComponentStart(returnTransition, endReturnTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 
 	//Finally, remove the cutscene doggo
-	AddTimedEventComponentStartContinuousEnd(entity, returnEndTime, nullptr, nullptr, returnUnpause, RemoveCutsceneEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-
-	/*
-	float cameraXOffset = transform->scaleX * transform->facingX * 15.0f;
-	float cameraYOffset = 1.f + transform->scaleY * 3.5f;
-	float cameraZOffset = transform->scaleZ * transform->facingZ * 15.0f;
-
-	//Have camera still and let eye move from side to side
-	EntityID stillShot = registry.CreateEntity();
-	CutsceneComponent* stillCameracutscene = registry.AddComponent<CutsceneComponent>(stillShot);
-	stillCameracutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(stillShot, transform->positionX, transform->positionY + cameraYOffset, transform->positionZ,
-		transform->positionX, transform->positionY + cameraYOffset, transform->positionZ);
-	CutsceneSetPosition(stillShot, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
-		transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f);
-	AddTimedEventComponentStartContinuousEnd(stillShot, 0.0f, BeginCutscene, CutsceneTransition, beginReturnTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-
-	//Make eye run from right to left
-	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-	float speedSquared = stats->GetSpeed() * stats->GetSpeed();
-	float distX = runningTime * stats->GetSpeed();
-	float dist = distX;
-	float sideX = transform->facingZ * dist;
-	float sideZ = -transform->facingX * dist;
-	cutscene = registry.AddComponent<CutsceneComponent>(entity);
-	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(entity, sideX, 0.0f, sideZ,
-		sideX, 0.0f, sideZ);
-	CutsceneSetPosition(entity, transform->positionX - sideX, 0.0f, transform->positionZ - sideZ,
-		transform->positionX + sideX, transform->positionY, transform->positionZ + sideZ);
-	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, runningTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-
-
-	//Make eye run from left to right
-
-	EntityID storedCutsceneSide = registry.CreateEntity();
-	cutscene = registry.AddComponent<CutsceneComponent>(storedCutsceneSide);
-	cutscene->mode = (CutsceneMode)(Cutscene_Character_Walk | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(storedCutsceneSide, -sideX, 0.0f, -sideZ,
-		-sideX, 0.0f, -sideZ);
-	CutsceneSetPosition(storedCutsceneSide, transform->positionX + sideX, 0.0f, transform->positionZ + sideZ,
-		transform->positionX - sideX, transform->positionY, transform->positionZ - sideZ);
-	AddTimedEventComponentStartContinuousEnd(storedCutsceneSide, waitingTime, StoredEnemyCutscene, nullptr, runningTime2, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-
-	//Make eye fly from above to close up shot camera
-	EntityID storedCutsceneVertical = registry.CreateEntity();
-	cutscene = registry.AddComponent<CutsceneComponent>(storedCutsceneVertical);
-	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Decelerating | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(storedCutsceneVertical, transform->facingX, 0.0f, transform->facingZ,
-		transform->facingX, 0.0f, transform->facingZ);
-	CutsceneSetPosition(storedCutsceneVertical, transform->positionX, 50.0f, transform->positionZ,
-		transform->positionX, transform->positionY, transform->positionZ);
-	AddTimedEventComponentStartContinuousEnd(storedCutsceneVertical, waitingTime2, StoredEnemyCutscene, nullptr, flyDownTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-
-	//Continue the idle animation
-	EntityID storedIdle = registry.CreateEntity();
-	cutscene = registry.AddComponent<CutsceneComponent>(storedIdle);
-	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Decelerating | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(storedIdle, transform->facingX, 0.0f, transform->facingZ,
-		transform->facingX, 0.0f, transform->facingZ);
-	CutsceneSetPosition(storedIdle, transform->positionX, transform->positionY, transform->positionZ,
-		transform->positionX, transform->positionY, transform->positionZ);
-	AddTimedEventComponentStartContinuousEnd(storedIdle, flyDownTime, StoredEnemyCutscene, nullptr, beginReturnTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	//Return the camera
-	//Return to player
-	EntityID returnTransition = stateManager.player;
-	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
-	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
-	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
-		transformPlayer->positionX, transformPlayer->positionY, transformPlayer->positionZ);
-	CutsceneSetPosition(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
-		transformPlayer->positionX + CAMERA_OFFSET_X, transformPlayer->positionY + CAMERA_OFFSET_Y, transformPlayer->positionZ + CAMERA_OFFSET_Z);
-	AddTimedEventComponentStartContinuousEnd(returnTransition, beginReturnTime, BeginCutscene, CutsceneTransition, returnEndTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-
-	AddTimedEventComponentStart(returnTransition, returnUnpause, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-
-	AddTimedEventComponentStartContinuousEnd(entity, returnEndTime, nullptr, nullptr, returnUnpause, RemoveCutsceneEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	*/
+	AddTimedEventComponentStartContinuousEnd(entity, returnUnpause, nullptr, nullptr, returnUnpause, RemoveCutsceneEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 void ImpIntroScene(EntityID& entity, const int& index)
@@ -845,6 +808,17 @@ void StoredEnemyCutscene(EntityID& entity, const int& index)
 	AddTimedEventComponentStartContinuousEnd(stateManager.cutsceneEnemy, 0.0f, nullptr, CutsceneTransition, time, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
+void StoredEnemyDogBreathScene(EntityID& entity, const int& index)
+{
+	//AAAAAAAAAAAAAAAA
+	float time = GetTimedEventTotalTime(entity, index) - GetTimedEventElapsedTime(entity, index);
+
+	CutsceneComponent* cutsceneTarget = registry.AddComponent<CutsceneComponent>(stateManager.cutsceneEnemy);
+	CutsceneComponent* cutscene = registry.GetComponent<CutsceneComponent>(entity);
+	memcpy(cutsceneTarget, cutscene, sizeof(CutsceneComponent));
+
+	AddTimedEventComponentStartContinuousEnd(stateManager.cutsceneEnemy, 0.0f, SpawnCutsceneParticles, CutsceneTransition, time, DestroyCutsceneParticles, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+}
 
 
 void CutsceneSetPosition(EntityID& entity, float startX, float startY, float startZ, float goalX, float goalY, float goalZ)
