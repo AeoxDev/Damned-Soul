@@ -24,6 +24,10 @@ void StartPlayerDeath(EntityID& entity, const int& index)
 		registry.RemoveComponent<ControllerComponent>(entity);
 	}
 
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+	transform->currentSpeedX = 0.0f;
+	transform->currentSpeedZ = 0.0f;
+
 	//registry.RemoveComponent<HitboxComponent>(entity);
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
