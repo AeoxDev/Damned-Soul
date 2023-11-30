@@ -12,6 +12,8 @@
 #include "UIComponents.h"
 #include "States\StateManager.h"
 
+
+
 void LoadLevel1()
 {
 	float redMult = 1.0f;
@@ -46,6 +48,7 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
 	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
+	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
 	//// For particle testing, don't touch, Arian gets angy.
 	//EntityID particles = registry.CreateEntity();
@@ -73,6 +76,14 @@ void LoadLevel1()
 	//tComp.positionZ = 21.0f;
 	//registry.AddComponent<TransformComponent>(particlesMesh, tComp);
 
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -226.0f, 0.f, 83.f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = 0.1f;
+	NormalizeFacing(transform);
+	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
+
+
 	if (SetupAllEnemies("LV1Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
@@ -85,8 +96,7 @@ void LoadLevel1()
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 
 	
-
-
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 	
 
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
@@ -125,5 +135,5 @@ void LoadLevel1()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f+0.3f+0.1f, Stage1IntroScene,CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f+0.3f+0.04f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

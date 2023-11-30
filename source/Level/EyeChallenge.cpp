@@ -90,5 +90,5 @@ void LoadEyeChallenge()
 
 	SetInPlay(true);
 	//AddTimedEventComponentStart(cutsceneEnemy, 0.0f, Stage1IntroScene, 0, 1);
-	Stage1IntroScene(cutsceneEnemy, 0);
+	SkeletonIntroScene(cutsceneEnemy, 0);
 }

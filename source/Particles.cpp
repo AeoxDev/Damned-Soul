@@ -50,6 +50,8 @@ TX_IDX textureParticle = -1; /// create holder for texture
 TX_IDX noTextureParticle = -1; /// create holder for texture
 SMP_IDX sampler = -1; //create holder for sampler
 
+
+
 void Particles::SwitchInputOutput()
 {
 	SRV_IDX readSRV = m_readBuffer->SRV;

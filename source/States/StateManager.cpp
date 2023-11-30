@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "OutlineHelper.h"
 #include "Glow.h"
 
 //Cursed
@@ -73,7 +74,7 @@ void SetInPause(bool value)
 	else
 	{
 		currentStates = (State)(currentStates & (~State::InPause));
-		if (Camera::InCutscene() == true)
+		if (Camera::InCutscene() > 0)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;
@@ -158,6 +159,7 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Outlines::InitializeOutlines();
 	Glow::Initialize();
 	//SetupTestHitbox();
 	RedrawUI();
@@ -173,6 +175,7 @@ int StateManager::Setup()
 	
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
+	systems.push_back(new OutlineSystem());
 
 
 	//systems[2]->timeCap = 1.f / 60.f;
@@ -232,6 +235,7 @@ int StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	
 	systems.push_back(new UIShopSystem());
+	systems.push_back(new NavigationSystem());
 
 	return 0;
 }

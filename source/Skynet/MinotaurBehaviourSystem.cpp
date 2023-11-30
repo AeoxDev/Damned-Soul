@@ -123,7 +123,7 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 		SmoothRotation(mtc, mc->goalDirectionZ, mc->goalDirectionZ, 40.0f);
 
 		//AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, ChargeColorFlash, mc->aimDuration - 0.2f, ResetColor);
-		AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->aimDuration - 0.2, ChargeColorFlash);
+		AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->aimDuration - 0.2f, ChargeColorFlash);
 	}
 
 	if (mc->aimTimer < mc->aimDuration)
