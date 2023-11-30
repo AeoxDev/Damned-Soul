@@ -41,7 +41,7 @@ void LoadLevel9()
 	EntityID lightholderForth = registry.CreateEntity();
 
 
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
 	
 
 	//Player
@@ -66,80 +66,8 @@ void LoadLevel9()
 	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
-	//Add static hazards on the where player does not spawn
-	int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_ACID, 1.f, 0.f, 0.5f, 0.f, 0.2f, 1.2f, 0.2f, 1.5f);
-		/*bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 100) - 50.0f;
-			float randZ = (float)(rand() % 100) - 50.0f;
-			if (randX * randX + randZ * randZ > 80)
-			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard = registry.CreateEntity();
-				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->shared.colorAdditiveRed = 0.0f;
-				hazardModel->shared.colorAdditiveGreen = 0.5f;
-				hazardModel->shared.colorAdditiveBlue = 0.0f;
-				hazardModel->shared.colorMultiplicativeRed = 0.2f;
-				hazardModel->shared.colorMultiplicativeGreen = 1.2f;
-				hazardModel->shared.colorMultiplicativeBlue = 0.2f;
-				hazardModel->shared.gammaCorrection = 1.5f;
-				hazardModel->castShadow = false;
-				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.5f;
-				hazardTransform->positionZ = randZ;
-				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 1.0f;
-				hazardTransform->scaleZ = randScaleZ;
-				hazardTransform->facingX = cosf((float)rand());
-				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_ACID);
-
-				succeded = true;
-			}
-		}*/
-	}
-	nrHazards = 1;//Big ice sheet
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
-		/*bool succeded = false;
-		float randX = (float)(rand() % 32) - 16.0f;
-		float randZ = (float)(rand() % 32) - 16.0f;
-		float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
-		float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
-		EntityID hazard = registry.CreateEntity();
-		ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-		hazardModel->shared.colorAdditiveRed = 0.1f;
-		hazardModel->shared.colorAdditiveGreen = 0.1f;
-		hazardModel->shared.colorAdditiveBlue = 0.5f;
-		hazardModel->shared.colorMultiplicativeRed = 0.5f;
-		hazardModel->shared.colorMultiplicativeGreen = 0.5f;
-		hazardModel->shared.colorMultiplicativeBlue = 1.5f;
-		hazardModel->shared.gammaCorrection = 1.5f;
-		hazardModel->castShadow = false;
-		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-		hazardTransform->positionX = randX;
-		hazardTransform->positionY = 0.4f;
-		hazardTransform->positionZ = randZ;
-		hazardTransform->scaleX = randScaleX;
-		hazardTransform->scaleY = 1.0f;
-		hazardTransform->scaleZ = randScaleZ;
-		hazardTransform->facingX = cosf((float)rand());
-		hazardTransform->facingZ = sinf((float)rand());
-		AddStaticHazard(hazard, HAZARD_ICE);
-
-		succeded = true;*/
-	}
-
 	stateManager.stage = stage;
 	SetInPlay(true);
-	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFallUnskippable, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, FinalBossIntroCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

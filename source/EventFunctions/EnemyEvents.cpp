@@ -620,6 +620,39 @@ void CreateLandingIndicator(EntityID& entity, const int& index)
 	
 }
 
+void PlayBossIntroVoiceLine(EntityID& entity, const int& index)
+{
+	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
+	//bossSound->Play();
+	//Play sounds here
+	int randomLine = rand();
+}
+
+void PlayBossIntroSlam(EntityID& entity, const int& index)
+{
+	//Play slam sound here when landing
+	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
+	//bossSound->Play();
+}
+
+void PlayImpIntroTeleport(EntityID& entity, const int& index)
+{
+	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
+	//impSound->Play();
+}
+
+void PlayImpIntroLaugh(EntityID& entity, const int& index)
+{
+	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
+	//impSound->Play();
+}
+
+void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
+{
+	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
+	//minotaurSound->Play();
+}
+
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 

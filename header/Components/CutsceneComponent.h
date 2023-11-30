@@ -12,10 +12,11 @@ enum CutsceneMode
 	Cutscene_Linear = 0b1000,
 	Cutscene_Accelerating = 0b10000,
 	Cutscene_Decelerating = 0b100000,
-	Cutscene_Character_Walk = 0b1000000,//Walk 1, auto facing
+	Cutscene_Character_Walk = 0b1000000,//Walk 0, auto facing
 	Cutscene_Character_Fall = 0b10000000,//Idle 1
 	Cutscene_Character_Idle = 0b100000000,//Idle 0
 	Cutscene_Character_Attack = 0b1000000000,//Attack 0
+	Cutscene_Character_BossLanding = 0b10000000000,//Walk 2
 };
 
 //This component functions as arguments
