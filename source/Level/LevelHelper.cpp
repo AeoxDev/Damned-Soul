@@ -861,6 +861,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+
+		//Sounds (Added by Joaquin)
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(BOSS);
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{

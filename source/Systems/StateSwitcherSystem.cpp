@@ -132,7 +132,10 @@ bool StateSwitcherSystem::Update()
 					sfx->Play(Minotaur_Death, Channel_Base);
 					break;
 				case EnemyType::lucifer:
-					//Play sound when we kill the final boss
+					sfx->Play(Boss_Death, Channel_Base);
+					sfx->Play(Boss_MustNotDie, Channel_Extra);
+
+					//Player victory sound (Make a timed event to play after boss death sound.)
 					SoundComponent* otherSfx = registry.GetComponent<SoundComponent>(stateManager.player);
 					if (otherSfx != nullptr)
 					{

@@ -38,7 +38,7 @@ void AudioEngineComponent::Setup(int& ID)
 	//Load all sounds to use in the game
 	FMOD::Sound* toAdd = nullptr;
 	this->sounds.clear();
-	for (int i = 0; i < 111; i++) //Change x in (i < x) to however many sounds you want to load into the game.
+	for (int i = 0; i < 132; i++) //Change x in (i < x) to however many sounds you want to load into the game.
 	{
 		this->sounds.push_back(toAdd);
 	}
@@ -290,6 +290,52 @@ void AudioEngineComponent::Setup(int& ID)
 	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeLastBoss.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+
+	//Boss (21)
+		//Sound Effects (11/21)
+	this->system->createSound("SFX/Enemy/Boss/Constant/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Charge.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Jump.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Slam.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Channeling.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Hurt1.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Hurt2.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Hurt3.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Hurt4.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/Hurt5.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Constant/DeathNut.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+		//Voice (10/21)
+	this->system->createSound("SFX/Enemy/Boss/Voice/AngryIntroGrunt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/APunyMortal.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/CrushYou.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/DodgeThis.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/FlattenYou.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/Heathen.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/JudgementIsUpon.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/MustNotDie.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/YourCrimes.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
+	this->system->createSound("SFX/Enemy/Boss/Voice/YouveBeenJudged.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
+	this->volumes.push_back(Volume(0.25f, VOICE_GROUP));
 }
 
 void AudioEngineComponent::HandleSound()
@@ -551,6 +597,27 @@ void SoundComponent::Load(const int EntityType)
 		break;
 	case BOSS:
 		//Push back all indices for the boss sounds into soundIndices
+		this->soundIndices.push_back((int)BOSS1);
+		this->soundIndices.push_back((int)BOSS2);
+		this->soundIndices.push_back((int)BOSS3);
+		this->soundIndices.push_back((int)BOSS4);
+		this->soundIndices.push_back((int)BOSS5);
+		this->soundIndices.push_back((int)BOSS6);
+		this->soundIndices.push_back((int)BOSS7);
+		this->soundIndices.push_back((int)BOSS8);
+		this->soundIndices.push_back((int)BOSS9);
+		this->soundIndices.push_back((int)BOSS10);
+		this->soundIndices.push_back((int)BOSS11);
+		this->soundIndices.push_back((int)BOSS12);
+		this->soundIndices.push_back((int)BOSS13);
+		this->soundIndices.push_back((int)BOSS14);
+		this->soundIndices.push_back((int)BOSS15);
+		this->soundIndices.push_back((int)BOSS16);
+		this->soundIndices.push_back((int)BOSS17);
+		this->soundIndices.push_back((int)BOSS18);
+		this->soundIndices.push_back((int)BOSS19);
+		this->soundIndices.push_back((int)BOSS20);
+		this->soundIndices.push_back((int)BOSS21);
 		break;
 	case SHOP:
 		//Push back all indices for the shop sounds into soundIndices
@@ -574,7 +641,6 @@ void SoundComponent::Load(const int EntityType)
 		this->soundIndices.push_back((int)SHOP16);
 		this->soundIndices.push_back((int)SHOP17);
 		this->soundIndices.push_back((int)SHOP18);
-		this->soundIndices.push_back((int)SHOP19);
 		break;
 	}
 }

@@ -407,7 +407,45 @@ void HurtSound(EntityID& entity, const int& index)
 		case EnemyType::lucifer:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
-				//sfx->Play(Boss_Hurt, Channel_Extra);
+				AudioEngineComponent* audioJungle = nullptr;
+				for (auto audioEngine : View<AudioEngineComponent>(registry))
+				{
+					audioJungle = registry.GetComponent<AudioEngineComponent>(audioEngine);
+				}
+				bool isPlaying = false;
+				if (audioJungle)
+				{
+					audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+					bool hurtSoundPlaying = false;
+					FMOD::Sound* test = nullptr;
+					audioJungle->channels[sfx->channelIndex[Channel_Extra]]->getCurrentSound(&test);
+					if (test == audioJungle->sounds[BOSS6] || test == audioJungle->sounds[BOSS7] || test == audioJungle->sounds[BOSS8] || test == audioJungle->sounds[BOSS9] || test == audioJungle->sounds[BOSS10])
+					{
+						hurtSoundPlaying = true;
+					}
+					if (!isPlaying || hurtSoundPlaying)
+					{
+						int soundToPlay = rand() % 5;
+						switch (soundToPlay)
+						{
+						case 0:
+							sfx->Play(Boss_Hurt1, Channel_Extra);
+							break;
+						case 1:
+							sfx->Play(Boss_Hurt2, Channel_Extra);
+							break;
+						case 2:
+							sfx->Play(Boss_Hurt3, Channel_Extra);
+							break;
+						case 3:
+							sfx->Play(Boss_Hurt4, Channel_Extra);
+							break;
+						case 4:
+							sfx->Play(Boss_Hurt5, Channel_Extra);
+							break;
+						}
+					}
+				}
 			}
 			break;
 		case EnemyType::tempBoss:

@@ -411,7 +411,7 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 				{
 					bool isPlaying = false;
 					registry.GetComponent<AudioEngineComponent>(audioEngine)->channels[sfx->channelIndex[Channel_Base]]->isPlaying(&isPlaying);
-					if (!isPlaying) sfx->Play(Skeleton_Attack, Channel_Base);
+					if (!isPlaying) sfx->Play(Miniboss_Attack, Channel_Base);
 				}
 			}
 		}
@@ -535,6 +535,11 @@ void BossShockwaveStart(EntityID& entity, const int& index)
 	{
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx) sfx->Play(Minotaur_Slam, Channel_Base);
+	}
+	else if (enemy->type == EnemyType::lucifer)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Boss_Slam, Channel_Base);
 	}
 }
 
