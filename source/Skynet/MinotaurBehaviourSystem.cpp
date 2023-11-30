@@ -123,7 +123,7 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 		SmoothRotation(mtc, mc->goalDirectionZ, mc->goalDirectionZ, 40.0f);
 
 		//AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, ChargeColorFlash, mc->aimDuration - 0.2f, ResetColor);
-		AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->aimDuration - 0.2, ChargeColorFlash);
+		AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->aimDuration - 0.2f, ChargeColorFlash);
 	}
 
 	if (mc->aimTimer < mc->aimDuration)
@@ -323,7 +323,7 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 					mc->attackStunTimer = 0;
 					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, mc->attackStunDuration, BossShockwaveEnd, 0, 1);
 					mc->jumpCounter++;
-					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 0.5f,0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 0.5f,0.f, 0.f, 1.f, 2000, ComputeShaders::PULSE);
 					//30.f is what is growthspeed in bossshockwaveexpand
 					
 				}

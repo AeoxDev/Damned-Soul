@@ -40,14 +40,18 @@ void GameScene::Input(bool isShop)
 	{
 		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
-			SetInPause(true);
-			SetInPlay(false);
+			if (Camera::InCutscene() == 0)
+			{
+				SetInPause(true);
+				SetInPlay(false);
 
-			SetPaused(true);
+				SetPaused(true);
 
-			gameSpeed = 0.0f;
-			ResetInput();
-			stateManager.pause.Setup();
+				gameSpeed = 0.0f;
+				ResetInput();
+				stateManager.pause.Setup();
+			}
+		
 		}
 	}
 }

@@ -50,6 +50,7 @@ bool FrozenBehaviourSystem::Update()
 		{
 			RemoveEnemy(enemyEntity, 1);
 		}
+
 	}
 
 	return true;
