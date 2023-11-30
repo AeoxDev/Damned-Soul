@@ -32,7 +32,7 @@ struct VFXTextRead // this is for torches
 
 bool SetupAllEnemies(std::string filePath);
 
-bool SetupVFXTorches(std::string filePath);
+bool SetupVFXTorches(std::string filePath, bool level8, bool level9);
 
 EntityID SetUpStage(StageSetupVariables& stageVars);
 

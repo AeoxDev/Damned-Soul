@@ -32,6 +32,12 @@ void LoadLevel9()
 	stageVars.stageNr = 9;
 	EntityID stage = SetUpStage(stageVars);
 
+	if (SetupVFXTorches("LV9Torch.dss", false, true) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV9Torch\nOr file is not written properly.");
+	}
+
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -56,11 +62,7 @@ void LoadLevel9()
 	mousePointOfInterset->mode = POI_MOUSE;
 
 
-	if (SetupVFXTorches("LV9Torch.dss") == false)
-	{
-		//something went wrong, could not open file
-		assert("Could not read file: LV9Torch\nOr file is not written properly.");
-	}
+	
 
 	//Light
 	float redLight = 0.05f;
