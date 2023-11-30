@@ -244,7 +244,7 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 		SetTexture(currentMaterial.glowIdx, BIND_PIXEL, 2);
 		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
 
-		int iJustWantToSeeWhatHappens = 0;
+		int iJustWantToSeeWhatHappens = 0; // debug variable?
 	}
 }
 

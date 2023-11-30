@@ -156,6 +156,8 @@ bool SetupAllEnemies(std::string filePath)
 	return true;
 }
 
+
+
 bool SetupVFXTorches(std::string filePath)
 {
 	std::string name = "VFX\\";
@@ -370,6 +372,29 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 	}
 
 	return hazard;
+}
+
+void SetupEnemyNavigationHelper()
+{
+	EntityID entity = registry.CreateEntity();
+	TransformComponent transform;
+	transform.positionX = 0.f;
+	transform.positionY = 0.2f;
+	transform.positionZ = 0.f;
+	transform.mass = 1.f;
+	transform.facingX = 0.f; transform.facingY = 0.f; transform.facingZ = 0.f;
+	transform.scaleX = 0.420f; transform.scaleY = 0.420f; transform.scaleZ = 0.420f;
+	
+
+	registry.AddComponent<TransformComponent>(entity, transform);
+
+	ModelBonelessComponent* model = nullptr;
+	model = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FixedArrow.mdl"));
+	if (model != nullptr)
+	{
+		model->shared.gammaCorrection = 1.5f;
+	}
+	registry.AddComponent<NavigationTrashComponentYouMustAccept>(entity);
 }
 
 EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float positionZ , int soulWorth, float mass ,
@@ -894,7 +919,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);   // CHANGE THIS TO FROZEN HELLHOUND
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);

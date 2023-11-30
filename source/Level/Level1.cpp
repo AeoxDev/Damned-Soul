@@ -12,6 +12,8 @@
 #include "UIComponents.h"
 #include "States\StateManager.h"
 
+
+
 void LoadLevel1()
 {
 	float redMult = 1.0f;
@@ -71,8 +73,7 @@ void LoadLevel1()
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 
 	
-
-
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 	
 
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);

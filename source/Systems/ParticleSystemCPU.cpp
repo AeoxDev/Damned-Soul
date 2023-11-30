@@ -16,7 +16,7 @@ bool ParticleSystemCPU::Update()
 	//Set all the shaders
 	/*Particles::PrepareParticlePass(renderStates);*/
 
-	
+
 	//Render
 	for (auto pEntity : View<ParticleComponent, TransformComponent>(registry))
 	{
