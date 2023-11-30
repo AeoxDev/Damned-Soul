@@ -433,7 +433,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	}
 }
 
-ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern, ComputeShaders pattern)
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern)
 {
 	metadataSlot = FindSlot();
 	VFX = true;
@@ -449,7 +449,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].maxRange = radius;
 	data->metadata[metadataSlot].size = size;
 	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
-	data->metadata[metadataSlot].pattern = pattern;
+	data->metadata[metadataSlot].pattern = 14;
 	data->metadata[metadataSlot].morePositionInfo.y = vfxPattern;
 
 	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
@@ -484,7 +484,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	}
 }
 
-ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, const char* filename, ComputeShaders pattern)
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, const char* filename, VFX_PATTERN vfxPattern)
 {
 	metadataSlot = FindSlot();
 	//Calculate how many groups are requiered to write to all particles
@@ -498,7 +498,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].maxRange = radius;
 	data->metadata[metadataSlot].size = size;
 	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
-	data->metadata[metadataSlot].pattern = pattern;
+	data->metadata[metadataSlot].pattern = 14;
 
 	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
 	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
