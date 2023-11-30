@@ -19,7 +19,7 @@ bool NavigationSystem::Update()
 		for (auto playerEntity : View<PlayerComponent, TransformComponent>(registry))
 			playerTransformCompenent = registry.GetComponent<TransformComponent>(playerEntity);
 
-		for (auto enemyEntity : View<TransformComponent, StatComponent, EnemyComponent, SkeletonBehaviour>(registry))
+		for (auto enemyEntity : View<TransformComponent, StatComponent, EnemyComponent>(registry))
 		{
 			enemyStats = registry.GetComponent<StatComponent>(enemyEntity);
 			if (enemyStats->GetHealth() > 0.f && playerTransformCompenent != nullptr)
