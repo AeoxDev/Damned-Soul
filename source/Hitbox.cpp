@@ -717,8 +717,20 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxIsMoveable(entity, hID, false);
 		SetHitboxIsMoveable(entity, sID, false);
 		break;
-	default:
+	case EnemyType::ghost:
 		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -1.5f * transfor->scaleX);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxIsMoveable(entity, hID, false);
+		SetHitboxIsMoveable(entity, sID, false);
+		SetHitboxActive(entity, 0, false);
+		SetHitboxActive(entity, 1, true);
+		SetHitboxActive(entity, 2, false);
+	default:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -2.0f * transfor->scaleX);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);

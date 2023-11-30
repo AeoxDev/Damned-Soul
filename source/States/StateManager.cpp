@@ -14,6 +14,7 @@
 #include "Components.h"
 #include "DeltaTime.h"
 #include "RenderDepthPass.h"
+#include "OutlineHelper.h"
 #include "Glow.h"
 
 //Cursed
@@ -158,6 +159,7 @@ int StateManager::Setup()
 	menu.Setup();
 
 	Particles::InitializeParticles();
+	Outlines::InitializeOutlines();
 	Glow::Initialize();
 	//SetupTestHitbox();
 	RedrawUI();
@@ -170,14 +172,15 @@ int StateManager::Setup()
 
 	// Render/GPU
 	
-	systems.push_back(new ParticleSystemCPU());
-
-
+	
 	systems.push_back(new ShadowSystem());
 	systems.push_back(new RenderSystem());
+	systems.push_back(new OutlineSystem());
 
 
 	//systems[2]->timeCap = 1.f / 60.f;
+	//systems[6]->timeCap = 1.f / 30.f;
+	systems.push_back(new ParticleSystemCPU());
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
@@ -232,6 +235,7 @@ int StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	
 	systems.push_back(new UIShopSystem());
+	systems.push_back(new NavigationSystem());
 
 	return 0;
 }

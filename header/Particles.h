@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include "MemLib/PoolPointer.hpp"
-#include "ParticleComponent.h"
+#include "Components.h"
 #include "GameRenderer.h"
 #include "D3D11Helper\IDX_Types.h"
 
@@ -26,6 +26,7 @@ struct Particle
 	float rotationZ;
 	DirectX::XMFLOAT3 rgb;
 	float size;
+	int patterns;
 };
 
 struct ParticleMetadata
@@ -73,8 +74,11 @@ namespace Particles
 	//Calls for D3D11Helper to reset the compute shader and copy the resources of the SRV to vertex buffer
 	void FinishParticleCompute(RenderSetupComponent renderStates[8]);
 	//Calls for D3D11Helper to set the shaders and resources requiered for the particle pass
-	void PrepareParticlePass(RenderSetupComponent renderStates[8]);
+	/*void PrepareParticlePass(RenderSetupComponent renderStates[8]);*/
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
+
+	void PrepareParticlePass(RenderSetupComponent renderStates[8], int metaDataSlot);
+
 	void FinishParticlePass();
 
 	void UpdateSingularMetadata(int& metadataSlot);

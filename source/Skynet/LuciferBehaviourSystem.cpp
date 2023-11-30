@@ -238,7 +238,7 @@ bool LuciferBehaviourSystem::Update()
 					{
 						luciferTransformComponent->positionY = 0.f;
 						enemyAnim->aAnim = ANIMATION_IDLE;
-						enemyAnim->aAnimIdx = 1;
+						enemyAnim->aAnimIdx = 0; // spawn animation, 1 is idle (is used to be)
 						enemyAnim->aAnimTimeFactor = 1.0f;
 
 						enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
@@ -420,6 +420,8 @@ bool LuciferBehaviourSystem::Update()
 
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
+						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 0.5f, 0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+						//30.f is what is growthspeed in bossshockwaveexpand
 					}
 				}
 			}

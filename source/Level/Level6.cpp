@@ -35,6 +35,8 @@ void LoadLevel6()
 
 	EntityID mouse = registry.CreateEntity();
 
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
@@ -45,7 +47,7 @@ void LoadLevel6()
 	 if (SetupAllEnemies("LV6Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV6Enemies");
 	}
 
 	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -78.f, 1.f, 108.f, 0);

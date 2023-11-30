@@ -221,6 +221,8 @@ void CreateTextWindows()
 
 void LoadShop()
 {
+
+
 	CreateTextWindows();
 
 	CreateRelicWindows();

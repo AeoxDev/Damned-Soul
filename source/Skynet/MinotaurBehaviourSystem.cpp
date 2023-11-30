@@ -309,10 +309,14 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 					SetHitboxActive(enemy, 1, true);
 					SetHitboxActive(enemy, 2, true);
 					mtc->positionY = 0.f;
-
+					//ParticleComponent(float seconds, float radius, float size, float x, float y, float z, float speed, int amount, ComputeShaders pattern);
 					//shockwave here
-					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, 1.0f, BossShockwaveEnd, 0, 1);
+					mc->attackStunTimer = 0;
+					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, mc->attackStunDuration, BossShockwaveEnd, 0, 1);
 					mc->jumpCounter++;
+					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 0.5f,0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+					//30.f is what is growthspeed in bossshockwaveexpand
+					
 				}
 			}
 		}

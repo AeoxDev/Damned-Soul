@@ -40,11 +40,13 @@ void LoadLevel7()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	if (SetupAllEnemies("LV7Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV7Enemies");
 	}
 
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss

@@ -12,7 +12,7 @@ struct LuciferBehaviour
 
 	// for the 10 second or damage charge
 	float chargeBehevCounter = 0.f;
-	float chargeBehevCounterTiming = 15.f;
+	float chargeBehevCounterTiming = 10.f;
 	float limitHP = 0.f; //how much hp left when he stops charge
 
 	//to handle the daze effect

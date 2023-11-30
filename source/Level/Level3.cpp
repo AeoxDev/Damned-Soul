@@ -38,6 +38,8 @@ void LoadLevel3()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+
 	//Player
 	//SetPlayerPosition(0.0, 0.0, 30.0f);
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
@@ -46,7 +48,7 @@ void LoadLevel3()
 	if (SetupAllEnemies("LV3Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV3Enemies");
 	}
 	////Upper right corner:
 	//SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
