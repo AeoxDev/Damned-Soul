@@ -221,14 +221,14 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
-		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f); 
 
 		break;
 	case 1:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
-		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.9f, 0.9f, 0.91f, -1.6f, -3.0f, 1.0f);//float colorRed, float colorGreen, float colorBlue, float directionX, float directionY, float directionZ)
 		
 		break;
 	case 2:

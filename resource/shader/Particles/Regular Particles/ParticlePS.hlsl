@@ -21,6 +21,7 @@ float4 main(GS_OUT input) : SV_TARGET
     int vfxPattern = input.VFXpatterns;
     
     float4 image;
+    float4 backBuffer = SampleBackbuffer(input.position, screenResolution_in, backbufferTexture_in, WrapSampler);
     
     // ---------- START OF FLIPBOOKING --------- //
 
@@ -64,9 +65,10 @@ float4 main(GS_OUT input) : SV_TARGET
         {
             image = flipBookTex.Sample(WrapSampler, input.uv);
         }
-   
-        
         clip(image.a - 0.1f);
+        image=AlphaBlend(backBuffer, image.a, image.rgb);
+        
+        //clip(image.a - 0.1f);
     
         if (image.r == 1.0f && image.g == 1.0f && image.b == 1.0f)
         {
@@ -78,7 +80,7 @@ float4 main(GS_OUT input) : SV_TARGET
     // *********** START OF VFX *********** //
     else
     {
-        float4 backBuffer = SampleBackbuffer(input.position, screenResolution_in, backbufferTexture_in, WrapSampler);
+        
         
         if (vfxPattern == 0) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
         {
@@ -101,7 +103,7 @@ float4 main(GS_OUT input) : SV_TARGET
     return image;
     //return float4(image.rgb, image.a);
 }
-
+/////****/////
 float4 AniRow(in GS_OUT input, in float animaVertStart, in bool singleRow, in float animaSpeed) //4x4 sections, First Row and Second Row
 {
     float framesPerSecond = animaSpeed;
