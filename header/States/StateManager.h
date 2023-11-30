@@ -32,6 +32,7 @@ struct StateManager
 	EntityID weapon;
 	EntityID stage;
 	EntityID gate;
+	EntityID cutsceneEnemy;
 	EntityID hitboxVis;
 
 

@@ -620,6 +620,39 @@ void CreateLandingIndicator(EntityID& entity, const int& index)
 	
 }
 
+void PlayBossIntroVoiceLine(EntityID& entity, const int& index)
+{
+	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
+	//bossSound->Play();
+	//Play sounds here
+	int randomLine = rand();
+}
+
+void PlayBossIntroSlam(EntityID& entity, const int& index)
+{
+	//Play slam sound here when landing
+	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
+	//bossSound->Play();
+}
+
+void PlayImpIntroTeleport(EntityID& entity, const int& index)
+{
+	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
+	//impSound->Play();
+}
+
+void PlayImpIntroLaugh(EntityID& entity, const int& index)
+{
+	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
+	//impSound->Play();
+}
+
+void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
+{
+	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
+	//minotaurSound->Play();
+}
+
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 
@@ -629,9 +662,17 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	{
 		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
 		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
-		pc->UpdateSouls(ec->soulCount);
+		if (ec != nullptr)
+		{
+			pc->UpdateSouls(ec->soulCount);
+		}
+ 		
 	}
-	
+	PlayerComponent* pc = registry.GetComponent<PlayerComponent>(entity);
+	if (pc != nullptr)
+	{
+		registry.RemoveComponent<PlayerComponent>(entity);
+	}
 	// I am inevitable 
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
@@ -661,7 +702,19 @@ void RemoveEnemy(EntityID& entity, const int& index)
 		ReleaseTimedEvents(entity);
 	}
 
-	registry.DestroyEntity(entity);
+	if (entity.index != -1)
+	{
+		registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+	}
+	
+}
+
+void RemoveCutsceneEnemy(EntityID& entity, const int& index)
+{
+	if (entity.index != -1)
+	{
+		registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+	}
 }
 
 void SpawnMainMenuEnemy(EntityID& entity, const int& index)
@@ -743,8 +796,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = lucifer;
 	}
-	float time = 0.05f * (float)(rand() % 64);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	float time = 0.05f * (float)(rand() % 1024);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }
 
 void DestroyAcidHazard(EntityID& entity, const int& index)

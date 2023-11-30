@@ -70,6 +70,54 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ, float rota
 	}
 }
 
+void SmoothRotationIgnoreTime(TransformComponent* tc, float goalX, float goalZ, float rotationFactor)
+{
+	DirectX::XMVECTOR goalV = DirectX::XMVECTOR{ goalX, goalZ, 0.0f };
+	DirectX::XMVECTOR length = DirectX::XMVector3Length(goalV);
+	DirectX::XMFLOAT3 l;
+	DirectX::XMStoreFloat3(&l, length);
+	float angle = acosf(tc->facingX);
+
+	if (rotationFactor <= 1.0f)
+	{
+		rotationFactor = 1.1f;
+	}
+
+	if (tc->facingZ < 0.0f)
+	{
+		angle *= -1.0f;
+	}
+
+	if (l.x > 0.001f)
+	{
+		goalV = DirectX::XMVector2Normalize(goalV);
+
+		DirectX::XMFLOAT3 goalFloats;
+		DirectX::XMStoreFloat3(&goalFloats, goalV);
+		goalX = goalFloats.x;
+		goalZ = goalFloats.y;
+		float goalAngle = acosf(goalX);
+		if (goalZ < 0.0f)
+		{
+			goalAngle *= -1.0f;
+		}
+		//Check if shortest distance is right or left
+		float orthogonalX = -tc->facingZ;
+		float orthogonalZ = tc->facingX;
+		float dot = goalX * tc->facingX + goalZ * tc->facingZ;
+		float orthDot = goalX * orthogonalX + goalZ * orthogonalZ;
+		if (orthDot > 0.0f)
+		{//if left
+			angle += GetFrameTime() * (1.01f - dot) * rotationFactor;
+		}
+		else
+		{
+			angle -= GetFrameTime() * (1.01f - dot) * rotationFactor;
+		}
+		tc->facingX = cosf(angle);
+		tc->facingZ = sinf(angle);
+	}
+}
 
 void TransformDecelerate(EntityID& entity)
 {
