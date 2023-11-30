@@ -593,7 +593,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			damage = 31.f;
+			damage = 16.f; //Used to be 31
 		}
 		else if (eType == EnemyType::hellhound)
 		{
@@ -617,7 +617,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 40.f;
+			damage = 40.f; //66.6f????
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -718,7 +718,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			soulWorth = 666;
+			soulWorth = 0; //No Damned Soul(TM)s
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{

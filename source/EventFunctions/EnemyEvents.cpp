@@ -840,7 +840,7 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	hazardTransform->scaleZ = scaling;
 	hazardTransform->facingX = cosf((float)rand());
 	hazardTransform->facingZ = sinf((float)rand());
-	AddStaticHazard(acidHazard, HAZARD_LAVA);
+	AddStaticHazard(acidHazard, HAZARD_ACID);
 
 	registry.AddComponent<StaticHazardComponent>(acidHazard, StaticHazardType::HAZARD_ACID);
 

@@ -9,7 +9,7 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 	int nrProjectiles = 1;//Get number of projectiles from component?
 	if (type == eye)
 	{
-		nrProjectiles = 2;
+		nrProjectiles = 1;
 	}
 	for (size_t i = 0; i < nrProjectiles; i++)
 	{
