@@ -31,6 +31,12 @@ void LoadLevel1()
 	//stageVars.offsetX = 16.f;
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
 
+	if (SetupVFXTorches("LV1Torch.dss", false, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Torch\nOr file is not written properly.");
+	}
+
 	EntityID mouse = registry.CreateEntity();
 
 	//StageLights
@@ -58,17 +64,17 @@ void LoadLevel1()
 	tComp.positionX = -122.0f;
 	tComp.positionY = 0.0f;
 	tComp.positionZ = 61.0f;
-	registry.AddComponent<TransformComponent>(particles, tComp);
+	registry.AddComponent<TransformComponent>(particles, tComp);*/
 		
-	EntityID particlesVFX = registry.CreateEntity();
+	/*EntityID particlesVFX = registry.CreateEntity();
 	registry.AddComponent<ParticleComponent>(particlesVFX, 50.0f, 50.0f, 3.0f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::FLAME);
-	
+	TransformComponent tComp;
 	tComp.positionX = -102.0f;
 	tComp.positionY = 0.0f;
 	tComp.positionZ = 41.0f;
-	registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	registry.AddComponent<TransformComponent>(particlesVFX, tComp);*/
 		
-	EntityID particlesMesh = registry.CreateEntity();
+	/*EntityID particlesMesh = registry.CreateEntity();
 	registry.AddComponent<ParticleComponent>(particlesMesh, 50.0f, 50.0f, 4.f, 0.0f, 0.0f, 1.0f, 32, "\\BackgroundQuad.mdl", VFX_PATTERN::SWORD);
 	
 	tComp.positionX = -122.0f;

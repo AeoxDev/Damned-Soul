@@ -35,7 +35,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	lc->goalDirectionX = playerTransformCompenent->positionX - ltc->positionX;
 	lc->goalDirectionZ = playerTransformCompenent->positionZ - ltc->positionZ;
 
-	SmoothRotation(ltc, lc->goalDirectionX, lc->goalDirectionZ, 35.f);
+	SmoothRotation(ltc, lc->goalDirectionX, lc->goalDirectionZ, 50.f);
 	float dirX = ltc->facingX, dirZ = ltc->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude > 0.001f)

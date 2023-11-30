@@ -33,6 +33,12 @@ void LoadLevel6()
 	stageVars.stageNr = 6;
 	EntityID stage = SetUpStage(stageVars);
 
+	if (SetupVFXTorches("LV6Torch.dss", false, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV6Torch\nOr file is not written properly.");
+	}
+
 	EntityID mouse = registry.CreateEntity();
 
 	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
@@ -44,11 +50,13 @@ void LoadLevel6()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	 if (SetupAllEnemies("LV6Enemies.dss") == false)
+	if (SetupAllEnemies("LV6Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
 		assert("Could not read file: LV6Enemies");
 	}
+	
+
 
 	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -78.f, 1.f, 108.f, 0);
 
