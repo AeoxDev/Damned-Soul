@@ -38,29 +38,26 @@ void SetUpAdvancedHealthBar(const EntityID player)
 
 	//Setup + Health
 	// Set background location!
-	uiElement->Setup   ("HP_Bar/HP_BG", "",			DSFLOAT2(BG_X,			bl.y + .000f));
+	uiElement->Setup   ("HP_Bar/HP_BG", "",			DSFLOAT2(BG_X,			bl.y));
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.x = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.x);
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.y = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.y);
 	uiElement->m_BaseImage.baseUI.UpdateTransform();
 
 	HP_STRETCH = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_INDICATOR_STRETCH", DSFLOAT2(BG_X, bl.y + .000f));
+	uiElement->AddImage("HP_Bar/HP_INDICATOR_STRETCH", DSFLOAT2(BG_X, bl.y));
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.x -= 2;
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_STRETCH);
-	//HP_EDGE = uiElement->m_Images.size();
-	//uiElement->AddImage("HP_Bar/HP_INDICATOR_END", DSFLOAT2(BG_X, bl.y + .000f));
-	//_ADVANCED_HP_ROUND_PIXELS_UP(HP_EDGE);
 	HP_LEFT = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_LEFT_X,	bl.y + .000f));
+	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_LEFT_X,	bl.y));
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_LEFT);
 	HP_RIGHT = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_RIGHT_X,	bl.y - .000f));
+	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_RIGHT_X,	bl.y));
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_RIGHT);
 	HP_MID = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_MID",			DSFLOAT2(LOOP_MID_X,	bl.y - .000f));
+	uiElement->AddImage("HP_Bar/HP_MID",			DSFLOAT2(LOOP_MID_X,	bl.y));
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_MID);
 	HP_START = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_LEFT_START",		DSFLOAT2(bl.x - .175f,	bl.y + .000f));
+	uiElement->AddImage("HP_Bar/HP_LEFT_START",		DSFLOAT2(bl.x - .175f,	bl.y));
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_START);
 	// Set HP Text location (I think?)
 	uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.m_PixelCoords;
@@ -70,7 +67,7 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	uiElement->AddText(" ", uiElement->m_Images[HP_TEXT].baseUI.GetOriginalBounds(), uiElement->m_Images[HP_START].baseUI.GetPosition());
 
 	HP_END = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(RIGHT_END_X,	bl.y + .000f));
+	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(RIGHT_END_X,	bl.y));
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_END);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(player);
 
