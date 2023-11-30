@@ -4,3 +4,5 @@
 void SetUpAdvancedHealthBar(const EntityID player);
 
 void ScaleAdvancedHealthBar(const EntityID player);
+
+void UpdateSoulUI(const EntityID player);

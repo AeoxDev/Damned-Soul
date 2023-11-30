@@ -15,6 +15,9 @@ static uint32_t HP_RIGHT;
 static uint32_t HP_MID;
 static uint32_t HP_START;
 static uint32_t HP_END;
+static uint32_t HP_TEXT;
+static uint32_t SOUL_STONE;
+static uint32_t SOUL_TEXT;
 
 #define BG_X (bl.x + .000f)
 #define LOOP_LEFT_X (bl.x - .055f)
@@ -62,7 +65,9 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	// Set HP Text location (I think?)
 	uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.m_PixelCoords;
 	uiElement->m_BaseText.baseUI.UpdateTransform();
-	//uiElement->m_BaseText.baseUI.m_Transform._31 -= 100;
+	// Create current health text
+	HP_TEXT = uiElement->m_Texts.size();
+	uiElement->AddText(" ", uiElement->m_Images[HP_TEXT].baseUI.GetOriginalBounds(), uiElement->m_Images[HP_START].baseUI.GetPosition());
 
 	HP_END = uiElement->m_Images.size();
 	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(RIGHT_END_X,	bl.y + .000f));
@@ -70,8 +75,11 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(player);
 
 	//Souls
-	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
-	uiElement->AddText(" ", uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
+	SOUL_STONE = uiElement->m_Images.size();
+	uiElement->AddImage("Soul_Stone", DSFLOAT2(-0.91f, 0.75f));
+	_ADVANCED_HP_ROUND_PIXELS_UP(SOUL_STONE)
+	SOUL_TEXT = uiElement->m_Texts.size();
+	uiElement->AddText(" ", uiElement->m_Images[SOUL_STONE].baseUI.GetOriginalBounds(), uiElement->m_Images[SOUL_STONE].baseUI.GetPosition());
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
 
 	//Relics
@@ -140,10 +148,21 @@ void ScaleAdvancedHealthBar(const EntityID player)
 			base.UpdateTransform();
 		}
 
-		char temp[32] = "";
-		sprintf(temp, /*"Health: %lld"*/"%lld", health->value);
-		uiElement->m_BaseText.SetText(temp, uiElement->m_BaseText.baseUI.GetBounds());
-		uiElement->m_BaseText.baseUI.Setup(uiElement->m_Images[HP_START].baseUI.GetPosition(), uiElement->m_Images[HP_START].baseUI.GetScale(),
+
+		char temp[8] = "";
+		sprintf(temp, "%lld", health->value);
+		DSFLOAT2 position = uiElement->m_Images[HP_START].baseUI.GetPosition();
+		position.x -= .03f;
+		uiElement->m_Texts[HP_TEXT].SetText(temp, uiElement->m_Texts[HP_TEXT].baseUI.GetBounds(), 16.f);
+		uiElement->m_Texts[HP_TEXT].baseUI.Setup(position, uiElement->m_Images[HP_START].baseUI.GetScale(),
+			uiElement->m_Images[HP_START].baseUI.GetRotation(), uiElement->m_Images[HP_START].baseUI.GetVisibility(),
+			uiElement->m_Images[HP_START].baseUI.GetOpacity());
+
+		sprintf(temp, "%lld", stats->GetMaxHealth());
+		position = uiElement->m_Images[HP_START].baseUI.GetPosition();
+		position.x += .01f;
+		uiElement->m_BaseText.SetText(temp, uiElement->m_BaseText.baseUI.GetBounds(), 13.5f);
+		uiElement->m_BaseText.baseUI.Setup(position, uiElement->m_Images[HP_START].baseUI.GetScale(),
 										   uiElement->m_Images[HP_START].baseUI.GetRotation(), uiElement->m_Images[HP_START].baseUI.GetVisibility(),
 										   uiElement->m_Images[HP_START].baseUI.GetOpacity());
 	}
@@ -162,5 +181,29 @@ void ScaleAdvancedHealthBar(const EntityID player)
 		counter++;
 #endif
 
+	}
+}
+
+void UpdateSoulUI(const EntityID player)
+{	
+	auto pc = registry.GetComponent<PlayerComponent>(player);
+	int	currentSouls = pc->GetSouls();
+
+	auto souls = registry.GetComponent<UIPlayerSoulsComponent>(player);
+	auto uiElement = registry.GetComponent<UIComponent>(player);
+
+	souls->value = currentSouls;
+		
+	if (uiElement->m_Texts.size() > 0)
+	{
+		char temp[8] = "";
+		sprintf(temp, /*"Health: %lld"*/"%ld", souls->value);
+		uiElement->m_Texts[SOUL_TEXT].SetText(temp, uiElement->m_Texts[SOUL_TEXT].baseUI.GetBounds(), 15.f);
+		DSFLOAT2 position = uiElement->m_Images[SOUL_STONE].baseUI.GetPosition();
+		position.x += .017f;
+		position.y -= .007f;
+		uiElement->m_Texts[SOUL_TEXT].baseUI.Setup(position, uiElement->m_Images[SOUL_STONE].baseUI.GetScale(),
+											uiElement->m_Images[SOUL_STONE].baseUI.GetRotation(), uiElement->m_Images[SOUL_STONE].baseUI.GetVisibility(), 
+											uiElement->m_Images[SOUL_STONE].baseUI.GetOpacity());
 	}
 }

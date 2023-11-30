@@ -92,28 +92,30 @@ bool UIHealthSystem::Update()
 
 bool UIPlayerSoulsSystem::Update()
 {
-	int currentSouls = 0;
+	for (auto entity : View<PlayerComponent, UIPlayerSoulsComponent, UIComponent>(registry))
+		UpdateSoulUI(entity);
+	//int currentSouls = 0;
 
-	for (auto entity : View<PlayerComponent>(registry))
-	{
-		auto player = registry.GetComponent<PlayerComponent>(entity);
-		currentSouls = player->GetSouls();
-	}
+	//for (auto entity : View<PlayerComponent>(registry))
+	//{
+	//	auto player = registry.GetComponent<PlayerComponent>(entity);
+	//	currentSouls = player->GetSouls();
+	//}
 
-    for (auto entity : View<UIPlayerSoulsComponent, UIComponent>(registry))
-    {
-		auto souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
-		auto uiElement = registry.GetComponent<UIComponent>(entity);
+ //   for (auto entity : View<UIPlayerSoulsComponent, UIComponent>(registry))
+ //   {
+	//	auto souls = registry.GetComponent<UIPlayerSoulsComponent>(entity);
+	//	auto uiElement = registry.GetComponent<UIComponent>(entity);
 
-		souls->value = currentSouls;
-		
-		if (uiElement->m_Texts.size() > 0)
-		{
-			uiElement->m_Texts[0].SetText(("Souls: " + std::to_string(souls->value)).c_str(), uiElement->m_Texts[0].baseUI.GetBounds());
-			uiElement->m_Texts[0].baseUI.Setup(uiElement->m_Images[1].baseUI.GetPosition(), uiElement->m_Images[1].baseUI.GetScale(),
-				uiElement->m_Images[1].baseUI.GetRotation(), uiElement->m_Images[1].baseUI.GetVisibility(), uiElement->m_Images[1].baseUI.GetOpacity());
-		}
-	}
+	//	souls->value = currentSouls;
+	//	
+	//	if (uiElement->m_Texts.size() > 0)
+	//	{
+	//		uiElement->m_Texts[0].SetText(("Souls: " + std::to_string(souls->value)).c_str(), uiElement->m_Texts[0].baseUI.GetBounds());
+	//		uiElement->m_Texts[0].baseUI.Setup(uiElement->m_Images[1].baseUI.GetPosition(), uiElement->m_Images[1].baseUI.GetScale(),
+	//			uiElement->m_Images[1].baseUI.GetRotation(), uiElement->m_Images[1].baseUI.GetVisibility(), uiElement->m_Images[1].baseUI.GetOpacity());
+	//	}
+	//}
 
 	return true;
 }
