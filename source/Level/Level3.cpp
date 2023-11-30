@@ -59,7 +59,11 @@ void LoadLevel3()
 	//SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
 	//SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f, 1);
 	//SetupEnemy(EnemyType::imp, -40.f, 0.f, 103.f, 1);
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -13.f, 0.f, 80.f, 1);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::hellhound, -240.f, 0.f, 153.f, 1);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = 0.1f;
+	transform->facingY = 0.0f;
 
 	////Under ribs
 	//SetupEnemy(EnemyType::skeleton, -188.f, 0.f, 24.f, 1);
@@ -122,5 +126,5 @@ void LoadLevel3()
 	SetInPlay(true);
 
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, HellhoundIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.04f, HellhoundIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }
