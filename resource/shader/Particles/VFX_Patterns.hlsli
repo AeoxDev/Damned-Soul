@@ -49,10 +49,11 @@ in float time,
 in float2 uv
 )
 {
-    float4 distortVornoi = vornoiTexture_in.Sample(vfxSampler_in, UVPan(float2(1.0f, 0.0f), 1.55f, time, uv));
+    // To change the speed and direction of the rotations, change what time is multiplied with.   
+    float4 distortVornoi = vornoiTexture_in.Sample(vfxSampler_in, UVRotate(uv, time * -15.6f, 0.8f));
     float2 vornoiUV = distortUV(0.1f, uv, distortVornoi);
     
-    float4 panningVornoi = vornoiTexture_in.Sample(vfxSampler_in, UVPan(float2(1.0f, 0.0f), 1.0f, time, uv * 0.5f));
+    float4 panningVornoi = vornoiTexture_in.Sample(vfxSampler_in, UVRotate(uv, time * 15.6f, 0.65f));
     
     float4 distortedProjectile = shapeTexture_in.Sample(vfxSampler_in, vornoiUV);
     float4 newProjectile = distortedProjectile - (panningVornoi * distortedProjectile);
@@ -91,8 +92,8 @@ in float2 uv
 )
 {
     // Pan the distortion Textures
-    float panGNoise = noiseTexture_in.Sample(vfxSampler_in, UVPan(float2(1.0f, 0.0f), 0.62f, time, uv * 0.96f)).r;
-    float panVornoi = vornoiTexture_in.Sample(vfxSampler_in, UVPan(float2(1.0f, 0.0f), 0.72f, time, uv * 0.51f)).r;
+    float panGNoise = noiseTexture_in.Sample(vfxSampler_in, UVRotate(uv, time * 15.6f, 0.8f)).r;
+    float panVornoi = vornoiTexture_in.Sample(vfxSampler_in, UVRotate(uv, time * -5.0f, 0.5f)).r;
     
     // Distort UV channels
     float2 fireUV = lerp( lerp(panGNoise, panVornoi, -0.31f), uv, 0.9f);
@@ -101,7 +102,7 @@ in float2 uv
     float alphaMask = shapeTexture_in.Sample(vfxSampler_in, fireUV).r;
     
     // Mask magic
-    float4 subtractionMask      = (alphaMask - (alphaMask * panVornoi)) * float4(1.0f, 0.6f, 0.0f, 0.0f);
+    float4 subtractionMask    = (alphaMask - (alphaMask * panVornoi)) * float4(1.0f, 0.6f, 0.0f, 0.0f);
     float4 multiplicationMask = (alphaMask - (alphaMask * (panVornoi * 0.49f))) - float4(0.0f, 0.43f, 1.0f, 1.0f);
     
     // Colors the projectile
@@ -118,7 +119,8 @@ in float2 uv
 )
 {
     // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THIS VALUE
-    float dissippateValue = 0.1f;
+    // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
+    float dissippateValue = 0.25f;
     
     // The panning textures
     float4 panCaustics = (float4(0.0f, 0.6666667f, 1.0f, 1.0f) * (3.76f * SamplePolarCoordinateTexture(maskTexture_in, vfxSampler_in, time, uv, 0.04f, -0.25f, 0.39f)));
@@ -128,7 +130,7 @@ in float2 uv
     float4 colorizedSpawn = panCaustics + rotateCaustics;
     
     //Alpha mask
-    float alphaMask = shapeTexture_in.Sample(vfxSampler_in, uv * (1.0f - clamp(time * dissippateValue, 0.0f, 1.0f))).r;
+    float alphaMask = shapeTexture_in.Sample(vfxSampler_in, uv * sin(time * dissippateValue)).r;
     
     // Making Alpha disappear
     float timedMask = alphaMask * shapeTexture_in.Sample(vfxSampler_in, uv);
@@ -143,6 +145,7 @@ in float2 uv
 )
 {
     // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THIS VALUE
+    // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
     float dissippateValue = 0.75f;
     
     // The panning textures
@@ -153,7 +156,7 @@ in float2 uv
     float4 colorizedSpawn = panCaustics + rotateCaustics;
     
     //Alpha mask
-    float alphaMask = shapeTexture_in.Sample(vfxSampler_in, uv * (1.0f - clamp(time * dissippateValue, 0.0f, 1.0f))).r;
+    float alphaMask = shapeTexture_in.Sample(vfxSampler_in, uv * sin(time * dissippateValue)).r;
     
     // Making Alpha disappear
     float timedMask = alphaMask * shapeTexture_in.Sample(vfxSampler_in, uv);
@@ -168,17 +171,18 @@ in float2 uv
 )
 {
     // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THIS VALUE
+    // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
     float dissippateValue = 0.75f;
     
     // The panning textures
-    float4 panCaustics = (float4(1.0f, 0.7675428f, 0.0f, 0.0f) * (3.76f * SamplePolarCoordinateTexture(maskTexture_in, vfxSampler_in, time, uv, 0.04f, -0.25f, 0.39f)));
-    float4 rotateCaustics = (float4(1.0f, 0.1011105f, 0.0f, 0.0f) * (4.23f * SamplePolarCoordinateTexture(maskTexture_in, vfxSampler_in, time, uv, 0.5f, -0.21f, 0.34f)));
+    float4 panCaustics = (float4(0.2171591f, 0.754717f, 0.6784216f, 0.0f) * (3.76f * SamplePolarCoordinateTexture(maskTexture_in, vfxSampler_in, time, uv, 0.04f, -0.25f, 0.39f)));
+    float4 rotateCaustics = (float4(0.6100035f, 0.843265f, 0.8679245f, 0.0f) * (4.23f * SamplePolarCoordinateTexture(maskTexture_in, vfxSampler_in, time, uv, 0.5f, -0.21f, 0.34f)));
     
     // Colorizing
     float4 colorizedSpawn = panCaustics + rotateCaustics;
     
     //Alpha mask
-    float alphaMask = shapeTexture_in.Sample(vfxSampler_in, uv * (1.0f - clamp(time * dissippateValue, 0.0f, 1.0f))).r;
+    float alphaMask = shapeTexture_in.Sample(vfxSampler_in, uv * sin(time * dissippateValue)).r;
     
     // Making Alpha disappear
     float timedMask = alphaMask * shapeTexture_in.Sample(vfxSampler_in, uv);
