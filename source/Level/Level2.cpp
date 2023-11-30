@@ -14,13 +14,19 @@
 
 void LoadLevel2()
 {
-	float redAdd = 0.1f;
+	//float redAdd = 0.1f;
+	//float greenAdd = 0.0f;
+	//float blueAdd = 0.0f;
+	//float redMult = 1.2f;
+	//float greenMult = 1.0f;
+	//float blueMult = 1.0f;
+	// 
+	float redAdd = 0.0f;
 	float greenAdd = 0.0f;
 	float blueAdd = 0.0f;
-	float redMult = 1.2f;
+	float redMult = 1.0f;
 	float greenMult = 1.0f;
 	float blueMult = 1.0f;
-
 	StageSetupVariables stageVars;
 	stageVars.ra = redAdd;
 	stageVars.ga = greenAdd;
@@ -33,19 +39,14 @@ void LoadLevel2()
 
 	EntityID mouse = registry.CreateEntity();
 
-	//StageLights
-	EntityID lightholder = registry.CreateEntity();
-	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	
-	if (SetupAllEnemies("LV2Enemies.dss") == false)
-	{
-		//something went wrong, could not open file
-		assert("Could not read file: LV2Enemies");
-	}
+	//if (SetupAllEnemies("LV2Enemies.dss") == false)
+	//{
+	//	//something went wrong, could not open file
+	//	assert("Could not read file: LV2Enemies");
+	//}
 	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//Enemies to the right:
@@ -102,12 +103,17 @@ void LoadLevel2()
 
 	float redLight = 0.35f;
 
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
 
-	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, redLight, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, redLight, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	//CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	//CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderThree, redLight, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderForth, redLight, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

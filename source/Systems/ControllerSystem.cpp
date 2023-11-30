@@ -117,46 +117,57 @@ bool ControllerSystem::Update()
 		if (keyState[SCANCODE_1] == pressed)
 		{
 			LoadLevel(1);
+			stateManager.activeLevel = 1;
 		}
 		else if (keyState[SCANCODE_2] == pressed)
 		{
 			LoadLevel(3);
+			stateManager.activeLevel = 3;
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
 			LoadLevel(5);
+			stateManager.activeLevel = 5;
 		}
 		else if (keyState[SCANCODE_4] == pressed)
 		{
 			LoadLevel(7);
+			stateManager.activeLevel = 7;
 		}
 		else if (keyState[SCANCODE_5] == pressed)
 		{
 			LoadLevel(9);
+			stateManager.activeLevel = 9;
 		}
 		else if (keyState[SCANCODE_6] == pressed)
 		{
 			LoadLevel(11);
+			stateManager.activeLevel = 11;
 		}
 		else if (keyState[SCANCODE_7] == pressed)
 		{
 			LoadLevel(13);
+			stateManager.activeLevel = 13;
 		}
 		else if (keyState[SCANCODE_8] == pressed)
 		{
 			LoadLevel(15);
+			stateManager.activeLevel = 15;
 		}
 		else if (keyState[SCANCODE_9] == pressed)
 		{
 			LoadLevel(17);
+			stateManager.activeLevel = 17;
 		}
 		else if (keyState[SCANCODE_0] == pressed)//Reset shop, do this only once per game
 		{
 			LoadLevel(2);
+			stateManager.activeLevel = 2;
 		}
 		else if (keyState[SCANCODE_S] == pressed)//Do this many times
 		{
 			LoadLevel(4);
+			stateManager.activeLevel = 4;
 		}
 	}
 	if (keyInput[SCANCODE_H] == down)
