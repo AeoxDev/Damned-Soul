@@ -33,7 +33,7 @@ bool ParticleSystemCPU::Update()
 
 			RenderOffset((Particles::GetMetadataAtIndex(pComp->metadataSlot).end - Particles::GetMetadataAtIndex(pComp->metadataSlot).start), 0);
 
-			//Particles::FinishParticlePass();
+			Particles::FinishParticlePass();
 		}
 		//else if (pComp->metadataSlot >= 0 && pComp->VFX == true)
 		//{

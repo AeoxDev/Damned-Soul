@@ -41,6 +41,8 @@ void LoadLevel1()
 	//CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 	ReloadPlayerNonGlobals();
 
+	SetupEnemy(EnemyType::tempBoss, -210.f, 0.f, -40.f);
+
 	/*SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
 	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
 	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
@@ -49,7 +51,7 @@ void LoadLevel1()
 
 	// For particle testing, don't touch, Arian gets angy.
 	EntityID particles = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 1.5f, 0.0f, 0.0f, 1.0f, 32, SMOKE);
+	registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 1.5f, 0.0f, 0.0f, 1.0f, 32, SPARK);
 	
 	TransformComponent tComp;
 	tComp.positionX = -122.0f;

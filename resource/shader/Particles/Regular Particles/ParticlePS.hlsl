@@ -44,8 +44,11 @@ float4 main(GS_OUT input) : SV_TARGET
      
         
         image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-
-        if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
+        if (pattern == 0)
+        {
+            image = AniRow(input, 0.0f, false); /*AniFullSheet(input);*/
+        }
+        else if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
         {
             image = AniRow(input, 0.0f, false); /*AniFullSheet(input);*/
         }
@@ -62,7 +65,6 @@ float4 main(GS_OUT input) : SV_TARGET
             image = flipBookTex.Sample(WrapSampler, input.uv);
         }
    
-        //image = image * float4(input.rgb.xyz, 1.0f);
         
         clip(image.a - 0.1f);
     

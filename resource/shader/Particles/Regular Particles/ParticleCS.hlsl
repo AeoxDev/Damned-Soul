@@ -1,11 +1,7 @@
 #include "../Headers/ParticleHeader.hlsli"
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
-inline void ArchMovement(in uint3 DTid, in uint3 blockID);
-inline void ExplosionMovement(in uint3 DTid, in uint3 blockID);
 inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
-inline void ImplosionMovement(in uint3 DTid, in uint3 blockID);
-inline void RainMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
 inline void FireMovement(in uint3 DTid, in uint3 blockID);
@@ -84,15 +80,13 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
             ShockWaveMovement(DTid, blockID);
         }
         // 11 SHARES SPOT WITH 3
-        
-
-
-        //// 12 = BOILING
+   
+        // 12 = BOILING
         if (meta[blockID.y].pattern == 12)
         {
             HotPotMovement(DTid, blockID);
         }
-        //// 13 = SPARK
+        // 13 = SPARK
         if (meta[blockID.y].pattern == 13)
         {
             SparkMovement(DTid, blockID);
@@ -167,9 +161,6 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
         particle.position.x = particle.position.x - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
 
     particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + meta[One_OneHundo].deltaTime) * dt;
-        
-    particle.patterns = 0; //is currently used to define pattern in PS-Shader for flipAnimations, patterns.x (free slots on y,z,w values)
-    // 0 = SMOKE// 1 = ARCH// 2 = EXPLOSION// 3 = FLAMETHROWER// 4 = IMPLOSION// 5 = RAIN// 6 = SINUS// 7 = LIGHTNING
     
     particle.rgb.r = 0.0f;
     particle.rgb.g = 0.0f;
@@ -257,35 +248,8 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     {
         particle.rgb = float3(1.f, .0f, .0f);
     }
+    
     outputParticleData[index] = particle;
-}
-
-void RainMovement(in uint3 DTid, in uint3 blockID)
-{
-    int index = DTid.x + blockID.y * NUM_THREADS;
-    
-    Input particle = inputParticleData[DTid.x];
-    //____________________________________________________________________
-    float speedOfRain = 4.0f; //adjust as you see fit
-    float scatterAmount = 4.0f; // adjust as you see fit
-    float scatterX = (float(DTid.x % 100) / 100.0f - 0.5f) * scatterAmount; // adjust as you see fit
-    float scatterZ = (float(DTid.x % 57) / 57.0f - 0.5f) * scatterAmount; // adjust as you see fit
-
-    particle.position.x += scatterX;
-    particle.position.z += scatterZ;
-    particle.position.y -= speedOfRain;
-    particle.rgb.r = 0.0f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
-    
-    if (particle.position.y < 0.0f)
-    {
-        particle.position = meta[index].startPosition;
-    }
-    
-    particle.patterns = 5; //is currently used to define pattern in PS-Shader for flipAnimations
-   
-    outputParticleData[DTid.x] = particle;
 }
 
 void LightningMovement(in uint3 DTid, in uint3 blockID)
@@ -320,12 +284,11 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = posy;
     particle.position.x = (2 * alpha + beta + 2 * gamma);
     particle.position.z = (alpha + 2 * beta - gamma);
+    
     particle.rgb.r = 0.0f;
     particle.rgb.g = 0.0f;
     particle.rgb.b = 1.0f;
-    
-    particle.patterns = 7; //is currently used to define pattern in PS-Shader for flipAnimations
-    
+        
     outputParticleData[index] = particle;
 }
 
@@ -365,9 +328,7 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     particle.rgb.r = 0.0f;
     particle.rgb.g = 0.0f;
     particle.rgb.b = 1.0f;
-    
-    particle.patterns = 8; //is used to define pattern in PS-Shader for flipAnimations
-  
+      
     outputParticleData[index] = particle;
 }
 
@@ -406,13 +367,11 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
             
     float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
 
-    
-    if (travelledDistance >= meta[blockID.y].maxRange + 17318)
+    if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
-        
-        
-        particle.position = startPosition;
+       
+        particle.position = meta[blockID.y].startPosition;
         particle.time = 0.f;
     }
     if (particle.time >= meta[blockID.y].life)
@@ -423,14 +382,21 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
         particle.time = 0.f;
     }
 
-    float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * meta[blockID.y].positionInfo.x * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/ index);
-    float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * meta[blockID.y].positionInfo.x * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);
+    float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/ index);
+    float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);
     
     float dirX = cos((float) localIndex / (float) amount * 15.0f) * 30.f;
     float dirZ = sin((float) localIndex / (float) amount * 15.0f) * 30.f;
+
         
-    outputParticleData[localIndex] = particle;
-    //float degree = dot(particleVector, triangleVector) / length(triangleVector);
+    particle.position.x = particle.position.x + (oscillationX + dirX) * dt;
+    particle.position.z = particle.position.z + (oscillationZ + dirZ) * dt;
+    
+    particle.rgb.r = 0.0f;
+    particle.rgb.g = 0.0f;
+    particle.rgb.b = 1.0f;
+        
+    outputParticleData[index] = particle;
 }
 
 void FireMovement(in uint3 DTid, in uint3 blockID)
@@ -492,8 +458,6 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
     particle.rgb.g = 1.0f;
     particle.rgb.b = 1.0f;
     
-    particle.patterns = 9; //is used to define pattern in PS-Shader for flipAnimations
-
     outputParticleData[index] = particle;
 
 }
@@ -558,8 +522,6 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     particle.rgb.g = 0.0f;
     particle.rgb.b = 0.0f;
     
-    particle.patterns = 12; //is used to define pattern in PS-Shader for flipAnimations
-
     outputParticleData[index] = particle;
 }
 
@@ -643,8 +605,6 @@ void SparkMovement(in uint3 DTid, in uint3 blockID)
     particle.rgb.g = 0.0f;
     particle.rgb.b = 0.0f;
     
-    particle.patterns = 13; //is used to define pattern in PS-Shader for flipAnimations
-
     outputParticleData[index] = particle;
 }
 
