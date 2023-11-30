@@ -16,6 +16,8 @@ void StartPlayerDeath(EntityID& entity, const int& index)
 		animComp->aAnimIdx = 0;
 		animComp->aAnimTime = 0.0f;
 	}
+
+	registry.RemoveComponent<ControllerComponent>(entity);
 }
 
 void PlayPlayerDeath(EntityID& entity, const int& index)

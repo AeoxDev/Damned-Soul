@@ -241,6 +241,11 @@ struct CollisionParamsComponent
 	CollisionParamsComponent(OnCollisionParameters params) : params(params) {}
 };
 
+struct NavigationTrashComponentYouMustAccept
+{
+
+};
+
 //
 struct EnemyComponent
 {

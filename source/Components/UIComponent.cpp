@@ -47,7 +47,11 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 
 void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, IDWriteTextFormat*& textFormat)
 {
-
+	if (textFormat != nullptr)
+	{
+		textFormat->Release();
+		textFormat = nullptr;
+	}
 	ui.GetWriteFactory()->CreateTextFormat(L"Arial", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &textFormat);
 
 	textFormat->SetTextAlignment(textAlignment);
@@ -168,7 +172,8 @@ void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_T
 {
 	if (text != "")
 	{
-		m_Text = _strdup(text);
+		//m_Text = _strdup(text);//This causes leaks
+		m_Text = text;
 		m_fontSize = fontSize;
 		m_textAlignment = textAlignment;
 		m_paragraphAlignment = paragraphAlignment;
