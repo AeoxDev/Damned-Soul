@@ -83,14 +83,14 @@ float4 main(VS_OUT input) : SV_TARGET
     
     float4 image = diffuseTex.Sample(WrapSampler, input.uv);
     
-    //float4 retVal = image + (1.0f - image.a) * backBuff;
+    float4 retVal = image.a * image + (1.0f - image.a) * backBuff;
     
-    float4 retVal;
-    retVal.r = backBuff.r + image.r * image.a;
-    retVal.g = backBuff.g + image.g * image.a;
-    retVal.b = backBuff.b + image.b * image.a;
+    //float4 retVal;
+    //retVal.r = backBuff.r + image.r * image.a;
+    //retVal.g = backBuff.g + image.g * image.a;
+    //retVal.b = backBuff.b + image.b * image.a;
     
     //clip(image.a - 0.004f);
-    return retVal;
+    return float4(retVal.xyz, 1.0f);
 }
    
