@@ -180,9 +180,9 @@ void UIFunctions::Game::ExitShopCutscene(void* args, int a)
 					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
 					if (shopBuy != nullptr)
 					{
-						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+						for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
 						{
-							if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
+							if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
 							{
 								selectedID = onClick;
 							}
@@ -543,22 +543,6 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 
-		//First relic purchase
-		UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
-		if (playerRelics->currentRelics == 0)
-		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-			if (sfx != nullptr) sfx->Play(Shop_FirstPurchase, Channel_Extra);
-		}
-		else if (stateManager.activeLevel == 6 || stateManager.activeLevel == 16)
-		{
-			if (souls->spentThisShopOnRelics == 0)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-				if (sfx != nullptr) sfx->Play(Shop_PurchaseBeforeBoss, Channel_Extra);
-			}
-		}
-
 		for (int i = 0; i < 2; i++)
 		{
 			if (relicWindow->shopSelections[i] == shopState::SELECTED)
@@ -585,6 +569,22 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 
 				DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 									-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+
+				//First relic purchase
+				UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
+				if (playerRelics->currentRelics == 0)
+				{
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+					if (sfx != nullptr) sfx->Play(Shop_FirstPurchase, Channel_Extra);
+				}
+				else if (stateManager.activeLevel == 6 || stateManager.activeLevel == 16)
+				{
+					if (souls->spentThisShopOnRelics == 0)
+					{
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+						if (sfx != nullptr) sfx->Play(Shop_PurchaseBeforeBoss, Channel_Extra);
+					}
+				}
 
 				if (playerRelics->currentRelics < playerRelics->maxRelics)
 				{

@@ -196,9 +196,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\DebugTests.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
+    <ClCompile Include="source\DebugTests.cpp" />
     <ClCompile Include="source\Glow.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DebuffComponent.cpp" />

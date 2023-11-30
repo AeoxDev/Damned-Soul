@@ -233,7 +233,7 @@ void PauseState::SetupButtons()
 
 		for (int i = 0; i < sliderAmount; i++)
 		{
-			auto button = registry.CreateEntity();
+			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
 			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
