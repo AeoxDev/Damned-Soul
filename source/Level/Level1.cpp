@@ -41,11 +41,11 @@ void LoadLevel1()
 	//CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 	ReloadPlayerNonGlobals();
 
-	/*SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
-	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
-	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
-	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
+	SetupEnemy(EnemyType::eye, -239.f, 0.f, -25.f);
+	SetupEnemy(EnemyType::eye, -210.f, 0.f, -40.f);
+	SetupEnemy(EnemyType::eye, -212.0f, 0.f, 72.f);
+	SetupEnemy(EnemyType::eye, -200.0f, 0.f, 69.f);
+	SetupEnemy(EnemyType::eye, -122.0f, 0.f, 61.f);
 
 	// For particle testing, don't touch, Arian gets angy.
 	//EntityID particles = registry.CreateEntity();
@@ -58,11 +58,11 @@ void LoadLevel1()
 	//registry.AddComponent<TransformComponent>(particles, tComp);
 
 
-	if (SetupAllEnemies("LV1Enemies.dss") == false)
-	{
-		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
-	}
+	//if (SetupAllEnemies("LV1Enemies.dss") == false)
+	//{
+	//	//something went wrong, could not open file
+	//	assert("Could not read file: LV1Enemies");
+	//}
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 

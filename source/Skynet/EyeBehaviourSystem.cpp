@@ -421,6 +421,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 
 void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* valueGrid)
 {
+	ec->avoidanceTimer = 0.0f;
 	ec->correcitonDirX = 0.0f;
 	ec->correcitonDirZ = 0.0f;
 	
@@ -496,7 +497,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 			
 			float distance = Calculate2dDistance((float)currentTile.x, (float)currentTile.z, (float)startPos.x, (float)startPos.z);
 
-			float multiplier = (float)(pow(distance / OBSTACLE_RANGE, 2)) * 0.0001f;
+			float multiplier = (float)(1 - pow(distance / OBSTACLE_RANGE, 2));
 
   			if (cost < 10000) //if tile is an enemy
 				multiplier *= 0.5f;
@@ -635,7 +636,7 @@ bool EyeBehaviourSystem::Update()
 				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
 			
-			if (!eyeComponent->charging)
+			if (!eyeComponent->charging || eyeComponent->avoidanceTimer < eyeComponent->avoidanceDuration)
 			{
 				if (hasUpdatedMap == false)
 				{
@@ -653,6 +654,7 @@ bool EyeBehaviourSystem::Update()
 		}
 
 		eyeComponent->attackStunTimer += GetDeltaTime();
+		eyeComponent->avoidanceTimer += GetDeltaTime();
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 		ANIM_BRANCHLESS(enemyAnim);
 		TransformDecelerate(enemyEntity);
