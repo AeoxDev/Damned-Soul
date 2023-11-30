@@ -55,10 +55,18 @@ void LoadLevel9()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+
+	if (SetupVFXTorches("LV9Torch.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV9Torch\nOr file is not written properly.");
+	}
+
 	//Light
 	float redLight = 0.05f;
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;
+
 
 
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level

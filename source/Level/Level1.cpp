@@ -64,7 +64,12 @@ void LoadLevel1()
 	if (SetupAllEnemies("LV1Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV1Enemies\nOr file is not written properly.");
+	}
+	if (SetupVFXTorches("LV1Torch.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Torch\nOr file is not written properly.");
 	}
 
 	// DO NOT REMOVE THIS BELOW

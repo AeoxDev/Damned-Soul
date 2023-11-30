@@ -48,6 +48,11 @@ void LoadLevel8()
 		//something went wrong, could not open file
 		assert("Could not read file: LV8Enemies");
 	}
+	if (SetupVFXTorches("LV8Torch.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV8Torch\nOr file is not written properly.");
+	}
 	//SetupEnemy(EnemyType::empoweredSkeleton, -25.f, 0.f, 50.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, 50.f, 0.f, -45.f, 0);
 	//SetupEnemy(EnemyType::empoweredSkeleton, -20.f, 0.f, 25.f, 0);

@@ -178,7 +178,7 @@ bool SetupVFXTorches(std::string filePath)
 			// 2 = positionZ
 			// 3 = r
 			// 4 = g
-			// 5 = r
+			// 5 = b
 			for (auto t : line)
 			{
 				if (t == ',')
