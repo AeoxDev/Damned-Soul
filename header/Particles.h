@@ -83,9 +83,9 @@ namespace Particles
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
 	void FinishParticlePass();
 	//Calls for D3D11Helper to set the shaders and resources requiered for the VFX pass
-	void PrepareVFXPass(RenderSetupComponent renderStates[8]);
-	//Calls for D3D11Helper to reset the shaders and resources used by the VFX pass
-	void FinishVFXPass();
+	//void PrepareVFXPass(RenderSetupComponent renderStates[8]);
+	////Calls for D3D11Helper to reset the shaders and resources used by the VFX pass
+	//void FinishVFXPass();
 
 	void PrepareMeshPass(int metadataSlot);
 	void FinishMeshPass();
