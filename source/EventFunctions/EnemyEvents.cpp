@@ -296,11 +296,11 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 		}	
 	}
 
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-	if (anim)
-	{
-		anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
-	}
+	//AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	//if (anim)
+	//{
+	//	anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
+	//}
 }
 
 void EnemyAttackGradient(EntityID& entity, const int& index)
@@ -566,6 +566,18 @@ void BossShockwaveEnd(EntityID& entity, const int& index)
 	}
 }
 
+void BossSpawnwaveEnd(EntityID& entity, const int& index)
+{
+ 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+
+	ParticleComponent* pc = registry.GetComponent<ParticleComponent>(entity);
+	if (pc != nullptr)
+	{
+		pc->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
+}
+
 void ChargeColorFlash(EntityID& entity, const int& index)
 {
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
@@ -670,34 +682,81 @@ void CreateLandingIndicator(EntityID& entity, const int& index)
 void PlayBossIntroVoiceLine(EntityID& entity, const int& index)
 {
 	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
-	//bossSound->Play();
 	//Play sounds here
-	int randomLine = rand();
+	int randomLine = rand() % 3;
+	switch (randomLine)
+	{
+	case 0:
+		bossSound->Play(Boss_APunyMortal, Channel_Extra);
+		break;
+	case 1:
+		bossSound->Play(Boss_Heathen, Channel_Extra);
+		break;
+	case 2:
+		bossSound->Play(Boss_AngryIntroGrunt, Channel_Extra);
+		break;
+	}
 }
 
 void PlayBossIntroSlam(EntityID& entity, const int& index)
 {
 	//Play slam sound here when landing
 	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
-	//bossSound->Play();
+	bossSound->Play(Boss_Slam, Channel_Base);
 }
 
 void PlayImpIntroTeleport(EntityID& entity, const int& index)
 {
 	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
-	//impSound->Play();
+	impSound->Play(Imp_Teleport, Channel_Base);
 }
 
 void PlayImpIntroLaugh(EntityID& entity, const int& index)
 {
 	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
-	//impSound->Play();
+	impSound->Play(Imp_AttackCharge, Channel_Base);
+}
+
+void PlayHellhoundIntroAttack(EntityID& entity, const int& index)
+{
+	SoundComponent* hellhoundSound = registry.GetComponent<SoundComponent>(entity);
+	hellhoundSound->Play(Hellhound_Attack, Channel_Base);
+}
+
+void PlayHellhoundIntroBreathIn(EntityID& entity, const int& index)
+{
+	SoundComponent* hellhoundSound = registry.GetComponent<SoundComponent>(entity);
+	hellhoundSound->Play(Hellhound_Inhale, Channel_Base);
+}
+
+void PlayHellhoundIntroBreathOut(EntityID& entity, const int& index)
+{
+	SoundComponent* hellhoundSound = registry.GetComponent<SoundComponent>(entity);
+	hellhoundSound->Play(Hellhound_Flame, Channel_Base);
+}
+
+void PlayPlayerBossVoiceLine(EntityID& entity, const int& index)
+{
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	if (sfx != nullptr)
+	{
+		int soundToPlay = rand() % 2;
+		switch (soundToPlay) //Play player boss encounter sound
+		{
+		case 0:
+			sfx->Play(Player_BringItOn, Channel_Extra);
+			break;
+		case 1:
+			sfx->Play(Player_ThisWillBeFun, Channel_Extra);
+			break;
+		}
+	}
 }
 
 void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
 {
 	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
-	//minotaurSound->Play();
+	minotaurSound->Play(Minotaur_Attack, Channel_Base);
 }
 
 void RemoveEnemy(EntityID& entity, const int& index)

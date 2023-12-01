@@ -59,4 +59,4 @@ void SetScoreboardUI(EntityID stage);
 
 
 
-void SetupEnemyNavigationHelper();
+void SetupEnemyNavigationHelper(bool level8);

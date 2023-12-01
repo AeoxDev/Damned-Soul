@@ -43,7 +43,7 @@ void LoadLevel6()
 
 	EntityID mouse = registry.CreateEntity();
 
-	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();

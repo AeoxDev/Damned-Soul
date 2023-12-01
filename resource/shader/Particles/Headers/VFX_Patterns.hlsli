@@ -106,16 +106,44 @@ in float2 uv
     return AlphaBlend(backBuffer, alphaMask, colorizedProjectile.rgb);
 }
 
-// REQUIRES: VFX_NOISES & VFX_SHAPES
-float4 VFXSpawnCrystals(
+// REQUIRES: VFX_Noises & VFX_Shapes
+float4 VFXFireBallEmpowered(
 in float4 backBuffer,
 in float time,
 in float2 uv
 )
 {
+    // Pan the distortion Textures
+    float panGNoise = noiseTexture_in.Sample(WrapSampler, UVRotate(uv, time * 15.6f, 0.8f)).g;
+    float panVornoi = noiseTexture_in.Sample(WrapSampler, UVRotate(uv, time * -5.0f, 0.5f)).r;
+    
+    // Distort UV channels
+    float2 fireUV = lerp(lerp(panGNoise, panVornoi, -0.31f), uv, 0.9f);
+    
+    // Create Alpha Mask
+    float alphaMask = shapeTexture_in.Sample(WrapSampler, fireUV).g;
+    
+    // Mask magic
+    float4 subtractionMask = (alphaMask - (alphaMask * panVornoi)) * float4(0.0f, 0.75f, 1.0f, 0.0f);
+    float4 multiplicationMask = (alphaMask - (alphaMask * (panVornoi * 0.49f))) - float4(0.3f, 0.34f, 0.0f, 1.0f);
+    
+    // Colors the projectile
+    float4 colorizedProjectile = multiplicationMask + subtractionMask;
+    
+    return AlphaBlend(backBuffer, alphaMask, colorizedProjectile.rgb);
+}
+
+// REQUIRES: VFX_NOISES & VFX_SHAPES
+float4 VFXSpawnCrystals(
+in float4 backBuffer,
+in float time,
+in float2 uv,
+float dissippateSpeed = 0.25f
+)
+{
     // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THIS VALUE
     // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
-    float dissippateValue = 0.25f;
+    float dissippateValue = dissippateSpeed;
     
     // The panning textures
     float4 panCaustics = (float4(0.0f, 0.6666667f, 1.0f, 1.0f) * (3.76f * SamplePolarCoordinateTexture(noiseTexture_in, WrapSampler, time, uv, 0.04f, -0.25f, 0.39f).b));
@@ -125,7 +153,7 @@ in float2 uv
     float4 colorizedSpawn = panCaustics + rotateCaustics;
     
     //Alpha mask
-    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * sin(time * dissippateValue)).g;
+    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * (1.0f - clamp(time * dissippateValue, 0.0f, 1.0f))).g;
     
     // Making Alpha disappear
     float timedMask = alphaMask * shapeTexture_in.Sample(WrapSampler, uv).g;
@@ -137,12 +165,13 @@ in float2 uv
 float4 VFXSpawnImp(
 in float4 backBuffer,
 in float time,
-in float2 uv
+in float2 uv,
+in float dissippateSpeed = 0.9f
 )
 {
     // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THIS VALUE
     // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
-    float dissippateValue = 0.75f;
+    float dissippateValue = dissippateSpeed;
     
     // The panning textures
     float4 panCaustics = (float4(1.0f, 0.7675428f, 0.0f, 0.0f) * (3.76f * SamplePolarCoordinateTexture(noiseTexture_in, WrapSampler, time, uv, 0.04f, -0.25f, 0.39f).b));
@@ -164,12 +193,13 @@ in float2 uv
 float4 VFXSpawnEmpoweredImp(
 in float4 backBuffer,
 in float time,
-in float2 uv
+in float2 uv,
+in float dissippateSpeed = 0.9f
 )
 {
     // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THIS VALUE
     // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
-    float dissippateValue = 0.75f;
+    float dissippateValue = dissippateSpeed;
     
     // The panning textures
     float4 panCaustics = (float4(0.2171591f, 0.754717f, 0.6784216f, 0.0f) * (3.76f * SamplePolarCoordinateTexture(noiseTexture_in, WrapSampler, time, uv, 0.04f, -0.25f, 0.39f).b));

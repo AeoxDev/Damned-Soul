@@ -42,7 +42,7 @@ void LoadLevel4()
 		 2.f, 2.f, 0.f,  0.f,  -1.f,  true, true,  true,
 		true, true,  false);
 
-	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	TransformComponent* stc = registry.AddComponent<TransformComponent>(stage);
 	stc->scaleX = 1.0f;

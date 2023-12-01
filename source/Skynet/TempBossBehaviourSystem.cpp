@@ -208,6 +208,8 @@ bool TempBossBehaviourSystem::Update()
 					{
 						// SHOCKWAVE BABY
 						tempBossComponent->willDoShockWave = true;
+						enemyAnim->aAnimTimeFactor = 0.5f; //Elliot comment: This might need to be changed when timePower changes
+						enemyAnim->aAnimTime = 0.0f;
 					}
 
 					//well, nothing happened....maybe next time
@@ -255,8 +257,17 @@ bool TempBossBehaviourSystem::Update()
 					tempBossComponent->shockwaveChanceCounter = 0.f;
 					tempBossComponent->shockwaveChargeCounter += GetDeltaTime();
 
+					//Animation setup
+					enemyAnim->aAnim = ANIMATION_ATTACK;
+					enemyAnim->aAnimIdx = 1;
+					enemyAnim->aAnimTimePower = 1.0f;
+					
+
 					if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown * 0.8f && tempBossComponent->isBlinking == false)
 					{
+						// play stomp animation
+						enemyAnim->aAnimTimeFactor = 1.7f;
+						
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, nullptr, BossBlinkBeforeShockwave, tempBossComponent->shockWaveChargeCooldown * 0.2f, BossResetBeforeShockwave);
 					}
 					else if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown) // Dew it..
@@ -270,6 +281,7 @@ bool TempBossBehaviourSystem::Update()
 					}
 
 					TransformDecelerate(enemyEntity);
+					enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 					continue; // dont chase
 				}
 

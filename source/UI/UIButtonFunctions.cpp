@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "MemLib/ML_Map.hpp"
 #include "Relics/Utility/RelicFuncInputTypes.h"
+#include "UI/HP_BarHelper.h"
 
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
@@ -96,20 +97,6 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 			break;
 		case 6: //To stage 4
 		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player); //Move this to after boss cutscene is done
-			if (sfx != nullptr)
-			{
-				int soundToPlay = rand() % 2;
-				switch (soundToPlay) //Play player boss encounter sound
-				{
-				case 0:
-					sfx->Play(Player_BringItOn, Channel_Extra);
-					break;
-				case 1:
-					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
-					break;
-				}
-			}
 			backgroundMusic->Play(Music_Boss, Channel_Base);
 			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
 			break;
@@ -132,20 +119,6 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 			break;
 		case 16: //To stage 9
 		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
-			if (sfx != nullptr)
-			{
-				int soundToPlay = rand() % 2;
-				switch (soundToPlay) //Play player boss encounter sound
-				{
-				case 0:
-					sfx->Play(Player_BringItOn, Channel_Extra);
-					break;
-				case 1:
-					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
-					break;
-				}
-			}
 			backgroundMusic->Play(Music_Boss, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
@@ -595,11 +568,10 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 						playerRelics->gridPos.x = 0;
 					}
 
-					playerUI->AddImage(relicWindow->shopRelics[i]->m_filePath, DSFLOAT2(playerUI->m_Images[2].baseUI.GetPosition().x /*+(0.06f * playerRelics->gridPos.x)*/,
-						uiPixelCoords.y - (0.12f * playerRelics->gridPos.y) - 0.02f), DSFLOAT2(1.5f, 1.5f), false);
+					uint32_t idx = AddNewRelicToUI(stateManager.player, relicWindow->shopRelics[i]);
 
-					playerHover->Add(playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetPixelCoords(),
-						playerUI->m_Images[playerUI->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnHover::PlayerRelic);
+					playerHover->Add(playerUI->m_Images[idx].baseUI.GetPixelCoords(),
+						playerUI->m_Images[idx].baseUI.GetBounds(), UIFunctions::OnHover::PlayerRelic);
 
 					playerRelics->relics[playerRelics->currentRelics] = relicWindow->shopRelics[i];
 

@@ -61,15 +61,16 @@ void LoadLevel1()
 
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
 	/*EntityID particles = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 1.5f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::ACID);
+	registry.AddComponent<ParticleComponent>(particles, 10.0f, 50.0f, 5.5f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::PORTAL);
 	
 	TransformComponent tComp;
-	tComp.positionX = -122.0f;
+	tComp.positionX = 0.0f;
 	tComp.positionY = 0.0f;
-	tComp.positionZ = 61.0f;
+	tComp.positionZ = 0.0f;
 	registry.AddComponent<TransformComponent>(particles, tComp);*/
 		
-	/*EntityID particlesVFX = registry.CreateEntity();
+	/*EntityID particlesVFX = regist
+	ry.CreateEntity();
 	registry.AddComponent<ParticleComponent>(particlesVFX, 50.0f, 50.0f, 3.0f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::FLAME);
 	TransformComponent tComp;
 	tComp.positionX = -102.0f;
@@ -108,7 +109,7 @@ void LoadLevel1()
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::skeleton, -118.0f, 0.f, 96.f);
 
 	
-	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 	
 
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f);
