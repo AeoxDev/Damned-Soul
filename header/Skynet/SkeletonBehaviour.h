@@ -12,11 +12,11 @@ struct SkeletonBehaviour
 	float timeCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	float attackTimer = 0.f;
-	float attackStunDurationCounter = 0.f;
 	const float attackStunDuration = 0.8f;
+	float attackStunDurationCounter = attackStunDuration;
 	int attackHitboxID = 2;
 
-	float meleeDistance = 2.5f;
+	float meleeDistance = 6.0f;
 
 	//how often pathfinding
 	float updatePathCounter = 1.8f;

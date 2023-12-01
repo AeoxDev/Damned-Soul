@@ -24,6 +24,12 @@ private:
 	// Used to alter speed when performing actions such as attacking
 	float m_speedMult = 1.0f;
 
+	//// Dash
+	//// Base dash value
+	//float m_baseDashValue = 2.5f;
+	//// Bonus dash value
+	//float m_bonusDashValue = 0.f;
+
 
 
 //Weapon stats
@@ -106,14 +112,23 @@ public:
 // Speed
 	// Get the current speed
 	float GetSpeed() const;
+	float GetBaseSpeed() const;
+	float GetBonusSpeed() const;
 	// Update the entity's bonus speed
 	void UpdateBonusSpeed(const float delta);
 	// Set the entity's speed mult
 	void SetSpeedMult(const float mult);
+	
+	//// Get the current dash distance
+	//float GetDashDistance() const;
+	//// Update Bonus Dash
+	//void UpdateBonusDashDistance(const float delta);
 
 // Offensive
 	// Get the base damage of the entity
 	float GetBaseDamage() const;
+	// update the entity's base damage
+	void UpdateBaseDamage(const float delta);
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage
@@ -139,6 +154,16 @@ private:
 	// Set to private since it is important that any update is carried on through UpdateSouls
 	int souls = 0;
 	int totalSouls = 0;
+
+	// Private dash variables
+	int m_remainingDashes = 1;
+	int m_baseDashes = 1;
+	int m_bonusDashes = 0;
+	float m_baseDashValue = 2.5f;
+	float m_bonusDashValue = 0.f;
+	float m_dashCooldown = 1.0f;
+	float m_dashCounter = 0.0f; //When this is 0.0f we can dash, and when we dash it's plus'd by dashCooldown
+
 public:
 	int attackHitboxID = -1;
 	int softHitboxID = -1;
@@ -146,6 +171,7 @@ public:
 	int killingSpree = 0;
 	int killThreshold = 0;
 	bool portalCreated = false;
+	bool isDashing = false;
 
 	//New additions because of player attack chains
 	float timeSinceLastAttack = -1.0f;
@@ -162,6 +188,29 @@ public:
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
 	int GetTotalSouls() const;
+
+	// Update how much additional dash distance the player get
+	void UpdateBonusDashScaling(const float delta);
+	// Update how many bonus dashes the player has
+	void UpdateBonusDashes(const int delta);
+	// Consume a dash charge if able, and return wether it was succesful
+	bool ConsumeDash();
+	// Reset the number of available dashes
+	void DashCooldown(const float dt);
+	// Get the current dash value
+	float GetDashValue();
+
+	// Zero the player component's bonuses
+	void ZeroBonusStats();
+};
+
+struct ShatterComponent
+{
+	float time = 0.f;
+	float strength = 1.f;
+	bool reverse = false;
+	bool useOrigin = false; //Displaces from origin point, displaces along face normal if false
+	float origin[4] = {0.f, 0.f, 0.f, 0.f};
 };
 
 struct ControllerComponent
@@ -203,6 +252,11 @@ struct CollisionParamsComponent
 	CollisionParamsComponent(OnCollisionParameters params) : params(params) {}
 };
 
+struct NavigationTrashComponentYouMustAccept
+{
+
+};
+
 //
 struct EnemyComponent
 {
@@ -213,3 +267,8 @@ struct EnemyComponent
 	int type = -1;
 	EnemyComponent(int sc, int t) : soulCount(sc), type(t) {}
 };
+
+void SetGodModeFactor(float value);
+float GetGodModeFactor();
+bool GetGodModePortal();
+void SetGodModePortal(bool createPortal);

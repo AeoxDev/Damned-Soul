@@ -3,77 +3,97 @@
 #include "Relics/RelicFunctions.h"
 #include "MemLib/ML_Vector.hpp"
 
-namespace UIFunc
+namespace UIFunctions
 {
-	// Start the next level
-	void LoadNextLevel(void* args, int a);
 
-	// Go from start menu to play
-	void MainMenu_Start(void* args, int a);
+	namespace MainMenu
+	{
+		void Start(void* args, int a);
 
-	// Go from start menu to settings
-	void MainMenu_Settings(void* args, int a);
+		void SetSettings(void* args, int a);
 
-	// Go from start menu to settings
-	void MainMenu_Credits(void* args, int a);
+		void SetCredits(void* args, int a);
 
-	// Quit the game from the start menu
-	void MainMenu_Quit(void* args, int a);
+		void Quit(void* args, int a);
 
-	// Resume game from pause state
-	void PauseState_ResumeGame(void* args, int a);
+	}
 
-	// Return to main menu from pause state
-	void PauseState_MainMenu(void* args, int a);
+	namespace Game
+	{
+		void LoadNextLevel(void* args, int a);
 
-	// Return to main menu from game state
-	void Game_MainMenu(void* args, int a);
+		void ExitShopCutscene(void* args, int a);
 
-	// Go back from the credits menu to the main menu
+		void SetMainMenu(void* args, int a);
+
+	}
+
+	namespace Settings
+	{
+		void Back(void* args, int a);
+
+		void SetLowRes(void* args, int a);
+
+		void SetMediumRes(void* args, int a);
+
+		void SetHighRes(void* args, int a);
+
+		void SetFullscreen(void* args, int a);
+
+		void SwitchTimer(void* args, int a);
+
+		namespace Volume
+		{
+			void Press(void* args, int a);
+			
+			void Release(void* args, int a);
+		}
+	}
+
+
 	void Credits_Back(void* args, int a);
-
-	// Go back from the settings menu to the main menu
-	void Settings_Back(void* args, int a);
-
-	// Change to low Resolution from settings
-	void Settings_LowRes(void* args, int a);
 	
-	// Change to medium Resolution from settings
-	void Settings_MediumRes(void* args, int a);
+	namespace Pause
+	{
+		void Resume(void* args, int a);
 
-	// Change to high Resolution from settings
-	void Settings_HighRes(void* args, int a);
+		void SetSettings(void* args, int a);
 
-	// Change to fullscreen from settings
-	void Settings_Fullscreen(void* args, int a);
+		void Back(void* args, int a);
 
-	// Turn on/off timer from settings
-	void Settings_Timer(void* args, int a);
+		void SetMainMenu(void* args, int a);
+	}
 
-	void LoadParticleLevel(void* args);
-	
-	void SelectRelic(void* args, int index);
+	namespace OnClick
+	{
+		void None(void* args, int index);
 
-	void BuyRelic(void* args, int index);
+		void SelectRelic(void* args, int index);
 
-	// Lock a relic in shop
-	void LockRelic(void* args, int index);
+		void LockRelic(void* args, int index);
 
-	// Re-roll a relic in shop
-	void RerollRelic(void* args, int index);
+		void RerollRelic(void* args, int index);
 
-	void EmptyOnClick(void* args, int index);
+		void LockRelic(void* args, int index);
 
-	void EmptyOnHover(void* args, int index, bool hover);
+		void UpgradeWeapon(void* args, int index);
 
-	// Heal the player
-	void HealPlayer(void* args, int index);
+		void BuyRelic(void* args, int index);
 
-	void HoverImage(void* args, int index, bool hover);
+		void HealPlayer(void* args, int index);
+	}
 
-	void HoverShopButtons(void* args, int index, bool hover);
+	namespace OnHover
+	{
+		void None(void* args, int index, bool hover);
 
-	void HoverShopRelic(void* args, int index, bool hover);
+		void Image(void* args, int index, bool hover);
 
-	void HoverPlayerRelic(void* args, int index, bool hover);
+		void ShopButton(void* args, int index, bool hover);
+
+		void ShopRelic(void* args, int index, bool hover);
+
+		void PlayerRelic(void* args, int index, bool hover);
+	}
+
 }

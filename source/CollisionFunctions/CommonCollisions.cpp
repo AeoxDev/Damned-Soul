@@ -15,7 +15,7 @@
 
 #include "UIComponents.h"
 
-#define SOFT_COLLISION_FACTOR 0.5f
+#define SOFT_COLLISION_FACTOR 0.25f
 
 
 void NoCollision(OnCollisionParameters &params)
@@ -28,6 +28,7 @@ void SoftCollision(OnCollisionParameters& params)
 	//Take both entities transform
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
+	
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
 	
@@ -76,9 +77,20 @@ void HardCollision(OnCollisionParameters& params)
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
 	assert(transform1 != nullptr && transform2 != nullptr);//No transform components added!, please add TransformComponent to your entities
 	//calc dist and direction from eachother. Push out.
+	if (transform1->positionX == transform2->positionX && transform1->positionZ == transform2->positionZ)
+	{
+		float positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionX += positionOffset;
+		positionOffset = 1.0f * GetDeltaTime() * ((float)(rand() % 3) - 1.0f);
+		params.pos1X += positionOffset;
+		transform1->positionZ += positionOffset;
 
+
+	}
 	float radius1 = 0.0f;
 	HitboxComponent* hitbox1 = registry.GetComponent<HitboxComponent>(params.entity1);
+	--hitbox1->nrMoveableCollisions;
 
 	if (params.hitboxID1 < SAME_TYPE_HITBOX_LIMIT)//For circular
 	{
@@ -330,6 +342,8 @@ bool IsDamageCollisionValid(OnCollisionParameters& params)
 
 void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 {
+	//transform 1 is the one hitting
+	// transform 2 is getting hit 
 	//Get relevant components
 	StatComponent* stat1 = registry.GetComponent<StatComponent>(params.entity1);
 	StatComponent* stat2 = registry.GetComponent<StatComponent>(params.entity2);
@@ -339,9 +353,9 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	//Camera shake
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
 
-	//Hitstop, pause both animations for extra effect
+	//Hitstop, pause both animations for extra effect (Edit: Pauses our own animation, shakes the enemy a bit but no longer pauses them)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
-	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, HitStop, FREEZE_TIME, nullptr, 0);
 
 	//Freeze both entities as they hit eachother for extra effect
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
@@ -355,52 +369,24 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, ResetSquashStretch, SquashStretch, FREEZE_TIME, ResetSquashStretch, 0, 1);
 
 	//Knockback
+	
 	TransformComponent* transform1 = registry.GetComponent<TransformComponent>(params.entity1);
 	float frictionKnockbackFactor1 = stat1->m_acceleration / stat1->m_baseAcceleration;
 	float frictionKnockbackFactor2 = stat2->m_acceleration / stat2->m_baseAcceleration;
 	TransformComponent* transform2 = registry.GetComponent<TransformComponent>(params.entity2);
-	AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
-	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));
-}
+	if (transform2->mass != 666.f)
+	{
+		float massFactor = std::sqrt(transform1->mass / transform2->mass);
+		float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
+		float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
+		float dx, dz;
+		CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
-void PlayHitSound(OnCollisionParameters& params)
-{
-	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(params.entity2);
-	if (enemy)
-	{
-		enemy->lastPlayer = params.entity1;
-		SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-		switch (enemy->type)
-		{
-		case EnemyType::hellhound:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Hellhound_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::eye:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Eye_Hurt, Channel_Base);
-			}
-			break;
-		case EnemyType::skeleton:
-			if (registry.GetComponent<StatComponent>(params.entity2)->GetHealth() > 0)
-			{
-				sfx->Play(Skeleton_Hurt, Channel_Base);
-			}
-			break;
-		}
+		AddKnockBack(params.entity1, selfKnockback * dx, selfKnockback * dz);
+		AddKnockBack(params.entity2, appliedKnockback * dx, appliedKnockback * dz);
 	}
-	else
-	{
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(params.entity2);
-		if (player != nullptr)
-		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(params.entity2);
-			sfx->Play(Player_Hurt, Channel_Base);
-		}
-	}
+	/*AddKnockBack(params.entity1, SELF_KNOCKBACK_FACTOR * stat1->GetKnockback() * params.normal1X / (transform1->mass * frictionKnockbackFactor1) , stat2->GetKnockback() * params.normal1Z / (transform1->mass * frictionKnockbackFactor1));
+	AddKnockBack(params.entity2, stat1->GetKnockback() * params.normal2X / (transform2->mass * frictionKnockbackFactor2), frictionKnockbackFactor2 * stat1->GetKnockback() * params.normal2Z / (transform2->mass * frictionKnockbackFactor2));*/
 }
 
 void DashCollision(OnCollisionParameters& params)
@@ -416,9 +402,6 @@ void DashCollision(OnCollisionParameters& params)
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if(registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -455,9 +438,6 @@ void AttackCollision(OnCollisionParameters& params)
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
 	else
 		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -505,9 +485,6 @@ void ShockWaveAttackCollision(OnCollisionParameters& params)
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
-	//Play entity hurt sounds
-	PlayHitSound(params);
-
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
 		RedrawUI();
@@ -536,15 +513,16 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 			return;
 		}
 	}
-
+	HitboxComponent* hitbox2 = registry.GetComponent<HitboxComponent>(params.entity2);
+	if (hitbox2->circularFlags[params.hitboxID2].canTakeDamage == false)
+	{
+		return;
+	}
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
-
-	//Play entity hurt sounds
-	PlayHitSound(params);
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -557,6 +535,70 @@ void LoadNextLevel(OnCollisionParameters& params)
 {
 	if (params.entity2.index == stateManager.player.index)
 	{
+		CancelTimedEvents(params.entity2);
+		FallofComponent* fallof = registry.AddComponent<FallofComponent>(params.entity2);
+		switch (stateManager.activeLevel)
+		{
+		case 1://Levl1
+			fallof->fallofX = -317.f;
+			fallof->fallofZ = 137.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 3://Level 2
+			fallof->fallofX = -318;
+			fallof->fallofZ = 347.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 5://Level 3
+			fallof->fallofX = -299.f;
+			fallof->fallofZ = 164.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 7://Level 4
+			fallof->fallofX = -160.f;
+			fallof->fallofZ = 120.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 9://Level 5
+			fallof->fallofX = -395.f;
+			fallof->fallofZ = 245.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 11://Level 6
+			fallof->fallofX = -477.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 13://Level 7
+			fallof->fallofX = -321.f;
+			fallof->fallofZ = 394.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		case 15://Level 8
+			fallof->fallofX = -1303.f;
+			fallof->fallofZ = 506.f;
+
+			CutsceneFallStage(params.entity2, 0);
+			return;
+			break;
+		default:
+			break;
+		}
+
 		//not final level portal
 		if (stateManager.activeLevel != stateManager.finalLevel)
 		{

@@ -31,15 +31,18 @@ bool FrozenBehaviourSystem::Update()
 				thanosSnap = true;
 				if (frozenComponent->type == EnemyType::frozenHellhound)
 				{
-					SetupEnemy(EnemyType::hellhound, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ);
+					SetupEnemy(EnemyType::empoweredHellhound, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,
+						6969, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 				}
 				else if (frozenComponent->type == EnemyType::frozenImp)
 				{
-					SetupEnemy(EnemyType::imp, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ);
+					SetupEnemy(EnemyType::empoweredImp, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,
+						6969, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 				}
 				else if (frozenComponent->type == EnemyType::frozenEye)
 				{
-					SetupEnemy(EnemyType::eye, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ);
+					SetupEnemy(EnemyType::eye, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,
+						6969, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 				}
 			}
 		}
@@ -47,6 +50,7 @@ bool FrozenBehaviourSystem::Update()
 		{
 			RemoveEnemy(enemyEntity, 1);
 		}
+
 	}
 
 	return true;

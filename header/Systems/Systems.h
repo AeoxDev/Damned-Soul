@@ -26,6 +26,14 @@ class AntiAliasingSystem : public System	// DOING
 {
 	bool Update();
 };
+class ShatterSystem : public System
+{
+	bool Update();
+};
+class OutlineSystem : public System
+{
+	bool Update();
+};
 class OnClickSystem : public System
 {
 	bool Update();
@@ -54,6 +62,10 @@ class AudioSystem : public System
 {
 	bool Update();
 };
+class StageVoiceLineSystem : public System
+{
+	bool Update();
+};
 
 class UIRenderSystem : public System
 {
@@ -71,7 +83,11 @@ class UIShopSystem : public System
 {
 	bool Update();
 };
-class UIRunTime : public System
+class UIRunTimeSystem : public System
+{
+	bool Update();
+};
+class UISliderSystem : public System
 {
 	bool Update();
 };
@@ -126,15 +142,15 @@ class ImpBehaviourSystem : public System
 	bool Update();
 };
 
-class ZacBehaviourSystem : public System
+class MinotaurBehaviourSystem : public System
 {
 	bool Update();
 };
 
-//class MinotaurBehaviourSystem : public System
-//{
-//	bool Update();
-//};
+class ZacBehaviourSystem : public System
+{
+	bool Update();
+};
 
 class TempBossBehaviourSystem : public System
 {
@@ -167,6 +183,11 @@ class StateSwitcherSystem : public System
 };
 
 class ProjectileSystem : public System
+{
+	bool Update();
+};
+
+class NavigationSystem : public System
 {
 	bool Update();
 };

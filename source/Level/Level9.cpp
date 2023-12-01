@@ -22,8 +22,23 @@ void LoadLevel9()
 	float greenMult = 1.0f;
 	float blueMult = 1.1f;
 
-	//This is the eye stage. Lots of acid in a grey environment.
-	EntityID stage = SetUpStage(redMult, greenMult, blueMult, redAdd, greenAdd, blueAdd, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.ra = redAdd;
+	stageVars.ga = greenAdd;
+	stageVars.ba = blueAdd;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 9;
+	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level9"); //Proximity hitbox (Added by Joaquin)
+
+	if (SetupVFXTorches("LV9Torch.dss", false, true) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV9Torch\nOr file is not written properly.");
+	}
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -33,23 +48,10 @@ void LoadLevel9()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	/*SetupEnemy(EnemyType::skeleton, -25.f, 0.f, 50.f);
-	SetupEnemy(EnemyType::skeleton, 50.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, -20.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 30.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::eye, -50.f, 0.f, 45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 0.f, 25.f);
-	SetupEnemy(EnemyType::eye, 15.f, 0.f, -45.f);
-	SetupEnemy(EnemyType::eye, 35.f, 1.f, 45.f);
-	SetupEnemy(EnemyType::eye, -25.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f);
-	SetupEnemy(EnemyType::eye, -55.f, 1.f, -35.f);
-	SetupEnemy(EnemyType::hellhound, -32.f, 1.f, 28.f);
-	SetupEnemy(EnemyType::hellhound, 13.f, 1.f, -12.f);*/
-	EntityID cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 0.f, 0.f, 0.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 6969, 2.f, 2.f, 2.f);
-	Stage3IntroScene(cutsceneEnemy, 0);
+
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
+
+	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
@@ -61,91 +63,24 @@ void LoadLevel9()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+
+	
+
 	//Light
 	float redLight = 0.05f;
 	float greenLight = 0.05f;
 	float blueLight = 0.25f;
 
-	SetDirectionLight(1.0f, 1.1f, 1.0f, -1.6f, -2.0f, 1.0f);
+
+
 	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
-	//Add static hazards on the where player does not spawn
-	int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_ACID, 1.f, 0.f, 0.5f, 0.f, 0.2f, 1.2f, 0.2f, 1.5f);
-		/*bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 100) - 50.0f;
-			float randZ = (float)(rand() % 100) - 50.0f;
-			if (randX * randX + randZ * randZ > 80)
-			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard = registry.CreateEntity();
-				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->shared.colorAdditiveRed = 0.0f;
-				hazardModel->shared.colorAdditiveGreen = 0.5f;
-				hazardModel->shared.colorAdditiveBlue = 0.0f;
-				hazardModel->shared.colorMultiplicativeRed = 0.2f;
-				hazardModel->shared.colorMultiplicativeGreen = 1.2f;
-				hazardModel->shared.colorMultiplicativeBlue = 0.2f;
-				hazardModel->shared.gammaCorrection = 1.5f;
-				hazardModel->castShadow = false;
-				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.5f;
-				hazardTransform->positionZ = randZ;
-				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 1.0f;
-				hazardTransform->scaleZ = randScaleZ;
-				hazardTransform->facingX = cosf((float)rand());
-				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_ACID);
-
-				succeded = true;
-			}
-		}*/
-	}
-	nrHazards = 1;//Big ice sheet
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
-		/*bool succeded = false;
-		float randX = (float)(rand() % 32) - 16.0f;
-		float randZ = (float)(rand() % 32) - 16.0f;
-		float randScaleX = 64.0f + (float)((rand() % 100) * 0.1f);
-		float randScaleZ = 64.0f + (float)((rand() % 100) * 0.1f);
-		EntityID hazard = registry.CreateEntity();
-		ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-		hazardModel->shared.colorAdditiveRed = 0.1f;
-		hazardModel->shared.colorAdditiveGreen = 0.1f;
-		hazardModel->shared.colorAdditiveBlue = 0.5f;
-		hazardModel->shared.colorMultiplicativeRed = 0.5f;
-		hazardModel->shared.colorMultiplicativeGreen = 0.5f;
-		hazardModel->shared.colorMultiplicativeBlue = 1.5f;
-		hazardModel->shared.gammaCorrection = 1.5f;
-		hazardModel->castShadow = false;
-		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-		hazardTransform->positionX = randX;
-		hazardTransform->positionY = 0.4f;
-		hazardTransform->positionZ = randZ;
-		hazardTransform->scaleX = randScaleX;
-		hazardTransform->scaleY = 1.0f;
-		hazardTransform->scaleZ = randScaleZ;
-		hazardTransform->facingX = cosf((float)rand());
-		hazardTransform->facingZ = sinf((float)rand());
-		AddStaticHazard(hazard, HAZARD_ICE);
-
-		succeded = true;*/
-	}
-	RenderGeometryIndependentCollision(stage);
-
 	stateManager.stage = stage;
 	SetInPlay(true);
+	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFallUnskippable, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, FinalBossIntroCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

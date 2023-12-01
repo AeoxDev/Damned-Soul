@@ -7,24 +7,21 @@
 #include "Registry.h"
 #include "Components.h"
 #include "UIButtonFunctions.h"
+#include "Input.h"
 #include <time.h>
 
 void LoadLevel(int level)
 {
+	stateManager.activeLevel = level;
 	std::srand((unsigned)time(NULL));
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);
 	SetInShop(false);
 	SetInMainMenu(false);
-	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
-	for (uint32_t i = 0; i < relics.size(); ++i)
-	{
-		relics[i](nullptr);
-	}
 
 	RedrawUI();
 	Camera::ResetCamera();
-
+	SetGodModePortal(false);
 	UnloadEntities(ENT_PERSIST_LOWEST);
 	//Bugfix: Reset current speed to stop sliding during shop.
 	if (stateManager.player.index != -1)
@@ -45,6 +42,7 @@ void LoadLevel(int level)
 	Camera::SetCutsceneMode(false);
 	switch (level)
 	{
+	case -1: LoadParticleLevel(); break; //Debug level for particles
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;//Imp stage
@@ -66,5 +64,12 @@ void LoadLevel(int level)
 		UnloadEntities(ENT_PERSIST_LEVEL);//Reset game
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
+	}
+
+	// Load swaps after switching
+	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
+	for (uint32_t i = 0; i < relics.size(); ++i)
+	{
+		relics[i](nullptr);
 	}
 }

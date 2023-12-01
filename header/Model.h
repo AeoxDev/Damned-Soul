@@ -117,6 +117,10 @@ public:
 	// Render all the model's submeshes one after another
 	void RenderAllSubmeshes(const ANIMATION_TYPE aType = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f);
 
+	// Overload for when you just want to call "DrawIndexed"
+	void RenderMeshes();
+
+
 	void Free();
 };
 

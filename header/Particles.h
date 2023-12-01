@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include "MemLib/PoolPointer.hpp"
-#include "ParticleComponent.h"
+#include "Components.h"
 #include "GameRenderer.h"
 #include "D3D11Helper\IDX_Types.h"
 
@@ -26,7 +26,14 @@ struct Particle
 	float rotationZ;
 	DirectX::XMFLOAT3 rgb;
 	float size;
+	int patterns;
+	int VFX;
 };
+
+//struct ExtraData
+//{
+//	int start;
+//};
 
 struct ParticleMetadata
 {
@@ -57,7 +64,6 @@ namespace Particles
 	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
 	extern std::vector<int> m_unoccupiedParticles;
 
-
 	void SwitchInputOutput();
 	void InitializeParticles();
 	void ReleaseParticles();
@@ -69,14 +75,22 @@ namespace Particles
 	ParticleMetadata GetMetadataAtIndex(int metadataSlot);
 
 	//Calls for D3D11Helper to set the compute shader and the resources it requires
-	void PrepareParticleCompute(RenderSetupComponent renderStates[8]);
+	void PrepareParticleCompute();
 	//Calls for D3D11Helper to reset the compute shader and copy the resources of the SRV to vertex buffer
-	void FinishParticleCompute(RenderSetupComponent renderStates[8]);
+	void FinishParticleCompute();
 	//Calls for D3D11Helper to set the shaders and resources requiered for the particle pass
-	void PrepareParticlePass(RenderSetupComponent renderStates[8]);
+	void PrepareParticlePass(int metadataSlot);
 	//Calls for D3D11Helper to reset the shaders and resources used by the particle pass
 	void FinishParticlePass();
+	//Calls for D3D11Helper to set the shaders and resources requiered for the VFX pass
+	//void PrepareVFXPass(RenderSetupComponent renderStates[8]);
+	////Calls for D3D11Helper to reset the shaders and resources used by the VFX pass
+	//void FinishVFXPass();
 
-	void UpdateSingularMetadata(int& metadataSlot);
+	void PrepareMeshPass(int metadataSlot);
+	void FinishMeshPass();
+
+	void UpdateStart(int& metadataSlot);
+	void UpdateVFXStart(int& metadataSlot);
 }
 

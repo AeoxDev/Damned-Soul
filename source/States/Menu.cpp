@@ -19,6 +19,7 @@
 
 void Menu::Setup()
 {
+	gameSpeed = 1.0f;
 	// Clear relics when entering the main menu
 	Relics::ResetRelics();
 	SetInMainMenu(true);
@@ -29,18 +30,19 @@ void Menu::Setup()
 	Camera::ResetCamera();
 
 	ResetRunTime();
-
+	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
+	int random = rand() % 10;//Level 1 thorugh 9
 	//Setup stage to rotate around
-	EntityID stage = SetUpStage(1.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f); //registry.CreateEntity();
+	StageSetupVariables stageVars;
+	stageVars.stageNr = random;
+	stageVars.scaleX = 1.0f;
+	stageVars.scaleY = 1.0f;
+	stageVars.scaleZ = 1.0f;
+	stageVars.offsetY = -.1f;
+	//stageVars.offsetX = 16.f;
+	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
 
-	// Stage POI
-	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(stage);
-	stageP->mode = POI_FORCE;
-	stageP->height = CAMERA_OFFSET_Y * -0.75f;
-	stageP->rotationY = 0.0f;
-	stageP->rotationRadius = -0.84f * CAMERA_OFFSET_Z;
-	stageP->rotationAccel = 0.08f;
-	SetDirectionLight(1.1f, 1.0f, .9f, -1.6f, -2.0f, 1.0f);
+
 
 	/*char ctexture[] = "3-1C.png";
 	char ltexture[] = "3-1L.png";
@@ -51,31 +53,10 @@ void Menu::Setup()
 
 	stateManager.activeLevel = 0;
 	AddTimedEventComponentStart(stage, 2.0f, LoopSpawnMainMenuEnemy, skeleton, 1);
-	EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
+	/*EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
 	SetHitboxIsPlayer(enemy, 1, true);
-	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);
+	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);*/
 
-	//Randomize enemies on screen max 6 of each'
-	for (size_t i = 0; i < 12; i++)
-	{
-		if (rand() % 8 == 0)//Dog, rare
-			RandomPlayerEnemy(hellhound);
-	}
-
-	for (size_t i = 0; i < 12; i++)
-	{
-		if (rand() % 16 == 0)//Eye, very rare
-			RandomPlayerEnemy(eye);
-	}
-
-	for (size_t i = 0; i < 12; i++)
-	{
-		if (rand() % 2 == 0)//Skeleton, common
-			RandomPlayerEnemy(skeleton);
-	}
-	if (rand() % 4096 == 0)//Boss, Pokemon Shiny rarity :)
-		RandomPlayerEnemy(tempBoss);
-	int random = rand() % 4;//Level 1, 2, 3
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
@@ -84,56 +65,62 @@ void Menu::Setup()
 	// Stage Model
 	ModelBonelessComponent* stageModel = registry.GetComponent<ModelBonelessComponent>(stage);
 	int nrHazards = 8;
-	switch (random)
+	// Stage POI
+	EntityID poi = registry.CreateEntity();
+	TransformComponent* poiPoint = registry.AddComponent<TransformComponent>(poi);
+	PointOfInterestComponent* stageP = registry.AddComponent<PointOfInterestComponent>(poi);
+	stageP->mode = POI_FORCE;
+	stageP->rotationY = 0.0f;
+	stageP->rotationAccel = 0.08f;
+	stageP->rotationRadius = -0.8f * CAMERA_OFFSET_Z;
+	stageP->height = -0.2f * CAMERA_OFFSET_Y;
+	switch (stageVars.stageNr)
 	{
 	case 0: //level 1
+	case 1: //Level 1
 		CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 		//CreatePointLight(lightholder, 0.8f, 0.0f, 0.0f, 70.0f, 20.0f, 35.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholder, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderTwo, 0.30f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderThree, 0.30f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderForth, 0.30f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-
-		// Shift color of map
-		stageModel->shared.colorMultiplicativeRed = 0.75f;
-		stageModel->shared.colorMultiplicativeGreen = 0.75f;
-		stageModel->shared.colorMultiplicativeBlue = 0.75f;
+		stageP->rotationRadius = -0.8f * CAMERA_OFFSET_Z;
+		stageP->height = -0.2f * CAMERA_OFFSET_Y;
+		poiPoint->positionX = -104.0f;
+		poiPoint->positionZ = -22.0f;
 		break;
-	case 1: //Lava
-		CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-		CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-		CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-		CreatePointLight(lightholderThree, 0.35f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-		CreatePointLight(lightholderForth, 0.35f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-
-		// Shift color of map
-		stageModel->shared.colorMultiplicativeRed = 1.4f;
-		stageModel->shared.colorMultiplicativeGreen = 1.2f;
-		stageModel->shared.colorMultiplicativeBlue = 0.8f;
-		stageModel->shared.colorAdditiveRed = 0.1f;
-		
-		for (size_t i = 0; i < nrHazards; i++)
-		{
-			SetUpHazard(HAZARD_LAVA, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.5f);
-		}
-		break;
-	case 2://Ice
+	case 2://level 2
 		CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
 		CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 		CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-
-		// Shift stage color
-		stageModel->shared.colorMultiplicativeRed = 1.2f;
-		stageModel->shared.colorMultiplicativeGreen = 1.0f;
-		stageModel->shared.colorMultiplicativeBlue = 1.4f;
-		stageModel->shared.colorAdditiveBlue = 0.1f;
-		nrHazards = 1;//Big ice sheet
-		for (size_t i = 0; i < nrHazards; i++)
-		{
-			SetUpHazard(HAZARD_ICE, 5.f, .1f, .1f, .5f, .5f, 0.5f, 1.5f, 1.5f);
-		}
+		stageP->rotationRadius = -0.8f * CAMERA_OFFSET_Z;
+		stageP->height = -0.2f * CAMERA_OFFSET_Y;
+		poiPoint->positionX = -115.0f;
+		poiPoint->positionZ = 94.0f;
+		break;
+	case 3://level 3
+		CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+		CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		stageP->rotationRadius = -0.8f * CAMERA_OFFSET_Z;
+		stageP->height = -0.2f * CAMERA_OFFSET_Y;
+		poiPoint->positionX = -142.0f;
+		poiPoint->positionZ = 72.0f;
+		break;
+	case 4://level 3
+		CreatePointLight(stage, 0.4f, 0.5f, 0.2f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+		CreatePointLight(lightholder, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderTwo, 0.10f, 0.0f, 0.3f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderThree, 0.10f, 0.0f, 0.3f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		CreatePointLight(lightholderForth, 0.10f, 0.0f, 0.3f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+		stageP->rotationRadius = -0.8f * CAMERA_OFFSET_Z;
+		stageP->height = -0.2f * CAMERA_OFFSET_Y;
+		poiPoint->positionX = -103.666f;
+		poiPoint->positionZ = 66.6f;
 		break;
 	default:
 		CreatePointLight(stage, 0.5f, 0.5f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
@@ -147,7 +134,7 @@ void Menu::Setup()
 	
 
 	
-	RenderGeometryIndependentCollision(stage);
+	
 	stateManager.stage = stage;
 	Camera::SetCutsceneMode(false);
 	AddTimedEventComponentStart(stage, (8.0f + (float)(rand() % 32))* (float)(rand() % 2), MainMenuIntroCutscene);
@@ -162,7 +149,7 @@ void Menu::SetupButtons()
 {
 	const int buttons = 4;
 
-	const char const texts[buttons][32] =
+	const char texts[buttons][32] =
 	{
 		"Start",
 		"Credits",
@@ -170,7 +157,7 @@ void Menu::SetupButtons()
 		"Quit"
 	};
 	
-	const DSFLOAT2 const positions[buttons] =
+	const DSFLOAT2 positions[buttons] =
 	{
 		{ -0.81f, -0.02f },
 		{ -0.81f, -0.28f },
@@ -178,7 +165,7 @@ void Menu::SetupButtons()
 		{ -0.81f, -0.8f }
 	};
 
-	const DSFLOAT2 const scales[buttons] =
+	const DSFLOAT2 scales[buttons] =
 	{
 		{ 0.7f, 0.6f },
 		{ 0.7f, 0.6f },
@@ -188,10 +175,10 @@ void Menu::SetupButtons()
 
 	void(* const functions[buttons])(void*, int) =
 	{
-		UIFunc::MainMenu_Start,
-		UIFunc::MainMenu_Credits,
-		UIFunc::MainMenu_Settings,
-		UIFunc::MainMenu_Quit
+		UIFunctions::MainMenu::Start,
+		UIFunctions::MainMenu::SetCredits,
+		UIFunctions::MainMenu::SetSettings,
+		UIFunctions::MainMenu::Quit
 	};
 
 	for (int i = 0; i < buttons; i++)
@@ -203,8 +190,8 @@ void Menu::SetupButtons()
 
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], 30.0f);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
-		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);

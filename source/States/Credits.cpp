@@ -11,6 +11,7 @@
 #include "GameRenderer.h"
 #include "UIComponents.h"
 #include "Model.h"
+#include "Levels\LevelHelper.h"
 
 void Credits::Setup()
 {
@@ -22,10 +23,11 @@ void Credits::Setup()
 	Camera::ResetCamera();
 
 	//Setup stage to rotate around
-	EntityID stage = registry.CreateEntity();
 	// Stage Model
-	ModelBonelessComponent* stageM = registry.AddComponent<ModelBonelessComponent>(stage);
-	stageM->model = LoadModel("PlaceholderScene.mdl");
+	StageSetupVariables stageVars;
+
+	stageVars.stageNr = rand() % 5;
+	EntityID stage = SetUpStage(stageVars);
 	// Stage Transform
 	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
 	// Stage POI
@@ -51,8 +53,8 @@ void Credits::SetupButtons()
 
 	uiElement->Setup("Exmenu/ButtonBackground", "\nBack", { -0.81f, -0.8f }, { 0.5f, 0.6f });
 
-	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunc::Credits_Back);
-	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Credits_Back, UIFunctions::OnClick::None);
+	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 	SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 	buttonSound->Load(MENU);
@@ -65,23 +67,23 @@ void Credits::SetupImages()
 
 void Credits::SetupText()
 {
-	const char const courses[3][32] =
+	const char courses[3][32] =
 	{
 		"Technical Artists:",
 		"Master of Engineering:",
 		"Game Programmers:"
 	};
 
-	const char const TAnames[5][32] =
+	const char TAnames[5][32] =
 	{
 		"Alexandra Lindberg",
 		"Erik Svensson",
 		"Erika Gustafsson",
 		"Rasmus Fridlund",
-		"Zannie"
+		"Zannie Karlsson"
 	};
 
-	const char const CIVnames[4][32] =
+	const char CIVnames[4][32] =
 	{
 		"Elliot Lundin",
 		"Felix Mathiasson",
@@ -89,7 +91,7 @@ void Credits::SetupText()
 		"Mattias Nordin"
 	};
 
-	const char const SPnames[5][32] =
+	const char SPnames[5][32] =
 	{
 		"Arian Watti",
 		"Christian Marcuz",
@@ -98,7 +100,7 @@ void Credits::SetupText()
 		"Niclas Andersson"
 	};
 
-	const DSFLOAT2 const positions[3] =
+	const DSFLOAT2 positions[3] =
 	{
 		{ 0.4f, 0.3f },
 		{ 0.0f, 0.3f },

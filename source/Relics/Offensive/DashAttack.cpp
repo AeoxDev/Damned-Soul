@@ -41,6 +41,6 @@ void DASH_ATTACK::DealDamageWhenDashing(void* data)
 	//Halve our damage in calculations when we do the dash relic thing
 	if (input->attacker.index == DASH_ATTACK::_OWNER.index)
 	{
-		input->incMult *= DASH_ATTACK_DAMAGE_MULTIPLIER;
+		input->damage *= DASH_ATTACK_DAMAGE_MULTIPLIER;
 	}
 }

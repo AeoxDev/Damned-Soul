@@ -26,42 +26,27 @@ void GameScene::Input(bool isShop)
 	// If Shop level is loaded
 	if (isShop)
 	{
-		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
-		{
-			SetInMainMenu(true);
-			SetInShop(false);
-			Unload(true);
-
-			stateManager.menu.Setup();
-		}
+		
 	}
 	// If Game Level is loaded
 	else
 	{
 		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
 		{
-			SetInPause(true);
-			SetInPlay(false);
+			if (Camera::InCutscene() == 0)
+			{
+				SetInPause(true);
+				SetInPlay(false);
 
-			SetPaused(true);
+				SetPaused(true);
 
-			gameSpeed = 0.0f;
-			ResetInput();
-			stateManager.pause.Setup();
+				gameSpeed = 0.0f;
+				ResetInput();
+				stateManager.pause.Setup();
+			}
+		
 		}
 	}
-}
-
-void GameScene::Update()
-{
-
-}
-
-void GameScene::ComputeShaders()
-{
-	/*Particles::PrepareParticleCompute();
-	Dispatch(100, 0, 0);
-	Particles::FinishParticleCompute();*/
 }
 
 void GameScene::Unload(int unloadPersistent)

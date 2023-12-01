@@ -42,8 +42,8 @@ namespace Camera
 	const DirectX::XMMATRIX GetPerspective();
 	const DirectX::XMMATRIX GetOrthographic();
 
-	void SetCutsceneMode(bool inCutscene);
-	bool InCutscene();
+	void SetCutsceneMode(int inCutscene);
+	int InCutscene();
 
 	int16_t GetCameraBufferIndex();
 

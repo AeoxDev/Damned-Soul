@@ -65,6 +65,7 @@ RTV_IDX CreateBackBuffer()
 	{
 		return -1;
 	}
+	rtvHolder->tx_map.emplace(currentIdx, backBuffer);
 
 	// use the back buffer address to create the render target
 	// null as description to base it on the backbuffers values
@@ -77,7 +78,7 @@ RTV_IDX CreateBackBuffer()
 		return -2;
 	}
 	rtvHolder->rtv_map.emplace(currentIdx, tempBB);
-	rtvHolder->tx_map.emplace(currentIdx, backBuffer);
+	//rtvHolder->tx_map.emplace(currentIdx, backBuffer);
 	//backBuffer->Release();
 
 	return currentIdx;
@@ -533,8 +534,8 @@ SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& heig
 	uint8_t currentIdx = uavHolder->NextIdx();
 
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = width;
-	texDesc.Height = height;
+	texDesc.Width = (UINT)width;
+	texDesc.Height = (UINT)height;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;

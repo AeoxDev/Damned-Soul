@@ -20,7 +20,8 @@ void PauseState::Setup()
 	SetupImages();
 	SetupButtons();
 	SetupText();
-	if (Camera::InCutscene() == true)
+
+	if (Camera::InCutscene() > 0)
 	{
 		TimedEventIgnoreGamespeed(false);
 	}
@@ -40,7 +41,9 @@ void PauseState::Input()
 			RedrawUI();
 			ResetInput();
 
+			gameSpeed = 1.0f;
 			Unload(ENT_PERSIST_PAUSE);
+			
 		}
 		else
 		{
@@ -48,11 +51,9 @@ void PauseState::Input()
 			SetInPlay(true);
 
 			SetPaused(false);
-
 			RedrawUI();
-			gameSpeed = 1.0f;
 			ResetInput();
-
+			gameSpeed = 1.0f;
 			Unload(ENT_PERSIST_PAUSE);
 		}
 	}
@@ -60,65 +61,251 @@ void PauseState::Input()
 
 void PauseState::SetupButtons()
 {
-	const char const texts[3][32] =
+
+	const int pauseAmount = 4;
+	const int settingsAmount = 3;
+	const int sliderAmount = 5;
+
+	//Pause Buttons
 	{
-		"\nResume",
-		"\nSettings (WIP)",
-		"\nMain Menu"
-	};
+		const char texts[pauseAmount][32] =
+		{
+			"Game Paused",
+			"Resume",
+			"Settings",
+			"Main Menu"
+		};
 
-	const DSFLOAT2 const positions[3] =
-	{
-		{ 0.0f, 0.275f },
-		{ 0.0f, 0.0f },
-		{ 0.0f, -0.275f }
-	};
+		const DSFLOAT2 positions[pauseAmount] =
+		{
+			{ 0.0f, 0.0f },
+			{ 0.0f, 0.275f },
+			{ 0.0f, 0.0f },
+			{ 0.0f, -0.275f }
+		};
 
-	const DSFLOAT2 const scales[3] =
-	{
-		{ 0.7f, 0.6f },
-		{ 0.7f, 0.6f },
-		{ 0.7f, 0.6f }
-	};
+		const DSFLOAT2 scales[pauseAmount] =
+		{
+			{ 1.5f, 3.0f },
+			{ 0.7f, 0.6f },
+			{ 0.7f, 0.6f },
+			{ 0.7f, 0.6f }
+		};
 
-	void(* const functions[3])(void*, int) =
-	{
-		UIFunc::PauseState_ResumeGame,
-		UIFunc::MainMenu_Settings,
-		UIFunc::PauseState_MainMenu
-	};
+		void(* const onClicks[pauseAmount - 1])(void*, int) =
+		{
+			UIFunctions::Pause::Resume,
+			UIFunctions::Pause::SetSettings,
+			UIFunctions::Pause::SetMainMenu
+		};
 
-	for (int i = 0; i < 3; i++)
-	{
-		auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
-		OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
-		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+		void(* const onHovers[pauseAmount - 1])(void*, int, bool) =
+		{
+			UIFunctions::OnHover::Image,
+			UIFunctions::OnHover::Image,
+			UIFunctions::OnHover::Image
+		};
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+		for (int i = 0; i < pauseAmount; i++)
+		{
+			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+			UIPauseButtonComponent* pauseSettings = registry.AddComponent<UIPauseButtonComponent>(button);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
-		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunc::HoverImage);
+			if (i == 0)
+			{
+				uiElement->Setup("Exmenu/ButtonBackgroundHover", texts[i], positions[i], scales[i]);
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
+			}
+			else
+				uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
 
-		SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
-		sound->Load(MENU);
+			if (i != 0)
+			{
+				onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i - 1], UIFunctions::OnClick::None);
+				onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i - 1]);
+			}
+
+			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
+			sound->Load(MENU);
+		}
 	}
 
+	//Settings Buttons
+	{
+		const char filename[settingsAmount][32] =
+		{
+			"Exmenu/ButtonBackgroundHover",
+			"Exmenu/ButtonBackground",
+			"Exmenu/ButtonBackground"
+		};
+
+		const char texts[settingsAmount][32] =
+		{
+			"Settings",
+			"Enable Game Timer",
+			"Back"
+		};
+
+		const DSFLOAT2 positions[settingsAmount] =
+		{
+			{ 0.0f, 0.0f },
+			{ -0.4f, 0.4f },
+			{ -0.4f, -0.4f }
+		};
+
+		const DSFLOAT2 scales[settingsAmount] =
+		{
+			{ 3.0f, 3.0f },
+			{ 0.4f, 0.4f },
+			{ 0.6f, 0.6f }
+		};
+
+		void(* const onClicks[settingsAmount - 1])(void*, int) =
+		{
+			UIFunctions::Settings::SwitchTimer,
+			UIFunctions::Pause::Back
+		};
+
+		void(* const onHovers[settingsAmount - 1])(void*, int, bool) =
+		{
+			UIFunctions::OnHover::Image,
+			UIFunctions::OnHover::Image
+		};
+
+		for (int i = 0; i < settingsAmount; i++)
+		{
+			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
+
+			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
+			sound->Load(MENU);
+
+			uiElement->Setup(filename[i], texts[i], positions[i], scales[i]);
+
+			uiElement->SetAllVisability(false);
+
+			if (i == 0)
+			{
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
+				continue;
+			}
+
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i - 1], UIFunctions::OnClick::None);
+
+			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i - 1]);
+
+		}
+	}
+
+
+	//Sliders
+	{
+		const char texts[sliderAmount][32] =
+		{
+			"Master Volume",
+			"Voice Volume",
+			"SFX Volume",
+			"Music Volume",
+			"Ambient Volume",
+		};
+
+		const DSFLOAT2 positions[sliderAmount] =
+		{
+			{ 0.4f, 0.3f },
+			{ 0.4f, 0.15f },
+			{ 0.4f, 0.0f },
+			{ 0.4f, -0.15f },
+			{ 0.4f, -0.3f },
+		};
+
+		AudioEngineComponent* audioComp = nullptr;
+
+		for (auto audio : View<AudioEngineComponent>(registry))
+		{
+			audioComp = registry.GetComponent<AudioEngineComponent>(audio);
+		}
+
+		for (int i = 0; i < sliderAmount; i++)
+		{
+			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
+			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
+			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
+
+			uiElement->Setup("SliderBackground2", texts[i], positions[i]);
+			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
+			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
+
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
+
+			uiElement->SetAllVisability(false);
+
+			float sliderWidth = abs(maxRightPosition - 0.13f) - abs(maxLeftPosition + 0.13f);
+
+			if (audioComp != nullptr)
+			{
+				float volume = 0;
+
+				if (uiElement->m_BaseText.m_Text == "Master Volume")
+				{
+					audioComp->groups[MASTER_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Voice Volume")
+				{
+					audioComp->groups[VOICE_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "SFX Volume")
+				{
+					audioComp->groups[SFX_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Music Volume")
+				{
+					audioComp->groups[MUSIC_GROUP]->getVolume(&volume);
+				}
+				if (uiElement->m_BaseText.m_Text == "Ambient Volume")
+				{
+					audioComp->groups[AMBIENCE_GROUP]->getVolume(&volume);
+				}
+
+				if (volume < 0.5f)
+				{
+					uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(uiElement->m_Images[0].baseUI.GetPosition().x - (sliderWidth * (0.5f - volume)), uiElement->m_BaseImage.baseUI.GetPosition().y));
+					slider->currentPercentage = volume;
+				}
+
+				if (volume > 0.5f)
+				{
+					uiElement->m_Images[0].baseUI.SetPosition(DSFLOAT2(uiElement->m_Images[0].baseUI.GetPosition().x + (sliderWidth * (volume - 0.5f)), uiElement->m_BaseImage.baseUI.GetPosition().y));
+					slider->currentPercentage = volume;
+				}
+			}
+
+
+			slider->currentPosition = uiElement->m_Images[0].baseUI.GetPosition().x;
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Settings::Volume::Press, UIFunctions::Settings::Volume::Release);
+
+		}
+	}
 }
 
 void PauseState::SetupImages()
 {
-	// Damned Soul Main Menu Title
-	/*auto title = registry.CreateEntity(ENT_PERSIST_PAUSE);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.6f });*/
+
 }
 
 void PauseState::SetupText()
 {
 	auto pause = registry.CreateEntity(ENT_PERSIST_PAUSE);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(pause);
-	uiElement->Setup("TempShopTitle", "Game Paused", { 0.0f, 0.6f });
+	uiElement->Setup("TempShopTitle", "", { 0.0f, 0.6f });
 	uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 	uiElement->AddImage("TempRelicHolder", { 1.5f, 1.5f }, { 1.5f, 1.5f }, false);
@@ -134,7 +321,7 @@ void PauseState::SetupText()
 void PauseState::Unload(int unloadPersistent)
 {
 	UnloadEntities((ENTITY_PERSISTENCY_TIER)unloadPersistent);
-	if (Camera::InCutscene() == true)
+	if (Camera::InCutscene() > 0)
 	{
 		TimedEventIgnoreGamespeed(true);
 		gameSpeed = 0.0f;

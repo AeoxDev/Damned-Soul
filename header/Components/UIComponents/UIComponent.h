@@ -13,10 +13,11 @@ struct ID2D1Bitmap;
 struct UIBase
 {
 	DSBOUNDS m_CurrentBounds = { 0.0f, 0.0f, 0.0f, 0.0f };
+	DSBOUNDS m_PositionBounds = { 0.0f, 0.0f, 0.0f, 0.0f };
 	DSBOUNDS m_OriginalBounds = { 0.0f, 0.0f, 0.0f, 0.0f };
 	D2D1::Matrix3x2F m_Transform;
 
-	DSFLOAT2 m_Position = {0.0f , 0.0f};
+	DSFLOAT2 m_Position = { 0.0f , 0.0f };
 	DSFLOAT2 m_PixelCoords = { 0.0f , 0.0f };
 	DSFLOAT2 m_Scale = { 1.0f , 1.0f };
 	float m_Rotation = 0.0f;
@@ -39,6 +40,7 @@ struct UIBase
 	DSFLOAT2 GetScale() const;
 	DSBOUNDS GetBounds() const;
 	DSBOUNDS GetOriginalBounds() const;
+	DSBOUNDS GetPositionBounds() const;
 	float GetRotation() const;
 	bool GetVisibility() const;
 	float GetOpacity() const;
@@ -51,11 +53,11 @@ struct UIText
 	ML_String m_Text;
 	IDWriteTextFormat* m_TextFormat = nullptr;
 
-	float m_fontSize;
-	DWRITE_TEXT_ALIGNMENT m_textAlignment;
-	DWRITE_PARAGRAPH_ALIGNMENT m_paragraphAlignment;
+	float m_fontSize = 20.0f;
+	DWRITE_TEXT_ALIGNMENT m_textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;
+	DWRITE_PARAGRAPH_ALIGNMENT m_paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
 
-	void SetText(const char* text, DSBOUNDS bounds, float fontSize = 20, 
+	void SetText(const char* text, DSBOUNDS bounds, float fontSize = 20.0f, 
 		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_CENTER,
 		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 

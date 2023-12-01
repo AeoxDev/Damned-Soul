@@ -26,6 +26,12 @@ namespace RelicInput
 		void* adressOfStatComonent;
 	};
 
+	struct OnStatCalcInputPlayer
+	{
+		EntityID entity;
+		void* adressOfPlayerComonent;
+	};
+
 	struct OnHitInput
 	{
 		EntityID attacker;
@@ -62,5 +68,24 @@ namespace RelicInput
 	struct OnTimeUpdate
 	{
 		float timeDelta;
+	};
+
+	struct OnPriceCalculation
+	{
+		float everythingCostMult = 1.f;
+		float relicCostMult = 1.f;
+		float healCostMult = 1.f;
+		float rerollCostMult = 1.f;
+		float upgradeCost = 1.f;
+
+		enum PRICE_TYPES
+		{
+			RELIC = 0x1,
+			HEAL = 0x2,
+			REROLL = 0x4,
+			UPGRADE = 0x8
+		};
+
+		int32_t GetCostOf(const int32_t initial, const PRICE_TYPES type);
 	};
 }

@@ -4,6 +4,7 @@
 #include "MemLib\MemLib.hpp"
 #include "RenderDepthPass.h"
 #include "UIRenderer.h"
+#include "OutlineHelper.h"
 
 SRV_IDX Glow::glow_srv;
 UAV_IDX Glow::backbuffer_uav;
@@ -49,6 +50,7 @@ void Glow::SetBlurViews()
 	SetUnorderedAcessView(backbuffer_uav, 0);
 	SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_COMPUTE, 0);
 	SetShaderResourceView(glow_srv, BIND_COMPUTE, 1);
+	SetShaderResourceView(Outlines::targetSRV, BIND_COMPUTE, 2);
 }
 
 void Glow::UpdateGlowBuffer(float r, float g, float b)
@@ -86,6 +88,7 @@ void Glow::FinishBlurPass()
 	SetDepthPassTextureCompute(false);
 	UnsetShaderResourceView(BIND_COMPUTE, 0);
 	UnsetShaderResourceView(BIND_COMPUTE, 1);
+	UnsetShaderResourceView(BIND_COMPUTE, 2);
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
 }

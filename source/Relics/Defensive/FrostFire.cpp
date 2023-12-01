@@ -9,8 +9,8 @@
 
 EntityID FROST_FIRE::_OWNER;
 
-#define FROST_FIRE_COOLDOWN (3.f)
-#define FROST_FIRE_BASE_KNOCKBACK (1.f)
+#define FROST_FIRE_COOLDOWN (2.f)
+#define FROST_FIRE_BASE_KNOCKBACK (1.25f)
 #define FROST_FIRE_DAMAGE_FLAT (5.f)
 #define FROST_FIRE_RANGE (10.f)
 #define FROST_FIRE_SFX_DURATION (0.3f)
@@ -52,7 +52,7 @@ void FROST_FIRE::Reset(void* data)
 
 void _FF_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, 0.f, 0.35f, 0.f, 0.f, 0.f, FROST_FIRE_RANGE, CIRCLE_FIELD);
+	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, 0.f, 0.35f, 0.f, 0.f, 0.f, (int)FROST_FIRE_RANGE, CIRCLE_FIELD);
 }
 
 void FROST_FIRE::PushBackAndDamage(void* data)

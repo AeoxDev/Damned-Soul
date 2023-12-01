@@ -21,6 +21,14 @@ void ContinueAnimation(EntityID& entity, const int& index)
 	{
 		anim->aAnimTimeFactor = 1.0f;
 	}
+
+	uint32_t condition = GetTimedEventCondition(entity, index);
+	if (condition == EnemyType::lucifer)
+	{
+		//Play Sound Effect (Added by Joaquin)
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Boss_Attack, Channel_Base);
+	}
 }
 
 void ResetAnimation(EntityID& entity, const int& index)
@@ -148,7 +156,17 @@ void SquashStretch(EntityID& entity, const int& index)
 		transform->offsetScaleZ = scaleZ + dz * acceleratingTime;
 	}
 }
-
+void TPose(EntityID& entity, const int& index)
+{
+	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	if (anim != nullptr)
+	{
+		anim->aAnimIdx = 0;
+		anim->aAnim = ANIMATION_DEATH;
+		anim->aAnimTime = 0.01f;;
+	}
+	
+}
 void ResetSquashStretch(EntityID& entity, const int& index)
 {
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
@@ -173,4 +191,13 @@ SquashStretchComponent* AddSquashStretch(EntityID& entity, const SquashStretchTy
 	component->startScaleY = startY;
 	component->startScaleZ = startZ;
 	return component;
+}
+
+void LoopFallingAnimation(EntityID& entity, const int& index)
+{
+
+}
+void FallingAnimation(EntityID& entity, const int& index)
+{
+
 }

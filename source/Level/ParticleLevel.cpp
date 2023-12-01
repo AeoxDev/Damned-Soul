@@ -5,11 +5,26 @@
 #include "Particles.h"
 #include "States\StateManager.h"
 #include "Model.h"
+#include "Levels\LevelHelper.h"
+
 #include <random>
 
 void LoadParticleLevel()
 {
-	EntityID stage = registry.CreateEntity();
+	float redMult = 1.0f;
+	float greenMult = 1.0f;
+	float blueMult = 1.0f;
+	StageSetupVariables stageVars;
+	stageVars.rm = redMult;
+	stageVars.gm = greenMult;
+	stageVars.bm = blueMult;
+	stageVars.stageNr = 1;
+	stageVars.scaleX = 1.0f;
+	stageVars.scaleY = 1.0f;
+	stageVars.scaleZ = 1.0f;
+	stageVars.offsetY = -0.1f;
+
+	EntityID stage = SetUpStage(stageVars);
 
 	srand(0);
 
@@ -33,17 +48,11 @@ void LoadParticleLevel()
 			cShad = FLAMETHROWER;
 
 		registry.AddComponent<TransformComponent>(particles, transform);
-		registry.AddComponent<ParticleComponent>(particles, rand() % (7 - 2 + 1) + 2, rand() % (20 - 5 + 1) + 5, rand() % (2 - 1 + 1) + 1, 
-			rand() % 40 + (-30), rand() % 40 + (-30), rand() % 40 + (-30), rand() % (5000 - 1 + 1) + 1, cShad);
+		registry.AddComponent<ParticleComponent>(particles, (float)(rand() % (7 - 2 + 1) + 2), (float)(rand() % (20 - 5 + 1) + 5), (float)(rand() % (2 - 1 + 1) + 1),
+			(float)(rand() % 40 + (-30)), (float)(rand() % 40 + (-30)), (float)(rand() % 40 + (-30)), rand() % (5000 - 1 + 1) + 1, cShad);
 		
 	}
 
-	// Stage (Default)
-	TransformComponent* stageTransform = registry.AddComponent<TransformComponent>(stage);
-	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
-	phc->Load("default");
-
-	RenderGeometryIndependentCollision(stage);
-
 	stateManager.stage = stage;
+	SetInPlay(true);
 }

@@ -13,5 +13,10 @@ enum EnemyType
 	frozenHellhound, 
 	frozenImp, 
 	frozenEye,
-	zac
+	zac,
+	empoweredSkeleton,
+	empoweredHellhound,
+	empoweredImp,
+	ghost,
+	//no empoweredEye, please for the love of god
 };

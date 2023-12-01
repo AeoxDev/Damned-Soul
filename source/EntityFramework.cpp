@@ -118,6 +118,9 @@ void Registry::DestroyEntity(EntityID id, ENTITY_PERSISTENCY_TIER destructionTie
 	entities[GetEntityIndex(id)].components.reset();
 
 	availableEntitySlots.push_back(GetEntityIndex(id));
+
+	//Since UI can't depth-check, its entities need to be in numerical order, but availableEntitySlots is in ascending order and pops from the back
+	registry.SortAvailableEntitySlotsVector();
 }
 
 int compCount = 0;
@@ -171,7 +174,9 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		if (destructionTier != ENT_PERSIST_PAUSE)
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
-			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) == nullptr)
+			auto shopRelicIcon = registry.GetComponent<UIShopRelicComponent>(entity);
+			auto shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) == nullptr && shopRelicIcon == nullptr && shopButton == nullptr)
 				sound->Unload();
 		}
 
@@ -179,6 +184,17 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		if (entity.persistentTier <= destructionTier) //I hate how this code actually works
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
+			auto shopRelicIcon = registry.GetComponent<UIShopRelicComponent>(entity);
+			auto shopButton = registry.GetComponent<UIShopButtonComponent>(entity);
+			if (shopRelicIcon != nullptr)
+			{
+				sound->Unload();
+			}
+			else if (shopButton != nullptr)
+			{
+				sound->Unload();
+			}
+
 			if (registry.GetComponent<AudioEngineComponent>(entity) == nullptr && registry.GetComponent<PlayerComponent>(entity) != nullptr)
 				sound->Unload();
 		}
