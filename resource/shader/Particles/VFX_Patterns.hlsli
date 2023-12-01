@@ -187,6 +187,22 @@ in float2 uv
     return AlphaBlend(backBuffer, timedMask, colorizedSpawn.rgb);
 }
 
+// PORTAL REQUIRES: VFX_Noises
+float4 VFXPortal(
+float4 backBuffer,
+float time,
+float2 uv
+)
+{
+    float vornoiDistortion = noiseTexture_in.Sample(vfxSampler_in, UVPan(float2(0.0f, -1.0f), 0.2f, time, uv * 1.1f)).r;
+    float4 colorizedCaustic = (noiseTexture_in.Sample(vfxSampler_in, distortUV(0.1f, uv, vornoiDistortion)).b * float4(0.6171079f, 0.4386792f, 1.0f, 0.0f));
+    float4 colorizedGaussian = (noiseTexture_in.Sample(vfxSampler_in, uv * 0.4f).g * float4(0.3818085f, 0.3938224f, 0.490566f, 0.0f));
+    
+    float4 colorizedPortal = colorizedCaustic + colorizedGaussian;
+    
+    return float4(colorizedPortal.rgb, 1.0f); //(gMaskTexture * pow(vornoiTexture, 2.0f + sin(time))).rgb, 1.0f;
+}
+
 // SWORDSSLASH REQUIRES: VFX_Noises & VFX_Masks
 float4 VFXSwordSlash(
 float4 backBuffer,
