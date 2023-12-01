@@ -11,6 +11,7 @@
 #include "Level.h"
 #include "Levels\LevelHelper.h"
 #include "Levels\LevelLoader.h"
+#include "UIButtonFunctions.h"
 
 bool ControllerSystem::Update()
 {
@@ -43,7 +44,13 @@ bool ControllerSystem::Update()
 				}
 				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-				LoadLevel(++stateManager.activeLevel);
+				for (auto entity : View<AudioEngineComponent>(registry))
+				{
+					AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+					audioJungle->HandleSound();
+					audioJungle->StopAllSounds();
+				}
+				UIFunctions::Game::LoadNextLevel(nullptr, -1);
 			}
 			else if (Camera::InCutscene() == 3)
 			{
