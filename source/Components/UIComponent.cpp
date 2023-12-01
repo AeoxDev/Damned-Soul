@@ -178,7 +178,6 @@ void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_T
 {
 	if (text != "")
 	{
-		//m_Text = _strdup(text);//This causes leaks
 		m_Text = text;
 		m_fontSize = fontSize;
 		m_textAlignment = textAlignment;
