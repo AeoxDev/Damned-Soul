@@ -66,7 +66,7 @@ void LoadLevel5()
 	//SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f, 1);
 	//SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f, 1);
 	//
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::eye, 55.f, 1.f, 135.f, 0);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::eye, 65.f, 1.f, 135.f, 0);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
 	transform->facingZ = -1.0f;
 	transform->facingX = -0.5f;
