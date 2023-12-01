@@ -7,6 +7,7 @@
 #include "States\StateManager.h"
 #include "UIComponents.h"
 #include "UIButtonFunctions.h"
+#include "UI\HP_BarHelper.h"
 #include "SDLHandler.h"
 
 #include <iostream>
@@ -1138,22 +1139,23 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 
 	// UI
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
-	
-	//Setup + Health
-	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
-	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
-	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(stateManager.player);
+	SetUpAdvancedHealthBar(stateManager.player);
+	//UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
+	//
+	////Setup + Health
+	//uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
+	//uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
+	//UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(stateManager.player);
 
-	//Souls
-	uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
-	uiElement->AddText(" ",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
-	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
+	////Souls
+	//uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
+	//uiElement->AddText(" ",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
+	//UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
 	
-	//Relics
-	uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
-	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
-	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
+	////Relics
+	//uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
+	//UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
+	//OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
 	//GlowComponent* player_glow = registry.AddComponent<GlowComponent>(stateManager.player, 1, 0, 0);
 
@@ -1179,7 +1181,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 
 	FollowerComponent* weapon_follow = registry.AddComponent<FollowerComponent>(stateManager.weapon, stateManager.player);
 
-	GlowComponent* weaponGlow = registry.AddComponent<GlowComponent>(stateManager.weapon, 0, 0.8, 0.7);
+	GlowComponent* weaponGlow = registry.AddComponent<GlowComponent>(stateManager.weapon, 0, 0, 0/*0.8, 0.7*/);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)

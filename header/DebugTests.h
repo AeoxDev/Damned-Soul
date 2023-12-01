@@ -1,15 +1,15 @@
 #pragma once
 #include <string>
 
-//Hermano 3000
+////Hermano 3000
 //#define GAME_TEST
 
 //#define UI_TEST
 
-//does not work, dont use
+////does not work, dont use
 //#define MAIN_MENU_TEST
 
-//Not done, Dont use
+////Not done, Dont use
 //#define PARTICLE_TEST
 
 //Displays info in the application title
