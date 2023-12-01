@@ -261,12 +261,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 		ModelBonelessComponent* hazardModel = registry.GetComponent<ModelBonelessComponent>(entity);
 		StaticHazardComponent* hazardComponent = registry.GetComponent<StaticHazardComponent>(entity);
 		TransformComponent* hazardTransform = registry.GetComponent<TransformComponent>(entity);
-		if (hazardComponent->type == HAZARD_NAV)
-		{
-			hazardTransform->facingZ = 1.0f;
-		}
 		SetWorldMatrix(hazardTransform->positionX, hazardTransform->positionY, hazardTransform->positionZ,
-			-hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ,
+			-hazardTransform->facingX, hazardTransform->facingY, -hazardTransform->facingZ,//Bugfix for rendering in GI only
 			hazardTransform->scaleX, hazardTransform->scaleY, hazardTransform->scaleZ,
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[hazardModel->model].m_vertexBuffer);

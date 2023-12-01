@@ -35,7 +35,7 @@ void Menu::Setup()
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;
-	stageVars.stageNr = 2;
+	stageVars.stageNr = 1;
 	stageVars.scaleX = 1.0f;
 	stageVars.scaleY = 1.0f;
 	stageVars.scaleZ = 1.0f;
