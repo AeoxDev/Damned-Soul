@@ -18,6 +18,7 @@ static uint32_t HP_END;
 static uint32_t HP_TEXT;
 static uint32_t SOUL_STONE;
 static uint32_t SOUL_TEXT;
+static uint32_t RC_ANCHOR;
 
 #define BG_X (bl.x + .000f)
 #define LOOP_LEFT_X (bl.x - .055f)
@@ -80,9 +81,15 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
 
 	//Relics
-	uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
-	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
-	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
+	RC_ANCHOR = uiElement->m_Images.size();
+	uiElement->AddImage("RelicChain/RC_Anchor", uiElement->m_Images[SOUL_STONE].baseUI.GetPosition());
+	uiElement->m_Images[RC_ANCHOR].baseUI.m_PixelCoords.y += 22;
+	uiElement->m_Images[RC_ANCHOR].baseUI.m_PixelCoords.x += 5;
+	_ADVANCED_HP_ROUND_PIXELS_UP(RC_ANCHOR)
+
+	//uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
+	//UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
+	//OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 }
 
 void ScaleAdvancedHealthBar(const EntityID player)
@@ -203,4 +210,20 @@ void UpdateSoulUI(const EntityID player)
 											uiElement->m_Images[SOUL_STONE].baseUI.GetRotation(), uiElement->m_Images[SOUL_STONE].baseUI.GetVisibility(), 
 											uiElement->m_Images[SOUL_STONE].baseUI.GetOpacity());
 	}
+}
+
+#include "Relics\RelicFunctions.h"
+
+void AddNewRelicToUI(const EntityID player, const void* relic)
+{
+	auto uiElement = registry.GetComponent<UIComponent>(player);
+	auto relicComponent = registry.GetComponent<UIPlayerRelicsComponent>(player);
+	const RelicData* data = (const RelicData*)relic;
+	DSFLOAT2 position = uiElement->m_Images[RC_ANCHOR].baseUI.GetPosition();
+	position.y += 18 + 48 * relicComponent->currentRelics;
+	uiElement->AddImage(data->m_filePath, position);
+	_ADVANCED_HP_ROUND_PIXELS_UP(uiElement->m_Images.size() - 1);
+	position.y += 8;
+	uiElement->AddImage("RC/RC_Link", position);
+	_ADVANCED_HP_ROUND_PIXELS_UP(uiElement->m_Images.size() - 1);
 }
