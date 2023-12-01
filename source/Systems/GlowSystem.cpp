@@ -98,7 +98,9 @@ bool GlowSystem::Update()
 		Glow::FinishGlowPass();
 		Glow::PrepareBlurPass();
 		Glow::UpdateBlurBuffer();
-		Dispatch(50, 29, 1);
+		int groupsX = Glow::blur_bufData.windowWidth / 32;
+		int groupsY = Glow::blur_bufData.windowHeight / 32;
+		Dispatch(groupsX, groupsY, 1);//(32, 32, 1)
 		Glow::FinishBlurPass();
 	}
 

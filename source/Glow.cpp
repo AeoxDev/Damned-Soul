@@ -15,7 +15,7 @@ SRV_IDX Glow::blur_srv;
 CB_IDX Glow::glow_buffer;
 CB_IDX Glow::blur_buffer;
 PoolPointer<Glow::GlowData> Glow::glow_bufData;
-PoolPointer<Glow::BlurData> Glow::blur_bufData;
+Glow::BlurData Glow::blur_bufData;
 
 void Glow::Initialize()
 {
@@ -26,7 +26,6 @@ void Glow::Initialize()
 	glow_depth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 	glow_buffer = CreateConstantBuffer(sizeof(GlowData));
 	blur_buffer = CreateConstantBuffer(sizeof(BlurData));
-
 	// Compute
 	blur_shader = LoadComputeShader("BlurShader.cso");
 	backbuffer_uav = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, renderStates[backBufferRenderSlot].renderTargetView);
@@ -67,11 +66,11 @@ void Glow::UpdateGlowBuffer(float r, float g, float b)
 void Glow::UpdateBlurBuffer()
 {
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
-	blur_bufData = MemLib::palloc(sizeof(BlurData));
-	blur_bufData->windowWidth = sdl.WIDTH;
-	blur_bufData->windowHeight = sdl.HEIGHT;
-	UpdateConstantBuffer(blur_buffer, blur_bufData);
-	MemLib::pfree(blur_bufData);
+	
+	blur_bufData.windowWidth = sdl.BASE_WIDTH;
+	blur_bufData.windowHeight = sdl.BASE_HEIGHT;
+	UpdateConstantBuffer(blur_buffer, &blur_bufData);
+	
 	SetConstantBuffer(blur_buffer, BIND_COMPUTE, 0);
 }
 

@@ -28,7 +28,7 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
     int2 index = int2(groupID.x * 32 + threadID.x, groupID.y * 32 + threadID.y);
        
-    if (index.x > 1600 || index.y > 900)
+    if (index.x > windowWidth || index.y > windowHeight)
     {
         return;
     }
@@ -45,9 +45,9 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     // Calculate color blend and glow falloff based on pixel distance.
     #define WIDTH_HEIGHT (10)
     #define SIGMA (6.f)
-    for (int y = max(index.y - WIDTH_HEIGHT, 0); y < min(index.y + WIDTH_HEIGHT, 900); ++y)
+    for (int y = max(index.y - WIDTH_HEIGHT, 0); y < min(index.y + WIDTH_HEIGHT, windowHeight); ++y)
     {
-        for (int x = max(index.x - WIDTH_HEIGHT, 0); x < min(index.x + WIDTH_HEIGHT, 1600); ++x)
+        for (int x = max(index.x - WIDTH_HEIGHT, 0); x < min(index.x + WIDTH_HEIGHT, windowWidth); ++x)
         {
             int2 h8t = int2(x, y);
             float temp = Gaussian(index.x - x, index.y - y, SIGMA);
