@@ -40,9 +40,9 @@ void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transf
 	ic->idleCounter = 0.0f;
 
 	// Regular walk
-	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
+	if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 0))
 	{
-		enemyAnim->aAnim = ANIMATION_WALK;
+		enemyAnim->aAnim = ANIMATION_IDLE;
 		enemyAnim->aAnimIdx = 0;
 		enemyAnim->aAnimTime = 0.0f;
 	}
@@ -91,6 +91,15 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	//rotate imp in order to shoot at the player
 	else if (ic->aimTimer < ic->aimDuration)
 	{
+		//enemyAnim->aAnimTimeFactor = (1.0f / ic->aimDuration) - 0.1f; //needs to be set every time because of weird animfactor bug?
+
+		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 0))
+		{
+			enemyAnim->aAnim = ANIMATION_ATTACK;
+			enemyAnim->aAnimIdx = 0;
+			enemyAnim->aAnimTime = 0.0f;
+		}
+
 		if (ic->aimTimer == 0.0f) //Play the charging attack sound
 		{
 			AddTimedEventComponentStartContinous(entity, 0.0f, nullptr, ic->aimDuration - 0.2f, EnemyAttackFlash);
@@ -109,18 +118,6 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	}
 	else // yes, we can indeed attack. 
 	{
-		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 1))
-		{
-			enemyAnim->aAnim = ANIMATION_ATTACK;
-			enemyAnim->aAnimIdx = 1;
-			enemyAnim->aAnimTime = 0.0f;
-		}
-
-		ic->attackTimer = 0;
-		ic->aimTimer = 0;
-		ic->attackStunTimer = 0;
-		ic->specialCounter++; //increase the special counter for special attack
-
 		//set direction for attack
 		float dx = (ptc->positionX - itc->positionX);
 		float dz = (ptc->positionZ - itc->positionZ);
@@ -165,11 +162,16 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		ic->goalDirectionX = dx;
 		ic->goalDirectionZ = dz;
 
-		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
+		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 40.f);
 		CreateProjectile(entity, dx, dz, imp);
-		
+
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Play(Imp_AttackThrow, Channel_Base);
+
+		ic->attackTimer = 0;
+		ic->aimTimer = 0;
+		ic->attackStunTimer = 0;
+		ic->specialCounter++; //increase the special counter for special attack
 
 		return true;
 	}
@@ -185,7 +187,6 @@ void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transform
 		enemyAnim->aAnimTime = 0.0f;
 	}
 
-	ic->idleCounter += GetDeltaTime();
 	if (ic->idleCounter >= ic->idleTimer)
 	{
 		ic->idleCounter = 0.0f;
@@ -198,6 +199,7 @@ void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transform
 
 		RepositionBehaviour(entity, ic, itc, itc, valueGrid);
 	}
+	ic->idleCounter += GetDeltaTime();
 }
 
 bool ImpBehaviourSystem::Update()
@@ -273,13 +275,15 @@ bool ImpBehaviourSystem::Update()
 		if (enemyStats->GetHealth() > 0 && impComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
 			float distance = Calculate2dDistance(impTransformComponent->positionX, impTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
+			
+			enemyAnim->aAnimTimeFactor = 1.0f;// Mattias: time factor is set to 0 somewhere have no clue :S
 
 			if (impComponent->attackStunTimer <= impComponent->attackStunDuration)
 			{
-				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 1))
+				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 0))
 				{
 					enemyAnim->aAnim = ANIMATION_IDLE;
-					enemyAnim->aAnimIdx = 1;
+					enemyAnim->aAnimIdx = 0;
 					enemyAnim->aAnimTime = 0.0f;
 				}
 			}

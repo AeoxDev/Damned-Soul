@@ -11,7 +11,7 @@ struct ImpBehaviour
 	float attackStunDuration = 2.0f;
 	float attackStunTimer = attackStunDuration;
 	float aimTimer = 0.0f;
-	float aimDuration = 0.4f;
+	float aimDuration = 0.7f;
 	float maxAttackRange = 50.f;
 	
 	int specialCounter = 0;		//how many attacks since last special

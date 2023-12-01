@@ -964,5 +964,5 @@ void EndDestroyProjectile(EntityID& entity, const int& index)
 
 void SpawnProjectileShadow(EntityID& entity, const int& index)
 {
-	CreateSpotLight(entity, -0.5f, -0.5f, -0.5f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
+	CreateSpotLight(entity, -0.7f, -0.7f, -0.7f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
 }

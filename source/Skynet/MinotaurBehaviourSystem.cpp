@@ -23,14 +23,9 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 		mc->goalDirectionZ = mc->dirZ;
 	}
 
-	if (enemyAnim->aAnim != ANIMATION_WALK)
+	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
 	{
 		enemyAnim->aAnim = ANIMATION_WALK;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
-	else if (enemyAnim->aAnimIdx != 0)
-	{
 		enemyAnim->aAnimIdx = 0;
 		enemyAnim->aAnimTime = 0.0f;
 	}
@@ -50,14 +45,9 @@ void IdleBehaviour(EntityID& enemy, MinotaurBehaviour* mc, TransformComponent* m
 {
 	mc->timeCounter += GetDeltaTime();
 
-	if (enemyAnim->aAnim != ANIMATION_WALK)
+	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
 	{
 		enemyAnim->aAnim = ANIMATION_WALK;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
-	else if (enemyAnim->aAnimIdx != 0)
-	{
 		enemyAnim->aAnimIdx = 0;
 		enemyAnim->aAnimTime = 0.0f;
 	}
@@ -90,16 +80,11 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 	{
 		enemyAnim->aAnimTime = 0;
 
-		if (enemyAnim->aAnim != ANIMATION_WALK)
+		if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
 		{
 			enemyAnim->aAnim = ANIMATION_WALK;
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor * (1 + mc->charging);
-		}
-		else if (enemyAnim->aAnimIdx != 0)
-		{
-			enemyAnim->aAnimIdx = 0;
-			enemyAnim->aAnimTime = 0.0f;
 		}
 
 		//reset values
@@ -138,7 +123,7 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 	}
 	else
 	{
-		if (enemyAnim->aAnim != ANIMATION_ATTACK)
+		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 0))
 		{
 			enemyAnim->aAnim = ANIMATION_ATTACK;
 			enemyAnim->aAnimIdx = 0;
@@ -147,16 +132,8 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
 			sfx->Play(Minotaur_Attack, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 		}
-		else if (enemyAnim->aAnimIdx != 0)
-		{
-			enemyAnim->aAnimIdx = 0;
-			enemyAnim->aAnimTime = 0.0f;
-
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
-			sfx->Play(Minotaur_Attack, Channel_Base); //Minotaur charge sound (Added by Joaquin)
-		}
+		
 		//slightly adjust the charging direction based on player position
-
 		//direction from the enemy towards the player
 		float dirToPlayerX = ptc->positionX - mtc->positionX;
 		float dirToPlayerZ = ptc->positionZ - mtc->positionZ;
@@ -222,26 +199,22 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 	{
 		if (mc->jumpStunTimer <= mc->jumpStunDuration)
 		{
-			if (enemyAnim->aAnim != ANIMATION_IDLE)
+			//dazed animation
+			if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 4))
 			{
 				enemyAnim->aAnim = ANIMATION_IDLE;
-				enemyAnim->aAnimIdx = 1;
-				enemyAnim->aAnimTime = 0.0f;
-			}
-			else if (enemyAnim->aAnimIdx != 1)
-			{
-				enemyAnim->aAnimIdx = 1;
+				enemyAnim->aAnimIdx = 4;
 				enemyAnim->aAnimTime = 0.0f;
 			}
 
-			mc->jumpStunTimer += GetDeltaTime();
 			return;
 		}
 		if (mc->jumpBuildUpTimer <= mc->jumpBuildUpDuration)
 		{
 			if (!mc->jumping)
 			{
-				enemyAnim->aAnim = ANIMATION_WALK;
+				//jumping animation
+				enemyAnim->aAnim = ANIMATION_IDLE;
 				enemyAnim->aAnimIdx = 1;
 				enemyAnim->aAnimTime = 0.0f;
 
@@ -253,6 +226,16 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 				sfx->Play(Minotaur_Jump, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 			}
 			mc->jumpBuildUpTimer += GetDeltaTime();
+			if (enemyAnim->aAnimTime >= 1.0f)
+			{
+				//hanging in the air animation
+				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 2))
+				{
+					enemyAnim->aAnim = ANIMATION_IDLE;
+					enemyAnim->aAnimIdx = 2;
+					enemyAnim->aAnimTime = 0.0f;
+				}
+			}
 		}
 		else if (mc->jumpTimer <= mc->jumpDuration) // fly up in the air
 		{
@@ -267,15 +250,11 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 		}
 		else  // fly down from air
 		{
-			if (enemyAnim->aAnim != ANIMATION_WALK)
+			//landing animimation
+			if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 3))
 			{
-				enemyAnim->aAnim = ANIMATION_WALK;
-				enemyAnim->aAnimIdx = 2;
-				enemyAnim->aAnimTime = 0.0f;
-			}
-			else if (enemyAnim->aAnimIdx != 2)
-			{
-				enemyAnim->aAnimIdx = 2;
+				enemyAnim->aAnim = ANIMATION_IDLE;
+				enemyAnim->aAnimIdx = 3;
 				enemyAnim->aAnimTime = 0.0f;
 			}
 
@@ -332,8 +311,9 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 	}
 	else
 	{
+		//dazed animation
 		enemyAnim->aAnim = ANIMATION_IDLE;
-		enemyAnim->aAnimIdx = 1;
+		enemyAnim->aAnimIdx = 4;
 		enemyAnim->aAnimTime = 0.0f;
 
 		mc->attackStunTimer = 0;
@@ -428,15 +408,11 @@ bool MinotaurBehaviourSystem::Update()
 
 			if (minoComp->attackStunTimer <= minoComp->attackStunDuration)
 			{
-				if (enemyAnim->aAnim != ANIMATION_IDLE)
+				//dazed animation
+				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 4))
 				{
 					enemyAnim->aAnim = ANIMATION_IDLE;
-					enemyAnim->aAnimIdx = 1;
-					enemyAnim->aAnimTime = 0.0f;
-				}
-				else if (enemyAnim->aAnimIdx != 1)
-				{
-					enemyAnim->aAnimIdx = 1;
+					enemyAnim->aAnimIdx = 4;
 					enemyAnim->aAnimTime = 0.0f;
 				}
 
@@ -502,6 +478,7 @@ bool MinotaurBehaviourSystem::Update()
 			}
 		}
 
+		minoComp->jumpStunTimer += GetDeltaTime();
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 		ANIM_BRANCHLESS(enemyAnim);
 		TransformDecelerate(enemyEntity);
