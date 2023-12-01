@@ -17,6 +17,8 @@
 #define SHOP_OFFSET_X_Left (SHOP_POSITION_X - 0.225f)
 #define SHOP_OFFSET_X_Right (SHOP_POSITION_X + 0.225f)
 
+#define SHOP_POSITION_Y (0.55f)
+
 #define SHOP_RELIC_WINDOWS (3)
 #define SHOP_SINGLE_WINDOWS (5)
 
@@ -56,13 +58,19 @@ void ShopCutscene()
 void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
 {
 	ML_Array<float, 2> xPos;
-	xPos[0] = pos.x - 0.05f;
-	xPos[1] = pos.x + 0.05f;
+	xPos[0] = pos.x - 0.1f;
+	xPos[1] = pos.x + 0.1f;
+
+	float yPos = pos.y;
 
 	for (int i = 0; i < 2; i++)
 	{
 		const RelicData* relic = Relics::PickRandomRelic(type);
-		uiComp.AddImage(relic->m_filePath, { xPos[i], pos.y - 0.025f }, { 1.5f, 1.5f }, false);
+		uiComp.AddImage(relic->m_filePath, { xPos[i], yPos }, { 1.5f, 1.5f }, false);
+		char price[4];
+		sprintf(price, "%i", relic->m_price);
+
+		uiComp.AddText(price, uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.GetBounds(), {xPos[i], yPos - 0.075f});
 		uiRelicComp.shopRelics[i] = relic;
 	}
 
@@ -85,9 +93,9 @@ void CreateRelicWindows()
 
 	const DSFLOAT2 positions[SHOP_RELIC_WINDOWS] =
 	{
-		{ SHOP_OFFSET_X_Left, 0.1f },
-		{ SHOP_OFFSET_X_Left, -0.3f },
-		{ SHOP_OFFSET_X_Right, -0.3f }
+		{ SHOP_OFFSET_X_Left, SHOP_POSITION_Y - 0.3f },
+		{ SHOP_OFFSET_X_Left, SHOP_POSITION_Y - 0.75f },
+		{ SHOP_OFFSET_X_Right, SHOP_POSITION_Y - 0.75f }
 	};
 
 	const Relics::RELIC_TYPE type[SHOP_RELIC_WINDOWS] =
@@ -140,10 +148,10 @@ void CreateSingleWindows()
 
 	const DSFLOAT2 positions[SHOP_SINGLE_WINDOWS] =
 	{
-		{ SHOP_POSITION_X, -0.7f },
-		{ SHOP_POSITION_X + 0.22f, -0.7f },
-		{ SHOP_POSITION_X + 0.44f, -0.7f },
-		{ SHOP_OFFSET_X_Right, 0.1f },
+		{ SHOP_OFFSET_X_Left, SHOP_POSITION_Y - 1.25f },
+		{ SHOP_OFFSET_X_Left + 0.22f, SHOP_POSITION_Y - 1.25f  },
+		{ SHOP_OFFSET_X_Left + 0.44f, SHOP_POSITION_Y - 1.25f  },
+		{ SHOP_OFFSET_X_Right, SHOP_POSITION_Y - 0.3f },
 		{ 0.8f, -0.75f }
 	};
 
@@ -206,17 +214,19 @@ void CreateSingleWindows()
 		if (i == 3)
 		{
 			uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
 		}
 		else if (i == 4)
 		{
 			uiElement->Setup("ExMenu/ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 		}
 		else
-			uiElement->Setup("", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			uiElement->Setup("ExMenu/ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 		if (i != 4)
+		{
+			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
 			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
+		}
 
 		if (i == 4)
 			uiElement->m_BaseImage.baseUI.SetVisibility(false);
@@ -232,7 +242,10 @@ void CreateSingleWindows()
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 
 		if (i != 4)
-		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+		{
+			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+			uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+		}
 		else
 			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 
@@ -252,7 +265,7 @@ void CreateTextWindows()
 	EntityID impText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.40f }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
