@@ -124,6 +124,54 @@ bool ControllerSystem::Update()
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
+			stateManager.activeLevel = 5;
+			LoadLevel(5);
+		}
+		else if (keyState[SCANCODE_4] == pressed)
+		{
+			LoadLevel(7);
+		}
+		else if (keyState[SCANCODE_5] == pressed)
+		{
+			LoadLevel(9);
+		}
+		else if (keyState[SCANCODE_6] == pressed)
+		{
+			LoadLevel(11);
+		}
+		else if (keyState[SCANCODE_7] == pressed)
+		{
+			LoadLevel(13);
+		}
+		else if (keyState[SCANCODE_8] == pressed)
+		{
+			LoadLevel(15);
+		}
+		else if (keyState[SCANCODE_9] == pressed)
+		{
+			LoadLevel(17);
+		}
+		else if (keyState[SCANCODE_0] == pressed)//Reset shop, do this only once per game
+		{
+			LoadLevel(2);
+		}
+		else if (keyState[SCANCODE_S] == pressed)//Do this many times
+		{
+			LoadLevel(4);
+		}
+	}
+	if (keyInput[SCANCODE_L] == down)
+	{
+		if (keyState[SCANCODE_1] == pressed)
+		{
+			LoadLevel(1);
+		}
+		else if (keyState[SCANCODE_2] == pressed)
+		{
+			LoadLevel(3);
+		}
+		else if (keyState[SCANCODE_3] == pressed)
+		{
 			LoadLevel(5);
 		}
 		else if (keyState[SCANCODE_4] == pressed)
@@ -171,6 +219,16 @@ bool ControllerSystem::Update()
 					VisualizeHitbox(entity, i);
 				}
 			}
+		}
+		if (keyState[SCANCODE_G] == pressed)
+		{
+			SetHitboxIsMoveable(stateManager.player, 0, false);
+			SetHitboxIsMoveable(stateManager.player, 1, false);
+		}
+		if (keyState[SCANCODE_I] == pressed)
+		{
+			SetHitboxIsMoveable(stateManager.player, 0, true);
+			SetHitboxIsMoveable(stateManager.player, 1, true);
 		}
 		if (keyState[SCANCODE_S] == pressed)
 		{

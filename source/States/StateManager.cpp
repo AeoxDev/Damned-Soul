@@ -174,18 +174,21 @@ int StateManager::Setup()
 	
 	
 	systems.push_back(new ShadowSystem());
+	systems[1]->timeCap = 1.f / 60.f;
 	systems.push_back(new RenderSystem());
+	systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new OutlineSystem());
 
 
-	//systems[2]->timeCap = 1.f / 60.f;
-	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new ParticleSystemCPU());
+	systems[4]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
+	systems[6]->timeCap = 1.f / 60.f;
 
 	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
+	systems.push_back(new ShatterSystem());
 
 	systems.push_back(new UIRunTimeSystem());
 	systems.push_back(new UIRenderSystem());
@@ -299,7 +302,7 @@ void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
-		systems[i]->timeElapsed += GetDeltaTime();
+		systems[i]->timeElapsed += GetFrameTime(); //No longer deltatime, in case of game pause deltatime
 
 		if (systems[i]->timeElapsed >= systems[i]->timeCap)
 		{

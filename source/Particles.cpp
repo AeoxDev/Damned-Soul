@@ -189,7 +189,14 @@ void Particles::PrepareParticleCompute()
 {
 	SwitchInputOutput();
 
-	data->metadata[0].deltaTime = GetDeltaTime();
+	if (Camera::InCutscene() > 0)
+	{
+		data->metadata[0].deltaTime = GetFrameTime();
+	}
+	else
+	{
+		data->metadata[0].deltaTime = GetDeltaTime();
+	}
 
 	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
 

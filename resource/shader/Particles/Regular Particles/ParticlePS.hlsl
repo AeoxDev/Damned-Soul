@@ -80,19 +80,29 @@ float4 main(GS_OUT input) : SV_TARGET
     {
         float4 backBuffer = SampleBackbuffer(input.position, screenResolution_in, backbufferTexture_in, WrapSampler);
         
-        if (vfxPattern == 0) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
+        if (vfxPattern == 0)
         {
             
             image = VFXFire(backBuffer, input.time, input.uv);
         }
-        else if (vfxPattern == 1) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+        else if (vfxPattern == 1) 
         {
             image = VFXAcidSpit(backBuffer, input.time, input.uv);
 
         }
-        else if (vfxPattern == 2) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+        else if (vfxPattern == 2) 
         {
             image = VFXSwordSlash(backBuffer, input.time, input.uv);
+
+        }
+        else if (vfxPattern == 3) 
+        {
+            image = VFXFireBall(backBuffer, input.time, input.uv);
+
+        }
+        else if (vfxPattern == 4)
+        {
+            image = VFXAcidGround(backBuffer, input.time, input.uv);
 
         }
     }

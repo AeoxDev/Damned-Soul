@@ -32,6 +32,14 @@ void LoadLevel6()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 6;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level6"); //Proximity hitbox (Added by Joaquin)
+
+	if (SetupVFXTorches("LV6Torch.dss", false, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV6Torch\nOr file is not written properly.");
+	}
 
 	EntityID mouse = registry.CreateEntity();
 
@@ -44,11 +52,13 @@ void LoadLevel6()
 	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	 if (SetupAllEnemies("LV6Enemies.dss") == false)
+	if (SetupAllEnemies("LV6Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
 		assert("Could not read file: LV6Enemies");
 	}
+	
+
 
 	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::minotaur, -78.f, 1.f, 108.f, 0);
 
