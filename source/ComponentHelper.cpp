@@ -204,6 +204,11 @@ void StatComponent::UpdateBonusDamage(const float delta)
 	m_bonusDamage += delta;
 }
 
+float StatComponent::GetBonusDamage() const
+{
+	return m_bonusDamage;
+}
+
 float StatComponent::GetAttackSpeed() const
 {
 	return m_baseAttackSpeed + m_bonusAttackSpeed;

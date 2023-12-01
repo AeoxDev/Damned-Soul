@@ -234,8 +234,15 @@ void CreateSingleWindows()
 
 		if (i != 4)
 		{
-			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
-			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
+			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f });
+			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.0f }, { 1.0f, 1.0f }, false);
+			if (price[i] > 0)
+			{
+				char Sprice[4];
+				sprintf(Sprice, "%i", price[i]);
+
+				uiElement->AddText(Sprice, uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.GetBounds(), { positions[i].x, positions[i].y - 0.1f });
+			}
 		}
 
 		if (i == 4)
@@ -273,6 +280,7 @@ void CreateTextWindows()
 {
 	EntityID shopTitle = registry.CreateEntity();
 	EntityID impText = registry.CreateEntity();
+	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
 	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -280,10 +288,30 @@ void CreateTextWindows()
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("TempRelicHolder", "Hello There", { 0.3f, 0.1f }, { 2.0f, 2.0f }, 20.0f);
-	uiImpText->m_BaseImage.baseUI.SetVisibility(false);
+	uiImpText->Setup("ExMenu/PanelMediumShort", "Hello There", { 0.5f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
+	
+	uiImpText->m_BaseText.baseUI.m_CurrentBounds.right *= 0.6;
+	uiImpText->m_BaseText.baseUI.m_PositionBounds.right *= 0.6;
+	uiImpText->m_BaseText.baseUI.m_OriginalBounds.right *= 0.6;
+
+	uiImpText->m_BaseText.baseUI.SetPosition(DSFLOAT2(uiImpText->m_BaseImage.baseUI.GetPosition().x, 0.0f));
 
 	registry.AddComponent<UIShopImpComponent>(impText);
+
+	UIComponent* uiPlayerInfo = registry.AddComponent<UIComponent>(statsText);
+	uiPlayerInfo->Setup("ExMenu/PanelSmall", "Player Stats", { 0.3f,  SHOP_POSITION_Y - 1.25f }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	uiPlayerInfo->m_BaseText.baseUI.SetPosition(DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y - 0.05f));
+
+	float offsets[3] = { 0.06f, 0.0f, -0.06f };
+
+	for (int i = 0; i < 3; i++)
+	{
+		uiPlayerInfo->AddText("", uiPlayerInfo->m_BaseImage.baseUI.GetBounds(),
+			DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y + offsets[i] - 0.025f));
+	}
+
+
+	registry.AddComponent<UIShopPlayerStatsComponent>(statsText);
 
 }
 
@@ -320,8 +348,6 @@ void LoadShop()
 
 void ReloadShop()
 {
-	CreateTextWindows();
-
 	SetInShop(true);
 
 	for (auto entity : View<UIShopRerollComponent>(registry))
@@ -330,6 +356,8 @@ void ReloadShop()
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Stop(Channel_Base);
 	}
+
+	CreateTextWindows();
 
 	for (auto entity : View<OnClickComponent>(registry))
 	{
