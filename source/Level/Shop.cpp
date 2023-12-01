@@ -26,18 +26,28 @@ void ShopCutscene()
 {
 	//Create the imp
 	EntityID imp = registry.CreateEntity();
-	registry.AddComponent<ModelBonelessComponent>(imp, LoadModel("EyePlaceholder.mdl"));
+	stateManager.cutsceneEnemy = imp;
+	registry.AddComponent<ModelSkeletonComponent>(imp, LoadModel("Imp.mdl"));
+	registry.AddComponent<AnimationComponent>(imp);
 	TransformComponent* transform = registry.AddComponent<TransformComponent>(imp);
 	transform->positionX = 13.0f;
 	transform->positionZ = -25.0f;
+	transform->scaleY = 1.2f;
+	transform->scaleX = 1.2f;
+	transform->scaleZ = 1.2f;
 
 	EntityID impCutscene = registry.CreateEntity();
 	CutsceneComponent* rotateImp = registry.AddComponent<CutsceneComponent>(imp);
 	rotateImp->mode = (CutsceneMode)(Cutscene_Character_Idle | Transition_LookAt | Cutscene_Accelerating);
 	CutsceneSetLookAt(imp, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f, 2.0f);
-
 	AddTimedEventComponentStartContinuousEnd(imp, 0.0f, BeginShopCutscene, CutsceneTransition, 5.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
+	//Keep Imp idle
+	EntityID impIdleCutscene = registry.CreateEntity();
+	CutsceneComponent* idleImp = registry.AddComponent<CutsceneComponent>(impIdleCutscene);
+	idleImp->mode = (CutsceneMode)(Cutscene_Character_Idle | Transition_LookAt | Cutscene_Linear);
+	CutsceneSetLookAt(impIdleCutscene, -1.0f, 0.0f, 2.0f, -1.0f, 0.0f, 2.0f);
+	AddTimedEventComponentStartContinuousEnd(impIdleCutscene, 5.0f, BeginShopCutscene, StoredEnemyCutscene, 99999999999.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	//Cutscene
 	EntityID cutscene = registry.CreateEntity();
 	CutsceneComponent* stillShot = registry.AddComponent<CutsceneComponent>(cutscene);

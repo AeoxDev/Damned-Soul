@@ -97,20 +97,6 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 			break;
 		case 6: //To stage 4
 		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player); //Move this to after boss cutscene is done
-			if (sfx != nullptr)
-			{
-				int soundToPlay = rand() % 2;
-				switch (soundToPlay) //Play player boss encounter sound
-				{
-				case 0:
-					sfx->Play(Player_BringItOn, Channel_Extra);
-					break;
-				case 1:
-					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
-					break;
-				}
-			}
 			backgroundMusic->Play(Music_Boss, Channel_Base);
 			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
 			break;
@@ -133,20 +119,6 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 			break;
 		case 16: //To stage 9
 		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
-			if (sfx != nullptr)
-			{
-				int soundToPlay = rand() % 2;
-				switch (soundToPlay) //Play player boss encounter sound
-				{
-				case 0:
-					sfx->Play(Player_BringItOn, Channel_Extra);
-					break;
-				case 1:
-					sfx->Play(Player_ThisWillBeFun, Channel_Extra);
-					break;
-				}
-			}
 			backgroundMusic->Play(Music_Boss, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
