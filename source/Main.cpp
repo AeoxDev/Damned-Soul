@@ -36,7 +36,7 @@ int main(int argc, char* args[])
 	
 #ifdef UI_TEST
 
-	SimulateUI(title, 500);
+	SimulateUI(title, 200);
 
 #endif // UI_TEST
 

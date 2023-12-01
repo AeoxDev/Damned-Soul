@@ -84,7 +84,6 @@ void SimulateUI(std::string& title, int total)
 
 void SimulateMainMenu(std::string& title, int total)
 {
-	gameSpeed = 36.0f;
 	LoadLevel(666);//Load the menu
 	for (size_t i = 0; i < total; i++)
 	{
@@ -92,9 +91,9 @@ void SimulateMainMenu(std::string& title, int total)
 		UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
 		stateManager.Update();
 		stateManager.EndFrame();
-		//MemLib::pdefrag();
+		MemLib::pdefrag();
 	}
-	gameSpeed = 1.0f;
+
 	LoadLevel(666);//Reload the menu
 }
 

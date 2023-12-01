@@ -6,6 +6,7 @@
 
 //#define UI_TEST
 
+//does not work, dont use
 //#define MAIN_MENU_TEST
 
 //Not done, Dont use
