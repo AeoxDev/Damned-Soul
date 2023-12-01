@@ -51,9 +51,9 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     
     #define WIDTH_HEIGHT_OUTLINE (3)
     #define SIGMA_OUTLINE (7.0f)
-    for (int y = max(index.y - WIDTH_HEIGHT_OUTLINE, 0); y < min(index.y + WIDTH_HEIGHT_OUTLINE, 900); ++y)
+    for (int y = max(index.y - WIDTH_HEIGHT_OUTLINE, 0); y < min(index.y + WIDTH_HEIGHT_OUTLINE, windowHeight); ++y)
     {
-        for (int x = max(index.x - WIDTH_HEIGHT_OUTLINE, 0); x < min(index.x + WIDTH_HEIGHT_OUTLINE, 1600); ++x)
+        for (int x = max(index.x - WIDTH_HEIGHT_OUTLINE, 0); x < min(index.x + WIDTH_HEIGHT_OUTLINE, windowWidth); ++x)
         {
             int2 h8t = int2(x, y);
             float temp = Gaussian(index.x - x, index.y - y, SIGMA_OUTLINE);
