@@ -103,21 +103,21 @@ void LoadLevel2()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	float redLight = 0.35f;
+	//float redLight = 0.35f;
 
-	//StageLights
-	EntityID lightholder = registry.CreateEntity();
-	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
+	////StageLights
+	//EntityID lightholder = registry.CreateEntity();
+	//EntityID lightholderTwo = registry.CreateEntity();
+	//EntityID lightholderThree = registry.CreateEntity();
+	//EntityID lightholderForth = registry.CreateEntity();
 
-	//EntityID part = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(lightholder, 10, 20, 6, 117, 14, -148, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	TransformComponent tComp;
-	tComp.positionX = 1;
-	tComp.positionY = 1;
-	tComp.positionZ = 1;
-	registry.AddComponent<TransformComponent>(lightholder, tComp);
+	////EntityID part = registry.CreateEntity();
+	//registry.AddComponent<ParticleComponent>(lightholder, 10, 20, 6, 117, 14, -148, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent tComp;
+	//tComp.positionX = 1;
+	//tComp.positionY = 1;
+	//tComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholder, tComp);
 
 	stateManager.stage = stage;
 	SetInPlay(true);
