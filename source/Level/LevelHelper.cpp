@@ -1169,7 +1169,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 
 	FollowerComponent* weapon_follow = registry.AddComponent<FollowerComponent>(stateManager.weapon, stateManager.player);
 
-	GlowComponent* weaponGlow = registry.AddComponent<GlowComponent>(stateManager.weapon, 0, 0.8, 0.7);
+	GlowComponent* weaponGlow = registry.AddComponent<GlowComponent>(stateManager.weapon, 0, 0, 0/*0.8, 0.7*/);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)
