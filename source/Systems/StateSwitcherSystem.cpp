@@ -105,6 +105,7 @@ bool StateSwitcherSystem::Update()
 							}
 
 							//Player death sound (Make a timed event to play after boss victory sound.)
+							TimedEventIgnoreGamespeed(true);
 							AddTimedEventComponentStart(stateManager.player, 4.0f, PlayBossVictoryOrDeathLine, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 						}
 					}
@@ -178,6 +179,7 @@ bool StateSwitcherSystem::Update()
 					sfx->Play(Boss_MustNotDie, Channel_Extra);
 
 					//Player victory sound (Make a timed event to play after boss death sound.)
+					TimedEventIgnoreGamespeed(true);
 					AddTimedEventComponentStart(stateManager.player, 5.5f, PlayBossVictoryOrDeathLine, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 					break;
 				}
@@ -219,7 +221,7 @@ bool StateSwitcherSystem::Update()
 			endGameLoop = false;
 			continue;
 		}
-		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop))
+		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop) && !(currentStates & State::InMainMenu))
 		{
 			SetGodModePortal(false);
 			playersComp->portalCreated = true;

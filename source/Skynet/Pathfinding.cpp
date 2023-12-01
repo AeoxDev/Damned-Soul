@@ -4,6 +4,62 @@
 #include "States\StateManager.h"
 #include "Registry.h"
 
+//Elliot: I'm the the culprit for this
+void NavigationSample(PathfindingMap* map, int x, int z)
+{
+	map->cost[x][z] += 10000.0f;
+	//RIght column
+	float adjacentPunish = 0.1f;//Elliot: tiny punish to guide away from walls and navigation maps.
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z + 1] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
+		map->cost[x + 1][z - 1] += adjacentPunish;
+
+	//Middle column
+	if (z > 0)
+		map->cost[x][z - 1] += adjacentPunish;
+	if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x][z + 1] += adjacentPunish;
+
+	//Left column
+
+	if (x > 0 && z > 0)
+		map->cost[x - 1][z - 1] += adjacentPunish;
+	if (x > 0)
+		map->cost[x - 1][z] += adjacentPunish;
+	if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x - 1][z + 1] += adjacentPunish;
+}
+//Elliot: I'm the the culprit for this
+void NavigationSample(ObstacleMap* map, int x, int z)
+{
+	float adjacentPunish = 0.1f;//Elliot: tiny punish to guide away from walls and navigation maps.
+	map->cost[x][z] += adjacentPunish;
+	//RIght column
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z + 1] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
+		map->cost[x + 1][z - 1] += adjacentPunish;
+
+	//Middle column
+	if (z > 0)
+		map->cost[x][z - 1] += adjacentPunish;
+	if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x][z + 1] += adjacentPunish;
+
+	//Left column
+
+	if (x > 0 && z > 0)
+		map->cost[x - 1][z - 1] += adjacentPunish;
+	if (x > 0)
+		map->cost[x - 1][z] += adjacentPunish;
+	if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x - 1][z + 1] += adjacentPunish;
+}
 
 void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform)
 {
@@ -49,11 +105,16 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -179,11 +240,16 @@ void CalculateGlobalMapValuesZac(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -304,11 +370,16 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Use overloaded function for navigation sampling
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -371,7 +442,7 @@ void CalculateGlobalMapValuesImp(PathfindingMap* map)
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -427,11 +498,16 @@ void CalculateGlobalMapValuesEye(ObstacleMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_GATE || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground
 			{
@@ -493,11 +569,16 @@ void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);//Elliot: Do neighboring tiles to prevent walking errors
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{

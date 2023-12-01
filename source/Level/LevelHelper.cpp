@@ -247,29 +247,35 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	EntityID stage = registry.CreateEntity();
 	EntityID hitbox = registry.CreateEntity();
 	EntityID gate = registry.CreateEntity();
+	stateManager.naviagtion = registry.CreateEntity();
+
 	ModelBonelessComponent* stageModel;
 	ModelBonelessComponent* hitboxModel;
 	ModelBonelessComponent* gateModel;
 	switch (stageVars.stageNr)
 	{
-	case 0:
+	case 0: 
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
-
 		break;
 	case 1:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
-		
 		break;
 	case 2:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV2Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV2Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV2Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV2Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(1.0f, 0.75f, .55f, -1.6f, -3.0f, 1.0f);
 		
 		break;
@@ -277,44 +283,98 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV3Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV3Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV3Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV3Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(1.0f, 0.7f, .5f, -1.6f, -3.0f, 1.0f);
+		{
+			//Add static hazards here
+			EntityID hazardLava = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(hazardLava, LoadModel("LV3Lava.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazardLava);
+			AddStaticHazard(hazardLava, HAZARD_LAVA);
+		}
 		
 		break;
 	case 4:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV4Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV4Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV4Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV4Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(1.0f, 0.666f, .466f, -1.6f, -3.0f, 1.0f);
+		{
+			//Add static hazards here
+			EntityID hazard = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV4Lava.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			AddStaticHazard(hazard, HAZARD_LAVA);
+		}
 		
 		break;
 	case 5:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV5Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV5Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.666f, 1.0f, .666f, -1.6f, -3.0f, 1.0f);
-		
+		{
+			//Add static hazards here
+			EntityID hazard = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV5Lava.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			AddStaticHazard(hazard, HAZARD_LAVA);
+		}
 		break;
 	case 6:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV6Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV6Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.666f, 0.666f, 1.0f, -1.6f, -3.0f, 1.0f);
+		{
+			//Add static hazards here
+			EntityID hazard = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV6Lava.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			AddStaticHazard(hazard, HAZARD_LAVA);
+		}
+		{
+			//Add static hazards here
+			EntityID hazard = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV6Acid.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			AddStaticHazard(hazard, HAZARD_ACID);
+		}
+		{
+			//Do the visual gate here
+			stateManager.gateVisual = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(stateManager.gateVisual, LoadModel("LV6GateGeo.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(stateManager.gateVisual);
+		}
 		break;
 	case 7:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV7Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV7Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV7Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV7Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	case 8:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV8Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV8Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV8Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV8Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	case 9:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV9Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV9Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
 		break;
 	default:
@@ -345,8 +405,9 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	transform->positionZ = stageVars.offsetZ;
 	TransformComponent* transformG = registry.AddComponent<TransformComponent>(gate, transform);
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
+	TransformComponent* transformN = registry.AddComponent<TransformComponent>(stateManager.naviagtion, transform);
 	RenderGeometryIndependentCollision(stage, gate, hitbox);
-
+	
 	stateManager.gate = gate;
 	
 #ifndef _DEBUG
@@ -355,10 +416,12 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	if (visualizeStage == true)
 	{
 		stateManager.hitboxVis = hitbox;
+		transformN->facingZ = -1.0f;
 	}
 	else
 	{
 		registry.DestroyEntity(hitbox);
+		registry.DestroyEntity(stateManager.naviagtion);
 	}
 	
 	
@@ -976,9 +1039,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		//Sounds
-		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(HELLHOUND);
 		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
