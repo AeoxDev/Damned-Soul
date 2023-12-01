@@ -44,20 +44,26 @@ float4 main(GS_OUT input) : SV_TARGET
             // AniRow(input, 0.0f, false, specify animation speed- defalt is 8);'
      
         
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
-        if (pattern == 0)
+        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));//4x4 sections, Top Row and Second Row //pattern = 0 (SMOKE) ||pattern = 10 (PULSE)
+        if (pattern == 0|| pattern == 10)
         {
-            image = AniRow(input, 0.0f, false); /*AniFullSheet(input);*/
+            image = AniRow(input, 0.0f, false); 
         }
-        else if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
+        else if (pattern == 9) //4x4 sections, Top Row and Second Row //pattern = 9 (FIRE)
         {
-            image = AniRow(input, 0.0f, false); /*AniFullSheet(input);*/
+            image = AniRow(input, 0.0f, false); 
         }
-        else if (pattern == 12) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+        else if (pattern == 3) //4x4 sections, Top Row and Second Row /pattern = 9 (PULSE)
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4,  0.75 + input.uv.y / 4));
+
+            image.rgb = image.rgb * input.rgb;
+        }
+        else if (pattern == 12) //4x4 sections, Third and Forth Row //pattern = (BOILING )
         {
             image = AniRow(input, 0.50f, false);
         }
-        else if (pattern == 13) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+        else if (pattern == 13) //4x4 sections, Third and Forth Row //pattern = (SPARK)
         {
             image = AniRow(input, 0.50f, false, 16);
         }
@@ -65,15 +71,20 @@ float4 main(GS_OUT input) : SV_TARGET
         {
             image = flipBookTex.Sample(WrapSampler, input.uv);
         }
+
         clip(image.a - 0.1f);
-        image=AlphaBlend(backBuffer, image.a, image.rgb);
-        
-        //clip(image.a - 0.1f);
-    
+        image = AlphaBlend(backBuffer, image.a, image.rgb);
+
         if (image.r == 1.0f && image.g == 1.0f && image.b == 1.0f)
         {
             image = input.rgb;
         }
+
+        
+        
+        //clip(image.a - 0.1f);
+    
+      
     }
      // ---------- END OF FLIPBOOKING --------- //
     
@@ -190,11 +201,11 @@ float4 AniFullSheet(in GS_OUT input)    //4x4 sections, Third Row and Forth Row
 
     if (time % 2 == 0)
     {
-        image = AniRow(input, animaVertStart, false, 8.0f);
+        image = AniRow(input, animaVertStart, false);
     }
     else
     {
-        image = AniRow(input, animaVertStart + 0.5, false, 8.0f);
+        image = AniRow(input, animaVertStart + 0.5, false);
     }
 
     return image;

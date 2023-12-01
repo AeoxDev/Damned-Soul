@@ -118,7 +118,9 @@ void LoadLevel1()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	/*registry.AddComponent<ParticleComponent>(stage, 10, 20, 5, 20, 0, 20, 20, FIRE); *///(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+/*
+	registry.AddComponent<ParticleComponent>(stage, 100.0f, 100.0f, 7.0f, 0.0f, 3.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+	registry.AddComponent<ParticleComponent>(stage, 10, 20, 5, 20, 0, 20, 20, FIRE); *///(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	//registry.AddComponent<ParticleComponent>(stage, 1, 0.5, 5, 20, 0, 20, 18, SPARK); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
 		//StageLights
@@ -133,6 +135,16 @@ void LoadLevel1()
 	CreatePointLight(lightholderThree, 0.5f, 0.1f, 0.0f, -66.0f, 10.0f, 30.0f, 300.0f, 20.0f);
 	CreatePointLight(lightholderForth, 0.5f, 0.1f, 0.0f, -66.0f, 10.0f, 75.0f, 300.0f, 20.0f);
 	/*CreatePointLight(lightholderFive, 0.0f, 0.1f, 0.5f, -236.0f, 10.0f, 65.0f, 300.0f, 20.0f);*/
+
+	EntityID particle = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(particle, 10, 0, 5, -240, 1, 0, 20, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent tComp;
+	tComp.positionX = 1;
+	tComp.positionY = 1;
+	tComp.positionZ = 1;
+	registry.AddComponent<TransformComponent>(particle, tComp);
+	//registry.AddComponent<ParticleComponent>(stage, 1, 0.5, 5, 20, 0, 20, 18, SPARK); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, Compu
+
 
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);

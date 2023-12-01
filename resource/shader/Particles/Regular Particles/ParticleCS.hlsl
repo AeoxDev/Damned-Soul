@@ -142,15 +142,20 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
     if (travelledDistance >= (meta[blockID.y].maxRange + meta[One_OneHundo].deltaTime))
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) localIndex / (float) amount), meta[blockID.y].startPosition.z);
-
-        
+       //Z-edited
+        float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
+        startPosition.z= startPosition.z + index + oddEvenFactor * (4 * meta[index].deltaTime);
+        //
         particle.position = startPosition;
         particle.time = 0.f;
     }
     if (particle.time >= (meta[blockID.y].life + meta[One_OneHundo].deltaTime))
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) localIndex / (float) amount), meta[blockID.y].startPosition.z);
-
+        //Z-edited
+        float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
+        startPosition.z = startPosition.z + index + oddEvenFactor * (4 * meta[index].deltaTime);
+        //
         particle.position = startPosition;
         particle.time = 0.f;
     }
@@ -162,9 +167,9 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
 
     particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + meta[One_OneHundo].deltaTime) * dt;
     
-    particle.rgb.r = 0.0f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
+    particle.rgb.r = 0.60f;
+    particle.rgb.g = 0.60f;
+    particle.rgb.b = 0.60f;
 
     outputParticleData[index] = particle;
 }
@@ -246,7 +251,7 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     }
     else
     {
-        particle.rgb = float3(1.f, .0f, .0f);
+        particle.rgb = float3(1.f, 0.10f, .0f);
     }
     
     outputParticleData[index] = particle;
@@ -448,7 +453,7 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
     float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
     particle.position = startPosition;
 
-    float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
+    float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
    
     particle.position.x = particle.position.x + (index);
     particle.position.y = 1 + particle.position.y;
