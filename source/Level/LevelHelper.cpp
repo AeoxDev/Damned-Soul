@@ -412,6 +412,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	
 #ifndef _DEBUG
 	registry.DestroyEntity(hitbox);
+	registry.DestroyEntity(stateManager.naviagtion);
 #else
 	if (visualizeStage == true)
 	{
