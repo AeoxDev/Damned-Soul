@@ -255,7 +255,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	switch (stageVars.stageNr)
 	{
 	case 0: 
-		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Crack.mdl"));
+		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));

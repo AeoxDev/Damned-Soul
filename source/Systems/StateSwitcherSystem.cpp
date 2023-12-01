@@ -221,7 +221,7 @@ bool StateSwitcherSystem::Update()
 			endGameLoop = false;
 			continue;
 		}
-		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop))
+		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop) && !(currentStates & State::InMainMenu))
 		{
 			SetGodModePortal(false);
 			playersComp->portalCreated = true;
