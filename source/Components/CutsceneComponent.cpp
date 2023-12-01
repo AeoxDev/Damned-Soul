@@ -681,6 +681,9 @@ void MinotaurIntroScene(EntityID& entity, const int& index)
 		transform->positionX, transform->positionY, transform->positionZ + 5.0f);
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, chargingTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
+	//Minotaur noise
+	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, nullptr, 0.1f, PlayMinotaurIntroCharge, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+
 	//Return the camera
 	//Return to player
 	EntityID returnTransition = stateManager.player;
