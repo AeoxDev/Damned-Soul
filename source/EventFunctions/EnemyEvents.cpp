@@ -296,11 +296,11 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 		}	
 	}
 
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-	if (anim)
-	{
-		anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
-	}
+	//AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	//if (anim)
+	//{
+	//	anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
+	//}
 }
 
 void EnemyAttackGradient(EntityID& entity, const int& index)

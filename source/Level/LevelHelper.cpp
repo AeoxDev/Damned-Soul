@@ -838,7 +838,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->baseCanWalkOnCrack = true;
 		stat->canWalkOnCrack = true;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Imp.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<ImpBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, EnemyType::imp, false);
@@ -847,7 +847,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scp->Load(IMP);
 
 		// REMOVE ONCE WE HAVE THE IMP MODEL
-		model->shared.colorMultiplicativeRed = 0.2f;
+	/*	model->shared.colorMultiplicativeRed = 0.2f;
 		model->shared.colorMultiplicativeBlue = 0.2f;
 		model->shared.colorMultiplicativeGreen = 0.2f;
 		model->shared.colorAdditiveRed = 0.8f;
@@ -859,7 +859,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model->shared.baseColorMultiplicativeGreen = 0.2f;
 		model->shared.baseColorAdditiveRed = 0.8f;
 		model->shared.baseColorAdditiveBlue = 0.4f;
-		model->shared.baseColorAdditiveGreen = 0.8f;
+		model->shared.baseColorAdditiveGreen = 0.8f;*/
 
 
 		if (player)
@@ -1063,7 +1063,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->baseCanWalkOnCrack = true;
 		stat->canWalkOnCrack = true;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Imp.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<ImpBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, EnemyType::imp, false);
