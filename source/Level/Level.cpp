@@ -12,6 +12,7 @@
 
 void LoadLevel(int level)
 {
+	stateManager.activeLevel = level;
 	std::srand((unsigned)time(NULL));
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);
