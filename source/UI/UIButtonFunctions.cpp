@@ -922,7 +922,7 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 		}
 		else
 		{
-			if (shopButton->m_name == "Lock" || shopButton->m_name == "Buy")
+			if (shopButton->m_name == "Lock" || shopButton->m_name == "Buy" || shopButton->m_name == "Next Level")
 			{
 				buttonText.append("\n");
 			}

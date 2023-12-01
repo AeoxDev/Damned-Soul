@@ -2,11 +2,11 @@
 #include <string>
 
 //Hermano 3000
-//#define GAME_TEST
+#define GAME_TEST
 
-//#define UI_TEST
+#define UI_TEST
 
-//#define MAIN_MENU_TEST
+#define MAIN_MENU_TEST
 
 //Not done, Dont use
 //#define PARTICLE_TEST
