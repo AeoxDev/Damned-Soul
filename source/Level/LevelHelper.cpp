@@ -408,12 +408,15 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 	return hazard;
 }
 
-void SetupEnemyNavigationHelper()
+void SetupEnemyNavigationHelper(bool level8)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
 	transform.positionX = 0.f;
-	transform.positionY = 0.3f;
+	if(level8)
+		transform.positionY = 1.6f;
+	else
+		transform.positionY = 0.3f;
 	transform.positionZ = 0.f;
 	transform.mass = 1.f;
 	transform.facingX = 0.f; transform.facingY = 0.f; transform.facingZ = 0.f;
