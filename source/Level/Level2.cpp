@@ -49,7 +49,7 @@ void LoadLevel2()
 		//something went wrong, could not open file
 		assert("Could not read file: LV2Enemies");
 	}
-	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//Enemies to the right:
 

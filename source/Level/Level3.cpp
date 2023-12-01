@@ -47,15 +47,14 @@ void LoadLevel3()
 		assert("Could not read file: LV3Torch\nOr file is not written properly.");
 	}
 
-	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//Player
 	//SetPlayerPosition(0.0, 0.0, 30.0f);
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	// 
-	if (SetupAllEnemies("LV3Enemies.dss") == false)//******
+	if (SetupAllEnemies("LV3Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
 		assert("Could not read file: LV3Enemies");

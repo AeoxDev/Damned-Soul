@@ -249,7 +249,7 @@ void StatComponent::SetKnockbackMultiplier(const float mult)
 int PlayerComponent::UpdateSouls(const int delta)
 {
 	// Update the UI after the player gets a soul
-	RedrawUI();
+  	RedrawUI();
 
 	auto onSoulUpdateFunctions = Relics::GetFunctionsOfType(Relics::FUNC_ON_SOUL_UPDATE);
 	RelicInput::OnSoulUpdate input =

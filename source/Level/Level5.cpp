@@ -41,7 +41,7 @@ void LoadLevel5()
 	phc->Load("level5"); //Proximity hitbox (Added by Joaquin)
 
 
-	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
 
 	EntityID mouse = registry.CreateEntity();

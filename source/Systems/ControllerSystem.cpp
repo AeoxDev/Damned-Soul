@@ -570,6 +570,11 @@ bool ControllerSystem::Update()
 				}
 				
 			}
+
+			//Make player immediately face in our mouse direction when we attack for better directional combat
+			transform->facingX = MouseComponentGetDirectionX(mouseComponent);
+			transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+
 			attackDuration /= playerStats->GetAttackSpeed(); //Speed up the attack animation based on attack speed
 			registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
@@ -593,7 +598,8 @@ bool ControllerSystem::Update()
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)
 				stats->SetSpeedMult(0.2f);
-			player->currentCharge += GetDeltaTime();
+			/*player->currentCharge += GetDeltaTime();*/
+			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed(); //Charge faster scaling off of attack speed baby
 			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
 				player->currentCharge = player->maxCharge;
 			//Play some sound, do some animation, indicate that we're charging the bigboy move
@@ -605,7 +611,8 @@ bool ControllerSystem::Update()
 				//it's time
 				if (sfx) sfx->Play(Player_HeavyAttack, Channel_Base);
 				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
-				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
+				float attackDuration = 0.8f / playerStats->GetAttackSpeed();
+				/*float attackDuration = 1.0f / playerStats->GetAttackSpeed();*/
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
 				player->currentCharge = 0.0f;
