@@ -45,7 +45,7 @@ float4 main(GS_OUT input) : SV_TARGET
      
         
         image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));//4x4 sections, Top Row and Second Row //pattern = 0 (SMOKE) ||pattern = 10 (PULSE)
-        if (pattern == 0|| pattern == 10)
+        if (pattern == 0)
         {
             image = AniRow(input, 0.0f, false); 
         }
@@ -53,7 +53,7 @@ float4 main(GS_OUT input) : SV_TARGET
         {
             image = AniRow(input, 0.0f, false); 
         }
-        else if (pattern == 3) //4x4 sections, Top Row and Second Row /pattern = 9 (PULSE)
+        else if (pattern == 3 || pattern == 10 || pattern == 11) //4x4 sections, Top Row and Second Row 
         {
             image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4,  0.75 + input.uv.y / 4));
 
@@ -201,11 +201,11 @@ float4 AniFullSheet(in GS_OUT input)    //4x4 sections, Third Row and Forth Row
 
     if (time % 2 == 0)
     {
-        image = AniRow(input, animaVertStart, false);
+        image = AniRow(input, animaVertStart, false,8);
     }
     else
     {
-        image = AniRow(input, animaVertStart + 0.5, false);
+        image = AniRow(input, animaVertStart + 0.5, false,8);
     }
 
     return image;

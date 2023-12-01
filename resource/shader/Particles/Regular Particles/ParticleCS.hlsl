@@ -390,16 +390,17 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/ index);
     float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);
     
-    float dirX = cos((float) localIndex / (float) amount * 15.0f) * 30.f;
-    float dirZ = sin((float) localIndex / (float) amount * 15.0f) * 30.f;
+    float dirX = cos((float) localIndex / (float) amount * 15.0f) * 28/*30.f*/;
+    float dirZ = sin((float) localIndex / (float) amount * 15.0f) * 28/*30.f*/;
 
+    particle.size = (particle.size / (1 / particle.time));
         
     particle.position.x = particle.position.x + (oscillationX + dirX) * dt;
     particle.position.z = particle.position.z + (oscillationZ + dirZ) * dt;
     
-    particle.rgb.r = 0.0f;
+    particle.rgb.r = 10.0f;
     particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
+    particle.rgb.b = 0.9f;
         
     outputParticleData[index] = particle;
 }
@@ -519,7 +520,7 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
 
     float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
     particle.size = particle.size + (1*oddEvenFactor);
-    particle.position.x = particle.position.x + (index+4);
+    particle.position.x = particle.position.x + (index*2/*+4*/);
     particle.position.y = 1 + particle.position.y;
     particle.position.z = particle.position.z + index + (oddEvenFactor * ( /*4*/6 * meta[index].deltaTime));
 

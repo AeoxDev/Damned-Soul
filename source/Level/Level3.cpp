@@ -53,11 +53,11 @@ void LoadLevel3()
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	// 
-	//if (SetupAllEnemies("LV3Enemies.dss") == false)//******
-	//{
-	//	//something went wrong, could not open file
-	//	assert("Could not read file: LV3Enemies");
-	//}
+	if (SetupAllEnemies("LV3Enemies.dss") == false)//******
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV3Enemies");
+	}
 	
 	////Upper right corner:
 	//SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
@@ -125,19 +125,19 @@ void LoadLevel3()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	//CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// EntityID& entity, float colorRed, float colorGreen, float colorBlue, float positionX, float positionY, float positionZ, float range, float fallofFactor
+	// EntityID& entity, float colorRed, float colorGreen, float colorBlue, float positionX, float positionY, float positionZ, float range, float fallofFactor
 	CreatePointLight(lightholder, 0.5f, 0.1f, 0.0f, 33.0f, 10.0f, 23.0f, 300.0f, 20.0f);
 	CreatePointLight(lightholderTwo,0.5f, 0.1f, 0.0f, -31.0f, 10.0f, -53.0f, 300.0f, 20.0f);
 	CreatePointLight(lightholderThree,0.5f, 0.1f, 0.0f, -180.0f, 10.0f, -33.0f, 300.0f, 20.0f);
 	CreatePointLight(lightholderForth, 0.5f, 0.1f, 0.0f, -263.0f, 10.0f, -5.0f, 300.0f, 20.0f);
 
-	EntityID part = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(part, 10, 20, 6, 0, 1, 0, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	TransformComponent tComp;
-	tComp.positionX = 1;
-	tComp.positionY = 1;
-	tComp.positionZ = 1;
-	registry.AddComponent<TransformComponent>(part, tComp);
+	/*EntityID part = registry.CreateEntity();*/
+	//registry.AddComponent<ParticleComponent>(lightholder, 10, 20, 6, 0, 1, 0, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent tComp;
+	//tComp.positionX = 1;
+	//tComp.positionY = 1;
+	//tComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholder, tComp);
 
 
 	stateManager.stage = stage;
