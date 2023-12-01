@@ -1,9 +1,14 @@
-RWTexture2D<unorm float4> outputGlowData : register(u0);
-RWTexture2D<unorm float4> inputGlowData : register(u1);
-RWTexture2D<unorm float4> backbuffer : register(u2);
+RWTexture2D<unorm float4> backbuffer : register(u0);
 
 Texture2D<unorm float4> uiSRV : register(t0);
-Texture2D<unorm float4> outlineSRV : register(t1);
+Texture2D<unorm float4> inputGlowData : register(t1);
+Texture2D<unorm float4> outlineSRV : register(t2);
+
+cbuffer GlowInfo : register(b0)     // HELP: Unsiure if this is input correctly. Gives strange results compared to "the normal".
+{
+    int windowWidth;
+    int windowHeight;
+}
 
 static const float e = 2.71828f;
 static const float pi = 3.14159f;
@@ -29,7 +34,7 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
     int2 index = int2(groupID.x * 32 + threadID.x, groupID.y * 32 + threadID.y);
        
-    if (index.x > 1600 || index.y > 900)
+    if (index.x > windowWidth || index.y > windowHeight)
     {
         return;
     }
@@ -46,9 +51,9 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     
     #define WIDTH_HEIGHT_OUTLINE (3)
     #define SIGMA_OUTLINE (7.0f)
-    for (int y = max(index.y - WIDTH_HEIGHT_OUTLINE, 0); y < min(index.y + WIDTH_HEIGHT_OUTLINE, 900); ++y)
+    for (int y = max(index.y - WIDTH_HEIGHT_OUTLINE, 0); y < min(index.y + WIDTH_HEIGHT_OUTLINE, windowHeight); ++y)
     {
-        for (int x = max(index.x - WIDTH_HEIGHT_OUTLINE, 0); x < min(index.x + WIDTH_HEIGHT_OUTLINE, 1600); ++x)
+        for (int x = max(index.x - WIDTH_HEIGHT_OUTLINE, 0); x < min(index.x + WIDTH_HEIGHT_OUTLINE, windowWidth); ++x)
         {
             int2 h8t = int2(x, y);
             float temp = Gaussian(index.x - x, index.y - y, SIGMA_OUTLINE);
@@ -66,9 +71,9 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     // Calculate color blend and glow falloff based on pixel distance.
     #define WIDTH_HEIGHT_GLOW (10)
     #define SIGMA_GLOW (6.f)
-    for (int y = max(index.y - WIDTH_HEIGHT_GLOW, 0); y < min(index.y + WIDTH_HEIGHT_GLOW, 900); ++y)
+    for (int y = max(index.y - WIDTH_HEIGHT_GLOW, 0); y < min(index.y + WIDTH_HEIGHT_GLOW, windowHeight); ++y)
     {
-        for (int x = max(index.x - WIDTH_HEIGHT_GLOW, 0); x < min(index.x + WIDTH_HEIGHT_GLOW, 1600); ++x)
+        for (int x = max(index.x - WIDTH_HEIGHT_GLOW, 0); x < min(index.x + WIDTH_HEIGHT_GLOW, windowWidth); ++x)
         {
             int2 h8t = int2(x, y);
             float temp = Gaussian(index.x - x, index.y - y, SIGMA_GLOW);

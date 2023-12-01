@@ -1143,6 +1143,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
+	//GlowComponent* player_glow = registry.AddComponent<GlowComponent>(stateManager.player, 1, 0, 0);
+
 	// Create weapon
 	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
@@ -1164,6 +1166,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	weapon_transform->mass = mass;
 
 	FollowerComponent* weapon_follow = registry.AddComponent<FollowerComponent>(stateManager.weapon, stateManager.player);
+
+	GlowComponent* weaponGlow = registry.AddComponent<GlowComponent>(stateManager.weapon, 0, 0.8, 0.7);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)
@@ -1288,22 +1292,22 @@ void SetScoreboardUI(EntityID stage)
 	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
 
-	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunctions::MainMenu::Start);
+	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
 
-	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunctions::Game::SetMainMenu);
+	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
 	onHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	DSFLOAT2 offsetUICoords = { abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().x + 32.0f) ,
+	DSFLOAT2 offsetPixelCoords = { abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().x + 32.0f) ,
 						   abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().y + 32.0f) };
 
-	DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-						-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+	DSFLOAT2 uiCoords = { (offsetPixelCoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+						-1 * ((offsetPixelCoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-	DSFLOAT2 diffPos(uiPixelCoords.x + 1.1f, uiPixelCoords.y - 0.4f);
+	DSFLOAT2 diffPos(uiCoords.x + 1.1f, uiCoords.y - 0.4f);
 
 	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y), DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.15f), DSFLOAT2(1.0f, 1.0f));
@@ -1334,7 +1338,7 @@ void SetScoreboardUI(EntityID stage)
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiPixelCoords.x + 0.4f, uiPixelCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.4f, uiCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
 			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);

@@ -42,7 +42,7 @@ void SOUL_HEALTH::Consume(void* input)
 	PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(SOUL_HEALTH::_OWNER);
 	if (playerComp && !_SC_IN_SHOP)
 	{
-		int consume = std::ceilf(playerComp->GetSouls() * _SC_FACTOR);
+		int consume = (int)std::ceilf(playerComp->GetSouls() * _SC_FACTOR);
 
 		playerComp->UpdateSouls(-consume);
 	}

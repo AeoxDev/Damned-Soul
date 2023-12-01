@@ -598,13 +598,14 @@ void LoadNextLevel(OnCollisionParameters& params)
 		default:
 			break;
 		}
+
 		//not final level portal
 		if (stateManager.activeLevel != stateManager.finalLevel)
 		{
 			LoadLevel(++stateManager.activeLevel);
 			return;
 		}
-		//Final portal stuff
+
 		//final level portal
 
 		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);

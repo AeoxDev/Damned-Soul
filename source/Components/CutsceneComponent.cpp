@@ -98,7 +98,7 @@ void StageIntroFall(EntityID& entity, const int& index)
 	CutsceneSetLookAt(returnCamera, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	
 	AddTimedEventComponentStartContinuousEnd(returnCamera, fallTime, BeginCutscene, CutsceneTransition, pauseTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	AddTimedEventComponentStart(entity, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	AddTimedEventComponentStart(returnCamera, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 void StageIntroFallUnskippable(EntityID& entity, const int& index)

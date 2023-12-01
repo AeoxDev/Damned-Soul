@@ -127,6 +127,8 @@ public:
 // Offensive
 	// Get the base damage of the entity
 	float GetBaseDamage() const;
+	// update the entity's base damage
+	void UpdateBaseDamage(const float delta);
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage

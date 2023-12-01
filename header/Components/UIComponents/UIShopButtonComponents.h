@@ -23,7 +23,7 @@ struct UIShopButtonComponent
 
 struct UIShopRerollComponent
 {
-	bool locked = false;
+
 };
 
 struct UIShopHealComponent

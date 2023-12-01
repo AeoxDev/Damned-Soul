@@ -41,7 +41,15 @@ namespace UIFunctions
 		void SetFullscreen(void* args, int a);
 
 		void SwitchTimer(void* args, int a);
+
+		namespace Volume
+		{
+			void Press(void* args, int a);
+			
+			void Release(void* args, int a);
+		}
 	}
+
 
 	void Credits_Back(void* args, int a);
 	
@@ -62,13 +70,17 @@ namespace UIFunctions
 
 		void SelectRelic(void* args, int index);
 
-		void HealPlayer(void* args, int index);
+		void LockRelic(void* args, int index);
 
 		void RerollRelic(void* args, int index);
 
 		void LockRelic(void* args, int index);
 
+		void UpgradeWeapon(void* args, int index);
+
 		void BuyRelic(void* args, int index);
+
+		void HealPlayer(void* args, int index);
 	}
 
 	namespace OnHover

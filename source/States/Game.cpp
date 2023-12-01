@@ -26,14 +26,7 @@ void GameScene::Input(bool isShop)
 	// If Shop level is loaded
 	if (isShop)
 	{
-		if (keyState[SDL_SCANCODE_ESCAPE] == pressed)
-		{
-			SetInMainMenu(true);
-			SetInShop(false);
-			Unload(true);
-
-			stateManager.menu.Setup();
-		}
+		
 	}
 	// If Game Level is loaded
 	else
@@ -54,18 +47,6 @@ void GameScene::Input(bool isShop)
 		
 		}
 	}
-}
-
-void GameScene::Update()
-{
-
-}
-
-void GameScene::ComputeShaders()
-{
-	/*Particles::PrepareParticleCompute();
-	Dispatch(100, 0, 0);
-	Particles::FinishParticleCompute();*/
 }
 
 void GameScene::Unload(int unloadPersistent)
