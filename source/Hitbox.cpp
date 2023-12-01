@@ -1,8 +1,6 @@
 #include "Hitbox.h"
 #include "D3D11Helper\D3D11Graphics.h"
 #include "D3D11Helper\D3D11Helper.h"
-#include <fstream>
-#include <sstream>
 #include "Backend/Collision.h"
 #include "CollisionFunctions.h"
 #include "Backend\GeometryIndependent.h"
@@ -11,6 +9,8 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Skynet\BehaviourHelper.h"
+#include <fstream>
+#include <sstream>
 
 int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ)
 {
