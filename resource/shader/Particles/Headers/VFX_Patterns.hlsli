@@ -153,7 +153,7 @@ float dissippateSpeed = 0.25f
     float4 colorizedSpawn = panCaustics + rotateCaustics;
     
     //Alpha mask
-    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * sin(time * dissippateValue)).g;
+    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * (1.0f - clamp(time * dissippateValue, 0.0f, 1.0f))).g;
     
     // Making Alpha disappear
     float timedMask = alphaMask * shapeTexture_in.Sample(WrapSampler, uv).g;

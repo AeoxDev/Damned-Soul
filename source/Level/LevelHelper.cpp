@@ -472,12 +472,15 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 	return hazard;
 }
 
-void SetupEnemyNavigationHelper()
+void SetupEnemyNavigationHelper(bool level8)
 {
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
 	transform.positionX = 0.f;
-	transform.positionY = 0.3f;
+	if(level8)
+		transform.positionY = 1.6f;
+	else
+		transform.positionY = 0.3f;
 	transform.positionZ = 0.f;
 	transform.mass = 1.f;
 	transform.facingX = 0.f; transform.facingY = 0.f; transform.facingZ = 0.f;
@@ -907,7 +910,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scp->Load(IMP);
 
 		// REMOVE ONCE WE HAVE THE IMP MODEL
-		model->shared.colorMultiplicativeRed = 0.2f;
+	/*	model->shared.colorMultiplicativeRed = 0.2f;
 		model->shared.colorMultiplicativeBlue = 0.2f;
 		model->shared.colorMultiplicativeGreen = 0.2f;
 		model->shared.colorAdditiveRed = 0.8f;
@@ -919,7 +922,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model->shared.baseColorMultiplicativeGreen = 0.2f;
 		model->shared.baseColorAdditiveRed = 0.8f;
 		model->shared.baseColorAdditiveBlue = 0.4f;
-		model->shared.baseColorAdditiveGreen = 0.8f;
+		model->shared.baseColorAdditiveGreen = 0.8f;*/
 
 
 		if (player)
@@ -991,6 +994,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
+	//	EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_BOSS);
+		
+
+		AddTimedEventComponentStart(entity, 4.f, BossSpawnwaveEnd);
+
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
 		if (eType == EnemyType::frozenHellhound)
@@ -1114,7 +1123,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->baseCanWalkOnCrack = true;
 		stat->canWalkOnCrack = true;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Imp.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<ImpBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.f, EnemyType::imp, false);

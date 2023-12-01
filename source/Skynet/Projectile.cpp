@@ -22,7 +22,7 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 
 	//Position
 	transform.positionX = origin->positionX;
-	transform.positionY = 1.0f;
+	transform.positionY = 5.0f;
 	transform.positionZ = origin->positionZ;
 
 	//Scale

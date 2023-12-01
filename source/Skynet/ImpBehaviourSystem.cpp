@@ -40,12 +40,11 @@ void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transf
 	ic->idleCounter = 0.0f;
 
 	// Regular walk
-	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
-	{
-		enemyAnim->aAnim = ANIMATION_WALK;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
+	
+	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnimIdx = 0;
+	//enemyAnim->aAnimTime = 0.0f;
+	
 
 	ic->chaseCounter += GetDeltaTime();
 	//if the player has chased the imp for too long, teleport away
@@ -109,12 +108,11 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	}
 	else // yes, we can indeed attack. 
 	{
-		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 1))
-		{
-			enemyAnim->aAnim = ANIMATION_ATTACK;
-			enemyAnim->aAnimIdx = 1;
-			enemyAnim->aAnimTime = 0.0f;
-		}
+		
+		enemyAnim->aAnim = ANIMATION_ATTACK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.4f;
+		
 
 		ic->attackTimer = 0;
 		ic->aimTimer = 0;
@@ -178,12 +176,11 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
 	//idle just do animation
-	if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 0))
-	{
-		enemyAnim->aAnim = ANIMATION_IDLE;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
+	
+	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnimIdx = 0;
+	//enemyAnim->aAnimTime = 0.0f;
+	
 
 	ic->idleCounter += GetDeltaTime();
 	if (ic->idleCounter >= ic->idleTimer)
@@ -276,12 +273,13 @@ bool ImpBehaviourSystem::Update()
 
 			if (impComponent->attackStunTimer <= impComponent->attackStunDuration)
 			{
-				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 1))
+				if (impComponent->attackStunTimer > 0.4f)
 				{
 					enemyAnim->aAnim = ANIMATION_IDLE;
-					enemyAnim->aAnimIdx = 1;
-					enemyAnim->aAnimTime = 0.0f;
+					enemyAnim->aAnimIdx = 0;
 				}
+
+				
 			}
 			else if (distance < 15.0f && !impComponent->charging) // try to retreat to a safe distance if not charging
 			{
