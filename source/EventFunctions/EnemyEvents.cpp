@@ -723,6 +723,24 @@ void PlayHellhoundIntroBreathOut(EntityID& entity, const int& index)
 	hellhoundSound->Play(Hellhound_Flame, Channel_Base);
 }
 
+void PlayPlayerBossVoiceLine(EntityID& entity, const int& index)
+{
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	if (sfx != nullptr)
+	{
+		int soundToPlay = rand() % 2;
+		switch (soundToPlay) //Play player boss encounter sound
+		{
+		case 0:
+			sfx->Play(Player_BringItOn, Channel_Extra);
+			break;
+		case 1:
+			sfx->Play(Player_ThisWillBeFun, Channel_Extra);
+			break;
+		}
+	}
+}
+
 void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
 {
 	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
