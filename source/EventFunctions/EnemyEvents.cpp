@@ -81,7 +81,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health , bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health * 1.5f, bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -116,6 +116,10 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
 	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
 
+	//Sounds (Added by Joaquin)
+	SoundComponent* scp = registry.AddComponent<SoundComponent>(newMini);
+	scp->Load(MINIBOSS);
+
 #ifdef DEBUG_HP
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
@@ -149,7 +153,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxHitPlayer(newMini, hID);
 	SetHitboxHitEnemy(newMini, hID);
 	SetHitboxActive(newMini, hID);
-	SetHitboxIsMoveable(newMini, hID);
+	SetHitboxIsMoveable(newMini, hID, false);
 
 	int sID = CreateHitbox(newMini, radius, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
@@ -157,9 +161,9 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxHitPlayer(newMini, sID);
 	SetHitboxHitEnemy(newMini, sID);
 	SetHitboxActive(newMini, sID);
-	SetHitboxIsMoveable(newMini, sID);
-	SetHitboxHitStaticHazard(newMini, sID, true);
-	SetHitboxCanTakeDamage(newMini, sID);
+	SetHitboxIsMoveable(newMini, sID, false);
+	SetHitboxHitStaticHazard(newMini, sID, false);
+	SetHitboxCanTakeDamage(newMini, sID, true);
 
 	SetHitboxCanDealDamage(newMini, sID, false);
 
@@ -168,7 +172,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 	SetHitboxHitPlayer(newMini, enemyComp->attackHitBoxID);
 	SetHitboxActive(newMini, enemyComp->attackHitBoxID);
-	SetHitboxIsMoveable(newMini, enemyComp->attackHitBoxID);
+	SetHitboxIsMoveable(newMini, enemyComp->attackHitBoxID, false);
 	SetHitboxCanTakeDamage(newMini, enemyComp->attackHitBoxID, false);
 	SetHitboxCanDealDamage(newMini, enemyComp->attackHitBoxID, false);
 
@@ -207,7 +211,6 @@ void CreateNewSplitZac(EntityID &ent, const int& index)
 		SetupEnemy(EnemyType::tempBoss, zacTransform->positionX, 0.f, zacTransform->positionZ, 0, 6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 2.f, 2.f, 2.f,
 			0.f, 0.f, -1.f, zacIndex[0], zacIndex[1], zacIndex[2], zacIndex[3], zacIndex[4], worthless);
 	}
-
 
 	registry.DestroyEntity(ent);
 }
@@ -258,7 +261,7 @@ void SplitBoss(EntityID& entity, const int& index)
 	transformZac->positionX = aiTransform->positionX;
 	transformZac->positionZ = aiTransform->positionZ;
 	float time = (float)BOSS_RESPAWN_TIME;
-	AddTimedEventComponentStart(trashEntity, time - 0.5f, CreateNewSplitZac);
+	AddTimedEventComponentStartEnd(trashEntity, 0.0f, nullptr, time - 0.5f, CreateNewSplitZac, 0, 2);
 
 	RemoveEnemy(entity, index);
 }
@@ -375,7 +378,21 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 	{
 		SkeletonBehaviour* skeleton = registry.GetComponent<SkeletonBehaviour>(entity);
 		if (skeleton)
+		{
 			skeleton->attackTimer = 0.0f;
+
+			//Play Sound Effect (Added by Joaquin)
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+			if (sfx)
+			{
+				for (auto audioEngine : View<AudioEngineComponent>(registry))
+				{
+					bool isPlaying = false;
+					registry.GetComponent<AudioEngineComponent>(audioEngine)->channels[sfx->channelIndex[Channel_Base]]->isPlaying(&isPlaying);
+					if(!isPlaying) sfx->Play(Skeleton_Attack, Channel_Base);
+				}
+			}
+		}
 	}
 
 	else if (condition == EnemyType::tempBoss)
@@ -385,6 +402,18 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 		{
 			tempBoss->attackTimer = 0.0f;
 			tempBoss->isAttacking = false;
+
+			//Play Sound Effect (Added by Joaquin)
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+			if (sfx)
+			{
+				for (auto audioEngine : View<AudioEngineComponent>(registry))
+				{
+					bool isPlaying = false;
+					registry.GetComponent<AudioEngineComponent>(audioEngine)->channels[sfx->channelIndex[Channel_Base]]->isPlaying(&isPlaying);
+					if (!isPlaying) sfx->Play(Miniboss_Attack, Channel_Base);
+				}
+			}
 		}
 
 	}
@@ -495,6 +524,23 @@ void BossShockwaveStart(EntityID& entity, const int& index)
 	SetHitboxActive(entity, enemy->specialHitBoxID, true);//Set false somewhere
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, true);
 	SetHitboxRadius(entity, enemy->specialHitBoxID, 0.0f);
+
+	//Play sound effect (Added by Joaquin)
+	if (enemy->type == EnemyType::tempBoss)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Miniboss_Shockwave, Channel_Base);
+	}
+	else if (enemy->type == EnemyType::minotaur)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Minotaur_Slam, Channel_Base);
+	}
+	else if (enemy->type == EnemyType::lucifer)
+	{
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Boss_Slam, Channel_Base);
+	}
 }
 
 void BossShockwaveExpand(EntityID& entity, const int& index)
@@ -621,6 +667,39 @@ void CreateLandingIndicator(EntityID& entity, const int& index)
 	
 }
 
+void PlayBossIntroVoiceLine(EntityID& entity, const int& index)
+{
+	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
+	//bossSound->Play();
+	//Play sounds here
+	int randomLine = rand();
+}
+
+void PlayBossIntroSlam(EntityID& entity, const int& index)
+{
+	//Play slam sound here when landing
+	SoundComponent* bossSound = registry.GetComponent<SoundComponent>(entity);
+	//bossSound->Play();
+}
+
+void PlayImpIntroTeleport(EntityID& entity, const int& index)
+{
+	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
+	//impSound->Play();
+}
+
+void PlayImpIntroLaugh(EntityID& entity, const int& index)
+{
+	SoundComponent* impSound = registry.GetComponent<SoundComponent>(entity);
+	//impSound->Play();
+}
+
+void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
+{
+	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
+	//minotaurSound->Play();
+}
+
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 
@@ -630,9 +709,17 @@ void RemoveEnemy(EntityID& entity, const int& index)
 	{
 		PlayerComponent* pc = registry.GetComponent<PlayerComponent>(player);
 		EnemyComponent* ec = registry.GetComponent<EnemyComponent>(entity);
-		pc->UpdateSouls(ec->soulCount);
+		if (ec != nullptr)
+		{
+			pc->UpdateSouls(ec->soulCount);
+		}
+ 		
 	}
-	
+	PlayerComponent* pc = registry.GetComponent<PlayerComponent>(entity);
+	if (pc != nullptr)
+	{
+		registry.RemoveComponent<PlayerComponent>(entity);
+	}
 	// I am inevitable 
 	// *le snap*
 	auto toAppend = registry.GetComponent<ModelBonelessComponent>(entity);
@@ -662,7 +749,19 @@ void RemoveEnemy(EntityID& entity, const int& index)
 		ReleaseTimedEvents(entity);
 	}
 
-	registry.DestroyEntity(entity);
+	if (entity.index != -1)
+	{
+		registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+	}
+	
+}
+
+void RemoveCutsceneEnemy(EntityID& entity, const int& index)
+{
+	if (entity.index != -1)
+	{
+		registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+	}
 }
 
 void SpawnMainMenuEnemy(EntityID& entity, const int& index)
@@ -744,8 +843,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = lucifer;
 	}
-	float time = 0.05f * (float)(rand() % 64);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	float time = 0.05f * (float)(rand() % 1024);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
 }
 
 void DestroyAcidHazard(EntityID& entity, const int& index)
@@ -754,11 +853,19 @@ void DestroyAcidHazard(EntityID& entity, const int& index)
 	{
 		return;
 	}
-	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
-	if (model != nullptr)
+	//ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
+	//if (model != nullptr)
+	//{
+	//	ReleaseModel(model->model);
+	//	registry.RemoveComponent<ModelBonelessComponent>(entity);
+	//}
+
+	//Remove Particle
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
 	{
-		ReleaseModel(model->model);
-		registry.RemoveComponent<ModelBonelessComponent>(entity);
+		particle->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
 	}
 
 	RemoveHitbox(entity, 0);
@@ -770,12 +877,15 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	TransformComponent* origin = registry.GetComponent<TransformComponent>(entity);
 	
 	EntityID acidHazard = registry.CreateEntity();
-	ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(acidHazard, LoadModel("LavaPlaceholder.mdl"));
-	hazardModel->shared.colorAdditiveRed = 0.1f;
-	hazardModel->shared.colorAdditiveGreen = 0.9f;
-	hazardModel->shared.colorAdditiveBlue = 0.2f;
-	hazardModel->shared.gammaCorrection = 1.5f;
-	hazardModel->castShadow = false;
+	//ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(acidHazard, LoadModel("LavaPlaceholder.mdl"));
+	//hazardModel->shared.colorAdditiveRed = 0.1f;
+	//hazardModel->shared.colorAdditiveGreen = 0.9f;
+	//hazardModel->shared.colorAdditiveBlue = 0.2f;
+	//hazardModel->shared.gammaCorrection = 1.5f;
+	//hazardModel->castShadow = false;
+
+	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::ACIDGROUND);
+
 
 	float scaling = 5.0f;
 
@@ -788,7 +898,7 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	hazardTransform->scaleZ = scaling;
 	hazardTransform->facingX = cosf((float)rand());
 	hazardTransform->facingZ = sinf((float)rand());
-	AddStaticHazard(acidHazard, HAZARD_LAVA);
+	AddStaticHazard(acidHazard, HAZARD_ACID);
 
 	registry.AddComponent<StaticHazardComponent>(acidHazard, StaticHazardType::HAZARD_ACID);
 
@@ -812,13 +922,26 @@ void BeginDestroyProjectile(EntityID& entity, const int& index)
 	{
 		return;
 	}
-	ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
-	if (model != nullptr)
-	{
-		ReleaseModel(model->model);
-		registry.RemoveComponent<ModelBonelessComponent>(entity);
-	}
+
+	////Remove Model
+	//ModelBonelessComponent* model = registry.GetComponent<ModelBonelessComponent>(entity);
+	//if (model != nullptr)
+	//{
+	//	ReleaseModel(model->model);
+	//	registry.RemoveComponent<ModelBonelessComponent>(entity);
+	//}
 	
+	//Remove Particle
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
+
+	//Remove shadow light
+	RemoveLight(entity);
+
 	if (proj->type == eye)
 	{
 		CreateAcidHazard(entity, index);
@@ -837,4 +960,9 @@ void EndDestroyProjectile(EntityID& entity, const int& index)
 		return;
 	}
 	registry.DestroyEntity(entity, ENT_PERSIST_HIGHEST);
+}
+
+void SpawnProjectileShadow(EntityID& entity, const int& index)
+{
+	CreateSpotLight(entity, -0.5f, -0.5f, -0.5f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
 }

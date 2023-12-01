@@ -27,7 +27,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 		//animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 
 		//Timed event time
-		float pauseDuration = .2f;
+		float pauseDuration = .15f;
 		float attackEndTime = 1.f;
 		//Telegraph (We've reached the player, blink and attack)
 		AddTimedEventComponentStartContinuousEnd(ent, 0.0f, PauseAnimation, EnemyAttackFlash, pauseDuration, ContinueAnimation, EnemyType::hellhound);
@@ -44,7 +44,6 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 		//RedrawUI();
 	}
 }
-
 
 void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, HellhoundBehaviour* hellhoundComponent, TransformComponent*  hellhoundTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool retreat)
 {
@@ -169,12 +168,29 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc, HellhoundBehaviour* hc, EntityID& dog)
 {	
 	hc->isShooting = true;
-	//Temp: Create SMALL spotlight when dog prepares to flame
 	
-	CreateSpotLight(dog, 8.0f, 4.0f, 1.0f,
+	//Create small pointlight in dogs mouth when getting ready to fire
+	if (!hc->isEmpoweredDoggo)
+	{
+		CreatePointLight(dog, 10.0f, 0.0f, 0.0f,
+			0.0f, 2.5f, -7.f,
+			2.5f, 1.0f);
+	}
+	else
+	{
+		CreatePointLight(dog, 0.0f, 0.0f, 10.0f,
+			0.0f, 2.5f, -7.f,
+			2.5f, 1.0f);
+	}
+
+	//From Zannie and Arian, ask
+	//CreatePointLight(dog, 2.0f, 0.40f, 0.1f, 0.0f, 2.5f, -5.0f, 5.0f, 1.3f);
+
+	//Previous
+	/*CreateSpotLight(dog, 8.0f, 4.0f, 1.0f,
 		0.0f, 1.0f, -0.25f,
 		hc->offsetForward + 1.0f, 1.0f,
-		0.0f, 0.0f, -1.0f, 33.0f);
+		0.0f, 0.0f, -1.0f, 33.0f);*/
 	hc->currentShootingAttackRange = 1.f;
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(dog);
 	sfx->Play(Hellhound_Inhale, Channel_Base);
@@ -232,7 +248,7 @@ bool IsPlayerHitByFlameThrower(float p1X, float p1Z, float p2X, float p2Z, float
 	return alpha >= 0 && beta >= 0 && gamma >= 0 && alpha + beta + gamma == 1.0;
 }
 
-void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, EntityID& dog, EnemyComponent* enemy/*, TransformComponent* testing, TransformComponent* testing2*/)
+void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComponent* enemyStats, StatComponent* playerStats, EntityID& dog, EnemyComponent* enemy/*, TransformComponent* testing, TransformComponent* testing2*/)
 {
 	// create a hitbox from doggo position, as a triangle, with 2 corners expanding outwards with the help of variables in behavior. 
 	//once max range has been reached, this function will reset all stats and let the doggo go on with a different behavior. 
@@ -249,10 +265,21 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 	hc->shootingTimer += GetDeltaTime();
 	//Temp: Create BIG spotlight when dog flame
 		//Temp: Create point light to indicate that we're going to do flamethrower
-	CreateSpotLight(dog, 10.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, -0.25f,
-		hc->currentShootingAttackRange + 1.0f, 1.0f,
-		0.0f, 0.0f, -1.0f, 33.0f);
+	if (!hc->isEmpoweredDoggo)
+	{
+		CreateSpotLight(dog, 5.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, -0.25f,
+			hc->currentShootingAttackRange + 1.0f, 7.0f,
+			0.0f, 0.0f, -1.0f, 33.0f);
+	}
+	else
+	{
+		CreateSpotLight(dog, 0.0f, 0.0f, 5.0f,
+			0.0f, 1.0f, -0.25f,
+			hc->currentShootingAttackRange + 1.0f, 7.0f,
+			0.0f, 0.0f, -1.0f, 33.0f);
+	}
+	
 
 	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
@@ -268,13 +295,13 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		if (!hc->isEmpoweredDoggo)
 		{
 			registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
-				0.0f, 2.5f, 3.0f, 0.0f,
+				0.0f, 2.5f, 7.5f, 0.0f,
 				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, FLAMETHROWER);
 		}
 		else
 		{
 			registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
-				0.0f, 2.5f, 3.0f, 0.0f,
+				0.0f, 2.5f, 7.5f, 0.0f,
 				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, ICETHROWER);
 		}
 	}
@@ -321,7 +348,7 @@ void ShootingBehaviour( TransformComponent* ptc, HellhoundBehaviour* hc, StatCom
 		hc->shootingTimer = 0.0f;
 
 		ParticleComponent* pc = registry.GetComponent<ParticleComponent>(dog);
-		if (pc!= nullptr)
+		if (pc != nullptr)
 		{
 			pc->Release();
 			registry.RemoveComponent<ParticleComponent>(dog);
@@ -345,7 +372,6 @@ void SetInfiniteDirection(TransformComponent* htc, HellhoundBehaviour* hc)
 	hc->cowardDirectionX = x;
 	hc->cowardDirectionZ = z;
 }
-
 
 void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, HellhoundBehaviour* hc, StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path)
 {
@@ -464,7 +490,7 @@ bool HellhoundBehaviourSystem::Update()
 			stc = registry.GetComponent<TransformComponent>(enemyEntity);
 			i++;
 		}
-			
+
 		if(i == 1)
 			stcTwo = registry.GetComponent<TransformComponent>(enemyEntity);
 	}*/

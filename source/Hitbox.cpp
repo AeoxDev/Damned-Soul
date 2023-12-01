@@ -58,6 +58,10 @@ void RemoveHitbox(EntityID& entity, int hitboxID)
 	// ob0011
 	// ob0101
 	HitboxComponent* hitbox = registry.GetComponent<HitboxComponent>(entity);
+	if (hitbox == nullptr)
+	{
+		return;
+	}
 
 	if (hitboxID < SAME_TYPE_HITBOX_LIMIT)
 	{
@@ -170,63 +174,63 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 	float magnitudeX, magnitudeZ = 0.f;
 	float radians = 0.f;
 	bool reverse = false;
-	//Check if convex
-	for (int i = 0; i < corners; i++)
-	{
-		//First get line
-		lineX = cornerPosX[(i + 1) % corners] - cornerPosX[i];
-		lineZ = cornerPosZ[(i + 1) % corners] - cornerPosZ[i];
+	////Check if convex
+	//for (int i = 0; i < corners; i++)
+	//{
+	//	//First get line
+	//	lineX = cornerPosX[(i + 1) % corners] - cornerPosX[i];
+	//	lineZ = cornerPosZ[(i + 1) % corners] - cornerPosZ[i];
 
-		//Second line
-		line2X = cornerPosX[(i + 2) % corners] - cornerPosX[(i + 1) % corners];
-		line2Z = cornerPosZ[(i + 2) % corners] - cornerPosZ[(i + 1) % corners];
+	//	//Second line
+	//	line2X = cornerPosX[(i + 2) % corners] - cornerPosX[(i + 1) % corners];
+	//	line2Z = cornerPosZ[(i + 2) % corners] - cornerPosZ[(i + 1) % corners];
 
-		// dot product
-		scalar = (lineX * line2X) + (lineZ * line2Z);
+	//	// dot product
+	//	scalar = (lineX * line2X) + (lineZ * line2Z);
 
-		//calculate magnitude of the lnes
-		magnitudeX = std::sqrt(lineX * lineX + lineZ * lineZ);
-		magnitudeZ = std::sqrt(line2X * line2X + line2Z * line2Z);
+	//	//calculate magnitude of the lnes
+	//	magnitudeX = std::sqrt(lineX * lineX + lineZ * lineZ);
+	//	magnitudeZ = std::sqrt(line2X * line2X + line2Z * line2Z);
 
-		//angle in radians
-		radians = std::acos(scalar / (magnitudeX * magnitudeZ));
+	//	//angle in radians
+	//	radians = std::acos(scalar / (magnitudeX * magnitudeZ));
 
-		if (i == 0 && radians - 0.0001f> 3.14159265359f * 0.5f)
-		{
-			reverse = true;
-		}
-		if (reverse)
-		{
-			radians = 3.14159265359f - radians;
-		}
-		if (radians > 3.14159265359f * 0.5f)
-		{
-			//Concave shape, sadge
-			RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
-			return -4;
-		}
-		//Check if middle point of neighboring points is on the inside
-		//First get middle point
-		float middleX = (cornerPosX[i] + cornerPosX[(i + 1) % corners] + cornerPosX[(i + 2) % corners]) * 0.333f;
-		float middleZ = (cornerPosZ[i] +cornerPosZ[(i + 1) % corners] + cornerPosZ[(i + 2) % corners]) * 0.333f;
-		float middleToCorner1X = cornerPosX[i] - middleX;
-		float middleToCorner1Z = cornerPosZ[i] - middleZ;
-		float middleToCorner2X = cornerPosX[(i + 2) % corners] - middleX;
-		float middleToCorner2Z = cornerPosZ[(i + 2) % corners] - middleZ;
-		//Then do scalar product to verify direction
-		scalar = (middleToCorner1X * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (middleToCorner1Z * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
-		if (scalar < 0.0f)
-		{
-			RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
-			return -5;
-		}
-		scalar = (middleToCorner2X * collisionComponent->convexHitbox[availableSlot].normalX[(i + 1) % corners]) + (middleToCorner2Z * collisionComponent->convexHitbox[availableSlot].normalZ[(i + 1) % corners]);
-		if (scalar < 0.0f)
-		{
-			RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
-			return -5;
-		}
-	}
+	//	if (i == 0 && radians - 0.0001f> 3.14159265359f * 0.5f)
+	//	{
+	//		reverse = true;
+	//	}
+	//	if (reverse)
+	//	{
+	//		radians = 3.14159265359f - radians;
+	//	}
+	//	if (radians > 3.14159265359f * 0.5f)
+	//	{
+	//		//Concave shape, sadge
+	//		RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+	//		return -4;
+	//	}
+	//	//Check if middle point of neighboring points is on the inside
+	//	//First get middle point
+	//	float middleX = (cornerPosX[i] + cornerPosX[(i + 1) % corners] + cornerPosX[(i + 2) % corners]) * 0.333f;
+	//	float middleZ = (cornerPosZ[i] +cornerPosZ[(i + 1) % corners] + cornerPosZ[(i + 2) % corners]) * 0.333f;
+	//	float middleToCorner1X = cornerPosX[i] - middleX;
+	//	float middleToCorner1Z = cornerPosZ[i] - middleZ;
+	//	float middleToCorner2X = cornerPosX[(i + 2) % corners] - middleX;
+	//	float middleToCorner2Z = cornerPosZ[(i + 2) % corners] - middleZ;
+	//	//Then do scalar product to verify direction
+	//	scalar = (middleToCorner1X * collisionComponent->convexHitbox[availableSlot].normalX[i]) + (middleToCorner1Z * collisionComponent->convexHitbox[availableSlot].normalZ[i]);
+	//	if (scalar < 0.0f)
+	//	{
+	//		RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+	//		return -5;
+	//	}
+	//	scalar = (middleToCorner2X * collisionComponent->convexHitbox[availableSlot].normalX[(i + 1) % corners]) + (middleToCorner2Z * collisionComponent->convexHitbox[availableSlot].normalZ[(i + 1) % corners]);
+	//	if (scalar < 0.0f)
+	//	{
+	//		RemoveHitbox(entity, availableSlot + SAME_TYPE_HITBOX_LIMIT);
+	//		return -5;
+	//	}
+	//}
 
 	//Set to mode
 	collisionComponent->convexFlags[availableSlot].ResetToActive();
@@ -632,13 +636,43 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		break;
 
 	case EnemyType::hellhound:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
+		//Regular attack hitbox
+
+		/*Player attack hitbox for reference, wider at the base
+		corners.cornersX[0] = -width;
+		corners.cornersX[1] = width;
+		corners.cornersX[2] = 2.0f * width;
+		corners.cornersX[3] = -2.0 * width;
+		// Z
+		corners.cornersZ[0] = -2.f * depth;
+		corners.cornersZ[1] = -2.f * depth;
+		corners.cornersZ[2] = -0.5f;
+		corners.cornersZ[3] = -0.5f;
+		*/
+
+
+
+		{
+			float cornersX[4];		//Width
+			cornersX[0] = -2.25f;	//Thinner at the tip
+			cornersX[1] = 2.25f;	//
+			cornersX[2] = 3.0f;		//Thicker at the base
+			cornersX[3] = -3.0f;	//
+			float cornersZ[4];		//Length
+			cornersZ[0] = -7.5f;	//Long reach forwards
+			cornersZ[1] = -7.5f;	//
+			cornersZ[2] = 1.0f;		//Slightly offset backwards
+			cornersZ[3] = 1.0f;		//
+			enemyComp->attackHitBoxID = CreateHitbox(entity, 4, cornersX, cornersZ);
+			//enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
+		}
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
-		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
-		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
 
+		
+		//Breath attack hitbox (cone)
 		float cornersX[3];// = { 0.0f, 0.5f, -0.5f };
 		cornersX[0] = 0.0f;
 		cornersX[1] = 0.5f;
@@ -713,8 +747,20 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 		SetHitboxIsMoveable(entity, hID, false);
 		SetHitboxIsMoveable(entity, sID, false);
 		break;
-	default:
+	case EnemyType::ghost:
 		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -1.5f * transfor->scaleX);
+		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
+		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
+		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
+		SetHitboxActive(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
+		SetHitboxIsMoveable(entity, hID, false);
+		SetHitboxIsMoveable(entity, sID, false);
+		SetHitboxActive(entity, 0, false);
+		SetHitboxActive(entity, 1, true);
+		SetHitboxActive(entity, 2, false);
+	default:
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 2.5f, 0.f * transfor->scaleX, radius * -2.0f * transfor->scaleX);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);

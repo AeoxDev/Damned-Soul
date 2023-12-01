@@ -23,10 +23,12 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 		tempBossComponent->goalDirectionZ = playerTransformCompenent->positionZ - tempBossTransformComponent->positionZ;
 	}
 	//
+
 	 //
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
+	animComp->aAnimTimeFactor = 0.8f;
 	ANIM_BRANCHLESS(animComp);
 
 	SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ);
@@ -108,7 +110,7 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 		animComp->aAnimTimeFactor = 3.0f; //Elliot comment: This might need to be changed when timePower changes
 
 		float PauseThreshold = 0.3f / animComp->aAnimTimeFactor;	//When to pause the animation
-		float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed();//When to continue the animation
+		float AttackStartTime = 0.3f / enemyStats->GetAttackSpeed();//When to continue the animation
 		float AttackActiveTime = AttackStartTime + 0.10f;			//When the entire attack has finished
 
 		//Attack Telegraphing #1: Quick prep + Pause + Blink
@@ -263,7 +265,7 @@ bool TempBossBehaviourSystem::Update()
 						tempBossComponent->isDazed = true;
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
-						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 500.f, 0.5f, 0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 0.5f, 0.f, 0.f, 1.f, 2000, PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand
 					}
 

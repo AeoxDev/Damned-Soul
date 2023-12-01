@@ -22,6 +22,8 @@ namespace UIFunctions
 	{
 		void LoadNextLevel(void* args, int a);
 
+		void ExitShopCutscene(void* args, int a);
+
 		void SetMainMenu(void* args, int a);
 
 	}

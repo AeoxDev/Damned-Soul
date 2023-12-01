@@ -9,6 +9,7 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "States\StateManager.h"
 #include "CollisionFunctions.h"
+#include "Camera.h"
 
 float giSpawnPosX = 0.0f;
 float giSpawnPosZ = 0.0f;
@@ -167,11 +168,11 @@ bool GeometryIndependentSystem::Update()
 						registry.DestroyEntity(entity);
 					}
 					{
-						GridPosition pixelPos = PositionOnGrid(geoCo, p, false);
+						GridPosition pixelPos = PositionOnGrid(geoCo, p);
 						TransformComponent lastPos;
 						lastPos.positionX = p->lastPositionX;
 						lastPos.positionZ = p->lastPositionZ;
-						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos, false);
+						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos);
 						//Edge direction
 						if (pixelPos.x >= GI_TEXTURE_DIMENSIONS || pixelPos.x < 0 || pixelPos.z >= GI_TEXTURE_DIMENSIONS || pixelPos.z < 0 ||
 							lastPixelPos.x >= GI_TEXTURE_DIMENSIONS || lastPixelPos.x < 0 || lastPixelPos.z >= GI_TEXTURE_DIMENSIONS || lastPixelPos.z < 0)
@@ -264,11 +265,11 @@ bool GeometryIndependentSystem::Update()
 								p->positionX += p->currentSpeedX * GetDeltaTime();
 								p->positionZ += p->currentSpeedZ * GetDeltaTime();
 								//Squish
-								AddSquashStretch(entity, Constant, 1.35f, 1.35f, 0.3f, false, 1.0f, 1.0f, 1.0f);
+								AddSquashStretch(entity, Constant, 1.1f, 1.1f, 0.8f, false, 1.0f, 1.0f, 1.0f);
 								p->facingX = -sumX;
 								p->facingZ = -sumZ;
 								NormalizeFacing(p);
-								float punishTime = 0.3f;
+								float punishTime = 0.05f;
 								AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 								if (anim != nullptr)
 								{
@@ -313,11 +314,11 @@ bool GeometryIndependentSystem::Update()
 					if (stat->canWalkOnCrack == false || proj != nullptr)
 					{
 						//Detect edge
-						GridPosition pixelPos = PositionOnGrid(geoCo, p, false);
+						GridPosition pixelPos = PositionOnGrid(geoCo, p);
 						TransformComponent lastPos;
 						lastPos.positionX = p->lastPositionX;
 						lastPos.positionZ = p->lastPositionZ;
-						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos, false);
+						GridPosition lastPixelPos = PositionOnGrid(geoCo, &lastPos);
 						//Edge direction
 						GIFloat2 direction = GetGIadjacentDirections(pixelPos.x, pixelPos.z, HAZARD_CRACK);
 						GIFloat2 lastDirection = GetGIadjacentDirections(lastPixelPos.x, lastPixelPos.z, HAZARD_CRACK);
@@ -364,12 +365,11 @@ bool GeometryIndependentSystem::Update()
 					break;
 				case HAZARD_GATE:
 				{
-					if (entity.index == stateManager.player.index)
+					if (Camera::InCutscene() == 0 && entity.index == stateManager.player.index)
 					{
 						OnCollisionParameters params = { 0 };
 						params.entity2 = stateManager.player;
 						LoadNextLevel(params);
-						player->portalCreated = false;
 					}
 					
 				}

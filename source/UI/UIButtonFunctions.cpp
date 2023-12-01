@@ -13,7 +13,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "MemLib/ML_Map.hpp"
-
+#include "EventFunctions.h"
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
 
 #include <random>
@@ -38,6 +38,7 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 	//Create player when we start the game instead, rather than specifically when Level1 starts (reason: debug later levels without having to run through everything)
 	//Niclas was here :)
 	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
+	gameSpeed = 1.0f; //Make sure it gets set back to 1 if StartGame is called from a completed run
 
 	stateManager.activeLevel = 0; //Level actually being loaded: activeLevel / 2 + 1
 	LoadLevel(++stateManager.activeLevel);
@@ -80,56 +81,19 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 		AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
 		audioJungle->HandleSound();
 
-		PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
-		UIPlayerSoulsComponent* playerSouls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
-		EntityID selectedID;
-		if (playerSouls != nullptr)
-		{
-			if (playerSouls->spentThisShop == 0)
-			{
-				for (auto onClick : View<OnClickComponent>(registry))
-				{
-					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
-					if (shopBuy != nullptr)
-					{
-						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
-						{
-							if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
-							{
-								selectedID = onClick;
-							}
-						}
-					}
-				}
-			}
-			playerSouls->spentThisShop = 0;
-			playerSouls->spentThisShopOnRelics = 0;
-		}
-
-
 		switch (stateManager.activeLevel)
 		{
 		case 2: //To stage 2
-			if (selectedID.index != -1)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
-				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
-			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
 			break;
 		case 4: //To stage 3
-			if (selectedID.index != -1)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
-				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
-			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Cave, Channel_Extra);
 			break;
 		case 6: //To stage 4
 		{
-			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player); //Move this to after boss cutscene is done
 			if (sfx != nullptr)
 			{
 				int soundToPlay = rand() % 2;
@@ -148,38 +112,18 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 			break;
 		}
 		case 8: //To stage 5
-			if (selectedID.index != -1)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
-				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
-			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
 			break;
 		case 10: //To stage 6
-			if (selectedID.index != -1)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
-				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
-			}
 			backgroundMusic->Play(Music_Hot, Channel_Base);
 			backgroundMusic->Play(Ambience_Lava, Channel_Extra);
 			break;
 		case 12: //To stage 7
-			if (selectedID.index != -1)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
-				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
-			}
 			backgroundMusic->Play(Music_Cold, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
 		case 14: //To stage 8
-			if (selectedID.index != -1)
-			{
-				SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
-				if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
-			}
 			backgroundMusic->Play(Music_Cold, Channel_Base);
 			backgroundMusic->Play(Ambience_Blizzard, Channel_Extra);
 			break;
@@ -207,8 +151,63 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 		audioJungle->HandleSound();
 	}
 
-
 	LoadLevel(++stateManager.activeLevel);
+}
+
+void UIFunctions::Game::ExitShopCutscene(void* args, int a)
+{
+	//Make the player fall
+	if (Camera::InCutscene() == 3)//If in shop, do the falling
+	{
+		AudioEngineComponent* audioJungle;
+		for (auto entity : View<AudioEngineComponent>(registry))
+		{
+			audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+		}
+
+		PlayerComponent* playerComp = registry.GetComponent<PlayerComponent>(stateManager.player);
+		UIPlayerSoulsComponent* playerSouls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
+		EntityID selectedID;
+		if (playerSouls != nullptr)
+		{
+			if (playerSouls->spentThisShop == 0)
+			{
+				for (auto onClick : View<OnClickComponent>(registry))
+				{
+					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
+					if (shopBuy != nullptr)
+					{
+						for (int i = 0; i < (int)shopBuy->onClickFunctions.size(); i++)
+						{
+							if (shopBuy->onClickFunctions[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
+							{
+								selectedID = onClick;
+							}
+						}
+					}
+				}
+			}
+			playerSouls->spentThisShop = 0;
+			playerSouls->spentThisShopOnRelics = 0;
+		}
+		//Play leave shop sounds
+		if (selectedID.index != -1)
+		{
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(selectedID);
+			if (sfx != nullptr) sfx->Play(Shop_BuyingNothing, Channel_Extra); //Play buy nothing sound.
+		}
+
+		CancelTimedEvents(stateManager.player);
+		CutsceneComponent* fallDown = registry.AddComponent<CutsceneComponent>(stateManager.player);
+		TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
+		fallDown->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_Position | Cutscene_Accelerating);
+		CutsceneSetPosition(stateManager.player, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, -33.0f, transform->positionZ);
+		AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginPortalCutscene, CutsceneTransition, 5.0f, EventShopLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	}
+	else //Otherwise (second time clicking) skip the shop cutscene
+	{
+		UIFunctions::Game::LoadNextLevel(nullptr, 0);
+	}
 }
 
 void UIFunctions::Game::SetMainMenu(void* args, int a)
@@ -360,7 +359,7 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		ResetInput();
 
 		UnloadEntities(ENT_PERSIST_PAUSE);
-		if (Camera::InCutscene() == true)
+		if (Camera::InCutscene() > 0)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;
@@ -376,7 +375,7 @@ void UIFunctions::Pause::Resume(void* args, int a)
 		RedrawUI();
 		gameSpeed = 1.0f;
 		ResetInput();
-		if (Camera::InCutscene() == true)
+		if (Camera::InCutscene() > 0)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;

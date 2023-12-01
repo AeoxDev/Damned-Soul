@@ -10,23 +10,26 @@ struct EyeBehaviour
 	float attackStunTimer = attackStunDuration;
 	float chargeTimer = 0.0f;
 	float aimTimer = 0.0f;
-	float aimDuration = 0.4f;
-	float facingX = 0.0f;
-	float facingZ = 0.0f;
+	float aimDuration = 0.6f;
 	float targetX = 0.0f;
 	float targetZ = 0.0f;
-	float changeDirX = 0.0f;
-	float changeDirZ = 0.0f;
-
-
+	float chargeDirX = 0.0f;
+	float chargeDirZ = 0.0f;
+	float range = 80.f;
+	
+	//Obstacle Avoidance
+	float correcitonDirX = 0.0f;
+	float correcitonDirZ = 0.0f;
+	float avoidanceDuration = 0.3f;
+	float avoidanceTimer = avoidanceDuration;
+	
 	int specialCounter = 0;		//how many attacks since last special
 	int specialBreakpoint = 4;	//how many attacks are needed for next special
 
 	bool shooting = false;
 	bool clockwiseCircle = true;
-	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
-	bool retreating = false; //bool to check if the eye is currently retreating
+	bool retreating = false;	//bool to check if the eye is currently retreating
 	bool dealtDamage = false;
 	bool chargeAttackSoundPlaying = false;
 };

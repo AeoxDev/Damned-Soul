@@ -202,6 +202,15 @@ public:
 	void ZeroBonusStats();
 };
 
+struct ShatterComponent
+{
+	float time = 0.f;
+	float strength = 1.f;
+	bool reverse = false;
+	bool useOrigin = false; //Displaces from origin point, displaces along face normal if false
+	float origin[4] = {0.f, 0.f, 0.f, 0.f};
+};
+
 struct ControllerComponent
 {
 	float goalX = 0.0f, goalZ = -1.0f;//Goal direction
@@ -239,6 +248,11 @@ struct CollisionParamsComponent
 {
 	OnCollisionParameters params;
 	CollisionParamsComponent(OnCollisionParameters params) : params(params) {}
+};
+
+struct NavigationTrashComponentYouMustAccept
+{
+
 };
 
 //
