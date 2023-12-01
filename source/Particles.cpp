@@ -240,8 +240,10 @@ void Particles::PrepareParticlePass(int metadataSlot)
 		SetTexture(flipBookTextureFire, BIND_PIXEL, 6); 
 	else if (data->metadata[metadataSlot].pattern == SPARK || data->metadata[metadataSlot].pattern == SMOKE)
 		SetTexture(flipBookTextureSpark, BIND_PIXEL, 6); 
-	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER || data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == ICETHROWER)
+	else if (data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == ICETHROWER)
 		SetTexture(flipBookTextureSmoke/*textureParticle*/, BIND_PIXEL, 6);
+	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER)
+		SetTexture(textureParticle, BIND_PIXEL, 6);
 	else
 		SetTexture(noTextureParticle, BIND_PIXEL, 6);
 

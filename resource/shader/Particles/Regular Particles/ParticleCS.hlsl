@@ -399,8 +399,8 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     particle.position.z = particle.position.z + (oscillationZ + dirZ) * dt;
     
     particle.rgb.r = 10.0f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 0.9f;
+    particle.rgb.g = 0.1f;
+    particle.rgb.b = 0.0f;
         
     outputParticleData[index] = particle;
 }
