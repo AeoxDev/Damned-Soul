@@ -31,6 +31,8 @@ void LoadLevel5()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 5;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level5"); //Proximity hitbox (Added by Joaquin)
 
 
 	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
@@ -64,7 +66,11 @@ void LoadLevel5()
 	//SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f, 1);
 	//SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f, 1);
 	//
-
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::eye, 55.f, 1.f, 135.f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = -0.5f;
+	NormalizeFacing(transform);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -145,5 +151,5 @@ void LoadLevel5()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, EyeIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

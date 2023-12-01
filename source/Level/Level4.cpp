@@ -27,6 +27,8 @@ void LoadLevel4()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 4;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level4"); //Proximity hitbox (Added by Joaquin)
 	//EntityID skeleton = registry.CreateEntity();
 	//EntityID skeleton2 = registry.CreateEntity();
 	EntityID portal = registry.CreateEntity();
@@ -76,5 +78,5 @@ void LoadLevel4()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(tempBoss, 0.85f + 0.3f + 0.1f, Stage4IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(tempBoss, 0.85f + 0.3f + 0.1f, SplitBossIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

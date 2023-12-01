@@ -157,9 +157,43 @@ bool SetupAllEnemies(std::string filePath)
 	return true;
 }
 
+void SpawnTorch(float positionX, float positoinY, float positionZ, float red, float green, float blue, bool level8, bool level9)
+{
+	if (level8 == false && level9 == false)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 7.0f, 0.0f, 1.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+	else if (level8 == true && level9 == false)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 18.0f, 0.0f, 3.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+	else if (level8 == false && level9 == true)
+	{
+		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 28.0f, 0.0f, 4.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		TransformComponent tComp;
+		tComp.positionX = positionX;
+		tComp.positionY = positoinY;
+		tComp.positionZ = -positionZ;
+		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	}
+}
 
 
-bool SetupVFXTorches(std::string filePath)
+
+bool SetupVFXTorches(std::string filePath, bool level8, bool level9)
 {
 	std::string name = "VFX\\";
 	name.append(filePath);
@@ -179,7 +213,7 @@ bool SetupVFXTorches(std::string filePath)
 			// 2 = positionZ
 			// 3 = r
 			// 4 = g
-			// 5 = r
+			// 5 = b
 			for (auto t : line)
 			{
 				if (t == ',')
@@ -199,7 +233,7 @@ bool SetupVFXTorches(std::string filePath)
 					term += t; //add char to string
 				}
 			}
-			//SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+			SpawnTorch( theInfo.positionX, theInfo.positionY, theInfo.positionZ, theInfo.r, theInfo.g, theInfo.b, level8, level9);
 		}
 	}
 
@@ -380,7 +414,7 @@ void SetupEnemyNavigationHelper()
 	EntityID entity = registry.CreateEntity();
 	TransformComponent transform;
 	transform.positionX = 0.f;
-	transform.positionY = 0.2f;
+	transform.positionY = 0.3f;
 	transform.positionZ = 0.f;
 	transform.mass = 1.f;
 	transform.facingX = 0.f; transform.facingY = 0.f; transform.facingZ = 0.f;
@@ -560,7 +594,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		if (eType == EnemyType::eye)
 		{
-			damage = 31.f;
+			damage = 16.f; //Used to be 31
 		}
 		else if (eType == EnemyType::hellhound)
 		{
@@ -584,7 +618,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 40.f;
+			damage = 40.f; //66.6f????
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -685,7 +719,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			soulWorth = 666;
+			soulWorth = 0; //No Damned Soul(TM)s
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -867,7 +901,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(SKELETON);
+		scp->Load(MINIBOSS);
 
  		SetupEnemyCollisionBox(entity, 0.4f * scaleX, EnemyType::tempBoss);
 		if (player)
@@ -887,6 +921,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+
+		//Sounds (Added by Joaquin)
+		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+		scp->Load(BOSS);
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
@@ -895,14 +933,23 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		if (eType == EnemyType::frozenHellhound)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(HELLHOUND);
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(IMP);
 		}
 		if (eType == EnemyType::frozenEye)
 		{
 			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Eye.mdl"));
+			//Sounds (Added by Joaquin)
+			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
+			scp->Load(EYE);
 		}
 		model->shared.colorMultiplicativeRed = 0.4f;
 		model->shared.colorMultiplicativeBlue = 0.4f;
@@ -920,10 +967,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);   // CHANGE THIS TO FROZEN HELLHOUND
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
+		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
 			behev->type = EnemyType::frozenHellhound;
@@ -1098,6 +1145,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
 	//OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 
+	//GlowComponent* player_glow = registry.AddComponent<GlowComponent>(stateManager.player, 1, 0, 0);
+
 	// Create weapon
 	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
@@ -1119,6 +1168,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	weapon_transform->mass = mass;
 
 	FollowerComponent* weapon_follow = registry.AddComponent<FollowerComponent>(stateManager.weapon, stateManager.player);
+
+	GlowComponent* weaponGlow = registry.AddComponent<GlowComponent>(stateManager.weapon, 0, 0.8, 0.7);
 }
 
 void SetPlayerPosition(float positionX, float positionY, float positionZ)
@@ -1194,10 +1245,13 @@ void ReloadPlayerNonGlobals()
 	MouseComponentAddComponent(stateManager.player);
 
 	int squashStretch1 = AddTimedEventComponentStart(stateManager.player, 0.0f, ResetSquashStretch);
-	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f,  0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	player->isAttacking = false;
 	player->isDashing = false;
+
+	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+	stats->SetSpeedMult(1.0f);
 }
 
 EntityID RandomPlayerEnemy(EnemyType enemyType) {
@@ -1240,22 +1294,22 @@ void SetScoreboardUI(EntityID stage)
 	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
 
-	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), 1, UIFunctions::MainMenu::Start);
+	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
 
-	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), 1, UIFunctions::Game::SetMainMenu);
+	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
 	onHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	DSFLOAT2 offsetUICoords = { abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().x + 32.0f) ,
+	DSFLOAT2 offsetPixelCoords = { abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().x + 32.0f) ,
 						   abs(uiElement->m_BaseImage.baseUI.GetPixelCoords().y + 32.0f) };
 
-	DSFLOAT2 uiPixelCoords = { (offsetUICoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
-						-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
+	DSFLOAT2 uiCoords = { (offsetPixelCoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+						-1 * ((offsetPixelCoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-	DSFLOAT2 diffPos(uiPixelCoords.x + 1.1f, uiPixelCoords.y - 0.4f);
+	DSFLOAT2 diffPos(uiCoords.x + 1.1f, uiCoords.y - 0.4f);
 
 	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y), DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.15f), DSFLOAT2(1.0f, 1.0f));
@@ -1286,7 +1340,7 @@ void SetScoreboardUI(EntityID stage)
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiPixelCoords.x + 0.4f, uiPixelCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.4f, uiCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
 			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
