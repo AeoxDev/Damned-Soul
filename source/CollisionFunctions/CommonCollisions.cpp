@@ -598,6 +598,7 @@ void LoadNextLevel(OnCollisionParameters& params)
 		default:
 			break;
 		}
+
 		//not final level portal
 		if (stateManager.activeLevel != stateManager.finalLevel)
 		{
