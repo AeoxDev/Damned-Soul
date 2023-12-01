@@ -49,16 +49,19 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.x -= 2;
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_STRETCH);
 	HP_LEFT = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_LEFT_X,	bl.y));
+	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(BG_X,	bl.y));
+	uiElement->m_Images[HP_LEFT].baseUI.m_PixelCoords.x -= 50;
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_LEFT);
 	HP_RIGHT = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(LOOP_RIGHT_X,	bl.y));
+	uiElement->AddImage("HP_Bar/HP_LOOP",			DSFLOAT2(BG_X,	bl.y));
+	uiElement->m_Images[HP_RIGHT].baseUI.m_PixelCoords.x += 50;
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_RIGHT);
 	HP_MID = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_MID",			DSFLOAT2(LOOP_MID_X,	bl.y));
+	uiElement->AddImage("HP_Bar/HP_MID",			DSFLOAT2(BG_X,	bl.y));
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_MID);
 	HP_START = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_LEFT_START",		DSFLOAT2(bl.x - .175f,	bl.y));
+	uiElement->AddImage("HP_Bar/HP_LEFT_START",		DSFLOAT2(BG_X,	bl.y));
+	uiElement->m_Images[HP_START].baseUI.m_PixelCoords.x -= 139;
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_START);
 	// Set HP Text location (I think?)
 	uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.m_PixelCoords;
@@ -68,7 +71,8 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	uiElement->AddText(" ", uiElement->m_Images[HP_TEXT].baseUI.GetOriginalBounds(), uiElement->m_Images[HP_START].baseUI.GetPosition());
 
 	HP_END = uiElement->m_Images.size();
-	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(RIGHT_END_X,	bl.y));
+	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(BG_X,	bl.y));
+	uiElement->m_Images[HP_END].baseUI.m_PixelCoords.x += 108;
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_END);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(player);
 
@@ -128,7 +132,7 @@ void ScaleAdvancedHealthBar(const EntityID player)
 		float healthFactor = stats->GetMaxHealth() / 100.f;
 		{
 			UIBase& base = uiElement->m_BaseImage.baseUI;
-			base.m_CurrentBounds.right = (base.m_OriginalBounds.right - base.m_OriginalBounds.left - (2.f * EDGE_FLAT_OFFSET)) * healthFactor;
+			base.m_CurrentBounds.right = (base.m_OriginalBounds.right - base.m_OriginalBounds.left - EDGE_FLAT_OFFSET) * healthFactor;
 		}
 		{
 			UIBase& base = uiElement->m_Images[HP_LEFT].baseUI;
@@ -156,19 +160,30 @@ void ScaleAdvancedHealthBar(const EntityID player)
 		char temp[8] = "";
 		sprintf(temp, "%lld", health->value);
 		DSFLOAT2 position = uiElement->m_Images[HP_START].baseUI.GetPosition();
-		position.x -= .03f;
+		//position.x -= .03f;
 		uiElement->m_Texts[HP_TEXT].SetText(temp, uiElement->m_Texts[HP_TEXT].baseUI.GetBounds(), 16.f);
 		uiElement->m_Texts[HP_TEXT].baseUI.Setup(position, uiElement->m_Images[HP_START].baseUI.GetScale(),
 			uiElement->m_Images[HP_START].baseUI.GetRotation(), uiElement->m_Images[HP_START].baseUI.GetVisibility(),
 			uiElement->m_Images[HP_START].baseUI.GetOpacity());
 
+		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.GetPixelCoords();
+		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords.x -= 65;
+		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords.y += 11;
+		uiElement->m_Texts[HP_TEXT].baseUI.UpdateTransform();
+
 		sprintf(temp, "%lld", stats->GetMaxHealth());
 		position = uiElement->m_Images[HP_START].baseUI.GetPosition();
-		position.x += .01f;
+		//position.x += .01f;
 		uiElement->m_BaseText.SetText(temp, uiElement->m_BaseText.baseUI.GetBounds(), 13.5f);
 		uiElement->m_BaseText.baseUI.Setup(position, uiElement->m_Images[HP_START].baseUI.GetScale(),
 										   uiElement->m_Images[HP_START].baseUI.GetRotation(), uiElement->m_Images[HP_START].baseUI.GetVisibility(),
 										   uiElement->m_Images[HP_START].baseUI.GetOpacity());
+
+		uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Texts[HP_TEXT].baseUI.GetPixelCoords();
+		uiElement->m_BaseText.baseUI.m_PixelCoords.x += 104;
+		uiElement->m_BaseText.baseUI.m_PixelCoords.y += 17;
+		//uiElement->m_BaseText.baseUI.m_PixelCoords.y += 11;
+		uiElement->m_BaseText.baseUI.UpdateTransform();
 	}
 	else
 	{
@@ -223,7 +238,7 @@ uint32_t AddNewRelicToUI(const EntityID player, const void* relic)
 
 	uint32_t retVal = uiElement->m_Images.size();
 	uint32_t latest = retVal;
-	uiElement->AddImage(data->m_filePath, position);
+	uiElement->AddImage(data->m_filePath, position, DSFLOAT2(1.0f, 1.0f), false);
 	// Displace the image
 	uiElement->m_Images[latest].baseUI.m_PixelCoords.y += 60 + 55 * relicComponent->currentRelics;
 	uiElement->m_Images[latest].baseUI.m_PixelCoords.x += 5;
@@ -231,7 +246,7 @@ uint32_t AddNewRelicToUI(const EntityID player, const void* relic)
 
 	// Displace the overlay
 	latest = uiElement->m_Images.size();
-	uiElement->AddImage("RelicChain/RC_Link", position);
+	uiElement->AddImage("RelicChain/RC_Link", position, DSFLOAT2(1.0f, 1.0f), false);
 	uiElement->m_Images[latest].baseUI.m_PixelCoords.y += 56 + 55 * relicComponent->currentRelics;
 	uiElement->m_Images[latest].baseUI.m_PixelCoords.x += 5;
 	_ADVANCED_HP_ROUND_PIXELS_UP(latest);
