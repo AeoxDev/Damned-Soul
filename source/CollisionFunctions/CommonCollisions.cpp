@@ -535,7 +535,10 @@ void LoadNextLevel(OnCollisionParameters& params)
 {
 	if (params.entity2.index == stateManager.player.index)
 	{
-		CancelTimedEvents(params.entity2);
+		if (stateManager.activeLevel != stateManager.finalLevel)
+		{
+			CancelTimedEvents(params.entity2);
+		}
 		FallofComponent* fallof = registry.AddComponent<FallofComponent>(params.entity2);
 		switch (stateManager.activeLevel)
 		{

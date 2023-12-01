@@ -966,9 +966,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		//Sounds
-		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
-		scp->Load(HELLHOUND);
 		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
