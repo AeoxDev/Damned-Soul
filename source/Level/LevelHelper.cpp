@@ -931,14 +931,11 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
-		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 7.0f, 0.0f, 1.0f, 1.0f, 32, VFX_PATTERN::FLAME);
-		TransformComponent tComp;
-		tComp.positionX = positionX;
-		tComp.positionY = 0.1f;
-		tComp.positionZ = -positionZ;
-		registry.AddComponent<TransformComponent>(particlesVFX, tComp);
+	//	EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_BOSS);
+		
 
+		AddTimedEventComponentStart(entity, 4.f, BossSpawnwaveEnd);
 
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;

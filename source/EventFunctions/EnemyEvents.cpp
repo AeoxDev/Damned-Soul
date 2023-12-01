@@ -566,6 +566,18 @@ void BossShockwaveEnd(EntityID& entity, const int& index)
 	}
 }
 
+void BossSpawnwaveEnd(EntityID& entity, const int& index)
+{
+ 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
+
+	ParticleComponent* pc = registry.GetComponent<ParticleComponent>(entity);
+	if (pc != nullptr)
+	{
+		pc->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
+}
+
 void ChargeColorFlash(EntityID& entity, const int& index)
 {
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
