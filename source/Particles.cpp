@@ -16,6 +16,8 @@ CB_IDX startKeeper;
 CB_IDX vfxStartKeeper;
 SRV_IDX particleSRV;
 
+
+
 PoolPointer<ParticleMetadataBuffer> data;
 
 // ## ALEX CODE ##
@@ -38,8 +40,9 @@ struct VFXBufferData
 // ## EO ALEX CODE ##
 
 int Particles::RenderSlot;
-SRV_IDX Particles::depthSRV;
-
+SRV_IDX Particles::particleDepthSRV;
+SRV_IDX Particles::backBufferDepthSRV;
+DSV_IDX Particles::proxyDepth;
 
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
@@ -153,8 +156,9 @@ void Particles::InitializeParticles()
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
 	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", PARTICLE);
 	RenderSlot = SetupParticles();
-
-	//Particles::depthSRV = CreateShaderResourceViewTexture(renderStates[Particles::RenderSlot].depthStencilView, RESOURCE_FLAGS::BIND_DEPTH_STENCIL);
+	Particles::particleDepthSRV = CreateShaderResourceViewTexture(renderStates[Particles::RenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::backBufferDepthSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::proxyDepth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 
 }
 
@@ -345,7 +349,6 @@ void Particles::UpdateVFXStart(int& metadataSlot)
 
 	UpdateConstantBuffer(vfxStartKeeper, &start);
 }
-
 
 // -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, ComputeShaders pattern)

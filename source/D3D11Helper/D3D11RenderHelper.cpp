@@ -400,7 +400,7 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], &srvDesc, &tempSRV);
 		assert(!FAILED(hr));
 		srvHolder->srv_map.emplace(currentIdx, tempSRV);
-		srvHolder->size.emplace(currentIdx, srvHolder->size[sourceIdx]);
+		//srvHolder->size.emplace(currentIdx, srvHolder->size[sourceIdx]);
 		break;
 	default:
 		assert("Did not create requested Shader Resource View (overload), requested case is not defined"[0] == "ERROR"[0]);

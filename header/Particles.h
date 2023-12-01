@@ -59,7 +59,9 @@ struct ParticleMetadataBuffer
 namespace Particles
 {
 	extern int RenderSlot;
-	extern SRV_IDX depthSRV;
+	extern SRV_IDX particleDepthSRV;
+	extern SRV_IDX backBufferDepthSRV;
+	extern DSV_IDX proxyDepth;
 
 	extern PoolPointer<ParticleInputOutput> m_readBuffer;
 	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
