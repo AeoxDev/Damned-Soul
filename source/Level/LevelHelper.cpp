@@ -305,8 +305,6 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV4Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
 			AddStaticHazard(hazard, HAZARD_LAVA);
-			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
-			AddStaticHazard(hazard, HAZARD_LAVA);
 		}
 		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		
