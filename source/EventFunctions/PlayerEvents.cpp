@@ -365,7 +365,7 @@ void PlayerAttack(EntityID& entity, const int& index)
 		corners.cornersX[0] = -width;
 		corners.cornersX[1] = width;
 		corners.cornersX[2] = 2.0f * width;
-		corners.cornersX[3] = -2.0 * width;
+		corners.cornersX[3] = -2.0f * width;
 		// Z
 		corners.cornersZ[0] = -2.f * depth;
 		corners.cornersZ[1] = -2.f * depth;

@@ -170,8 +170,8 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 		collisionComponent->convexHitbox[availableSlot].normalZ[i] /= magnitude;
 	}
 
-	float line2X, line2Z = 0.f;
-	float magnitudeX, magnitudeZ = 0.f;
+	float line2X = 0.f, line2Z = 0.f;
+	float magnitudeX = 0.f, magnitudeZ = 0.f;
 	float radians = 0.f;
 	bool reverse = false;
 	////Check if convex

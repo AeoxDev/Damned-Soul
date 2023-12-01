@@ -68,7 +68,7 @@ void PauseState::SetupButtons()
 
 	//Pause Buttons
 	{
-		const char const texts[pauseAmount][32] =
+		const char texts[pauseAmount][32] =
 		{
 			"Game Paused",
 			"Resume",
@@ -76,7 +76,7 @@ void PauseState::SetupButtons()
 			"Main Menu"
 		};
 
-		const DSFLOAT2 const positions[pauseAmount] =
+		const DSFLOAT2 positions[pauseAmount] =
 		{
 			{ 0.0f, 0.0f },
 			{ 0.0f, 0.275f },
@@ -84,7 +84,7 @@ void PauseState::SetupButtons()
 			{ 0.0f, -0.275f }
 		};
 
-		const DSFLOAT2 const scales[pauseAmount] =
+		const DSFLOAT2 scales[pauseAmount] =
 		{
 			{ 1.5f, 3.0f },
 			{ 0.7f, 0.6f },
@@ -135,28 +135,28 @@ void PauseState::SetupButtons()
 
 	//Settings Buttons
 	{
-		const char const filename[settingsAmount][32] =
+		const char filename[settingsAmount][32] =
 		{
 			"Exmenu/ButtonBackgroundHover",
 			"Exmenu/ButtonBackground",
 			"Exmenu/ButtonBackground"
 		};
 
-		const char const texts[settingsAmount][32] =
+		const char texts[settingsAmount][32] =
 		{
 			"Settings",
 			"Enable Game Timer",
 			"Back"
 		};
 
-		const DSFLOAT2 const positions[settingsAmount] =
+		const DSFLOAT2 positions[settingsAmount] =
 		{
 			{ 0.0f, 0.0f },
 			{ -0.4f, 0.4f },
 			{ -0.4f, -0.4f }
 		};
 
-		const DSFLOAT2 const scales[settingsAmount] =
+		const DSFLOAT2 scales[settingsAmount] =
 		{
 			{ 3.0f, 3.0f },
 			{ 0.4f, 0.4f },
@@ -206,7 +206,7 @@ void PauseState::SetupButtons()
 
 	//Sliders
 	{
-		const char const texts[sliderAmount][32] =
+		const char texts[sliderAmount][32] =
 		{
 			"Master Volume",
 			"Voice Volume",
@@ -215,7 +215,7 @@ void PauseState::SetupButtons()
 			"Ambient Volume",
 		};
 
-		const DSFLOAT2 const positions[sliderAmount] =
+		const DSFLOAT2 positions[sliderAmount] =
 		{
 			{ 0.4f, 0.3f },
 			{ 0.4f, 0.15f },

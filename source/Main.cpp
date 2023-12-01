@@ -9,7 +9,7 @@
 #include "TransformComponent.h"
 
 #include "MemLib/ML_String.hpp"
-//#include "DebugTests.h" // <-- ALL TEST ARE IN HERE
+#include "DebugTests.h" // <-- ALL TEST ARE IN HERE
 
 
 int main(int argc, char* args[])

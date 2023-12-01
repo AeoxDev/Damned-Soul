@@ -723,7 +723,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 		return;
 
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
-	stats->UpdateBaseDamage(uiWeapon->m_price - 2);
+	stats->UpdateBaseDamage((float)(uiWeapon->m_price - 2.0f));
 }
 
 void UIFunctions::OnClick::RerollRelic(void* args, int index)
@@ -922,7 +922,7 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 		}
 		else
 		{
-			if (shopButton->m_name == "Lock" || shopButton->m_name == "Buy" || shopButton->m_name == "Next Level")
+			if (shopButton->m_name == "Lock" || shopButton->m_name == "Buy" || shopButton->m_name == "")
 			{
 				buttonText.append("\n");
 			}

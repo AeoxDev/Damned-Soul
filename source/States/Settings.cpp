@@ -51,7 +51,7 @@ void SettingsState::SetupButtons()
 
 	//Buttons
 	{
-		const char const texts[amount][32] =
+		const char texts[amount][32] =
 		{
 			"Fullscreen",
 			"1920x1080",
@@ -61,7 +61,7 @@ void SettingsState::SetupButtons()
 			"Back",
 		};
 
-		const DSFLOAT2 const positions[amount] =
+		const DSFLOAT2 positions[amount] =
 		{
 			{ -0.4f, 0.3f },
 			{ -0.4f, 0.2f },
@@ -71,7 +71,7 @@ void SettingsState::SetupButtons()
 			{ -0.5f, -0.45f },
 		};
 
-		const DSFLOAT2 const scales[amount] =
+		const DSFLOAT2 scales[amount] =
 		{
 			{ 0.5f, 0.15f },
 			{ 0.5f, 0.15f },
@@ -110,7 +110,7 @@ void SettingsState::SetupButtons()
 
 	//Sliders
 	{
-		const char const texts[sliderAmount][32] =
+		const char texts[sliderAmount][32] =
 		{
 			"Master Volume",
 			"Voice Volume",
@@ -119,7 +119,7 @@ void SettingsState::SetupButtons()
 			"Ambient Volume",
 		};
 
-		const DSFLOAT2 const positions[sliderAmount] =
+		const DSFLOAT2 positions[sliderAmount] =
 		{
 			{ 0.4f, 0.3f },
 			{ 0.4f, 0.15f },

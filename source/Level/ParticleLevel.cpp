@@ -48,8 +48,8 @@ void LoadParticleLevel()
 			cShad = FLAMETHROWER;
 
 		registry.AddComponent<TransformComponent>(particles, transform);
-		registry.AddComponent<ParticleComponent>(particles, rand() % (7 - 2 + 1) + 2, rand() % (20 - 5 + 1) + 5, rand() % (2 - 1 + 1) + 1, 
-			rand() % 40 + (-30), rand() % 40 + (-30), rand() % 40 + (-30), rand() % (5000 - 1 + 1) + 1, cShad);
+		registry.AddComponent<ParticleComponent>(particles, (float)(rand() % (7 - 2 + 1) + 2), (float)(rand() % (20 - 5 + 1) + 5), (float)(rand() % (2 - 1 + 1) + 1),
+			(float)(rand() % 40 + (-30)), (float)(rand() % 40 + (-30)), (float)(rand() % 40 + (-30)), rand() % (5000 - 1 + 1) + 1, cShad);
 		
 	}
 
