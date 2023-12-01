@@ -68,6 +68,9 @@ void PlayHellhoundIntroAttack(EntityID& entity, const int& index);
 void PlayHellhoundIntroBreathIn(EntityID& entity, const int& index);
 void PlayHellhoundIntroBreathOut(EntityID& entity, const int& index);
 
+//Play player voice lines
+void PlayPlayerBossVoiceLine(EntityID& entity, const int& index);
+
 //Minotaur sounds
 void PlayMinotaurIntroCharge(EntityID& entity, const int& index);
 
