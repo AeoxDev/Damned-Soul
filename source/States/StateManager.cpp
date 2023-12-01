@@ -169,7 +169,7 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
-	systems.push_back(new AntiAliasingSystem());
+	//systems.push_back(new AntiAliasingSystem());	// NOTE: (Erika) Not working yet...
 
 
 	systems.push_back(new UIRunTime());
