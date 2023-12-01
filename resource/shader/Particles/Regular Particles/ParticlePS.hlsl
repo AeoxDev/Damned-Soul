@@ -105,7 +105,7 @@ float4 main(GS_OUT input) : SV_TARGET
                 image = VFXFireBallEmpowered(backBuffer, input.time, input.uv);
                 break;
             case 7: // SPAWN_BOSS
-                image = VFXSpawnCrystals(backBuffer, input.time, input.uv, 222.25f);
+                image = VFXSpawnCrystals(backBuffer, input.time, input.uv, 0.08f);
                 // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THE SPEED VALUE ( 0.25f )
                 // FURTHER: SIZE UP THE PARTICLE, DONT LET IT BE SMOL ( Pliz)
                 // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
