@@ -502,6 +502,11 @@ bool ControllerSystem::Update()
 				}
 				
 			}
+
+			//waA
+			transform->facingX = MouseComponentGetDirectionX(mouseComponent);
+			transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+
 			attackDuration /= playerStats->GetAttackSpeed(); //Speed up the attack animation based on attack speed
 			registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);

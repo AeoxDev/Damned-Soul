@@ -782,8 +782,11 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 	if (sfx != nullptr) sfx->Play(Shop_Reroll, Channel_Base);
 
-	souls->spentThisShop += priceCalc.GetCostOf(uiReroll->m_price, RelicInput::OnPriceCalculation::REROLL);
-	player->UpdateSouls(-priceCalc.GetCostOf(uiReroll->m_price, RelicInput::OnPriceCalculation::REROLL));
+	if (index != -1)
+	{
+		souls->spentThisShop += priceCalc.GetCostOf(uiReroll->m_price, RelicInput::OnPriceCalculation::REROLL);
+		player->UpdateSouls(-priceCalc.GetCostOf(uiReroll->m_price, RelicInput::OnPriceCalculation::REROLL));
+	}
 
 	RedrawUI();
 }

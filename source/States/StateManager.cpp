@@ -162,7 +162,7 @@ int StateManager::Setup()
 	Particles::InitializeParticles();
 	Outlines::InitializeOutlines();
 	Glow::Initialize();
-	AntiAlias::Initialize();	// NOTE: Erika was here.
+	//AntiAlias::Initialize();	// NOTE: Erika was here.
 	//SetupTestHitbox();
 	RedrawUI();
 	
