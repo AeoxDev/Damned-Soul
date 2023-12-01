@@ -30,6 +30,8 @@ void LoadLevel1()
 	stageVars.offsetY = -0.1f;
 	//stageVars.offsetX = 16.f;
 	EntityID stage = SetUpStage(stageVars); //registry.CreateEntity();
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level1"); //Proximity hitbox (Added by Joaquin)
 
 	if (SetupVFXTorches("LV1Torch.dss", false, false) == false)
 	{
@@ -52,14 +54,15 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
+
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
 	/*EntityID particles = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(particles, 50.0f, 50.0f, 1.5f, 0.0f, 0.0f, 1.0f, 32, VFX_PATTERN::ACID);
+	registry.AddComponent<ParticleComponent>(particles, 10.0f, 50.0f, 5.5f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::PORTAL);
 	
 	TransformComponent tComp;
-	tComp.positionX = -122.0f;
+	tComp.positionX = 0.0f;
 	tComp.positionY = 0.0f;
-	tComp.positionZ = 61.0f;
+	tComp.positionZ = 0.0f;
 	registry.AddComponent<TransformComponent>(particles, tComp);*/
 		
 	/*EntityID particlesVFX = registry.CreateEntity();
@@ -146,7 +149,10 @@ void LoadLevel1()
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
 	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
-	uiElement->SetAllVisability(false);
+	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	if (!GetVisualTimer())
+		uiElement->m_BaseText.baseUI.SetVisibility(false);
+	
 
 	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 	

@@ -49,7 +49,7 @@ void Render(RenderPass renderPass)
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 	}
-
+	
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, AnimationComponent>(registry))
 	{

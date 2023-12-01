@@ -25,14 +25,14 @@ bool NavigationSystem::Update()
 			if (enemyStats->GetHealth() > 0.f && playerTransformCompenent != nullptr)
 			{
 				enemyTransformCompenent = registry.GetComponent<TransformComponent>(enemyEntity);
-				float distance = sqrt((playerTransformCompenent->positionX - enemyTransformCompenent->positionX) * (playerTransformCompenent->positionX - enemyTransformCompenent->positionX) + (playerTransformCompenent->positionZ - enemyTransformCompenent->positionZ) * (playerTransformCompenent->positionZ - enemyTransformCompenent->positionZ));
+				float distance = (float)sqrt((playerTransformCompenent->positionX - enemyTransformCompenent->positionX) * (playerTransformCompenent->positionX - enemyTransformCompenent->positionX) + (playerTransformCompenent->positionZ - enemyTransformCompenent->positionZ) * (playerTransformCompenent->positionZ - enemyTransformCompenent->positionZ));
 				if (distance < closestDistance)
 				{
 					closestDistance = distance;
 					directionX = enemyTransformCompenent->positionX - playerTransformCompenent->positionX;
 					directionZ = enemyTransformCompenent->positionZ - playerTransformCompenent->positionZ;
 
-					float magnitude = sqrt(directionX * directionX + directionZ * directionZ);
+					float magnitude = (float)sqrt(directionX * directionX + directionZ * directionZ);
 					if (magnitude < 0.001f)
 					{
 						magnitude = 0.001f;

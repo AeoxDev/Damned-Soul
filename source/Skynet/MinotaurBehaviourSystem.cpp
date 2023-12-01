@@ -143,11 +143,17 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			enemyAnim->aAnim = ANIMATION_ATTACK;
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime = 0.0f;
+
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
+			sfx->Play(Minotaur_Attack, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 		}
 		else if (enemyAnim->aAnimIdx != 0)
 		{
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime = 0.0f;
+
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
+			sfx->Play(Minotaur_Attack, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 		}
 		//slightly adjust the charging direction based on player position
 
@@ -242,6 +248,9 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 				//AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, BossBlinkBeforeShockwave, mc->jumpDuration * 0.2f, ResetColor);
 				AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->jumpDuration * 0.2f, BossBlinkBeforeShockwave);
 				mc->jumping = true;
+
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
+				sfx->Play(Minotaur_Jump, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 			}
 			mc->jumpBuildUpTimer += GetDeltaTime();
 		}
@@ -443,7 +452,7 @@ bool MinotaurBehaviourSystem::Update()
 				{
 					minoComp->chargeAttackSoundPlaying = true;
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
-					sfx->Play(Eye_Attack, Channel_Base); //minotaur charge sound???
+					sfx->Play(Minotaur_Charge, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 					minoComp->chargeTimer = 0.0f;
 				}
 				ChargeBehaviour(enemyEntity, playerTransformCompenent, minoComp, minoTransformComponent, enemyStats, enmComp, enemyAnim);

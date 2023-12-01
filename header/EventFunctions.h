@@ -24,6 +24,10 @@ void PlayerLoseControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
 void PlayerBeginAttack(EntityID& entity, const int& index);
 
+//Voiceline
+void PlayBossVictoryOrDeathLine(EntityID& entity, const int& index);
+
+
 //END
 void PlayerRegainControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index);
@@ -59,6 +63,13 @@ void PlayBossIntroSlam(EntityID& entity, const int& index);
 //Imp sounds
 void PlayImpIntroTeleport(EntityID& entity, const int& index);
 void PlayImpIntroLaugh(EntityID& entity, const int& index);
+//Doggo noises
+void PlayHellhoundIntroAttack(EntityID& entity, const int& index);
+void PlayHellhoundIntroBreathIn(EntityID& entity, const int& index);
+void PlayHellhoundIntroBreathOut(EntityID& entity, const int& index);
+
+//Play player voice lines
+void PlayPlayerBossVoiceLine(EntityID& entity, const int& index);
 
 //Minotaur sounds
 void PlayMinotaurIntroCharge(EntityID& entity, const int& index);
@@ -130,6 +141,9 @@ void EyeIntroScene(EntityID& entity, const int& index);
 void MinotaurIntroScene(EntityID& entity, const int& index);
 void FinalBossIntroCutscene(EntityID& entity, const int& index);
 void StoredEnemyCutscene(EntityID& entity, const int& index);//Store a cutscene and apply to enemy when relevant.
+void StoredEnemyDogBreathScene(EntityID& entity, const int& index);
+void SpawnCutsceneParticles(EntityID& entity, const int& index);
+void DestroyCutsceneParticles(EntityID& entity, const int& index);
 
 void CutsceneFallStage1(EntityID& entity, const int& index);
 void CutsceneFallStage(EntityID& entity, const int& index);
@@ -139,6 +153,7 @@ void CutscenePlayerFallInPlace(EntityID& entity, const int& index);
 
 void BeginDestroyProjectile(EntityID& entity, const int& index);
 void EndDestroyProjectile(EntityID& entity, const int& index);
+void SpawnProjectileShadow(EntityID& entity, const int& index);
 
 
 //Game speed

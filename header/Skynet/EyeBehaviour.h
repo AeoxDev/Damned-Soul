@@ -16,19 +16,18 @@ struct EyeBehaviour
 	float chargeDirX = 0.0f;
 	float chargeDirZ = 0.0f;
 	float range = 80.f;
+	
 	//Obstacle Avoidance
 	float correcitonDirX = 0.0f;
 	float correcitonDirZ = 0.0f;
-
-	const int rayCount = 5; //assumed to be odd
-	const float rayDistance = 5.0f;
+	float avoidanceDuration = 0.3f;
+	float avoidanceTimer = avoidanceDuration;
 	
 	int specialCounter = 0;		//how many attacks since last special
 	int specialBreakpoint = 4;	//how many attacks are needed for next special
 
 	bool shooting = false;
 	bool clockwiseCircle = true;
-	//bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
 	bool retreating = false;	//bool to check if the eye is currently retreating
 	bool dealtDamage = false;

@@ -93,21 +93,52 @@ float4 main(GS_OUT input) : SV_TARGET
     {
         
         
-        if (vfxPattern == 0) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
+        
+        switch (vfxPattern)
         {
-            
-            image = VFXFire(backBuffer, input.time, input.uv);
-        }
-        else if (vfxPattern == 1) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
-        {
-            image = VFXAcidSpit(backBuffer, input.time, input.uv);
-
-        }
-        else if (vfxPattern == 2) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
-        {
-            image = VFXSwordSlash(backBuffer, input.time, input.uv);
-
-        }
+            case 0: // FLAME
+                image = VFXFire(backBuffer, input.time, input.uv);
+                break;
+            case 1: // BLUE_FLAME
+                image = VFXFire(backBuffer, input.time, input.uv, 2.0f, float3(0.0f, 0.25f, 1.0f));
+                break;
+            case 2: // SWORD
+                image = VFXSwordSlash(backBuffer, input.time, input.uv);
+                break;
+            case 3: // ACID
+                image = VFXAcidSpit(backBuffer, input.time, input.uv);
+                break;
+            case 4: // ACIDGROUND
+                image = VFXAcidGround(backBuffer, input.time, input.uv);
+                break;
+            case 5: // FIREBALL
+                image = VFXFireBall(backBuffer, input.time, input.uv);
+                break;
+            case 6: //FIREBALL_EMPOWERED
+                image = VFXFireBallEmpowered(backBuffer, input.time, input.uv);
+                break;
+            case 7: // SPAWN_BOSS
+                image = VFXSpawnCrystals(backBuffer, input.time, input.uv, 0.25f);
+                // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THE SPEED VALUE ( 0.25f )
+                // FURTHER: SIZE UP THE PARTICLE, DONT LET IT BE SMOL ( Pliz)
+                // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
+                break;
+            case 8: // SPAWN_IMP
+                image = VFXSpawnImp(backBuffer, input.time, input.uv, 2.0f);
+                // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THE SPEED VALUE ( 2.0f )
+                // FURTHER: SIZE UP THE PARTICLE, DONT LET IT BE SMOL ( Pliz)
+                // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
+                break;
+            case 9: // SPAWN_IMP_EMPOWERED
+                image = VFXSpawnEmpoweredImp(backBuffer, input.time, input.uv, 2.0f);
+                // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THE SPEED VALUE ( 2.0f )
+                // FURTHER: SIZE UP THE PARTICLE, DONT LET IT BE SMOL ( Pliz)
+                // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
+                break;
+            case 10: // PORTAL
+                image = VFXPortal(backBuffer, input.time, input.uv);
+                break;
+        };
     }
     // *********** END OF VFX *********** //
 

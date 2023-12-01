@@ -13,6 +13,12 @@ namespace Glow
 		float col_b;
 	};
 
+	struct BlurData
+	{
+		int windowWidth;
+		int windowHeight;
+	};
+
 	// TODO: Edit resources. UAV is unnecessary if only read access is needed.
 
 	extern SRV_IDX glow_srv;
@@ -21,10 +27,11 @@ namespace Glow
 	extern PS_IDX glow_shader;
 	extern DSV_IDX glow_depth;
 	extern CS_IDX blur_shader;
-	extern UAV_IDX blur_uav1;
-	extern UAV_IDX blur_uav2;
+	extern SRV_IDX blur_srv;
 	extern CB_IDX glow_buffer;
+	extern CB_IDX blur_buffer;
 	extern PoolPointer<GlowData> glow_bufData;
+	extern BlurData blur_bufData;
 
 	// Create and load everything necessary for glow to work.
 	void Initialize();
@@ -36,6 +43,8 @@ namespace Glow
 	void SetBlurViews();
 	// Update with values from GlowComponent.
 	void UpdateGlowBuffer(float r, float g, float b);
+	// Update with window values for correct resolution.
+	void UpdateBlurBuffer();
 	// Set resources for blur pass.
 	void PrepareBlurPass();
 	// Unset resources used in blur pass.
