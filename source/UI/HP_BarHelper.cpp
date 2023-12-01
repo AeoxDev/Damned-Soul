@@ -88,8 +88,8 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	_ADVANCED_HP_ROUND_PIXELS_UP(RC_ANCHOR)
 
 	//uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
-	//UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
-	//OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
+	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
 }
 
 void ScaleAdvancedHealthBar(const EntityID player)
@@ -214,16 +214,27 @@ void UpdateSoulUI(const EntityID player)
 
 #include "Relics\RelicFunctions.h"
 
-void AddNewRelicToUI(const EntityID player, const void* relic)
+uint32_t AddNewRelicToUI(const EntityID player, const void* relic)
 {
 	auto uiElement = registry.GetComponent<UIComponent>(player);
 	auto relicComponent = registry.GetComponent<UIPlayerRelicsComponent>(player);
 	const RelicData* data = (const RelicData*)relic;
 	DSFLOAT2 position = uiElement->m_Images[RC_ANCHOR].baseUI.GetPosition();
-	position.y += 18 + 48 * relicComponent->currentRelics;
+
+	uint32_t retVal = uiElement->m_Images.size();
+	uint32_t latest = retVal;
 	uiElement->AddImage(data->m_filePath, position);
-	_ADVANCED_HP_ROUND_PIXELS_UP(uiElement->m_Images.size() - 1);
-	position.y += 8;
-	uiElement->AddImage("RC/RC_Link", position);
-	_ADVANCED_HP_ROUND_PIXELS_UP(uiElement->m_Images.size() - 1);
+	// Displace the image
+	uiElement->m_Images[latest].baseUI.m_PixelCoords.y += 60 + 55 * relicComponent->currentRelics;
+	uiElement->m_Images[latest].baseUI.m_PixelCoords.x += 5;
+	_ADVANCED_HP_ROUND_PIXELS_UP(latest);	
+
+	// Displace the overlay
+	latest = uiElement->m_Images.size();
+	uiElement->AddImage("RelicChain/RC_Link", position);
+	uiElement->m_Images[latest].baseUI.m_PixelCoords.y += 56 + 55 * relicComponent->currentRelics;
+	uiElement->m_Images[latest].baseUI.m_PixelCoords.x += 5;
+	_ADVANCED_HP_ROUND_PIXELS_UP(latest);
+
+	return retVal;
 }
