@@ -251,6 +251,7 @@ bool ControllerSystem::Update()
 			if (stateManager.hitboxVis.index == -1)
 			{
 				stateManager.hitboxVis = registry.CreateEntity();
+				stateManager.naviagtion = registry.CreateEntity();
 				ModelBonelessComponent* stageHitbox;
 				TransformComponent* transform;
 				visualizeStage = true;
@@ -259,18 +260,56 @@ bool ControllerSystem::Update()
 					case 1://Level 1
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV1Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 					case 3://Level 2
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV2Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV2Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 					case 5://Level 3
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV3Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV3Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 					case 7://Level 4
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV4Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV4Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 9://Level 5
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV5Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV5Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 11://Level 6
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV6Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 13://Level 7
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV7Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV7Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 15://Level 8
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV8Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV8Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 17://Level 9
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV9Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 				default:
 					break;
@@ -335,6 +374,8 @@ bool ControllerSystem::Update()
 				registry.DestroyEntity(stateManager.hitboxVis);
 				stateManager.hitboxVis.index = -1;
 				visualizeStage = false;
+				registry.DestroyEntity(stateManager.naviagtion);
+				stateManager.naviagtion.index = -1;
 			}
 
 		}

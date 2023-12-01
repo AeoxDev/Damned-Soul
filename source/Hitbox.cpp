@@ -601,7 +601,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 	SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
-	SetHitboxHitWall(entity, hID);
+	//SetHitboxHitWall(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, SoftCollision);

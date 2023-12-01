@@ -243,22 +243,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 		GIcomponent->shaderData.isTexture = false;
 	}
 
-	//Render all existing static hazards on to the submesh.
-	for (auto entity : View<StaticHazardComponent, TransformComponent, ModelBonelessComponent>(registry))
-	{
-		ModelBonelessComponent *hazardModel = registry.GetComponent<ModelBonelessComponent>(entity);
-		StaticHazardComponent* hazardComponent = registry.GetComponent<StaticHazardComponent>(entity);
-		TransformComponent* hazardTransform = registry.GetComponent<TransformComponent>(entity);
-		SetWorldMatrix(hazardTransform->positionX, hazardTransform->positionY, hazardTransform->positionZ,
-			-hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ, 
-			hazardTransform->scaleX, hazardTransform->scaleY, hazardTransform->scaleZ, 
-			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-		SetVertexBuffer(LOADED_MODELS[hazardModel->model].m_vertexBuffer);
-		SetIndexBuffer(LOADED_MODELS[hazardModel->model].m_indexBuffer);
-		GIcomponent->shaderData.idValue = (float)hazardComponent->type;
-		UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
-		LOADED_MODELS[hazardModel->model].RenderAllSubmeshes();
-	}
+	
 
 	//Update CB
 	GIcomponent->shaderData.idValue = 1.0f;
@@ -269,7 +254,28 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	//Render texture to RTV
 	LOADED_MODELS[model->model].RenderAllSubmeshes();
 
-	
+	ClearDepthStencilView(GIcomponent->depthStencil);
+	//Render all existing static hazards on to the submesh.
+	for (auto entity : View<StaticHazardComponent, TransformComponent, ModelBonelessComponent>(registry))
+	{
+		ModelBonelessComponent* hazardModel = registry.GetComponent<ModelBonelessComponent>(entity);
+		StaticHazardComponent* hazardComponent = registry.GetComponent<StaticHazardComponent>(entity);
+		TransformComponent* hazardTransform = registry.GetComponent<TransformComponent>(entity);
+		if (hazardComponent->type == HAZARD_NAV)
+		{
+			hazardTransform->facingZ = 1.0f;
+		}
+		SetWorldMatrix(hazardTransform->positionX, hazardTransform->positionY, hazardTransform->positionZ,
+			-hazardTransform->facingX, hazardTransform->facingY, hazardTransform->facingZ,
+			hazardTransform->scaleX, hazardTransform->scaleY, hazardTransform->scaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[hazardModel->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[hazardModel->model].m_indexBuffer);
+		GIcomponent->shaderData.idValue = (float)hazardComponent->type;
+		UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+		LOADED_MODELS[hazardModel->model].RenderAllSubmeshes();
+	}
+
 	ClearDepthStencilView(GIcomponent->depthStencil);
 	//Render hitbox
 	if (hitbox.index != -1)

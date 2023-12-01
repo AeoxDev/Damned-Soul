@@ -5,6 +5,60 @@
 #include "Registry.h"
 
 
+void NavigationSample(PathfindingMap* map, int x, int z)
+{
+	map->cost[x][z] += 10000.0f;
+	//RIght column
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z + 1] += 10000.0f;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z] += 10000.0f;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
+		map->cost[x + 1][z - 1] += 10000.0f;
+
+	//Middle column
+	if (z > 0)
+		map->cost[x][z - 1] += 10000.0f;
+	if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x][z + 1] += 10000.0f;
+
+	//Left column
+
+	if (x > 0 && z > 0)
+		map->cost[x - 1][z - 1] += 10000.0f;
+	if (x > 0)
+		map->cost[x - 1][z] += 10000.0f;
+	if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x - 1][z + 1] += 10000.0f;
+}
+
+void NavigationSample(ObstacleMap* map, int x, int z)
+{
+	map->cost[x][z] += 10000.0f;
+	//RIght column
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z + 1] += 10000.0f;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z] += 10000.0f;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
+		map->cost[x + 1][z - 1] += 10000.0f;
+
+	//Middle column
+	if (z > 0)
+		map->cost[x][z - 1] += 10000.0f;
+	if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x][z + 1] += 10000.0f;
+
+	//Left column
+
+	if (x > 0 && z > 0)
+		map->cost[x - 1][z - 1] += 10000.0f;
+	if (x > 0)
+		map->cost[x - 1][z] += 10000.0f;
+	if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x - 1][z + 1] += 10000.0f;
+}
+
 void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform)
 {
 	GITexture* mapGrid = giTexture;
@@ -49,6 +103,11 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
@@ -179,6 +238,11 @@ void CalculateGlobalMapValuesZac(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
 			{
@@ -304,6 +368,11 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Use overloaded function for navigation sampling
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
@@ -427,6 +496,11 @@ void CalculateGlobalMapValuesEye(ObstacleMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_GATE || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
@@ -493,6 +567,11 @@ void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{

@@ -34,6 +34,7 @@ struct StateManager
 	EntityID gate;
 	EntityID cutsceneEnemy;
 	EntityID hitboxVis;
+	EntityID naviagtion;
 
 
 	/// <summary>
