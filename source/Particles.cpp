@@ -226,7 +226,7 @@ void Particles::PrepareParticlePass(int metadataSlot)
 	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
 	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
 	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	SetSamplerState(VFXSampler, 3);
+	SetSamplerState(sampler, 3);
 
 	// ## EO ALEX CODE ##
 
