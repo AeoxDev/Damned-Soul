@@ -194,12 +194,17 @@ float time,
 float2 uv
 )
 {
+    // Distorts UV
     float vornoiDistortion = noiseTexture_in.Sample(vfxSampler_in, UVPan(float2(0.0f, -1.0f), 0.2f, time, uv * 1.1f)).r;
+    
+    // Colorizes
     float4 colorizedCaustic = (noiseTexture_in.Sample(vfxSampler_in, distortUV(0.1f, uv, vornoiDistortion)).b * float4(0.6171079f, 0.4386792f, 1.0f, 0.0f));
     float4 colorizedGaussian = (noiseTexture_in.Sample(vfxSampler_in, uv * 0.4f).g * float4(0.3818085f, 0.3938224f, 0.490566f, 0.0f));
     
+    // Additive Color
     float4 colorizedPortal = colorizedCaustic + colorizedGaussian;
     
+    //Display
     return float4(colorizedPortal.rgb, 1.0f); //(gMaskTexture * pow(vornoiTexture, 2.0f + sin(time))).rgb, 1.0f;
 }
 
