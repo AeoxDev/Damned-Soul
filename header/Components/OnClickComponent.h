@@ -2,6 +2,7 @@
 #include "UI.h"
 
 #include "MemLib/ML_Vector.hpp"
+#include "MemLib/ML_Array.hpp"
 
 #include <vector>
 
@@ -12,34 +13,32 @@ struct OnClickComponent
 
 	int index = 0;
 
-	//container of bool doesnt exist, 0 = pressed, 1 = released
-	ML_Vector<int> mouseStates;
+	//2d container of click functions, 0 for mouse pressed and 1 for mouse released
+	ML_Vector<void(*)(void*, int)> onClickFunctionsPressed;
+	ML_Vector<void(*)(void*, int)> onClickFunctionsReleased;
 
-	ML_Vector<void(*)(void*, int)> onClickFunctions;
-
-	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, int state, void(*func)(void*, int))
+	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*function1)(void*, int), void(*function2)(void*, int))
 	{
 		positions.Initialize();
 		bounds.Initialize();
-		mouseStates.Initialize();
-		onClickFunctions.Initialize();
+
+		onClickFunctionsPressed.Initialize();
+		onClickFunctionsReleased.Initialize();
 
 		positions.push_back(pos);
 		bounds.push_back(bnds);
 
-		mouseStates.push_back(state);
-
-		onClickFunctions.push_back(func);
+		onClickFunctionsPressed.push_back(function1);
+		onClickFunctionsReleased.push_back(function2);
 	};
 
-	void Add(DSFLOAT2 pos, DSBOUNDS bnds, int state, void(*func)(void*, int))
+	void Add(DSFLOAT2 pos, DSBOUNDS bnds, void(*function1)(void*, int), void(*function2)(void*, int))
 	{
 		positions.push_back(pos);
 		bounds.push_back(bnds);
 
-		mouseStates.push_back(state);
-
-		onClickFunctions.push_back(func);
+		onClickFunctionsPressed.push_back(function1);
+		onClickFunctionsReleased.push_back(function2);
 	};
 
 	//Returns -1 for no intersect, positive number for first index that interacted, 
@@ -64,7 +63,8 @@ struct OnClickComponent
 	{
 		positions.~ML_Vector();
 		bounds.~ML_Vector();
-		mouseStates.~ML_Vector();
-		onClickFunctions.~ML_Vector();
+
+		onClickFunctionsPressed.~ML_Vector();
+		onClickFunctionsReleased.~ML_Vector();
 	};
 };

@@ -118,6 +118,9 @@ void Registry::DestroyEntity(EntityID id, ENTITY_PERSISTENCY_TIER destructionTie
 	entities[GetEntityIndex(id)].components.reset();
 
 	availableEntitySlots.push_back(GetEntityIndex(id));
+
+	//Since UI can't depth-check, its entities need to be in numerical order, but availableEntitySlots is in ascending order and pops from the back
+	registry.SortAvailableEntitySlotsVector();
 }
 
 int compCount = 0;

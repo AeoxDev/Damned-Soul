@@ -40,6 +40,11 @@ float StatComponent::GetHealthFraction() const
 	return this->m_currentHealth / GetMaxHealth();
 }
 
+void StatComponent::UpdateBaseHealth(const float delta)
+{
+	m_baseHealth += delta;
+}
+
 float StatComponent::CapHealth()
 {
 	float maxHp = (float)GetMaxHealth();
@@ -182,6 +187,11 @@ void StatComponent::SetSpeedMult(const float mult)
 float StatComponent::GetBaseDamage() const
 {
 	return m_baseDamage;
+}
+
+void StatComponent::UpdateBaseDamage(const float delta)
+{
+	m_baseDamage += delta;
 }
 
 float StatComponent::GetDamage() const

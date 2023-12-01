@@ -95,6 +95,8 @@ public:
 	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
+	// Update the entity's base health (permanently)
+	void UpdateBaseHealth(const float delta);
 	// Update the entity's bonus health
 	void UpdateBonusHealth(const float delta);
 
@@ -127,6 +129,8 @@ public:
 // Offensive
 	// Get the base damage of the entity
 	float GetBaseDamage() const;
+	// update the entity's base damage
+	void UpdateBaseDamage(const float delta);
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage

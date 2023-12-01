@@ -390,7 +390,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 		//create new points, left or right in the grid based on direction
 		p1.x += 1;
 		p2.x -= 1;
-		p3.z += direction.z;
+		p3.z += (int)direction.z;
 		
 		
 	}
@@ -399,7 +399,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 		//create new points, up or down in the grid based on direction
 		p1.z += 1;
 		p2.z -= 1;
-		p3.x += direction.x;
+		p3.x += (int)direction.x;
 	}
 
 	bool addP1 = true;

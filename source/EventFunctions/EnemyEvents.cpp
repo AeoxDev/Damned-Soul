@@ -501,7 +501,7 @@ void DogEndWait(EntityID& entity, const int& index)
 		{
 			float x = hc->lastPositionX - htc->positionX;
 			float z = hc->lastPositionZ - htc->positionZ;
-			float magnitude = sqrt(x * x + z * z);
+			float magnitude = (float)sqrt(x * x + z * z);
 			if (magnitude > 0.001f)
 			{
 				x /= magnitude;
