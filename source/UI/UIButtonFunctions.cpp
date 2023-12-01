@@ -42,7 +42,7 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 	gameSpeed = 1.0f; //Make sure it gets set back to 1 if StartGame is called from a completed run
 
-	stateManager.activeLevel = 0; //Level actually being loaded: activeLevel / 2 + 1
+	stateManager.activeLevel = 1; //Level actually being loaded: activeLevel / 2 + 1
 	LoadLevel(++stateManager.activeLevel);
 
 	SetPaused(false);
@@ -571,7 +571,6 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 									-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 				//First relic purchase
-				UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
 				if (playerRelics->currentRelics == 0)
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
@@ -721,6 +720,63 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 
 	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE))
 		return;
+
+	int soundToPlay = rand() % 2;
+	AudioEngineComponent* audioJungle = nullptr;
+	for (auto jungle : View<AudioEngineComponent>(registry))
+	{
+		audioJungle = registry.GetComponent<AudioEngineComponent>(jungle);
+	}
+	bool isPlaying = false;
+
+	if (soundToPlay == 0)
+	{
+		if (audioJungle != nullptr)
+		{
+			//Player voice line
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+			if (sfx != nullptr)
+			{
+				audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+				if (!isPlaying)
+				{
+					soundToPlay = rand() % 2;
+					if (soundToPlay == 0)
+					{
+						if (sfx != nullptr) sfx->Play(Player_LikeTheLook, Channel_Extra);
+					}
+					else
+					{
+						if (sfx != nullptr) sfx->Play(Player_WillDoDamage, Channel_Extra);
+					}
+				}
+			}
+		}
+	}
+	else if (soundToPlay == 1)
+	{
+		if (audioJungle != nullptr)
+		{
+			//Imp voice line
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+			if (sfx != nullptr)
+			{
+				audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+				if (!isPlaying)
+				{
+					soundToPlay = rand() % 2;
+					if (soundToPlay == 0)
+					{
+						if (sfx != nullptr) sfx->Play(Shop_UpgradeWeapon, Channel_Extra);
+					}
+					else
+					{
+						if (sfx != nullptr) sfx->Play(Shop_UpgradeWeapon2, Channel_Extra);
+					}
+				}
+			}
+		}
+	}
 
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage((float)(uiWeapon->m_price - 2.0f));

@@ -96,6 +96,10 @@ bool OnClickSystem::Update()
 				{
 					//Play sound in the function itself
 				}
+				else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::OnClick::UpgradeWeapon)
+				{
+					//Play sound in the function itself
+				}
 				else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::Game::LoadNextLevel)
 				{
 					for (auto entity : View<AudioEngineComponent>(registry))

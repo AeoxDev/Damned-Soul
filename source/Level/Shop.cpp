@@ -13,11 +13,12 @@
 #include "Camera.h"
 #include "EventFunctions.h"
 
-#define SHOP_POSITION_X (-0.35f)
-#define SHOP_OFFSET_X (SHOP_POSITION_X + 0.225f)
+#define SHOP_POSITION_X (-0.4f)
+#define SHOP_OFFSET_X_Left (SHOP_POSITION_X - 0.225f)
+#define SHOP_OFFSET_X_Right (SHOP_POSITION_X + 0.225f)
 
 #define SHOP_RELIC_WINDOWS (3)
-#define SHOP_SINGLE_WINDOWS (6)
+#define SHOP_SINGLE_WINDOWS (5)
 
 void ShopCutscene()
 {
@@ -84,9 +85,9 @@ void CreateRelicWindows()
 
 	const DSFLOAT2 positions[SHOP_RELIC_WINDOWS] =
 	{
-		{ SHOP_POSITION_X, 0.6f }, 
-		{ SHOP_POSITION_X, 0.3f }, 
-		{ SHOP_POSITION_X, 0.0f }
+		{ SHOP_OFFSET_X_Left, 0.1f },
+		{ SHOP_OFFSET_X_Left, -0.3f },
+		{ SHOP_OFFSET_X_Right, -0.3f }
 	};
 
 	const Relics::RELIC_TYPE type[SHOP_RELIC_WINDOWS] =
@@ -100,8 +101,9 @@ void CreateRelicWindows()
 	{
 		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
-		uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-
+		uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
+		
 		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
 		CreateUIRelics(*uiElement, *uiRelicWindow, type[i], positions[i]);
@@ -130,37 +132,36 @@ void CreateSingleWindows()
 	{
 		"Heal",
 		"Reroll",
-		"Lock",
+		//"Lock",
 		"Buy",
 		"Weapon",
-		""
+		"Next Level"
 	};
 
 	const DSFLOAT2 positions[SHOP_SINGLE_WINDOWS] =
 	{
-		{SHOP_OFFSET_X, 0.6f},
-		{SHOP_OFFSET_X, 0.3f},
-		{SHOP_OFFSET_X, 0.0f},
-		{SHOP_OFFSET_X, -0.3f},
-		{SHOP_POSITION_X, -0.3f},
-		{0.8f, -0.75f }
+		{ SHOP_POSITION_X, -0.7f },
+		{ SHOP_POSITION_X + 0.22f, -0.7f },
+		{ SHOP_POSITION_X + 0.44f, -0.7f },
+		{ SHOP_OFFSET_X_Right, 0.1f },
+		{ 0.8f, -0.75f }
 	};
 
 	const char filenames[SHOP_SINGLE_WINDOWS][32] =
 	{
 		"Heal",
 		"Reroll",
-		"Lock",
+		//"Lock",
 		"Buy",
 		"Axe",
-		"TempNextLevel"
+		""
 	};
 
 	void(*const functions[SHOP_SINGLE_WINDOWS])(void*, int)  =
 	{
 		UIFunctions::OnClick::HealPlayer,
 		UIFunctions::OnClick::RerollRelic,
-		UIFunctions::OnClick::LockRelic,
+		//UIFunctions::OnClick::LockRelic,
 		UIFunctions::OnClick::BuyRelic,
 		UIFunctions::OnClick::UpgradeWeapon,
 		UIFunctions::Game::ExitShopCutscene
@@ -170,7 +171,7 @@ void CreateSingleWindows()
 	{
 		"Heal",
 		"Reroll",
-		"Lock",
+		//"Lock",
 		"Buy",
 		"Upgrade Weapon",
 		""
@@ -180,7 +181,7 @@ void CreateSingleWindows()
 	{
 		"Recover 25% of max Health",
 		"Reroll a new set of relics",
-		"Lock the selected relic until the next reroll or shop",
+		//"Lock the selected relic until the next reroll or shop",
 		"Buy the selected relic",
 		"Upgrade your weapon",
 		"Leave the shop"
@@ -190,7 +191,7 @@ void CreateSingleWindows()
 	{
 		2,
 		5,
-		0,
+		//0,
 		0,
 		5,
 		0,
@@ -202,14 +203,22 @@ void CreateSingleWindows()
 		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 
-		if (i == 4)
-			uiElement->Setup("TempRelicFlavorHolder", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		if (i == 3)
+		{
+			uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
+		}
+		else if (i == 4)
+		{
+			uiElement->Setup("ExMenu/ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+		}
 		else
 			uiElement->Setup("", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-		uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
+		if (i != 4)
+			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.05f }, { 1.0f, 1.0f }, false);
 
-		if (i == 5)
+		if (i == 4)
 			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 		if (i == 0)
@@ -222,14 +231,18 @@ void CreateSingleWindows()
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 
-		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnClick::None, UIFunctions::OnClick::None);
+		if (i != 4)
 		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+		else
+			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+
 
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::ShopButton);
 
 		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
 		sfx->Load(SHOP);
+
 	}
 }
 
@@ -239,8 +252,7 @@ void CreateTextWindows()
 	EntityID impText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("TempShopTitle", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.8f }, DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-	uiTitle->m_BaseImage.baseUI.SetVisibility(false);
+	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, 0.40f }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
@@ -254,8 +266,6 @@ void CreateTextWindows()
 
 void LoadShop()
 {
-
-
 	CreateTextWindows();
 
 	CreateRelicWindows();

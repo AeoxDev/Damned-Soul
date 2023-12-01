@@ -163,7 +163,6 @@ bool UIShopSystem::Update()
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			uiElement->SetAllVisability(true);
-			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 		}
 
 		for (auto entity : View<UIShopRelicComponent>(registry))
@@ -197,7 +196,6 @@ bool UIShopSystem::Update()
     return true;
 }
 
-
 bool UIRunTimeSystem::Update()
 {
 
@@ -210,6 +208,7 @@ bool UIRunTimeSystem::Update()
 	}
 	return true;
 }
+
 
 bool UISliderSystem::Update()
 {
@@ -231,13 +230,14 @@ bool UISliderSystem::Update()
 			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
 			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
 
-			float sliderWidth = abs(maxRightPosition - 0.13f) - abs(maxLeftPosition + 0.13f);
+			float sliderWidth = abs(maxRightPosition - 0.13f) + abs(maxLeftPosition + 0.13f);
 
 			if (slider->currentPosition >= maxRightPosition - 0.13f)
 				slider->currentPosition = maxRightPosition - 0.13f;
 
 			if (slider->currentPosition <= maxLeftPosition + 0.13f)
 				slider->currentPosition = maxLeftPosition + 0.13f;
+
 
 			if (uiMouseCoords > slider->currentPosition && slider->currentPosition < maxRightPosition - 0.13f)
 			{
