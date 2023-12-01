@@ -63,6 +63,10 @@ void PlayBossIntroSlam(EntityID& entity, const int& index);
 //Imp sounds
 void PlayImpIntroTeleport(EntityID& entity, const int& index);
 void PlayImpIntroLaugh(EntityID& entity, const int& index);
+//Doggo noises
+void PlayHellhoundIntroAttack(EntityID& entity, const int& index);
+void PlayHellhoundIntroBreathIn(EntityID& entity, const int& index);
+void PlayHellhoundIntroBreathOut(EntityID& entity, const int& index);
 
 //Minotaur sounds
 void PlayMinotaurIntroCharge(EntityID& entity, const int& index);

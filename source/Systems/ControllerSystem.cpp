@@ -48,8 +48,17 @@ bool ControllerSystem::Update()
 			else if (Camera::InCutscene() == 3)
 			{
 				//Nothing. Not a skippable cutscene.
+#ifdef _DEBUG //Allow debug to skip the cutscene
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				ReloadPlayerNonGlobals();
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+#endif // _DEBUG //Allow debug to skip the cutscene
+
 			}
-			
 		}
 		
 	}

@@ -44,15 +44,14 @@ void LoadLevel7()
 
 	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
 
-	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	if (SetupAllEnemies("LV7Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
 		assert("Could not read file: LV7Enemies");
 	}
 
-	//22 souls + 18 souls level 1,2 = 40 souls total before boss
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -40.f, 0.f, -45.f, 1); // make stronger version
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::empoweredImp, -110.f, 0.f, 277.f, 0);
+	
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
@@ -76,5 +75,5 @@ void LoadLevel7()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, HellhoundIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, ImpIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

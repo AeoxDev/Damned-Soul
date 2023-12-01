@@ -694,6 +694,18 @@ void PlayImpIntroLaugh(EntityID& entity, const int& index)
 	//impSound->Play();
 }
 
+void PlayHellhoundIntroAttack(EntityID& entity, const int& index)
+{
+}
+
+void PlayHellhoundIntroBreathIn(EntityID& entity, const int& index)
+{
+}
+
+void PlayHellhoundIntroBreathOut(EntityID& entity, const int& index)
+{
+}
+
 void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
 {
 	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
