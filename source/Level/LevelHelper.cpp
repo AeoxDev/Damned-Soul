@@ -304,7 +304,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	transform->scaleY = stageVars.scaleY;
 	transform->scaleZ = stageVars.scaleZ;
 	transform->positionX = stageVars.offsetX;
-	transform->positionY = stageVars.offsetY+5000.f;
+	transform->positionY = stageVars.offsetY;
 	transform->positionZ = stageVars.offsetZ;
 	TransformComponent* transformG = registry.AddComponent<TransformComponent>(gate, transform);
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
