@@ -82,10 +82,7 @@ float4 main(VS_OUT input) : SV_TARGET
     
     float2 screenSpaceUV = float2((input.position.x / screenX), (input.position.y / screenY));
     float4 backBuff = backbufferTexture_in.Sample(WrapSampler, screenSpaceUV);
-    
-    if (backBuff.a != 0)
-        clip(-1.f);
-    
+
     float4 image = diffuseTex.Sample(WrapSampler, input.uv);
     
     //float screenX = 1600.f;

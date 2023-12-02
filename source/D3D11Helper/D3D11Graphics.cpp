@@ -23,6 +23,7 @@ BufferHolder* bfrHolder;
 ViewPortHolder* vpHolder;
 RTVHolder* rtvHolder;
 DSVHolder* dsvHolder;
+DSSHolder* dssHolder;
 SRVHolder* srvHolder;
 UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
@@ -88,6 +89,7 @@ int SetupDirectX(HWND& w)
 	PUSH_AND_INITIALIZE(rtvHolder, RTVHolder);
 	//rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
 	PUSH_AND_INITIALIZE(dsvHolder, DSVHolder);
+	PUSH_AND_INITIALIZE(dssHolder, DSSHolder);
 	//dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
 	PUSH_AND_INITIALIZE(srvHolder, SRVHolder);
 	//srvHolder = (SRVHolder*)MemLib::spush(sizeof(SRVHolder));
@@ -279,4 +281,9 @@ void EndDirectX()
 	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 	debugInterface->Release();
 #endif
+}
+
+DSS_IDX DSSHolder::NextIdx()
+{
+	return DSS_IDX();
 }

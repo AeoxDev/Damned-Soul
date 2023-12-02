@@ -12,12 +12,14 @@ extern EntityID m_rocksPlane;
 extern EntityID m_islandPlane;
 
 extern  RS_IDX m_skyPlaneRasterizer;
-extern  DSV_IDX m_skyPlaneDepth;
+extern  DSS_IDX m_skyPlaneStencil;
 extern  VS_IDX m_skyVS;
 extern  PS_IDX m_skyPS;
+extern  PS_IDX m_skyPSForeground;
 extern	CB_IDX m_skyConst;
 extern	BS_IDX m_skyBlend;
-extern SRV_IDX m_backBufferSRV;
+extern SRV_IDX m_skyBackBufferSRV;
+extern SRV_IDX m_skyBackBufferSRVCopy;
 
 
 void InitializeSky();

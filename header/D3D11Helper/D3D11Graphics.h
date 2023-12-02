@@ -137,6 +137,16 @@ public:
 	DSV_IDX NextIdx();
 };
 
+struct DSSHolder
+{
+private:
+	DSS_IDX										_nextIdx = 0;
+public:
+	ML_Map<DSS_IDX, ID3D11DepthStencilState*>	dss_map; // Needs a texture for the depth stencil as well
+
+	DSS_IDX NextIdx();
+};
+
 struct SRVHolder
 {
 private:
@@ -183,6 +193,7 @@ extern BufferHolder* bfrHolder;
 extern ViewPortHolder* vpHolder;
 extern RTVHolder* rtvHolder;
 extern DSVHolder* dsvHolder;
+extern DSSHolder* dssHolder;
 extern SRVHolder* srvHolder;
 extern UAVHolder* uavHolder;
 extern RasterizerHolder* rsHolder;

@@ -33,7 +33,6 @@ void SmoothRotation(TransformComponent* tc, float goalX, float goalZ, float rota
 	{
 		rotationFactor = 1.1f;
 	}
-
 	if (tc->facingZ < 0.0f)
 	{
 		angle *= -1.0f;

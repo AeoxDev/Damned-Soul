@@ -16,12 +16,14 @@ EntityID m_rocksPlane;
 EntityID m_islandPlane;
 
 RS_IDX m_skyPlaneRasterizer;
-DSV_IDX m_skyPlaneDepth;
+DSS_IDX m_skyPlaneStencil;
 VS_IDX m_skyVS;
 PS_IDX m_skyPS;
+PS_IDX m_skyPSForeground;
 CB_IDX m_skyConst;
 BS_IDX m_skyBlend;
-SRV_IDX m_backBufferSRV; 
+SRV_IDX m_skyBackBufferSRVCopy;
+SRV_IDX m_skyBackBufferSRV;
 
 
 void InitializeSky()
@@ -30,9 +32,9 @@ void InitializeSky()
 	m_rocksPlane = registry.CreateEntity(ENTITY_PERSISTENCY_TIER::ENT_PERSIST_GAME);
 	m_islandPlane = registry.CreateEntity(ENTITY_PERSISTENCY_TIER::ENT_PERSIST_GAME);
 
-	registry.AddComponent<ModelBonelessComponent>(m_basePlane, LoadModel("3.mdl"));
-	registry.AddComponent<ModelBonelessComponent>(m_rocksPlane, LoadModel("2.mdl"));
-	registry.AddComponent<ModelBonelessComponent>(m_islandPlane, LoadModel("1.mdl"));
+	registry.AddComponent<ModelBonelessComponent>(m_basePlane, LoadModel("LavaIslandLayer.mdl"));
+	registry.AddComponent<ModelBonelessComponent>(m_rocksPlane, LoadModel("IslandLayer.mdl"));
+	registry.AddComponent<ModelBonelessComponent>(m_islandPlane, LoadModel("BackgroundLayer.mdl"));
 
 	TransformComponent baseTComp;
 	TransformComponent rocksTComp;
@@ -41,22 +43,22 @@ void InitializeSky()
 	DirectX::XMFLOAT3 camPos;
 
 	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
-	baseTComp.positionX = camPos.x; baseTComp.positionY = camPos.y; baseTComp.positionZ = camPos.z;
-	baseTComp.offsetY = -247.f; baseTComp.offsetZ = 350.f; 
-	baseTComp.scaleX = 4.0f; baseTComp.scaleY = 2.5f;
-	baseTComp.facingY = 0.75f;
+	/*baseTComp.positionX = camPos.x; baseTComp.positionY = camPos.y; baseTComp.positionZ = camPos.z;
+	baseTComp.offsetY = -25.f; baseTComp.offsetZ = 450.f;
+	baseTComp.scaleX = 7.f; baseTComp.scaleY = 3.0f;
+	baseTComp.facingY = 0.75f;*/
 
-	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
-	rocksTComp.positionX = camPos.x; rocksTComp.positionY = camPos.y; rocksTComp.positionZ = camPos.z;
-	rocksTComp.offsetY = -247.f; rocksTComp.offsetZ = 300.f;
-	rocksTComp.scaleX = 4.0f; rocksTComp.scaleY = 2.5f;
-	rocksTComp.facingY = 0.75f;
+	//rocksTComp.positionX = camPos.x; rocksTComp.positionY = camPos.y; rocksTComp.positionZ = camPos.z;
+	/*rocksTComp.offsetY = -25.f; rocksTComp.offsetZ = 445.f;
+	rocksTComp.scaleX = 7.f; rocksTComp.scaleY = 3.0f;
+	rocksTComp.facingY = 0.75f;*/
 
-	DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
-	islandTComp.positionX = camPos.x; islandTComp.positionY = camPos.y; islandTComp.positionZ = camPos.z;
-	islandTComp.offsetY = -247.f; islandTComp.offsetZ = 250.f;
-	islandTComp.scaleX = 4.0f; islandTComp.scaleY = 2.5f;
-	islandTComp.facingY = 0.75f;
+
+	//islandTComp.positionX = camPos.x; islandTComp.positionY = camPos.y; islandTComp.positionZ = camPos.z;
+	/*islandTComp.offsetY = -25.f; islandTComp.offsetZ = 440.f;
+	islandTComp.scaleX = 7.f; islandTComp.scaleY = 3.0f;
+	islandTComp.facingY = 0.75f;*/
+
 
 	registry.AddComponent<TransformComponent>(m_basePlane, baseTComp);
 	registry.AddComponent<TransformComponent>(m_rocksPlane, rocksTComp);
@@ -69,17 +71,21 @@ void InitializeSky()
 
 	m_skyConst = CreateConstantBuffer(sizeof(int));
 	m_skyPlaneRasterizer = CreateRasterizerState(false, true);
-	m_skyPlaneDepth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, true);
+	m_skyPlaneStencil = CreateDepthStencilState();
 	m_skyBlend = CreateBlendState();
 
 	m_skyVS = LoadVertexShader("SkyVS.cso", LAYOUT_DESC::DEFAULT);
 	m_skyPS = LoadPixelShader("SkyPS.cso");
+	m_skyPSForeground = LoadPixelShader("SkyPSForeground.cso");
 
 	planes[0] = m_basePlane;
 	planes[1] = m_rocksPlane;
 	planes[2] = m_islandPlane;
 
-	m_backBufferSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
+
+	RESOURCE_FLAGS rFlags = (RESOURCE_FLAGS)(BIND_RENDER_TARGET | BIND_SHADER_RESOURCE | BIND_UNORDERED_ACCESS);
+	m_skyBackBufferSRVCopy = CreateShaderResourceViewTexture(RESOURCES::RESOURCE_TEXTURE2D, rFlags, CPU_FLAGS::NONE, 1600.f, 900.f);
+	m_skyBackBufferSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
 }
 
 void ReleaseSky()
@@ -97,29 +103,72 @@ void UpdateTransform(int layerNumber)
 {
 	TransformComponent* tComp = registry.GetComponent<TransformComponent>(m_islandPlane);
 	DirectX::XMFLOAT3 camPos;
+	DirectX::XMFLOAT3 camLook;		
+	float scale = 1.f;
 
 	switch (layerNumber)
 	{
 	case 0:
 		tComp = registry.GetComponent<TransformComponent>(m_basePlane);
 		DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
-		tComp->positionX = camPos.x * 0.9f;
-		tComp->positionY = camPos.y * 0.9f;
-		tComp->positionZ = camPos.z * 0.9f;
+		DirectX::XMStoreFloat3(&camLook, Camera::GetLookAt());
+
+		tComp->positionX = camPos.x + (camPos.x - camLook.x);
+		tComp->positionY = camPos.y + (camPos.y - camLook.y);
+		tComp->positionZ = camPos.z + (camPos.z - camLook.z);
+
+
+		//tComp->facingX = (camPos.x - camLook.x) * scale;
+
+		//tComp->positionX = camPos.x* 0.9f - (camPos.x - camLook.x) * 2.f;
+		//tComp->positionY = camPos.y* 0.9f - (camPos.y - camLook.y) * 2.f;
+		//tComp->positionZ = camPos.z* 0.9f;
+
+		//tComp->positionX = -800.f;
+		//tComp->positionY = 200.f;
+		//tComp->positionZ = camPos.z;
+
 		break;
 	case 1:
 		tComp = registry.GetComponent<TransformComponent>(m_rocksPlane);
 		DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
-		tComp->positionX = camPos.x * 0.8f;
-		tComp->positionY = camPos.y * 0.8f;
-		tComp->positionZ = camPos.z * 0.8f;
+		DirectX::XMStoreFloat3(&camLook, Camera::GetLookAt());
+
+		tComp->positionX = camPos.x + (camPos.x - camLook.x);
+		tComp->positionY = camPos.y + (camPos.y - camLook.y);
+		tComp->positionZ = camPos.z + (camPos.z - camLook.z)*10.f;
+
+		//tComp->facingX = (camPos.x - camLook.x) * scale;
+
+		//tComp->positionX = camPos.x* 0.8f - (camPos.x - camLook.x) * 2.f;
+		//tComp->positionY = camPos.y* 0.8f - (camPos.y - camLook.y) * 2.f;
+		//tComp->positionZ = camPos.z* 0.8f;
+
 		break;
 	case 2:
 		tComp = registry.GetComponent<TransformComponent>(m_islandPlane);
 		DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
-		tComp->positionX = camPos.x * 0.7f;
-		tComp->positionY = camPos.y * 0.7f;
-		tComp->positionZ = camPos.z * 0.7f;
+		DirectX::XMStoreFloat3(&camLook, Camera::GetLookAt());
+
+		tComp->positionX = camPos.x + (camPos.x - camLook.x)*10.f;
+		tComp->positionY = camPos.y + (camPos.y - camLook.y)*10.f;
+		tComp->positionZ = camPos.z + (camPos.z - camLook.z) * 10.f;
+
+		//tComp->facingX = (camPos.x - camLook.x) * scale;
+
+		//tComp->positionX = camPos.x * 0.7f - (camPos.x - camLook.x) * 2.f;
+		//tComp->positionY = camPos.y * 0.7f - (camPos.y - camLook.y) * 2.f;
+		//tComp->positionZ = camPos.z * 0.7f;
+	 //
+		//tComp = registry.GetComponent<TransformComponent>(m_islandPlane);
+		//DirectX::XMStoreFloat3(&camPos, Camera::GetPosition());
+		//DirectX::XMStoreFloat3(&camLook, Camera::GetLookAt());
+
+		//tComp->positionX = camPos.x + (camPos.x - camLook.x);
+		//tComp->positionY = camPos.y + (camPos.y - camLook.y);
+		//tComp->positionZ = camPos.z + (camPos.z - camLook.z);
+
+
 		break;
 	default:
 		break;

@@ -15,7 +15,7 @@ ID3D11DepthStencilView* dsv_NULL = NULL;
 ID3D11ShaderResourceView* srv_NULL = NULL;
 ID3D11UnorderedAccessView* uav_NULL = NULL;
 ID3D11RasterizerState* rs_NULL = NULL;
-
+ID3D11DepthStencilState* dss_NULL = NULL;
 
 VP_IDX CreateViewport(const size_t& width, const size_t& height)
 {
@@ -151,39 +151,32 @@ DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 	return currentIdx;
 }
 
-DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height, bool comparison)
+DSS_IDX CreateDepthStencilState()
 {
-	uint8_t currentIdx = dsvHolder->NextIdx();
+	uint8_t currentIdx = dssHolder->NextIdx();
 
-	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = (UINT)width;
-	textureDesc.Height = (UINT)height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.SampleDesc.Quality = 0;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
+	dssDesc.DepthEnable = false;
+	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	dssDesc.StencilEnable = false;
+	dssDesc.StencilReadMask = 0;
+	dssDesc.StencilWriteMask = 0;
+	dssDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 
-	ID3D11Texture2D* tempTex = 0;
-	HRESULT hr = d3d11Data->device->CreateTexture2D(&textureDesc, nullptr, &tempTex);
+
+	ID3D11DepthStencilState* tempDSS = 0;
+	HRESULT hr = d3d11Data->device->CreateDepthStencilState(&dssDesc, &tempDSS);
 	assert(!FAILED(hr));
 
-	dsvHolder->ds_map.emplace(currentIdx, tempTex);
-
-	D3D11_DEPTH_STENCIL_DESC dsvDesc;
-
-	dsvDesc.DepthEnable = true;
-	dsvDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dsvDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-	ID3D11DepthStencilView* tempDSV = 0;
-	hr = d3d11Data->device->CreateDepthStencilView(dsvHolder->ds_map[currentIdx], 0, &tempDSV);
-	assert(!FAILED(hr));
-	dsvHolder->dsv_map.emplace(currentIdx, tempDSV);
+	dssHolder->dss_map.emplace(currentIdx, tempDSS);
 
 	return currentIdx;
 }
@@ -194,6 +187,26 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 
 	d3d11Data->deviceContext->OMSetRenderTargets(1, &(rtvHolder->rtv_map[idx_rtv]), dsvHolder->dsv_map[idx_dsv]);
 	return true;
+}
+
+bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv)
+{
+	ID3D11DepthStencilView* dsvNull = nullptr;
+
+
+	d3d11Data->deviceContext->OMSetRenderTargets(1, &(rtvHolder->rtv_map[idx_rtv]), dsvNull);
+	return true;
+}
+
+bool SetStencil(const DSS_IDX dss_idx)
+{
+	d3d11Data->deviceContext->OMSetDepthStencilState(dssHolder->dss_map[dss_idx], 1);
+	return true;
+}
+
+void UnsetStencil()
+{
+	d3d11Data->deviceContext->OMSetDepthStencilState(dss_NULL, 1);
 }
 
 void UnsetRenderTargetViewAndDepthStencil()
@@ -297,6 +310,8 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 
 			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			SRVDesc.Texture2D.MipLevels = 1;
+			SRVDesc.Texture2D.MostDetailedMip = 0;
 
 			// Release tempTex as the queryInterface is the resource appended
 			tempTex->Release();

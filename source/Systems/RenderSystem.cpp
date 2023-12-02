@@ -151,7 +151,11 @@ void RenderSkyPlane()
 {
 	int loops = 0;
 
-	for (int i = 0; i < 1; i++)
+	SetStencil(m_skyPlaneStencil);
+
+	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
+
+	for (int i = 0; i < 3; i++)
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(planes[i]);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(planes[i]);
@@ -170,10 +174,7 @@ void RenderSkyPlane()
 
 		SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
 
-
-
-
-		UpdateTransform(loops++);
+		//UpdateTransform(loops++);
 		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
 			tc->facingX, tc->facingY, -tc->facingZ,
 			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
@@ -182,9 +183,14 @@ void RenderSkyPlane()
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		SetVertexShader(m_skyVS);
-		SetPixelShader(m_skyPS);
+		SetPixelShader(m_skyPSForeground);
 
-		SetShaderResourceView(m_backBufferSRV, BIND_PIXEL, 5);
+		if (i == 0)
+			SetPixelShader(m_skyPS);
+
+		CopySRVtoSRV(m_skyBackBufferSRVCopy, m_skyBackBufferSRV);
+
+		SetShaderResourceView(m_skyBackBufferSRVCopy, BIND_PIXEL, 5);
 
 		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 
@@ -195,6 +201,7 @@ void RenderSkyPlane()
 	}
 	UnsetConstantBuffer(BIND_VERTEX, 3);
 	//UnsetBlendState();
+	UnsetStencil();
 }
 
 bool RenderSystem::Update()
@@ -216,11 +223,15 @@ bool RenderSystem::Update()
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
 	Render(DepthPass);
 	ClearBackBuffer();
+
+	
+	// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+	RenderSkyPlane();
+
 	// Render UI
 	RenderUI();
-	
-	//Render Lightpass
 
+	//Render Lightpass
 	//Set shaders here.
 	PrepareBackBuffer();
 	//If light needs to update, update it.
@@ -237,9 +248,7 @@ bool RenderSystem::Update()
 	// Unset geometry shader
 	UnsetGeometryShader();
 
-	// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
-	RenderSkyPlane();
-	
+
 
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
@@ -307,6 +316,7 @@ bool RenderSystem::Update()
 bool OutlineSystem::Update()
 {
 	//Outlines::SwapTargets();
+
 
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetTopology(TOPOLOGY::TRIANGLELIST);
