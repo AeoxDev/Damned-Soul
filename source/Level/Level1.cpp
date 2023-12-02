@@ -61,12 +61,12 @@ void LoadLevel1()
 
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
 	EntityID particles = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(particles, 5.0f, 50.0f, 5.5f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::SPAWN_BOSS);
+	registry.AddComponent<ParticleComponent>(particles, 5.0f, 50.0f, 5.5f, 0.0f, 0.0f, 1.0f, 2, "\\SwordSlash.mdl", VFX_PATTERN::FLAME);
 	
 	TransformComponent tComp;
-	tComp.positionX = 0.0f;
+	tComp.positionX = -122.0f;
 	tComp.positionY = 0.0f;
-	tComp.positionZ = 0.0f;
+	tComp.positionZ = 21.0f;
 	registry.AddComponent<TransformComponent>(particles, tComp);
 		
 	/*EntityID particlesVFX = registry.CreateEntity();
