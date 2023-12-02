@@ -223,6 +223,7 @@ void ReleaseRTV(const RTV_IDX idx);
 
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
+DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height, bool SRV);
 // Overload for skyplane
 DSS_IDX CreateDepthStencilState();
 // Set a render target view and depth stencil view
