@@ -8,11 +8,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2023
 		Month: 12
-		Day: 1
-		Hour: 17
-		Minute: 45
-		Second: 34
-		Millisecond: 516
+		Day: 2
+		Hour: 14
+		Minute: 22
+		Second: 14
+		Millisecond: 995
 	}
 	Creator: "FBX SDK/FBX Plugins version 2020.3.1"
 	OtherFlags:  {
@@ -31,19 +31,19 @@ FBXHeaderExtension:  {
 			Comment: ""
 		}
 		Properties70:  {
-			P: "DocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\Meshes\SwordSlash_231201.fbx"
-			P: "SrcDocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\Meshes\SwordSlash_231201.fbx"
+			P: "DocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\Meshes\SwordSlash_231202.fbx"
+			P: "SrcDocumentUrl", "KString", "Url", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\Meshes\SwordSlash_231202.fbx"
 			P: "Original", "Compound", "", ""
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya"
 			P: "Original|ApplicationVersion", "KString", "", "", "2023"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "01/12/2023 16:45:34.513"
-			P: "Original|FileName", "KString", "", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\Meshes\SwordSlash_231201.fbx"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "02/12/2023 13:22:14.993"
+			P: "Original|FileName", "KString", "", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\Meshes\SwordSlash_231202.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2023"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "01/12/2023 16:45:34.513"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "02/12/2023 13:22:14.993"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\Meshes"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "C:\Users\Proj\OneDrive - BTH Student\1StortSpelDamnedSoul\Alex Working\VFXFolder\MayaFiles\2023-12-01_CircularMeshSize.mb"
 		}
@@ -80,7 +80,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 2149113582976, "", "Scene" {
+	Document: 2162048057424, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -275,9 +275,9 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 2149074547248, "Geometry::", "Mesh" {
+	Geometry: 2162081608208, "Geometry::", "Mesh" {
 		Vertices: *96 {
-			a: 0,0,-4,-1.5307320356369,0,-3.69551992416382,-2.82842803001404,0,-2.82842803001404,-3.69551992416382,0,-1.5307320356369,-4,0,0,-3.69551992416382,0,1.5307320356369,-2.82842803001404,0,2.82842803001404,-1.5307320356369,0,3.69551992416382,0,0,4,1.5307320356369,0,3.69551992416382,2.82842803001404,0,2.82842803001404,3.69551992416382,0,1.5307320356369,4,0,0,3.69551992416382,0,-1.5307320356369,2.82842803001404,0,-2.82842803001404,1.5307320356369,0,-3.69551992416382,0,0,-1.49628400802612,-0.57260400056839,0,-1.38238799571991,-1.05803203582764,0,-1.05803203582764,-1.38238799571991,0,-0.57260400056839,-1.49628400802612,0,0,-1.38238799571991,0,0.57260400056839,-1.05803203582764,0,1.05803203582764,-0.57260400056839,0,1.38238799571991,0,0,1.49628400802612,0.57260400056839,0,1.38238799571991,1.05803203582764,0,1.05803203582764,1.38238799571991,0,0.57260400056839,1.49628400802612,0,0,1.38238799571991,0,-0.57260400056839,1.05803203582764,0,-1.05803203582764,0.57260400056839,0,-1.38238799571991
+			a: 0,4,0,-1.5307320356369,3.69551992416382,1.19209289550781e-07,-2.82842803001404,2.82842803001404,5.96046447753906e-08,-3.69551992416382,1.5307320356369,2.98023223876953e-08,-4,0,0,-3.69551992416382,-1.5307320356369,-2.98023223876953e-08,-2.82842803001404,-2.82842803001404,-5.96046447753906e-08,-1.5307320356369,-3.69551992416382,-1.19209289550781e-07,0,-4,0,1.5307320356369,-3.69551992416382,-1.19209289550781e-07,2.82842803001404,-2.82842803001404,-5.96046447753906e-08,3.69551992416382,-1.5307320356369,-2.98023223876953e-08,4,0,0,3.69551992416382,1.5307320356369,2.98023223876953e-08,2.82842803001404,2.82842803001404,5.96046447753906e-08,1.5307320356369,3.69551992416382,1.19209289550781e-07,0,1.49628400802612,0,-0.57260400056839,1.38238799571991,2.98023223876953e-08,-1.05803203582764,1.05803203582764,0,-1.38238799571991,0.57260400056839,-1.49011611938477e-08,-1.49628400802612,0,0,-1.38238799571991,-0.57260400056839,1.49011611938477e-08,-1.05803203582764,-1.05803203582764,0,-0.57260400056839,-1.38238799571991,-2.98023223876953e-08,0,-1.49628400802612,0,0.57260400056839,-1.38238799571991,-2.98023223876953e-08,1.05803203582764,-1.05803203582764,0,1.38238799571991,-0.57260400056839,1.49011611938477e-08,1.49628400802612,0,0,1.38238799571991,0.57260400056839,-1.49011611938477e-08,1.05803203582764,1.05803203582764,0,0.57260400056839,1.38238799571991,2.98023223876953e-08
 		} 
 		PolygonVertexIndex: *96 {
 			a: 6,22,-6,5,22,-22,14,30,-14,13,30,-30,7,23,-7,6,23,-23,15,31,-15,14,31,-31,8,24,-8,7,24,-24,1,17,-1,0,17,-17,0,16,-16,15,16,-32,9,25,-9,8,25,-25,2,18,-2,1,18,-18,10,26,-10,9,26,-26,3,19,-3,2,19,-19,11,27,-11,10,27,-27,4,20,-4,3,20,-20,12,28,-12,11,28,-28,5,21,-5,4,21,-21,13,29,-13,12,29,-29
@@ -292,7 +292,7 @@ Objects:  {
 			MappingInformationType: "ByPolygonVertex"
 			ReferenceInformationType: "Direct"
 			Normals: *288 {
-				a: 0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0
+				a: 0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1
 			} 
 			NormalsW: *96 {
 				a: 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
@@ -335,7 +335,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 2147979261008, "Model::Sword", "Mesh" {
+	Model: 2160885332256, "Model::Sword", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -347,7 +347,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 2149109377328, "Material::SwordSlash", "" {
+	Material: 2159159101632, "Material::SwordSlash", "" {
 		Version: 102
 		ShadingModel: "lambert"
 		MultiLayer: 0
@@ -361,7 +361,7 @@ Objects:  {
 			P: "Opacity", "double", "Number", "",1
 		}
 	}
-	Video: 2149070810160, "Video::file2", "Clip" {
+	Video: 2161830058256, "Video::file2", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "C:/Users/Proj/Downloads/VFX/VFX_GradientMask.png"
@@ -371,7 +371,7 @@ Objects:  {
 		Filename: "C:/Users/Proj/Downloads/VFX/VFX_GradientMask.png"
 		RelativeFilename: "..\..\..\..\..\Downloads\VFX\VFX_GradientMask.png"
 	}
-	Texture: 2149070814480, "Texture::file2", "" {
+	Texture: 2161830040976, "Texture::file2", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::file2"
@@ -396,17 +396,17 @@ Objects:  {
 Connections:  {
 	
 	;Model::Sword, Model::RootNode
-	C: "OO",2147979261008,0
+	C: "OO",2160885332256,0
 	
 	;Texture::file2, Material::SwordSlash
-	C: "OP",2149070814480,2149109377328, "DiffuseColor"
+	C: "OP",2161830040976,2159159101632, "DiffuseColor"
 	
 	;Video::file2, Texture::file2
-	C: "OO",2149070810160,2149070814480
+	C: "OO",2161830058256,2161830040976
 	
 	;Geometry::, Model::Sword
-	C: "OO",2149074547248,2147979261008
+	C: "OO",2162081608208,2160885332256
 	
 	;Material::SwordSlash, Model::Sword
-	C: "OO",2149109377328,2147979261008
+	C: "OO",2159159101632,2160885332256
 }

@@ -1125,6 +1125,12 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	MouseComponentAddComponent(stateManager.player);
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
 
+	// ## ALEX CODE ##
+	//ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(stateManager.player, 5.0f, 50.0f, 5.5f, 0.0f, 10.0f, 0.0f, 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
+	// ## EO ALEX CODE ##
+
+
+
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
 	

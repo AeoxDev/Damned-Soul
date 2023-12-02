@@ -245,9 +245,15 @@ float time,
 float2 uv
 )
 {
-    float4 vornoiTexture = maskTexture_in.Sample(WrapSampler, uv).r;
-
+    float4 vornoiTexture = pow(1.0f - noiseTexture_in.Sample(WrapSampler, UVPan(float2(1.0f, 0.0f), 0.25f, time, float2(uv.x * 2.35f, uv.y * -0.18))).r, -2.0f);
+    float2 noiseTexture = noiseTexture_in.Sample(WrapSampler, uv).rg;
     
-    return float4(vornoiTexture.rgb, 1.0f); //(gMaskTexture * pow(vornoiTexture, 2.0f + sin(time))).rgb, 1.0f;
+    float4 colorizedNoise = vornoiTexture * ( noiseTexture.r * float4(1.0f, 0.2066951f, 0.0f, 0.0f));
+    
+    float4 vornoiMask = pow(noiseTexture_in.Sample(WrapSampler, uv * 1.05f).r, time * 5.0f);
+    float alphaMask = noiseTexture.g * vornoiMask.r;
+    
+    
+    return AlphaBlend(backBuffer, alphaMask, colorizedNoise.rgb); //(gMaskTexture * pow(vornoiTexture, 2.0f + sin(time))).rgb, 1.0f;
 
 }
