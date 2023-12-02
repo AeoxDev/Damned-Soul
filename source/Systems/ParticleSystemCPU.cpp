@@ -64,10 +64,11 @@ bool ParticleSystemCPU::Update()
 
 		if (pComp->modelUse)
 		{
-			SetWorldMatrix(tComp->positionX + pComp->meshOffset[0], tComp->positionY + pComp->meshOffset[1], tComp->positionZ + pComp->meshOffset[2], -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
+			//SetWorldMatrix(tComp->positionX + pComp->meshOffset[0], tComp->positionY + pComp->meshOffset[1], tComp->positionZ + pComp->meshOffset[2], -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
+			SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
 
 			// Prepare the resources for the mesh pass
-			Particles::PrepareMeshPass(pComp->metadataSlot);
+			Particles::PrepareMeshPass(pComp->metadataSlot, *pComp);
 
 			// The mesh pass does not use vertex pulling
 			SetVertexBuffer(LOADED_MODELS[pComp->model].m_vertexBuffer);

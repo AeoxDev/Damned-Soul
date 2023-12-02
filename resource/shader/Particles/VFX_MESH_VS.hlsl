@@ -10,16 +10,44 @@ cbuffer CameraBuffer : register(b1)
     matrix projection;
 }
 
+struct metadata
+{
+    int start;
+    int end;
+    float life; // How much time (in seconds) a particle is allowed to live
+    float maxRange; // How long particle is allowed to go 
+    float3 startPosition;
+    float size; // Size of particle
+    float3 positionInfo;
+    int pattern; // The movement pattern of the particle and decidor of size
+    
+    float deltaTime;
+    // Slot 0 is reserved for delta time
+    // Slot 1-99 is a random number between 0.0 and 1.0
+    // Slot 100-255 is a random number between 1.0 and 5.0
+    
+    float2 morePositionInfo;
+    bool reset;
+};
+
+
+cbuffer metadataBuffer : register(b2)
+{
+    metadata meta[256];
+};
+
+cbuffer metadataBuffer : register(b3)
+{
+    int metadataSlot;
+    float timeAlive;
+};
+
+
 struct Input
 {
-    float3 position : POSITION;
-    float time : TIME; // Time (in seconds) particles has been active
-    float3 velocity : VELOCITY;
-    float rotationZ : ROTATIONZ;
-    float3 rgb : RGB; // Red Green Blue
-    float size : SIZE;
-    int patterns : PATTERNS;
-    int VFXpatterns : VFXPATTERNS;
+    float4 position : POSITION;
+    float4 normal : NORMAL;
+    float2 uv : UV;
 };
 
 struct VS_OUT
@@ -35,36 +63,21 @@ struct VS_OUT
 VS_OUT main(Input inval)
 {
     VS_OUT retval;
-    //float3 worldMid = mul(float4(meshMid, 1.f), world).xyz;
-    //float3 look = cameraPosition.xyz - worldMid;
-    ////look.y = 0.f;
-    //look = normalize(look);
-    
-    
-    //// TODO: Up vector needs to be calculated independantly
-    //float3 up = float3(0.f, 1.f, 0.f);
-    //float3 right = cross(up, look);
-    
-    //inval.position.z = 1.f;
-    //retval.position.xyz += right + up;
-    
-    //retval.position = mul(float4(inval.position, 1.0f), world);
-    //retval.position = mul(retval.position, view);
-    //retval.position = mul(retval.position, projection);
 
     
     matrix worldView = mul(world, view);
     //float4 pos = float4(inval.position, 1.0f);
     //float4 WV = float4(worldView[3].xyz, 0.0f);
     
-    retval.position = mul((float4(inval.position, 1.0f) + float4(worldView[3].xyz, 0.0f)), projection);
+    retval.position = mul((float4(inval.position.xyz, 1.0f) + float4(worldView[3].xyz, 0.0f)), projection);
     retval.position /= retval.position.w;
     
-    retval.rgb = float4(inval.rgb, 1.f);
-    retval.uv = inval.rgb.xy;
-    retval.time = inval.time;
-    retval.patterns = inval.patterns;
-    retval.VFXpatterns = inval.VFXpatterns;
+    retval.rgb = float4(1.f, 1.f, 1.f, 1.f);
+    retval.uv = inval.uv;
+    retval.time = timeAlive;
+    retval.patterns = meta[metadataSlot].pattern;
+    // VFX pattern is stored in morePositionInfo.y to save space
+    retval.VFXpatterns = meta[metadataSlot].morePositionInfo.y;
     //retval.worldPosition = mul(retval.position, world);
     //retval.rotationZ = inval.rotationZ;
     //retval.size = inval.size;

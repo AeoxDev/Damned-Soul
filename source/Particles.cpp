@@ -14,6 +14,7 @@ PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
 std::vector<int> Particles::m_unoccupiedParticles;
 CB_IDX startKeeper;
 CB_IDX vfxStartKeeper;
+CB_IDX VFXMetadata;
 SRV_IDX particleSRV;
 
 PoolPointer<ParticleMetadataBuffer> data;
@@ -77,6 +78,7 @@ void Particles::InitializeParticles()
 	VFXNoiseTX =		LoadTexture("\\VFX_Noises.png");
 	VFXShapeTX =		LoadTexture("\\VFX_Shapes.png");
 	VFXMaskTX =			LoadTexture("\\VFX_Masks.png");
+	VFXMetadata =		CreateConstantBuffer(sizeof(VFXMeshData));
 // ## EO ALEX CODE ##
 
 	flipBookTexture = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
@@ -146,7 +148,7 @@ void Particles::InitializeParticles()
 	}
 
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
-	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", PARTICLE);
+	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", DEFAULT);
 	RenderSlot = SetupParticles();
 }
 
@@ -308,18 +310,37 @@ void Particles::FinishParticlePass()
 	SetTopology(TRIANGLELIST);
 }
 
-void Particles::PrepareMeshPass(int metadataSlot)
+void Particles::PrepareMeshPass(int metadataSlot, ParticleComponent& pComp)
 {
-	//PrepareParticlePass(metadataSlot);
+	PrepareParticlePass(metadataSlot);
+
+	SetTopology(TRIANGLELIST);
+
+	UnsetVertexShader();
+	UnsetGeometryShader();
+
+	pComp.VFXTimeAlive += data->metadata[0].deltaTime;
 
 	// We want everything from the regular particle pass but without the geoemtry shader and a different vertex shader
 	SetVertexShader(MeshVS);
-	UnsetGeometryShader();
+
+	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_VERTEX, 2);
+	
+	VFXMeshData tempData;
+	tempData.metadataSlot = metadataSlot;
+	tempData.timeAlive = pComp.VFXTimeAlive;
+
+	UpdateConstantBuffer(VFXMetadata, &tempData);
+	SetConstantBuffer(VFXMetadata, BIND_VERTEX, 3);
+
 }
 
 void Particles::FinishMeshPass()
 {
 	FinishParticlePass();
+
+	UnsetConstantBuffer(BIND_VERTEX, 2);
+	UnsetConstantBuffer(BIND_VERTEX, 3);
 }
 
 
@@ -456,9 +477,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].size = size;
 	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
 	data->metadata[metadataSlot].pattern = 14;
+	data->metadata[metadataSlot].morePositionInfo.y = vfxPattern;
 
 	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
-	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f;
 	data->metadata[metadataSlot].reset = false;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
@@ -466,6 +488,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	model = LoadModel(filename);
 	modelUse = true;
 
+	VFXTimeAlive = 0.0f;
 
 	meshOffset[0] = offsetX;
 	meshOffset[1] = offsetY;
