@@ -149,56 +149,95 @@ bool ShadowSystem::Update()
 // ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
 void RenderSkyPlane()
 {
-	int loops = 0;
-
+	
 	SetStencil(m_skyPlaneStencil);
 
 	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
 
-	for (int i = 0; i < 3; i++)
+
+	TransformComponent* tc = registry.GetComponent<TransformComponent>(planes[0]);
+	ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(planes[0]);
+	if (tc->offsetX != 0.0f)
 	{
-		TransformComponent* tc = registry.GetComponent<TransformComponent>(planes[i]);
-		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(planes[i]);
-		if (tc->offsetX != 0.0f)
-		{
-			tc->offsetY = 0.0f;
-		}
-
-
-		int* level = (int*)MemLib::spush(sizeof(int));
-		*level = stateManager.activeLevel;
-
-		UpdateConstantBuffer(m_skyConst, (void*)level);
-
-		MemLib::spop();
-
-		SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
-
-		//UpdateTransform(loops++);
-		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
-			tc->facingX, tc->facingY, -tc->facingZ,
-			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
-			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
-		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-
-		SetVertexShader(m_skyVS);
-		SetPixelShader(m_skyPSForeground);
-
-		if (i == 0)
-			SetPixelShader(m_skyPS);
-
-		CopySRVtoSRV(m_skyBackBufferSRVCopy, m_skyBackBufferSRV);
-
-		SetShaderResourceView(m_skyBackBufferSRVCopy, BIND_PIXEL, 5);
-
-		LOADED_MODELS[mc->model].RenderAllSubmeshes();
-
-		// If this is the first loop, set the blend state as the last thing we do
-		//+if (i == 0)
-			//SetBlendState(m_skyBlend);
-
+		tc->offsetY = 0.0f;
 	}
+
+
+	int* level = (int*)MemLib::spush(sizeof(int));
+	*level = stateManager.activeLevel;
+
+	UpdateConstantBuffer(m_skyConst, (void*)level);
+
+	MemLib::spop();
+
+	SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
+
+	SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+		tc->facingX, tc->facingY, -tc->facingZ,
+		tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+		SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+	SetVertexShader(m_skyVS);
+	SetPixelShader(m_skyPS);
+
+	LOADED_MODELS[mc->model].RenderAllSubmeshes();
+
+
+	//int loops = 0;
+
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	TransformComponent* tc = registry.GetComponent<TransformComponent>(planes[i]);
+	//	ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(planes[i]);
+	//	if (tc->offsetX != 0.0f)
+	//	{
+	//		tc->offsetY = 0.0f;
+	//	}
+
+
+	//	int* level = (int*)MemLib::spush(sizeof(int));
+	//	*level = stateManager.activeLevel;
+
+	//	UpdateConstantBuffer(m_skyConst, (void*)level);
+
+	//	MemLib::spop();
+
+	//	SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
+
+	//	UpdateTransform(loops++);
+
+	//	SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+	//		tc->facingX, tc->facingY, -tc->facingZ,
+	//		tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+	//		SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	//	SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+	//	SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+	//	if (i == 0)
+	//	{
+	//		SetVertexShader(m_skyVS);
+	//		SetPixelShader(m_skyPS);
+
+	//	}
+	//	else
+	//	{
+	//		SetVertexShader(m_skyVSForeground);
+	//		SetPixelShader(m_skyPSForeground);
+	//	}
+
+	//	CopySRVtoSRV(m_skyBackBufferSRVCopy, m_skyBackBufferSRV);
+
+	//	SetShaderResourceView(m_skyBackBufferSRVCopy, BIND_PIXEL, 5);
+
+	//	LOADED_MODELS[mc->model].RenderAllSubmeshes();
+
+	//	// If this is the first loop, set the blend state as the last thing we do
+	//	//+if (i == 0)
+	//		//SetBlendState(m_skyBlend);
+
+	//}
 	UnsetConstantBuffer(BIND_VERTEX, 3);
 	//UnsetBlendState();
 	UnsetStencil();

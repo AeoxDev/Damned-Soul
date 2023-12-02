@@ -15,6 +15,7 @@ extern  RS_IDX m_skyPlaneRasterizer;
 extern  DSS_IDX m_skyPlaneStencil;
 extern  VS_IDX m_skyVS;
 extern  PS_IDX m_skyPS;
+extern  VS_IDX m_skyVSForeground;
 extern  PS_IDX m_skyPSForeground;
 extern	CB_IDX m_skyConst;
 extern	BS_IDX m_skyBlend;

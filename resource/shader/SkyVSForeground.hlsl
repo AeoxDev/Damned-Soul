@@ -24,6 +24,9 @@ VS_OUT main(VS_INPUTS pos)
     matrix WVP = mul(world, view);
     WVP = mul(WVP, projection);
 
+    //WVP = mul(WVP, projection);
+
+    output.position = mul(pos.position, WVP);
     
     output.depth.x = output.position.z;
     output.depth.y = output.position.w;
