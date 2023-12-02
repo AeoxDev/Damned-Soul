@@ -75,6 +75,7 @@ void StageIntroFall(EntityID& entity, const int& index)
 	float fallTime = 0.85f;
 	float pauseTime = fallTime + 0.3f;
 	float fallHeight = 60.0f;
+
 	//Fall of point. -321.6, 133.14
 	//Move camera to view point and background from a lower angle
 	EntityID cutscene1 = registry.CreateEntity();

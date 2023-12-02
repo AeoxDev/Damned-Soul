@@ -73,7 +73,7 @@ bool ControllerSystem::Update()
 	{
 		ReleaseTimedEvents(stateManager.stage);
 
-		AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+		AddTimedEventComponentStart(stateManager.stage, 0.1f, LoopSpawnMainMenuEnemy, skeleton, 8);
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
