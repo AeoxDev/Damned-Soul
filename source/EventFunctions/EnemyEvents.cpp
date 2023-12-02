@@ -902,8 +902,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = lucifer;
 	}
-	float time = 0.05f * (float)(rand() % 1024);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 8);
+	float time = 0.01f * (float)(rand() % 4096);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 8);
 }
 
 void DestroyAcidHazard(EntityID& entity, const int& index)
