@@ -64,7 +64,24 @@ bool ParticleSystemCPU::Update()
 
 		if (pComp->modelUse)
 		{
-			SetWorldMatrix(tComp->positionX + pComp->meshOffset[0], tComp->positionY + pComp->meshOffset[1], tComp->positionZ + pComp->meshOffset[2], -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
+
+			// TODO: ANGLE +Z & -X
+			float angle = 0.0f;
+			if ((tComp->facingZ <= 0.0f && tComp->facingX <= 0.0f) || (tComp->facingZ <= 0.0f && tComp->facingX >= 0.0f))
+			{
+				 angle = atanf(-1.0f * (tComp->facingX / tComp->facingZ));
+			}
+			else if (tComp->facingZ >= 0.0f && tComp->facingX <= 0.0f)
+			{
+				angle = std::clamp(atanf(tComp->facingZ / tComp->facingX), -1.0f, 1.0f);
+			}
+			else
+			{
+				angle = atanf(tComp->facingZ / tComp->facingX);
+			}
+
+
+			SetWorldMatrix(tComp->positionX + pComp->meshOffset[0], tComp->positionY + pComp->meshOffset[1], tComp->positionZ + pComp->meshOffset[2], angle, BIND_VERTEX, 0, true);
 			//SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
 
 			// Prepare the resources for the mesh pass

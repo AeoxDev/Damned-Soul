@@ -66,11 +66,83 @@ VS_OUT main(Input inval)
 
     
     matrix worldView = mul(world, view);
-    //float4 pos = float4(inval.position, 1.0f);
-    //float4 WV = float4(worldView[3].xyz, 0.0f);
+    //matrix world;
+
+    // Extract rotation matrix from the world matrix
+    float3x3 rotationMatrix = (float3x3) world;
+    //rotationMatrix[2] = float3(0.f, 0.f, 1.f);
+    //rotationMatrix[1].z = 0.f;
+    //rotationMatrix[0].z = 0.f;
+
+//    // Extract rotation (as Euler angles)
+//    float3 rotation;
+//    rotation.x = atan2(rotationMatrix[1].z, rotationMatrix[1].y);
+//    rotation.y = atan2(-rotationMatrix[2].z, sqrt(rotationMatrix[2].x * rotationMatrix[2].x + rotationMatrix[2].y * rotationMatrix[2].y));
+//    rotation.z = atan2(rotationMatrix[2].y, rotationMatrix[2].x);
+
+//    // Rotate only in the Z axis
+//    // Assuming you want to rotate by an additional 45 degrees
+//    float angleInDegrees = 0.0f;
+//    float angleInRadians = radians(angleInDegrees);
+
+//    // Create a rotation matrix for the additional Z-axis rotation
+//    float2x2 additionalRotationMatrix = float2x2(
+//    cos(angleInRadians), -sin(angleInRadians),
+//    sin(angleInRadians), cos(angleInRadians)
+//    );
+
+//    // Apply additional Z-axis rotation to the original rotation matrix
+//    rotationMatrix = float3x3(
+//    rotationMatrix[0].x * additionalRotationMatrix[0].x + rotationMatrix[0].y * additionalRotationMatrix[1].x,
+//    rotationMatrix[0].x * additionalRotationMatrix[0].y + rotationMatrix[0].y * additionalRotationMatrix[1].y,
+//    0,
+
+//    rotationMatrix[1].x * additionalRotationMatrix[0].x + rotationMatrix[1].y * additionalRotationMatrix[1].x,
+//    rotationMatrix[1].x * additionalRotationMatrix[0].y + rotationMatrix[1].y * additionalRotationMatrix[1].y,
+//    0,
+
+//    rotationMatrix[2].x,
+//    rotationMatrix[2].y,
+//    1
+//);
+
+
+//    // 3. Billboard the model after the rotation in Z axis
+//    // Assuming your input position is in local space
+//    float3 rotatedPosition = mul(inval.position.xyz, rotationMatrix);
+
+//    // Combine the rotated position with the original z component
+//    float3 finalPosition = rotatedPosition + world[3].xyz;
+
+//    // Transform to world space
+//    float4 worldPosition = mul(float4(finalPosition, 1.0f), world);
+
+//    // Transform to view space
+//    float4 viewPosition = mul(worldPosition, view);
+
+//// Perform the multiplication with the projection matrix
+//    float4 projectedPosition = mul(viewPosition, projection);
+//    projectedPosition /= projectedPosition.w;
+
+//// Output the final position
+//    retval.position = projectedPosition;
+            
     
-    retval.position = mul((float4(inval.position.xyz, 1.0f) + float4(worldView[3].xyz, 0.0f)), projection);
+    retval.position = float4(mul(inval.position.xyz, rotationMatrix), 1.0f);
+    retval.position = mul((float4(retval.position.xyz, 1.0f) + float4(worldView[3].xyz, 0.0f)), projection);
     retval.position /= retval.position.w;
+
+    //retval.position = mul((float4(inval.position.xyz, 1.0f) + float4(worldView[3].xyz, 0.0f)), projection);
+    //retval.position /= retval.position.w;
+
+    
+
+
+
+
+    //worldView = mul(worldView, projection);
+    //retval.position = mul(float4(inval.position.xyz, 1.0f), worldView);
+
     
     retval.rgb = float4(1.f, 1.f, 1.f, 1.f);
     retval.uv = inval.uv;
