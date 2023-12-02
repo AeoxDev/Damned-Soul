@@ -12,7 +12,8 @@ enum StaticHazardType
 	HAZARD_CRACK = 3,
 	HAZARD_ACID = 4,
 	HAZARD_ICE = 5,
-	HAZARD_GATE = 6
+	HAZARD_GATE = 6,
+	HAZARD_NAV = 7//For AI navigation only
 };
 
 //This does not need to be in the same entity for GI to see it.

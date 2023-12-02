@@ -27,7 +27,7 @@ void CombatBehaviour(HellhoundBehaviour* hc, StatComponent* enemyStats, StatComp
 		//animComp->aAnimTime = 0.5f * hc->attackTimer / (0.0001f + enemyStats->GetAttackSpeed());
 
 		//Timed event time
-		float pauseDuration = .2f;
+		float pauseDuration = .15f;
 		float attackEndTime = 1.f;
 		//Telegraph (We've reached the player, blink and attack)
 		AddTimedEventComponentStartContinuousEnd(ent, 0.0f, PauseAnimation, EnemyAttackFlash, pauseDuration, ContinueAnimation, EnemyType::hellhound);
@@ -295,13 +295,13 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 		if (!hc->isEmpoweredDoggo)
 		{
 			registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
-				0.0f, 2.5f, 3.0f, 0.0f,
+				0.0f, 2.5f, 7.5f, 0.0f,
 				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, FLAMETHROWER);
 		}
 		else
 		{
 			registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
-				0.0f, 2.5f, 3.0f, 0.0f,
+				0.0f, 2.5f, 7.5f, 0.0f,
 				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, ICETHROWER);
 		}
 	}

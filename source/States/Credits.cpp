@@ -26,7 +26,7 @@ void Credits::Setup()
 	// Stage Model
 	StageSetupVariables stageVars;
 
-	stageVars.stageNr = rand() % 5;
+	stageVars.stageNr = rand() % 10;
 	EntityID stage = SetUpStage(stageVars);
 	// Stage Transform
 	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);
@@ -53,7 +53,7 @@ void Credits::SetupButtons()
 
 	uiElement->Setup("Exmenu/ButtonBackground", "\nBack", { -0.81f, -0.8f }, { 0.5f, 0.6f });
 
-	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, UIFunctions::Credits_Back);
+	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Credits_Back, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 	SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
@@ -80,7 +80,7 @@ void Credits::SetupText()
 		"Erik Svensson",
 		"Erika Gustafsson",
 		"Rasmus Fridlund",
-		"Zannie"
+		"Zannie Karlsson"
 	};
 
 	const char CIVnames[4][32] =

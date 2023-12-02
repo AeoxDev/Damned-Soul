@@ -15,7 +15,7 @@ ID3D11DepthStencilView* dsv_NULL = NULL;
 ID3D11ShaderResourceView* srv_NULL = NULL;
 ID3D11UnorderedAccessView* uav_NULL = NULL;
 ID3D11RasterizerState* rs_NULL = NULL;
-
+ID3D11DepthStencilState* dss_NULL = NULL;
 
 VP_IDX CreateViewport(const size_t& width, const size_t& height)
 {
@@ -151,6 +151,36 @@ DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height)
 	return currentIdx;
 }
 
+DSS_IDX CreateDepthStencilState()
+{
+	uint8_t currentIdx = dssHolder->NextIdx();
+
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
+	dssDesc.DepthEnable = false;
+	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	dssDesc.StencilEnable = false;
+	dssDesc.StencilReadMask = 0;
+	dssDesc.StencilWriteMask = 0;
+	dssDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+
+
+	ID3D11DepthStencilState* tempDSS = 0;
+	HRESULT hr = d3d11Data->device->CreateDepthStencilState(&dssDesc, &tempDSS);
+	assert(!FAILED(hr));
+
+	dssHolder->dss_map.emplace(currentIdx, tempDSS);
+
+	return currentIdx;
+}
+
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height, bool SRV)
 {
 	uint8_t currentIdx = dsvHolder->NextIdx();
@@ -194,6 +224,26 @@ bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx
 
 	d3d11Data->deviceContext->OMSetRenderTargets(1, &(rtvHolder->rtv_map[idx_rtv]), dsvHolder->dsv_map[idx_dsv]);
 	return true;
+}
+
+bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv)
+{
+	ID3D11DepthStencilView* dsvNull = nullptr;
+
+
+	d3d11Data->deviceContext->OMSetRenderTargets(1, &(rtvHolder->rtv_map[idx_rtv]), dsvNull);
+	return true;
+}
+
+bool SetStencil(const DSS_IDX dss_idx)
+{
+	d3d11Data->deviceContext->OMSetDepthStencilState(dssHolder->dss_map[dss_idx], 1);
+	return true;
+}
+
+void UnsetStencil()
+{
+	d3d11Data->deviceContext->OMSetDepthStencilState(dss_NULL, 1);
 }
 
 void UnsetRenderTargetViewAndDepthStencil()
@@ -297,6 +347,8 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 
 			SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			SRVDesc.Texture2D.MipLevels = 1;
+			SRVDesc.Texture2D.MostDetailedMip = 0;
 
 			// Release tempTex as the queryInterface is the resource appended
 			tempTex->Release();
@@ -593,8 +645,8 @@ SRV_IDX CreateUnorderedAccessViewTexture(const size_t& width, const size_t& heig
 	uint8_t currentIdx = uavHolder->NextIdx();
 
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = width;
-	texDesc.Height = height;
+	texDesc.Width = (UINT)width;
+	texDesc.Height = (UINT)height;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -756,6 +808,48 @@ bool SetRasterizerState(const RS_IDX idx)
 void UnsetRasterizerState()
 {
 	d3d11Data->deviceContext->RSSetState(rs_NULL);
+}
+
+BS_IDX CreateBlendState()
+{
+	uint8_t currentIdx = bsHolder->NextIdx();
+
+	D3D11_BLEND_DESC desc;
+	desc.AlphaToCoverageEnable = true;
+	desc.IndependentBlendEnable = false;
+	desc.RenderTarget[0].BlendEnable = true;
+	desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_COLOR;
+	desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	desc.RenderTarget[0].RenderTargetWriteMask = 0;
+
+	ID3D11BlendState* tempBlend = 0;
+	HRESULT hr = d3d11Data->device->CreateBlendState(&desc, &tempBlend);
+	assert(!FAILED(hr));
+	bsHolder->bs_map.emplace(currentIdx, tempBlend);
+
+	return currentIdx;
+}
+
+bool SetBlendState(const BS_IDX idx)
+{
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+
+	d3d11Data->deviceContext->OMSetBlendState(bsHolder->bs_map[idx], blendFactor, sampleMask);
+
+	return true;
+}
+
+void UnsetBlendState()
+{
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+
+	d3d11Data->deviceContext->OMSetBlendState(nullptr, blendFactor, sampleMask);
 }
 
 bool DeleteD3D11Viewport(const VP_IDX idx)

@@ -21,6 +21,7 @@ float4 main(GS_OUT input) : SV_TARGET
     int vfxPattern = input.VFXpatterns;
     
     float4 image;
+    float4 backBuffer = SampleBackbuffer(input.position, screenResolution_in, backbufferTexture_in, WrapSampler);
     
     // ---------- START OF FLIPBOOKING --------- //
 
@@ -43,20 +44,26 @@ float4 main(GS_OUT input) : SV_TARGET
             // AniRow(input, 0.0f, false, specify animation speed- defalt is 8);'
      
         
-        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));
+        image = flipBookTex.Sample(WrapSampler, float2(input.uv.x / 4, input.uv.y / 4));//4x4 sections, Top Row and Second Row //pattern = 0 (SMOKE) ||pattern = 10 (PULSE)
         if (pattern == 0)
         {
-            image = AniRow(input, 0.0f, false); /*AniFullSheet(input);*/
+            image = AniRow(input, 0.0f, false); 
         }
-        else if (pattern == 9) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
+        else if (pattern == 9) //4x4 sections, Top Row and Second Row //pattern = 9 (FIRE)
         {
-            image = AniRow(input, 0.0f, false); /*AniFullSheet(input);*/
+            image = AniRow(input, 0.0f, false); 
         }
-        else if (pattern == 12) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+        else if (pattern == 3 || pattern == 10 || pattern == 11) //4x4 sections, Top Row and Second Row 
+        {
+            image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4,  0.75 + input.uv.y / 4));
+
+            image.rgb = image.rgb * input.rgb;
+        }
+        else if (pattern == 12) //4x4 sections, Third and Forth Row //pattern = (BOILING )
         {
             image = AniRow(input, 0.50f, false);
         }
-        else if (pattern == 13) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
+        else if (pattern == 13) //4x4 sections, Third and Forth Row //pattern = (SPARK)
         {
             image = AniRow(input, 0.50f, false, 16);
         }
@@ -64,44 +71,81 @@ float4 main(GS_OUT input) : SV_TARGET
         {
             image = flipBookTex.Sample(WrapSampler, input.uv);
         }
-   
-        
+
         clip(image.a - 0.1f);
-    
+        image = AlphaBlend(backBuffer, image.a, image.rgb);
+
         if (image.r == 1.0f && image.g == 1.0f && image.b == 1.0f)
         {
             image = input.rgb;
         }
+
+        
+        
+        //clip(image.a - 0.1f);
+    
+      
     }
      // ---------- END OF FLIPBOOKING --------- //
     
     // *********** START OF VFX *********** //
     else
     {
-        float4 backBuffer = SampleBackbuffer(input.position, screenResolution_in, backbufferTexture_in, WrapSampler);
         
-        if (vfxPattern == 0) //4x4 sections, Top Row and Second Row A&B//pattern = 9 (FIRE)
+        
+        
+        switch (vfxPattern)
         {
-            
-            image = VFXFire(backBuffer, input.time, input.uv);
-        }
-        else if (vfxPattern == 1) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
-        {
-            image = VFXAcidSpit(backBuffer, input.time, input.uv);
-
-        }
-        else if (vfxPattern == 2) //4x4 sections, Third and Forth Row C&D//pattern = test 0(SMOKE)
-        {
-            image = VFXSwordSlash(backBuffer, input.time, input.uv);
-
-        }
+            case 0: // FLAME
+                image = VFXFire(backBuffer, input.time, input.uv);
+                break;
+            case 1: // BLUE_FLAME
+                image = VFXFire(backBuffer, input.time, input.uv, 2.0f, float3(0.0f, 0.25f, 1.0f));
+                break;
+            case 2: // SWORD
+                image = VFXSwordSlash(backBuffer, input.time, input.uv);
+                break;
+            case 3: // ACID
+                image = VFXAcidSpit(backBuffer, input.time, input.uv);
+                break;
+            case 4: // ACIDGROUND
+                image = VFXAcidGround(backBuffer, input.time, input.uv);
+                break;
+            case 5: // FIREBALL
+                image = VFXFireBall(backBuffer, input.time, input.uv);
+                break;
+            case 6: //FIREBALL_EMPOWERED
+                image = VFXFireBallEmpowered(backBuffer, input.time, input.uv);
+                break;
+            case 7: // SPAWN_BOSS
+                image = VFXSpawnCrystals(backBuffer, input.time, input.uv, 0.08f);
+                // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THE SPEED VALUE ( 0.25f )
+                // FURTHER: SIZE UP THE PARTICLE, DONT LET IT BE SMOL ( Pliz)
+                // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
+                break;
+            case 8: // SPAWN_IMP
+                image = VFXSpawnImp(backBuffer, input.time, input.uv, 2.0f);
+                // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THE SPEED VALUE ( 2.0f )
+                // FURTHER: SIZE UP THE PARTICLE, DONT LET IT BE SMOL ( Pliz)
+                // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
+                break;
+            case 9: // SPAWN_IMP_EMPOWERED
+                image = VFXSpawnEmpoweredImp(backBuffer, input.time, input.uv, 2.0f);
+                // NOTE: IF YOU WANT TO MAKE IT GO FASTER, INCREASTE THE SPEED VALUE ( 2.0f )
+                // FURTHER: SIZE UP THE PARTICLE, DONT LET IT BE SMOL ( Pliz)
+                // IMPORTANT: MATCH THE PARTICLE LIFETIME OR THE ANIMATION WILL BE REPEATING INFINITELY.
+                break;
+            case 10: // PORTAL
+                image = VFXPortal(backBuffer, input.time, input.uv);
+                break;
+        };
     }
     // *********** END OF VFX *********** //
 
     return image;
     //return float4(image.rgb, image.a);
 }
-
+/////****/////
 float4 AniRow(in GS_OUT input, in float animaVertStart, in bool singleRow, in float animaSpeed) //4x4 sections, First Row and Second Row
 {
     float framesPerSecond = animaSpeed;
@@ -188,11 +232,11 @@ float4 AniFullSheet(in GS_OUT input)    //4x4 sections, Third Row and Forth Row
 
     if (time % 2 == 0)
     {
-        image = AniRow(input, animaVertStart, false, 8.0f);
+        image = AniRow(input, animaVertStart, false,8);
     }
     else
     {
-        image = AniRow(input, animaVertStart + 0.5, false, 8.0f);
+        image = AniRow(input, animaVertStart + 0.5, false,8);
     }
 
     return image;

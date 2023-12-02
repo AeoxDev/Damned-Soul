@@ -236,7 +236,7 @@ float4 main(GS_OUT input) : SV_TARGET
         }
     }
     
-    addOnColor = saturate((addOnColor + /* diffuse+*/diffuseDir + diffusePoint + diffuseSpot) * image.xyz); //Add ambient, diffuse and specular lights
+    addOnColor = saturate((addOnColor + diffuse + diffuseDir + diffusePoint + diffuseSpot) * image.xyz); //Add ambient, diffuse and specular lights
     addOnColor = saturate(addOnColor + pointSpecular + spotSpecular + dirSpecular); //not multiply -to put on top and not affect color of image
 
     addOnColor = (addOnColor * colorMultiplier.rgb) + colorAdditive.rgb; //ColourHue Added

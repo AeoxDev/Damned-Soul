@@ -25,7 +25,6 @@ CB_IDX VFXConstantBuffer;
 
 SRV_IDX VFXBackBufferSRV; // Difference between SRV and TX is that SRV are textures created by the pipeline.
 TX_IDX VFXColorRampTX;
-TX_IDX VFXVornoiTX;
 TX_IDX VFXNoiseTX;
 TX_IDX VFXShapeTX;
 TX_IDX VFXMaskTX;
@@ -33,9 +32,7 @@ TX_IDX VFXMaskTX;
 
 struct VFXBufferData
 {
-	DirectX::XMFLOAT2 offsetXY_in; // Offset of the uv coordinates in x ( u ) and y ( v ). Clamped between 1 and -1 since its illogial to do other ones.
-	DirectX::XMFLOAT2 resolution_in; // Offset of the uv coordinates in x ( u ) and y ( v ). Clamped between 1 and -1 since its illogial to do other ones.
-	float panSpeed_in; // How fast do you want the panning to be. A multiplier.
+	DirectX::XMFLOAT2 resolution_in; // Screen Resolution
 };
 // ## EO ALEX CODE ##
 
@@ -49,8 +46,9 @@ CS_IDX setToZeroCS = -1;
 // Shaders for VFX
 VS_IDX MeshVS = -1;
 
-TX_IDX flipBookTexture = -1; /// create holder for texture
-TX_IDX flipBookTextureTwo = -1; /// create holder for texture
+TX_IDX flipBookTextureFire = -1; /// create holder for texture
+TX_IDX flipBookTextureSpark = -1; /// create holder for texture
+TX_IDX flipBookTextureSmoke = -1; /// create holder for texture
 TX_IDX textureParticle = -1; /// create holder for texture
 TX_IDX noTextureParticle = -1; /// create holder for texture
 SMP_IDX sampler = -1; //create holder for sampler
@@ -72,24 +70,24 @@ void Particles::SwitchInputOutput()
 void Particles::InitializeParticles()
 {
 // ## ALEX CODE ##
-	VFXBufferData VFXData = {
+	/*VFXBufferData VFXData = {
 		DirectX::XMFLOAT2(0.0f, 1.0f),
 		DirectX::XMFLOAT2(sdl.WIDTH,sdl.HEIGHT),
-		0.75f };
+		0.75f };*/
+	VFXBufferData VFXData = { DirectX::XMFLOAT2(sdl.WIDTH,sdl.HEIGHT) }; //Kept this in the merge
 	VFXConstantBuffer = CreateConstantBuffer((void*)&VFXData, sizeof(VFXBufferData));
 
 	//VFXSampler =		CreateSamplerState();
 	VFXBackBufferSRV =	CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].renderTargetView, RESOURCE_FLAGS::BIND_RENDER_TARGET);
 	VFXColorRampTX =	LoadTexture("\\VFX_FireGradient.png");
-	VFXVornoiTX =		LoadTexture("\\VFX_Vornoi.png");
-	VFXNoiseTX =		LoadTexture("\\VFX_gNoise.png");
-	//VFXShapeTX =		LoadTexture("\\VFX_InnerGradient.png"); // VFX_SwordSlash
-	VFXShapeTX =		LoadTexture("\\VFX_CircleSoft.png"); // VFX_Fire
-	VFXMaskTX =			LoadTexture("\\VFX_GradientMask.png");
-	// ## EO ALEX CODE ##
+	VFXNoiseTX =		LoadTexture("\\VFX_Noises.png");
+	VFXShapeTX =		LoadTexture("\\VFX_Shapes.png");
+	VFXMaskTX =			LoadTexture("\\VFX_Masks.png");
+// ## EO ALEX CODE ##
 
-	flipBookTexture = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
-	flipBookTextureTwo = LoadTexture("\\SpriteSmokeSpark.png");//created texture resource 
+	flipBookTextureFire = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
+	flipBookTextureSpark = LoadTexture("\\SpriteSmokeSpark.png");//created texture resource 
+	flipBookTextureSmoke = LoadTexture("\\SpriteSmoke.png");//created texture resource 
 	textureParticle = LoadTexture("\\LavaPlaceholderAlpha.png");
 	noTextureParticle = LoadTexture("\\DefaultParticle.png");
 
@@ -197,7 +195,14 @@ void Particles::PrepareParticleCompute()
 {
 	SwitchInputOutput();
 
-	data->metadata[0].deltaTime = GetDeltaTime();
+	if (Camera::InCutscene() > 0)
+	{
+		data->metadata[0].deltaTime = GetFrameTime();
+	}
+	else
+	{
+		data->metadata[0].deltaTime = GetDeltaTime();
+	}
 
 	UpdateConstantBuffer(renderStates[RenderSlot].constantBuffer, data->metadata);
 
@@ -230,11 +235,12 @@ void Particles::PrepareParticlePass(int metadataSlot)
 	SetConstantBuffer(VFXConstantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 	SetShaderResourceView(VFXBackBufferSRV, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 0);
 	SetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
-	SetTexture(VFXVornoiTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
-	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
-	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
-	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 5);
+	SetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	SetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	SetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
 	SetSamplerState(sampler, 3);
+
+	// ## EO ALEX CODE ##
 
 	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
@@ -245,16 +251,18 @@ void Particles::PrepareParticlePass(int metadataSlot)
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
 	if (  data->metadata[metadataSlot].pattern == FIRE || data->metadata[metadataSlot].pattern == BOILING)
-		SetTexture(flipBookTexture, BIND_PIXEL, 6); 
+		SetTexture(flipBookTextureFire, BIND_PIXEL, 6); 
 	else if (data->metadata[metadataSlot].pattern == SPARK || data->metadata[metadataSlot].pattern == SMOKE)
-		SetTexture(flipBookTextureTwo, BIND_PIXEL, 6); 
-	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER || data->metadata[metadataSlot].pattern == PULSE)
-		SetTexture(textureParticle, BIND_PIXEL, 6); 
+		SetTexture(flipBookTextureSpark, BIND_PIXEL, 6); 
+	else if (data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == ICETHROWER)
+		SetTexture(flipBookTextureSmoke/*textureParticle*/, BIND_PIXEL, 6);
+	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER)
+		SetTexture(textureParticle, BIND_PIXEL, 6);
 	else
 		SetTexture(noTextureParticle, BIND_PIXEL, 6);
 
 
-	/*if (data->metadata[metaDataSlot].pattern == 0 || data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	/*if (data->metadata[metaDataSlot].pattern == 0 || data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10)
 	{
 
 		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
@@ -262,14 +270,13 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 
 	}
-	else if (data->metadata[metaDataSlot].pattern == 15)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
-	{
+	else if (data->metadata[metaDataSlot].pattern == 15)//	
 
 		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
 
 
 	}
-	else if (data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	else if (data->metadata[metaDataSlot].pattern == 3)//	
 	{
 
 		SetTexture(textureParticle, BIND_PIXEL, 2); //Set texture
@@ -300,13 +307,13 @@ void Particles::FinishParticlePass()
 	// Alex Code
 	UnsetConstantBuffer(BIND_PIXEL, 0);
 	UnsetShaderResourceView(BIND_PIXEL, 0);
+	UnsetTexture(VFXColorRampTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 1);
+	UnsetTexture(VFXNoiseTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 2);
+	UnsetTexture(VFXShapeTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 3);
+	UnsetTexture(VFXMaskTX, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
 
-	UnsetTexture(VFXColorRampTX, BIND_PIXEL, 1);
-	UnsetTexture(VFXVornoiTX, BIND_PIXEL, 2);
-	UnsetTexture(VFXNoiseTX, BIND_PIXEL, 3);
-	UnsetTexture(VFXShapeTX, BIND_PIXEL, 4);
-	UnsetTexture(VFXMaskTX, BIND_PIXEL, 5);
 	UnsetTexture(textureParticle, BIND_PIXEL, 6);
+	
 	UnsetSamplerState(3);
 
 	UnsetRasterizerState();

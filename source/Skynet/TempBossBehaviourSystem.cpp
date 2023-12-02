@@ -23,10 +23,12 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 		tempBossComponent->goalDirectionZ = playerTransformCompenent->positionZ - tempBossTransformComponent->positionZ;
 	}
 	//
+
 	 //
 
 	animComp->aAnim = ANIMATION_WALK;
 	animComp->aAnimIdx = 0;
+	animComp->aAnimTimeFactor = 0.8f;
 	ANIM_BRANCHLESS(animComp);
 
 	SmoothRotation(tempBossTransformComponent, tempBossComponent->goalDirectionX, tempBossComponent->goalDirectionZ);
@@ -206,6 +208,8 @@ bool TempBossBehaviourSystem::Update()
 					{
 						// SHOCKWAVE BABY
 						tempBossComponent->willDoShockWave = true;
+						enemyAnim->aAnimTimeFactor = 0.5f; //Elliot comment: This might need to be changed when timePower changes
+						enemyAnim->aAnimTime = 0.0f;
 					}
 
 					//well, nothing happened....maybe next time
@@ -253,8 +257,17 @@ bool TempBossBehaviourSystem::Update()
 					tempBossComponent->shockwaveChanceCounter = 0.f;
 					tempBossComponent->shockwaveChargeCounter += GetDeltaTime();
 
+					//Animation setup
+					enemyAnim->aAnim = ANIMATION_ATTACK;
+					enemyAnim->aAnimIdx = 1;
+					enemyAnim->aAnimTimePower = 1.0f;
+					
+
 					if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown * 0.8f && tempBossComponent->isBlinking == false)
 					{
+						// play stomp animation
+						enemyAnim->aAnimTimeFactor = 1.7f;
+						
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, nullptr, BossBlinkBeforeShockwave, tempBossComponent->shockWaveChargeCooldown * 0.2f, BossResetBeforeShockwave);
 					}
 					else if (tempBossComponent->shockwaveChargeCounter >= tempBossComponent->shockWaveChargeCooldown) // Dew it..
@@ -263,11 +276,12 @@ bool TempBossBehaviourSystem::Update()
 						tempBossComponent->isDazed = true;
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
-						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 0.5f, 0.f, 0.f, 1.f, 2000, PULSE);
+						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.f, 0.f, 0.f, 1.f, 200, PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand
 					}
 
 					TransformDecelerate(enemyEntity);
+					enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 					continue; // dont chase
 				}
 

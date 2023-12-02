@@ -23,8 +23,16 @@ enum ComputeShaders
 enum VFX_PATTERN
 {
 	FLAME = 0,
-	ACID = 1,
-	SWORD = 2
+	FLAME_BLUE = 1, 
+	SWORD = 2,
+	ACID = 3,
+	ACIDGROUND = 4,
+	FIREBALL = 5,
+	FIREBALL_EMPOWERED = 6,
+	SPAWN_BOSS = 7,
+	SPAWN_IMP = 8,
+	SPAWN_IMP_EMPOWERED = 9,
+	PORTAL = 10
 };
 
 //(entity, float seconds, float radius, float size, float x, float y, float z, int amount, ComputeShaders pattern)

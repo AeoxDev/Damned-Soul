@@ -14,12 +14,19 @@
 
 void LoadLevel3()
 {
-	float redAdd = 0.1f;
+	//float redAdd = 0.1f;
+	//float greenAdd = 0.0f;
+	//float blueAdd = 0.0f;
+	//float redMult = 1.4f;
+	//float greenMult = 1.2f;
+	//float blueMult = 0.8f;
+
+	float redAdd = 0.0f;
 	float greenAdd = 0.0f;
 	float blueAdd = 0.0f;
-	float redMult = 1.4f;
-	float greenMult = 1.2f;
-	float blueMult = 0.8f;
+	float redMult = 1.0f;
+	float greenMult = 1.0f;
+	float blueMult = 1.0f;
 
 	StageSetupVariables stageVars;
 	stageVars.ra = redAdd;
@@ -30,15 +37,17 @@ void LoadLevel3()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 3;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level3"); //Proximity hitbox (Added by Joaquin)
 	EntityID mouse = registry.CreateEntity();
 
-	//StageLights
-	EntityID lightholder = registry.CreateEntity();
-	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
+	if (SetupVFXTorches("LV3Torch.dss", false, false) == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV3Torch\nOr file is not written properly.");
+	}
 
-	SetupEnemyNavigationHelper(); // This is for enemyfinder, ask Felix if you have a problem with it
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//Player
 	//SetPlayerPosition(0.0, 0.0, 30.0f);
@@ -50,6 +59,7 @@ void LoadLevel3()
 		//something went wrong, could not open file
 		assert("Could not read file: LV3Enemies");
 	}
+	
 	////Upper right corner:
 	//SetupEnemy(EnemyType::skeleton, -18.f, 0.f, 101.f, 1);
 	//SetupEnemy(EnemyType::skeleton, -37.f, 0.f, 101.f, 1);
@@ -110,12 +120,26 @@ void LoadLevel3()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
 
-	CreatePointLight(stage, 0.6f, 0.6f, 0.0f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, 0.35f, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, 0.35f, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, 0.35f, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	// EntityID& entity, float colorRed, float colorGreen, float colorBlue, float positionX, float positionY, float positionZ, float range, float fallofFactor
+	CreatePointLight(lightholder, 0.5f, 0.1f, 0.0f, 33.0f, 10.0f, 23.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderTwo,0.5f, 0.1f, 0.0f, -31.0f, 10.0f, -53.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderThree,0.5f, 0.1f, 0.0f, -180.0f, 10.0f, -33.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderForth, 0.5f, 0.1f, 0.0f, -263.0f, 10.0f, -5.0f, 300.0f, 20.0f);
+
+	/*EntityID part = registry.CreateEntity();*/
+	//registry.AddComponent<ParticleComponent>(lightholder, 10, 20, 6, 0, 1, 0, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent tComp;
+	//tComp.positionX = 1;
+	//tComp.positionY = 1;
+	//tComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholder, tComp);
+
 
 	stateManager.stage = stage;
 	SetInPlay(true);
