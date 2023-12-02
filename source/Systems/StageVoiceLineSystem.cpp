@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "States\StateManager.h"
 #include "DeltaTime.h"
+#include "Camera.h"
 
 float cooldown = 0.0f;
 
@@ -22,7 +23,7 @@ bool StageVoiceLineSystem::Update()
 		if(audioEngine != nullptr) audioEngine->occasionalVoiceLinesPlayed.clear();
 	}
 
-	if ((playerSounds != nullptr) && (audioEngine != nullptr) && !(currentStates & InPause) && !(currentStates & InMainMenu)) //Check if the components exist and we are not in pause
+	if ((playerSounds != nullptr) && (audioEngine != nullptr) && !(currentStates & InPause) && !(currentStates & InMainMenu) && (Camera::InCutscene() == 0)) //Check if the components exist and we are not in pause
 	{
 		if ((stateManager.activeLevel % 2) == 1)
 		{

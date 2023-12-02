@@ -123,7 +123,7 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 		SmoothRotation(mtc, mc->goalDirectionZ, mc->goalDirectionZ, 40.0f);
 
 		//AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, ChargeColorFlash, mc->aimDuration - 0.2f, ResetColor);
-		AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->aimDuration - 0.2, ChargeColorFlash);
+		AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->aimDuration - 0.2f, ChargeColorFlash);
 	}
 
 	if (mc->aimTimer < mc->aimDuration)
@@ -143,11 +143,17 @@ void ChargeBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviour
 			enemyAnim->aAnim = ANIMATION_ATTACK;
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime = 0.0f;
+
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
+			sfx->Play(Minotaur_Attack, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 		}
 		else if (enemyAnim->aAnimIdx != 0)
 		{
 			enemyAnim->aAnimIdx = 0;
 			enemyAnim->aAnimTime = 0.0f;
+
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
+			sfx->Play(Minotaur_Attack, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 		}
 		//slightly adjust the charging direction based on player position
 
@@ -242,6 +248,9 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 				//AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, nullptr, BossBlinkBeforeShockwave, mc->jumpDuration * 0.2f, ResetColor);
 				AddTimedEventComponentStartContinous(enemy, 0.0f, nullptr, mc->jumpDuration * 0.2f, BossBlinkBeforeShockwave);
 				mc->jumping = true;
+
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemy);
+				sfx->Play(Minotaur_Jump, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 			}
 			mc->jumpBuildUpTimer += GetDeltaTime();
 		}
@@ -314,7 +323,7 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 					mc->attackStunTimer = 0;
 					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, mc->attackStunDuration, BossShockwaveEnd, 0, 1);
 					mc->jumpCounter++;
-					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 0.5f,0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 2.f,0.f, 0.f, 1.f, 300, ComputeShaders::PULSE);
 					//30.f is what is growthspeed in bossshockwaveexpand
 					
 				}
@@ -443,7 +452,7 @@ bool MinotaurBehaviourSystem::Update()
 				{
 					minoComp->chargeAttackSoundPlaying = true;
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
-					sfx->Play(Eye_Attack, Channel_Base); //minotaur charge sound???
+					sfx->Play(Minotaur_Charge, Channel_Base); //Minotaur charge sound (Added by Joaquin)
 					minoComp->chargeTimer = 0.0f;
 				}
 				ChargeBehaviour(enemyEntity, playerTransformCompenent, minoComp, minoTransformComponent, enemyStats, enmComp, enemyAnim);

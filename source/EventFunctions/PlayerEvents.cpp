@@ -157,7 +157,9 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 
 		if (playerComp->isAttacking)
 		{
+			//Cancel attack
 			SetHitboxActive(entity, playerComp->attackHitboxID, false);
+			playerComp->isAttacking = false;
 		}
 
 		if (playerComp->currentCharge > 0.0f) //Dash cancelling a charged attack
@@ -207,6 +209,47 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	stats->SetSpeedMult(0.6f); //Move slower while attacking
 	player->isAttacking = true;
 	ResetAttackTrackerFlags(entity);
+}
+
+void PlayBossVictoryOrDeathLine(EntityID& entity, const int& index)
+{
+	//Do the playing here
+	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+	if (sfx != nullptr)
+	{
+		int soundToPlay = rand() % 3;
+
+		if (registry.GetComponent<StatComponent>(entity)->GetHealth() <= 0.0f)
+		{
+			switch (soundToPlay)
+			{
+			case 0:
+				sfx->Play(Player_NotAgain, Channel_Extra);
+				break;
+			case 1:
+				sfx->Play(Player_GetRevenge, Channel_Extra);
+				break;
+			case 2:
+				sfx->Play(Player_HellSucks, Channel_Extra);
+				break;
+			}
+		}
+		else
+		{
+			switch (soundToPlay)
+			{
+			case 0:
+				sfx->Play(Player_SuckOnThat, Channel_Extra);
+				break;
+			case 1:
+				sfx->Play(Player_WinnerIs, Channel_Extra);
+				break;
+			case 2:
+				sfx->Play(Player_HellYeah, Channel_Extra);
+				break;
+			}
+		}
+	}
 }
 
 void PlayerRegainControl(EntityID& entity, const int& index)
@@ -278,11 +321,14 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
-{;
+{
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
+	if (player->isAttacking == false)
+		return; //NICE TRY BUDDY
 
 	//Can't perform animation without the AnimationComponent, durr
 	if (!anim)
@@ -324,7 +370,7 @@ void PlayerAttack(EntityID& entity, const int& index)
 		corners.cornersX[0] = -width;
 		corners.cornersX[1] = width;
 		corners.cornersX[2] = 2.0f * width;
-		corners.cornersX[3] = -2.0 * width;
+		corners.cornersX[3] = -2.0f * width;
 		// Z
 		corners.cornersZ[0] = -2.f * depth;
 		corners.cornersZ[1] = -2.f * depth;
@@ -332,7 +378,6 @@ void PlayerAttack(EntityID& entity, const int& index)
 		corners.cornersZ[3] = -0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
-		//SetHitboxRadius(entity, player->attackHitboxID, (anim->aAnimTime - 0.5f) * 5);
 	}
 }
 
@@ -368,6 +413,98 @@ void HurtSound(EntityID& entity, const int& index)
 				sfx->Play(Skeleton_Hurt, Channel_Extra);
 			}
 			break;
+		case EnemyType::empoweredSkeleton:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Skeleton_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::empoweredImp:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Imp_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::empoweredHellhound:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::frozenEye:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Eye_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::frozenHellhound:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Hellhound_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::frozenImp:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Imp_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::lucifer:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				AudioEngineComponent* audioJungle = nullptr;
+				for (auto audioEngine : View<AudioEngineComponent>(registry))
+				{
+					audioJungle = registry.GetComponent<AudioEngineComponent>(audioEngine);
+				}
+				bool isPlaying = false;
+				if (audioJungle)
+				{
+					audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+					bool hurtSoundPlaying = false;
+					FMOD::Sound* test = nullptr;
+					audioJungle->channels[sfx->channelIndex[Channel_Extra]]->getCurrentSound(&test);
+					if (test == audioJungle->sounds[BOSS6] || test == audioJungle->sounds[BOSS7] || test == audioJungle->sounds[BOSS8] || test == audioJungle->sounds[BOSS9] || test == audioJungle->sounds[BOSS10])
+					{
+						hurtSoundPlaying = true;
+					}
+					if (!isPlaying || hurtSoundPlaying)
+					{
+						int soundToPlay = rand() % 5;
+						switch (soundToPlay)
+						{
+						case 0:
+							sfx->Play(Boss_Hurt1, Channel_Extra);
+							break;
+						case 1:
+							sfx->Play(Boss_Hurt2, Channel_Extra);
+							break;
+						case 2:
+							sfx->Play(Boss_Hurt3, Channel_Extra);
+							break;
+						case 3:
+							sfx->Play(Boss_Hurt4, Channel_Extra);
+							break;
+						case 4:
+							sfx->Play(Boss_Hurt5, Channel_Extra);
+							break;
+						}
+					}
+				}
+			}
+			break;
+		case EnemyType::tempBoss:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Miniboss_Hurt, Channel_Extra);
+			}
+			break;
+		case EnemyType::zac:
+			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
+			{
+				sfx->Play(Miniboss_Hurt, Channel_Extra);
+			}
+			break;
 		case EnemyType::imp:
 			if (registry.GetComponent<StatComponent>(entity)->GetHealth() > 0)
 			{
@@ -387,7 +524,13 @@ void HurtSound(EntityID& entity, const int& index)
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 		if (player != nullptr)
 		{
-			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Base);
+			bool isPlaying = false;
+			for (auto audioEngine : View<AudioEngineComponent>(registry))
+			{
+				//Check if sound is currently playing
+				registry.GetComponent<AudioEngineComponent>(audioEngine)->channels[registry.GetComponent<SoundComponent>(entity)->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+			}
+			registry.GetComponent<SoundComponent>(entity)->Play(Player_Hurt, Channel_Extra);
 		}
 	}
 }

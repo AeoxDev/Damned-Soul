@@ -353,9 +353,9 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 	//Camera shake
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
 
-	//Hitstop, pause both animations for extra effect
+	//Hitstop, pause both animations for extra effect (Edit: Pauses our own animation, shakes the enemy a bit but no longer pauses them)
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, PauseAnimation, nullptr, FREEZE_TIME, ContinueAnimation, 0);
-	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, PauseAnimation, HitStop, FREEZE_TIME, ContinueAnimation, 0);
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, HitStop, FREEZE_TIME, nullptr, 0);
 
 	//Freeze both entities as they hit eachother for extra effect
 	AddTimedEventComponentStartContinuousEnd(params.entity1, 0.0f, SetSpeedZero, nullptr, FREEZE_TIME, ResetSpeed, 0);
@@ -379,6 +379,36 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		float massFactor = std::sqrt(transform1->mass / transform2->mass);
 		float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
 		float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
+		auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
+		if (charge)
+			appliedKnockback *= charge->multiplier * 2.5f; //Big
+		for (auto entity : View<UIPlayerRelicsComponent>(registry))
+		{
+			UIPlayerRelicsComponent* comp = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+			if (comp)
+			{
+				for (auto relic : comp->relics)
+				{
+					char explo[17] = "Exploding Weapon";
+					int sum1 = 0;
+					int sum2 = 0;
+					for (int i = 0; i < 10; i++)
+					{
+						sum1 += explo[i];
+					}
+					for (int i = 0; i < 10; i++)
+					{
+						if (relic->m_relicName != nullptr)
+							sum2 += relic->m_relicName[i];
+					}
+					
+					if(sum1 == sum2)
+					{
+						appliedKnockback *= 2.0f; //XD
+					}
+				}
+			}
+		}
 		float dx, dz;
 		CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
@@ -535,7 +565,10 @@ void LoadNextLevel(OnCollisionParameters& params)
 {
 	if (params.entity2.index == stateManager.player.index)
 	{
-		CancelTimedEvents(params.entity2);
+		if (stateManager.activeLevel != stateManager.finalLevel)
+		{
+			CancelTimedEvents(params.entity2);
+		}
 		FallofComponent* fallof = registry.AddComponent<FallofComponent>(params.entity2);
 		switch (stateManager.activeLevel)
 		{
@@ -598,13 +631,14 @@ void LoadNextLevel(OnCollisionParameters& params)
 		default:
 			break;
 		}
+
 		//not final level portal
 		if (stateManager.activeLevel != stateManager.finalLevel)
 		{
 			LoadLevel(++stateManager.activeLevel);
 			return;
 		}
-		//Final portal stuff
+
 		//final level portal
 
 		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);

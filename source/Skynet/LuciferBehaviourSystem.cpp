@@ -35,7 +35,7 @@ void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* player
 	lc->goalDirectionX = playerTransformCompenent->positionX - ltc->positionX;
 	lc->goalDirectionZ = playerTransformCompenent->positionZ - ltc->positionZ;
 
-	SmoothRotation(ltc, lc->goalDirectionX, lc->goalDirectionZ, 35.f);
+	SmoothRotation(ltc, lc->goalDirectionX, lc->goalDirectionZ, 50.f);
 	float dirX = ltc->facingX, dirZ = ltc->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude > 0.001f)
@@ -74,6 +74,10 @@ void CombatBehaviour(LuciferBehaviour* sc, StatComponent* enemyStats, StatCompon
 		float PauseThreshold = 0.2f / animComp->aAnimTimeFactor;	//When to pause the animation
 		float AttackStartTime = 0.6f / enemyStats->GetAttackSpeed();//When to continue the animation
 		float AttackActiveTime = AttackStartTime + 0.7f;			//When the entire attack has finished
+
+		//Play Sound Effect (Added by Joaquin)
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(ent);
+		if (sfx) sfx->Play(Boss_Charge, Channel_Base);
 
 		//Attack Telegraphing #1: Quick prep + Pause + Blink
 		AddTimedEventComponentStartContinuousEnd(ent, PauseThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, EnemyType::lucifer, 1);
@@ -210,6 +214,10 @@ bool LuciferBehaviourSystem::Update()
 				luciferComponent->nextSpecialIsSpawn = true;
 				luciferComponent->isDazed = true;
 				luciferComponent->limitHP = 0.f;
+
+				//Play Sound Effect (Added by Joaquin)
+				SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+				if (sfx) sfx->Play(Boss_Channeling, Channel_Extra);
 			}
 
 			// are we dazed? dazed means standing still like an idiot
@@ -238,7 +246,7 @@ bool LuciferBehaviourSystem::Update()
 					{
 						luciferTransformComponent->positionY = 0.f;
 						enemyAnim->aAnim = ANIMATION_IDLE;
-						enemyAnim->aAnimIdx = 1;
+						enemyAnim->aAnimIdx = 0; // spawn animation, 1 is idle (is used to be)
 						enemyAnim->aAnimTimeFactor = 1.0f;
 
 						enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
@@ -338,6 +346,22 @@ bool LuciferBehaviourSystem::Update()
 					// Ends after 15 seconds or
 					// if taken enough damage
 
+					//Play Sound Effect (Added by Joaquin)
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+					if (sfx)
+					{
+						int soundToPlay = rand() % 4;
+						switch (soundToPlay)
+						{
+						case 0:
+							sfx->Play(Boss_FlattenYou, Channel_Extra);
+							break;
+						case 1:
+							sfx->Play(Boss_JudgementIsUpon, Channel_Extra);
+							break;
+						}
+					}
+
 					float percent = enemyStats->GetMaxHealth() / 5.f;
 					luciferComponent->limitHP = (float)enemyStats->GetMaxHealth();
 					while (luciferComponent->limitHP >= enemyStats->GetHealth() || luciferComponent->limitHP + percent > enemyStats->GetHealth())
@@ -348,6 +372,10 @@ bool LuciferBehaviourSystem::Update()
 				}
 				else // jump jump
 				{
+					//Play Sound Effect (Added by Joaquin)
+					SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+					if (sfx) sfx->Play(Boss_Jump, Channel_Base);
+
 					luciferComponent->isJumpJump = true;
 					enemyAnim->aAnimTime = 0;
 					luciferComponent->flyCounter = 0.f;
@@ -398,6 +426,25 @@ bool LuciferBehaviourSystem::Update()
 						luciferTransformComponent->positionX = landingPosition.positionX; //teleport in the air basically
 						luciferTransformComponent->positionZ = landingPosition.positionZ; // happens once
 						AddTimedEventComponentStart(enemyEntity, 0.0f, CreateLandingIndicator, EnemyType::lucifer);
+
+						//Play Sound Effect (Added by Joaquin)
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+						if (sfx)
+						{
+							int soundToPlay = rand() % 3;
+							switch (soundToPlay)
+							{
+							case 0:
+								sfx->Play(Boss_YourCrimes, Channel_Extra);
+								break;
+							case 1:
+								sfx->Play(Boss_DodgeThis, Channel_Extra);
+								break;
+							case 2:
+								sfx->Play(Boss_CrushYou, Channel_Extra);
+								break;
+							}
+						}
 					}
 					
 
@@ -416,11 +463,14 @@ bool LuciferBehaviourSystem::Update()
 						SetHitboxActive(enemyEntity, 2, true);
 						luciferTransformComponent->positionY = 0.f;
 						luciferComponent->nextSpecialIsSpawn = true;
+						//Play Sound Effect (Added by Joaquin)
+						SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
+						if (sfx) sfx->Play(Boss_Channeling, Channel_Extra);
 
 
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
-						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 0.5f, 0.f, 0.f, 0.f, 30.f, 2000, ComputeShaders::PULSE);
+						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 2.0f, 0.f, 0.f, 1.f, 300, ComputeShaders::PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand
 					}
 				}

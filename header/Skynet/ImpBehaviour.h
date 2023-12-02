@@ -8,7 +8,7 @@ struct ImpBehaviour
 	float idleCounter = 0.f;
 	float goalDirectionX = 0.f, goalDirectionZ = 0.f;
 	float attackTimer = 0.0f;
-	float attackStunDuration = 0.2f; // 2.0f;
+	float attackStunDuration = 2.0f;
 	float attackStunTimer = attackStunDuration;
 	float aimTimer = 0.0f;
 	float aimDuration = 0.4f;

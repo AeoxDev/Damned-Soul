@@ -16,6 +16,7 @@
 #include "RenderDepthPass.h"
 #include "OutlineHelper.h"
 #include "Glow.h"
+#include "AntiAlias.h"
 #include "SkyPlane.h"
 
 //Cursed
@@ -75,7 +76,7 @@ void SetInPause(bool value)
 	else
 	{
 		currentStates = (State)(currentStates & (~State::InPause));
-		if (Camera::InCutscene() == true)
+		if (Camera::InCutscene() > 0)
 		{
 			TimedEventIgnoreGamespeed(true);
 			gameSpeed = 0.0f;
@@ -176,20 +177,22 @@ int StateManager::Setup()
 	
 	
 	systems.push_back(new ShadowSystem());
+	systems[1]->timeCap = 1.f / 60.f;
 	systems.push_back(new RenderSystem());
+	systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new OutlineSystem());
 
 
-	//systems[2]->timeCap = 1.f / 60.f;
-	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new ParticleSystemCPU());
+	systems[4]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
+	systems[6]->timeCap = 1.f / 60.f;
 
-	systems.push_back(new GlowApplySystem());	// WARNING: Does nothing at the moment!
+	systems.push_back(new ShatterSystem());
 
-	systems.push_back(new UIRunTime());
+	systems.push_back(new UIRunTimeSystem());
 	systems.push_back(new UIRenderSystem());
 	
 	//Input based CPU 
@@ -235,8 +238,10 @@ int StateManager::Setup()
 	// Updating UI Elements (Needs to be last)
 	systems.push_back(new UIHealthSystem());
 	systems.push_back(new UIPlayerSoulsSystem());
+	systems.push_back(new UISliderSystem());
 	
 	systems.push_back(new UIShopSystem());
+	systems.push_back(new NavigationSystem());
 
 	return 0;
 }
@@ -299,11 +304,13 @@ void StateManager::Update()
 {
 	for (size_t i = 0; i < systems.size(); i++)
 	{
-		systems[i]->timeElapsed += GetDeltaTime();
+		systems[i]->timeElapsed += GetFrameTime(); //No longer deltatime, in case of game pause deltatime
 
 		if (systems[i]->timeElapsed >= systems[i]->timeCap)
 		{
 			systems[i]->Update();
+			if (systems.size() == 0)
+				break;
 			systems[i]->timeElapsed -= systems[i]->timeCap;
 		}
 	}

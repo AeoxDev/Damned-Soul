@@ -12,6 +12,7 @@
 
 void LoadLevel(int level)
 {
+	stateManager.activeLevel = level;
 	std::srand((unsigned)time(NULL));
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);
@@ -20,7 +21,7 @@ void LoadLevel(int level)
 
 	RedrawUI();
 	Camera::ResetCamera();
-
+	SetGodModePortal(false);
 	UnloadEntities(ENT_PERSIST_LOWEST);
 	//Bugfix: Reset current speed to stop sliding during shop.
 	if (stateManager.player.index != -1)
@@ -41,6 +42,7 @@ void LoadLevel(int level)
 	Camera::SetCutsceneMode(false);
 	switch (level)
 	{
+	case -1: LoadParticleLevel(); break; //Debug level for particles
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;//Imp stage

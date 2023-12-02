@@ -4,6 +4,62 @@
 #include "States\StateManager.h"
 #include "Registry.h"
 
+//Elliot: I'm the the culprit for this
+void NavigationSample(PathfindingMap* map, int x, int z)
+{
+	map->cost[x][z] += 10000.0f;
+	//RIght column
+	float adjacentPunish = 0.1f;//Elliot: tiny punish to guide away from walls and navigation maps.
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z + 1] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
+		map->cost[x + 1][z - 1] += adjacentPunish;
+
+	//Middle column
+	if (z > 0)
+		map->cost[x][z - 1] += adjacentPunish;
+	if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x][z + 1] += adjacentPunish;
+
+	//Left column
+
+	if (x > 0 && z > 0)
+		map->cost[x - 1][z - 1] += adjacentPunish;
+	if (x > 0)
+		map->cost[x - 1][z] += adjacentPunish;
+	if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x - 1][z + 1] += adjacentPunish;
+}
+//Elliot: I'm the the culprit for this
+void NavigationSample(ObstacleMap* map, int x, int z)
+{
+	float adjacentPunish = 0.1f;//Elliot: tiny punish to guide away from walls and navigation maps.
+	map->cost[x][z] += adjacentPunish;
+	//RIght column
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z + 1] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x + 1][z] += adjacentPunish;
+	if (x < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1 && z > 0)
+		map->cost[x + 1][z - 1] += adjacentPunish;
+
+	//Middle column
+	if (z > 0)
+		map->cost[x][z - 1] += adjacentPunish;
+	if (z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x][z + 1] += adjacentPunish;
+
+	//Left column
+
+	if (x > 0 && z > 0)
+		map->cost[x - 1][z - 1] += adjacentPunish;
+	if (x > 0)
+		map->cost[x - 1][z] += adjacentPunish;
+	if (x > 0 && z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING - 1)
+		map->cost[x - 1][z + 1] += adjacentPunish;
+}
 
 void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* playerTransform)
 {
@@ -49,11 +105,16 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -179,11 +240,16 @@ void CalculateGlobalMapValuesZac(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -245,7 +311,10 @@ void CalculateGlobalMapValuesZac(PathfindingMap* map)
 	//return returnMap;
 }
 
-float CalculateEuclideanDistanceWorldSpace(float x, float z, Node goal)
+
+
+//											startX     starrtY   genXY
+float CalculateEuclideanDistanceWorldSpace(float x, float z, Node goal, bool obstacle)
 {
 	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 	GridPosition nodePos;
@@ -253,8 +322,15 @@ float CalculateEuclideanDistanceWorldSpace(float x, float z, Node goal)
 	nodePos.z = goal.z;
 	nodePos.fx = 0.f;
 	nodePos.fz = 0.f;
-	Coordinate2D world2 = GridOnPosition(nodePos, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
-	
+	Coordinate2D world2;
+	if (obstacle)
+	{
+		world2 = GridOnPosition(nodePos, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+	}
+	else
+	{
+		world2 = GridOnPosition(nodePos, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+	}
 
 
 	float dist = (sqrtf((float)(x - world2.x) * (float)(x - world2.x) + (float)(z - world2.z) * (float)(z - world2.z)));
@@ -294,11 +370,16 @@ void CalculateGlobalMapValuesHellhound(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Use overloaded function for navigation sampling
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -361,7 +442,7 @@ void CalculateGlobalMapValuesImp(PathfindingMap* map)
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -417,11 +498,16 @@ void CalculateGlobalMapValuesEye(ObstacleMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_GATE || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground
 			{
@@ -483,11 +569,16 @@ void CalculateGlobalMapValuesLuciferJump(PathfindingMap* map)
 	{
 		for (int z = 0; z < GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING; z++)
 		{
+			//Elliot: Pathfinding navigation.
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
+			{
+				NavigationSample(map, x, z);
+			}
 			// is it walkable?
 			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_CRACK || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
-				map->cost[x][z] += 10000;
+				NavigationSample(map, x, z);//Elliot: Do neighboring tiles to prevent walking errors
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground?
 			{
@@ -534,15 +625,39 @@ TransformComponent FindRetreatTile(ObstacleMap* gridValues, TransformComponent* 
 	}
 	int x = 0, z = 0;
 	float distance = 1.f;
+	float maxXValue = 0.f;
+	float minXValue = 0.f;
+	float maxZValue = 0.f;
+	float minZValue = 0.f;
 	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
 	while (!(distance > minRange && distance < maxRange))
 	{
 		bool legal = false;
+		
 		while (!legal)
 		{
-			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE;
-			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE;
+			maxXValue = temporaryTransform->positionX + maxRange;
+			minXValue = temporaryTransform->positionX - maxRange;
+			maxZValue = temporaryTransform->positionZ - maxRange;
+			minZValue = temporaryTransform->positionZ + maxRange;
+			TransformComponent tempPos;
+			tempPos.positionX = maxXValue;
+			tempPos.positionZ = maxZValue;
+
+			GridPosition randGrid = PositionOnGrid(GIcomponent, &tempPos, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+			maxXValue = randGrid.x;
+			maxZValue = randGrid.z;
+
+			tempPos.positionX = minXValue;
+			tempPos.positionZ = minZValue;
+
+			randGrid = PositionOnGrid(GIcomponent, &tempPos, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+			minXValue = randGrid.x;
+			minZValue = randGrid.z;
+
+			x = rand() % (int)(maxXValue - minXValue + 1) + minXValue;
+			z = rand() % (int)(maxZValue - minZValue + 1) + minZValue;
 
 			if (gridValues->cost[x][z] < 10000)
 			{
@@ -552,7 +667,7 @@ TransformComponent FindRetreatTile(ObstacleMap* gridValues, TransformComponent* 
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode, true);
 	}
 
 
@@ -579,6 +694,10 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		return TransformComponent();
 	}
 	int x = 0, z = 0;
+	float maxXValue = 0.f;
+	float minXValue = 0.f;
+	float maxZValue = 0.f;
+	float minZValue = 0.f;
 	float distance = 1.f;
 	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
@@ -587,8 +706,27 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		bool legal = false;
 		while (!legal)
 		{
-			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
-			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+			maxXValue = temporaryTransform->positionX + maxRange;
+			minXValue = temporaryTransform->positionX - maxRange;
+			maxZValue = temporaryTransform->positionZ - maxRange;
+			minZValue = temporaryTransform->positionZ + maxRange;
+			TransformComponent tempPos;
+			tempPos.positionX = maxXValue;
+			tempPos.positionZ = maxZValue;
+
+			GridPosition randGrid = PositionOnGrid(GIcomponent, &tempPos, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+			maxXValue = randGrid.x;
+			maxZValue = randGrid.z;
+
+			tempPos.positionX = minXValue;
+			tempPos.positionZ = minZValue;
+
+			randGrid = PositionOnGrid(GIcomponent, &tempPos, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+			minXValue = randGrid.x;
+			minZValue = randGrid.z;
+
+			x = rand() % (int)(maxXValue - minXValue + 1) + minXValue;
+			z = rand() % (int)(maxZValue - minZValue + 1) + minZValue;
 
 			if (gridValues->cost[x][z] < 10000)
 			{
@@ -598,7 +736,7 @@ TransformComponent FindRetreatTile(PathfindingMap* gridValues, TransformComponen
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode, false);
 	}
 	
 	
@@ -624,15 +762,38 @@ TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent*
 
 	int x = 0, z = 0;
 	float distance = 1.f;
-	int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+	float maxXValue = 0.f;
+	float minXValue = 0.f;
+	float maxZValue = 0.f;
+	float minZValue = 0.f;
+	//int ratio = GI_TEXTURE_DIMENSIONS / GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
 	Node returnNode;
 	while (!(distance > minRange && distance < maxRange))
 	{
 		bool legal = false;
 		while (!legal)
 		{
-			x = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
-			z = rand() % GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING;
+			maxXValue = temporaryTransform->positionX + maxRange;
+			minXValue = temporaryTransform->positionX - maxRange;
+			maxZValue = temporaryTransform->positionZ - maxRange;
+			minZValue = temporaryTransform->positionZ + maxRange;
+			TransformComponent tempPos;
+			tempPos.positionX = maxXValue;
+			tempPos.positionZ = maxZValue;
+
+			GridPosition randGrid = PositionOnGrid(GIcomponent, &tempPos, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+			maxXValue = randGrid.x;
+			maxZValue = randGrid.z;
+
+			tempPos.positionX = minXValue;
+			tempPos.positionZ = minZValue;
+
+			randGrid = PositionOnGrid(GIcomponent, &tempPos, GI_TEXTURE_DIMENSIONS_FOR_PATHFINDING);
+			minXValue = randGrid.x;
+			minZValue = randGrid.z;
+
+			x = rand() % (int)(maxXValue - minXValue + 1) + minXValue;
+			z = rand() % (int)(maxZValue - minZValue + 1) + minZValue;
 
 			if (gridValues->cost[x][z] == 1)
 			{
@@ -642,7 +803,7 @@ TransformComponent FindSpawnTile(PathfindingMap* gridValues, TransformComponent*
 		}
 		returnNode.x = x;
 		returnNode.z = z;
-		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode);
+		distance = CalculateEuclideanDistanceWorldSpace(temporaryTransform->positionX, temporaryTransform->positionZ, returnNode, false);
 	}
 
 

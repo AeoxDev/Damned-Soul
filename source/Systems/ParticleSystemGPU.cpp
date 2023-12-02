@@ -27,11 +27,11 @@ bool ParticleSystemGPU::Update()
 
 	if (highestActiveSlot >= 0)
 	{
-		Particles::PrepareParticleCompute(renderStates);
+		Particles::PrepareParticleCompute();
 
 		Dispatch((highestGroupAmount + 1), (highestActiveSlot + 1), 1); //x * y * z
 
-		Particles::FinishParticleCompute(renderStates);
+		Particles::FinishParticleCompute();
 	}
 
 	return true;

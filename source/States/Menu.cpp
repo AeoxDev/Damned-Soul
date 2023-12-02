@@ -35,6 +35,7 @@ void Menu::Setup()
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;
+	stageVars.stageNr = 1;
 	stageVars.scaleX = 1.0f;
 	stageVars.scaleY = 1.0f;
 	stageVars.scaleZ = 1.0f;
@@ -190,7 +191,7 @@ void Menu::SetupButtons()
 
 		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], 30.0f);
 
-		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), 1, functions[i]);
+		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);

@@ -95,6 +95,8 @@ public:
 	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
+	// Update the entity's base health (permanently)
+	void UpdateBaseHealth(const float delta);
 	// Update the entity's bonus health
 	void UpdateBonusHealth(const float delta);
 
@@ -127,6 +129,8 @@ public:
 // Offensive
 	// Get the base damage of the entity
 	float GetBaseDamage() const;
+	// update the entity's base damage
+	void UpdateBaseDamage(const float delta);
 	// Get the damage of the entity
 	float GetDamage() const;
 	// update the entity's bonus damage
@@ -202,6 +206,15 @@ public:
 	void ZeroBonusStats();
 };
 
+struct ShatterComponent
+{
+	float time = 0.f;
+	float strength = 1.f;
+	bool reverse = false;
+	bool useOrigin = false; //Displaces from origin point, displaces along face normal if false
+	float origin[4] = {0.f, 0.f, 0.f, 0.f};
+};
+
 struct ControllerComponent
 {
 	float goalX = 0.0f, goalZ = -1.0f;//Goal direction
@@ -239,6 +252,11 @@ struct CollisionParamsComponent
 {
 	OnCollisionParameters params;
 	CollisionParamsComponent(OnCollisionParameters params) : params(params) {}
+};
+
+struct NavigationTrashComponentYouMustAccept
+{
+
 };
 
 //
