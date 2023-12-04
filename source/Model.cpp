@@ -7,6 +7,7 @@
 #include "MemLib\ML_String.hpp"
 #include "Hashing.h"
 #include "D3D11Helper\D3D11Graphics.h"
+#include "Skynet\TempBossBehaviour.h"
 
 #include "DeltaTime.h"
 
@@ -210,8 +211,10 @@ AnimationFrame Model::GetAnimation(const ANIMATION_TYPE aType, const uint8_t aId
 	return m_animations[ANIMATION_IDLE][0].GetFrame(0);
 }
 
-void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
+void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
 {
+	
+
 	// Incorrect bone indices?
 	// That would sort of explain some of the wonky stuff happening
 
@@ -228,23 +231,54 @@ void Model::RenderAllSubmeshes(const ANIMATION_TYPE aType, const uint8_t aIdx, c
 	// Set as slot 0, for the time being
 	SetConstantBuffer(m_materialBuffer, BIND_PIXEL, 0);
 
-	for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
+	if(m_data->m_numSubMeshes == 7 && m_data->m_numBones == 25) // this is splitboss, we need to do special things. Trust the process, don't touch this code...bastard
 	{
-		const SubMesh& currentMesh = m_data->GetSubMesh(i);
-		const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
+		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
+		for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
+		{
+			if (i != 0 && i != 1)
+			{
+				if (tempBossComponent->parts[i - 2] == false)
+				{
+					continue;
+				}
+			}
+			const SubMesh& currentMesh = m_data->GetSubMesh(i);
+			const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
 
-		// Create a buffer and give it values
-		MaterialBufferStruct buffStruct(currentMaterial.roughness, currentMaterial.exponent);
-		// Update the material buffer
-		UpdateConstantBuffer(m_materialBuffer, &buffStruct);
+			// Create a buffer and give it values
+			MaterialBufferStruct buffStruct(currentMaterial.roughness, currentMaterial.exponent);
+			// Update the material buffer
+			UpdateConstantBuffer(m_materialBuffer, &buffStruct);
 
-		// Set material and draw
-		SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
-		SetTexture(currentMaterial.normalIdx, BIND_PIXEL, 1);
-		SetTexture(currentMaterial.glowIdx, BIND_PIXEL, 2);
-		d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
+			// Set material and draw
+			SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
+			SetTexture(currentMaterial.normalIdx, BIND_PIXEL, 1);
+			SetTexture(currentMaterial.glowIdx, BIND_PIXEL, 2);
+			d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
+			int iJustWantToSeeWhatHappens = 0; // debug variable?
+		}
+	}
+	else
+	{
+		for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
+		{
+			const SubMesh& currentMesh = m_data->GetSubMesh(i);
+			const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
 
-		int iJustWantToSeeWhatHappens = 0; // debug variable?
+			// Create a buffer and give it values
+			MaterialBufferStruct buffStruct(currentMaterial.roughness, currentMaterial.exponent);
+			// Update the material buffer
+			UpdateConstantBuffer(m_materialBuffer, &buffStruct);
+
+			// Set material and draw
+			SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
+			SetTexture(currentMaterial.normalIdx, BIND_PIXEL, 1);
+			SetTexture(currentMaterial.glowIdx, BIND_PIXEL, 2);
+			d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
+
+			int iJustWantToSeeWhatHappens = 0; // debug variable?
+		}
 	}
 }
 
