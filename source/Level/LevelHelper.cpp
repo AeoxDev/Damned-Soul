@@ -292,6 +292,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<ModelBonelessComponent>(hazardLava, LoadModel("LV3Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazardLava);
 			AddStaticHazard(hazardLava, HAZARD_LAVA);
+			registry.AddComponent<GlowComponent>(hazardLava, 0.1f, 0.08f, 0.05f);
 		}
 		
 		break;
@@ -305,6 +306,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV4Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
 			AddStaticHazard(hazard, HAZARD_LAVA);
+			registry.AddComponent<GlowComponent>(hazard, 0.1f, 0.08f, 0.05f);
 		}
 		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		
@@ -320,6 +322,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV5Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
 			AddStaticHazard(hazard, HAZARD_LAVA);
+			registry.AddComponent<GlowComponent>(hazard, 0.1f, 0.08f, 0.05f);
 		}
 		break;
 	case 6:
@@ -337,6 +340,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV6Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
 			AddStaticHazard(hazard, HAZARD_LAVA);
+			registry.AddComponent<GlowComponent>(hazard, 0.1f, 0.08f, 0.05f);
 		}
 		{
 			//Add static hazards here
