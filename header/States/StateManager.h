@@ -8,7 +8,6 @@
 #include "EntityID.h"
 
 //#include "MemLib\ML_Vector.hpp"
-
 #include <vector>
 
 struct StateManager;
@@ -32,8 +31,10 @@ struct StateManager
 	EntityID weapon;
 	EntityID stage;
 	EntityID gate;
+	EntityID gateVisual;//The visual gate
 	EntityID cutsceneEnemy;
 	EntityID hitboxVis;
+	EntityID naviagtion;
 
 
 	/// <summary>

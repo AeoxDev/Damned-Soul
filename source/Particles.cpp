@@ -41,8 +41,9 @@ CS_IDX setToZeroCS = -1;
 // Shaders for VFX
 VS_IDX MeshVS = -1;
 
-TX_IDX flipBookTexture = -1; /// create holder for texture
-TX_IDX flipBookTextureTwo = -1; /// create holder for texture
+TX_IDX flipBookTextureFire = -1; /// create holder for texture
+TX_IDX flipBookTextureSpark = -1; /// create holder for texture
+TX_IDX flipBookTextureSmoke = -1; /// create holder for texture
 TX_IDX textureParticle = -1; /// create holder for texture
 TX_IDX noTextureParticle = -1; /// create holder for texture
 SMP_IDX sampler = -1; //create holder for sampler
@@ -79,8 +80,9 @@ void Particles::InitializeParticles()
 	VFXMaskTX =			LoadTexture("\\VFX_Masks.png");
 // ## EO ALEX CODE ##
 
-	flipBookTexture = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
-	flipBookTextureTwo = LoadTexture("\\SpriteSmokeSpark.png");//created texture resource 
+	flipBookTextureFire = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
+	flipBookTextureSpark = LoadTexture("\\SpriteSmokeSpark.png");//created texture resource 
+	flipBookTextureSmoke = LoadTexture("\\SpriteSmoke.png");//created texture resource 
 	textureParticle = LoadTexture("\\LavaPlaceholderAlpha.png");
 	noTextureParticle = LoadTexture("\\DefaultParticle.png");
 
@@ -239,16 +241,18 @@ void Particles::PrepareParticlePass(int metadataSlot)
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
 	if (  data->metadata[metadataSlot].pattern == FIRE || data->metadata[metadataSlot].pattern == BOILING)
-		SetTexture(flipBookTexture, BIND_PIXEL, 6); 
+		SetTexture(flipBookTextureFire, BIND_PIXEL, 6); 
 	else if (data->metadata[metadataSlot].pattern == SPARK || data->metadata[metadataSlot].pattern == SMOKE)
-		SetTexture(flipBookTextureTwo, BIND_PIXEL, 6); 
-	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER || data->metadata[metadataSlot].pattern == PULSE)
-		SetTexture(textureParticle, BIND_PIXEL, 6); 
+		SetTexture(flipBookTextureSpark, BIND_PIXEL, 6); 
+	else if (data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == ICETHROWER)
+		SetTexture(flipBookTextureSmoke/*textureParticle*/, BIND_PIXEL, 6);
+	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER)
+		SetTexture(textureParticle, BIND_PIXEL, 6);
 	else
 		SetTexture(noTextureParticle, BIND_PIXEL, 6);
 
 
-	/*if (data->metadata[metaDataSlot].pattern == 0 || data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	/*if (data->metadata[metaDataSlot].pattern == 0 || data->metadata[metaDataSlot].pattern == 9 /*|| data->metadata[metaDataSlot].pattern == 10)
 	{
 
 		SetTexture(flipBookTexture, BIND_PIXEL, 2); //Set texture
@@ -256,14 +260,13 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 
 	}
-	else if (data->metadata[metaDataSlot].pattern == 15)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
-	{
+	else if (data->metadata[metaDataSlot].pattern == 15)//	
 
 		SetTexture(flipBookTextureTwo, BIND_PIXEL, 2); //Set texture
 
 
 	}
-	else if (data->metadata[metaDataSlot].pattern == 3)//	SMOKE = 0,ARCH = 1,EXPLOSION = 2,FLAMETHROWER = 3,IMPLOSION = 4,RAIN = 5,SINUS = 6,
+	else if (data->metadata[metaDataSlot].pattern == 3)//	
 	{
 
 		SetTexture(textureParticle, BIND_PIXEL, 2); //Set texture

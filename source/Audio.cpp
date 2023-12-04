@@ -63,11 +63,11 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Music/LavaCave.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/Shop.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.1f, MUSIC_GROUP));
+	this->volumes.push_back(Volume(0.2f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/Ice.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/Boss.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, MUSIC_GROUP));
+	this->volumes.push_back(Volume(0.15f, MUSIC_GROUP));
 	this->system->createSound("SFX/Music/CaveAmbience.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(1.0f, AMBIENCE_GROUP));
 	this->system->createSound("SFX/Music/LavaAmbience.mp3", FMOD_LOOP_NORMAL, 0, &this->sounds[i++]);
@@ -162,9 +162,9 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Player/Voice/WasntSoBad.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Player/Voice/BetterWork.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Player/Voice/SomethingPositive.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
 	this->system->createSound("SFX/Player/Voice/LikeTheLook.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Player/Voice/WillDoDamage.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
@@ -190,51 +190,51 @@ void AudioEngineComponent::Setup(int& ID)
 
 	//Eye (4)
 	this->system->createSound("SFX/Enemy/Eye/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Eye/Shoot.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Eye/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Eye/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 
 	//Hellhound (5)
 	this->system->createSound("SFX/Enemy/Hellhound/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Hellhound/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Hellhound/Inhale.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Hellhound/Flamethrower.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Hellhound/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 
 	//Skeleton (3)
 	this->system->createSound("SFX/Enemy/Skeleton/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Skeleton/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Skeleton/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
 
 	//Imp (5)
 	this->system->createSound("SFX/Enemy/Imp/AttackCharge.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.20f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.35f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/AttackThrow.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.20f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.35f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/Teleport.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.6f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Imp/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 
 	//Minotaur (6)
 	this->system->createSound("SFX/Enemy/Minotaur/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Charge.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Jump.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Slam.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
@@ -242,19 +242,19 @@ void AudioEngineComponent::Setup(int& ID)
 	this->system->createSound("SFX/Enemy/Minotaur/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Minotaur/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 
 	//Miniboss (5)
 	this->system->createSound("SFX/Enemy/Miniboss/Attack.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Miniboss/Slam.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.5f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Miniboss/Hurt.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Miniboss/Reassembling.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
 	this->volumes.push_back(Volume(0.75f, SFX_GROUP));
 	this->system->createSound("SFX/Enemy/Miniboss/Death.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
+	this->volumes.push_back(Volume(0.4f, SFX_GROUP));
 
 	//Shop (18)
 		//Sound Effects (5/18)
@@ -270,31 +270,31 @@ void AudioEngineComponent::Setup(int& ID)
 	this->volumes.push_back(Volume(0.25f, SFX_GROUP));
 		//Voice (13/18)
 	this->system->createSound("SFX/Shop/Voice/FirstMeet.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeSplitBoss.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BuyingNothing.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/FirstPurchase.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/PurchaseBeforeBoss.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/LowHealth.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/RelicPurchase.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/RelicPurchase2.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/UpgradeWeapon.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/UpgradeWeapon2.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeLava.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeIce.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 	this->system->createSound("SFX/Shop/Voice/BeforeLastBoss.mp3", FMOD_DEFAULT, 0, &this->sounds[i++]);
-	this->volumes.push_back(Volume(0.75f, VOICE_GROUP));
+	this->volumes.push_back(Volume(0.5f, VOICE_GROUP));
 
 	//Boss (21)
 		//Sound Effects (11/21)

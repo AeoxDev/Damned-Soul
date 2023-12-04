@@ -40,12 +40,11 @@ void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transf
 	ic->idleCounter = 0.0f;
 
 	// Regular walk
-	if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 0))
-	{
-		enemyAnim->aAnim = ANIMATION_IDLE;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
+	
+	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnimIdx = 0;
+	//enemyAnim->aAnimTime = 0.0f;
+	
 
 	ic->chaseCounter += GetDeltaTime();
 	//if the player has chased the imp for too long, teleport away
@@ -91,15 +90,6 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	//rotate imp in order to shoot at the player
 	else if (ic->aimTimer < ic->aimDuration)
 	{
-		//enemyAnim->aAnimTimeFactor = (1.0f / ic->aimDuration) - 0.1f; //needs to be set every time because of weird animfactor bug?
-
-		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 0))
-		{
-			enemyAnim->aAnim = ANIMATION_ATTACK;
-			enemyAnim->aAnimIdx = 0;
-			enemyAnim->aAnimTime = 0.0f;
-		}
-
 		if (ic->aimTimer == 0.0f) //Play the charging attack sound
 		{
 			AddTimedEventComponentStartContinous(entity, 0.0f, nullptr, ic->aimDuration - 0.2f, EnemyAttackFlash);
@@ -118,6 +108,16 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	}
 	else // yes, we can indeed attack. 
 	{
+		enemyAnim->aAnim = ANIMATION_ATTACK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.4f;
+		
+
+		ic->attackTimer = 0;
+		ic->aimTimer = 0;
+		ic->attackStunTimer = 0;
+		ic->specialCounter++; //increase the special counter for special attack
+
 		//set direction for attack
 		float dx = (ptc->positionX - itc->positionX);
 		float dz = (ptc->positionZ - itc->positionZ);
@@ -180,12 +180,11 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
 	//idle just do animation
-	if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 0))
-	{
-		enemyAnim->aAnim = ANIMATION_IDLE;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
+	
+	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnimIdx = 0;
+	//enemyAnim->aAnimTime = 0.0f;
+	
 
 	if (ic->idleCounter >= ic->idleTimer)
 	{
@@ -280,11 +279,10 @@ bool ImpBehaviourSystem::Update()
 
 			if (impComponent->attackStunTimer <= impComponent->attackStunDuration)
 			{
-				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 0))
+				if (impComponent->attackStunTimer > 0.4f)
 				{
 					enemyAnim->aAnim = ANIMATION_IDLE;
 					enemyAnim->aAnimIdx = 0;
-					enemyAnim->aAnimTime = 0.0f;
 				}
 			}
 			else if (distance < 15.0f && !impComponent->charging) // try to retreat to a safe distance if not charging

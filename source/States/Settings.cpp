@@ -26,7 +26,7 @@ void SettingsState::Setup()
 	// Stage Model
 	StageSetupVariables stageVars;
 	
-	stageVars.stageNr = rand()% 5;
+	stageVars.stageNr = rand()% 10;
 	EntityID stage = SetUpStage(stageVars);
 	// Stage Transform
 	TransformComponent* stageT = registry.AddComponent<TransformComponent>(stage);

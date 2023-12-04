@@ -11,6 +11,7 @@
 #include "Level.h"
 #include "Levels\LevelHelper.h"
 #include "Levels\LevelLoader.h"
+#include "UIButtonFunctions.h"
 
 bool ControllerSystem::Update()
 {
@@ -43,13 +44,28 @@ bool ControllerSystem::Update()
 				}
 				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-				LoadLevel(++stateManager.activeLevel);
+				for (auto entity : View<AudioEngineComponent>(registry))
+				{
+					AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+					audioJungle->HandleSound();
+					audioJungle->StopAllSounds();
+				}
+				UIFunctions::Game::LoadNextLevel(nullptr, -1);
 			}
 			else if (Camera::InCutscene() == 3)
 			{
 				//Nothing. Not a skippable cutscene.
+#ifdef _DEBUG //Allow debug to skip the cutscene
+				for (auto entity : View<TimedEventComponent>(registry))
+				{
+					ReleaseTimedEvents(entity);
+				}
+				ReloadPlayerNonGlobals();
+				AddTimedEventComponentStart(stateManager.player, 0.0f, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+				AddTimedEventComponentStart(stateManager.player, 0.0f, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+#endif // _DEBUG //Allow debug to skip the cutscene
+
 			}
-			
 		}
 		
 	}
@@ -117,10 +133,12 @@ bool ControllerSystem::Update()
 		if (keyState[SCANCODE_1] == pressed)
 		{
 			LoadLevel(1);
+			stateManager.activeLevel = 1;
 		}
 		else if (keyState[SCANCODE_2] == pressed)
 		{
 			LoadLevel(3);
+			stateManager.activeLevel = 3;
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
@@ -173,38 +191,47 @@ bool ControllerSystem::Update()
 		else if (keyState[SCANCODE_3] == pressed)
 		{
 			LoadLevel(5);
+			stateManager.activeLevel = 5;
 		}
 		else if (keyState[SCANCODE_4] == pressed)
 		{
 			LoadLevel(7);
+			stateManager.activeLevel = 7;
 		}
 		else if (keyState[SCANCODE_5] == pressed)
 		{
 			LoadLevel(9);
+			stateManager.activeLevel = 9;
 		}
 		else if (keyState[SCANCODE_6] == pressed)
 		{
 			LoadLevel(11);
+			stateManager.activeLevel = 11;
 		}
 		else if (keyState[SCANCODE_7] == pressed)
 		{
 			LoadLevel(13);
+			stateManager.activeLevel = 13;
 		}
 		else if (keyState[SCANCODE_8] == pressed)
 		{
 			LoadLevel(15);
+			stateManager.activeLevel = 15;
 		}
 		else if (keyState[SCANCODE_9] == pressed)
 		{
 			LoadLevel(17);
+			stateManager.activeLevel = 17;
 		}
 		else if (keyState[SCANCODE_0] == pressed)//Reset shop, do this only once per game
 		{
 			LoadLevel(2);
+			stateManager.activeLevel = 2;
 		}
 		else if (keyState[SCANCODE_S] == pressed)//Do this many times
 		{
 			LoadLevel(4);
+			stateManager.activeLevel = 4;
 		}
 	}
 	if (keyInput[SCANCODE_H] == down)
@@ -235,6 +262,7 @@ bool ControllerSystem::Update()
 			if (stateManager.hitboxVis.index == -1)
 			{
 				stateManager.hitboxVis = registry.CreateEntity();
+				stateManager.naviagtion = registry.CreateEntity();
 				ModelBonelessComponent* stageHitbox;
 				TransformComponent* transform;
 				visualizeStage = true;
@@ -243,18 +271,56 @@ bool ControllerSystem::Update()
 					case 1://Level 1
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV1Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 					case 3://Level 2
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV2Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV2Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 					case 5://Level 3
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV3Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV3Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 					case 7://Level 4
 						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV4Hitbox.mdl"));
 						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV4Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 9://Level 5
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV5Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV5Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 11://Level 6
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV6Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 13://Level 7
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV7Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV7Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 15://Level 8
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV8Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV8Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
+						break;
+					case 17://Level 9
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.hitboxVis, LoadModel("LV9Hitbox.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.hitboxVis);
+						stageHitbox = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
+						transform = registry.AddComponent<TransformComponent>(stateManager.naviagtion);
 						break;
 				default:
 					break;
@@ -319,6 +385,8 @@ bool ControllerSystem::Update()
 				registry.DestroyEntity(stateManager.hitboxVis);
 				stateManager.hitboxVis.index = -1;
 				visualizeStage = false;
+				registry.DestroyEntity(stateManager.naviagtion);
+				stateManager.naviagtion.index = -1;
 			}
 
 		}
@@ -502,6 +570,11 @@ bool ControllerSystem::Update()
 				}
 				
 			}
+
+			//Make player immediately face in our mouse direction when we attack for better directional combat
+			transform->facingX = MouseComponentGetDirectionX(mouseComponent);
+			transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+
 			attackDuration /= playerStats->GetAttackSpeed(); //Speed up the attack animation based on attack speed
 			registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
@@ -525,7 +598,8 @@ bool ControllerSystem::Update()
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)
 				stats->SetSpeedMult(0.2f);
-			player->currentCharge += GetDeltaTime();
+			/*player->currentCharge += GetDeltaTime();*/
+			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed(); //Charge faster scaling off of attack speed baby
 			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
 				player->currentCharge = player->maxCharge;
 			//Play some sound, do some animation, indicate that we're charging the bigboy move
@@ -537,7 +611,8 @@ bool ControllerSystem::Update()
 				//it's time
 				if (sfx) sfx->Play(Player_HeavyAttack, Channel_Base);
 				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
-				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
+				float attackDuration = 0.8f / playerStats->GetAttackSpeed();
+				/*float attackDuration = 1.0f / playerStats->GetAttackSpeed();*/
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
 				player->currentCharge = 0.0f;
