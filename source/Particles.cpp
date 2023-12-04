@@ -592,7 +592,8 @@ void ParticleComponent::Release()
 	if (data->metadata[metadataSlot].start >= data->metadata[metadataSlot].end)
 		return;
 
-	std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
+	std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), -1, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
+	//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
 	
 	// Declare to the compute shader that this components particles is to be reset
 	data->metadata[metadataSlot].reset = true;
