@@ -194,6 +194,8 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
 
+		ec->shooting = false;
+
 		return true;
 	}
 }

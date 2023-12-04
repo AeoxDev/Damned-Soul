@@ -20,5 +20,7 @@ struct ImpBehaviour
 	bool clockwiseCircle = true;
 	bool circleBehaviour = false;
 	bool charging = false;		//bool to check if the eye is currently charging at the players position or not
+	bool shooting = false;
 	bool dealtDamage = false;
+	bool updateIdleTimer = false;
 };
