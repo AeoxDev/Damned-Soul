@@ -114,25 +114,33 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 		soulWorth = 1;
 	}
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
+
 	if (zacIndex == 0)
 	{
-		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
 	}
 	else if (zacIndex == 1)
 	{
-		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Leg.mdl"));
+		//this one has animation
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RLeg.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 	}
 	else if (zacIndex == 2)
 	{
-		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
 	}
 	else if (zacIndex == 3)
 	{
-		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
 	}
 	else if (zacIndex == 4)
 	{
-		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
 	}
 	
 

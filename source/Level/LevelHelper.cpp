@@ -578,6 +578,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 				health += partHealth;
 			if (zacIndex4)
 				health += partHealth;
+		
 
 		}
 		else if (eType == EnemyType::lucifer)
@@ -953,6 +954,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	{
 		stat->hazardModifier = 0.0f;
 		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Splitboss.mdl"));
+		mod->shared.hasOutline = true;
 		registry.AddComponent<AnimationComponent>(entity);
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);

@@ -10,6 +10,7 @@
 #include "Light.h"
 #include "Model.h"
 #include "RenderDepthPass.h"
+#include "OutlineHelper.h"
 
 // ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
 #include "SkyPlane.h"
@@ -288,7 +289,7 @@ bool RenderSystem::Update()
 	return true;
 }
 
-#include "OutlineHelper.h"
+
 
 bool OutlineSystem::Update()
 {
@@ -349,7 +350,7 @@ bool OutlineSystem::Update()
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue(), true);
 	}
 
 	//Outlines::SwapBack();

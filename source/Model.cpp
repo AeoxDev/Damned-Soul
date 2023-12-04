@@ -211,7 +211,7 @@ AnimationFrame Model::GetAnimation(const ANIMATION_TYPE aType, const uint8_t aId
 	return m_animations[ANIMATION_IDLE][0].GetFrame(0);
 }
 
-void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime)
+void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime, bool isOutline)
 {
 	
 
@@ -238,7 +238,7 @@ void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, con
 		{
 			if (i != 0 && i != 1)
 			{
-				if (tempBossComponent->parts[i - 2] == false)
+				if (tempBossComponent->parts[i - 2] == false && false == isOutline)
 				{
 					continue;
 				}
