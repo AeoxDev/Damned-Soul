@@ -32,18 +32,19 @@ void RepositionBehaviour(EntityID& entity, ImpBehaviour* ic, TransformComponent*
 	//ADD POOF
 
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-	if (sfx != nullptr) sfx->Play(Imp_Teleport, Channel_Base);
+	if (sfx != nullptr) sfx->Play(Imp_Teleport, Channel_Extra);
 }
 
 void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
+	ic->idleCounter = 0.0f;
+
 	// Regular walk
-	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
-	{
-		enemyAnim->aAnim = ANIMATION_WALK;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
+	
+	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnimIdx = 0;
+	//enemyAnim->aAnimTime = 0.0f;
+	
 
 	ic->chaseCounter += GetDeltaTime();
 	//if the player has chased the imp for too long, teleport away
@@ -78,6 +79,8 @@ void RetreatBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transf
 
 bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*& ptc, ImpBehaviour*& ic, TransformComponent*& itc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
+	ic->idleCounter = 0.0f;
+
 	//if you just attacked go back to circle behaviour
 	if (ic->attackTimer < enemyStats->GetAttackSpeed())
 	{
@@ -105,12 +108,11 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	}
 	else // yes, we can indeed attack. 
 	{
-		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 1))
-		{
-			enemyAnim->aAnim = ANIMATION_ATTACK;
-			enemyAnim->aAnimIdx = 1;
-			enemyAnim->aAnimTime = 0.0f;
-		}
+		
+		enemyAnim->aAnim = ANIMATION_ATTACK;
+		enemyAnim->aAnimIdx = 0;
+		enemyAnim->aAnimTime = 0.4f;
+		
 
 		ic->attackTimer = 0;
 		ic->aimTimer = 0;
@@ -122,7 +124,7 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		float dz = (ptc->positionZ - itc->positionZ);
 
 		float distanceFromPlayer = sqrt(dx * dx + dz * dz);
-		float rangePercentage = distanceFromPlayer / ic->maxAttackRange;
+		float rangePercentage = 1 - (distanceFromPlayer / ic->maxAttackRange);
 
 		//how much the player moved since last frame
 		float playerMovementX = ptc->positionX - ptc->lastPositionX;
@@ -135,7 +137,7 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		if (playerMovementZ > 0.03f)
 			playerMovementZ = 0.03f;
 
-		//		C		= sqrt(A^2 + B^2)	
+		//		C	  = sqrt(A^2 + B^2)	
 		float newDirX = sqrt(playerMovementX * playerMovementX + dx * dx);
 		float newDirZ = sqrt(playerMovementZ * playerMovementZ + dz * dz);
 	
@@ -163,6 +165,7 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 
 		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
 		CreateProjectile(entity, dx, dz, imp);
+		
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Play(Imp_AttackThrow, Channel_Base);
 
@@ -173,12 +176,11 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, ImpBehaviour* ic, TransformComponent* itc, StatComponent* enemyStats, AnimationComponent* enemyAnim, PathfindingMap* valueGrid, bool& hasUpdatedMap)
 {
 	//idle just do animation
-	if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 0))
-	{
-		enemyAnim->aAnim = ANIMATION_IDLE;
-		enemyAnim->aAnimIdx = 0;
-		enemyAnim->aAnimTime = 0.0f;
-	}
+	
+	enemyAnim->aAnim = ANIMATION_IDLE;
+	enemyAnim->aAnimIdx = 0;
+	//enemyAnim->aAnimTime = 0.0f;
+	
 
 	ic->idleCounter += GetDeltaTime();
 	if (ic->idleCounter >= ic->idleTimer)
@@ -271,12 +273,13 @@ bool ImpBehaviourSystem::Update()
 
 			if (impComponent->attackStunTimer <= impComponent->attackStunDuration)
 			{
-				if (enemyAnim->aAnim != ANIMATION_IDLE || (enemyAnim->aAnim == ANIMATION_IDLE && enemyAnim->aAnimIdx != 1))
+				if (impComponent->attackStunTimer > 0.4f)
 				{
 					enemyAnim->aAnim = ANIMATION_IDLE;
-					enemyAnim->aAnimIdx = 1;
-					enemyAnim->aAnimTime = 0.0f;
+					enemyAnim->aAnimIdx = 0;
 				}
+
+				
 			}
 			else if (distance < 15.0f && !impComponent->charging) // try to retreat to a safe distance if not charging
 			{

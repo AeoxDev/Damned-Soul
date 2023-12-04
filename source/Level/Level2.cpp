@@ -14,13 +14,19 @@
 
 void LoadLevel2()
 {
-	float redAdd = 0.1f;
+	//float redAdd = 0.1f;
+	//float greenAdd = 0.0f;
+	//float blueAdd = 0.0f;
+	//float redMult = 1.2f;
+	//float greenMult = 1.0f;
+	//float blueMult = 1.0f;
+	// 
+	float redAdd = 0.0f;
 	float greenAdd = 0.0f;
 	float blueAdd = 0.0f;
-	float redMult = 1.2f;
+	float redMult = 1.0f;
 	float greenMult = 1.0f;
 	float blueMult = 1.0f;
-
 	StageSetupVariables stageVars;
 	stageVars.ra = redAdd;
 	stageVars.ga = greenAdd;
@@ -30,14 +36,11 @@ void LoadLevel2()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 2;
 	EntityID stage = SetUpStage(stageVars); 
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level2"); //Proximity hitbox (Added by Joaquin)
 
 	EntityID mouse = registry.CreateEntity();
 
-	//StageLights
-	EntityID lightholder = registry.CreateEntity();
-	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	
@@ -46,6 +49,7 @@ void LoadLevel2()
 		//something went wrong, could not open file
 		assert("Could not read file: LV2Enemies");
 	}
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
 	//Enemies to the right:
 
@@ -56,7 +60,10 @@ void LoadLevel2()
 	////Enemies to the north:
 	//SetupEnemy(EnemyType::skeleton, 7.f, 0.f, 148.f, 1);
 	//SetupEnemy(EnemyType::skeleton, 28.f, 0.f, 145.f, 1);
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::imp, 20.0f, 0.f, 160.0f, 1);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::imp, -225.0f, 0.f, 234.0f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = 0.0f;
 
 	////Enemies in ruins
 	//SetupEnemy(EnemyType::imp, -110.f, 0.f, 120.f, 1);
@@ -96,17 +103,24 @@ void LoadLevel2()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	float redLight = 0.35f;
+	//float redLight = 0.35f;
 
+	////StageLights
+	//EntityID lightholder = registry.CreateEntity();
+	//EntityID lightholderTwo = registry.CreateEntity();
+	//EntityID lightholderThree = registry.CreateEntity();
+	//EntityID lightholderForth = registry.CreateEntity();
 
-	CreatePointLight(stage, 0.5f, 0.5f, 0.1f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, redLight, 0.0f, 0.0f, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, redLight, 0.0f, 0.0f, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, redLight, 0.0f, 0.0f, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, redLight, 0.0f, 0.0f, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	////EntityID part = registry.CreateEntity();
+	//registry.AddComponent<ParticleComponent>(lightholder, 10, 20, 6, 117, 14, -148, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent tComp;
+	//tComp.positionX = 1;
+	//tComp.positionY = 1;
+	//tComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholder, tComp);
 
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, ImpIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.04f, ImpIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

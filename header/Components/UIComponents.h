@@ -24,6 +24,9 @@
 #include "UIComponents/UIPlayerSoulsComponent.h"
 #include "UIComponents/UIPlayerRelicsComponent.h"
 
+//Settings
+#include "UIComponents/UISettingsSliderComponent.h"
+
 //Pause Components
 #include "UIComponents/UIPauseRelicTextComponent.h"
 #include "UIComponents/UIPauseButtonComponent.h"

@@ -33,6 +33,15 @@ void ContinueAnimation(EntityID& entity, const int& index)
 		blendAnim->anim1.aAnimTimeFactor = 1.0f;
 		blendAnim->anim2.aAnimTimeFactor = 1.0f;
 	}
+
+	uint32_t condition = GetTimedEventCondition(entity, index);
+	if (condition == EnemyType::lucifer)
+	{
+		//Play Sound Effect (Added by Joaquin)
+		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
+		if (sfx) sfx->Play(Boss_Attack, Channel_Base);
+	}
+	
 }
 
 void ResetAnimation(EntityID& entity, const int& index)

@@ -18,11 +18,15 @@ class ShadowSystem : public System
 {
 	bool Update();
 };
-class GlowSystem : public System	// NOTE: Might need a separate blur system for future readability.
+class GlowSystem : public System
 {
 	bool Update();
 };
-class GlowApplySystem : public System
+class AntiAliasingSystem : public System	// DOING
+{
+	bool Update();
+};
+class ShatterSystem : public System
 {
 	bool Update();
 };
@@ -79,7 +83,11 @@ class UIShopSystem : public System
 {
 	bool Update();
 };
-class UIRunTime : public System
+class UIRunTimeSystem : public System
+{
+	bool Update();
+};
+class UISliderSystem : public System
 {
 	bool Update();
 };
@@ -175,6 +183,11 @@ class StateSwitcherSystem : public System
 };
 
 class ProjectileSystem : public System
+{
+	bool Update();
+};
+
+class NavigationSystem : public System
 {
 	bool Update();
 };

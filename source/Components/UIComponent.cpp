@@ -47,7 +47,11 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 
 void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, IDWriteTextFormat*& textFormat)
 {
-
+	if (textFormat != nullptr)
+	{
+		textFormat->Release();
+		textFormat = nullptr;
+	}
 	ui.GetWriteFactory()->CreateTextFormat(L"Arial", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &textFormat);
 
 	textFormat->SetTextAlignment(textAlignment);
@@ -62,14 +66,6 @@ void SetBounds(D2D1_RECT_F& d2d1Bounds, DSBOUNDS bounds)
 	d2d1Bounds.right = bounds.right;
 	d2d1Bounds.bottom = bounds.bottom;
 }
-
-void UpdateTransform(D2D1::Matrix3x2F& transform, DSFLOAT2 position, float rotation)
-{
-	transform = D2D1::Matrix3x2F::Scale(1.0f, 1.0f)
-		* D2D1::Matrix3x2F::Translation(position.x, position.y)
-		* D2D1::Matrix3x2F::Rotation(rotation, { sdl.WIDTH / 2.0f, sdl.HEIGHT / 2.0f });
-}
-
 
 void UIBase::Setup(DSFLOAT2 position, DSFLOAT2 scale, float rotation, bool visibility, float opacity)
 {
@@ -91,7 +87,16 @@ void UIBase::SetPosition(DSFLOAT2 position)
 {
 	DSFLOAT2 pixelCoords = { (position.x + 1.0f) * 0.5f * sdl.BASE_WIDTH, (1.0f - position.y) * 0.5f * sdl.BASE_HEIGHT };
 
+	m_PositionBounds = 
+	{ 
+		((pixelCoords.x - m_CurrentBounds.right) / (0.5f * sdl.BASE_WIDTH)) - 1.0f ,
+		-1 * (((pixelCoords.y - m_CurrentBounds.bottom) - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)),
+		((pixelCoords.x + m_CurrentBounds.right) / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
+		-1 * (((pixelCoords.y + m_CurrentBounds.bottom) - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT))
+	};
+
 	m_PixelCoords = { pixelCoords.x - (m_CurrentBounds.right / 2.0f) , pixelCoords.y - (m_CurrentBounds.bottom / 2.0f) };
+	
 	m_Position = position;
 
 	UpdateTransform();
@@ -149,6 +154,11 @@ DSBOUNDS UIBase::GetOriginalBounds() const
 	return m_OriginalBounds;
 }
 
+DSBOUNDS UIBase::GetPositionBounds() const
+{
+	return m_PositionBounds;
+}
+
 float UIBase::GetRotation() const
 {
 	return m_Rotation;
@@ -168,7 +178,7 @@ void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_T
 {
 	if (text != "")
 	{
-		m_Text = _strdup(text);
+		m_Text = text;
 		m_fontSize = fontSize;
 		m_textAlignment = textAlignment;
 		m_paragraphAlignment = paragraphAlignment;

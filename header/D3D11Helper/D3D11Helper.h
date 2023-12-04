@@ -61,7 +61,8 @@ enum LAYOUT_DESC
 	DEFAULT,
 	SKELETAL,
 	SCREEN,
-	PARTICLE
+	PARTICLE,
+	VFX
 };
 
 enum TOPOLOGY
@@ -222,8 +223,16 @@ void ReleaseRTV(const RTV_IDX idx);
 
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
+// Overload for skyplane
+DSS_IDX CreateDepthStencilState();
 // Set a render target view and depth stencil view
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_ds);
+bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv);
+// Set depth stencil
+bool SetStencil(const DSS_IDX dss_idx);
+void UnsetStencil();
+
+
 // Set render target view and depth stencil view to NULL
 void UnsetRenderTargetViewAndDepthStencil();
 // Release for a single depth stencil view
@@ -284,6 +293,12 @@ bool SetRasterizerState(const RS_IDX idx);
 void UnsetRasterizerState();
 // Release for a single rasterizer state
 void ReleaseRS(const RS_IDX idx);
+
+// Creates a blend state, currently hardcoded as SkyPlane is the only model thats uses a blend state
+BS_IDX CreateBlendState();
+bool SetBlendState(const BS_IDX idx);
+void UnsetBlendState();
+
 
 void SetTopology(TOPOLOGY topology);
 

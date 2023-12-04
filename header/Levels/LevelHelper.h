@@ -13,6 +13,7 @@ struct StageSetupVariables
 	float offsetX = .0f, offsetY = .0f, offsetZ = .0f;
 };
 
+
 struct ModelTextRead
 {
 	EnemyType eType;
@@ -31,7 +32,7 @@ struct VFXTextRead // this is for torches
 
 bool SetupAllEnemies(std::string filePath);
 
-bool SetupVFXTorches(std::string filePath);
+bool SetupVFXTorches(std::string filePath, bool level8, bool level9);
 
 EntityID SetUpStage(StageSetupVariables& stageVars);
 
@@ -55,3 +56,7 @@ void ReloadPlayerNonGlobals();
 EntityID RandomPlayerEnemy(EnemyType enemyType);
 
 void SetScoreboardUI(EntityID stage);
+
+
+
+void SetupEnemyNavigationHelper(bool level8);

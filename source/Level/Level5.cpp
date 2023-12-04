@@ -15,11 +15,17 @@
 
 void LoadLevel5()
 {
+	//float redAdd = 0.0f;
+	//float greenAdd = 0.1f;
+	//float blueAdd = 0.0f;
+	//float redMult = 1.0f;
+	//float greenMult = 1.1f;
+	//float blueMult = 1.0f;
 	float redAdd = 0.0f;
-	float greenAdd = 0.1f;
+	float greenAdd = 0.0f;
 	float blueAdd = 0.0f;
 	float redMult = 1.0f;
-	float greenMult = 1.1f;
+	float greenMult = 1.0f;
 	float blueMult = 1.0f;
 
 	StageSetupVariables stageVars;
@@ -31,14 +37,15 @@ void LoadLevel5()
 	stageVars.bm = blueMult;
 	stageVars.stageNr = 5;
 	EntityID stage = SetUpStage(stageVars);
+	ProximityHitboxComponent* phc = registry.AddComponent<ProximityHitboxComponent>(stage);
+	phc->Load("level5"); //Proximity hitbox (Added by Joaquin)
+
+
+	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
+
 
 	EntityID mouse = registry.CreateEntity();
 
-	//StageLights
-	EntityID lightholder = registry.CreateEntity();
-	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
 
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	if (SetupAllEnemies("LV5Enemies.dss") == false)
@@ -60,7 +67,11 @@ void LoadLevel5()
 	//SetupEnemy(EnemyType::eye, -50.f, 1.f, 25.f, 1);
 	//SetupEnemy(EnemyType::eye, -40.f, 1.f, 25.f, 1);
 	//
-
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::eye, 65.f, 1.f, 135.f, 0);
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.cutsceneEnemy);
+	transform->facingZ = -1.0f;
+	transform->facingX = -0.5f;
+	NormalizeFacing(transform);
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	/*registry.AddComponent<ModelSkeletonComponent>(player, LoadModel("PlayerPlaceholder.mdl"));
@@ -87,59 +98,99 @@ void LoadLevel5()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	float redLight = 0.2f;
-	float greenLight = 0.05f;
-	float blueLight = 0.05f;
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
+	
+	CreatePointLight(lightholder, 0.6f, 0.f, 0.0f, 82.0f, 10.0f, 185.0f, 600.0f, 20.0f);
+	//CreatePointLight(lightholderTwo, 0.6f, 0.f, 0.0f, -190.0f, 15.0f, -70.0f, 600.0f, 20.0f);
+	//CreatePointLight(lightholderThree, 0.6f, 0.f, 0.0f, 80.0f, 15.0f, -22.0f, 600.0f, 20.0f);
+	//CreatePointLight(lightholderForth, 0.6f, 0.f, 0.0f, -63.0f, 15.0f, 150.0f, 600.0f, 20.0f);
+
+	//registry.AddComponent<ParticleComponent>(lightholder, 10, 0, 5.5, -169.5, 0.0, -222.0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent tComp;
+	//tComp.positionX = 1;
+	//tComp.positionY = 1;
+	//tComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholder, tComp);
+
+	//registry.AddComponent<ParticleComponent>(lightholderTwo, 10, 0, 5, -90, 1, -24, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent ttComp;
+	//ttComp.positionX = 1;
+	//ttComp.positionY = 1;
+	//ttComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholderTwo, ttComp);
+
+	//registry.AddComponent<ParticleComponent>(lightholderThree, 10, 0, 5.5, -60, -6, 29, 10, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent tttComp;
+	//tttComp.positionX = 1;
+	//tttComp.positionY = 1;
+	//tttComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholderThree, tttComp);
+
+	//registry.AddComponent<ParticleComponent>(lightholderForth, 10, 0, 5, 181, -1, 47, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//TransformComponent fComp;
+	//fComp.positionX = 1;
+	//fComp.positionY = 1;
+	//fComp.positionZ = 1;
+	//registry.AddComponent<TransformComponent>(lightholderForth, fComp);
 
 
-	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	//float redLight = 0.2f;
+	//float greenLight = 0.05f;
+	//float blueLight = 0.05f;
+
+
+	//CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
+	//CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
+	//CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	//Add static hazards on the where player does not spawn
-	const int nrHazards = 8;
-	for (size_t i = 0; i < nrHazards; i++)
-	{
-		SetUpHazard(HAZARD_ACID, 1.f, 0.f, 0.5f, 0.f, 0.2f, 1.2f, 0.2f, 1.5f);
-		/*bool succeded = false;
-		while (!succeded)
-		{
-			float randX = (float)(rand() % 100) - 50.0f;
-			float randZ = (float)(rand() % 100) - 50.0f;
-			if (randX * randX + randZ * randZ > 80)
-			{
-				float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
-				float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
-				EntityID hazard = registry.CreateEntity();
-				ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
-				hazardModel->shared.colorAdditiveRed = 0.0f;
-				hazardModel->shared.colorAdditiveGreen = 0.5f;
-				hazardModel->shared.colorAdditiveBlue = 0.0f;
-				hazardModel->shared.colorMultiplicativeRed = 0.2f;
-				hazardModel->shared.colorMultiplicativeGreen = 1.2f;
-				hazardModel->shared.colorMultiplicativeBlue = 0.2f;
-				hazardModel->shared.gammaCorrection = 1.5f;
-				hazardModel->castShadow = false;
-				TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
-				hazardTransform->positionX = randX;
-				hazardTransform->positionY = 0.5f;
-				hazardTransform->positionZ = randZ;
-				hazardTransform->scaleX = randScaleX;
-				hazardTransform->scaleY = 1.0f;
-				hazardTransform->scaleZ = randScaleZ;
-				hazardTransform->facingX = cosf((float)rand());
-				hazardTransform->facingZ = sinf((float)rand());
-				AddStaticHazard(hazard, HAZARD_ACID);
+	//////const int nrHazards = 8;
+	//////for (size_t i = 0; i < nrHazards; i++)
+	//////{
+	//////	SetUpHazard(HAZARD_ACID, 1.f, 0.f, 0.5f, 0.f, 0.2f, 1.2f, 0.2f, 1.5f);
+	//////	/*bool succeded = false;
+	//////	while (!succeded)
+	//////	{
+	//////		float randX = (float)(rand() % 100) - 50.0f;
+	//////		float randZ = (float)(rand() % 100) - 50.0f;
+	//////		if (randX * randX + randZ * randZ > 80)
+	//////		{
+	//////			float randScaleX = 5.0f + (float)((rand() % 100) * 0.1f);
+	//////			float randScaleZ = 5.0f + (float)((rand() % 100) * 0.1f);
+	//////			EntityID hazard = registry.CreateEntity();
+	//////			ModelBonelessComponent* hazardModel = registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LavaPlaceholder.mdl"));
+	//////			hazardModel->shared.colorAdditiveRed = 0.0f;
+	//////			hazardModel->shared.colorAdditiveGreen = 0.5f;
+	//////			hazardModel->shared.colorAdditiveBlue = 0.0f;
+	//////			hazardModel->shared.colorMultiplicativeRed = 0.2f;
+	//////			hazardModel->shared.colorMultiplicativeGreen = 1.2f;
+	//////			hazardModel->shared.colorMultiplicativeBlue = 0.2f;
+	//////			hazardModel->shared.gammaCorrection = 1.5f;
+	//////			hazardModel->castShadow = false;
+	//////			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
+	//////			hazardTransform->positionX = randX;
+	//////			hazardTransform->positionY = 0.5f;
+	//////			hazardTransform->positionZ = randZ;
+	//////			hazardTransform->scaleX = randScaleX;
+	//////			hazardTransform->scaleY = 1.0f;
+	//////			hazardTransform->scaleZ = randScaleZ;
+	//////			hazardTransform->facingX = cosf((float)rand());
+	//////			hazardTransform->facingZ = sinf((float)rand());
+	//////			AddStaticHazard(hazard, HAZARD_ACID);
 
-				succeded = true;
-			}
-		}*/
-	}
+	//////			succeded = true;
+	//////		}
+	//////	}*/
+	//////}
 
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	//AddTimedEventComponentStart(cutsceneEnemy, 0.85f + 0.3f + 0.1f, Stage1IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, EyeIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }

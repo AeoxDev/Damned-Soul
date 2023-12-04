@@ -12,10 +12,11 @@ RTV_IDX Glow::glow_rtv;
 PS_IDX Glow::glow_shader;
 DSV_IDX Glow::glow_depth;
 CS_IDX Glow::blur_shader;
-UAV_IDX Glow::blur_uav1;
-UAV_IDX Glow::blur_uav2;
+SRV_IDX Glow::blur_srv;
 CB_IDX Glow::glow_buffer;
+CB_IDX Glow::blur_buffer;
 PoolPointer<Glow::GlowData> Glow::glow_bufData;
+Glow::BlurData Glow::blur_bufData;
 
 void Glow::Initialize()
 {
@@ -25,12 +26,9 @@ void Glow::Initialize()
 	glow_shader = LoadPixelShader("GlowShader.cso");
 	glow_depth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 	glow_buffer = CreateConstantBuffer(sizeof(GlowData));
-	
-
+	blur_buffer = CreateConstantBuffer(sizeof(BlurData));
 	// Compute
 	blur_shader = LoadComputeShader("BlurShader.cso");
-	blur_uav1 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
-	blur_uav2 = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 	backbuffer_uav = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, renderStates[backBufferRenderSlot].renderTargetView);
 }
 
@@ -44,18 +42,15 @@ void Glow::FinishGlowPass()
 {
 	UnsetPixelShader();
 	UnsetRenderTargetViewAndDepthStencil();
-	CopySRVToUAV(blur_uav2, glow_srv);
-	CopySRVToUAV(blur_uav1, glow_srv);
 	UnsetConstantBuffer(BIND_PIXEL, 2);
 }
 
 void Glow::SetBlurViews()
 {
-	SetUnorderedAcessView(blur_uav1, 0);
-	SetUnorderedAcessView(blur_uav2, 1);
-	SetUnorderedAcessView(backbuffer_uav, 2);
+	SetUnorderedAcessView(backbuffer_uav, 0);
 	SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_COMPUTE, 0);
-	SetShaderResourceView(Outlines::targetSRV, BIND_COMPUTE, 1);
+	SetShaderResourceView(glow_srv, BIND_COMPUTE, 1);
+	SetShaderResourceView(Outlines::targetSRV, BIND_COMPUTE, 2);
 }
 
 void Glow::UpdateGlowBuffer(float r, float g, float b)
@@ -70,6 +65,17 @@ void Glow::UpdateGlowBuffer(float r, float g, float b)
 	SetConstantBuffer(glow_buffer, BIND_PIXEL, 2);
 }
 
+void Glow::UpdateBlurBuffer()
+{
+	UnsetConstantBuffer(BIND_COMPUTE, 0);
+	
+	blur_bufData.windowWidth = sdl.BASE_WIDTH;
+	blur_bufData.windowHeight = sdl.BASE_HEIGHT;
+	UpdateConstantBuffer(blur_buffer, &blur_bufData);
+	
+	SetConstantBuffer(blur_buffer, BIND_COMPUTE, 0);
+}
+
 void Glow::PrepareBlurPass()
 {
 	SetComputeShader(blur_shader);
@@ -79,13 +85,12 @@ void Glow::PrepareBlurPass()
 void Glow::FinishBlurPass()
 {
 	UnsetUnorderedAcessView(0);
-	UnsetUnorderedAcessView(1);
-	UnsetUnorderedAcessView(2);
-	UnsetShaderResourceView(BIND_COMPUTE, 1);
 	SetDepthPassTextureCompute(false);
+	UnsetShaderResourceView(BIND_COMPUTE, 0);
+	UnsetShaderResourceView(BIND_COMPUTE, 1);
+	UnsetShaderResourceView(BIND_COMPUTE, 2);
+	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
-
-	CopyUAVToSRV(glow_srv, blur_uav1);
 }
 
 void Glow::ClearGlowRenderTarget()

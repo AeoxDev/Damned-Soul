@@ -32,17 +32,17 @@ bool FrozenBehaviourSystem::Update()
 				if (frozenComponent->type == EnemyType::frozenHellhound)
 				{
 					SetupEnemy(EnemyType::empoweredHellhound, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,
-						6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 0);
+						6969, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 				}
 				else if (frozenComponent->type == EnemyType::frozenImp)
 				{
 					SetupEnemy(EnemyType::empoweredImp, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,
-						6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 0);
+						6969, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 				}
 				else if (frozenComponent->type == EnemyType::frozenEye)
 				{
 					SetupEnemy(EnemyType::eye, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,
-						6969.f, 6969.f, 6969.f, 6969.f, 6969.f, 0);
+						6969, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 				}
 			}
 		}
@@ -50,6 +50,7 @@ bool FrozenBehaviourSystem::Update()
 		{
 			RemoveEnemy(enemyEntity, 1);
 		}
+
 	}
 
 	return true;

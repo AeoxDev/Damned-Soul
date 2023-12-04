@@ -11,6 +11,10 @@
 #include "Model.h"
 #include "RenderDepthPass.h"
 
+// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+#include "SkyPlane.h"
+#include "States/StateManager.h"
+
 enum RenderPass
 {
 	ShadowPass, DepthPass, LightPass, OutlinePass
@@ -20,6 +24,9 @@ void Render(RenderPass renderPass)
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
+		if (registry.GetComponent<SkyPlaneComponent>(entity) != nullptr)
+			continue;
+
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
 		if (renderPass  == ShadowPass && mc->castShadow == false)
@@ -49,7 +56,7 @@ void Render(RenderPass renderPass)
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 		LOADED_MODELS[mc->model].RenderAllSubmeshes();
 	}
-
+	
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, AnimationComponent>(registry))
 	{
@@ -118,6 +125,8 @@ void Render(RenderPass renderPass)
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->anim1.aAnim,  bac->anim1.aAnimIdx, bac->anim1.GetTimeValue(),bac->anim2.aAnim, bac->anim2.aAnimIdx, bac->anim2.GetTimeValue());
 	}
+
+
 }
 bool ShadowSystem::Update()
 {
@@ -133,8 +142,8 @@ bool ShadowSystem::Update()
 	DirectX::XMStoreFloat3(&cameraLookAt, cameraV);
 	Camera::ToggleProjection();
 	float dist = 128.0f;
-	Camera::SetPosition(cameraLookAt.x + -dir.x * dist, cameraLookAt.y + -dir.y * dist, cameraLookAt.z + -dir.z * dist + 16.0f, false);//Set this to center of stage offset upwards
-	Camera::SetLookAt(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z + 16.0f);//Set to center of stage
+	Camera::SetPosition(cameraLookAt.x + -dir.x * dist, -dir.y * dist, cameraLookAt.z + -dir.z * dist + 16.0f, false);//Set this to center of stage offset upwards
+	Camera::SetLookAt(cameraLookAt.x, 0.0f, cameraLookAt.z + 16.0f);//Set to center of stage
 	Camera::SetUp(0.0f, 1.0f, 0.0f);
 	Camera::SetWidth(700.0f * Camera::GetFOV());//Set width (x) of orthogonal based on stage
 	Camera::SetHeight(700.0f * Camera::GetFOV());//Set height (z) of orthogonal based on stage
@@ -168,6 +177,41 @@ bool ShadowSystem::Update()
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	return true;
 }
+
+// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+void RenderSkyPlane()
+{
+	
+	SetStencil(m_skyPlaneStencil);
+
+	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
+
+
+	TransformComponent* tc = registry.GetComponent<TransformComponent>(m_basePlane);
+	ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(m_basePlane);
+
+
+	int* level = (int*)MemLib::spush(sizeof(int));
+	*level = stateManager.activeLevel;
+
+	UpdateConstantBuffer(m_skyConst, (void*)level);
+
+	MemLib::spop();
+
+	SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
+
+	SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+	SetVertexShader(m_skyVS);
+	SetPixelShader(m_skyPS);
+
+	LOADED_MODELS[mc->model].RenderAllSubmeshes();
+
+	UnsetConstantBuffer(BIND_VERTEX, 3);
+	UnsetStencil();
+}
+
 bool RenderSystem::Update()
 {
 	for (auto entity : View<TransformComponent, LightComponent>(registry))
@@ -187,11 +231,15 @@ bool RenderSystem::Update()
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
 	Render(DepthPass);
 	ClearBackBuffer();
+
+	
+	// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+	RenderSkyPlane();
+
 	// Render UI
 	RenderUI();
-	
-	//Render Lightpass
 
+	//Render Lightpass
 	//Set shaders here.
 	PrepareBackBuffer();
 	//If light needs to update, update it.
@@ -207,6 +255,9 @@ bool RenderSystem::Update()
 	Render(LightPass);
 	// Unset geometry shader
 	UnsetGeometryShader();
+
+
+
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
 	UnsetShadowmap(false);
@@ -273,6 +324,7 @@ bool RenderSystem::Update()
 bool OutlineSystem::Update()
 {
 	//Outlines::SwapTargets();
+
 
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetTopology(TOPOLOGY::TRIANGLELIST);

@@ -11,7 +11,8 @@
 #include <random>
 #include <iostream>
 
-#define OBSTACLE_RANGE 5
+//Obstacle range is based on grid dimensions so that changing the grid does not impact the behaviour
+#define OBSTACLE_RANGE (3 * (GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE/128))
 
 void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, ObstacleMap* valueGrid)
 {
@@ -124,34 +125,74 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 
 
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
-		
+
 		ec->aimTimer += GetDeltaTime();
 		ec->attackTimer += GetDeltaTime();
 		return true;
 	}
 	else // yes, we can indeed attack. 
 	{
+		if (enemyAnim->aAnim != ANIMATION_ATTACK || (enemyAnim->aAnim == ANIMATION_ATTACK && enemyAnim->aAnimIdx != 1))
+		{
+			enemyAnim->aAnim = ANIMATION_ATTACK;
+			enemyAnim->aAnimIdx = 1;
+			enemyAnim->aAnimTime = 0.0f;
+		}
+
 		ec->attackTimer = 0;
 		ec->aimTimer = 0;
-		ec->specialCounter++; //increase the special counter for special attack
 		ec->attackStunTimer = 0;
-		ec->shooting = false;
-
-		enemyAnim->aAnim = ANIMATION_IDLE;
-		enemyAnim->aAnimIdx = 1;
-		enemyAnim->aAnimTime = 0.0f;
-		enemyAnim->aAnimTimeFactor = 1.0f;
+		ec->specialCounter++; //increase the special counter for special attack
 
 		//set direction for attack
-		float dx = ptc->positionX - etc->positionX;
-		float dz = ptc->positionZ - etc->positionZ;
-		
+		float dx = (ptc->positionX - etc->positionX);
+		float dz = (ptc->positionZ - etc->positionZ);
+
+		float distanceFromPlayer = sqrt(dx * dx + dz * dz);
+		float rangePercentage = 1 - (distanceFromPlayer / (ec->range / 1.5f));
+
+		//how much the player moved since last frame
+		float playerMovementX = ptc->positionX - ptc->lastPositionX;
+		float playerMovementZ = ptc->positionZ - ptc->lastPositionZ;
+
+		//limit player movement in case of dash
+		if (playerMovementX > 0.03f)
+			playerMovementX = 0.03f;
+
+		if (playerMovementZ > 0.03f)
+			playerMovementZ = 0.03f;
+
+		//		C	  = sqrt(A^2 + B^2)	
+		float newDirX = sqrt(playerMovementX * playerMovementX + dx * dx);
+		float newDirZ = sqrt(playerMovementZ * playerMovementZ + dz * dz);
+
+		//calculate final direction based on how much the player moved plus the player movespeed
+		float offsetX = newDirX * playerMovementX * playerStats->GetSpeed() * rangePercentage;
+		float offsetZ = newDirZ * playerMovementZ * playerStats->GetSpeed() * rangePercentage;
+
+		float offsetMag = sqrt(offsetX * offsetX + offsetZ * offsetZ);
+		float baseMag = sqrt(dx * dx + dz * dz);
+
+		if (offsetMag > baseMag)
+		{
+			offsetX *= 0.5f;
+			offsetZ *= 0.5f;
+		}
+
+		dx += offsetX;
+		dz += offsetZ;
+
+		//normalize finial direction
 		Normalize(dx, dz);
 
+		ec->goalDirectionX = dx;
+		ec->goalDirectionZ = dz;
+
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 		CreateProjectile(entity, dx, dz, eye);
 
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
-		if(sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
+		if (sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
 
 		return true;
 	}
@@ -225,6 +266,7 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	//adjust facing based on obstacle avoidance
 	eyeComponent->goalDirectionX += eyeComponent->correcitonDirX;
 	eyeComponent->goalDirectionZ += eyeComponent->correcitonDirZ;
+	Normalize(eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 5.0f);
 
@@ -348,7 +390,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 		//create new points, left or right in the grid based on direction
 		p1.x += 1;
 		p2.x -= 1;
-		p3.z += direction.z;
+		p3.z += (int)direction.z;
 		
 		
 	}
@@ -357,7 +399,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 		//create new points, up or down in the grid based on direction
 		p1.z += 1;
 		p2.z -= 1;
-		p3.x += direction.x;
+		p3.x += (int)direction.x;
 	}
 
 	bool addP1 = true;
@@ -371,6 +413,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 		addP2 = false;
 	if (sqrt((p3.x - startPos.x) * (p3.x - startPos.x) + (p3.z - startPos.z) * (p3.z - startPos.z)) > OBSTACLE_RANGE)
 		addP3 = false;
+
 
 	//are they in the closedlist?
 	for (unsigned int i = 0; i < closedList.size(); ++i)
@@ -418,6 +461,7 @@ void GetNeighbours(GridPosition currentPos, GridPosition startPos, ML_Vector<Gri
 
 void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* valueGrid)
 {
+	ec->avoidanceTimer = 0.0f;
 	ec->correcitonDirX = 0.0f;
 	ec->correcitonDirZ = 0.0f;
 	
@@ -433,7 +477,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 	if (eyeMovementX == 0 && eyeMovementZ == 0)
 		return;
 
-	GeometryIndependentComponent* GIcomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
+	GeometryIndependentComponent* Gecomponent = registry.GetComponent<GeometryIndependentComponent>(stateManager.stage);
 
 	float dirX = eyeMovementX;
 	float dirZ = eyeMovementZ;
@@ -466,7 +510,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 		}
 	}
 
-	GridPosition startPos = PositionOnGrid(GIcomponent, etc, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+	GridPosition startPos = PositionOnGrid(Gecomponent, etc, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
 	
 	ML_Vector<GridPosition> openList;
 	ML_Vector<GridPosition> closedList;
@@ -475,10 +519,9 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 
 	GetNeighbours(startPos, startPos, openList, closedList, direction);
 
-	Coordinate2D finalDirection = { 0.0f ,0.0f };
+	Coordinate2D finalDirection = { 0.0f, 0.0f };
 	while (openList.size() > 0)
 	{
-		//are you wall?
 		GridPosition currentTile = openList[0];
 		openList.erase(0);
 
@@ -488,7 +531,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 		{
 			//apply force
 
-			Coordinate2D tileWorldPos = GridOnPosition(currentTile, GIcomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
+			Coordinate2D tileWorldPos = GridOnPosition(currentTile, Gecomponent, GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE);
 			float pushbackX = etc->positionX - tileWorldPos.x;
 			float pushbackZ = etc->positionZ - tileWorldPos.z;
 			
@@ -496,7 +539,7 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 
 			float multiplier = (float)(1 - pow(distance / OBSTACLE_RANGE, 2));
 
-			if (cost < 10000) //if tile is an enemy
+  			if (cost < 10000) //if tile is an enemy
 				multiplier *= 0.5f;
 
 			finalDirection.x += pushbackX * multiplier;
@@ -507,14 +550,14 @@ void ObstacleAvoidance(EyeBehaviour* ec, TransformComponent* etc, ObstacleMap* v
 			GetNeighbours(currentTile, startPos, openList, closedList, direction);
 		}
 	}
-	Normalize(finalDirection.x, finalDirection.z);
+	//Normalize(finalDirection.x, finalDirection.z);
 
 	ec->correcitonDirX = finalDirection.x;
   	ec->correcitonDirZ = finalDirection.z;
 
-	if (finalDirection.x > 0.0)
+	if (finalDirection.x > 0.0f || (finalDirection.x == 0.0f && finalDirection.z < 0.0f))
 		ec->clockwiseCircle = true;
-	else if(finalDirection.x < 0.0)
+	else if (finalDirection.x < 0.0f || (finalDirection.x == 0.0f && finalDirection.z > 0.0f))
 		ec->clockwiseCircle = false;
 }
 
@@ -590,6 +633,7 @@ bool EyeBehaviourSystem::Update()
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 			
 			//distance = 10000;
+			enemyAnim->aAnimTimeFactor = 1.0f;// Mattias: time factor is set to 0 somewhere have no clue :S
 
 			if (eyeComponent->attackStunTimer <= eyeComponent->attackStunDuration)
 			{
@@ -633,7 +677,7 @@ bool EyeBehaviourSystem::Update()
 				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
 			
-			if (!eyeComponent->charging)
+			if (!eyeComponent->charging || eyeComponent->avoidanceTimer < eyeComponent->avoidanceDuration)
 			{
 				if (hasUpdatedMap == false)
 				{
@@ -651,6 +695,7 @@ bool EyeBehaviourSystem::Update()
 		}
 
 		eyeComponent->attackStunTimer += GetDeltaTime();
+		eyeComponent->avoidanceTimer += GetDeltaTime();
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 		ANIM_BRANCHLESS(enemyAnim);
 		TransformDecelerate(enemyEntity);
