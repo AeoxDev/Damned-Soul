@@ -1185,7 +1185,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->scaleZ = scaleZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
-	registry.AddComponent<PlayerComponent>(stateManager.player);
+	PlayerComponent* pc = registry.AddComponent<PlayerComponent>(stateManager.player);
+	pc->UpdateSouls(soulWorth);
 
 	registry.AddComponent<ControllerComponent>(stateManager.player);
 	PointOfInterestComponent poic;

@@ -25,7 +25,7 @@ void LoadEyeChallenge()
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
-	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
+	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 20.0f, 10.0f, 1.0f, 0);
 	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	EntityID cutsceneEnemy = SetupEnemy(EnemyType::eye, -45.f, 0.f, -20.f);
 	SetupEnemy(EnemyType::eye, 40.f, 0.f, -35.f);

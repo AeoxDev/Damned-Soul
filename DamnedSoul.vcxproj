@@ -634,6 +634,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\UIComponents\UIGameHealthComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIShopPlayerStatsComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIShopRelicComponent.h" />
     <ClInclude Include="header\DebugTests.h" />
     <ClInclude Include="header\EnemyType.h" />
