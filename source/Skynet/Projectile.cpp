@@ -24,6 +24,11 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 	transform.positionX = origin->positionX;
 	transform.positionY = 5.0f;
 	transform.positionZ = origin->positionZ;
+	
+//	if(type == imp)
+//		transform.positionY = 5.0f;
+//	else
+//		transform.positionY = 1.0f;
 
 	//Scale
 	float scaleFactor = 6.0f;
@@ -56,7 +61,7 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 	stats->hazardModifier = 0.0f;
 
 	//Setup Bullet hitbox
-	SetupProjectileCollisionBox(bullet, 1.0f);
+	SetupProjectileCollisionBox(bullet, 1.2f);
 	if (type == eye)
 	{
 		//VFX of the bullet
@@ -74,6 +79,7 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 	}
 	else
 	{
+
 		//VFX of the bullet
 		
 		registry.AddComponent<ParticleComponent>(bullet, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::FIREBALL);

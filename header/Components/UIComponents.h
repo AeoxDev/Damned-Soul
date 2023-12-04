@@ -19,6 +19,7 @@
 #include "UIComponents/UIShopImpComponents.h"
 #include "UIComponents/UIShopButtonComponents.h"
 #include "UIComponents/UIShopRelicComponent.h"
+#include "UIComponents/UIShopPlayerStatsComponent.h"
 
 //Player Components
 #include "UIComponents/UIPlayerSoulsComponent.h"

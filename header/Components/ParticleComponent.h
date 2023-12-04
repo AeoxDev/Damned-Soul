@@ -47,6 +47,7 @@ struct ParticleComponent
 	// The mesh VFX
 	uint64_t model;
 	float meshOffset[3];
+	float VFXTimeAlive;
 	
 
 	// -- Functions defined in Particles.cpp --//

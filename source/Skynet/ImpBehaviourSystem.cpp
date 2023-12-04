@@ -103,6 +103,7 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	{
 		if (ic->aimTimer == 0.0f) //Play the charging attack sound
 		{
+			ic->shooting = true;
 			AddTimedEventComponentStartContinous(entity, 0.0f, nullptr, ic->aimDuration - 0.2f, EnemyAttackFlash);
 			SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 			if (sfx != nullptr) sfx->Play(Imp_AttackCharge, Channel_Base);
@@ -119,7 +120,6 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 	}
 	else // yes, we can indeed attack. 
 	{
-		
 		enemyAnim->aAnim = ANIMATION_ATTACK;
 		enemyAnim->aAnimIdx = 0;
 		enemyAnim->aAnimTime = 0.4f;
@@ -174,7 +174,7 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		ic->goalDirectionX = dx;
 		ic->goalDirectionZ = dz;
 
-		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 30.f);
+		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 40.f);
 	
 		if (enemyStats->GetDamage() < 20.f) //normal imp
 		{
@@ -189,6 +189,12 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Play(Imp_AttackThrow, Channel_Base);
 
+		ic->attackTimer = 0;
+		ic->aimTimer = 0;
+		ic->attackStunTimer = 0;
+		ic->specialCounter++; //increase the special counter for special attack
+		ic->shooting = false;
+
 		return true;
 	}
 }
@@ -202,7 +208,6 @@ void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transform
 	//enemyAnim->aAnimTime = 0.0f;
 	
 
-	ic->idleCounter += GetDeltaTime();
 	if (ic->idleCounter >= ic->idleTimer)
 	{
 		ic->idleCounter = 0.0f;
@@ -215,6 +220,7 @@ void IdleBehaviour(EntityID& entity, PlayerComponent* playerComponent, Transform
 
 		RepositionBehaviour(entity, ic, itc, itc, valueGrid);
 	}
+	ic->idleCounter += GetDeltaTime();
 }
 
 bool ImpBehaviourSystem::Update()
@@ -236,7 +242,6 @@ bool ImpBehaviourSystem::Update()
 	//Find available entity
 	for (auto enemyEntity : View<ImpBehaviour, TransformComponent, HitboxComponent, EnemyComponent>(registry))
 	{
-
 		SetLightColor(enemyEntity, 0.3f, 0.3f, 0.3f);
 		impComponent = registry.GetComponent<ImpBehaviour>(enemyEntity);
 		impTransformComponent = registry.GetComponent<TransformComponent>(enemyEntity);
@@ -290,6 +295,20 @@ bool ImpBehaviourSystem::Update()
 		if (enemyStats->GetHealth() > 0 && impComponent != nullptr && playerTransformCompenent != nullptr && enemyHitbox != nullptr && enemComp != nullptr)// check if enemy is alive
 		{
 			float distance = Calculate2dDistance(impTransformComponent->positionX, impTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
+			
+			if (impComponent->updateIdleTimer == false)
+			{
+				impComponent->updateIdleTimer = true;
+
+				//Calculate a new IdleTimer, so that all imps dont teleport at the same time
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				// Define a uniform distribution for the range [4.0, 8.0]
+				std::uniform_real_distribution<float> distribution(4.0f, 8.0f);
+				impComponent->idleTimer = (int)distribution(gen);
+			}
+
+			//enemyAnim->aAnimTimeFactor = 1.0f;// Mattias: time factor is set to 0 somewhere have no clue :S
 
 			if (impComponent->attackStunTimer <= impComponent->attackStunDuration)
 			{
@@ -298,10 +317,8 @@ bool ImpBehaviourSystem::Update()
 					enemyAnim->aAnim = ANIMATION_IDLE;
 					enemyAnim->aAnimIdx = 0;
 				}
-
-				
 			}
-			else if (distance < 15.0f && !impComponent->charging) // try to retreat to a safe distance if not charging
+			else if (distance < 15.0f && !impComponent->charging && !impComponent->shooting) // try to retreat to a safe distance if not charging
 			{
 				RetreatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
 			}
@@ -316,7 +333,7 @@ bool ImpBehaviourSystem::Update()
 
 				RepositionBehaviour(enemyEntity, impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
 			}
-			else if (distance <= impComponent->maxAttackRange) // circle player & attack when possible (WIP)
+			else if (impComponent->shooting || distance <= impComponent->maxAttackRange)
 			{
 				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, playerStats, enemyAnim))
 					IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, impComponent, impTransformComponent, enemyStats, enemyAnim, valueGrid, hasUpdatedMap);
