@@ -15,6 +15,8 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 {
 
 	SetWindowTitle((title + extra).c_str());
+
+#ifdef _DEBUG
 	//Get player transform
 	TransformComponent* transform = nullptr;
 	if (stateManager.player.index != -1)
@@ -31,6 +33,7 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 		}
 		SetWindowTitle((title + extra).c_str());
 	}
+#endif
 }
 
 #ifdef GAME_TEST
