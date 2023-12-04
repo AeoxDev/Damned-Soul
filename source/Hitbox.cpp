@@ -1006,15 +1006,15 @@ void RenderGeometryIndependentCollision(EntityID& stageFloor, EntityID& gate, En
 {
 	AddGeometryIndependentComponent(stageFloor);
 	GeometryIndependentColliderComponent* GeoIndie = registry.GetComponent<GeometryIndependentColliderComponent>(stageFloor);
-	while (true)//Debugging GI
-	{
-		//char ctexture[] = "2-1C.png";
-		//char ltexture[] = "2-1L.png";
-		//char emptyTexture[] = "";
-		//AddStaticHazardTexture(m, ctexture, ltexture, emptyTexture);
-		RenderGeometryIndependentCollisionToTexture(stageFloor, gate, hitbox);
-		Present();
-	}
+	//while (true)//Debugging GI
+	//{
+	//	//char ctexture[] = "2-1C.png";
+	//	//char ltexture[] = "2-1L.png";
+	//	//char emptyTexture[] = "";
+	//	//AddStaticHazardTexture(m, ctexture, ltexture, emptyTexture);
+	//	RenderGeometryIndependentCollisionToTexture(stageFloor, gate, hitbox);
+	//	Present();
+	//}
 
 	RenderGeometryIndependentCollisionToTexture(stageFloor, gate, hitbox);
 	ReleaseGI(stageFloor);
