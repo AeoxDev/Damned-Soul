@@ -583,6 +583,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 				health += partHealth;
 			if (zacIndex4)
 				health += partHealth;
+		
+
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -956,7 +958,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	else if (eType == EnemyType::tempBoss)
 	{
 		stat->hazardModifier = 0.0f;
-		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Splitboss.mdl"));
+		mod->shared.hasOutline = true;
 		registry.AddComponent<AnimationComponent>(entity);
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
@@ -1199,6 +1202,12 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+
+	// ## ALEX CODE ##
+	//ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(stateManager.player, 5.0f, 50.0f, 5.5f, 0.0f, 10.0f, 0.0f, 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
+	// ## EO ALEX CODE ##
+
+
 
 	// UI
 	SetUpAdvancedHealthBar(stateManager.player);

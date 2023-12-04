@@ -252,7 +252,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
 	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
 	//Render texture to RTV
-	LOADED_MODELS[model->model].RenderAllSubmeshes();
+	EntityID trash;
+	LOADED_MODELS[model->model].RenderAllSubmeshes(trash);
 
 	ClearDepthStencilView(GIcomponent->depthStencil);
 	//Render all existing static hazards on to the submesh.
@@ -269,7 +270,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 		SetIndexBuffer(LOADED_MODELS[hazardModel->model].m_indexBuffer);
 		GIcomponent->shaderData.idValue = (float)hazardComponent->type;
 		UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
-		LOADED_MODELS[hazardModel->model].RenderAllSubmeshes();
+		LOADED_MODELS[hazardModel->model].RenderAllSubmeshes(entity);
 	}
 
 	ClearDepthStencilView(GIcomponent->depthStencil);
@@ -285,7 +286,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
 			SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
 			//Render texture to RTV
-			LOADED_MODELS[model->model].RenderAllSubmeshes();
+			EntityID trash;
+			LOADED_MODELS[model->model].RenderAllSubmeshes(trash);
 		}
 		
 	}
@@ -302,7 +304,8 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 			SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
 			SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
 			//Render texture to RTV
-			LOADED_MODELS[model->model].RenderAllSubmeshes();
+			EntityID trash;
+			LOADED_MODELS[model->model].RenderAllSubmeshes(trash);
 		}
 
 	}
