@@ -63,7 +63,7 @@ void PauseState::SetupButtons()
 {
 
 	const int pauseAmount = 4;
-	const int settingsAmount = 3;
+	const int settingsAmount = 7;
 	const int sliderAmount = 5;
 
 	//Pause Buttons
@@ -79,17 +79,17 @@ void PauseState::SetupButtons()
 		const DSFLOAT2 positions[pauseAmount] =
 		{
 			{ 0.0f, 0.0f },
-			{ 0.0f, 0.275f },
-			{ 0.0f, 0.0f },
-			{ 0.0f, -0.275f }
+			{ -0.285f, 0.225f },
+			{ -0.285f, 0.0f },
+			{ -0.285f, -0.225f }
 		};
 
 		const DSFLOAT2 scales[pauseAmount] =
 		{
-			{ 1.5f, 3.0f },
-			{ 0.7f, 0.6f },
-			{ 0.7f, 0.6f },
-			{ 0.7f, 0.6f }
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f }
 		};
 
 		void(* const onClicks[pauseAmount - 1])(void*, int) =
@@ -116,11 +116,14 @@ void PauseState::SetupButtons()
 
 			if (i == 0)
 			{
-				uiElement->Setup("Exmenu/ButtonBackgroundHover", texts[i], positions[i], scales[i]);
+				if (stateManager.activeLevel > 10)
+					uiElement->Setup("Exmenu/BookFrozen60%", texts[i], positions[i], scales[i]);
+				else
+					uiElement->Setup("Exmenu/BookNormal60%", texts[i], positions[i], scales[i]);
 				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
 			}
 			else
-				uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i]);
+				uiElement->Setup("Exmenu/ButtonMedium", texts[i], positions[i], scales[i]);
 
 			if (i != 0)
 			{
@@ -135,42 +138,77 @@ void PauseState::SetupButtons()
 
 	//Settings Buttons
 	{
-		const char filename[settingsAmount][32] =
-		{
-			"Exmenu/ButtonBackgroundHover",
-			"Exmenu/ButtonBackground",
-			"Exmenu/ButtonBackground"
-		};
-
 		const char texts[settingsAmount][32] =
 		{
 			"Settings",
+			"Fullscreen",
+			"1920x1080",
+			"1600x900",
+			"1280x720",
 			"Enable Game Timer",
-			"Back"
+			"Back",
 		};
 
 		const DSFLOAT2 positions[settingsAmount] =
 		{
 			{ 0.0f, 0.0f },
-			{ -0.4f, 0.4f },
-			{ -0.4f, -0.4f }
+			{ -0.3f, 0.225f },
+			{ -0.3f, 0.075f },
+			{ -0.3f, -0.075f },
+			{ -0.3f, -0.225f },
+			{ 0.3f, 0.225f },
+			{ 0.78f, -0.85f }
 		};
 
 		const DSFLOAT2 scales[settingsAmount] =
 		{
-			{ 3.0f, 3.0f },
-			{ 0.4f, 0.4f },
-			{ 0.6f, 0.6f }
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f }
+		};
+
+		const char filenames[settingsAmount][32] =
+		{
+			"Exmenu/SettingsPanel",
+			"Exmenu/ButtonSmall",
+			"Exmenu/ButtonSmall",
+			"Exmenu/ButtonSmall",
+			"Exmenu/ButtonSmall",
+			"Exmenu/ButtonSmall",
+			"Exmenu/ButtonMedium"
+		};
+
+		const float fontsizes[settingsAmount] =
+		{
+			{ 30.0f },
+			{ 18.0f },
+			{ 18.0f },
+			{ 18.0f },
+			{ 18.0f },
+			{ 16.0f },
+			{ 20.0f }
 		};
 
 		void(* const onClicks[settingsAmount - 1])(void*, int) =
 		{
+			UIFunctions::Settings::SetFullscreen,
+			UIFunctions::Settings::SetHighRes,
+			UIFunctions::Settings::SetMediumRes,
+			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
 			UIFunctions::Pause::Back
 		};
 
 		void(* const onHovers[settingsAmount - 1])(void*, int, bool) =
 		{
+			UIFunctions::OnHover::Image,
+			UIFunctions::OnHover::Image,
+			UIFunctions::OnHover::Image,
+			UIFunctions::OnHover::Image,
 			UIFunctions::OnHover::Image,
 			UIFunctions::OnHover::Image
 		};
@@ -186,7 +224,7 @@ void PauseState::SetupButtons()
 			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
 			sound->Load(MENU);
 
-			uiElement->Setup(filename[i], texts[i], positions[i], scales[i]);
+			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
 
 			uiElement->SetAllVisability(false);
 
@@ -197,7 +235,6 @@ void PauseState::SetupButtons()
 			}
 
 			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i - 1], UIFunctions::OnClick::None);
-
 			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i - 1]);
 
 		}
@@ -217,11 +254,11 @@ void PauseState::SetupButtons()
 
 		const DSFLOAT2 positions[sliderAmount] =
 		{
-			{ 0.4f, 0.3f },
-			{ 0.4f, 0.15f },
-			{ 0.4f, 0.0f },
-			{ 0.4f, -0.15f },
-			{ 0.4f, -0.3f },
+			{ 0.0f, 0.225f },
+			{ 0.0f, 0.075f },
+			{ 0.0f, -0.075f },
+			{ 0.0f, -0.225f },
+			{ 0.0f, -0.375f }
 		};
 
 		AudioEngineComponent* audioComp = nullptr;
@@ -248,7 +285,7 @@ void PauseState::SetupButtons()
 
 			uiElement->SetAllVisability(false);
 
-			float sliderWidth = abs(maxRightPosition - 0.13f) - abs(maxLeftPosition + 0.13f);
+			float sliderWidth = abs(maxRightPosition - 0.13f) + abs(maxLeftPosition + 0.13f);
 
 			if (audioComp != nullptr)
 			{

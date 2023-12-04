@@ -40,8 +40,11 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 
 	//Create player when we start the game instead, rather than specifically when Level1 starts (reason: debug later levels without having to run through everything)
 	//Niclas was here :)
-	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
+	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 0, 0.0f, 0.0, -1.0f);
 	gameSpeed = 1.0f; //Make sure it gets set back to 1 if StartGame is called from a completed run
+
+	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	SetScoreboardUI(scoreBoard);
 
 	stateManager.activeLevel = 0; //Level actually being loaded: activeLevel / 2 + 1
 	LoadLevel(++stateManager.activeLevel);
@@ -544,7 +547,6 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 									-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 				//First relic purchase
-				UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
 				if (playerRelics->currentRelics == 0)
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
@@ -683,6 +685,7 @@ void UIFunctions::OnClick::LockRelic(void* args, int index)
 void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 {
 	UIShopButtonComponent* uiWeapon = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
+	UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
 
@@ -691,9 +694,66 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
 		func(&priceCalc);
 
-	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE))
+	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || upgrade->tier >= 2)
 		return;
 
+	int soundToPlay = rand() % 2;
+	AudioEngineComponent* audioJungle = nullptr;
+	for (auto jungle : View<AudioEngineComponent>(registry))
+	{
+		audioJungle = registry.GetComponent<AudioEngineComponent>(jungle);
+	}
+	bool isPlaying = false;
+
+	if (soundToPlay == 0)
+	{
+		if (audioJungle != nullptr)
+		{
+			//Player voice line
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(stateManager.player);
+			if (sfx != nullptr)
+			{
+				audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+				if (!isPlaying)
+				{
+					soundToPlay = rand() % 2;
+					if (soundToPlay == 0)
+					{
+						if (sfx != nullptr) sfx->Play(Player_LikeTheLook, Channel_Extra);
+					}
+					else
+					{
+						if (sfx != nullptr) sfx->Play(Player_WillDoDamage, Channel_Extra);
+					}
+				}
+			}
+		}
+	}
+	else if (soundToPlay == 1)
+	{
+		if (audioJungle != nullptr)
+		{
+			//Imp voice line
+			SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+			if (sfx != nullptr)
+			{
+				audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+				if (!isPlaying)
+				{
+					soundToPlay = rand() % 2;
+					if (soundToPlay == 0)
+					{
+						if (sfx != nullptr) sfx->Play(Shop_UpgradeWeapon, Channel_Extra);
+					}
+					else
+					{
+						if (sfx != nullptr) sfx->Play(Shop_UpgradeWeapon2, Channel_Extra);
+					}
+				}
+			}
+		}
+	}
+	upgrade->tier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage((float)(uiWeapon->m_price - 2.0f));
 }
@@ -746,6 +806,7 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 
 			const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
 			uiRelic->m_Images[i].SetImage(relic->m_filePath);
+			uiRelic->m_Texts[i].SetText(std::to_string(priceCalc.GetCostOf(relic->m_price, RelicInput::OnPriceCalculation::RELIC)).c_str(), uiRelic->m_Images[i].baseUI.GetBounds());
 			relicWindow->shopRelics[i] = relic;
 		}
 	}
