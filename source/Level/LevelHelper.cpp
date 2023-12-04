@@ -971,7 +971,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 
-		//registry.AddComponent<GlowComponent>(entity, 0.7f, 0.7f, 0.5f);	//Erika was here
+		registry.AddComponent<GlowComponent>(entity, 0.7f, 0.7f, 0.5f);	//Erika was here
 	}
 	else if (eType == EnemyType::imp)
 	{
@@ -1007,7 +1007,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold += 1;
 		}
-		//registry.AddComponent<GlowComponent>(entity, 0.8f, 0.6f, 0.9f);	//Erika was here
+		registry.AddComponent<GlowComponent>(entity, 0.8f, 0.6f, 0.9f);	//Erika was here
 	}
 	else if (eType == EnemyType::minotaur)
 	{
@@ -1026,7 +1026,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
-		//registry.AddComponent<GlowComponent>(entity, 0.9f, 0.7f, 0);
+		registry.AddComponent<GlowComponent>(entity, 0.9f, 0.7f, 0);
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
@@ -1054,6 +1054,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold+=5;
 		}
+		//Orange glow
+		registry.AddComponent<GlowComponent>(entity, .7f, .3f, 0.f);
 	}
 	else if (eType == EnemyType::lucifer)
 	{
@@ -1071,10 +1073,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds (Added by Joaquin)
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(BOSS);
+		registry.AddComponent<GlowComponent>(entity, .1f, .2f, .6f);
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
-		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz		
+		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
+		registry.AddComponent<GlowComponent>(entity, .0f, .05f, .15f);
 
 		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
 		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
@@ -1126,6 +1130,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model->shared.baseColorAdditiveRed = 0.4f;
 		model->shared.baseColorAdditiveGreen = 0.4f;
 		model->shared.baseColorAdditiveBlue = 0.8f;
+		model->shared.hasOutline = true;
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
@@ -1232,6 +1237,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold += 1;
 		}
+		registry.AddComponent<GlowComponent>(entity, .5f, .0f, .65f);
 	}
 
 
