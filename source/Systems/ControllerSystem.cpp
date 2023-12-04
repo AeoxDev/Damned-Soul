@@ -73,7 +73,7 @@ bool ControllerSystem::Update()
 	{
 		ReleaseTimedEvents(stateManager.stage);
 
-		AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+		AddTimedEventComponentStart(stateManager.stage, 0.1f, LoopSpawnMainMenuEnemy, skeleton, 8);
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
@@ -133,10 +133,12 @@ bool ControllerSystem::Update()
 		if (keyState[SCANCODE_1] == pressed)
 		{
 			LoadLevel(1);
+			stateManager.activeLevel = 1;
 		}
 		else if (keyState[SCANCODE_2] == pressed)
 		{
 			LoadLevel(3);
+			stateManager.activeLevel = 3;
 		}
 		else if (keyState[SCANCODE_3] == pressed)
 		{
@@ -189,38 +191,47 @@ bool ControllerSystem::Update()
 		else if (keyState[SCANCODE_3] == pressed)
 		{
 			LoadLevel(5);
+			stateManager.activeLevel = 5;
 		}
 		else if (keyState[SCANCODE_4] == pressed)
 		{
 			LoadLevel(7);
+			stateManager.activeLevel = 7;
 		}
 		else if (keyState[SCANCODE_5] == pressed)
 		{
 			LoadLevel(9);
+			stateManager.activeLevel = 9;
 		}
 		else if (keyState[SCANCODE_6] == pressed)
 		{
 			LoadLevel(11);
+			stateManager.activeLevel = 11;
 		}
 		else if (keyState[SCANCODE_7] == pressed)
 		{
 			LoadLevel(13);
+			stateManager.activeLevel = 13;
 		}
 		else if (keyState[SCANCODE_8] == pressed)
 		{
 			LoadLevel(15);
+			stateManager.activeLevel = 15;
 		}
 		else if (keyState[SCANCODE_9] == pressed)
 		{
 			LoadLevel(17);
+			stateManager.activeLevel = 17;
 		}
 		else if (keyState[SCANCODE_0] == pressed)//Reset shop, do this only once per game
 		{
 			LoadLevel(2);
+			stateManager.activeLevel = 2;
 		}
 		else if (keyState[SCANCODE_S] == pressed)//Do this many times
 		{
 			LoadLevel(4);
+			stateManager.activeLevel = 4;
 		}
 	}
 	if (keyInput[SCANCODE_H] == down)
@@ -383,8 +394,11 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 	
-
-	
+	//Bugfix, player able to make moves before cutscenes, causing glitches.
+	if (Camera::InCutscene() != 0)
+	{
+		return true;
+	}
 
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
@@ -559,6 +573,11 @@ bool ControllerSystem::Update()
 				}
 				
 			}
+
+			//Make player immediately face in our mouse direction when we attack for better directional combat
+			transform->facingX = MouseComponentGetDirectionX(mouseComponent);
+			transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+
 			attackDuration /= playerStats->GetAttackSpeed(); //Speed up the attack animation based on attack speed
 			registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 			//AddTimedEventComponentStartEnd(entity, 0.0f, ResetAnimation, 1.0f, nullptr, 1);
@@ -582,7 +601,15 @@ bool ControllerSystem::Update()
 			auto stats = registry.GetComponent<StatComponent>(entity);
 			if (stats)
 				stats->SetSpeedMult(0.2f);
-			player->currentCharge += GetDeltaTime();
+			/*player->currentCharge += GetDeltaTime();*/
+			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed(); //Charge faster scaling off of attack speed baby
+			auto skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+			if (skelel) //Gradually light up player when charging heavy attack
+			{
+				skelel->shared.bcaR_temp = player->currentCharge * 0.5f;
+				skelel->shared.bcaG_temp = player->currentCharge * 0.5f;
+				skelel->shared.bcaB_temp = player->currentCharge * 0.5f;
+			}
 			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
 				player->currentCharge = player->maxCharge;
 			//Play some sound, do some animation, indicate that we're charging the bigboy move
@@ -594,7 +621,8 @@ bool ControllerSystem::Update()
 				//it's time
 				if (sfx) sfx->Play(Player_HeavyAttack, Channel_Base);
 				StatComponent* playerStats = registry.GetComponent<StatComponent>(entity);
-				float attackDuration = 1.0f / playerStats->GetAttackSpeed();
+				float attackDuration = 0.8f / playerStats->GetAttackSpeed();
+				/*float attackDuration = 1.0f / playerStats->GetAttackSpeed();*/
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
 				player->currentCharge = 0.0f;

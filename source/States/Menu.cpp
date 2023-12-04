@@ -35,7 +35,6 @@ void Menu::Setup()
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;
-	stageVars.stageNr = 1;
 	stageVars.scaleX = 1.0f;
 	stageVars.scaleY = 1.0f;
 	stageVars.scaleZ = 1.0f;
@@ -53,7 +52,7 @@ void Menu::Setup()
 	registry.AddComponent<PlayerComponent>(stateManager.player);
 
 	stateManager.activeLevel = 0;
-	AddTimedEventComponentStart(stage, 2.0f, LoopSpawnMainMenuEnemy, skeleton, 1);
+	AddTimedEventComponentStart(stage, 0.0f, LoopSpawnMainMenuEnemy, skeleton, 8);
 	/*EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
 	SetHitboxIsPlayer(enemy, 1, true);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);*/

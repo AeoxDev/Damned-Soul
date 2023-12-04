@@ -296,11 +296,11 @@ void EnemyAttackFlash(EntityID& entity, const int& index)
 		}	
 	}
 
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-	if (anim)
-	{
-		anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
-	}
+	//AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	//if (anim)
+	//{
+	//	anim->aAnimTimeFactor = 0.0f; //If we get hit while our animation is paused, hitstop will do a quick pause of its own and reset aAnimTimeFactor back to 1 afterwards, and we don't want that
+	//}
 }
 
 void EnemyAttackGradient(EntityID& entity, const int& index)
@@ -557,6 +557,18 @@ void BossShockwaveEnd(EntityID& entity, const int& index)
 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enemy->specialHitBoxID, false);//Set false somewhere
 	SetHitboxCanDealDamage(entity, enemy->specialHitBoxID, false);
+
+	ParticleComponent* pc = registry.GetComponent<ParticleComponent>(entity);
+	if (pc != nullptr)
+	{
+		pc->Release();
+		registry.RemoveComponent<ParticleComponent>(entity);
+	}
+}
+
+void BossSpawnwaveEnd(EntityID& entity, const int& index)
+{
+ 	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(entity);
 
 	ParticleComponent* pc = registry.GetComponent<ParticleComponent>(entity);
 	if (pc != nullptr)
@@ -890,8 +902,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = lucifer;
 	}
-	float time = 0.05f * (float)(rand() % 1024);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	float time = 0.01f * (float)(rand() % 4096);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 8);
 }
 
 void DestroyAcidHazard(EntityID& entity, const int& index)
@@ -1011,5 +1023,5 @@ void EndDestroyProjectile(EntityID& entity, const int& index)
 
 void SpawnProjectileShadow(EntityID& entity, const int& index)
 {
-	CreateSpotLight(entity, -0.5f, -0.5f, -0.5f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
+	CreateSpotLight(entity, -0.7f, -0.7f, -0.7f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
 }

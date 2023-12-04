@@ -23,9 +23,11 @@ BufferHolder* bfrHolder;
 ViewPortHolder* vpHolder;
 RTVHolder* rtvHolder;
 DSVHolder* dsvHolder;
+DSSHolder* dssHolder;
 SRVHolder* srvHolder;
 UAVHolder* uavHolder;
 RasterizerHolder* rsHolder;
+BlendStateHolder* bsHolder;
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
@@ -87,12 +89,14 @@ int SetupDirectX(HWND& w)
 	PUSH_AND_INITIALIZE(rtvHolder, RTVHolder);
 	//rtvHolder = (RTVHolder*)MemLib::spush(sizeof(RTVHolder));
 	PUSH_AND_INITIALIZE(dsvHolder, DSVHolder);
+	PUSH_AND_INITIALIZE(dssHolder, DSSHolder);
 	//dsvHolder = (DSVHolder*)MemLib::spush(sizeof(DSVHolder));
 	PUSH_AND_INITIALIZE(srvHolder, SRVHolder);
 	//srvHolder = (SRVHolder*)MemLib::spush(sizeof(SRVHolder));
 	PUSH_AND_INITIALIZE(uavHolder, UAVHolder);
 	//uavHolder = (UAVHolder*)MemLib::spush(sizeof(UAVHolder));
 	PUSH_AND_INITIALIZE(rsHolder, RasterizerHolder);
+	PUSH_AND_INITIALIZE(bsHolder, BlendStateHolder);
 	//rsHolder = (RasterizerHolder*)MemLib::spush(sizeof(RasterizerHolder));
 	PUSH_AND_INITIALIZE(geoHolder, GeometryShaderHolder);
 	bool succeded = CreateDeviceAndSwapChain(w, sdl.WIDTH, sdl.HEIGHT);
@@ -249,6 +253,14 @@ void EndDirectX()
 	}
 	rsHolder->rs_map.clear();
 
+	// Release all pixel shaders
+	for (auto& [key, val] : bsHolder->bs_map)
+	{
+		if (val != nullptr)
+			val->Release();
+	}
+	bsHolder->bs_map.clear();
+
 	// Clear and flush device context
 	d3d11Data->deviceContext->ClearState();
 	d3d11Data->deviceContext->Flush();
@@ -269,4 +281,9 @@ void EndDirectX()
 	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 	debugInterface->Release();
 #endif
+}
+
+DSS_IDX DSSHolder::NextIdx()
+{
+	return DSS_IDX();
 }

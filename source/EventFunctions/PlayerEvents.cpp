@@ -157,7 +157,9 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 
 		if (playerComp->isAttacking)
 		{
+			//Cancel attack
 			SetHitboxActive(entity, playerComp->attackHitboxID, false);
+			playerComp->isAttacking = false;
 		}
 
 		if (playerComp->currentCharge > 0.0f) //Dash cancelling a charged attack
@@ -319,11 +321,14 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 }
 
 void PlayerAttack(EntityID& entity, const int& index)
-{;
+{
 	//All we do right now is perform the attack animation
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
+
+	if (player->isAttacking == false)
+		return; //NICE TRY BUDDY
 
 	//Can't perform animation without the AnimationComponent, durr
 	if (!anim)
@@ -373,7 +378,6 @@ void PlayerAttack(EntityID& entity, const int& index)
 		corners.cornersZ[3] = -0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
-		//SetHitboxRadius(entity, player->attackHitboxID, (anim->aAnimTime - 0.5f) * 5);
 	}
 }
 

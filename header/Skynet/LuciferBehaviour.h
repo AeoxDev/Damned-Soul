@@ -39,7 +39,7 @@ struct LuciferBehaviour
 	float fz = 0.f;
 
 	//special attacks variables
-	bool nextSpecialIsSpawn = true;
+	bool nextSpecialIsSpawn = false;
 	bool isChargeCharge = false;
 	bool isJumpJump = false;
 	bool isSpawning = false;

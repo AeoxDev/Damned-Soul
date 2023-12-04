@@ -379,6 +379,36 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		float massFactor = std::sqrt(transform1->mass / transform2->mass);
 		float selfKnockback = -SELF_KNOCKBACK_FACTOR * (frictionKnockbackFactor1 / massFactor);
 		float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
+		auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
+		if (charge)
+			appliedKnockback *= charge->multiplier * charge->multiplier; //tWEEK (1 to 4 mult instead of 2.5 to 5)
+		for (auto entity : View<UIPlayerRelicsComponent>(registry))
+		{
+			UIPlayerRelicsComponent* comp = registry.GetComponent<UIPlayerRelicsComponent>(entity);
+			if (comp)
+			{
+				for (auto relic : comp->relics)
+				{
+					char explo[17] = "Exploding Weapon";
+					int sum1 = 0;
+					int sum2 = 0;
+					for (int i = 0; i < 10; i++)
+					{
+						sum1 += explo[i];
+					}
+					for (int i = 0; i < 10; i++)
+					{
+						if (relic->m_relicName != nullptr)
+							sum2 += relic->m_relicName[i];
+					}
+					
+					if(sum1 == sum2)
+					{
+						appliedKnockback *= 2.0f; //XD
+					}
+				}
+			}
+		}
 		float dx, dz;
 		CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
