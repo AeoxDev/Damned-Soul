@@ -132,8 +132,9 @@ void CutsceneTransition(EntityID& entity, const int& index)
 			animation->aAnim = ANIMATION_WALK;
 			animation->aAnimIdx = 0;
 			animation->aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS(animation);
 		}
-		else if (bAnimation)
+		else if (bAnimation != nullptr)
 		{
 			bAnimation->anim1.aAnim = ANIMATION_WALK;
 			bAnimation->anim1.aAnimIdx = 0;
