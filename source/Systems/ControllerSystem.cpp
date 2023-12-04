@@ -73,7 +73,7 @@ bool ControllerSystem::Update()
 	{
 		ReleaseTimedEvents(stateManager.stage);
 
-		AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+		AddTimedEventComponentStart(stateManager.stage, 0.1f, LoopSpawnMainMenuEnemy, skeleton, 8);
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
@@ -394,8 +394,11 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 	
-
-	
+	//Bugfix, player able to make moves before cutscenes, causing glitches.
+	if (Camera::InCutscene() != 0)
+	{
+		return true;
+	}
 
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
