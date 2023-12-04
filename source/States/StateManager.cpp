@@ -17,6 +17,7 @@
 #include "OutlineHelper.h"
 #include "Glow.h"
 #include "AntiAlias.h"
+#include "SkyPlane.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -162,7 +163,7 @@ int StateManager::Setup()
 	Particles::InitializeParticles();
 	Outlines::InitializeOutlines();
 	Glow::Initialize();
-	//AntiAlias::Initialize();	// NOTE: Erika was here.
+	InitializeSky();
 	//SetupTestHitbox();
 	RedrawUI();
 	
@@ -239,7 +240,7 @@ int StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UISliderSystem());
 	
-	systems.push_back(new UIShopSystem());
+	systems.push_back(new UIRenderShopSystem());
 	systems.push_back(new NavigationSystem());
 
 	return 0;
@@ -304,7 +305,7 @@ void StateManager::Update()
 	for (size_t i = 0; i < systems.size(); i++)
 	{
 		systems[i]->timeElapsed += GetFrameTime(); //No longer deltatime, in case of game pause deltatime
-
+		
 		if (systems[i]->timeElapsed >= systems[i]->timeCap)
 		{
 			systems[i]->Update();

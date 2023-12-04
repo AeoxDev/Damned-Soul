@@ -29,11 +29,8 @@ struct VS_OUT
 VS_OUT main(VS_INPUTS pos)
 {
 	VS_OUT retval;
-
-    retval.position = mul(pos.position, world);
 	
     retval.position = mul(pos.position, world);
-    retval.position = mul(retval.position, view);
 	
     retval.svPosition = mul(pos.position, world);
     retval.svPosition = mul(retval.svPosition, view);

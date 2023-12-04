@@ -10,6 +10,11 @@
 #include "Light.h"
 #include "Model.h"
 #include "RenderDepthPass.h"
+#include "OutlineHelper.h"
+
+// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+#include "SkyPlane.h"
+#include "States/StateManager.h"
 
 enum RenderPass
 {
@@ -20,6 +25,9 @@ void Render(RenderPass renderPass)
 {
 	for (auto entity : View<TransformComponent, ModelBonelessComponent>(registry))
 	{
+		if (registry.GetComponent<SkyPlaneComponent>(entity) != nullptr)
+			continue;
+
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
 		if (renderPass  == ShadowPass && mc->castShadow == false)
@@ -47,7 +55,7 @@ void Render(RenderPass renderPass)
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-		LOADED_MODELS[mc->model].RenderAllSubmeshes();
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity);
 	}
 	
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
@@ -84,8 +92,10 @@ void Render(RenderPass renderPass)
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
 	}
+
+
 }
 bool ShadowSystem::Update()
 {
@@ -136,6 +146,42 @@ bool ShadowSystem::Update()
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	return true;
 }
+
+// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+void RenderSkyPlane()
+{
+	
+	SetStencil(m_skyPlaneStencil);
+
+	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
+
+
+	TransformComponent* tc = registry.GetComponent<TransformComponent>(m_basePlane);
+	ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(m_basePlane);
+
+
+	int* level = (int*)MemLib::spush(sizeof(int));
+	*level = stateManager.activeLevel;
+
+	UpdateConstantBuffer(m_skyConst, (void*)level);
+
+	MemLib::spop();
+
+	SetConstantBuffer(m_skyConst, BIND_VERTEX, 3);
+
+	SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+	SetVertexShader(m_skyVS);
+	SetPixelShader(m_skyPS);
+
+	EntityID trash;
+	LOADED_MODELS[mc->model].RenderAllSubmeshes(trash);
+
+	UnsetConstantBuffer(BIND_VERTEX, 3);
+	UnsetStencil();
+}
+
 bool RenderSystem::Update()
 {
 	for (auto entity : View<TransformComponent, LightComponent>(registry))
@@ -155,11 +201,15 @@ bool RenderSystem::Update()
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
 	Render(DepthPass);
 	ClearBackBuffer();
+
+	
+	// ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
+	RenderSkyPlane();
+
 	// Render UI
 	RenderUI();
-	
-	//Render Lightpass
 
+	//Render Lightpass
 	//Set shaders here.
 	PrepareBackBuffer();
 	//If light needs to update, update it.
@@ -175,6 +225,9 @@ bool RenderSystem::Update()
 	Render(LightPass);
 	// Unset geometry shader
 	UnsetGeometryShader();
+
+
+
 	//UpdateGlobalShaderBuffer();
 	UnsetDepthPassTexture(false);
 	UnsetShadowmap(false);
@@ -236,11 +289,12 @@ bool RenderSystem::Update()
 	return true;
 }
 
-#include "OutlineHelper.h"
+
 
 bool OutlineSystem::Update()
 {
 	//Outlines::SwapTargets();
+
 
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetTopology(TOPOLOGY::TRIANGLELIST);
@@ -271,7 +325,7 @@ bool OutlineSystem::Update()
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-		LOADED_MODELS[mc->model].RenderAllSubmeshes();
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity);
 	}
 
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
@@ -296,7 +350,7 @@ bool OutlineSystem::Update()
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue(), true);
 	}
 
 	//Outlines::SwapBack();

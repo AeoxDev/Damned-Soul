@@ -18,6 +18,12 @@ struct ParticleInputOutput
 	UAV_IDX UAV;
 };
 
+struct VFXMeshData
+{
+	int metadataSlot;
+	float timeAlive;
+};
+
 struct Particle
 {
 	DirectX::XMFLOAT3 position;
@@ -29,11 +35,6 @@ struct Particle
 	int patterns;
 	int VFX;
 };
-
-//struct ExtraData
-//{
-//	int start;
-//};
 
 struct ParticleMetadata
 {
@@ -59,6 +60,9 @@ struct ParticleMetadataBuffer
 namespace Particles
 {
 	extern int RenderSlot;
+	extern SRV_IDX particleDepthSRV;
+	extern SRV_IDX backBufferDepthSRV;
+	extern DSV_IDX proxyDepth;
 
 	extern PoolPointer<ParticleInputOutput> m_readBuffer;
 	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
@@ -87,8 +91,11 @@ namespace Particles
 	////Calls for D3D11Helper to reset the shaders and resources used by the VFX pass
 	//void FinishVFXPass();
 
-	void PrepareMeshPass(int metadataSlot);
+	void PrepareMeshPass(int metadataSlot, ParticleComponent& pComp, float timeCap);
 	void FinishMeshPass();
+
+	void CopyBackBufferToRender();
+	void CopyRenderToBackBuffer();
 
 	void UpdateStart(int& metadataSlot);
 	void UpdateVFXStart(int& metadataSlot);

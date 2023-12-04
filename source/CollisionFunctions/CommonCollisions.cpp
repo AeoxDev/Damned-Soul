@@ -381,7 +381,7 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		float appliedKnockback = stat1->GetKnockback() * (massFactor * frictionKnockbackFactor2);
 		auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
 		if (charge)
-			appliedKnockback *= charge->multiplier * 2.5f; //Big
+			appliedKnockback *= charge->multiplier * charge->multiplier; //tWEEK (1 to 4 mult instead of 2.5 to 5)
 		for (auto entity : View<UIPlayerRelicsComponent>(registry))
 		{
 			UIPlayerRelicsComponent* comp = registry.GetComponent<UIPlayerRelicsComponent>(entity);

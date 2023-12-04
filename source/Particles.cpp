@@ -14,7 +14,10 @@ PoolPointer<ParticleInputOutput> Particles::m_writeBuffer;
 std::vector<int> Particles::m_unoccupiedParticles;
 CB_IDX startKeeper;
 CB_IDX vfxStartKeeper;
+CB_IDX VFXMetadata;
 SRV_IDX particleSRV;
+
+
 
 PoolPointer<ParticleMetadataBuffer> data;
 
@@ -35,6 +38,9 @@ struct VFXBufferData
 // ## EO ALEX CODE ##
 
 int Particles::RenderSlot;
+SRV_IDX Particles::particleDepthSRV;
+SRV_IDX Particles::backBufferDepthSRV;
+DSV_IDX Particles::proxyDepth;
 
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
@@ -78,6 +84,7 @@ void Particles::InitializeParticles()
 	VFXNoiseTX =		LoadTexture("\\VFX_Noises.png");
 	VFXShapeTX =		LoadTexture("\\VFX_Shapes.png");
 	VFXMaskTX =			LoadTexture("\\VFX_Masks.png");
+	VFXMetadata =		CreateConstantBuffer(sizeof(VFXMeshData));
 // ## EO ALEX CODE ##
 
 	flipBookTextureFire = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
@@ -126,7 +133,6 @@ void Particles::InitializeParticles()
 	startKeeper = CreateConstantBuffer(sizeof(int));
 	vfxStartKeeper = CreateConstantBuffer(sizeof(int));
 
-
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
 		data->metadata[i].life = -1.f;
@@ -148,8 +154,12 @@ void Particles::InitializeParticles()
 	}
 
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
-	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", PARTICLE);
+	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", DEFAULT);
 	RenderSlot = SetupParticles();
+	Particles::particleDepthSRV = CreateShaderResourceViewTexture(renderStates[Particles::RenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::backBufferDepthSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::proxyDepth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
+
 }
 
 void Particles::ReleaseParticles()
@@ -216,8 +226,6 @@ void Particles::PrepareParticlePass(int metadataSlot)
 {
 	SetTopology(POINTLIST);
 
-	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
-
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
@@ -234,7 +242,7 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
-	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
+	SetShaderResourceView(m_writeBuffer->SRV, BIND_VERTEX, 0);
 	UnsetVertexBuffer();
 	UnsetIndexBuffer();
 
@@ -311,18 +319,48 @@ void Particles::FinishParticlePass()
 	SetTopology(TRIANGLELIST);
 }
 
-void Particles::PrepareMeshPass(int metadataSlot)
+void Particles::PrepareMeshPass(int metadataSlot, ParticleComponent& pComp, float timeCap)
 {
-	//PrepareParticlePass(metadataSlot);
+	PrepareParticlePass(metadataSlot);
+
+	SetTopology(TRIANGLELIST);
+
+	UnsetVertexShader();
+	UnsetGeometryShader();
+
+	pComp.VFXTimeAlive += timeCap;// data->metadata[0].deltaTime;
 
 	// We want everything from the regular particle pass but without the geoemtry shader and a different vertex shader
 	SetVertexShader(MeshVS);
-	UnsetGeometryShader();
+
+	SetConstantBuffer(renderStates[RenderSlot].constantBuffer, BIND_VERTEX, 2);
+	
+	VFXMeshData tempData;
+	tempData.metadataSlot = metadataSlot;
+	tempData.timeAlive = pComp.VFXTimeAlive;
+
+	UpdateConstantBuffer(VFXMetadata, &tempData);
+	SetConstantBuffer(VFXMetadata, BIND_VERTEX, 3);
+
 }
 
 void Particles::FinishMeshPass()
 {
 	FinishParticlePass();
+
+	UnsetConstantBuffer(BIND_VERTEX, 2);
+	UnsetConstantBuffer(BIND_VERTEX, 3);
+}
+
+void Particles::CopyBackBufferToRender()
+{
+	CopySRVtoSRV(renderStates[Particles::RenderSlot].shaderResourceView, VFXBackBufferSRV);
+}
+
+void Particles::CopyRenderToBackBuffer()
+{
+	CopySRVtoSRV(VFXBackBufferSRV, renderStates[Particles::RenderSlot].shaderResourceView);
+
 }
 
 
@@ -341,7 +379,6 @@ void Particles::UpdateVFXStart(int& metadataSlot)
 
 	UpdateConstantBuffer(vfxStartKeeper, &start);
 }
-
 
 // -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, ComputeShaders pattern)
@@ -459,9 +496,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].size = size;
 	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
 	data->metadata[metadataSlot].pattern = 14;
+	data->metadata[metadataSlot].morePositionInfo.y = vfxPattern;
 
 	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
-	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f;
 	data->metadata[metadataSlot].reset = false;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
@@ -469,6 +507,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	model = LoadModel(filename);
 	modelUse = true;
 
+	VFXTimeAlive = 0.0f;
 
 	meshOffset[0] = offsetX;
 	meshOffset[1] = offsetY;
@@ -592,7 +631,8 @@ void ParticleComponent::Release()
 	if (data->metadata[metadataSlot].start >= data->metadata[metadataSlot].end)
 		return;
 
-	std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
+	std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), -1, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
+	//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
 	
 	// Declare to the compute shader that this components particles is to be reset
 	data->metadata[metadataSlot].reset = true;

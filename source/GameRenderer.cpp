@@ -130,7 +130,7 @@ int SetupGameRenderer()
 	// Create a render target view
 	renderStates[currentSize].renderTargetView = CreateBackBuffer();
 	// Create a depth stencil view
-	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+	renderStates[currentSize].depthStencilView =  CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT, true);
 	// Set a render target view and depth stencil view
 	s = SetRenderTargetViewAndDepthStencil(renderStates[currentSize].renderTargetView, renderStates[currentSize].depthStencilView);
 
@@ -164,7 +164,7 @@ int SetupParticles()
 	RESOURCE_FLAGS resourceFlags = static_cast<RESOURCE_FLAGS>(BIND_SHADER_RESOURCE | BIND_RENDER_TARGET);
 	renderStates[currentSize].renderTargetView = CreateRenderTargetView(USAGE_DEFAULT, resourceFlags, (CPU_FLAGS)0, sdl.WIDTH, sdl.HEIGHT);
 	renderStates[currentSize].shaderResourceView = CreateShaderResourceViewTexture(renderStates[currentSize].renderTargetView, BIND_RENDER_TARGET);
-	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT);
+	renderStates[currentSize].depthStencilView = CreateDepthStencil(sdl.WIDTH, sdl.HEIGHT, true);
 
 	return currentSize++;
 }
@@ -212,7 +212,8 @@ void ClearParticles()
 	ClearRenderTargetView(renderStates[Particles::RenderSlot].renderTargetView);
 	ClearDepthStencilView(renderStates[Particles::RenderSlot].depthStencilView);
 
-	SetRenderTargetViewAndDepthStencil(renderStates[Particles::RenderSlot].renderTargetView, renderStates[Particles::RenderSlot].depthStencilView);
+	SetRenderTargetViewAndDepthStencil(renderStates[Particles::RenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
+	//SetRenderTargetViewAndDepthStencil(renderStates[Particles::RenderSlot].renderTargetView, renderStates[Particles::RenderSlot].depthStencilView);
 }
 
 void Present()

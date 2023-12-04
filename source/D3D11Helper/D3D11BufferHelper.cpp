@@ -202,6 +202,17 @@ void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_
 	UpdateWorldMatrix(&in, bindto, slot);
 }
 
+void SetWorldMatrix(float x, float y, float z, float rotationZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot, bool ZRot)
+{
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	world = DirectX::XMMatrixRotationZ(rotationZ);
+	world = world * DirectX::XMMatrixTranslation(x, y, z);
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMFLOAT4X4 in;
+	DirectX::XMStoreFloat4x4(&in, world);
+	UpdateWorldMatrix(&in, bindto, slot);
+}
+
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
 {
 	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();

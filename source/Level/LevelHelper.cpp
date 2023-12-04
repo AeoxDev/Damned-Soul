@@ -493,6 +493,7 @@ void SetupEnemyNavigationHelper(bool level8)
 	if (model != nullptr)
 	{
 		model->shared.gammaCorrection = 1.5f;
+		model->shared.hasOutline = true;
 	}
 	registry.AddComponent<NavigationTrashComponentYouMustAccept>(entity);
 }
@@ -578,6 +579,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 				health += partHealth;
 			if (zacIndex4)
 				health += partHealth;
+		
+
 		}
 		else if (eType == EnemyType::lucifer)
 		{
@@ -908,20 +911,20 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(IMP);
 
-		// REMOVE ONCE WE HAVE THE IMP MODEL
-	/*	model->shared.colorMultiplicativeRed = 0.2f;
-		model->shared.colorMultiplicativeBlue = 0.2f;
-		model->shared.colorMultiplicativeGreen = 0.2f;
-		model->shared.colorAdditiveRed = 0.8f;
-		model->shared.colorAdditiveBlue = 0.4f;
-		model->shared.colorAdditiveGreen = 0.8f;
+		//// REMOVE ONCE WE HAVE THE IMP MODEL
+		//model->shared.colorMultiplicativeRed = 0.2f;
+		//model->shared.colorMultiplicativeBlue = 0.2f;
+		//model->shared.colorMultiplicativeGreen = 0.2f;
+		//model->shared.colorAdditiveRed = 0.8f;
+		//model->shared.colorAdditiveBlue = 0.4f;
+		//model->shared.colorAdditiveGreen = 0.8f;
 
-		model->shared.baseColorMultiplicativeRed = 0.2f;
-		model->shared.baseColorMultiplicativeBlue = 0.2f;
-		model->shared.baseColorMultiplicativeGreen = 0.2f;
-		model->shared.baseColorAdditiveRed = 0.8f;
-		model->shared.baseColorAdditiveBlue = 0.4f;
-		model->shared.baseColorAdditiveGreen = 0.8f;*/
+		//model->shared.baseColorMultiplicativeRed = 0.2f;
+		//model->shared.baseColorMultiplicativeBlue = 0.2f;
+		//model->shared.baseColorMultiplicativeGreen = 0.2f;
+		//model->shared.baseColorAdditiveRed = 0.8f;
+		//model->shared.baseColorAdditiveBlue = 0.4f;
+		//model->shared.baseColorAdditiveGreen = 0.8f;
 
 
 		if (player)
@@ -936,7 +939,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->lavaAccelFactor = 1.0f;
 		stat->lavaAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Minotaur.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<MinotaurBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::minotaur);
@@ -951,7 +954,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	else if (eType == EnemyType::tempBoss)
 	{
 		stat->hazardModifier = 0.0f;
-		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Skeleton.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Splitboss.mdl"));
+		mod->shared.hasOutline = true;
 		registry.AddComponent<AnimationComponent>(entity);
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<TempBossBehaviour>(entity, 0, 0);
@@ -1184,7 +1188,8 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	playerTransform->scaleZ = scaleZ;
 
 	registry.AddComponent<StatComponent>(stateManager.player,health, moveSpeed, damage, attackSpeed); //Hp, MoveSpeed, Damage, AttackSpeed
-	registry.AddComponent<PlayerComponent>(stateManager.player);
+	PlayerComponent* pc = registry.AddComponent<PlayerComponent>(stateManager.player);
+	pc->UpdateSouls(soulWorth);
 
 	registry.AddComponent<ControllerComponent>(stateManager.player);
 	PointOfInterestComponent poic;
@@ -1193,6 +1198,12 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	SetupPlayerCollisionBox(stateManager.player, 1.0f);
 	MouseComponentAddComponent(stateManager.player);
 	CreatePointLight(stateManager.player, 0.7f, 0.7f, 0.7f, 0.0f, 0.5f, 0.0f, 2.0f, 1.0f);
+
+	// ## ALEX CODE ##
+	//ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(stateManager.player, 5.0f, 50.0f, 5.5f, 0.0f, 10.0f, 0.0f, 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
+	// ## EO ALEX CODE ##
+
+
 
 	// UI
 	SetUpAdvancedHealthBar(stateManager.player);
