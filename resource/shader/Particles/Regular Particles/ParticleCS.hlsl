@@ -571,10 +571,10 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
         particle.size = (particle.size - 1.0f);
 
     }
-    else
-    {
-        particle.position.y = particle.position.y + ((particle.size - 1) + (oddEvenFactor));
-    }
+    //else
+    //{
+    //    //particle.position.y = particle.position.y + ((particle.size - 1) + (oddEvenFactor));
+    //}
    
     
     particle.position.z = noiseZ + particle.position.z + (2 / localIndex) /** oddEvenFactor*/; /*+ oddEvenFactor * ( 4* meta[index].deltaTime)*/;

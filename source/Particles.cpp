@@ -687,7 +687,7 @@ int ParticleComponent::FindSlot()
 
 void ParticleComponent::Release()
 {
-	if (data->metadata[metadataSlot].start >= data->metadata[metadataSlot].end)
+	if ( (data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
 		return;
 
 	std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), -1, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
