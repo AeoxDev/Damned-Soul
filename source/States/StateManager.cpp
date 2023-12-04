@@ -305,7 +305,7 @@ void StateManager::Update()
 	for (size_t i = 0; i < systems.size(); i++)
 	{
 		systems[i]->timeElapsed += GetFrameTime(); //No longer deltatime, in case of game pause deltatime
-
+		
 		if (systems[i]->timeElapsed >= systems[i]->timeCap)
 		{
 			systems[i]->Update();
