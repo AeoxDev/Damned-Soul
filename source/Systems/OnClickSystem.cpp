@@ -48,10 +48,26 @@ bool OnClickSystem::Update()
 
 		}
 
-		if (mouseButtonPressed[MouseButton::left] == released && index > -1)
+		if (mouseButtonPressed[MouseButton::left] == released)
 		{
+			if (index <= -1)
+			{
+				for (auto slider : View<UISettingsSliderComponent>(registry))
+				{
+					OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(slider);
+					onClick->onClickFunctionsReleased[0](&slider, 0);
+				}
+				continue;
+			}
+
 			if (index == 0) //baseimage intersect
 			{
+				for (auto slider : View<UISettingsSliderComponent>(registry))
+				{
+					OnClickComponent* onClick = registry.GetComponent<OnClickComponent>(slider);
+					onClick->onClickFunctionsReleased[0](&slider, 0);
+				}
+
 				if (!uiElement->m_BaseImage.baseUI.GetVisibility())
 					continue;
 			}
@@ -68,9 +84,9 @@ bool OnClickSystem::Update()
 				if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::MainMenu::Start)
 				{
 					//Stop all the previous sounds (except music) to mute for example the dog breath
-					for (auto entity : View<AudioEngineComponent>(registry))
+					for (auto audio : View<AudioEngineComponent>(registry))
 					{
-						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
 						audioJungle->HandleSound();
 						audioJungle->StopAllSounds();
 					}
@@ -102,9 +118,9 @@ bool OnClickSystem::Update()
 				}
 				else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::Game::LoadNextLevel)
 				{
-					for (auto entity : View<AudioEngineComponent>(registry))
+					for (auto audio : View<AudioEngineComponent>(registry))
 					{
-						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
 						audioJungle->HandleSound();
 						audioJungle->StopAllSounds();
 					}
@@ -112,9 +128,9 @@ bool OnClickSystem::Update()
 				else if (comp->onClickFunctionsReleased[comp->index] == UIFunctions::Game::SetMainMenu)
 				{
 					//Stop all the previous sounds (except music) to mute for example the dog breath
-					for (auto entity : View<AudioEngineComponent>(registry))
+					for (auto audio : View<AudioEngineComponent>(registry))
 					{
-						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(entity);
+						AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
 						audioJungle->HandleSound();
 						audioJungle->StopAllSounds();
 					}
@@ -125,7 +141,7 @@ bool OnClickSystem::Update()
 				{
 					sound->Play(Button_Press, Channel_Base);
 				}
-			}
+			}			
 
 			comp->onClickFunctionsReleased[comp->index](&entity, comp->index);
 			return true;
