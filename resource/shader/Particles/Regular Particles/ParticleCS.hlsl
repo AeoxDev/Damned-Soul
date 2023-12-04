@@ -143,9 +143,9 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) localIndex / (float) amount), meta[blockID.y].startPosition.z);
        //Z-edited
-        //float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
-        //startPosition.z= startPosition.z + index + oddEvenFactor * (4 * meta[index].deltaTime);
-        ////
+        float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
+        startPosition.z = startPosition.z + localIndex/2 ;
+        //
         particle.position = startPosition;
         particle.time = 0.f;
     }
@@ -153,9 +153,9 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) localIndex / (float) amount), meta[blockID.y].startPosition.z);
         //Z-edited
-        //float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
-        //startPosition.z = startPosition.z + index + oddEvenFactor * (4 * meta[index].deltaTime);
-        ////
+        float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
+        startPosition.z = startPosition.z + localIndex + oddEvenFactor * (4 * meta[index].deltaTime);
+        //
         particle.position = startPosition;
         particle.time = 0.f;
     }
@@ -330,9 +330,9 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = timeValue * indexValue;
     particle.position.z = sin(piFraction) * radius;
     
-    particle.rgb.r = 0.0f;
+    particle.rgb.r = 0.5f;
     particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
+    particle.rgb.b = 0.5f;
       
     outputParticleData[index] = particle;
 }
@@ -454,9 +454,20 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
 
     float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
    
-    particle.position.x = particle.position.x + (localIndex);
-    particle.position.y = 1 + particle.position.y;
-    particle.position.z = particle.position.z; // + oddEvenFactor * ( 4* meta[index].deltaTime);
+    particle.position.x = particle.position.x + ((particle.size) * localIndex /3);
+    if(localIndex%2==0)
+    {
+        particle.position.y = particle.position.y;
+        particle.size = (particle.size - 0.5f);
+
+    }
+    else
+    {
+        particle.position.y = particle.position.y + ((particle.size - 1) + (oddEvenFactor));
+    }
+   
+    
+    particle.position.z = particle.position.z +(2 / localIndex) /** oddEvenFactor*/; /*+ oddEvenFactor * ( 4* meta[index].deltaTime)*/;
 
     particle.rgb.r = 1.0f;
     particle.rgb.g = 1.0f;
@@ -500,7 +511,30 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     //float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
     //???float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
     
-    //Time differense for variation in animation 
+    ////Time differense for variation in animation 
+    //if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
+    //{
+    //    particle.time = 0.0f;
+    //}
+    //else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    //{
+    //    particle.time = meta[index].deltaTime * meta[blockID.y].life;
+        
+
+    //}
+    
+    ////Set specified Start position 
+    //float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    //particle.position = startPosition;
+
+    //float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
+    //particle.size = particle.size + (1*oddEvenFactor);
+    //particle.position.x = particle.position.x + (localIndex * 2 /*+4*/);
+    //particle.position.y = 1 + particle.position.y;
+    
+    //particle.position.z = particle.position.z +  localIndex/2 ; //*localIndex + (oddEvenFactor * ( /*4*6 * meta[index].deltaTime));*/
+
+        //Time differense for variation in animation 
     if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
     {
         particle.time = 0.0f;
@@ -514,15 +548,29 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     
     //Set specified Start position 
     float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
-    particle.position = startPosition;
+    float noiseRange = 3.0f;
+    float noiseX = noiseRange * sin(index);
+    float noiseZ = noiseRange * sin(index * 2.0f);
+    particle.position = startPosition + noiseX;
 
-    float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
-    particle.size = particle.size + (1*oddEvenFactor);
-    particle.position.x = particle.position.x + (index*2/*+4*/);
-    particle.position.y = 1 + particle.position.y;
-    particle.position.z = particle.position.z;
-    //particle.position.z = particle.position.z + index + (oddEvenFactor * ( /*4*/6 * meta[index].deltaTime));
+    float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
+    particle.position.x = particle.position.x + ((particle.size) * localIndex / 2);
+    if (index % 2 == 0)
+    {
+        particle.position.y = particle.position.y;
+        particle.size = (particle.size - 1.0f);
 
+    }
+    else
+    {
+        particle.position.y = particle.position.y + ((particle.size - 1) + (oddEvenFactor));
+    }
+   
+    
+    particle.position.z = noiseZ + particle.position.z + (2 / localIndex) /** oddEvenFactor*/; /*+ oddEvenFactor * ( 4* meta[index].deltaTime)*/;
+
+    //Add noise
+    
     particle.rgb.r = 1.0f;
     particle.rgb.g = 0.0f;
     particle.rgb.b = 0.0f;
@@ -586,15 +634,15 @@ void SparkMovement(in uint3 DTid, in uint3 blockID)
     particle.size = particle.size + (1 * oddEvenFactor);
     if (index %2 == 1)
     {
-        particle.position.x = (particle.position.x + ((index / meta[blockID.y].maxRange) * meta[blockID.y].maxRange) * -1);
+        particle.position.x = (particle.position.x + ((localIndex / meta[blockID.y].maxRange) * meta[blockID.y].maxRange) * -1);
     }
     else
     {
-        particle.position.x = (particle.position.x + (index / meta[blockID.y].maxRange) * meta[blockID.y].maxRange);
+        particle.position.x = (particle.position.x + (localIndex / meta[blockID.y].maxRange) * meta[blockID.y].maxRange);
 
     }
   
-    particle.position.y = particle.position.y + (index * particle.time);
+    particle.position.y = particle.position.y + (localIndex * particle.time);
     //////fire waterfall ??  particle.position.y = particle.position.y + (index / particle.time);
     particle.position.z = particle.position.z  /*+ (oddEvenFactor * ( 6 * meta[index].deltaTime)*/;
     
