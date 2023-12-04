@@ -31,22 +31,26 @@ void ShopCutscene()
 	registry.AddComponent<AnimationComponent>(imp);
 	TransformComponent* transform = registry.AddComponent<TransformComponent>(imp);
 	transform->positionX = 13.0f;
+	transform->positionY = 3.5f;
 	transform->positionZ = -25.0f;
 	transform->scaleY = 1.2f;
 	transform->scaleX = 1.2f;
 	transform->scaleZ = 1.2f;
 
+	float impY = 0.0f;
+	float impZ = -1.0f;
+
 	EntityID impCutscene = registry.CreateEntity();
 	CutsceneComponent* rotateImp = registry.AddComponent<CutsceneComponent>(imp);
 	rotateImp->mode = (CutsceneMode)(Cutscene_Character_Idle | Transition_LookAt | Cutscene_Accelerating);
-	CutsceneSetLookAt(imp, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f, 2.0f);
+	CutsceneSetLookAt(imp, 0.0f, impY, -1.0f, -1.0f, impY, impZ);
 	AddTimedEventComponentStartContinuousEnd(imp, 0.0f, BeginShopCutscene, CutsceneTransition, 5.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//Keep Imp idle
 	EntityID impIdleCutscene = registry.CreateEntity();
 	CutsceneComponent* idleImp = registry.AddComponent<CutsceneComponent>(impIdleCutscene);
 	idleImp->mode = (CutsceneMode)(Cutscene_Character_Idle | Transition_LookAt | Cutscene_Linear);
-	CutsceneSetLookAt(impIdleCutscene, -1.0f, 0.0f, 2.0f, -1.0f, 0.0f, 2.0f);
+	CutsceneSetLookAt(impIdleCutscene, -1.0f, impY, impZ, -1.0f, impY, impZ);
 	AddTimedEventComponentStartContinuousEnd(impIdleCutscene, 5.0f, BeginShopCutscene, StoredEnemyCutscene, 99999999999.0f, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	//Cutscene
 	EntityID cutscene = registry.CreateEntity();
@@ -252,6 +256,9 @@ void CreateSingleWindows()
 			registry.AddComponent<UIShopHealComponent>(relicWindow);
 		else if (i == 1)
 			registry.AddComponent<UIShopRerollComponent>(relicWindow);
+		else if (i == 3)
+			registry.AddComponent<UIShopUpgradeComponent>(relicWindow);
+
 
 		UIShopButtonComponent* button = registry.AddComponent<UIShopButtonComponent>(relicWindow);
 		button->Setup(name[i], description[i], price[i]);

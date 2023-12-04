@@ -685,6 +685,7 @@ void UIFunctions::OnClick::LockRelic(void* args, int index)
 void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 {
 	UIShopButtonComponent* uiWeapon = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
+	UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
 
@@ -693,7 +694,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
 		func(&priceCalc);
 
-	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE))
+	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || upgrade->tier >= 2)
 		return;
 
 	int soundToPlay = rand() % 2;
@@ -752,7 +753,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 			}
 		}
 	}
-
+	upgrade->tier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage((float)(uiWeapon->m_price - 2.0f));
 }

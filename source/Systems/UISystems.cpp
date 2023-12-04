@@ -142,6 +142,18 @@ bool UIRenderShopSystem::Update()
 			uiElement->SetAllVisability(true);
 		}
 
+		for (auto entity : View<UIShopUpgradeComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
+			UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(entity);
+			if (upgrade->tier == 2)
+			{
+				button->m_description = "Fully Upgraded";
+				button->m_price = 666;
+			}
+		}
+
 		for (auto entity : View<UIShopButtonComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
