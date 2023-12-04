@@ -32,6 +32,7 @@ namespace Glow
 	extern CB_IDX blur_buffer;
 	extern PoolPointer<GlowData> glow_bufData;
 	extern BlurData blur_bufData;
+	extern SRV_IDX blur_depth;
 
 	// Create and load everything necessary for glow to work.
 	void Initialize();
