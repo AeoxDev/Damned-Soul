@@ -69,10 +69,19 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 
 		AddTimedEventComponentStartEnd(bullet, 1.0f, BeginDestroyProjectile, 1.01f, EndDestroyProjectile, 0, 2);
 	}
+	else if (type == empoweredImp)
+	{
+		//VFX of the bullet
+
+		registry.AddComponent<ParticleComponent>(bullet, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::FIREBALL_EMPOWERED);
+
+		AddTimedEventComponentStartEnd(bullet, 5.0f, BeginDestroyProjectile, 5.01f, EndDestroyProjectile, 0, 2);
+	}
 	else
 	{
 
 		//VFX of the bullet
+		
 		registry.AddComponent<ParticleComponent>(bullet, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::FIREBALL);
 
 		AddTimedEventComponentStartEnd(bullet, 5.0f, BeginDestroyProjectile, 5.01f, EndDestroyProjectile, 0, 2);
