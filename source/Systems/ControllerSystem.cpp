@@ -671,10 +671,39 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 		//Update animation at the end of user input
-		anim->anim1.aAnimTime += GetDeltaTime() * anim->anim1.aAnimTimeFactor;
-		anim->anim2.aAnimTime += GetDeltaTime() * anim->anim2.aAnimTimeFactor;
-		ANIM_BRANCHLESS((&(anim->anim1)));
-		ANIM_BRANCHLESS((&(anim->anim2)));
+		float scalar = (transform->facingX * controller->goalX) + (transform->facingZ * controller->goalZ);
+		if (scalar >= 0.0f)
+		{
+			anim->anim1.aAnimTime += GetDeltaTime() * anim->anim1.aAnimTimeFactor;
+			anim->anim2.aAnimTime += GetDeltaTime() * anim->anim2.aAnimTimeFactor;
+			ANIM_BRANCHLESS((&(anim->anim1)));
+			ANIM_BRANCHLESS((&(anim->anim2)));
+		}
+		else
+		{
+			anim->anim1.aAnimTime -= GetDeltaTime() * anim->anim1.aAnimTimeFactor;//Legs
+			if (anim->anim1.aAnimTime < 0.0f)
+			{
+				anim->anim1.aAnimTime += 1.0f;
+			}
+
+			if (player->isAttacking == false)//Only do the backwards whilst not attacking.
+			{
+				anim->anim2.aAnimTime -= GetDeltaTime() * anim->anim2.aAnimTimeFactor;
+				if (anim->anim2.aAnimTime < 0.0f)
+				{
+					anim->anim2.aAnimTime += 1.0f;
+				}
+			}
+			else
+			{
+				anim->anim2.aAnimTime += GetDeltaTime() * anim->anim2.aAnimTimeFactor;
+				ANIM_BRANCHLESS((&(anim->anim2)));
+			}
+			
+		
+		}
+		
 
 	}
 	//Loop for player during other places

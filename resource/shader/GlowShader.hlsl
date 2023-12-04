@@ -17,7 +17,7 @@ float4 main(VS_OUT input) : SV_TARGET
     if (tex_rgba.r <= 0.0f && tex_rgba.g <= 0.0f && tex_rgba.b <= 0.0f)
     {
         // Pixel is black, apply no glow or alpha.
-        float4 glow_col = float4(1, 0, 0, 0.f);
+        float4 glow_col = float4(0, 0, 0, 0.f);
         return glow_col;
     }
     
@@ -26,7 +26,7 @@ float4 main(VS_OUT input) : SV_TARGET
     //float avg = (tex_rgba.r * 0.2126f) + (tex_rgba.g * 0.7152) + (tex_rgba.b * 0.0722); // Useful if the emission texture isn't greyscale.
     
     // Apply glow color.
-    float4 glow_col = float4(1, in_g, in_b, avg);
+    float4 glow_col = float4(in_r, in_g, in_b, avg);
     
     return glow_col;
 }
