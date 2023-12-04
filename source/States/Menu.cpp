@@ -31,7 +31,7 @@ void Menu::Setup()
 
 	ResetRunTime();
 	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
-	int random = rand() % 10;//Level 1 thorugh 9
+	int random = rand() % 5;//Level 1 thorugh 9
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;

@@ -30,6 +30,17 @@ void RepositionBehaviour(EntityID& entity, ImpBehaviour* ic, TransformComponent*
 	itc->positionZ = newTransform.positionZ;
 
 	//ADD POOF
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	if (stats->GetDamage() < 20.f) //normal imp
+	{
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP);
+		AddTimedEventComponentStart(entity, 2.f, BossSpawnwaveEnd);
+	}
+	else
+	{
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP_EMPOWERED);
+		AddTimedEventComponentStart(entity, 2.f, BossSpawnwaveEnd);
+	}
 
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 	if (sfx != nullptr) sfx->Play(Imp_Teleport, Channel_Extra);
@@ -164,8 +175,17 @@ bool CombatBehaviour(EntityID& entity, PlayerComponent*& pc, TransformComponent*
 		ic->goalDirectionZ = dz;
 
 		SmoothRotation(itc, ic->goalDirectionX, ic->goalDirectionZ, 40.f);
-		CreateProjectile(entity, dx, dz, imp);
-
+	
+		if (enemyStats->GetDamage() < 20.f) //normal imp
+		{
+			CreateProjectile(entity, dx, dz, imp);
+		}
+		else //empowered imp
+		{
+			CreateProjectile(entity, dx, dz, empoweredImp);
+		}
+		
+		
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Play(Imp_AttackThrow, Channel_Base);
 
@@ -309,9 +329,7 @@ bool ImpBehaviourSystem::Update()
 					hasUpdatedMap = true;
 					CalculateGlobalMapValuesImp(valueGrid);
 				}
-				//ADD POOF ?
-
-
+				
 
 				RepositionBehaviour(enemyEntity, impComponent, impTransformComponent, playerTransformCompenent, valueGrid);
 			}

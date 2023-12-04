@@ -181,6 +181,43 @@ DSS_IDX CreateDepthStencilState()
 	return currentIdx;
 }
 
+DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height, bool SRV)
+{
+	uint8_t currentIdx = dsvHolder->NextIdx();
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = (UINT)width;
+	textureDesc.Height = (UINT)height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	ID3D11Texture2D* tempTex = 0;
+	HRESULT hr = d3d11Data->device->CreateTexture2D(&textureDesc, nullptr, &tempTex);
+	assert(!FAILED(hr));
+
+	dsvHolder->ds_map.emplace(currentIdx, tempTex);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Texture2D.MipSlice = 0;
+	dsvDesc.Flags = 0;
+
+	ID3D11DepthStencilView* tempDSV = 0;
+	hr = d3d11Data->device->CreateDepthStencilView(dsvHolder->ds_map[currentIdx], &dsvDesc, &tempDSV);
+	assert(!FAILED(hr));
+	dsvHolder->dsv_map.emplace(currentIdx, tempDSV);
+
+	return currentIdx;
+}
+
 bool SetRenderTargetViewAndDepthStencil(const RTV_IDX idx_rtv, const DSV_IDX idx_dsv)
 {
 	assert(true == rtvHolder->rtv_map.contains(idx_rtv) && true == dsvHolder->dsv_map.contains(idx_dsv));
@@ -391,9 +428,31 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 
 
 		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], NULL, &tempSRV);
-		assert(FAILED(hr));
+		assert(!FAILED(hr));
 		srvHolder->srv_map.emplace(currentIdx, tempSRV);
 		srvHolder->size.emplace(currentIdx, srvHolder->size[sourceIdx]);
+		break;
+	case BIND_DEPTH_STENCIL:
+		tempTex = dsvHolder->ds_map[sourceIdx];
+		hr = tempTex->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&tempResource);
+		if (FAILED(hr))
+		{
+			assert("ERRPR"[0] == "Failed to create Buffer to be used for Unordered Access View!"[0]);
+			return false;
+		}
+
+		srvHolder->srv_resource_map.emplace(currentIdx, tempResource);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+
+		hr = d3d11Data->device->CreateShaderResourceView(srvHolder->srv_resource_map[currentIdx], &srvDesc, &tempSRV);
+		assert(!FAILED(hr));
+		srvHolder->srv_map.emplace(currentIdx, tempSRV);
+		//srvHolder->size.emplace(currentIdx, srvHolder->size[sourceIdx]);
 		break;
 	default:
 		assert("Did not create requested Shader Resource View (overload), requested case is not defined"[0] == "ERROR"[0]);

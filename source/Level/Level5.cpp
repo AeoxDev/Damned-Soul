@@ -101,53 +101,17 @@ void LoadLevel5()
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
-	
-	CreatePointLight(lightholder, 0.6f, 0.f, 0.0f, 82.0f, 10.0f, 185.0f, 600.0f, 20.0f);
-	//CreatePointLight(lightholderTwo, 0.6f, 0.f, 0.0f, -190.0f, 15.0f, -70.0f, 600.0f, 20.0f);
-	//CreatePointLight(lightholderThree, 0.6f, 0.f, 0.0f, 80.0f, 15.0f, -22.0f, 600.0f, 20.0f);
-	//CreatePointLight(lightholderForth, 0.6f, 0.f, 0.0f, -63.0f, 15.0f, 150.0f, 600.0f, 20.0f);
 
-	//registry.AddComponent<ParticleComponent>(lightholder, 10, 0, 5.5, -169.5, 0.0, -222.0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	CreatePointLight(lightholder, 0.6f, 0.1f, 0.0f, 82.0f, 10.0f, 185.0f, 700.0f, 20.0f);
+	CreatePointLight(lightholderTwo, 0.6f, 0.1f, 0.0f, -318.0f, 10.0f, 163.0f, 200.0f, 20.0f);
+
+
+	//registry.AddComponent<ParticleComponent>(lightholder, 10, 0, 5.5,0.0, 0.0, 0.0, 18, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	//TransformComponent tComp;
-	//tComp.positionX = 1;
-	//tComp.positionY = 1;
-	//tComp.positionZ = 1;
+	//tComp.positionX = 150.0;
+	//tComp.positionY = 20.0;
+	//tComp.positionZ = 185.0;
 	//registry.AddComponent<TransformComponent>(lightholder, tComp);
-
-	//registry.AddComponent<ParticleComponent>(lightholderTwo, 10, 0, 5, -90, 1, -24, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent ttComp;
-	//ttComp.positionX = 1;
-	//ttComp.positionY = 1;
-	//ttComp.positionZ = 1;
-	//registry.AddComponent<TransformComponent>(lightholderTwo, ttComp);
-
-	//registry.AddComponent<ParticleComponent>(lightholderThree, 10, 0, 5.5, -60, -6, 29, 10, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent tttComp;
-	//tttComp.positionX = 1;
-	//tttComp.positionY = 1;
-	//tttComp.positionZ = 1;
-	//registry.AddComponent<TransformComponent>(lightholderThree, tttComp);
-
-	//registry.AddComponent<ParticleComponent>(lightholderForth, 10, 0, 5, 181, -1, 47, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent fComp;
-	//fComp.positionX = 1;
-	//fComp.positionY = 1;
-	//fComp.positionZ = 1;
-	//registry.AddComponent<TransformComponent>(lightholderForth, fComp);
-
-
-	//float redLight = 0.2f;
-	//float greenLight = 0.05f;
-	//float blueLight = 0.05f;
-
-
-	//CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	//CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	//CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	//CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	//CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	//Add static hazards on the where player does not spawn
 	//////const int nrHazards = 8;

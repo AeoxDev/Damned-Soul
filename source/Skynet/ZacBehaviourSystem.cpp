@@ -57,6 +57,14 @@ bool ZacBehaviourSystem::Update()
 				//TransformAccelerate(enemyEntity, dirX, dirZ);
 				zacTransformComponent->positionX += dirX * GetDeltaTime() * enemyStats->GetSpeed();
 				zacTransformComponent->positionZ += dirZ * GetDeltaTime()* enemyStats->GetSpeed();
+
+				if (zacComponent->zacIndex == 1) //time to animate
+				{
+					enemyAnim->aAnim = ANIMATION_WALK;
+					enemyAnim->aAnimIdx = 0;
+					ANIM_BRANCHLESS(enemyAnim);
+					enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
+				}
 			}
 		}
 	}

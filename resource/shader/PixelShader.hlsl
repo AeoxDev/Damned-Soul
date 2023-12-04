@@ -79,11 +79,8 @@ cbuffer LightComponentShaderBuffer : register(b2)
 
 float4 main(GS_OUT input) : SV_TARGET
 {
-    
-    if (depthTexture.Load(input.base.position.xyz).w >= input.base.position.w + 0.0001f)
-    {
-        clip(-1.0f);
-    }
+    //The realer forward
+    clip(input.base.position.w - depthTexture.Load(input.base.position.xyz).w + 0.1f);
     
     // Calculate normal based on normal map combined with true normal
     
