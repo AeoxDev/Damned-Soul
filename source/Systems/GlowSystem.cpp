@@ -92,6 +92,48 @@ bool GlowSystem::Update()
 		UnsetGeometryShader();
 		drawn = true;
 	}
+	for (auto entity : View<TransformComponent, ModelSkeletonComponent, BlendAnimationComponent>(registry))
+	{
+		// Prepare to draw meshes.
+		SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
+		ModelSkeletonComponent* skel_comp = registry.GetComponent<ModelSkeletonComponent>(entity);
+		BlendAnimationComponent* blandAnim_comp = registry.GetComponent<BlendAnimationComponent>(entity);
+		TransformComponent* trans_comp = registry.GetComponent<TransformComponent>(entity);
+		if (!prepped)
+		{
+			// Prepare for glow pass.
+			Glow::PrepareGlowPass();
+			prepped = true;
+		}
+		GlowComponent* glow_comp = registry.GetComponent<GlowComponent>(entity);
+		if (glow_comp)
+		{
+			Glow::UpdateGlowBuffer(glow_comp->m_r, glow_comp->m_g, glow_comp->m_b);
+		}
+		else
+		{
+			Glow::UpdateGlowBuffer(0, 0, 0); // NOTE: Values?
+		}
+		// Draw models with skeleton.
+		SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+		SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
+		if (trans_comp->offsetX != 0.0f)
+		{
+			trans_comp->offsetY = 0.0f;
+		}
+		SetWorldMatrix(trans_comp->positionX + trans_comp->offsetX, trans_comp->positionY + trans_comp->offsetY, trans_comp->positionZ + trans_comp->offsetZ,
+			trans_comp->facingX, trans_comp->facingY, -trans_comp->facingZ,
+			trans_comp->scaleX * trans_comp->offsetScaleX, trans_comp->scaleY * trans_comp->offsetScaleY, trans_comp->scaleZ * trans_comp->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[skel_comp->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[skel_comp->model].m_indexBuffer);
+
+		// Render with data
+		LOADED_MODELS[skel_comp->model].RenderAllSubmeshesWithBlending(blandAnim_comp->anim1.aAnim, blandAnim_comp->anim1.aAnimIdx, blandAnim_comp->anim1.aAnimTime, blandAnim_comp->anim2.aAnim, blandAnim_comp->anim2.aAnimIdx, blandAnim_comp->anim2.aAnimTime);
+
+		UnsetGeometryShader();
+		drawn = true;
+	}
 	if (drawn)
 	{
 		// FInish glow and do blur.

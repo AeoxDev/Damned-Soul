@@ -144,11 +144,23 @@ void WallResolve(EntityID entity, ProjectileComponent* proj, GeometryIndependent
 				NormalizeFacing(p);
 				float punishTime = 0.05f;
 				AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+				BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
+
 				if (anim != nullptr)
 				{
 					anim->aAnimIdx = 0;
 					anim->aAnim = ANIMATION_DEATH;
 					anim->aAnimTime = 0.01f;
+				}
+				else if (blendAnim != nullptr)
+				{
+					blendAnim->anim1.aAnimIdx = 0;
+					blendAnim->anim1.aAnim = ANIMATION_DEATH;
+					blendAnim->anim1.aAnimTime = 0.01f;
+				
+					blendAnim->anim2.aAnimIdx = 0;
+					blendAnim->anim2.aAnim = ANIMATION_DEATH;
+					blendAnim->anim2.aAnimTime = 0.01f;
 				}
 				player->isDashing = false;
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PauseAnimation, TPose, punishTime, ContinueAnimation, 0, 2);

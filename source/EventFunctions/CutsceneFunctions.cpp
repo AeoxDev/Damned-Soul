@@ -125,18 +125,27 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		}
 		
 		//Loop the walk animation
-		BlendAnimationComponent* animation = registry.GetComponent<BlendAnimationComponent>(entity);
-		animation->anim1.aAnim = ANIMATION_WALK;
-		animation->anim1.aAnimIdx = 0;
-		animation->anim1.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		BlendAnimationComponent* bAnimation = registry.GetComponent<BlendAnimationComponent>(entity);
+		if (animation != nullptr)
+		{
+			animation->aAnim = ANIMATION_WALK;
+			animation->aAnimIdx = 0;
+			animation->aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		}
+		else if (bAnimation)
+		{
+			bAnimation->anim1.aAnim = ANIMATION_WALK;
+			bAnimation->anim1.aAnimIdx = 0;
+			bAnimation->anim1.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 
-		animation->anim2.aAnim = ANIMATION_WALK;
-		animation->anim2.aAnimIdx = 0;
-		animation->anim2.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			bAnimation->anim2.aAnim = ANIMATION_WALK;
+			bAnimation->anim2.aAnimIdx = 0;
+			bAnimation->anim2.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 
-		ANIM_BRANCHLESS((&(animation->anim1)));
-		ANIM_BRANCHLESS((&(animation->anim2)));
-		
+			ANIM_BRANCHLESS((&(bAnimation->anim1)));
+			ANIM_BRANCHLESS((&(bAnimation->anim2)));
+		}
 	}
 	if (cutscene->mode & Cutscene_Character_Fall)
 	{
@@ -187,11 +196,23 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		}
 
 		//Loop the walk animation
-		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
-		animation->aAnim = ANIMATION_IDLE;
-		animation->aAnimIdx = 1;
-		animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
-		ANIM_BRANCHLESS(animation);
+		//AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		//animation->aAnim = ANIMATION_IDLE;
+		//animation->aAnimIdx = 1;
+		//animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		//ANIM_BRANCHLESS(animation);
+
+		BlendAnimationComponent* animation = registry.GetComponent<BlendAnimationComponent>(entity);
+		animation->anim1.aAnim = ANIMATION_IDLE;
+		animation->anim1.aAnimIdx = 1;
+		animation->anim1.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS((&(animation->anim1)));
+
+		animation->anim2.aAnim = ANIMATION_IDLE;
+		animation->anim2.aAnimIdx = 1;
+		animation->anim2.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS((& (animation->anim2)));
+
 	}
 	if (cutscene->mode & Cutscene_Character_Idle)
 	{
@@ -234,12 +255,25 @@ void CutsceneTransition(EntityID& entity, const int& index)
 
 		//Loop the idle animation
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		BlendAnimationComponent* bAnimation = registry.GetComponent<BlendAnimationComponent>(entity);
 		if (animation != nullptr)
 		{
 			animation->aAnim = ANIMATION_IDLE;
 			animation->aAnimIdx = 0;
 			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
+		}
+		else if (bAnimation != nullptr)
+		{
+			bAnimation->anim1.aAnim = ANIMATION_IDLE;
+			bAnimation->anim1.aAnimIdx = 0;
+			bAnimation->anim1.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->anim1)));
+
+			bAnimation->anim2.aAnim = ANIMATION_IDLE;
+			bAnimation->anim2.aAnimIdx = 0;
+			bAnimation->anim2.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->anim2)));
 		}
 		
 	}
@@ -284,12 +318,25 @@ void CutsceneTransition(EntityID& entity, const int& index)
 
 		//Loop the attack animation
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		BlendAnimationComponent* bAnimation = registry.GetComponent<BlendAnimationComponent>(entity);
 		if (animation != nullptr)
 		{
 			animation->aAnim = ANIMATION_ATTACK;
 			animation->aAnimIdx = 0;
 			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
+		}
+		else if (bAnimation != nullptr)
+		{
+			bAnimation->anim1.aAnim = ANIMATION_ATTACK;
+			bAnimation->anim1.aAnimIdx = 0;
+			bAnimation->anim1.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->anim1)));
+
+			bAnimation->anim2.aAnim = ANIMATION_ATTACK;
+			bAnimation->anim2.aAnimIdx = 0;
+			bAnimation->anim2.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->anim2)));
 		}
 		
 	}
