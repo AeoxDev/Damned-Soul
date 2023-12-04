@@ -79,6 +79,15 @@ void UIFunctions::MainMenu::Quit(void* args, int a)
 
 void UIFunctions::Game::LoadNextLevel(void* args, int a)
 {
+	for (auto entity : View<UIShopRelicComponent>(registry))
+	{
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+		for (int i = 0; i < 2; i++)
+		{
+			Relics::PutBackRelic(relicWindow->shopRelics[i]);
+		}
+	}
+
 	UnloadEntities();
 
 	for (auto entity : View<AudioEngineComponent>(registry))
