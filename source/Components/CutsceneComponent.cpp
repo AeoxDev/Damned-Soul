@@ -5,6 +5,7 @@
 #include "EventFunctions.h"
 #include "DeltaTime.h"
 #include "States\StateManager.h"
+#include "Camera.h"
 void MainMenuIntroCutscene(EntityID& entity, const int& index)
 {
 	float pointX = (rand() % 64) * 0.5f - 32.0f;
@@ -69,6 +70,7 @@ void MainMenuIntroCutscene(EntityID& entity, const int& index)
 void StageIntroFall(EntityID& entity, const int& index)
 {
 	//Fall from a high place down to 0.
+	
 	TimedEventIgnoreGamespeed(true);
 	gameSpeed = 0.0f;
 	float returnTime = 1.0f;

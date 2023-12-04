@@ -394,8 +394,11 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 	
-
-	
+	//Bugfix, player able to make moves before cutscenes, causing glitches.
+	if (Camera::InCutscene() != 0)
+	{
+		return true;
+	}
 
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
 	{
