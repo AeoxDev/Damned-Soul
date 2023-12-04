@@ -2,9 +2,9 @@
 #include <string>
 
 //Hermano 3000
-//#define GAME_TEST
+#define GAME_TEST
 
-//#define UI_TEST
+#define UI_TEST
 
 ////does not work, dont use
 //#define MAIN_MENU_TEST
