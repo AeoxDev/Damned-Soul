@@ -265,10 +265,15 @@ void Camera::UpdateView()
 
 void Camera::UpdateProjection()
 {
+	float nearClip = 64.0f;
+	if (InCutscene() > 0)
+	{
+		nearClip = 0.1f;
+	}
 	if (GameCamera->m_projectionType)
 	{
 		DirectX::XMMATRIX proj;
-		proj = DirectX::XMMatrixPerspectiveFovLH(GetFOV(), (float)sdl.WIDTH / (float)sdl.HEIGHT, 0.1f, CAMERA_PERSPECTIVE_DEPTH);//proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
+		proj = DirectX::XMMatrixPerspectiveFovLH(GetFOV(), (float)sdl.WIDTH / (float)sdl.HEIGHT, nearClip, CAMERA_PERSPECTIVE_DEPTH);//proj = DirectX::XMMatrixPerspectiveLH(1600.f, 900.f, 0.1f, 50.f);
 		DirectX::XMStoreFloat4x4(&GameCamera->m_perspective, proj);
 		DirectX::XMStoreFloat4x4(&BufferData->m_projectionMatrix, DirectX::XMMatrixTranspose(proj));
 	}

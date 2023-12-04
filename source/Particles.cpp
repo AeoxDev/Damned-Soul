@@ -17,6 +17,8 @@ CB_IDX vfxStartKeeper;
 CB_IDX VFXMetadata;
 SRV_IDX particleSRV;
 
+
+
 PoolPointer<ParticleMetadataBuffer> data;
 
 // ## ALEX CODE ##
@@ -36,6 +38,9 @@ struct VFXBufferData
 // ## EO ALEX CODE ##
 
 int Particles::RenderSlot;
+SRV_IDX Particles::particleDepthSRV;
+SRV_IDX Particles::backBufferDepthSRV;
+DSV_IDX Particles::proxyDepth;
 
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
@@ -128,7 +133,6 @@ void Particles::InitializeParticles()
 	startKeeper = CreateConstantBuffer(sizeof(int));
 	vfxStartKeeper = CreateConstantBuffer(sizeof(int));
 
-
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
 		data->metadata[i].life = -1.f;
@@ -152,6 +156,10 @@ void Particles::InitializeParticles()
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
 	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", DEFAULT);
 	RenderSlot = SetupParticles();
+	Particles::particleDepthSRV = CreateShaderResourceViewTexture(renderStates[Particles::RenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::backBufferDepthSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::proxyDepth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
+
 }
 
 void Particles::ReleaseParticles()
@@ -218,8 +226,6 @@ void Particles::PrepareParticlePass(int metadataSlot)
 {
 	SetTopology(POINTLIST);
 
-	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
-
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
@@ -236,7 +242,7 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
-	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
+	SetShaderResourceView(m_writeBuffer->SRV, BIND_VERTEX, 0);
 	UnsetVertexBuffer();
 	UnsetIndexBuffer();
 
@@ -346,6 +352,17 @@ void Particles::FinishMeshPass()
 	UnsetConstantBuffer(BIND_VERTEX, 3);
 }
 
+void Particles::CopyBackBufferToRender()
+{
+	CopySRVtoSRV(renderStates[Particles::RenderSlot].shaderResourceView, VFXBackBufferSRV);
+}
+
+void Particles::CopyRenderToBackBuffer()
+{
+	CopySRVtoSRV(VFXBackBufferSRV, renderStates[Particles::RenderSlot].shaderResourceView);
+
+}
+
 
 void Particles::UpdateStart(int& metadataSlot)
 {
@@ -362,7 +379,6 @@ void Particles::UpdateVFXStart(int& metadataSlot)
 
 	UpdateConstantBuffer(vfxStartKeeper, &start);
 }
-
 
 // -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, ComputeShaders pattern)

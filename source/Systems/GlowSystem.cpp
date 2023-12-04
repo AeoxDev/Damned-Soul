@@ -47,7 +47,7 @@ bool GlowSystem::Update()
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[boneless_comp->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[boneless_comp->model].m_indexBuffer);
-		LOADED_MODELS[boneless_comp->model].RenderAllSubmeshes();
+		LOADED_MODELS[boneless_comp->model].RenderAllSubmeshes(entity);
 		drawn = true;
 	}
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, AnimationComponent>(registry))
@@ -87,7 +87,7 @@ bool GlowSystem::Update()
 		SetIndexBuffer(LOADED_MODELS[skel_comp->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[skel_comp->model].RenderAllSubmeshes(anim_comp->aAnim, anim_comp->aAnimIdx, anim_comp->aAnimTime);
+		LOADED_MODELS[skel_comp->model].RenderAllSubmeshes(entity, anim_comp->aAnim, anim_comp->aAnimIdx, anim_comp->aAnimTime);
 
 		UnsetGeometryShader();
 		drawn = true;
@@ -98,7 +98,7 @@ bool GlowSystem::Update()
 		Glow::FinishGlowPass();
 		Glow::PrepareBlurPass();
 		Glow::UpdateBlurBuffer();
-		Dispatch(Glow::blur_bufData.windowWidth / 32, Glow::blur_bufData.windowHeight / 32, 1);//(32, 32, 1)
+		Dispatch(1 + Glow::blur_bufData.windowWidth / 32, 1 + Glow::blur_bufData.windowHeight / 32, 1);//(32, 32, 1)
 		Glow::FinishBlurPass();
 	}
 
