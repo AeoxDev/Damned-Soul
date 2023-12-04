@@ -11,31 +11,34 @@
 
 bool ParticleSystem::Update()
 {
-	////PrepareBackBuffer();
+	//////PrepareBackBuffer();
 
-	ClearDepthStencilView(Particles::proxyDepth);
+	//ClearDepthStencilView(Particles::proxyDepth);
 
-	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, Particles::proxyDepth);
+	//SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, Particles::proxyDepth);
 
-	SetVertexShader(renderStates[Particles::RenderSlot].vertexShaders[1]);
-	SetPixelShader(renderStates[Particles::RenderSlot].pixelShaders[1]);
+	//SetVertexShader(renderStates[Particles::RenderSlot].vertexShaders[1]);
+	//SetPixelShader(renderStates[Particles::RenderSlot].pixelShaders[1]);
 
-	//////Set the depth texture
+	////////Set the depth texture
 
 
-	SetVertexBuffer(renderStates[backBufferRenderSlot].vertexBuffer);
-	SetIndexBuffer(renderStates[backBufferRenderSlot].indexBuffer);
-	SetShaderResourceView(renderStates[Particles::RenderSlot].shaderResourceView, BIND_PIXEL, 2);
-	//SetShaderResourceView(renderStates[Particles::RenderSlot].shaderResourceView, BIND_PIXEL, 3);
-	SetShaderResourceView(Particles::backBufferDepthSRV, BIND_PIXEL, 3);
-	SetShaderResourceView(Particles::particleDepthSRV, BIND_PIXEL, 4);
+	//SetVertexBuffer(renderStates[backBufferRenderSlot].vertexBuffer);
+	//SetIndexBuffer(renderStates[backBufferRenderSlot].indexBuffer);
+	//SetShaderResourceView(renderStates[Particles::RenderSlot].shaderResourceView, BIND_PIXEL, 2);
+	//ClearRenderTargetView(renderStates[Particles::RenderSlot].renderTargetView);
+	//Particles::CopyBackBufferToRender();
 
-	RenderIndexed(3);
 
-	//////UNBIND SHIT 
-	UnsetShaderResourceView(BIND_PIXEL, 2);
-	UnsetShaderResourceView(BIND_PIXEL, 3);
-	//UnsetDepthPassTexture(false);
-	UnsetShaderResourceView(BIND_PIXEL, 4);
+	//SetShaderResourceView(Particles::backBufferDepthSRV, BIND_PIXEL, 3);
+	//SetShaderResourceView(Particles::particleDepthSRV, BIND_PIXEL, 4);
+
+	//RenderIndexed(3);
+
+	////////UNBIND SHIT 
+	//UnsetShaderResourceView(BIND_PIXEL, 2);
+	//UnsetShaderResourceView(BIND_PIXEL, 3);
+	////UnsetDepthPassTexture(false);
+	//UnsetShaderResourceView(BIND_PIXEL, 4);
 	return true;
 }

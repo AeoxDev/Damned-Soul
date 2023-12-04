@@ -222,11 +222,7 @@ void Particles::FinishParticleCompute()
 
 void Particles::PrepareParticlePass(int metadataSlot)
 {
-	CopyBackBufferToRender();
-
 	SetTopology(POINTLIST);
-
-	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
 
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
@@ -244,7 +240,7 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
-	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
+	SetShaderResourceView(m_writeBuffer->SRV, BIND_VERTEX, 0);
 	UnsetVertexBuffer();
 	UnsetIndexBuffer();
 
@@ -338,6 +334,12 @@ void Particles::FinishMeshPass()
 void Particles::CopyBackBufferToRender()
 {
 	CopySRVtoSRV(renderStates[Particles::RenderSlot].shaderResourceView, VFXBackBufferSRV);
+}
+
+void Particles::CopyRenderToBackBuffer()
+{
+	CopySRVtoSRV(VFXBackBufferSRV, renderStates[Particles::RenderSlot].shaderResourceView);
+
 }
 
 

@@ -94,6 +94,7 @@ namespace Particles
 	void FinishMeshPass();
 
 	void CopyBackBufferToRender();
+	void CopyRenderToBackBuffer();
 
 	void UpdateStart(int& metadataSlot);
 	void UpdateVFXStart(int& metadataSlot);
