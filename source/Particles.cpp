@@ -17,6 +17,8 @@ CB_IDX vfxStartKeeper;
 CB_IDX VFXMetadata;
 SRV_IDX particleSRV;
 
+
+
 PoolPointer<ParticleMetadataBuffer> data;
 
 // ## ALEX CODE ##
@@ -36,6 +38,9 @@ struct VFXBufferData
 // ## EO ALEX CODE ##
 
 int Particles::RenderSlot;
+SRV_IDX Particles::particleDepthSRV;
+SRV_IDX Particles::backBufferDepthSRV;
+DSV_IDX Particles::proxyDepth;
 
 // Compute shader used to reset particle components
 CS_IDX setToZeroCS = -1;
@@ -128,7 +133,6 @@ void Particles::InitializeParticles()
 	startKeeper = CreateConstantBuffer(sizeof(int));
 	vfxStartKeeper = CreateConstantBuffer(sizeof(int));
 
-
 	for (int i = 0; i < PARTICLE_METADATA_LIMIT; i++)
 	{
 		data->metadata[i].life = -1.f;
@@ -152,6 +156,10 @@ void Particles::InitializeParticles()
 	setToZeroCS = LoadComputeShader("ParticleTimeResetCS.cso");
 	MeshVS = LoadVertexShader("VFX_MESH_VS.cso", DEFAULT);
 	RenderSlot = SetupParticles();
+	Particles::particleDepthSRV = CreateShaderResourceViewTexture(renderStates[Particles::RenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::backBufferDepthSRV = CreateShaderResourceViewTexture(renderStates[backBufferRenderSlot].depthStencilView, BIND_DEPTH_STENCIL);
+	Particles::proxyDepth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
+
 }
 
 void Particles::ReleaseParticles()
@@ -218,8 +226,6 @@ void Particles::PrepareParticlePass(int metadataSlot)
 {
 	SetTopology(POINTLIST);
 
-	CopySRVtoSRV(particleSRV, m_writeBuffer->SRV);
-
 	SetVertexShader(renderStates[RenderSlot].vertexShaders[0], true);
 	SetGeometryShader(renderStates[RenderSlot].geometryShader);
 	SetPixelShader(renderStates[RenderSlot].pixelShaders[0]);
@@ -236,7 +242,7 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 	SetConstantBuffer(startKeeper, BIND_VERTEX, 2);
 	SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
-	SetShaderResourceView(particleSRV, BIND_VERTEX, 0);
+	SetShaderResourceView(m_writeBuffer->SRV, BIND_VERTEX, 0);
 	UnsetVertexBuffer();
 	UnsetIndexBuffer();
 
@@ -346,6 +352,17 @@ void Particles::FinishMeshPass()
 	UnsetConstantBuffer(BIND_VERTEX, 3);
 }
 
+void Particles::CopyBackBufferToRender()
+{
+	CopySRVtoSRV(renderStates[Particles::RenderSlot].shaderResourceView, VFXBackBufferSRV);
+}
+
+void Particles::CopyRenderToBackBuffer()
+{
+	CopySRVtoSRV(VFXBackBufferSRV, renderStates[Particles::RenderSlot].shaderResourceView);
+
+}
+
 
 void Particles::UpdateStart(int& metadataSlot)
 {
@@ -362,7 +379,6 @@ void Particles::UpdateVFXStart(int& metadataSlot)
 
 	UpdateConstantBuffer(vfxStartKeeper, &start);
 }
-
 
 // -- PARTICLE COMPONENT FUNCTION DEFINTIONS -- //
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, ComputeShaders pattern)
@@ -411,6 +427,65 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 			break;
 		}
 		
+	}
+}
+
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, bool frostFire, bool expolding, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+	//Calculate how many groups are requiered to write to all particles
+	float groups = (float)amount / (float)THREADS_PER_GROUP;
+	if (groups == (int)groups)
+		groupsRequiered = groups;
+	else
+		groupsRequiered = groups + 1;
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
+	data->metadata[metadataSlot].pattern = pattern;
+	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+
+
+	if (frostFire)
+	{
+		data->metadata[metadataSlot].morePositionInfo.x = 1.f;
+
+	}
+	if (expolding)
+	{
+		data->metadata[metadataSlot].morePositionInfo.y = 1.f;
+	}
+
+	data->metadata[metadataSlot].reset = false;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+
+	// We need to find "amount" of particles free in the physical buffer
+	// so we can allocate it for the ParticleComponents logical buffer
+	int freeConsecutively = 0;
+	int counter = 0;
+	for (int i : Particles::m_unoccupiedParticles)
+	{
+		counter++;
+
+		if (i == -1)
+			freeConsecutively++;
+		else
+			freeConsecutively = 0;
+
+		if (freeConsecutively >= amount)
+		{
+			data->metadata[metadataSlot].start = counter - amount;
+			data->metadata[metadataSlot].end = counter - 1;
+
+
+			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			break;
+		}
+
 	}
 }
 
@@ -612,7 +687,7 @@ int ParticleComponent::FindSlot()
 
 void ParticleComponent::Release()
 {
-	if (data->metadata[metadataSlot].start >= data->metadata[metadataSlot].end)
+	if ( (data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
 		return;
 
 	std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), -1, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
@@ -643,8 +718,8 @@ void ParticleComponent::Release()
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
 	data->metadata[metadataSlot].pattern = -1;
 	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].end = 0.f;
-	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
-	data->metadata[metadataSlot].morePositionInfo.x = 99999.f; data->metadata[metadataSlot].morePositionInfo.y = 99999.f;
+	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
 	data->metadata[metadataSlot].reset = false;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);

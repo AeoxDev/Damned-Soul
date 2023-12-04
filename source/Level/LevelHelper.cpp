@@ -9,6 +9,10 @@
 #include "UIButtonFunctions.h"
 #include "UI\HP_BarHelper.h"
 #include "SDLHandler.h"
+#include "DeltaTime.h"
+
+#include "UIComponents.h"
+#include "UIRenderer.h"
 
 #include <iostream>
 #include <fstream>
@@ -172,7 +176,7 @@ void SpawnTorch(float positionX, float positoinY, float positionZ, float red, fl
 	else if (level8 == true && level9 == false)
 	{
 		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 18.0f, 0.0f, 3.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 20.0f, 0.0f, 4.0f, 2.5f, 32, VFX_PATTERN::FLAME_BLUE);
 		TransformComponent tComp;
 		tComp.positionX = positionX;
 		tComp.positionY = positoinY;
@@ -182,7 +186,7 @@ void SpawnTorch(float positionX, float positoinY, float positionZ, float red, fl
 	else if (level8 == false && level9 == true)
 	{
 		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 28.0f, 0.0f, 4.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 38.0f, 0.0f, 7.5f, 6.0f, 32, VFX_PATTERN::FLAME_BLUE);
 		TransformComponent tComp;
 		tComp.positionX = positionX;
 		tComp.positionY = positoinY;
@@ -248,10 +252,19 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	EntityID hitbox = registry.CreateEntity();
 	EntityID gate = registry.CreateEntity();
 	stateManager.naviagtion = registry.CreateEntity();
+	EntityID torch = registry.CreateEntity();
+	EntityID portal = registry.CreateEntity(); 
 
 	ModelBonelessComponent* stageModel;
 	ModelBonelessComponent* hitboxModel;
 	ModelBonelessComponent* gateModel;
+	ModelBonelessComponent* torchModel;
+	ModelBonelessComponent* portalModel;
+
+	GlowComponent* torchGlow;
+	GlowComponent* stageGlow;
+	GlowComponent* portalGlow;
+
 	switch (stageVars.stageNr)
 	{
 	case 0: 
@@ -259,16 +272,24 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
+		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV1Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.7f, 0.7f, 0.71f, -1.6f, -3.0f, 1.0f);
+		// set glow components
+		torchGlow = registry.AddComponent<GlowComponent>(torch, 1, 0.6f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Portal glow
 		break;
 	case 1:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV1Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV1Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
+		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV1Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.7f, 0.7f, 0.71f, -1.6f, -3.0f, 1.0f);//float colorRed, float colorGreen, float colorBlue, float directionX, float directionY, float directionZ)
+		// set glow components
+		torchGlow = registry.AddComponent<GlowComponent>(torch, 1, 0.6f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Portal glow
 		break;
 	case 2:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV2Geo.mdl"));
@@ -277,6 +298,8 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV2Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.7f, 0.7f, 0.71f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Portal glow
 		
 		break;
 	case 3:
@@ -284,6 +307,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV3Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV3Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV3Nav.mdl"));
+		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV3Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.71f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		{
@@ -291,8 +315,12 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			EntityID hazardLava = registry.CreateEntity();
 			registry.AddComponent<ModelBonelessComponent>(hazardLava, LoadModel("LV3Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazardLava);
+			registry.AddComponent<GlowComponent>(hazardLava, 0.9f, 0.3f, 0);
 			AddStaticHazard(hazardLava, HAZARD_LAVA);
 		}
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(torch, 1, 0.6f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Portal glow
 		
 		break;
 	case 4:
@@ -304,38 +332,46 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			EntityID hazard = registry.CreateEntity();
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV4Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			registry.AddComponent<GlowComponent>(hazard, 0.9f, 0.3f, 0);
 			AddStaticHazard(hazard, HAZARD_LAVA);
 		}
 		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Portal glow
 		
 		break;
 	case 5:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV5Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
-		SetDirectionLight(0.666f, 1.0f, .666f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV5Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			registry.AddComponent<GlowComponent>(hazard, 0.9f, 0.3f, 0);
 			AddStaticHazard(hazard, HAZARD_LAVA);
 		}
+		//Set glow components.
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Portal glow
 		break;
 	case 6:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV6Geo.mdl"));//not finished from here
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV6Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));
-		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
-		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));
+		//hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
+		//hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));	//why? /Erika & Niclas
+		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV6Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.61f, 0.6f, 0.62f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV6Lava.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			registry.AddComponent<GlowComponent>(hazard, 0.9f, 0.3f, 0);
 			AddStaticHazard(hazard, HAZARD_LAVA);
 		}
 		{
@@ -343,6 +379,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			EntityID hazard = registry.CreateEntity();
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV6Acid.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			registry.AddComponent<GlowComponent>(hazard, 0.9f, 0.3f, 0);
 			AddStaticHazard(hazard, HAZARD_ACID);
 		}
 		{
@@ -351,6 +388,10 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<ModelBonelessComponent>(stateManager.gateVisual, LoadModel("LV6GateGeo.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(stateManager.gateVisual);
 		}
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(torch, 1, 0.6f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		portalGlow = registry.AddComponent<GlowComponent>(stateManager.gateVisual, 0.6f, 0.9f, 0.6f);	// Portal glow
 		break;
 	case 7:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV7Geo.mdl"));
@@ -358,22 +399,53 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV7Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV7Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
+		{
+			//Do the visual gate here
+			stateManager.gateVisual = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(stateManager.gateVisual, LoadModel("LV6GateGeo.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(stateManager.gateVisual);
+		}
 		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		portalGlow = registry.AddComponent<GlowComponent>(stateManager.gateVisual, 0.6f, 0.9f, 0.6f);	// Portal glow
 		break;
 	case 8:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV8Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV8Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV8Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV8Nav.mdl"));
+		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV8Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
+		{
+			//Do the visual gate here
+			stateManager.gateVisual = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(stateManager.gateVisual, LoadModel("LV6GateGeo.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(stateManager.gateVisual);
+		}
 		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		portalGlow = registry.AddComponent<GlowComponent>(stateManager.gateVisual, 0.6f, 0.9f, 0.6f);	// Portal glow
 		break;
 	case 9:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV9Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV9Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
+		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV9Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
+		{
+			//Do the visual gate here
+			stateManager.gateVisual = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(stateManager.gateVisual, LoadModel("LV6GateGeo.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(stateManager.gateVisual);
+		}
 		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		portalGlow = registry.AddComponent<GlowComponent>(stateManager.gateVisual, 0.6f, 0.9f, 0.6f);	// Portal glow
 		break;
 	default:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
@@ -404,6 +476,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	TransformComponent* transformG = registry.AddComponent<TransformComponent>(gate, transform);
 	TransformComponent* transformH = registry.AddComponent<TransformComponent>(hitbox, transform);
 	TransformComponent* transformN = registry.AddComponent<TransformComponent>(stateManager.naviagtion, transform);
+	TransformComponent* transformT = registry.AddComponent<TransformComponent>(torch, transform);
 	RenderGeometryIndependentCollision(stage, gate, hitbox);
 	
 	stateManager.gate = gate;
@@ -492,7 +565,7 @@ void SetupEnemyNavigationHelper(bool level8)
 	model = registry.AddComponent<ModelBonelessComponent>(entity, LoadModel("FixedArrow.mdl"));
 	if (model != nullptr)
 	{
-		model->shared.gammaCorrection = 1.5f;
+		//model->shared.gammaCorrection = 1.5f;
 		model->shared.hasOutline = true;
 	}
 	registry.AddComponent<NavigationTrashComponentYouMustAccept>(entity);
@@ -815,6 +888,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
+
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
@@ -896,6 +970,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+
+		//registry.AddComponent<GlowComponent>(entity, 0.7f, 0.7f, 0.5f);	//Erika was here
 	}
 	else if (eType == EnemyType::imp)
 	{
@@ -931,7 +1007,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold += 1;
 		}
-
+		//registry.AddComponent<GlowComponent>(entity, 0.8f, 0.6f, 0.9f);	//Erika was here
 	}
 	else if (eType == EnemyType::minotaur)
 	{
@@ -950,6 +1026,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+		//registry.AddComponent<GlowComponent>(entity, 0.9f, 0.7f, 0);
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
@@ -997,11 +1074,21 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
-	//	EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_BOSS);
-		
+		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz		
 
-		AddTimedEventComponentStart(entity, 4.f, BossSpawnwaveEnd);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
+		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
+		hazardTransform->positionX = transform.positionX;
+		hazardTransform->positionY = 0.2f;
+		hazardTransform->positionZ = transform.positionZ;
+		hazardTransform->scaleX = 1.f;
+		hazardTransform->scaleY = 1.0f;
+		hazardTransform->scaleZ = 1.f;
+		hazardTransform->facingX = 0.0000f;
+		hazardTransform->facingZ = 0.0000f;
+		hazardTransform->facingY = 0.00001f;
+
+		AddTimedEventComponentStart(particlesVFX, 4.f, BossSpawnwaveEnd);
 
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
@@ -1364,20 +1451,20 @@ void SetScoreboardUI(EntityID stage)
 {
 	//Scoreboard UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
-	uiElement->Setup("TempShopWindow3", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
-	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.7f));
+	uiElement->Setup("ExMenu/SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
 
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
 
-	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
-	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.5f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
-	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.5f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
 	onHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -1388,34 +1475,21 @@ void SetScoreboardUI(EntityID stage)
 	DSFLOAT2 uiCoords = { (offsetPixelCoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 						-1 * ((offsetPixelCoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-	DSFLOAT2 diffPos(uiCoords.x + 1.1f, uiCoords.y - 0.4f);
-
-	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y), DSFLOAT2(1.0f, 1.0f), 30.0f);
-	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.15f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.25f), DSFLOAT2(1.0f, 1.0f));
-
-	const int amount = 8;
+	const int amount = 7;
 	const char texts[amount][32] =
 	{
-		"Time: ", //index 3
+		"Time: ",
 
-		"Leftover Souls: ", //index 4
-		"Spent Souls: ", //index 5
-		"Total Souls: ", //index 6
+		"Leftover Souls: ",
+		"Spent Souls: ",
+		"Total Souls: ",
 
-		"Damage Done: (WIP)", //index 7
+		"Damage Done: ",
 
-		//"Strongest Hit Dealt:",
+		"Damage Taken: ",
 
-		"Damage Taken: (WIP)", //index 8
+		"Healing Done: ",
 
-		//"Strongest Hit Taken:",
-
-		"Healing Done: (WIP)", //index 9
-
-		//"Strongest Heal Done:"
-
-		"Score: (WIP)" //index 10
 	};
 
 	for (int i = 0; i < amount; i++)
@@ -1425,4 +1499,49 @@ void SetScoreboardUI(EntityID stage)
 	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
 
 	uiElement->SetAllVisability(false);
+}
+
+void UpdateScoreBoardUI(bool won)
+{
+	UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
+	playerUI->SetAllVisability(false);
+
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	StatComponent* playerStats = registry.GetComponent<StatComponent>(stateManager.player);
+
+	for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
+
+		if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+			uiElement->SetAllVisability(true);
+
+		if (!won)
+			uiElement->m_BaseText.m_Text = "Run Failed!";
+
+		RedrawUI();
+		gameSpeed = 0.0f;
+		SetPaused(true);
+
+		const int amount = 7;
+		ML_String texts[amount] =
+		{
+			GetDigitalMinuteClock().c_str(),
+
+			("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
+			("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
+			("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
+			("Damage Done: " + std::to_string((int)playerStats->GetDamageDone())).c_str(),
+			("Healing Done: " + std::to_string((int)playerStats->GetHealthRecovered())).c_str(),
+			("Damage Taken: " + std::to_string((int)playerStats->GetDamageTaken())).c_str(),
+
+		};
+
+		for (int i = 2; i < amount + 2; i++)
+		{
+			uiElement->m_Texts[i].SetText(texts[i - 2].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
+				DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		}
+	}
 }

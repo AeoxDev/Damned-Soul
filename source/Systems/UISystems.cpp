@@ -121,11 +121,18 @@ bool UIRenderShopSystem::Update()
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
-
+			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			uiElement->m_BaseImage.baseUI.SetVisibility(true);
 
 			for (UINT32 i = 0; i < uiElement->m_Images.size() - (uiElement->m_Images.size() / 2); i++)
+			{
+				if (priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC) > player->GetSouls())
+					uiElement->m_Images[i].baseUI.SetOpacity(0.3f);
+				else
+					uiElement->m_Images[i].baseUI.SetOpacity(1.0f);
+
 				uiElement->m_Images[i].baseUI.SetVisibility(true);
+			}
 
 			uiElement->m_BaseText.baseUI.SetVisibility(true);
 

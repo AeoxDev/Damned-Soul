@@ -60,6 +60,9 @@ struct ParticleMetadataBuffer
 namespace Particles
 {
 	extern int RenderSlot;
+	extern SRV_IDX particleDepthSRV;
+	extern SRV_IDX backBufferDepthSRV;
+	extern DSV_IDX proxyDepth;
 
 	extern PoolPointer<ParticleInputOutput> m_readBuffer;
 	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
@@ -90,6 +93,9 @@ namespace Particles
 
 	void PrepareMeshPass(int metadataSlot, ParticleComponent& pComp, float timeCap);
 	void FinishMeshPass();
+
+	void CopyBackBufferToRender();
+	void CopyRenderToBackBuffer();
 
 	void UpdateStart(int& metadataSlot);
 	void UpdateVFXStart(int& metadataSlot);

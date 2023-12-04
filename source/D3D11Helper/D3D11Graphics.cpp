@@ -215,6 +215,13 @@ void EndDirectX()
 	}
 	dsvHolder->ds_map.clear();
 
+	for (auto& [key, val] : dssHolder->dss_map)
+	{
+		if (val != nullptr)
+			val->Release();
+	}
+	dssHolder->dss_map.clear();
+
 	// Release all shader resource views
 	for (auto& [key, val] : srvHolder->srv_resource_map)
 	{

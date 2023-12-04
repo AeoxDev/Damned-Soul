@@ -57,6 +57,6 @@ EntityID RandomPlayerEnemy(EnemyType enemyType);
 
 void SetScoreboardUI(EntityID stage);
 
-
+void UpdateScoreBoardUI(bool won);
 
 void SetupEnemyNavigationHelper(bool level8);

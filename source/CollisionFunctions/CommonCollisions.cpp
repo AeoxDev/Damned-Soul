@@ -3,9 +3,7 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "Level.h"
-#include "UIRenderer.h"
 #include <assert.h>
-#include "UIRenderer.h"
 #include "Relics/RelicFunctions.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
@@ -14,6 +12,7 @@
 #include <string>
 
 #include "UIComponents.h"
+#include "UIRenderer.h"
 
 #define SOFT_COLLISION_FACTOR 0.25f
 
@@ -641,41 +640,7 @@ void LoadNextLevel(OnCollisionParameters& params)
 
 		//final level portal
 
-		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
-		playerUI->SetAllVisability(false);
-
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-
-		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
-		{
-			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
-
-			if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-				uiElement->SetAllVisability(true);
-
-			RedrawUI();
-			gameSpeed = 0.0f;
-			SetPaused(true);
-
-			const int amount = 4;
-			ML_String texts[amount] =
-			{
-				GetDigitalMinuteClock().c_str(),
-
-				("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
-				("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
-				("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
-
-			};
-
-			for (int i = 3; i < amount + 3; i++)
-			{
-				uiElement->m_Texts[i].SetText(texts[i - 3].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
-					DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-			}
-		}
+		UpdateScoreBoardUI(true);
 	}
 	
 }
-
