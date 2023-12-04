@@ -354,12 +354,6 @@ void PlayerAttack(EntityID& entity, const int& index)
 	if (animTime >= HITBOX_END_TIME)
 	{
 		SetPlayerAttackHitboxInactive(entity, index);
-		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
-		if (pComp != nullptr)
-		{
-			pComp->Release();
-			registry.RemoveComponent<ParticleComponent>(entity);
-		}
 	}
 		
 	else if (animTime >= HITBOX_START_TIME && player->hasActivatedHitbox == false) //hasActivatedHitbox ensures we only enable once, now for dash-cancel reasons
