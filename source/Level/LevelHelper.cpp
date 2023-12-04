@@ -249,9 +249,17 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	EntityID gate = registry.CreateEntity();
 	stateManager.naviagtion = registry.CreateEntity();
 
+	//GlowComponent* stageGlow = registry.AddComponent<GlowComponent>(stage, 1, 1, 1);	// Where do I set this? How do I know which is which? Ice or lava? Color?
+
 	ModelBonelessComponent* stageModel;
 	ModelBonelessComponent* hitboxModel;
 	ModelBonelessComponent* gateModel;
+
+	GlowComponent* torchGlow;
+	GlowComponent* stageGlow;
+	GlowComponent* lavaGlow;
+	GlowComponent* gateGlow;
+
 	switch (stageVars.stageNr)
 	{
 	case 0: 
@@ -261,6 +269,9 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.7f, 0.7f, 0.71f, -1.6f, -3.0f, 1.0f);
+		// set glow components
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 1, 0.6f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		break;
 	case 1:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV1Geo.mdl"));
@@ -269,6 +280,9 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV1Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.7f, 0.7f, 0.71f, -1.6f, -3.0f, 1.0f);//float colorRed, float colorGreen, float colorBlue, float directionX, float directionY, float directionZ)
+		// set glow components
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 1, 0.6f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		break;
 	case 2:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV2Geo.mdl"));
@@ -277,6 +291,9 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV2Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.7f, 0.7f, 0.71f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 1, 0.6f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		
 		break;
 	case 3:
@@ -293,6 +310,10 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazardLava);
 			AddStaticHazard(hazardLava, HAZARD_LAVA);
 		}
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 1, 0.6f, 0);
+		lavaGlow = registry.AddComponent<GlowComponent>(stage, 0.9f, 0.3f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		
 		break;
 	case 4:
@@ -307,6 +328,10 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			AddStaticHazard(hazard, HAZARD_LAVA);
 		}
 		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 1, 0.6f, 0);
+		lavaGlow = registry.AddComponent<GlowComponent>(stage, 0.9f, 0.3f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		
 		break;
 	case 5:
@@ -321,6 +346,10 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
 			AddStaticHazard(hazard, HAZARD_LAVA);
 		}
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 1, 0.6f, 0);
+		lavaGlow = registry.AddComponent<GlowComponent>(stage, 0.9f, 0.3f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		break;
 	case 6:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV6Geo.mdl"));//not finished from here
@@ -351,6 +380,11 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<ModelBonelessComponent>(stateManager.gateVisual, LoadModel("LV6GateGeo.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(stateManager.gateVisual);
 		}
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 1, 0.6f, 0);
+		lavaGlow = registry.AddComponent<GlowComponent>(stage, 0.9f, 0.3f, 0);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		gateGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		break;
 	case 7:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV7Geo.mdl"));
@@ -359,6 +393,9 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV7Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		gateGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		break;
 	case 8:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV8Geo.mdl"));
@@ -367,6 +404,10 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV8Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 0.6f, 0.9f, 0.8f);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		gateGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		break;
 	case 9:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV9Geo.mdl"));
@@ -374,6 +415,10 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
+		//Set glow components.
+		torchGlow = registry.AddComponent<GlowComponent>(stage/*TODO: Switch this to the new torch model.*/, 0.6f, 0.9f, 0.8f);
+		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
+		gateGlow = registry.AddComponent<GlowComponent>(stage, 0.6f, 0.9f, 0.6f);	// Gate glow
 		break;
 	default:
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("PlaceholderScene.mdl"));
@@ -893,6 +938,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+
+		//registry.AddComponent<GlowComponent>(entity, 0.7f, 0.7f, 0.5f);	//Erika was here
 	}
 	else if (eType == EnemyType::imp)
 	{
@@ -928,7 +975,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold += 1;
 		}
-
+		//registry.AddComponent<GlowComponent>(entity, 0.8f, 0.6f, 0.9f);	//Erika was here
 	}
 	else if (eType == EnemyType::minotaur)
 	{
@@ -947,6 +994,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
+		//registry.AddComponent<GlowComponent>(entity, 0.9f, 0.7f, 0);
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
