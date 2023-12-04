@@ -330,9 +330,19 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = timeValue * indexValue;
     particle.position.z = sin(piFraction) * radius;
     
-    particle.rgb.r = 0.0f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
+    if (meta[blockID.y].morePositionInfo.x > 0)
+    {
+        particle.rgb.r = 0.0f;
+        particle.rgb.g = 0.0f;
+        particle.rgb.b = 1.0f;
+    }
+    else if (meta[blockID.y].morePositionInfo.y > 0)
+    {
+        particle.rgb.r = 1.0f;
+        particle.rgb.g = 0.0f;
+        particle.rgb.b = 0.0f;
+    }
+
       
     outputParticleData[index] = particle;
 }
