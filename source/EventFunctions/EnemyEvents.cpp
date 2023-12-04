@@ -902,8 +902,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = lucifer;
 	}
-	float time = 0.05f * (float)(rand() % 1024);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	float time = 0.01f * (float)(rand() % 4096);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 8);
 }
 
 void DestroyAcidHazard(EntityID& entity, const int& index)
@@ -1023,5 +1023,5 @@ void EndDestroyProjectile(EntityID& entity, const int& index)
 
 void SpawnProjectileShadow(EntityID& entity, const int& index)
 {
-	CreateSpotLight(entity, -0.5f, -0.5f, -0.5f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
+	CreateSpotLight(entity, -0.7f, -0.7f, -0.7f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
 }

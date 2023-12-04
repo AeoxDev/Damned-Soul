@@ -909,20 +909,20 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(IMP);
 
-		// REMOVE ONCE WE HAVE THE IMP MODEL
-	/*	model->shared.colorMultiplicativeRed = 0.2f;
-		model->shared.colorMultiplicativeBlue = 0.2f;
-		model->shared.colorMultiplicativeGreen = 0.2f;
-		model->shared.colorAdditiveRed = 0.8f;
-		model->shared.colorAdditiveBlue = 0.4f;
-		model->shared.colorAdditiveGreen = 0.8f;
+		//// REMOVE ONCE WE HAVE THE IMP MODEL
+		//model->shared.colorMultiplicativeRed = 0.2f;
+		//model->shared.colorMultiplicativeBlue = 0.2f;
+		//model->shared.colorMultiplicativeGreen = 0.2f;
+		//model->shared.colorAdditiveRed = 0.8f;
+		//model->shared.colorAdditiveBlue = 0.4f;
+		//model->shared.colorAdditiveGreen = 0.8f;
 
-		model->shared.baseColorMultiplicativeRed = 0.2f;
-		model->shared.baseColorMultiplicativeBlue = 0.2f;
-		model->shared.baseColorMultiplicativeGreen = 0.2f;
-		model->shared.baseColorAdditiveRed = 0.8f;
-		model->shared.baseColorAdditiveBlue = 0.4f;
-		model->shared.baseColorAdditiveGreen = 0.8f;*/
+		//model->shared.baseColorMultiplicativeRed = 0.2f;
+		//model->shared.baseColorMultiplicativeBlue = 0.2f;
+		//model->shared.baseColorMultiplicativeGreen = 0.2f;
+		//model->shared.baseColorAdditiveRed = 0.8f;
+		//model->shared.baseColorAdditiveBlue = 0.4f;
+		//model->shared.baseColorAdditiveGreen = 0.8f;
 
 
 		if (player)
@@ -937,7 +937,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		stat->baseHazardModifier = 0.0f;
 		stat->lavaAccelFactor = 1.0f;
 		stat->lavaAnimFactor = 1.0f;
-		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("BossTest.mdl"));
+		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Minotaur.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<MinotaurBehaviour>(entity);
 		SetupEnemyCollisionBox(entity, 1.3f, EnemyType::minotaur);

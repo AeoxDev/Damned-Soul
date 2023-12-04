@@ -11,8 +11,8 @@
 #include "Model.h"
 #include "UIComponents.h"
 #include "States\StateManager.h"
-
-
+#include "Input.h"
+#include "Camera.h"
 
 void LoadLevel1()
 {
@@ -92,11 +92,12 @@ void LoadLevel1()
 	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
 
 
-	if (SetupAllEnemies("LV1Enemies.dss") == false) ////Comment out for no enemy testing
+	if (SetupAllEnemies("LV1Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV1Enemies\nOr file is not written properly.");
 	}
+	
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 
@@ -159,6 +160,8 @@ void LoadLevel1()
 	
 	stateManager.stage = stage;
 	SetInPlay(true);
+	Camera::SetCutsceneMode(1);
+	CancelTimedEvents(stateManager.player);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f+0.3f+0.04f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 }
