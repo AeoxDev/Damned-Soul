@@ -92,11 +92,12 @@ void LoadLevel1()
 	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
 
 
-	if (SetupAllEnemies("LV1Enemies.dss") == false) ////Comment out for no enemy testing
+	if (SetupAllEnemies("LV1Enemies.dss") == false)
 	{
 		//something went wrong, could not open file
-		assert("Could not read file: LV1Enemies");
+		assert("Could not read file: LV1Enemies\nOr file is not written properly.");
 	}
+	
 
 	// DO NOT REMOVE THIS BELOW
 	//SetupEnemy(EnemyType::lucifer, -24.0f, 0.f, 0.f); // TESTCODE FOR TESTING ENEMIES 
