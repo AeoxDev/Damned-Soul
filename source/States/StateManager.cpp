@@ -183,7 +183,7 @@ int StateManager::Setup()
 
 
 	systems.push_back(new ParticleSystemCPU());
-	//systems[4]->timeCap = 1.f / 60.f;
+	systems[4]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
@@ -304,7 +304,7 @@ void StateManager::Update()
 	for (size_t i = 0; i < systems.size(); i++)
 	{
 		systems[i]->timeElapsed += GetFrameTime(); //No longer deltatime, in case of game pause deltatime
-
+		
 		if (systems[i]->timeElapsed >= systems[i]->timeCap)
 		{
 			systems[i]->Update();

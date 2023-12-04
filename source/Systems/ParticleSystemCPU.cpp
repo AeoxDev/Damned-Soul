@@ -72,7 +72,7 @@ bool ParticleSystemCPU::Update()
 			//SetWorldMatrix(tComp->positionX, tComp->positionY, tComp->positionZ, -tComp->facingX, tComp->facingY, tComp->facingZ, BIND_VERTEX, 0);
 
 			// Prepare the resources for the mesh pass
-			Particles::PrepareMeshPass(pComp->metadataSlot, *pComp);
+			Particles::PrepareMeshPass(pComp->metadataSlot, *pComp, timeCap);
 
 			// The mesh pass does not use vertex pulling
 			SetVertexBuffer(LOADED_MODELS[pComp->model].m_vertexBuffer);

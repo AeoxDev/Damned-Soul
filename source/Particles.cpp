@@ -310,7 +310,7 @@ void Particles::FinishParticlePass()
 	SetTopology(TRIANGLELIST);
 }
 
-void Particles::PrepareMeshPass(int metadataSlot, ParticleComponent& pComp)
+void Particles::PrepareMeshPass(int metadataSlot, ParticleComponent& pComp, float timeCap)
 {
 	PrepareParticlePass(metadataSlot);
 
@@ -319,7 +319,7 @@ void Particles::PrepareMeshPass(int metadataSlot, ParticleComponent& pComp)
 	UnsetVertexShader();
 	UnsetGeometryShader();
 
-	pComp.VFXTimeAlive += data->metadata[0].deltaTime;
+	pComp.VFXTimeAlive += timeCap;// data->metadata[0].deltaTime;
 
 	// We want everything from the regular particle pass but without the geoemtry shader and a different vertex shader
 	SetVertexShader(MeshVS);
