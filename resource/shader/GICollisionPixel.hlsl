@@ -40,9 +40,21 @@ uint4 main(PS_IN input) : SV_TARGET
             clip(-1.0f);
         }
     }
-    else if (input.position.z > -10.0f)
+    else if (input.position.y > -100.0f)
     {
-        result = idValue;
+        if (idValue != 2)
+        {
+            result = idValue;
+        }
+        else if (input.position.y < 3.0f)//If lava only do if within height limit
+        {
+            result = idValue;
+        }
+        else
+        {
+            clip(-1.0f);
+
+        }
     }
     return uint4(result, 0, 0, 0);
 }
