@@ -5,26 +5,40 @@
 #include "GameRenderer.h"
 #include "Particles.h"
 #include "D3D11Helper\D3D11Helper.h"
-
+#include "RenderDepthPass.h"
+#include "Glow.h"
 
 
 bool ParticleSystem::Update()
 {
-	PrepareBackBuffer();
+	//////PrepareBackBuffer();
 
-	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
+	//ClearDepthStencilView(Particles::proxyDepth);
 
-	SetVertexShader(renderStates[Particles::RenderSlot].vertexShaders[1]);
-	SetPixelShader(renderStates[Particles::RenderSlot].pixelShaders[1]);
-	SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, renderStates[backBufferRenderSlot].depthStencilView);
+	//SetRenderTargetViewAndDepthStencil(renderStates[backBufferRenderSlot].renderTargetView, Particles::proxyDepth);
 
-	SetVertexBuffer(renderStates[backBufferRenderSlot].vertexBuffer);
-	SetIndexBuffer(renderStates[backBufferRenderSlot].indexBuffer);
-	SetShaderResourceView(renderStates[Particles::RenderSlot].shaderResourceView, BIND_PIXEL, 3);
+	//SetVertexShader(renderStates[Particles::RenderSlot].vertexShaders[1]);
+	//SetPixelShader(renderStates[Particles::RenderSlot].pixelShaders[1]);
 
-	RenderIndexed(3);
+	////////Set the depth texture
 
-	//UNBIND SHIT 
-	UnsetShaderResourceView(BIND_PIXEL, 3);
+
+	//SetVertexBuffer(renderStates[backBufferRenderSlot].vertexBuffer);
+	//SetIndexBuffer(renderStates[backBufferRenderSlot].indexBuffer);
+	//SetShaderResourceView(renderStates[Particles::RenderSlot].shaderResourceView, BIND_PIXEL, 2);
+	//ClearRenderTargetView(renderStates[Particles::RenderSlot].renderTargetView);
+	//Particles::CopyBackBufferToRender();
+
+
+	//SetShaderResourceView(Particles::backBufferDepthSRV, BIND_PIXEL, 3);
+	//SetShaderResourceView(Particles::particleDepthSRV, BIND_PIXEL, 4);
+
+	//RenderIndexed(3);
+
+	////////UNBIND SHIT 
+	//UnsetShaderResourceView(BIND_PIXEL, 2);
+	//UnsetShaderResourceView(BIND_PIXEL, 3);
+	////UnsetDepthPassTexture(false);
+	//UnsetShaderResourceView(BIND_PIXEL, 4);
 	return true;
 }
