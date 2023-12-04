@@ -370,8 +370,6 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     int OneHundo_TwoFiveFive = One_OneHundo + 155;
     // ------------------------------------------------------ //
             
-    float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
-
     if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
     {
         float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
