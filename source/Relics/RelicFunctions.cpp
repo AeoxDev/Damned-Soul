@@ -116,7 +116,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Demon Bonemarrow",
 				/*Filepath*/	"RelicIcons\\Demon_Bonemarrow",
 				/*Description*/	DEMON_BONEMARROW::Description(),
-				/*Price*/		15,
+				/*Price*/		14,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DEMON_BONEMARROW::Initialize
 			),
@@ -164,7 +164,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Life Steal",
 				/*Filepath*/	"RelicIcons\\Life_Steal",
 				/*Description*/	LIFE_STEAL::Description(),//"You heal for 15% of the damage you deal",
-				/*Price*/		12,
+				/*Price*/		13,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	LIFE_STEAL::Initialize
 			),
@@ -172,7 +172,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Soul Eater",
 				/*Filepath*/	"RelicIcons\\Soul_Eater",
 				/*Description*/	SOUL_EATER::Description(),
-				/*Price*/		15,
+				/*Price*/		8,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	SOUL_EATER::Initialize
 			),
@@ -188,7 +188,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Dash Attack",
 				/*Filepath*/	"RelicIcons\\Dash_Attack",
 				/*Description*/	DASH_ATTACK::Description(),//"Deals 50% of your damage when dashing through an enemy",
-				/*Price*/		10,
+				/*Price*/		6,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	DASH_ATTACK::Initialize
 			),
@@ -196,7 +196,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Adrenaline Rush",
 				/*Filepath*/	"RelicIcons\\Adrenaline_Rush",
 				/*Description*/	ADRENALINE_RUSH::Description(),//"You attack twice as fast for 1 second after being hit",
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	ADRENALINE_RUSH::Initialize
 			),
@@ -220,7 +220,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Power Strike",
 				/*Filepath*/	"RelicIcons\\Power_Strike",
 				/*Description*/	POWER_STRIKE::Description(),
-				/*Price*/		8,
+				/*Price*/		6,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	POWER_STRIKE::Initialize
 			),
@@ -404,9 +404,10 @@ void _validateMasterRelicList()
 				/*Name*/		"Exploitable Coupon",
 				/*Filepath*/	"RelicIcons\\Exploitable_Coupon",
 				/*Description*/	EXPLOITABLE_COUPON::Description(),
-				/*Price*/		6,
+				/*Price*/		5,
 				/*Type*/		RELIC_GADGET,
-				/*Function*/	EXPLOITABLE_COUPON::Initialize
+				/*Function*/	EXPLOITABLE_COUPON::Initialize,
+				/*Weight*/		15
 			),
 			RelicData(
 				/*Name*/		"Succubus Charm",
@@ -430,7 +431,8 @@ void _validateMasterRelicList()
 				/*Description*/	SEEING_DOUBLE::Description(),
 				/*Price*/		1,
 				/*Type*/		RELIC_GADGET,
-				/*Function*/	SEEING_DOUBLE::Initialize
+				/*Function*/	SEEING_DOUBLE::Initialize,
+				/*Weight*/		20
 			),
 			RelicData(
 				/*Name*/		"Dash Flash",
@@ -519,7 +521,8 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 			if (currentRelic->m_typeFlag & type) {
 				// Set weight inversely by price and add level (cheaper relics more common early on)
 				// After a fairly large number of levels, this weight system will give everything an equal chance
-				currentTotalWeight += CLAMP_SUB(5, CLAMP_SUB(currentRelic->m_price, stateManager.activeLevel * 2)) + stateManager.activeLevel;
+				uint32_t localWeight = CLAMP_SUB(10, CLAMP_SUB(currentRelic->m_weight * 2, stateManager.activeLevel * 3)) + stateManager.activeLevel;
+				currentTotalWeight += localWeight;
 				// Emplace with the combined weights of previous selection possibilities
 				possibleSelection.emplace(currentTotalWeight, currentRelic);
 				// Erase current, no need to increment

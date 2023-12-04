@@ -166,7 +166,7 @@ float StatComponent::GetBonusSpeed() const
 
 void StatComponent::UpdateBonusSpeed(const float delta)
 {
-	m_bonusMoveSpeed += delta;
+	m_bonusMoveSpeed += delta * m_baseMoveSpeed;
 }
 
 void StatComponent::SetSpeedMult(const float mult)
