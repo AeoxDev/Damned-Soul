@@ -178,7 +178,7 @@ void UIFunctions::Game::ExitShopCutscene(void* args, int a)
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(stateManager.player);
 		fallDown->mode = (CutsceneMode)(Cutscene_Character_Fall | Transition_Position | Cutscene_Accelerating);
 		CutsceneSetPosition(stateManager.player, transform->positionX, transform->positionY, transform->positionZ, transform->positionX, -33.0f, transform->positionZ);
-		AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginPortalCutscene, CutsceneTransition, 5.0f, EventShopLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+		AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, BeginPortalCutscene, CutsceneTransition, 3.75f, EventShopLoadNextLevel, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	}
 	else //Otherwise (second time clicking) skip the shop cutscene
 	{
