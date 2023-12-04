@@ -9,6 +9,10 @@
 #include "UIButtonFunctions.h"
 #include "UI\HP_BarHelper.h"
 #include "SDLHandler.h"
+#include "DeltaTime.h"
+
+#include "UIComponents.h"
+#include "UIRenderer.h"
 
 #include <iostream>
 #include <fstream>
@@ -1388,34 +1392,21 @@ void SetScoreboardUI(EntityID stage)
 	DSFLOAT2 uiCoords = { (offsetPixelCoords.x / (0.5f * sdl.BASE_WIDTH)) - 1.0f,
 						-1 * ((offsetPixelCoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
-	DSFLOAT2 diffPos(uiCoords.x + 1.1f, uiCoords.y - 0.4f);
-
-	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y), DSFLOAT2(1.0f, 1.0f), 30.0f);
-	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.15f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.25f), DSFLOAT2(1.0f, 1.0f));
-
-	const int amount = 8;
+	const int amount = 7;
 	const char texts[amount][32] =
 	{
-		"Time: ", //index 3
+		"Time: ",
 
-		"Leftover Souls: ", //index 4
-		"Spent Souls: ", //index 5
-		"Total Souls: ", //index 6
+		"Leftover Souls: ",
+		"Spent Souls: ",
+		"Total Souls: ",
 
-		"Damage Done: (WIP)", //index 7
+		"Damage Done: ",
 
-		//"Strongest Hit Dealt:",
+		"Damage Taken: ",
 
-		"Damage Taken: (WIP)", //index 8
+		"Healing Done: ",
 
-		//"Strongest Hit Taken:",
-
-		"Healing Done: (WIP)", //index 9
-
-		//"Strongest Heal Done:"
-
-		"Score: (WIP)" //index 10
 	};
 
 	for (int i = 0; i < amount; i++)
@@ -1425,4 +1416,49 @@ void SetScoreboardUI(EntityID stage)
 	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
 
 	uiElement->SetAllVisability(false);
+}
+
+void UpdateScoreBoardUI(bool won)
+{
+	UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
+	playerUI->SetAllVisability(false);
+
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+	StatComponent* playerStats = registry.GetComponent<StatComponent>(stateManager.player);
+
+	for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
+
+		if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+			uiElement->SetAllVisability(true);
+
+		if (!won)
+			uiElement->m_BaseText.m_Text = "Run Failed!";
+
+		RedrawUI();
+		gameSpeed = 0.0f;
+		SetPaused(true);
+
+		const int amount = 7;
+		ML_String texts[amount] =
+		{
+			GetDigitalMinuteClock().c_str(),
+
+			("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
+			("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
+			("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
+			("Damage Done: " + std::to_string((int)playerStats->GetDamageDone())).c_str(),
+			("Healing Done: " + std::to_string((int)playerStats->GetHealthRecovered())).c_str(),
+			("Damage Taken: " + std::to_string((int)playerStats->GetDamageTaken())).c_str(),
+
+		};
+
+		for (int i = 2; i < amount + 2; i++)
+		{
+			uiElement->m_Texts[i].SetText(texts[i - 2].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
+				DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		}
+	}
 }

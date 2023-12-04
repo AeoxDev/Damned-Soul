@@ -40,6 +40,16 @@ float StatComponent::GetHealthFraction() const
 	return this->m_currentHealth / GetMaxHealth();
 }
 
+float StatComponent::GetHealthRecovered() const
+{
+	return m_HealthRecovered;
+}
+
+float StatComponent::GetDamageTaken() const
+{
+	return m_DamgeTaken;
+}
+
 void StatComponent::UpdateBaseHealth(const float delta)
 {
 	m_baseHealth += delta;
@@ -105,6 +115,7 @@ float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
 	{
 		// Apply damage as a negative delta
 		StealthilyModifyHealth(-damage);
+		m_DamgeTaken += damage;
 
 		// Apply on damage taken effects
 		RelicInput::OnHealthUpdate hpUpdateData =
@@ -127,6 +138,7 @@ float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
 	{
 		// Apply healing as a positive delta
 		StealthilyModifyHealth(+healing);
+		m_HealthRecovered += healing;
 
 		// Apply on healing applied effects
 		RelicInput::OnHealthUpdate hpUpdateData =
@@ -207,6 +219,11 @@ void StatComponent::UpdateBonusDamage(const float delta)
 float StatComponent::GetBonusDamage() const
 {
 	return m_bonusDamage;
+}
+
+float StatComponent::GetDamageDone() const
+{
+	return m_DamgeDone;
 }
 
 float StatComponent::GetAttackSpeed() const

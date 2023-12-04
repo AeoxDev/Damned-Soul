@@ -16,6 +16,10 @@ private:
 	// Multiplicative damage reduction, affected by things such as relics
 	float m_damageReduction = 1.f;
 
+	float m_DamgeTaken = 0.0f;
+
+	float m_HealthRecovered = 0.0f;
+
 // Movement stats
 	// Base move speed
 	float m_baseMoveSpeed = 1.f;
@@ -37,6 +41,8 @@ private:
 	float m_baseDamage = 10.f;
 	// Bonus damage, affected by things such as relics
 	float m_bonusDamage = 0.f;
+
+	float m_DamgeDone = 0.0f;
 
 	// Attack speed
 	float m_baseAttackSpeed = 1.f;
@@ -95,6 +101,10 @@ public:
 	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
+	// Get Total Healing Done
+	float GetHealthRecovered() const;
+	// Get Total Healing Done
+	float GetDamageTaken() const;
 	// Update the entity's base health (permanently)
 	void UpdateBaseHealth(const float delta);
 	// Update the entity's bonus health
@@ -137,6 +147,8 @@ public:
 	void UpdateBonusDamage(const float delta);
 	// Get the damage of the entity
 	float GetBonusDamage() const;
+	// Get Total damage done
+	float GetDamageDone() const;
 
 	// Get the attack speed of the entity
 	float GetAttackSpeed() const;

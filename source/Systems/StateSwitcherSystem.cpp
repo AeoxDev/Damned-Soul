@@ -55,7 +55,7 @@ void PlayPlayerDeath(EntityID& entity, const int& index)
 
 void EndPlayerDeath(EntityID& entity, const int& index)
 {
-	stateManager.GetCurrentLevel().GameOver();
+	UpdateScoreBoardUI(false);
 }
 
 bool StateSwitcherSystem::Update()
