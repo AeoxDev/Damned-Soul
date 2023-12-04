@@ -313,7 +313,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV5Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
-		SetDirectionLight(0.666f, 1.0f, .666f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
@@ -330,7 +330,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.61f, 0.6f, 0.62f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
@@ -1370,13 +1370,13 @@ void SetScoreboardUI(EntityID stage)
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
 
-	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
@@ -1389,20 +1389,19 @@ void SetScoreboardUI(EntityID stage)
 						-1 * ((offsetPixelCoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 	DSFLOAT2 diffPos(uiCoords.x + 1.1f, uiCoords.y - 0.4f);
-
+	/*
 	uiElement->AddText("Difficulty", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(diffPos.x, diffPos.y), DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElement->AddImage("Slider1", DSFLOAT2(diffPos.x, diffPos.y - 0.15f), DSFLOAT2(1.0f, 1.0f));
 	uiElement->AddImage("Slider2", DSFLOAT2(diffPos.x, diffPos.y - 0.25f), DSFLOAT2(1.0f, 1.0f));
-
+	*/
 	const int amount = 8;
 	const char texts[amount][32] =
 	{
 		"Time: ", //index 3
-
 		"Leftover Souls: ", //index 4
 		"Spent Souls: ", //index 5
 		"Total Souls: ", //index 6
-
+		/*
 		"Damage Done: (WIP)", //index 7
 
 		//"Strongest Hit Dealt:",
@@ -1416,6 +1415,7 @@ void SetScoreboardUI(EntityID stage)
 		//"Strongest Heal Done:"
 
 		"Score: (WIP)" //index 10
+		*/
 	};
 
 	for (int i = 0; i < amount; i++)

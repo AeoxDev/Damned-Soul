@@ -124,7 +124,7 @@ void CreateRelicWindows()
 		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 		uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
+		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f});
 		
 		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
@@ -154,7 +154,6 @@ void CreateSingleWindows()
 	{
 		"Heal",
 		"Reroll",
-		//"Lock",
 		"Buy",
 		"Weapon",
 		"Next Level"
@@ -173,9 +172,8 @@ void CreateSingleWindows()
 	{
 		"Heal",
 		"Reroll",
-		//"Lock",
 		"Buy",
-		"Axe",
+		"AxeMedium",
 		""
 	};
 
@@ -183,7 +181,6 @@ void CreateSingleWindows()
 	{
 		UIFunctions::OnClick::HealPlayer,
 		UIFunctions::OnClick::RerollRelic,
-		//UIFunctions::OnClick::LockRelic,
 		UIFunctions::OnClick::BuyRelic,
 		UIFunctions::OnClick::UpgradeWeapon,
 		UIFunctions::Game::ExitShopCutscene
@@ -193,7 +190,6 @@ void CreateSingleWindows()
 	{
 		"Heal",
 		"Reroll",
-		//"Lock",
 		"Buy",
 		"Upgrade Weapon",
 		""
@@ -203,7 +199,6 @@ void CreateSingleWindows()
 	{
 		"Recover 25% of max Health",
 		"Reroll a new set of relics",
-		//"Lock the selected relic until the next reroll or shop",
 		"Buy the selected relic",
 		"Upgrade your weapon",
 		"Leave the shop"
@@ -213,7 +208,6 @@ void CreateSingleWindows()
 	{
 		2,
 		5,
-		//0,
 		0,
 		10,
 		0,
@@ -290,7 +284,7 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
