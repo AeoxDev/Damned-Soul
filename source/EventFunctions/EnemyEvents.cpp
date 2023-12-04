@@ -89,7 +89,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	stat->lavaAnimFactor = 1.f;
 	//Set transform
 	TransformComponent transComp;
-	float newScaleSize = 0.3f; // change as see fit
+	float newScaleSize = 0.8f; // change as see fit
 	//float offsetX = transform->facingX;
 	//float offsetZ = -transform->facingZ;
 	//float magnitude = sqrtf(offsetX * offsetX + offsetZ * offsetZ);
@@ -114,7 +114,27 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 		soulWorth = 1;
 	}
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
-	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
+	if (zacIndex == 0)
+	{
+		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+	}
+	else if (zacIndex == 1)
+	{
+		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Leg.mdl"));
+	}
+	else if (zacIndex == 2)
+	{
+		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+	}
+	else if (zacIndex == 3)
+	{
+		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+	}
+	else if (zacIndex == 4)
+	{
+		registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+	}
+	
 
 	//Sounds (Added by Joaquin)
 	SoundComponent* scp = registry.AddComponent<SoundComponent>(newMini);
@@ -236,7 +256,6 @@ void SplitBoss(EntityID& entity, const int& index)
 	}
 	health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
 	health = health / (float)partsAlive;
-
 	for (int i = 0; i < 5; ++i)
 	{
 		if (tempBossComponent->parts[i] )

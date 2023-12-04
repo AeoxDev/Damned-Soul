@@ -578,6 +578,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 				health += partHealth;
 			if (zacIndex4)
 				health += partHealth;
+
 		}
 		else if (eType == EnemyType::lucifer)
 		{
