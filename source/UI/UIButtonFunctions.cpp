@@ -46,7 +46,7 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	SetScoreboardUI(scoreBoard);
 
-	stateManager.activeLevel = 1; //Level actually being loaded: activeLevel / 2 + 1
+	stateManager.activeLevel = 0; //Level actually being loaded: activeLevel / 2 + 1
 	LoadLevel(++stateManager.activeLevel);
 
 	SetPaused(false);

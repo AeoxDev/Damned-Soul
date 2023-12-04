@@ -117,7 +117,7 @@ void CreateRelicWindows()
 
 	for (int i = 0; i < SHOP_RELIC_WINDOWS; i++)
 	{
-		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
+		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 		uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
@@ -218,7 +218,7 @@ void CreateSingleWindows()
 
 	for (int i = 0; i < SHOP_SINGLE_WINDOWS; i++)
 	{
-		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
+		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 
 		if (i == 3)
@@ -328,11 +328,12 @@ void LoadShop()
 	for (auto entity : View<OnClickComponent>(registry))
 	{
 		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
+
 		if (shopBuy != nullptr)
 		{
-			for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
+			for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 			{
-				if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
+				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr) sfx->Play(Shop_FirstMeet, Channel_Extra);
@@ -348,6 +349,12 @@ void LoadShop()
 
 void ReloadShop()
 {
+	CreateTextWindows();
+
+	CreateRelicWindows();
+
+	CreateSingleWindows();
+
 	SetInShop(true);
 
 	for (auto entity : View<UIShopRerollComponent>(registry))
@@ -357,16 +364,14 @@ void ReloadShop()
 		if (sfx != nullptr) sfx->Stop(Channel_Base);
 	}
 
-	CreateTextWindows();
-
 	for (auto entity : View<OnClickComponent>(registry))
 	{
 		OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(entity);
 		if (shopBuy != nullptr)
 		{
-			for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
+			for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 			{
-				if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
+				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr)

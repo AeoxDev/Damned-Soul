@@ -14,6 +14,7 @@
 
 #include "States/StateManager.h"
 #include "States/StateEnums.h"
+#include "Relics/Utility/RelicFuncInputTypes.h"
 
 bool uiUpdated = true;
 
@@ -111,9 +112,15 @@ bool UIRenderShopSystem::Update()
 
 		}
 
+		RelicInput::OnPriceCalculation priceCalc;
+
+		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+			func(&priceCalc);
+
 		for (auto entity : View<UIShopRelicComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 
 			uiElement->m_BaseImage.baseUI.SetVisibility(true);
 
@@ -123,7 +130,10 @@ bool UIRenderShopSystem::Update()
 			uiElement->m_BaseText.baseUI.SetVisibility(true);
 
 			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
+			{
 				uiElement->m_Texts[i].baseUI.SetVisibility(true);
+				uiElement->m_Texts[i].SetText(std::to_string(priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC)).c_str(), uiElement->m_Images[i].baseUI.GetBounds());
+			}
 		}
 
 		for (auto entity : View<UIShopRerollComponent>(registry))
@@ -135,7 +145,21 @@ bool UIRenderShopSystem::Update()
 		for (auto entity : View<UIShopButtonComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
 			uiElement->SetAllVisability(true);
+
+			if (button->m_name == "Heal")
+			{
+				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::HEAL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+			}
+			else if (button->m_name == "Reroll")
+			{
+				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::REROLL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+			}
+			else if (button->m_name == "Upgrade Weapon")
+			{
+				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::UPGRADE)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+			}
 		}
 
 	}
@@ -155,7 +179,6 @@ bool UIRunTimeSystem::Update()
 	}
 	return true;
 }
-
 
 bool UISliderSystem::Update()
 {
