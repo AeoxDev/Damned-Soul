@@ -40,7 +40,7 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 
 	//Create player when we start the game instead, rather than specifically when Level1 starts (reason: debug later levels without having to run through everything)
 	//Niclas was here :)
-	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 100, 0.0f, 0.0, -1.0f);
+	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 0, 0.0f, 0.0, -1.0f);
 	gameSpeed = 1.0f; //Make sure it gets set back to 1 if StartGame is called from a completed run
 
 	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
