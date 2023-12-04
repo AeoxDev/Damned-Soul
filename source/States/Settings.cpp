@@ -107,7 +107,7 @@ void SettingsState::SetupButtons()
 			{ 18.0f },
 			{ 18.0f },
 			{ 18.0f },
-			{ 16.0f },
+			{ 17.0f },
 			{ 20.0f }
 		};
 
@@ -118,7 +118,7 @@ void SettingsState::SetupButtons()
 			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i]);
+			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
 
 			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
