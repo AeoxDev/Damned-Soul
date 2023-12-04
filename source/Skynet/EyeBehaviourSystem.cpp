@@ -188,11 +188,13 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		ec->goalDirectionX = dx;
 		ec->goalDirectionZ = dz;
 
-		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 40.f);
 		CreateProjectile(entity, dx, dz, eye);
 
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
+
+		ec->shooting = false;
 
 		return true;
 	}

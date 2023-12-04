@@ -8,18 +8,32 @@
 #include "MemLib/ML_String.hpp"
 #include "Level.h"
 #include "Levels\LevelLoader.h"
+#include "Components.h"
+#include "Registry.h"
 
 void UpdateDebugWindowTitle(std::string& title, std::string extra)
 {
 
 	SetWindowTitle((title + extra).c_str());
 
+#ifdef _DEBUG
+	//Get player transform
+	TransformComponent* transform = nullptr;
+	if (stateManager.player.index != -1)
+	{
+		transform = registry.GetComponent<TransformComponent>(stateManager.player);
+	}
+	
 	if (NewSecond())
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps) ";
-
+		if (transform != nullptr)
+		{
+			title += "(x: " + std::to_string(transform->positionX) + ", z: " + std::to_string(transform->positionZ) + ") ";
+		}
 		SetWindowTitle((title + extra).c_str());
 	}
+#endif
 }
 
 #ifdef GAME_TEST

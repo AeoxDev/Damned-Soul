@@ -176,20 +176,17 @@ float UIBase::GetOpacity() const
 
 void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment)
 {
-	if (text != "")
-	{
-		m_Text = text;
-		m_fontSize = fontSize;
-		m_textAlignment = textAlignment;
-		m_paragraphAlignment = paragraphAlignment;
+	m_Text = text;
+	m_fontSize = fontSize;
+	m_textAlignment = textAlignment;
+	m_paragraphAlignment = paragraphAlignment;
 
-		SetupText(m_fontSize, m_textAlignment, m_paragraphAlignment, m_TextFormat);
+	SetupText(m_fontSize, m_textAlignment, m_paragraphAlignment, m_TextFormat);
 
-		if (bounds.right == 0)
-			baseUI.m_OriginalBounds = { 0, 0, (m_fontSize + 5.0f) * m_Text.length(), m_fontSize };
-		else
-			baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
-	}
+	if (bounds.right == 0)
+		baseUI.m_OriginalBounds = { 0, 0, (m_fontSize + 5.0f) * m_Text.length(), m_fontSize };
+	else
+		baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
 }
 
 void UIText::Draw()

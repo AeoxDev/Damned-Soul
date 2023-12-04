@@ -128,9 +128,27 @@ void LoadLevel3()
 
 	// EntityID& entity, float colorRed, float colorGreen, float colorBlue, float positionX, float positionY, float positionZ, float range, float fallofFactor
 	CreatePointLight(lightholder, 0.5f, 0.1f, 0.0f, 33.0f, 10.0f, 23.0f, 300.0f, 20.0f);
-	CreatePointLight(lightholderTwo,0.5f, 0.1f, 0.0f, -31.0f, 10.0f, -53.0f, 300.0f, 20.0f);
-	CreatePointLight(lightholderThree,0.5f, 0.1f, 0.0f, -180.0f, 10.0f, -33.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderTwo, 0.5f, 0.1f, 0.0f, -31.0f, 10.0f, -53.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderThree, 0.5f, 0.1f, 0.0f, -180.0f, 10.0f, -33.0f, 300.0f, 20.0f);
 	CreatePointLight(lightholderForth, 0.5f, 0.1f, 0.0f, -263.0f, 10.0f, -5.0f, 300.0f, 20.0f);
+
+	EntityID partTT = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(partTT, 10, 5, 3, 0, 0, 0, 7, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent ttttComp;
+	ttttComp.positionX = -193;
+	ttttComp.positionY = 1;
+	ttttComp.positionZ = -7.5;
+	registry.AddComponent<TransformComponent>(partTT, ttttComp);
+
+
+	EntityID partT = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(partT, 10, 5, 3, 0, 0, 0, 9, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent ttComp;
+	ttComp.positionX = -145;
+	ttComp.positionY = 1;
+	ttComp.positionZ = 111;
+	registry.AddComponent<TransformComponent>(partT, ttComp);
+
 
 	/*EntityID part = registry.CreateEntity();*/
 	//registry.AddComponent<ParticleComponent>(lightholder, 10, 20, 6, 0, 1, 0, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)

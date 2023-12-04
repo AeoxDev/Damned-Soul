@@ -61,8 +61,7 @@ enum LAYOUT_DESC
 	DEFAULT,
 	SKELETAL,
 	SCREEN,
-	PARTICLE,
-	VFX
+	PARTICLE
 };
 
 enum TOPOLOGY
@@ -169,6 +168,7 @@ void UpdateWorldMatrix(const void* data, const SHADER_TO_BIND_RESOURCE& bindto, 
 //No rotations, only position
 void SetWorldMatrix(float x, float y, float z, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 void SetWorldMatrix(float x, float y, float z, float rotationY, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+void SetWorldMatrix(float x, float y, float z, float rotationZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot, bool ZRot);
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 void SetWorldMatrix(float x, float y, float z, float dirX, float dirY, float dirZ, float scaleX, float scaleY, float ScaleZ, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Release for a single constant buffer
@@ -223,6 +223,7 @@ void ReleaseRTV(const RTV_IDX idx);
 
 // Create a depth stencil view
 DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height);
+DSV_IDX CreateDepthStencil(const size_t& width, const size_t& height, bool SRV);
 // Overload for skyplane
 DSS_IDX CreateDepthStencilState();
 // Set a render target view and depth stencil view

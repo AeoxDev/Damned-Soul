@@ -14,4 +14,4 @@ struct GlowComponent
 		m_g = g;
 		m_b = b;
 	}
-};
+}; 
