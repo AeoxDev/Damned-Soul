@@ -15,6 +15,7 @@
 #include "MemLib/ML_Map.hpp"
 #include "Relics/Utility/RelicFuncInputTypes.h"
 #include "UI/HP_BarHelper.h"
+#include "Model.h"
 
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
@@ -501,6 +502,8 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\HoverRelic");
 			uiWindow->shopSelections[index - 1] = shopState::AVALIABLE;
 		}
+
+		BuyRelic(args, 0);
 	}
 
 	RedrawUI();
@@ -688,6 +691,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+	ModelSkeletonComponent* weapon = registry.GetComponent<ModelSkeletonComponent>(stateManager.weapon);
 
 	RelicInput::OnPriceCalculation priceCalc;
 
@@ -753,9 +757,16 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 			}
 		}
 	}
+	
 	upgrade->tier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
-	stats->UpdateBaseDamage((float)(uiWeapon->m_price - 2.0f));
+	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
+
+	// Update axe model
+	ReleaseModel(weapon->model);
+	char modelName[64] = "";
+	sprintf(modelName, "AxeV%d.mdl", upgrade->tier + 1);
+	weapon->model = LoadModel(modelName);
 }
 
 void UIFunctions::OnClick::RerollRelic(void* args, int index)
@@ -827,6 +838,7 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 void UIFunctions::OnClick::HealPlayer(void* args, int index)
 {
 	UIShopButtonComponent* uiHeal = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
+	UIShopHealComponent* uiHeal2 = registry.GetComponent<UIShopHealComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
@@ -852,6 +864,11 @@ void UIFunctions::OnClick::HealPlayer(void* args, int index)
 
 	souls->spentThisShop += priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL);
 	player->UpdateSouls(-priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL));
+	if (uiHeal2->freebie)
+	{
+		uiHeal->m_price = 3;
+		uiHeal2->freebie = false;
+	}
 }
 
 
