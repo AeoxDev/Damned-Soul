@@ -180,8 +180,8 @@ in float dissippateSpeed = 0.9f
     // Colorizing
     float4 colorizedSpawn = panCaustics + rotateCaustics;
     
-    //Alpha mask
-    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * sin(time * dissippateValue)).g;
+     //Alpha mask
+    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * (1.0f - clamp(time * dissippateValue, 0.0f, 1.0f))).g;
     
     // Making Alpha disappear
     float timedMask = alphaMask * shapeTexture_in.Sample(WrapSampler, uv).g;
@@ -209,7 +209,7 @@ in float dissippateSpeed = 0.9f
     float4 colorizedSpawn = panCaustics + rotateCaustics;
     
     //Alpha mask
-    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * sin(time * dissippateValue)).g;
+    float alphaMask = shapeTexture_in.Sample(WrapSampler, uv * (1.0f - clamp(time * dissippateValue, 0.0f, 1.0f))).g;
     
     // Making Alpha disappear
     float timedMask = alphaMask * shapeTexture_in.Sample(WrapSampler, uv).g;
@@ -244,10 +244,21 @@ float4 backBuffer,
 float time,
 float2 uv
 )
-{
-    float4 vornoiTexture = maskTexture_in.Sample(WrapSampler, uv).r;
-
+{ 
+    // Panning textures
+    float4 vornoiTexture = pow(1.0f - noiseTexture_in.Sample(WrapSampler, UVPan(float2(1.0f, 0.0f), 0.25f, time, float2(uv.x * 2.35f, uv.y * -0.18))).r, -2.0f);
+    float vornoiMultiply = noiseTexture_in.Sample(WrapSampler, UVPan(float2(1.0f, 0.0f), 0.2f, time, uv));
     
-    return float4(vornoiTexture.rgb, 1.0f); //(gMaskTexture * pow(vornoiTexture, 2.0f + sin(time))).rgb, 1.0f;
+    // Load Mask.
+    float2 maskTexture = maskTexture_in.Sample(WrapSampler, uv).rg;
 
+    // Colorizing
+    float4 colorizedNoise = (vornoiTexture * (maskTexture.r * float4(1.0f, 0.2066951f, 0.0f, 0.0f)) * vornoiMultiply);
+    
+    // Create alpha mask and dissolve
+    float4 vornoiMask = pow(noiseTexture_in.Sample(WrapSampler, uv * 1.05f).r, log10(time + 1.0f) * 75.0f);
+    float alphaMask = (maskTexture.g + maskTexture.g) * vornoiMask.r;
+    
+    // Alpha Blend
+    return AlphaBlend(backBuffer, alphaMask, colorizedNoise.rgb);
 }

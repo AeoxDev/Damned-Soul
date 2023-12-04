@@ -89,7 +89,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	stat->lavaAnimFactor = 1.f;
 	//Set transform
 	TransformComponent transComp;
-	float newScaleSize = 0.3f; // change as see fit
+	float newScaleSize = 0.8f; // change as see fit
 	//float offsetX = transform->facingX;
 	//float offsetZ = -transform->facingZ;
 	//float magnitude = sqrtf(offsetX * offsetX + offsetZ * offsetZ);
@@ -114,7 +114,35 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 		soulWorth = 1;
 	}
 	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
-	registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skeleton.mdl"));
+
+	if (zacIndex == 0)
+	{
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
+	}
+	else if (zacIndex == 1)
+	{
+		//this one has animation
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RLeg.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
+	}
+	else if (zacIndex == 2)
+	{
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
+	}
+	else if (zacIndex == 3)
+	{
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
+	}
+	else if (zacIndex == 4)
+	{
+		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+		mod->shared.gammaCorrection = 1.5f;
+	}
+	
 
 	//Sounds (Added by Joaquin)
 	SoundComponent* scp = registry.AddComponent<SoundComponent>(newMini);
@@ -236,7 +264,6 @@ void SplitBoss(EntityID& entity, const int& index)
 	}
 	health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
 	health = health / (float)partsAlive;
-
 	for (int i = 0; i < 5; ++i)
 	{
 		if (tempBossComponent->parts[i] )
@@ -902,8 +929,8 @@ void LoopSpawnMainMenuEnemy(EntityID& entity, const int& index)
 	{
 		type = lucifer;
 	}
-	float time = 0.05f * (float)(rand() % 1024);
-	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 1.0f, LoopSpawnMainMenuEnemy, (unsigned)type, 2);
+	float time = 0.01f * (float)(rand() % 4096);
+	AddTimedEventComponentStartEnd(entity, 0.0f, SpawnMainMenuEnemy,time + 0.1f, LoopSpawnMainMenuEnemy, (unsigned)type, 8);
 }
 
 void DestroyAcidHazard(EntityID& entity, const int& index)
@@ -1023,5 +1050,5 @@ void EndDestroyProjectile(EntityID& entity, const int& index)
 
 void SpawnProjectileShadow(EntityID& entity, const int& index)
 {
-	CreateSpotLight(entity, -0.5f, -0.5f, -0.5f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
+	CreateSpotLight(entity, -0.7f, -0.7f, -0.7f, 0.0f, 6.0f, -1.0f, 24.0f, 0.9f, 0.0f, -1.0f, 0.0f, 20);
 }

@@ -135,6 +135,8 @@ public:
 	float GetDamage() const;
 	// update the entity's bonus damage
 	void UpdateBonusDamage(const float delta);
+	// Get the damage of the entity
+	float GetBonusDamage() const;
 
 	// Get the attack speed of the entity
 	float GetAttackSpeed() const;

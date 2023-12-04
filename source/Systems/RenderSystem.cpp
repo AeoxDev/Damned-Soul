@@ -10,6 +10,7 @@
 #include "Light.h"
 #include "Model.h"
 #include "RenderDepthPass.h"
+#include "OutlineHelper.h"
 
 // ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
 #include "SkyPlane.h"
@@ -54,7 +55,7 @@ void Render(RenderPass renderPass)
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-		LOADED_MODELS[mc->model].RenderAllSubmeshes();
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity);
 	}
 	
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
@@ -91,7 +92,7 @@ void Render(RenderPass renderPass)
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 		
 		// Render with data
-			LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
 	}
 
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, BlendAnimationComponent>(registry))
@@ -206,7 +207,8 @@ void RenderSkyPlane()
 	SetVertexShader(m_skyVS);
 	SetPixelShader(m_skyPS);
 
-	LOADED_MODELS[mc->model].RenderAllSubmeshes();
+	EntityID trash;
+	LOADED_MODELS[mc->model].RenderAllSubmeshes(trash);
 
 	UnsetConstantBuffer(BIND_VERTEX, 3);
 	UnsetStencil();
@@ -319,7 +321,7 @@ bool RenderSystem::Update()
 	return true;
 }
 
-#include "OutlineHelper.h"
+
 
 bool OutlineSystem::Update()
 {
@@ -355,7 +357,7 @@ bool OutlineSystem::Update()
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
-		LOADED_MODELS[mc->model].RenderAllSubmeshes();
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity);
 	}
 
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
@@ -380,7 +382,7 @@ bool OutlineSystem::Update()
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[mc->model].RenderAllSubmeshes(ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue(), true);
 	}
 
 	for (auto entity : View<TransformComponent, ModelSkeletonComponent, BlendAnimationComponent>(registry))

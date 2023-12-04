@@ -323,6 +323,11 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	player->currentCharge = 0.0f;
 	player->hasActivatedHitbox = false; //Reset
 
+	// ## ALEX CODE ##
+	if (registry.GetComponent<ParticleComponent>(entity) != nullptr)
+		registry.RemoveComponent<ParticleComponent>(entity);
+	// ## EO ALEX CODE ##
+
 	if (registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
 		registry.RemoveComponent<ChargeAttackArgumentComponent>(entity);
 
@@ -376,6 +381,11 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 	{
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
+		
+		// ## ALEX CODE ##
+		ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(entity, 5.0f, 50.0f, 15.0f, 0.0f + (transform->facingX * 3.0f), 5.0f, 0.0f + (transform->facingZ * 3.0f), 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
+		// ## EO ALEX CODE ##
+
 	}
 	else if(animTime >= HITBOX_START_TIME)
 	{

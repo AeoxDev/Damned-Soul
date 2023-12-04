@@ -31,3 +31,8 @@ struct UIShopHealComponent
 	int price = 0;
 	bool locked = false;
 };
+
+struct UIShopUpgradeComponent
+{
+	int tier = 0;
+};

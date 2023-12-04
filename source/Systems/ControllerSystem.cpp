@@ -73,7 +73,7 @@ bool ControllerSystem::Update()
 	{
 		ReleaseTimedEvents(stateManager.stage);
 
-		AddTimedEventComponentStart(stateManager.stage, 1.0f, LoopSpawnMainMenuEnemy, skeleton, 2);
+		AddTimedEventComponentStart(stateManager.stage, 0.1f, LoopSpawnMainMenuEnemy, skeleton, 8);
 		if (keyState[SCANCODE_SPACE] == pressed)
 		{
 			AddTimedEventComponentStart(stateManager.stage, (float)(rand() % 16) + 8.0f, MainMenuIntroCutscene, 0, 8);
@@ -394,8 +394,11 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 	
-
-	
+	//Bugfix, player able to make moves before cutscenes, causing glitches.
+	if (Camera::InCutscene() != 0)
+	{
+		return true;
+	}
 
 	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, BlendAnimationComponent, MouseComponent>(registry))
 	{
@@ -613,6 +616,13 @@ bool ControllerSystem::Update()
 				stats->SetSpeedMult(0.2f);
 			/*player->currentCharge += GetDeltaTime();*/
 			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed(); //Charge faster scaling off of attack speed baby
+			auto skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+			if (skelel) //Gradually light up player when charging heavy attack
+			{
+				skelel->shared.bcaR_temp = player->currentCharge * 0.5f;
+				skelel->shared.bcaG_temp = player->currentCharge * 0.5f;
+				skelel->shared.bcaB_temp = player->currentCharge * 0.5f;
+			}
 			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
 				player->currentCharge = player->maxCharge;
 			//Play some sound, do some animation, indicate that we're charging the bigboy move
