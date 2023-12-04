@@ -311,8 +311,13 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	player->hasActivatedHitbox = false; //Reset
 
 	// ## ALEX CODE ##
-	if (registry.GetComponent<ParticleComponent>(entity) != nullptr)
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
 		registry.RemoveComponent<ParticleComponent>(entity);
+	}
+		
 	// ## EO ALEX CODE ##
 
 	if (registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
