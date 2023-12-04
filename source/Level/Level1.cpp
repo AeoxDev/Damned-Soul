@@ -54,10 +54,6 @@ void LoadLevel1()
 	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
 	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
-	//SetupEnemy(EnemyType::minotaur, -122.0f, 0.f, 61.f);
-	SetupEnemy(EnemyType::imp, -122.0f, 0.f, 31.f);
-	SetupEnemy(EnemyType::eye, -122.0f, 0.f, 11.f);
-
 
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
 	/*EntityID particles = registry.CreateEntity();
@@ -96,11 +92,11 @@ void LoadLevel1()
 	registry.RemoveComponent<EnemyComponent>(stateManager.cutsceneEnemy);
 
 
-	//if (SetupAllEnemies("LV1Enemies.dss") == false)
-	//{
-	//	//something went wrong, could not open file
-	//	assert("Could not read file: LV1Enemies\nOr file is not written properly.");
-	//}
+	if (SetupAllEnemies("LV1Enemies.dss") == false)
+	{
+		//something went wrong, could not open file
+		assert("Could not read file: LV1Enemies\nOr file is not written properly.");
+	}
 	
 
 	// DO NOT REMOVE THIS BELOW
