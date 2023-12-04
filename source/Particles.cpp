@@ -430,6 +430,65 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	}
 }
 
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, bool frostFire, bool expolding, ComputeShaders pattern)
+{
+	metadataSlot = FindSlot();
+	//Calculate how many groups are requiered to write to all particles
+	float groups = (float)amount / (float)THREADS_PER_GROUP;
+	if (groups == (int)groups)
+		groupsRequiered = groups;
+	else
+		groupsRequiered = groups + 1;
+
+	data->metadata[metadataSlot].life = seconds;
+	data->metadata[metadataSlot].maxRange = radius;
+	data->metadata[metadataSlot].size = size;
+	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
+	data->metadata[metadataSlot].pattern = pattern;
+	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+
+
+	if (frostFire)
+	{
+		data->metadata[metadataSlot].morePositionInfo.x = 1.f;
+
+	}
+	if (expolding)
+	{
+		data->metadata[metadataSlot].morePositionInfo.y = 1.f;
+	}
+
+	data->metadata[metadataSlot].reset = false;
+
+	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
+
+
+	// We need to find "amount" of particles free in the physical buffer
+	// so we can allocate it for the ParticleComponents logical buffer
+	int freeConsecutively = 0;
+	int counter = 0;
+	for (int i : Particles::m_unoccupiedParticles)
+	{
+		counter++;
+
+		if (i == -1)
+			freeConsecutively++;
+		else
+			freeConsecutively = 0;
+
+		if (freeConsecutively >= amount)
+		{
+			data->metadata[metadataSlot].start = counter - amount;
+			data->metadata[metadataSlot].end = counter - 1;
+
+
+			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			break;
+		}
+
+	}
+}
+
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern)
 {
 	metadataSlot = FindSlot();
@@ -628,7 +687,7 @@ int ParticleComponent::FindSlot()
 
 void ParticleComponent::Release()
 {
-	if (data->metadata[metadataSlot].start >= data->metadata[metadataSlot].end)
+	if ( (data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
 		return;
 
 	std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), -1, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
@@ -659,8 +718,8 @@ void ParticleComponent::Release()
 	data->metadata[metadataSlot].spawnPos.x = 99999.f;	data->metadata[metadataSlot].spawnPos.y = 99999.f;	data->metadata[metadataSlot].spawnPos.z = 99999.f;
 	data->metadata[metadataSlot].pattern = -1;
 	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].end = 0.f;
-	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
-	data->metadata[metadataSlot].morePositionInfo.x = 99999.f; data->metadata[metadataSlot].morePositionInfo.y = 99999.f;
+	data->metadata[metadataSlot].positionInfo.x = -9999.f; data->metadata[metadataSlot].positionInfo.y = -9999.f; data->metadata[metadataSlot].positionInfo.z = -9999.f;
+	data->metadata[metadataSlot].morePositionInfo.x = -9999.f; data->metadata[metadataSlot].morePositionInfo.y = -9999.f;
 	data->metadata[metadataSlot].reset = false;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);

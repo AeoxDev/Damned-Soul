@@ -124,7 +124,7 @@ void CreateRelicWindows()
 		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 		uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
+		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f});
 		
 		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
@@ -175,7 +175,7 @@ void CreateSingleWindows()
 		"Reroll",
 		//"Lock",
 		//"Buy",
-		"Axe",
+		"AxeMedium",
 		""
 	};
 
@@ -290,7 +290,7 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 

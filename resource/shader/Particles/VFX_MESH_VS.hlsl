@@ -124,11 +124,11 @@ VS_OUT main(Input inval)
 //    float4 projectedPosition = mul(viewPosition, projection);
 //    projectedPosition /= projectedPosition.w;
 
-//// Output the final position
+//// Output the final positions
 //    retval.position = projectedPosition;
             
     
-    retval.position = float4(mul(inval.position.xyz, rotationMatrix), 1.0f);
+    retval.position = float4(mul((inval.position.xyz * meta[metadataSlot].size), rotationMatrix), 1.0f);
     retval.position = mul((float4(retval.position.xyz, 1.0f) + float4(worldView[3].xyz, 0.0f)), projection);
     retval.position /= retval.position.w;
 

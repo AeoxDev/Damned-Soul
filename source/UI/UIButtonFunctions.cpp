@@ -234,7 +234,7 @@ void UIFunctions::Settings::SetLowRes(void* args, int a)
 		sdl.WINDOWED_WIDTH = sdl.WIDTH;
 		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
 		SDL_SetWindowSize(sdl.sdlWindow, 1280, 720);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		SDL_SetWindowPosition(sdl.sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1280, 720);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
@@ -256,7 +256,7 @@ void UIFunctions::Settings::SetMediumRes(void* args, int a)
 		sdl.WINDOWED_WIDTH = sdl.WIDTH;
 		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
 		SDL_SetWindowSize(sdl.sdlWindow, 1600, 900);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		SDL_SetWindowPosition(sdl.sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1600, 900);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
@@ -297,7 +297,7 @@ void UIFunctions::Settings::SetFullscreen(void* args, int a)
 		SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
+		SDL_SetWindowPosition(sdl.sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	}
 	else
 	{

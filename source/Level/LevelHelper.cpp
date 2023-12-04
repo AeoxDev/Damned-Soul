@@ -176,7 +176,7 @@ void SpawnTorch(float positionX, float positoinY, float positionZ, float red, fl
 	else if (level8 == true && level9 == false)
 	{
 		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 18.0f, 0.0f, 3.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 20.0f, 0.0f, 4.0f, 2.5f, 32, VFX_PATTERN::FLAME_BLUE);
 		TransformComponent tComp;
 		tComp.positionX = positionX;
 		tComp.positionY = positoinY;
@@ -186,7 +186,7 @@ void SpawnTorch(float positionX, float positoinY, float positionZ, float red, fl
 	else if (level8 == false && level9 == true)
 	{
 		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 28.0f, 0.0f, 4.0f, 1.0f, 32, VFX_PATTERN::FLAME);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 38.0f, 0.0f, 7.5f, 6.0f, 32, VFX_PATTERN::FLAME_BLUE);
 		TransformComponent tComp;
 		tComp.positionX = positionX;
 		tComp.positionY = positoinY;
@@ -317,7 +317,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV5Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
-		SetDirectionLight(0.666f, 1.0f, .666f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
@@ -334,7 +334,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV6Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV6Nav.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.61f, 0.6f, 0.62f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
@@ -819,6 +819,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
+
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
@@ -1001,11 +1002,21 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
-	//	EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_BOSS);
-		
+		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz		
 
-		AddTimedEventComponentStart(entity, 4.f, BossSpawnwaveEnd);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
+		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
+		hazardTransform->positionX = transform.positionX;
+		hazardTransform->positionY = 0.2f;
+		hazardTransform->positionZ = transform.positionZ;
+		hazardTransform->scaleX = 1.f;
+		hazardTransform->scaleY = 1.0f;
+		hazardTransform->scaleZ = 1.f;
+		hazardTransform->facingX = 0.0000f;
+		hazardTransform->facingZ = 0.0000f;
+		hazardTransform->facingY = 0.00001f;
+
+		AddTimedEventComponentStart(particlesVFX, 4.f, BossSpawnwaveEnd);
 
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
@@ -1374,13 +1385,13 @@ void SetScoreboardUI(EntityID stage)
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
 
-	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ExMenu/ButtonBackground", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
 	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);

@@ -64,44 +64,45 @@ void LoadLevel4()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	////StageLights
-	//EntityID lightholder = registry.CreateEntity();
-	//EntityID lightholderTwo = registry.CreateEntity();
-	//EntityID lightholderThree = registry.CreateEntity();
-	//EntityID lightholderForth = registry.CreateEntity();
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
 
-	//CreatePointLight(lightholderThree, 0.6f, 0.f, 0.0f, 80.0f, 15.0f, -22.0f, 600.0f, 20.0f);// needs to be removed end of level
-	//CreatePointLight(lightholder, 0.6f, 0.f, 0.0f, -50.0f, 15.0f, -70.0f, 600.0f, 20.0f);
-	//CreatePointLight(lightholderTwo, 0.6f, 0.f, 0.0f, -190.0f, 15.0f, -70.0f, 600.0f, 20.0f);
-	//CreatePointLight(lightholderForth, 0.6f, 0.f, 0.0f, -63.0f, 15.0f, 150.0f, 600.0f, 20.0f);
+	CreatePointLight(lightholderThree, 0.6f, 0.f, 0.0f, 80.0f, 15.0f, -22.0f, 600.0f, 20.0f);// needs to be removed end of level
+	CreatePointLight(lightholder, 0.6f, 0.f, 0.0f, -50.0f, 15.0f, -70.0f, 600.0f, 20.0f);
+	CreatePointLight(lightholderTwo, 0.6f, 0.f, 0.0f, -190.0f, 15.0f, -70.0f, 600.0f, 20.0f);
+	CreatePointLight(lightholderForth, 0.6f, 0.f, 0.0f, -63.0f, 15.0f, 150.0f, 600.0f, 20.0f);
 
-	//registry.AddComponent<ParticleComponent>(lightholder, 10, 0, 5.5, 0, 0, 1, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent tComp;
-	//tComp.positionX = -90.0f;
-	//tComp.positionY = -7.0f;
-	//tComp.positionZ = 38.0f;
-	//registry.AddComponent<TransformComponent>(lightholder, tComp);
+	EntityID holder = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(holder, 10, 0, 3, 0, 0, 0, 5, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent tComp;
+	tComp.positionX = -80;
+	tComp.positionY = 0;
+	tComp.positionZ = 145;
+	registry.AddComponent<TransformComponent>(holder, tComp);
 
-	//registry.AddComponent<ParticleComponent>(lightholderTwo, 10, 0, 5, 0,0,1, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	//registry.AddComponent<ParticleComponent>(lightholderTwo, 10, 0, 5, 0, 1, 0, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	//TransformComponent ttComp;
-	//ttComp.positionX = -90.0f;
-	//ttComp.positionY = 1.0f;
-	//ttComp.positionZ = -24.0f;
+	//ttComp.positionX = 70;
+	//ttComp.positionY = 0;
+	//ttComp.positionZ = 23;
 	//registry.AddComponent<TransformComponent>(lightholderTwo, ttComp);
 
-	//registry.AddComponent<ParticleComponent>(lightholderThree, 10, 0, 5.5, 0, 0, 1, 10, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent tttComp;
-	//tttComp.positionX = -60;
-	//tttComp.positionY = -6;
-	//tttComp.positionZ = 29;
-	//registry.AddComponent<TransformComponent>(lightholderThree, tttComp);
+	registry.AddComponent<ParticleComponent>(lightholderThree, 10, 0, 3, 0, 1, 0, 7, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent tttComp;
+	tttComp.positionX = -171;
+	tttComp.positionY = 0;
+	tttComp.positionZ = 48;
+	registry.AddComponent<TransformComponent>(lightholderThree, tttComp);
 
-	//registry.AddComponent<ParticleComponent>(lightholderForth, 10, 0, 5, 0, 0, 1, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent fComp;
-	//fComp.positionX = 181;
-	//fComp.positionY = -1;
-	//fComp.positionZ = 47;
-	//registry.AddComponent<TransformComponent>(lightholderForth, fComp);
+	registry.AddComponent<ParticleComponent>(lightholderForth, 10, 0, 3.5, 0, 0, 0, 19, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent fComp;
+	fComp.positionX = 69;
+	fComp.positionY = 0;
+	fComp.positionZ = 20.5;
+	registry.AddComponent<TransformComponent>(lightholderForth, fComp);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

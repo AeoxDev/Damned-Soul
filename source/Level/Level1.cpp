@@ -123,30 +123,23 @@ void LoadLevel1()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-/*
-	registry.AddComponent<ParticleComponent>(stage, 100.0f, 100.0f, 7.0f, 0.0f, 3.0f, 1.0f, 32, VFX_PATTERN::FLAME);
-	registry.AddComponent<ParticleComponent>(stage, 10, 20, 5, 20, 0, 20, 20, FIRE); *///(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//registry.AddComponent<ParticleComponent>(stage, 1, 0.5, 5, 20, 0, 20, 18, SPARK); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//CreatePointLight(player, 1.0f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 100.0f, 10.0f);
-		//StageLights
+
+	//StageLights
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
-	EntityID lightholderFive = registry.CreateEntity();
-	
-	CreatePointLight(lightholder, 0.5f, 0.1f, 0.0f, -12.0f, 10.0f, 12.0f, 300.0f, 20.0f); //EntityID& entity, float colorRed, float colorGreen, float colorBlue, float positionX, float positionY, float positionZ, float range, float fallofFactor)
-	CreatePointLight(lightholderTwo, 0.5f, 0.1f, 0.0f, -48.0f, 10.0f, -9.0f, 300.0f, 20.0f);
-	CreatePointLight(lightholderThree, 0.5f, 0.1f, 0.0f, -66.0f, 10.0f, 30.0f, 300.0f, 20.0f);
-	CreatePointLight(lightholderForth, 0.5f, 0.1f, 0.0f, -66.0f, 10.0f, 75.0f, 300.0f, 20.0f);
-	
-	//EntityID particle = registry.CreateEntity(); //transformComponent Wack on level 1
-	//registry.AddComponent<ParticleComponent>(particle, 10, 0, 5, -240, 1, 0, 20, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent tComp;
-	//tComp.positionX = 1;
-	//tComp.positionY = 1;
-	//tComp.positionZ = 1;
-	//registry.AddComponent<TransformComponent>(particle, tComp);
+
+	float redLight = 0.5f;
+	float greenLight = 0.1f;
+	float blueLight = 0.0f;
+
+	CreatePointLight(lightholder, redLight, greenLight, blueLight, -12.0f, 10.0f, 12.0f, 300.0f, 20.0f); //EntityID& entity, float colorRed, float colorGreen, float colorBlue, float positionX, float positionY, float positionZ, float range, float fallofFactor)
+	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, -48.0f, 10.0f, -9.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, -66.0f, 10.0f, 30.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -66.0f, 10.0f, 75.0f, 300.0f, 20.0f);
+
+
 
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);

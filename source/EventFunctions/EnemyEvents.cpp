@@ -970,10 +970,12 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	//hazardModel->shared.gammaCorrection = 1.5f;
 	//hazardModel->castShadow = false;
 
-	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::ACIDGROUND);
 
-
-	float scaling = 5.0f;
+	// ## ALEX CODE EDITS OF MATTIAS ORIGINAL CODE ##
+	// Changelog 2023-12-04 14:15: Changed scaling value & hitbox radius, changed to a mesh particle instead
+	// Also changed facing values since mesh particles rotate around Z by default (was originally meant for the sword slash)
+	float scaling = 10.0f;
+	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, scaling, 0.0f, 0.0f, -5.0f, 1, "\\AcidGround.mdl", VFX_PATTERN::ACIDGROUND);
 
 	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(acidHazard);
 	hazardTransform->positionX = origin->positionX;
@@ -982,15 +984,18 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	hazardTransform->scaleX = scaling;
 	hazardTransform->scaleY = 1.0f;
 	hazardTransform->scaleZ = scaling;
-	hazardTransform->facingX = cosf((float)rand());
-	hazardTransform->facingZ = sinf((float)rand());
+	hazardTransform->facingX = 0.0000f;
+	hazardTransform->facingZ = 0.0000f;
+	hazardTransform->facingY = 0.00001f;
 	AddStaticHazard(acidHazard, HAZARD_ACID);
 
 	registry.AddComponent<StaticHazardComponent>(acidHazard, StaticHazardType::HAZARD_ACID);
 
-	float radius = 5.0f;
+	float radius = 10.0f;
+	// ## EO ALEX CODE ##
+
 	AddHitboxComponent(acidHazard);
-	int hitboxID = CreateHitbox(acidHazard, radius * 0.5f, 0.f, 0.f);
+	int hitboxID = CreateHitbox(acidHazard, radius * 0.5f, 0.f, 1.f);
 	SetCollisionEvent(acidHazard, hitboxID, HazardAttackCollision);
 	SetHitboxHitPlayer(acidHazard, hitboxID);
 	SetHitboxHitEnemy(acidHazard, hitboxID);

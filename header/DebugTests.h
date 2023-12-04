@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-////Hermano 3000
+//Hermano 3000
 //#define GAME_TEST
 
 //#define UI_TEST
