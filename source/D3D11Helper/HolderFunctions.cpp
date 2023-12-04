@@ -11,20 +11,15 @@ while (_nextIdx < 0 || main_map.contains(_nextIdx))	\
 		std::terminate();							\
 }													\
 
+BS_IDX BlendStateHolder::NextIdx()
+{
+	FIND_NEXT_SUITABLE(bs_map, BS_IDX);
+
+	return _nextIdx;
+}
+
 GS_IDX GeometryShaderHolder::NextIdx()
 {
-	//uint32_t infinityLoopCheck = 0;
-	//// Find suitable index
-	//while (_nextIdx < 0 || gs_map.contains(_nextIdx))
-	//{
-	//	// Increment
-	//	++_nextIdx;
-	//	// Branchlessly set to 0 if negative
-	//	_nextIdx = _nextIdx * (1 - (_nextIdx < 0));
-	//	if (UINT32_MAX == ++infinityLoopCheck)
-	//		std::terminate();
-	//}
-
 	FIND_NEXT_SUITABLE(gs_map, GS_IDX);
 
 	return _nextIdx;
