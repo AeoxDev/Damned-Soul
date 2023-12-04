@@ -56,8 +56,6 @@ void LoadLevel9()
 	//Player
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
-	SetScoreboardUI(stage);
-
 	//Mouse
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);

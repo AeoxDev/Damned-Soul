@@ -79,7 +79,7 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIShopSystem : public System
+class UIRenderShopSystem : public System
 {
 	bool Update();
 };

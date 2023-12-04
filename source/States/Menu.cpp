@@ -31,11 +31,10 @@ void Menu::Setup()
 
 	ResetRunTime();
 	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
-	int random = rand() % 10;//Level 1 thorugh 9
+	int random = rand() % 5;//Level 1 thorugh 9
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;
-	stageVars.stageNr = 1;
 	stageVars.scaleX = 1.0f;
 	stageVars.scaleY = 1.0f;
 	stageVars.scaleZ = 1.0f;
@@ -53,7 +52,7 @@ void Menu::Setup()
 	registry.AddComponent<PlayerComponent>(stateManager.player);
 
 	stateManager.activeLevel = 0;
-	AddTimedEventComponentStart(stage, 2.0f, LoopSpawnMainMenuEnemy, skeleton, 1);
+	AddTimedEventComponentStart(stage, 0.0f, LoopSpawnMainMenuEnemy, skeleton, 8);
 	/*EntityID enemy = SetupEnemy(EnemyType::skeleton, 0.0f, 0.f, 0.0f);
 	SetHitboxIsPlayer(enemy, 1, true);
 	StatComponent* stats = registry.GetComponent<StatComponent>(enemy);*/
@@ -153,32 +152,32 @@ void Menu::SetupButtons()
 	const char texts[buttons][32] =
 	{
 		"Start",
-		"Credits",
 		"Settings",
+		"Credits",
 		"Quit"
 	};
 	
 	const DSFLOAT2 positions[buttons] =
 	{
-		{ -0.81f, -0.02f },
-		{ -0.81f, -0.28f },
-		{ -0.81f,  -0.54f },
-		{ -0.81f, -0.8f }
+		{ -0.78f, -0.25f },
+		{ -0.78f, -0.45f },
+		{ -0.78f,  -0.65f },
+		{ -0.78f, -0.85f }
 	};
 
 	const DSFLOAT2 scales[buttons] =
 	{
-		{ 0.7f, 0.6f },
-		{ 0.7f, 0.6f },
-		{ 0.7f, 0.6f },
-		{ 0.7f, 0.6f }
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f }
 	};
 
 	void(* const functions[buttons])(void*, int) =
 	{
 		UIFunctions::MainMenu::Start,
-		UIFunctions::MainMenu::SetCredits,
 		UIFunctions::MainMenu::SetSettings,
+		UIFunctions::MainMenu::SetCredits,
 		UIFunctions::MainMenu::Quit
 	};
 
@@ -189,7 +188,7 @@ void Menu::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonBackground", texts[i], positions[i], scales[i], 30.0f);
+		uiElement->Setup("Exmenu/ButtonMedium", texts[i], positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -204,7 +203,7 @@ void Menu::SetupImages()
 	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.20f });
+	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.50f });
 }
 
 void Menu::SetupText()
