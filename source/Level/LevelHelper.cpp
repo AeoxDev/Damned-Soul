@@ -1379,20 +1379,20 @@ void SetScoreboardUI(EntityID stage)
 {
 	//Scoreboard UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
-	uiElement->Setup("TempShopWindow3", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
-	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.7f));
+	uiElement->Setup("ExMenu/SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
 
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
 
-	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(-0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
-	uiElement->AddText("\nNew Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.5f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(0.2f, -0.6f), DSFLOAT2(0.5f, 0.6f));
-	uiElement->AddText("\nMain Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.6f));
+	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.5f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
 	onHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::Image);

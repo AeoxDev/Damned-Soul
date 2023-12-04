@@ -221,6 +221,11 @@ float StatComponent::GetBonusDamage() const
 	return m_bonusDamage;
 }
 
+void StatComponent::UpdateDamageDone(const float delta)
+{
+	m_DamgeDone += delta;
+}
+
 float StatComponent::GetDamageDone() const
 {
 	return m_DamgeDone;

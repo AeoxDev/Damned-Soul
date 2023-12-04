@@ -101,9 +101,9 @@ public:
 	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
-	// Get Total Healing Done
+	// Get Healing Done
 	float GetHealthRecovered() const;
-	// Get Total Healing Done
+	// Get Healing Done
 	float GetDamageTaken() const;
 	// Update the entity's base health (permanently)
 	void UpdateBaseHealth(const float delta);
@@ -147,7 +147,9 @@ public:
 	void UpdateBonusDamage(const float delta);
 	// Get the damage of the entity
 	float GetBonusDamage() const;
-	// Get Total damage done
+	// update damage done
+	void UpdateDamageDone(const float delta);
+	// Get damage done
 	float GetDamageDone() const;
 
 	// Get the attack speed of the entity

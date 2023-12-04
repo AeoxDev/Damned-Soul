@@ -3,6 +3,7 @@
 #include "Relics\RelicFunctions.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "UIRenderer.h"
+#include "States/StateManager.h"
 
 #define FLASH_TIME(dmg) ((dmg * 0.025f) + 0.2f)
 
@@ -73,6 +74,11 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	// Apply on damage final
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
 		func(&funcInput);
+
+	if (attacker.index == stateManager.player.index)
+	{
+		registry.GetComponent<StatComponent>(stateManager.player)->UpdateDamageDone(funcInput.CollapseDamage());
+	}
 
 	return funcInput.CollapseDamage();
 }
