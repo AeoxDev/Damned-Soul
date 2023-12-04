@@ -81,10 +81,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -179,7 +181,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -201,6 +203,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
     <ClCompile Include="source\DebugTests.cpp" />
     <ClCompile Include="source\Glow.cpp" />
+    <ClCompile Include="source\SkyPlane.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DebuffComponent.cpp" />
     <ClCompile Include="source\Components\TransformComponent.cpp" />
@@ -343,6 +346,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Systems\Systems.cpp" />
     <ClCompile Include="source\Systems\TransformSystem.cpp" />
     <ClCompile Include="source\Systems\UISystems.cpp" />
+    <ClCompile Include="source\UI\HP_BarHelper.cpp" />
     <ClCompile Include="source\UI\UIButtonFunctions.cpp" />
     <ClCompile Include="source\UI\UIRenderer.cpp" />
     <ClCompile Include="source\Collision.cpp" />
@@ -494,6 +498,18 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="resource\shader\SkyPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="resource\shader\SkyVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="resource\shader\ShatterGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
@@ -592,6 +608,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ProjectileComponent.h" />
     <ClInclude Include="header\Components\OnClickComponent.h" />
     <ClInclude Include="header\Components\OnHoverComponent.h" />
+    <ClInclude Include="header\Components\SkyPlaneComponent.h" />
     <ClInclude Include="header\Components\SquashStretchComponent.h" />
     <ClInclude Include="header\Components\StaticHazardComponent.h" />
     <ClInclude Include="header\Components\UIComponents.h" />
@@ -700,11 +717,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Skynet\EyeBehaviour.h" />
     <ClInclude Include="header\Skynet\HellhoundBehaviour.h" />
     <ClInclude Include="header\Skynet\SkeletonBehaviour.h" />
+    <ClInclude Include="header\SkyPlane.h" />
     <ClInclude Include="header\Skynet\ZacBehaviour.h" />
     <ClInclude Include="header\States\CleanupMacros.h" />
     <ClInclude Include="header\States\Credits.h" />
     <ClInclude Include="header\States\Pause.h" />
     <ClInclude Include="header\Systems\Systems.h" />
+    <ClInclude Include="header\UI\HP_BarHelper.h" />
     <ClInclude Include="header\UI\UIButtonFunctions.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
     <ClInclude Include="header\Camera.h" />

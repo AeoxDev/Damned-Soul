@@ -17,6 +17,7 @@
 #include "OutlineHelper.h"
 #include "Glow.h"
 #include "AntiAlias.h"
+#include "SkyPlane.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -162,7 +163,7 @@ int StateManager::Setup()
 	Particles::InitializeParticles();
 	Outlines::InitializeOutlines();
 	Glow::Initialize();
-	//AntiAlias::Initialize();	// NOTE: Erika was here.
+	InitializeSky();
 	//SetupTestHitbox();
 	RedrawUI();
 	

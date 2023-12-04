@@ -72,7 +72,7 @@ extern int compCount;
 namespace EntityGlobals
 {
 	//Define a bitset of all possible components (bitset is pretty much just a collection of on-off switches or booleans), currently upper limit is set to 64
-	static constexpr int MAX_COMPONENTS = 64;
+	static constexpr int MAX_COMPONENTS = 128;
 	typedef std::bitset<MAX_COMPONENTS> componentBitset;
 
 	//Function to get the unique id of a component

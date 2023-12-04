@@ -37,6 +37,9 @@ typedef int8_t RTV_IDX;
 // Depth Stencil View index type definition
 typedef int8_t DSV_IDX;
 
+// Depth Stencil State index type definition
+typedef int8_t DSS_IDX;
+
 // Shader Resource View index type definition
 typedef int8_t SRV_IDX;
 
@@ -48,3 +51,6 @@ typedef int8_t RS_IDX;
 
 // Sampler State index type definition
 typedef int8_t SMP_IDX;
+
+// Blend State index type definition
+typedef int8_t	BS_IDX;

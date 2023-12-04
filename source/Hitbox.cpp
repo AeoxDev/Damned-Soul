@@ -1,8 +1,6 @@
 #include "Hitbox.h"
 #include "D3D11Helper\D3D11Graphics.h"
 #include "D3D11Helper\D3D11Helper.h"
-#include <fstream>
-#include <sstream>
 #include "Backend/Collision.h"
 #include "CollisionFunctions.h"
 #include "Backend\GeometryIndependent.h"
@@ -11,6 +9,8 @@
 #include "Registry.h"
 #include "EntityFramework.h"
 #include "Skynet\BehaviourHelper.h"
+#include <fstream>
+#include <sstream>
 
 int CreateHitbox(EntityID& entity, float radius, float offsetX, float offsetZ)
 {
@@ -601,7 +601,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 	SetHitboxHitEnemy(entity, hID);
 	SetHitboxActive(entity, hID);
 	SetHitboxIsMoveable(entity, hID);
-	SetHitboxHitWall(entity, hID);
+	//SetHitboxHitWall(entity, hID);
 
 	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
 	SetCollisionEvent(entity, sID, SoftCollision);
