@@ -603,6 +603,13 @@ bool ControllerSystem::Update()
 				stats->SetSpeedMult(0.2f);
 			/*player->currentCharge += GetDeltaTime();*/
 			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed(); //Charge faster scaling off of attack speed baby
+			auto skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+			if (skelel) //Gradually light up player when charging heavy attack
+			{
+				skelel->shared.bcaR_temp = player->currentCharge * 0.5f;
+				skelel->shared.bcaG_temp = player->currentCharge * 0.5f;
+				skelel->shared.bcaB_temp = player->currentCharge * 0.5f;
+			}
 			if (player->currentCharge > player->maxCharge) //clamp, since I'm going to let this number modify damage
 				player->currentCharge = player->maxCharge;
 			//Play some sound, do some animation, indicate that we're charging the bigboy move
