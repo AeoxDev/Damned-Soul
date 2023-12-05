@@ -115,15 +115,15 @@ void LoadLevel2()
 	/*CreateParticle(70, 20, -110, 10, 0, 7, 0, 0, 0, 30, 13);*/
 
 	EntityID part = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(part, 10, 20, 6, 0, 0, 0, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(part, 5.0f, 10.0f, 6.0f, 0.0f, 0.0f, 0.0f, 40, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent ttComp;
 	ttComp.positionX = -115;
-	ttComp.positionY = 14;
-	ttComp.positionZ = 150;
+	ttComp.positionY = 7;
+	ttComp.positionZ = 154;
 	registry.AddComponent<TransformComponent>(part, ttComp);
 
 	EntityID partT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partT, 10, 20, 2.5f, 0, 0, 0, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partT, 1.0f, 20.0f, 2.5f, 0.0f, 0.0f, 0.0f, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent tttComp;
 	tttComp.positionX = -118;
 	tttComp.positionY = 5;

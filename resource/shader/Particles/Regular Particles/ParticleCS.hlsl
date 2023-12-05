@@ -159,6 +159,12 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
         particle.position = startPosition;
         particle.time = 0.f;
     }
+    else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    {
+        particle.time = meta[index].deltaTime * meta[blockID.y].life;
+        
+
+    }
             
     if (DTid.x % 2 == 1)
         particle.position.x = particle.position.x - (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
@@ -522,16 +528,16 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     //???float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
     
     ////Time differense for variation in animation 
-    //if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
-    //{
-    //    particle.time = 0.0f;
-    //}
-    //else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
-    //{
-    //    particle.time = meta[index].deltaTime * meta[blockID.y].life;
+    ////if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
+    ////{
+    ////    particle.time = 0.0f;
+    ////}
+    ////else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    ////{
+    ////    particle.time = meta[index].deltaTime * meta[blockID.y].life;
         
 
-    //}
+    ////}
     
     ////Set specified Start position 
     //float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
@@ -547,6 +553,7 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
         //Time differense for variation in animation 
     if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
     {
+       
         particle.time = 0.0f;
     }
     else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
