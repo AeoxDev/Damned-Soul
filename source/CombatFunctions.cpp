@@ -20,7 +20,7 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	//Play sound when hit by hazard
 	if (time == 1.0f || !isPlayer)
 	{
-		AddTimedEventComponentStartEnd(defender, 0.0f, HurtSound, 0.25f, nullptr, 0, 1);
+		AddTimedEventComponentStartEnd(defender, 0.0f, HurtSound, 0.35f, nullptr, 0, 1);
 	}
 
 	// Update UI

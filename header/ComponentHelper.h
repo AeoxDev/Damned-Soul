@@ -179,7 +179,7 @@ private:
 	int m_bonusDashes = 0;
 	float m_baseDashValue = 2.5f;
 	float m_bonusDashValue = 0.f;
-	float m_dashCooldown = 1.0f;
+	float m_dashCooldown = 0.8f;
 	float m_dashCounter = 0.0f; //When this is 0.0f we can dash, and when we dash it's plus'd by dashCooldown
 
 public:

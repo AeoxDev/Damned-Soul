@@ -81,19 +81,23 @@ void UIFunctions::Game::LoadNextLevel(void* args, int a)
 {
 	UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
 
-	for (auto entity : View<UIShopRelicComponent>(registry))
+ 	for (auto entity : View<UIShopRelicComponent>(registry))
 	{
 		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 		for (int i = 0; i < 2; i++)
 		{
+			bool addBack = true;
 			for (int j = 0; j < sizeof(playerRelics->relics)/sizeof(playerRelics->relics[0]); j++)
 			{
 				if (relicWindow->shopRelics[i] == playerRelics->relics[j])
+				{
+					addBack = false;
 					continue;
-
-				Relics::PutBackRelic(relicWindow->shopRelics[i]);
+				}
 			}
-			
+
+			if (addBack)
+				Relics::PutBackRelic(relicWindow->shopRelics[i]);
 		}
 	}
 
