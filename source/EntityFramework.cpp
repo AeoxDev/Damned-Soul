@@ -5,6 +5,7 @@
 #include "Registry.h"
 #include "Light.h"
 #include "States\StateManager.h"
+#include "UIButtonFunctions.h"
 
 size_t Registry::GetEntityCount()
 {
@@ -160,13 +161,30 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 	for (auto entity : View<SoundComponent>(registry))
 	{
 		//Delete sound component from the pause buttons.
-		if (destructionTier == ENT_PERSIST_PAUSE) //Shitty code, for a shitty scenario with the pause menu buttons. If any other entity during pause has an ONCLICK FKING COMPONENT THIS WILL BREAK AND I WILL BREAK YOU.
+		if (destructionTier == ENT_PERSIST_PAUSE) //Shitty code, for a shitty scenario with the pause menu buttons.
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
 			auto button = registry.GetComponent<OnClickComponent>(entity);
 			if ((sound != nullptr) && (button != nullptr))
 			{
-				sound->Unload();
+				for (int i = 0; i < (int)button->onClickFunctionsPressed.size(); i++)
+				{
+					if (button->onClickFunctionsPressed[i] == UIFunctions::Pause::Resume)
+					{
+						sound->Unload();
+						break;
+					}
+					if (button->onClickFunctionsPressed[i] == UIFunctions::Pause::SetMainMenu)
+					{
+						sound->Unload();
+						break;
+					}
+					if (button->onClickFunctionsPressed[i] == UIFunctions::Pause::SetSettings)
+					{
+						sound->Unload();
+						break;
+					}
+				}
 			}
 		}
 

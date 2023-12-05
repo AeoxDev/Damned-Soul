@@ -175,9 +175,9 @@ void UIFunctions::Game::ExitShopCutscene(void* args, int a)
 					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
 					if (shopBuy != nullptr)
 					{
-						for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
+						for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 						{
-							if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
+							if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found
 							{
 								selectedID = onClick;
 							}
@@ -779,6 +779,9 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	upgrade->tier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
+
+	SoundComponent* upgradeSound = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+	if (upgradeSound) upgradeSound->Play(Shop_Upgrade, Channel_Base);
 
 	// Update axe model
 	ReleaseModel(weapon->model);

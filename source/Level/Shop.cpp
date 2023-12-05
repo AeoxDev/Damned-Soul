@@ -340,7 +340,7 @@ void LoadShop()
 		{
 			for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 			{
-				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
+				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found, play the first imp voice line.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr) sfx->Play(Shop_FirstMeet, Channel_Extra);
@@ -376,7 +376,7 @@ void ReloadShop()
 		{
 			for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 			{
-				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
+				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found, play the correct sound based on the level.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr)
@@ -385,6 +385,10 @@ void ReloadShop()
 						{
 						case 4:
 							sfx->Play(Shop_BeforeLava, Channel_Extra);
+							for (auto audio : View<AudioEngineComponent>(registry))
+							{
+								registry.GetComponent<AudioEngineComponent>(audio)->HandleSound();
+							}
 							break;
 						case 6:
 							sfx->Play(Shop_BeforeSplitBoss, Channel_Extra);
