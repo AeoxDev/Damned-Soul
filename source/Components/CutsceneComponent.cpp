@@ -101,7 +101,7 @@ void StageIntroFall(EntityID& entity, const int& index)
 	CutsceneSetLookAt(returnCamera, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	
 	AddTimedEventComponentStartContinuousEnd(returnCamera, fallTime, BeginCutscene, CutsceneTransition, pauseTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	AddTimedEventComponentStart(returnCamera, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	//AddTimedEventComponentStart(returnCamera, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 void StageIntroFallUnskippable(EntityID& entity, const int& index)
@@ -136,7 +136,7 @@ void StageIntroFallUnskippable(EntityID& entity, const int& index)
 	CutsceneSetLookAt(returnCamera, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
 	AddTimedEventComponentStartContinuousEnd(returnCamera, fallTime, BeginShopCutscene, CutsceneTransition, pauseTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	AddTimedEventComponentStart(entity, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
+	//AddTimedEventComponentStart(entity, pauseTime, SetGameSpeedDefault, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 }
 
 void SkeletonIntroScene(EntityID& entity, const int& index)
@@ -569,7 +569,6 @@ void SplitBossLevel8IntroScene(EntityID& entity, const int& index)
 	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear);
 	AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, CutsceneTransition, beginReturn + 0.1f, RemoveCutsceneEnemy, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	AddTimedEventComponentStartContinuousEnd(stateManager.player, 0.0f, nullptr, nullptr, beginReturn + 0.1f, PlayPlayerBossVoiceLine, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
-	transform->positionY = -100.0f;
 }
 
 //Have eye come in from side to side.
