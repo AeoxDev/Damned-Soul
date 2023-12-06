@@ -525,7 +525,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 			hazardModel->shared.colorMultiplicativeGreen = gm;
 			hazardModel->shared.colorMultiplicativeBlue = bm;
 			hazardModel->shared.gammaCorrection = gamma;
-			hazardModel->castShadow = false;
+			hazardModel->shared.castShadow = false;
 			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 			hazardTransform->positionX = randX;
 			hazardTransform->positionY = 0.6f - ((float)type * .1f);

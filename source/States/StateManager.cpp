@@ -18,6 +18,7 @@
 #include "Glow.h"
 #include "AntiAlias.h"
 #include "SkyPlane.h"
+#include "Shatter.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -159,6 +160,7 @@ int StateManager::Setup()
 	Camera::InitializeCamera();
 	SetupHitboxVisualizer();
 	menu.Setup();
+	Shatter::Initialize();
 
 	Particles::InitializeParticles();
 	Outlines::InitializeOutlines();
@@ -179,7 +181,7 @@ int StateManager::Setup()
 	systems.push_back(new ShadowSystem());
 	systems[1]->timeCap = 1.f / 60.f;
 	systems.push_back(new RenderSystem());
-	systems[2]->timeCap = 1.f / 60.f;
+	//systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new OutlineSystem());
 
 

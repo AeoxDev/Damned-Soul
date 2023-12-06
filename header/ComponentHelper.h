@@ -76,6 +76,9 @@ public:
 	float acidAccelFactor = 0.3f;
 	float acidAnimFactor = 0.5f;
 
+	//Elliot
+	float overkill = 0.0f;
+
 
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
 	{/* m_baseMoveSpeed = m_moveSpeed; */
@@ -229,6 +232,11 @@ struct ShatterComponent
 	bool reverse = false;
 	bool useOrigin = false; //Displaces from origin point, displaces along face normal if false
 	float origin[4] = {0.f, 0.f, 0.f, 0.f};
+
+	ShatterComponent(float strength, bool reverse, bool useOrigin, float origin[4]) : time(0), strength(strength), reverse(reverse), useOrigin(useOrigin) 
+	{
+		this->origin[0] = origin[0], this->origin[1] = origin[1], this->origin[2] = origin[2], this->origin[3] = origin[3];
+	}
 };
 
 struct ControllerComponent
