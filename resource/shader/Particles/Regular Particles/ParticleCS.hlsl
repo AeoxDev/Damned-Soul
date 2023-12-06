@@ -17,7 +17,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
     int amount = meta[blockID.y].end - meta[blockID.y].start;
     int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     
-    if (index < meta[blockID.y].start || index > meta[blockID.y].end)
+    if (index < meta[blockID.y].start || index > meta[blockID.y].end || meta[blockID.y].reset == 1)
         return;
 
     
@@ -387,13 +387,13 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
         particle.position = meta[blockID.y].startPosition;
         particle.time = 0.f;
     }
-    if (particle.time >= meta[blockID.y].life)
-    {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    //if (particle.time >= meta[blockID.y].life)
+    //{
+    //    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
 
-        particle.position = startPosition;
-        particle.time = 0.f;
-    }
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
 
     float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/ index);
     float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);
