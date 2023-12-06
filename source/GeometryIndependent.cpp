@@ -255,7 +255,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	EntityID trash;
 	LOADED_MODELS[model->model].RenderAllSubmeshes(trash);
 
-	ClearDepthStencilView(GIcomponent->depthStencil);
+	//ClearDepthStencilView(GIcomponent->depthStencil); //Take into account depth here to avoid issues with GI under the stage.
 	//Render all existing static hazards on to the submesh.
 	for (auto entity : View<StaticHazardComponent, TransformComponent, ModelBonelessComponent>(registry))
 	{

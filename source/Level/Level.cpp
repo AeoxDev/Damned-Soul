@@ -13,6 +13,7 @@
 void LoadLevel(int level)
 {
 	stateManager.activeLevel = level;
+	stateManager.cutsceneEnemy.index = -1;//Reset cutscene entity for safety.
 	std::srand((unsigned)time(NULL));
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);

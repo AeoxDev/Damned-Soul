@@ -102,6 +102,12 @@ void Registry::ReleaseComponentResources(EntityID id, ENTITY_PERSISTENCY_TIER de
 	if(p)
 		p->pointList.~ML_Vector();
 
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(id);
+	if (particle != nullptr && particle->metadataSlot != -1)
+	{
+		particle->Release();
+	}
+
 	//TODO: Pass in persistency thing so we can check to see if it's NOT equal to ENT_PERSIST_PAUSE when unloading sound components
 	if (destructionTier != ENT_PERSIST_PAUSE)
 		ReleaseTimedEvents(id);
