@@ -462,21 +462,23 @@ void UIFunctions::OnClick::None(void* args, int index)
 void UIFunctions::OnClick::SelectRelic(void* args, int index)
 {
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+	UIShopRelicComponent* uiWindow = registry.GetComponent<UIShopRelicComponent>(*(EntityID*)args);
+
 
 	int inverseIndex = 0;
-	int imageIndexes[2] = { 0, 0 };
+	int hoverIndecies[2] = { 0, 0 };
+
+	hoverIndecies[0] = (index * 3) - 1;
 
 	if (index == 1)
 	{
 		inverseIndex = 1;
-		imageIndexes[0] = uiElement->m_Images.size() - 2;
-		imageIndexes[1] = uiElement->m_Images.size() - 1;
+		hoverIndecies[1] = ((index + 1) * 3) - 1;
 	}
 	else
 	{
 		inverseIndex = 0;
-		imageIndexes[0] = uiElement->m_Images.size() - 1;
-		imageIndexes[1] = uiElement->m_Images.size() - 2;
+		hoverIndecies[1] = ((index + 1) - 1);
 	}
 
 	for (auto entity : View<UIShopRelicComponent>(registry))
@@ -492,26 +494,24 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 				{
 					otherWindow->shopSelections[i] = shopState::AVALIABLE;
 
-					otherUI->m_Images[otherUI->m_Images.size() - (2 - i)].SetImage("RelicIcons\\HoverRelic");
-					otherUI->m_Images[otherUI->m_Images.size() - (2 - i)].baseUI.SetVisibility(false);
+					otherUI->m_Images[((i + 1) * 3) - 1].SetImage("RelicIcons\\HoverRelic");
+					otherUI->m_Images[((i + 1) * 3) - 1].baseUI.SetVisibility(false);
 				}
 			}
 
 			continue;
 		}
 
-		UIShopRelicComponent* uiWindow = registry.GetComponent<UIShopRelicComponent>(entity);
-
 		if (uiWindow->shopSelections[index - 1] != shopState::LOCKED && uiWindow->shopSelections[index - 1] != shopState::BOUGHT)
 		{
-			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\SelectedRelic");
-			uiElement->m_Images[imageIndexes[0]].baseUI.SetVisibility(true);
+			uiElement->m_Images[hoverIndecies[0]].SetImage("RelicIcons\\SelectedRelic");
+			uiElement->m_Images[hoverIndecies[0]].baseUI.SetVisibility(true);
 		}
 
 		if (uiWindow->shopSelections[inverseIndex] != shopState::LOCKED && uiWindow->shopSelections[inverseIndex] != shopState::BOUGHT)
 		{
-			uiElement->m_Images[imageIndexes[1]].SetImage("RelicIcons\\HoverRelic");
-			uiElement->m_Images[imageIndexes[1]].baseUI.SetVisibility(false);
+			uiElement->m_Images[hoverIndecies[1]].SetImage("RelicIcons\\HoverRelic");
+			uiElement->m_Images[hoverIndecies[1]].baseUI.SetVisibility(false);
 			uiWindow->shopSelections[inverseIndex] = shopState::AVALIABLE;
 		}
 
@@ -521,11 +521,11 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 		}
 		else if (uiWindow->shopSelections[index - 1] == shopState::SELECTED)
 		{
-			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\HoverRelic");
+			uiElement->m_Images[hoverIndecies[0]].SetImage("RelicIcons\\HoverRelic");
 			uiWindow->shopSelections[index - 1] = shopState::AVALIABLE;
 		}
 
-		BuyRelic(args, 0);
+		BuyRelic(args, hoverIndecies[0]);
 	}
 
 	RedrawUI();
@@ -564,7 +564,8 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 
 				uiElement->m_Images[i].baseUI.SetVisibility(false);
 				uiElement->m_Texts[i].baseUI.SetVisibility(false);
-				uiElement->m_Images[i + 2].baseUI.SetVisibility(false);
+
+				uiElement->m_Images[index].baseUI.SetVisibility(false);
 
 				relicWindow->shopRelics[i]->m_function(&stateManager.player);
 
@@ -830,8 +831,11 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 			if (relicWindow->shopSelections[i] == shopState::BOUGHT)
 				ignore = true;
 
-			uiRelic->m_Images[i + 2].SetImage("RelicIcons\\HoverRelic");
-			uiRelic->m_Images[i + 2].baseUI.SetVisibility(false);
+			int imageIndex = i * 3;
+			int hoverIndex = imageIndex + 2;
+
+			uiRelic->m_Images[hoverIndex].SetImage("RelicIcons\\HoverRelic");
+			uiRelic->m_Images[hoverIndex].baseUI.SetVisibility(false);
 
 			if (relicWindow->shopSelections[i] == shopState::LOCKED)
 			{
@@ -850,8 +854,8 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 			type.emplace("Gadget", Relics::RELIC_GADGET);
 
 			const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
-			uiRelic->m_Images[i].SetImage(relic->m_filePath);
-			uiRelic->m_Images[i].baseUI.SetVisibility(true);
+			uiRelic->m_Images[imageIndex].SetImage(relic->m_filePath);
+			uiRelic->m_Images[imageIndex].baseUI.SetVisibility(true);
 			uiRelic->m_Texts[i].SetText(std::to_string(priceCalc.GetCostOf(relic->m_price, RelicInput::OnPriceCalculation::RELIC)).c_str(), uiRelic->m_Images[i].baseUI.GetBounds());
 			relicWindow->shopRelics[i] = relic;
 		}
@@ -1068,12 +1072,13 @@ void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 	if (uiImpElement == nullptr || uiImpText == nullptr)
 		return;
 
-	int imageIndex = uiElement->m_Images.size() - (2 - index + 1);
+	int imageIndex = (index * 3) - 3;
+	int hoverIndex = (index * 3) - 1;
 
 	if (hover)
 	{
-		uiElement->m_Images[imageIndex].baseUI.SetVisibility(true);
-		uiElement->m_Images[imageIndex].baseUI.SetPosition(uiElement->m_Images[index - 1].baseUI.GetPosition());
+		uiElement->m_Images[hoverIndex].baseUI.SetVisibility(true);
+		uiElement->m_Images[hoverIndex].baseUI.SetPosition(uiElement->m_Images[imageIndex].baseUI.GetPosition());
 
 		uiImpText->name = relicWindow->shopRelics[index - 1]->m_relicName;
 		uiImpText->description = relicWindow->shopRelics[index - 1]->m_description;
@@ -1104,7 +1109,7 @@ void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 	}
 	else if (!hover && relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
 	{
-		uiElement->m_Images[imageIndex].baseUI.SetVisibility(false);
+		uiElement->m_Images[hoverIndex].baseUI.SetVisibility(false);
 	}
 
 }

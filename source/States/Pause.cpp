@@ -128,7 +128,7 @@ void PauseState::SetupButtons()
 					uiElement->Setup("BookFrozen60%", texts[i], positions[i], scales[i]);
 				else
 					uiElement->Setup("BookNormal60%", texts[i], positions[i], scales[i]);
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.4f));
 			}
 			else if (i == 4)
 			{

@@ -80,19 +80,17 @@ void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, cons
 	for (int i = 0; i < 2; i++)
 	{
 		const RelicData* relic = Relics::PickRandomRelic(type);
-		uiComp.AddImage(relic->m_filePath, { xPos[i], yPos }, { 1.5f, 1.5f }, false);
+		uiComp.AddImage(relic->m_filePath, { xPos[i], yPos + 0.025f }, { 1.5f, 1.5f }, false);
 		char price[4];
 		sprintf(price, "%i", relic->m_price);
 
-		uiComp.AddText(price, uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.GetBounds(), {xPos[i], yPos - 0.075f});
+		uiComp.AddText(price, uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.GetBounds(), {xPos[i] + 0.015f, yPos - 0.075f});
+		uiComp.AddImage("Soul_Stone", { xPos[i], yPos - 0.075f }, { 1.0f, 1.0f }, false);
+		uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
+		uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.SetVisibility(false);
+
 		uiRelicComp.shopRelics[i] = relic;
 	}
-
-	uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
-	uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
-	uiComp.m_Images[uiComp.m_Images.size() - 2].baseUI.SetVisibility(false);
-	uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.SetVisibility(false);
-
 };
 
 
@@ -135,11 +133,11 @@ void CreateRelicWindows()
 
 		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnClick::None, UIFunctions::OnClick::None);
 		uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
-		uiOnClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
+		uiOnClick->Add(uiElement->m_Images[3].baseUI.GetPixelCoords(), uiElement->m_Images[3].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
 
 		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::None);
 		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
-		uiOnHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
+		uiOnHover->Add(uiElement->m_Images[3].baseUI.GetPixelCoords(), uiElement->m_Images[3].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
 
 		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
 		sfx->Load(SHOP);

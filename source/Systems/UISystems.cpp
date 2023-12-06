@@ -100,16 +100,9 @@ bool UIShopSystem::Update()
 
 			uiElement->m_Texts[0].SetText(damage.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
 
-			//ML_String atkspd = "AttackSpeed: ";
-			//atkspd.append(std::to_string((int)player->GetAttackSpeed()).c_str());
-			//uiElement->m_Texts[1].SetText(atkspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
 			char atkSpdStr[64] = "";
 			sprintf(atkSpdStr, "Attack Speed: %.0lf%%", player->GetAttackSpeed() * 100.f);
 			uiElement->m_Texts[1].SetText(atkSpdStr, uiElement->m_BaseImage.baseUI.GetBounds());
-
-			//ML_String movspd = "MoveSpeed: ";
-			//movspd.append(std::to_string((int)player->GetSpeed()).c_str());
-			//uiElement->m_Texts[2].SetText(movspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
 
 			char movSpeed[64] = "";
 			player->SetSpeedMult(1.f);
@@ -130,26 +123,40 @@ bool UIShopSystem::Update()
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			uiElement->m_BaseImage.baseUI.SetVisibility(true);
 
-			for (UINT32 i = 0; i < uiElement->m_Images.size() - (uiElement->m_Images.size() / 2); i++)
+			for (uint32_t i = 0; i < relicWindow->shopRelics.size(); i++)
 			{
+
+				int imageIndex = i * 3;
+				int soulIndex = imageIndex + 1;
+
 				if (priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC) > player->GetSouls())
-					uiElement->m_Images[i].baseUI.SetOpacity(0.3f);
+				{
+					uiElement->m_Images[imageIndex].baseUI.SetOpacity(0.3f);
+					uiElement->m_Images[soulIndex].baseUI.SetOpacity(0.3f);
+
+					uiElement->m_Texts[i].baseUI.SetOpacity(0.3f);
+				}
 				else
-					uiElement->m_Images[i].baseUI.SetOpacity(1.0f);
+				{
+					uiElement->m_Images[imageIndex].baseUI.SetOpacity(1.0f);
+					uiElement->m_Images[soulIndex].baseUI.SetOpacity(1.0f);
+
+					uiElement->m_Texts[i].baseUI.SetOpacity(1.0f);
+				}
 
 				if (relicWindow->shopSelections[i] != shopState::BOUGHT)
-					uiElement->m_Images[i].baseUI.SetVisibility(true);
+				{
+					uiElement->m_Images[imageIndex].baseUI.SetVisibility(true);
+					uiElement->m_Images[soulIndex].baseUI.SetVisibility(true);
+
+					uiElement->m_Texts[i].baseUI.SetVisibility(true);
+				}
+
+				uiElement->m_Texts[i].SetText(std::to_string(priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC)).c_str(), uiElement->m_Images[i].baseUI.GetBounds());
 			}
 
 			uiElement->m_BaseText.baseUI.SetVisibility(true);
 
-			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
-			{
-				if (relicWindow->shopSelections[i] != shopState::BOUGHT)
-					uiElement->m_Texts[i].baseUI.SetVisibility(true);
-
-				uiElement->m_Texts[i].SetText(std::to_string(priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC)).c_str(), uiElement->m_Images[i].baseUI.GetBounds());
-			}
 		}
 
 		for (auto entity : View<UIShopRerollComponent>(registry))
