@@ -222,7 +222,7 @@ void CreateSingleWindows()
 
 	for (int i = 0; i < SHOP_SINGLE_WINDOWS; i++)
 	{
-		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
+		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 
 		if (i == 2)
@@ -359,6 +359,8 @@ void ReloadShop()
 	CreateTextWindows();
 
 	CreateRelicWindows();
+
+	CreateSingleWindows();
 
 	SetInShop(true);
 

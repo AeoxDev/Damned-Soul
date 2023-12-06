@@ -15,7 +15,7 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 {
 
 	SetWindowTitle((title + extra).c_str());
-
+	bool newSec = NewSecond();
 #ifdef _DEBUG
 	//Get player transform
 	TransformComponent* transform = nullptr;
@@ -24,7 +24,7 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 		transform = registry.GetComponent<TransformComponent>(stateManager.player);
 	}
 	
-	if (NewSecond())
+	if (newSec)
 	{
 		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps) ";
 		if (transform != nullptr)
@@ -34,6 +34,7 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 		SetWindowTitle((title + extra).c_str());
 	}
 #endif
+	
 }
 
 #ifdef GAME_TEST
