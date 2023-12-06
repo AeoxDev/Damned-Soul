@@ -8,7 +8,7 @@
 #include "States\StateManager.h"
 #include <assert.h>
 
-#define TIMED_EVENT_ARRAY_LIMIT 16
+#define TIMED_EVENT_ARRAY_LIMIT 32
 
 bool ignoreGameSpeed = false;
 
