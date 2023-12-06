@@ -165,27 +165,19 @@ void UnloadEntities(ENTITY_PERSISTENCY_TIER destructionTier)
 		{
 			auto sound = registry.GetComponent<SoundComponent>(entity);
 			auto button = registry.GetComponent<OnClickComponent>(entity);
-			if ((sound != nullptr) && (button != nullptr))
+			auto pauseSettings = registry.GetComponent<UIPauseSettingsComponent>(entity);
+			auto pause = registry.GetComponent<UIPauseButtonComponent>(entity);
+
+			if ((pauseSettings != nullptr) && (sound != nullptr) && (button != nullptr))
 			{
-				for (int i = 0; i < (int)button->onClickFunctionsPressed.size(); i++)
-				{
-					if (button->onClickFunctionsPressed[i] == UIFunctions::Pause::Resume)
-					{
-						sound->Unload();
-						break;
-					}
-					if (button->onClickFunctionsPressed[i] == UIFunctions::Pause::SetMainMenu)
-					{
-						sound->Unload();
-						break;
-					}
-					if (button->onClickFunctionsPressed[i] == UIFunctions::Pause::SetSettings)
-					{
-						sound->Unload();
-						break;
-					}
-				}
+				sound->Unload();
 			}
+
+			if ((pause != nullptr) && (sound != nullptr) && (button != nullptr))
+			{
+				sound->Unload();
+			}
+
 		}
 
 		//Delete the sound component from every entity that is not the Player.

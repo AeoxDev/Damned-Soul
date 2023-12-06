@@ -720,7 +720,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
 		func(&priceCalc);
 
-	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || upgrade->tier >= 2)
+	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || player->weaponTier >= 3)
 		return;
 
 	int soundToPlay = rand() % 2;
@@ -780,7 +780,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 		}
 	}
 	
-	upgrade->tier++;
+	player->weaponTier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
 
@@ -790,7 +790,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	// Update axe model
 	ReleaseModel(weapon->model);
 	char modelName[64] = "";
-	sprintf(modelName, "AxeV%d.mdl", upgrade->tier + 1);
+	sprintf(modelName, "AxeV%d.mdl", player->weaponTier);
 	weapon->model = LoadModel(modelName);
 }
 

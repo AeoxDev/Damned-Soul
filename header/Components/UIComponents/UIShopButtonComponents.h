@@ -33,5 +33,5 @@ struct UIShopHealComponent
 
 struct UIShopUpgradeComponent
 {
-	int tier = 0;
+
 };
