@@ -38,6 +38,8 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 		audioJungle->HandleSound();
 	}
 
+	// Resets all relics on a new run
+	Relics::ResetRelics();
 
 	//Create player when we start the game instead, rather than specifically when Level1 starts (reason: debug later levels without having to run through everything)
 	//Niclas was here :)

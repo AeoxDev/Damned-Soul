@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_HEART_HEALTH_INCREASE 45
+#define DEMON_HEART_HEALTH_INCREASE 60
 
 EntityID DEMON_HEART::_OWNER;
 
@@ -22,9 +22,10 @@ void DEMON_HEART::Initialize(void* input)
 	// Set owner
 	DEMON_HEART::_OWNER = *((EntityID*)input);
 
-	// This is a stat altering relic, mark the entity as having modified stats
-	// It also raises max HP while elevating current hp to match, meaning this is nessecary
-	RELIC_RAISE_CURRENT_MAX_HP(DEMON_HEART::_OWNER, DEMON_HEART_HEALTH_INCREASE);
+	registry.GetComponent<StatComponent>(DEMON_HEART::_OWNER)->MarkAsModified();
+	//// This is a stat altering relic, mark the entity as having modified stats
+	//// It also raises max HP while elevating current hp to match, meaning this is nessecary
+	//RELIC_RAISE_CURRENT_MAX_HP(DEMON_HEART::_OWNER, DEMON_HEART_HEALTH_INCREASE);
 
 	// Make sure the relic function map exists
 	_validateRelicFunctions();

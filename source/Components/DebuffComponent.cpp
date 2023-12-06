@@ -15,24 +15,28 @@ void DamageOverTime::AlterModelColor(void* model, const DOT_TYPE& type)
 	// Both model components have the relevant data at the same place, typecast between them shouldn't matter in this case
 	ModelSkeletonComponent* cast = (ModelSkeletonComponent*)model;
 
-	float power = std::min(damagePerSecond * remainingTime / 10.f, 1.f);
+	float power = std::sqrt(WeightedPower());
 	if (POISON == type)
 	{
 		// Multiplicative
-		cast->shared.bcmR_temp *= (1 + (.15f + .4f * power));
-		cast->shared.bcmB_temp *= (1 + (.1f + .4f * power));
+		cast->shared.bcmR_temp *= (1.03f + (.02f * power));
+		cast->shared.bcmG_temp /= (1.05f + (.04f * power));
+		cast->shared.bcmB_temp *= (1.05f + (.04f * power));
 		// Additive
-		cast->shared.bcaR_temp += .1f + .4f * power;
-		cast->shared.bcaB_temp += .4f * power;
+		cast->shared.bcaR_temp += .03f;
+		cast->shared.bcaG_temp -= .06f + (.06f * power);
+		cast->shared.bcaB_temp += .05f;
 	}
 	else if (BURN == type)
 	{
 		// Multiplicative
-		cast->shared.bcmR_temp /= (1 + (.25f + power));
-		cast->shared.bcmB_temp /= (1 + (1.f * power));
+		cast->shared.bcmR_temp *= (1.1f + (.05f * power));
+		cast->shared.bcmG_temp *= (1.04f + (.02f * power));
+		cast->shared.bcmB_temp /= (1.1f + (.1f * power));
 		// Additive
-		cast->shared.bcaR_temp += .1f + power;
-		cast->shared.bcaG_temp += power;
+		cast->shared.bcaR_temp += .12f;
+		cast->shared.bcaG_temp += .03f;
+		cast->shared.bcmB_temp -= .1 + (.08f * power);
 	}
 }
 

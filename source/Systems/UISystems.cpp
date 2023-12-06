@@ -92,24 +92,13 @@ bool UIRenderShopSystem::Update()
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			StatComponent* player = registry.GetComponent<StatComponent>(stateManager.player);
 
-			ML_String damage = "Damage: ";
-			damage.append(std::to_string((int)player->GetBaseDamage()).c_str());
-			damage.append("+(");
-			damage.append(std::to_string((int)player->GetBonusDamage()).c_str());
-			damage.append(")");
+			char atkDmgStr[64] = "";
+			sprintf(atkDmgStr, "Damage: %.1lf + (%.1lf)", player->GetBaseDamage(), player->GetBonusDamage());
+			uiElement->m_Texts[0].SetText(atkDmgStr, uiElement->m_BaseImage.baseUI.GetBounds());
 
-			uiElement->m_Texts[0].SetText(damage.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
-
-			//ML_String atkspd = "AttackSpeed: ";
-			//atkspd.append(std::to_string((int)player->GetAttackSpeed()).c_str());
-			//uiElement->m_Texts[1].SetText(atkspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
 			char atkSpdStr[64] = "";
 			sprintf(atkSpdStr, "Attack Speed: %.0lf%%", player->GetAttackSpeed() * 100.f);
 			uiElement->m_Texts[1].SetText(atkSpdStr, uiElement->m_BaseImage.baseUI.GetBounds());
-
-			//ML_String movspd = "MoveSpeed: ";
-			//movspd.append(std::to_string((int)player->GetSpeed()).c_str());
-			//uiElement->m_Texts[2].SetText(movspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
 
 			char movSpeed[64] = "";
 			player->SetSpeedMult(1.f);

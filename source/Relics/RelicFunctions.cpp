@@ -15,7 +15,6 @@
 #include "Relics\Offensive\HoundFang.h"
 #include "Relics\Offensive\CrackedLense.h"
 #include "Relics\Offensive\LifeSteal.h"
-#include "Relics\Offensive\SoulEater.h"
 #include "Relics\Offensive\AdvancedFighting.h"
 #include "Relics\Offensive\SoulPower.h"
 #include "Relics\Offensive\FlameWeapon.h"
@@ -47,6 +46,7 @@
 #include "Relics\Gadget\LightningGod.h"
 #include "Relics\Gadget\Reckless.h"
 #include "Relics\Gadget\SoulSpeed.h"
+#include "Relics\Gadget\SoulEater.h"
 #include "Relics\Gadget\IcyBlade.h"
 #include "Relics\Gadget\FrozenMaul.h"
 #include "Relics\Gadget\Discount\ExploitableCoupon.h"
@@ -156,9 +156,10 @@ void _validateMasterRelicList()
 				/*Name*/		"Soul Power",
 				/*Filepath*/	"RelicIcons\\Soul_Power",
 				/*Description*/	SOUL_POWER::Description(),//"You gain 1 Strength for every soul in your posession",
-				/*Price*/		15,
+				/*Price*/		10,
 				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	SOUL_POWER::Initialize
+				/*Function*/	SOUL_POWER::Initialize,
+				/*Weight*/		12
 			),
 			RelicData(
 				/*Name*/		"Life Steal",
@@ -167,14 +168,6 @@ void _validateMasterRelicList()
 				/*Price*/		13,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	LIFE_STEAL::Initialize
-			),
-			RelicData(
-				/*Name*/		"Soul Eater",
-				/*Filepath*/	"RelicIcons\\Soul_Eater",
-				/*Description*/	SOUL_EATER::Description(),
-				/*Price*/		8,
-				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	SOUL_EATER::Initialize
 			),
 			RelicData(
 				/*Name*/		"Advanced Fighting",
@@ -240,7 +233,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Corrupted Heart",
 				/*Filepath*/	"RelicIcons\\Corrupted_Heart",
 				/*Description*/	CORRUPTED_HEART::Description(),//"Increases your Maximum Health by 40",
-				/*Price*/		10,
+				/*Price*/		9,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	CORRUPTED_HEART::Initialize
 			),
@@ -272,15 +265,16 @@ void _validateMasterRelicList()
 				/*Name*/		"Soul Health",
 				/*Filepath*/	"RelicIcons\\Soul_Health",
 				/*Description*/	SOUL_HEALTH::Description(),//"You gain a dynamic bonus to your Health equal to the number of Souls you possess",
-				/*Price*/		15,
+				/*Price*/		10,
 				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	SOUL_HEALTH::Initialize
+				/*Function*/	SOUL_HEALTH::Initialize,
+				/*Weight*/		12
 			),
 			RelicData(
 				/*Name*/		"Demon Skin",
 				/*Filepath*/	"RelicIcons\\Demon_Skin",
 				/*Description*/	DEMON_SKIN::Description(),//"Reduces the damage you take by 20%",
-				/*Price*/		10,
+				/*Price*/		9,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	DEMON_SKIN::Initialize
 			),
@@ -290,15 +284,17 @@ void _validateMasterRelicList()
 				/*Description*/	SPIKED_SKIN::Description(),//"Whenever an enemy strikes you, it takes 100% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		5,
 				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	SPIKED_SKIN::Initialize
+				/*Function*/	SPIKED_SKIN::Initialize,
+				/*Weight*/		7
 			),
 			RelicData(
 				/*Name*/		"Undead Fortitude",
 				/*Filepath*/	"RelicIcons\\Undead_Fortitude",
 				/*Description*/	UNDEAD_FORTITUDE::Description(),//"Reduces the damage you take by 10%-40%, based on how low your current health is",
-				/*Price*/		15,
+				/*Price*/		12,
 				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	UNDEAD_FORTITUDE::Initialize
+				/*Function*/	UNDEAD_FORTITUDE::Initialize,
+				/*Weight*/		15
 			),
 			RelicData(
 				/*Name*/		"Pain Mirror",
@@ -306,15 +302,17 @@ void _validateMasterRelicList()
 				/*Description*/	PAIN_MIRROR::Description(),//"Whenever an enemy strikes you, it takes 150% of the damage it would deal (before reduction) as irresistable damage",
 				/*Price*/		9,
 				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	PAIN_MIRROR::Initialize
+				/*Function*/	PAIN_MIRROR::Initialize,
+				/*Weight*/		11
 			),
 			RelicData(
 				/*Name*/		"Golden Duck",
 				/*Filepath*/	"RelicIcons\\Golden_Duck",
 				/*Description*/	GOLDEN_DUCK::Description(),//"You are immune to up to 3 seconds of exposure to damaging hazards. Recharges while not in use",
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	GOLDEN_DUCK::Initialize
+				/*Function*/	GOLDEN_DUCK::Initialize,
+				/*Weight*/		11
 			),
 			RelicData(
 				/*Name*/		"Back Shield",
@@ -336,9 +334,10 @@ void _validateMasterRelicList()
 				/*Name*/		"Last Stand",
 				/*Filepath*/	"RelicIcons\\Last_Stand",
 				/*Description*/	LAST_STAND::Description(),//"While below 50% health, you block 50% of damage taken from attacks up to once every 2 seconds",
-				/*Price*/		15,
+				/*Price*/		14,
 				/*Type*/		RELIC_DEFENSE,
-				/*Function*/	LAST_STAND::Initialize
+				/*Function*/	LAST_STAND::Initialize,
+				/*Weight*/		15
 			),
 			//ENDOF: DEFENSIVE RELICS
 
@@ -380,9 +379,18 @@ void _validateMasterRelicList()
 				/*Name*/		"Soul Speed",
 				/*Filepath*/	"RelicIcons\\Soul_Speed",
 				/*Description*/	SOUL_SPEED::Description(),//"You gain a bonus to your speed equal to your souls",
-				/*Price*/		15,
+				/*Price*/		10,
 				/*Type*/		RELIC_GADGET,
-				/*Function*/	SOUL_SPEED::Initialize
+				/*Function*/	SOUL_SPEED::Initialize,
+				/*Weight*/		12
+			),
+			RelicData(
+				/*Name*/		"Soul Eater",
+				/*Filepath*/	"RelicIcons\\Soul_Eater",
+				/*Description*/	SOUL_EATER::Description(),
+				/*Price*/		8,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	SOUL_EATER::Initialize
 			),
 			RelicData(
 				/*Name*/		"Icy Blade",
@@ -413,7 +421,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Succubus Charm",
 				/*Filepath*/	"RelicIcons\\Succubus_Charm",
 				/*Description*/	SUCCUBUS_CHARM::Description(),
-				/*Price*/		10,
+				/*Price*/		8,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	SUCCUBUS_CHARM::Initialize
 			),

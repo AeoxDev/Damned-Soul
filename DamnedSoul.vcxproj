@@ -240,7 +240,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Offensive\HoundFang.cpp" />
     <ClCompile Include="source\Relics\Offensive\MinotaurHorn.cpp" />
     <ClCompile Include="source\Relics\Offensive\PowerStrike.cpp" />
-    <ClCompile Include="source\Relics\Offensive\SoulEater.cpp" />
+    <ClCompile Include="source\Relics\Gadget\SoulEater.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
     <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
@@ -249,6 +249,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Skynet\ZacBehaviourSystem.cpp" />
     <ClCompile Include="source\States\Credits.cpp" />
     <ClCompile Include="source\Systems\AntiAliasingSystem.cpp" />
+    <ClCompile Include="source\Systems\ColorResetSystem.cpp" />
     <ClCompile Include="source\Systems\FollowerSystem.cpp" />
     <ClCompile Include="source\Systems\GlowSystem.cpp" />
     <ClCompile Include="source\Systems\NavigationSystem.cpp" />
@@ -687,7 +688,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Offensive\LifeSteal.h" />
     <ClInclude Include="header\Relics\Offensive\MinotaurHorn.h" />
     <ClInclude Include="header\Relics\Offensive\PowerStrike.h" />
-    <ClInclude Include="header\Relics\Offensive\SoulEater.h" />
+    <ClInclude Include="header\Relics\Gadget\SoulEater.h" />
     <ClInclude Include="header\Relics\Offensive\ThrillSeeker.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />
