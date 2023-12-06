@@ -125,9 +125,9 @@ void PauseState::SetupButtons()
 			if (i == 0)
 			{
 				if (stateManager.activeLevel > 10)
-					uiElement->Setup("Exmenu/BookFrozen60%", texts[i], positions[i], scales[i]);
+					uiElement->Setup("BookFrozen60%", texts[i], positions[i], scales[i]);
 				else
-					uiElement->Setup("Exmenu/BookNormal60%", texts[i], positions[i], scales[i]);
+					uiElement->Setup("BookNormal60%", texts[i], positions[i], scales[i]);
 				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
 			}
 			else if (i == 4)
@@ -136,7 +136,7 @@ void PauseState::SetupButtons()
 			}
 			else 
 			{
-				uiElement->Setup("Exmenu/ButtonMedium", texts[i], positions[i], scales[i]);
+				uiElement->Setup("ButtonMedium", texts[i], positions[i], scales[i]);
 			}
 
 			if (i != 0 && i != 4)
@@ -187,13 +187,13 @@ void PauseState::SetupButtons()
 
 		const char filenames[settingsAmount][32] =
 		{
-			"Exmenu/SettingsPanel",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonMedium"
+			"SettingsPanel",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonMedium"
 		};
 
 		const float fontsizes[settingsAmount] =
@@ -294,12 +294,12 @@ void PauseState::SetupButtons()
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
 
 			uiElement->SetAllVisability(false);
 
-			float sliderWidth = abs(maxRightPosition - 0.13f) + abs(maxLeftPosition + 0.13f);
+			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 
 			if (audioComp != nullptr)
 			{

@@ -137,14 +137,17 @@ bool UIShopSystem::Update()
 				else
 					uiElement->m_Images[i].baseUI.SetOpacity(1.0f);
 
-				uiElement->m_Images[i].baseUI.SetVisibility(true);
+				if (relicWindow->shopSelections[i] != shopState::BOUGHT)
+					uiElement->m_Images[i].baseUI.SetVisibility(true);
 			}
 
 			uiElement->m_BaseText.baseUI.SetVisibility(true);
 
 			for (UINT32 i = 0; i < uiElement->m_Texts.size(); i++)
 			{
-				uiElement->m_Texts[i].baseUI.SetVisibility(true);
+				if (relicWindow->shopSelections[i] != shopState::BOUGHT)
+					uiElement->m_Texts[i].baseUI.SetVisibility(true);
+
 				uiElement->m_Texts[i].SetText(std::to_string(priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC)).c_str(), uiElement->m_Images[i].baseUI.GetBounds());
 			}
 		}
@@ -164,7 +167,7 @@ bool UIShopSystem::Update()
 			if (player->weaponTier == 3)
 			{
 				button->m_description = "Fully Upgraded";
-				button->m_price = 666;
+				button->m_price = 0;
 			}
 		}
 
@@ -184,7 +187,14 @@ bool UIShopSystem::Update()
 			}
 			else if (button->m_name == "Upgrade Weapon")
 			{
-				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::UPGRADE)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				if (button->m_price == 0)
+				{
+					uiElement->m_Texts[0].SetText("Fully Upgraded", uiElement->m_Images[0].baseUI.GetBounds());
+				}
+				else
+				{
+					uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::UPGRADE)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				}
 			}
 		}
 
@@ -223,19 +233,19 @@ bool UISliderSystem::Update()
 		if (slider->holding)
 		{
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
 
-			float sliderWidth = abs(maxRightPosition - 0.13f) + abs(maxLeftPosition + 0.13f);
+			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 
-			if (slider->currentPosition >= maxRightPosition - 0.13f)
-				slider->currentPosition = maxRightPosition - 0.13f;
+			if (slider->currentPosition >= maxRightPosition)
+				slider->currentPosition = maxRightPosition;
 
-			if (slider->currentPosition <= maxLeftPosition + 0.13f)
-				slider->currentPosition = maxLeftPosition + 0.13f;
+			if (slider->currentPosition <= maxLeftPosition)
+				slider->currentPosition = maxLeftPosition;
 
 
-			if (uiMouseCoords > slider->currentPosition && slider->currentPosition < maxRightPosition - 0.13f)
+			if (uiMouseCoords > slider->currentPosition && slider->currentPosition < maxRightPosition)
 			{
 				slider->currentPercentage += 0.01f;
 				slider->currentPosition += (sliderWidth * 0.01f);
@@ -243,7 +253,7 @@ bool UISliderSystem::Update()
 				RedrawUI();
 			}
 
-			if (uiMouseCoords < slider->currentPosition && slider->currentPosition > maxLeftPosition + 0.13f)
+			if (uiMouseCoords < slider->currentPosition && slider->currentPosition > maxLeftPosition)
 			{
 				slider->currentPercentage -= 0.01f;
 				slider->currentPosition -= (sliderWidth * 0.01f);

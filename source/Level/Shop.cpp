@@ -72,8 +72,8 @@ void ShopCutscene()
 void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
 {
 	ML_Array<float, 2> xPos;
-	xPos[0] = pos.x - 0.1f;
-	xPos[1] = pos.x + 0.1f;
+	xPos[0] = pos.x - 0.075f;
+	xPos[1] = pos.x + 0.075f;
 
 	float yPos = pos.y;
 
@@ -123,7 +123,7 @@ void CreateRelicWindows()
 	{
 		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
-		uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		uiElement->Setup("PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f});
 		
 		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
@@ -175,7 +175,7 @@ void CreateSingleWindows()
 		"Reroll",
 		//"Lock",
 		//"Buy",
-		"AxeMedium",
+		"Axe2",
 		""
 	};
 
@@ -205,7 +205,7 @@ void CreateSingleWindows()
 		"Reroll a new set of relics",
 		//"Lock the selected relic until the next reroll or shop",
 		//"Buy the selected relic",
-		"Upgrade your weapon",
+		"Increase your base damage by 25%",
 		"Leave the shop"
 	};
 
@@ -227,14 +227,14 @@ void CreateSingleWindows()
 
 		if (i == 2)
 		{
-			uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			uiElement->Setup("PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		}
 		else if (i == 3)
 		{
-			uiElement->Setup("ExMenu/ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+			uiElement->Setup("ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 		}
 		else
-			uiElement->Setup("ExMenu/ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			uiElement->Setup("ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 		if (i != 3)
 		{
@@ -290,12 +290,12 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("ExMenu/PanelMediumShort", "Hello There", { 0.5f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
+	uiImpText->Setup("PanelMediumShort", "Hello There", { 0.5f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
 	
 	uiImpText->m_BaseText.baseUI.m_CurrentBounds.right *= 0.6;
 	uiImpText->m_BaseText.baseUI.m_PositionBounds.right *= 0.6;
@@ -306,7 +306,7 @@ void CreateTextWindows()
 	registry.AddComponent<UIShopImpComponent>(impText);
 
 	UIComponent* uiPlayerInfo = registry.AddComponent<UIComponent>(statsText);
-	uiPlayerInfo->Setup("ExMenu/PanelSmall", "Player Stats", { 0.3f,  SHOP_POSITION_Y - 1.25f }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	uiPlayerInfo->Setup("PanelSmall", "Player Stats", { 0.3f,  SHOP_POSITION_Y - 1.25f }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 	uiPlayerInfo->m_BaseText.baseUI.SetPosition(DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y - 0.05f));
 
 	float offsets[3] = { 0.06f, 0.0f, -0.06f };

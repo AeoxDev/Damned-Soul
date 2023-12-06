@@ -562,7 +562,10 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 
 				relicWindow->shopSelections[i] = shopState::BOUGHT;
 
-				uiElement->m_Images[i + 2].SetImage("Buy");
+				uiElement->m_Images[i].baseUI.SetVisibility(false);
+				uiElement->m_Texts[i].baseUI.SetVisibility(false);
+				uiElement->m_Images[i + 2].baseUI.SetVisibility(false);
+
 				relicWindow->shopRelics[i]->m_function(&stateManager.player);
 
 				DSFLOAT2 offsetUICoords = { abs(playerUI->m_Images[2].baseUI.GetPixelCoords().x + 32.0f) ,
@@ -709,6 +712,7 @@ void UIFunctions::OnClick::LockRelic(void* args, int index)
 
 void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 {
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 	UIShopButtonComponent* uiWeapon = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
 	UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
@@ -780,6 +784,9 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 		}
 	}
 	
+	if (player->weaponTier == 1)
+		uiElement->m_Images[0].SetImage("Axe3");
+
 	player->weaponTier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
@@ -792,6 +799,8 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	char modelName[64] = "";
 	sprintf(modelName, "AxeV%d.mdl", player->weaponTier);
 	weapon->model = LoadModel(modelName);
+
+	RedrawUI();
 }
 
 void UIFunctions::OnClick::RerollRelic(void* args, int index)
@@ -842,6 +851,7 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 
 			const RelicData* relic = Relics::PickRandomRelic(type[uiRelic->m_BaseText.m_Text]);
 			uiRelic->m_Images[i].SetImage(relic->m_filePath);
+			uiRelic->m_Images[i].baseUI.SetVisibility(true);
 			uiRelic->m_Texts[i].SetText(std::to_string(priceCalc.GetCostOf(relic->m_price, RelicInput::OnPriceCalculation::RELIC)).c_str(), uiRelic->m_Images[i].baseUI.GetBounds());
 			relicWindow->shopRelics[i] = relic;
 		}
@@ -1000,7 +1010,7 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 		}
 		else
 		{
-			if (shopButton->m_name == "Lock" || shopButton->m_name == "Buy" || shopButton->m_name == "")
+			if (shopButton->m_name == "" || shopButton->m_name == "Upgrade Weapon")
 			{
 				buttonText.append("\n");
 			}
@@ -1015,12 +1025,14 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
 
 
-		UIFunctions::OnHover::Image(args, index, hover);
+		if (shopButton->m_name != "Upgrade Weapon")
+			UIFunctions::OnHover::Image(args, index, hover);
 
 	}
 	else
 	{
-		UIFunctions::OnHover::Image(args, index, hover);
+		if (shopButton->m_name != "Upgrade Weapon")
+			UIFunctions::OnHover::Image(args, index, hover);
 	}
 
 }

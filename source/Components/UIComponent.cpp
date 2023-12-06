@@ -313,7 +313,10 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 	else
 		m_Images[m_Images.size() - 1].SetImage("TempBaseImage");
 
-	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale);
+	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale, 
+		m_Images[m_Images.size() - 1].baseUI.GetRotation(), 
+		m_Images[m_Images.size() - 1].baseUI.GetVisibility(), 
+		m_Images[m_Images.size() - 1].baseUI.GetOpacity());
 
 	if (translateText && m_BaseText.baseUI.GetVisibility())
 	{
