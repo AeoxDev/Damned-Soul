@@ -3,6 +3,7 @@ RWTexture2D<unorm float4> backbuffer : register(u0);
 Texture2D<unorm float4> uiSRV : register(t0);
 Texture2D<unorm float4> inputGlowData : register(t1);
 Texture2D<unorm float4> outlineSRV : register(t2);
+//Texture2D<unorm float4> depthSRV : register(t3); // TODO: Find out how to copy SRV from DSV.
 
 cbuffer GlowInfo : register(b0)     // HELP: Unsiure if this is input correctly. Gives strange results compared to "the normal".
 {
@@ -69,21 +70,32 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     float total = 0;
     float4 output = float4(0, 0, 0, 0);
     // Calculate color blend and glow falloff based on pixel distance.
-    #define WIDTH_HEIGHT_GLOW (10)
-    #define SIGMA_GLOW (6.f)
-    for (int y = max(index.y - WIDTH_HEIGHT_GLOW, 0); y < min(index.y + WIDTH_HEIGHT_GLOW, windowHeight); ++y)
+    #define WIDTH_HEIGHT_GLOW (10)  // TODO: Clamp based on distance?
+    #define SIGMA_GLOW (40.f)       // TODO: Clamp based on distance?
+    for (int y_glow = max(index.y - WIDTH_HEIGHT_GLOW, 0); y_glow < min(index.y + WIDTH_HEIGHT_GLOW, windowHeight); ++y_glow)
     {
-        for (int x = max(index.x - WIDTH_HEIGHT_GLOW, 0); x < min(index.x + WIDTH_HEIGHT_GLOW, windowWidth); ++x)
+        for (int x_glow = max(index.x - WIDTH_HEIGHT_GLOW, 0); x_glow < min(index.x + WIDTH_HEIGHT_GLOW, windowWidth); ++x_glow)
         {
-            int2 h8t = int2(x, y);
-            float temp = Gaussian(index.x - x, index.y - y, SIGMA_GLOW);
-            total += temp;
-            output += inputGlowData[h8t] * temp;
+            if(sqrt(pow(index.x - x_glow, 2) + pow(index.y - y_glow, 2))<=WIDTH_HEIGHT_GLOW)
+            {
+                int2 h8t = int2(x_glow, y_glow);
+                float temp = Gaussian(index.x - x_glow, index.y - y_glow, SIGMA_GLOW);
+                //if (inputGlowData[h8t].a != 0)
+                {
+                    total += temp;
+                }
+            
+                output += inputGlowData[h8t] * temp;
+            }
         }
     }
     
+    if(total == 0)
+    {
+        return;
+    }
     //  Add blur "on top of" existing glow texture.
-    float3 tmp = output.rgb/total + inputGlowData[index].rgb * inputGlowData[index].a;
+    float3 tmp = output.rgb / total + (2 * inputGlowData[index].rgb) * inputGlowData[index].a;
     float4 glow = float4(tmp, output.a);
     float4 bb_rgba = outlineAdd; //backbuffer[index];
     

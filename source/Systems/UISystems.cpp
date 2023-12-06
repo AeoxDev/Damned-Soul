@@ -60,7 +60,7 @@ bool UIPlayerSoulsSystem::Update()
 	return true;
 }
 
-bool UIRenderShopSystem::Update()
+bool UIShopSystem::Update()
 {
 	if (!(currentStates & State::InShop))
 	{
@@ -100,16 +100,22 @@ bool UIRenderShopSystem::Update()
 
 			uiElement->m_Texts[0].SetText(damage.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
 
-			ML_String atkspd = "AttackSpeed: ";
-			atkspd.append(std::to_string((int)player->GetAttackSpeed()).c_str());
+			//ML_String atkspd = "AttackSpeed: ";
+			//atkspd.append(std::to_string((int)player->GetAttackSpeed()).c_str());
+			//uiElement->m_Texts[1].SetText(atkspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
+			char atkSpdStr[64] = "";
+			sprintf(atkSpdStr, "Attack Speed: %.0lf%%", player->GetAttackSpeed() * 100.f);
+			uiElement->m_Texts[1].SetText(atkSpdStr, uiElement->m_BaseImage.baseUI.GetBounds());
 
-			uiElement->m_Texts[1].SetText(atkspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
+			//ML_String movspd = "MoveSpeed: ";
+			//movspd.append(std::to_string((int)player->GetSpeed()).c_str());
+			//uiElement->m_Texts[2].SetText(movspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
 
-			ML_String movspd = "MoveSpeed: ";
-			movspd.append(std::to_string((int)player->GetSpeed()).c_str());
-
-			uiElement->m_Texts[2].SetText(movspd.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
-
+			char movSpeed[64] = "";
+			player->SetSpeedMult(1.f);
+			sprintf(movSpeed, "Movement Speed: %.0lf%%", (player->GetSpeed() / player->GetBaseSpeed()) * 100.f);
+			player->SetSpeedMult(0.f);
+			uiElement->m_Texts[2].SetText(movSpeed, uiElement->m_BaseImage.baseUI.GetBounds());
 		}
 
 		RelicInput::OnPriceCalculation priceCalc;
@@ -121,11 +127,18 @@ bool UIRenderShopSystem::Update()
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
-
+			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			uiElement->m_BaseImage.baseUI.SetVisibility(true);
 
 			for (UINT32 i = 0; i < uiElement->m_Images.size() - (uiElement->m_Images.size() / 2); i++)
+			{
+				if (priceCalc.GetCostOf(relicWindow->shopRelics[i]->m_price, RelicInput::OnPriceCalculation::RELIC) > player->GetSouls())
+					uiElement->m_Images[i].baseUI.SetOpacity(0.3f);
+				else
+					uiElement->m_Images[i].baseUI.SetOpacity(1.0f);
+
 				uiElement->m_Images[i].baseUI.SetVisibility(true);
+			}
 
 			uiElement->m_BaseText.baseUI.SetVisibility(true);
 
@@ -147,7 +160,8 @@ bool UIRenderShopSystem::Update()
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
 			UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(entity);
-			if (upgrade->tier == 2)
+			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+			if (player->weaponTier == 3)
 			{
 				button->m_description = "Fully Upgraded";
 				button->m_price = 666;

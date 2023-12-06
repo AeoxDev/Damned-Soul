@@ -28,11 +28,10 @@ struct UIShopRerollComponent
 
 struct UIShopHealComponent
 {
-	int price = 0;
-	bool locked = false;
+	bool freebie = true;
 };
 
 struct UIShopUpgradeComponent
 {
-	int tier = 0;
+
 };

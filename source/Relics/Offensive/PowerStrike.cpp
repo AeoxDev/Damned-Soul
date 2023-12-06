@@ -11,7 +11,7 @@ EntityID POWER_STRIKE::_OWNER;
 const char* POWER_STRIKE::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Increases the damage of your charge attaks by up to %ld%%",
+	sprintf_s(temp, "Increases the damage of your charge attacks by up to %ld%%",
 		PERCENT(POWER_STRIKE_BOOST));
 #pragma warning(suppress : 4172)
 	return temp;

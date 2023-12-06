@@ -256,7 +256,7 @@ float2 uv
     float4 colorizedNoise = (vornoiTexture * (maskTexture.r * float4(1.0f, 0.2066951f, 0.0f, 0.0f)) * vornoiMultiply);
     
     // Create alpha mask and dissolve
-    float4 vornoiMask = pow(noiseTexture_in.Sample(WrapSampler, uv * 1.05f).r, log10(time + 1.0f) * 75.0f);
+    float4 vornoiMask = clamp(pow(noiseTexture_in.Sample(WrapSampler, uv * 1.05f).r, log10(time + 1.0f) * 75.0f), 0.0f, 1.0f);
     float alphaMask = (maskTexture.g + maskTexture.g) * vornoiMask.r;
     
     // Alpha Blend

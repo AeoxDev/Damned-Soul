@@ -299,6 +299,7 @@ bool OutlineSystem::Update()
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
 	SetTopology(TOPOLOGY::TRIANGLELIST);
 	// Prepare the outline pixel shader
+	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
 	SetPixelShader(Outlines::outlinePixelShader);
 	// Prepare the ountline resources
 	SetRenderTargetViewAndDepthStencil(Outlines::renderTarget, Outlines::depthStencil);

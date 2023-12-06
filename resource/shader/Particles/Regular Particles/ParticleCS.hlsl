@@ -330,9 +330,19 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = timeValue * indexValue;
     particle.position.z = sin(piFraction) * radius;
     
-    particle.rgb.r = 0.5f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 0.5f;
+    if (meta[blockID.y].morePositionInfo.x > 0)
+    {
+        particle.rgb.r = 0.0f;
+        particle.rgb.g = 0.0f;
+        particle.rgb.b = 1.0f;
+    }
+    else if (meta[blockID.y].morePositionInfo.y > 0)
+    {
+        particle.rgb.r = 1.0f;
+        particle.rgb.g = 0.0f;
+        particle.rgb.b = 0.0f;
+    }
+
       
     outputParticleData[index] = particle;
 }
@@ -561,10 +571,10 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
         particle.size = (particle.size - 1.0f);
 
     }
-    else
-    {
-        particle.position.y = particle.position.y + ((particle.size - 1) + (oddEvenFactor));
-    }
+    //else
+    //{
+    //    //particle.position.y = particle.position.y + ((particle.size - 1) + (oddEvenFactor));
+    //}
    
     
     particle.position.z = noiseZ + particle.position.z + (2 / localIndex) /** oddEvenFactor*/; /*+ oddEvenFactor * ( 4* meta[index].deltaTime)*/;

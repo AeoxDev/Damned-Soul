@@ -14,13 +14,13 @@
 #include "EventFunctions.h"
 
 #define SHOP_POSITION_X (-0.4f)
-#define SHOP_OFFSET_X_Left (SHOP_POSITION_X - 0.225f)
-#define SHOP_OFFSET_X_Right (SHOP_POSITION_X + 0.225f)
+#define SHOP_OFFSET_X_LEFT (SHOP_POSITION_X - 0.225f)
+#define SHOP_OFFSET_X_RIGHT (SHOP_POSITION_X + 0.225f)
 
 #define SHOP_POSITION_Y (0.55f)
 
 #define SHOP_RELIC_WINDOWS (3)
-#define SHOP_SINGLE_WINDOWS (5)
+#define SHOP_SINGLE_WINDOWS (4)
 
 void ShopCutscene()
 {
@@ -107,9 +107,9 @@ void CreateRelicWindows()
 
 	const DSFLOAT2 positions[SHOP_RELIC_WINDOWS] =
 	{
-		{ SHOP_OFFSET_X_Left, SHOP_POSITION_Y - 0.3f },
-		{ SHOP_OFFSET_X_Left, SHOP_POSITION_Y - 0.75f },
-		{ SHOP_OFFSET_X_Right, SHOP_POSITION_Y - 0.75f }
+		{ SHOP_OFFSET_X_LEFT, SHOP_POSITION_Y - 0.3f },
+		{ SHOP_OFFSET_X_LEFT, SHOP_POSITION_Y - 0.75f },
+		{ SHOP_OFFSET_X_RIGHT, SHOP_POSITION_Y - 0.75f }
 	};
 
 	const Relics::RELIC_TYPE type[SHOP_RELIC_WINDOWS] =
@@ -124,7 +124,7 @@ void CreateRelicWindows()
 		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 		uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.1f });
+		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f});
 		
 		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
@@ -155,17 +155,17 @@ void CreateSingleWindows()
 		"Heal",
 		"Reroll",
 		//"Lock",
-		"Buy",
+		//"Buy",
 		"Weapon",
 		"Next Level"
 	};
 
 	const DSFLOAT2 positions[SHOP_SINGLE_WINDOWS] =
 	{
-		{ SHOP_OFFSET_X_Left, SHOP_POSITION_Y - 1.25f },
-		{ SHOP_OFFSET_X_Left + 0.22f, SHOP_POSITION_Y - 1.25f  },
-		{ SHOP_OFFSET_X_Left + 0.44f, SHOP_POSITION_Y - 1.25f  },
-		{ SHOP_OFFSET_X_Right, SHOP_POSITION_Y - 0.3f },
+		{ SHOP_OFFSET_X_LEFT, SHOP_POSITION_Y - 1.25f },
+		{ SHOP_OFFSET_X_RIGHT, SHOP_POSITION_Y - 1.25f  },
+		//{ SHOP_OFFSET_X_Left + 0.44f, SHOP_POSITION_Y - 1.25f  },
+		{ SHOP_OFFSET_X_RIGHT, SHOP_POSITION_Y - 0.3f },
 		{ 0.8f, -0.75f }
 	};
 
@@ -174,8 +174,8 @@ void CreateSingleWindows()
 		"Heal",
 		"Reroll",
 		//"Lock",
-		"Buy",
-		"Axe",
+		//"Buy",
+		"AxeMedium",
 		""
 	};
 
@@ -184,7 +184,7 @@ void CreateSingleWindows()
 		UIFunctions::OnClick::HealPlayer,
 		UIFunctions::OnClick::RerollRelic,
 		//UIFunctions::OnClick::LockRelic,
-		UIFunctions::OnClick::BuyRelic,
+		//UIFunctions::OnClick::BuyRelic,
 		UIFunctions::OnClick::UpgradeWeapon,
 		UIFunctions::Game::ExitShopCutscene
 	};
@@ -194,7 +194,7 @@ void CreateSingleWindows()
 		"Heal",
 		"Reroll",
 		//"Lock",
-		"Buy",
+		//"Buy",
 		"Upgrade Weapon",
 		""
 	};
@@ -204,17 +204,17 @@ void CreateSingleWindows()
 		"Recover 25% of max Health",
 		"Reroll a new set of relics",
 		//"Lock the selected relic until the next reroll or shop",
-		"Buy the selected relic",
+		//"Buy the selected relic",
 		"Upgrade your weapon",
 		"Leave the shop"
 	};
 
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
-		2,
+		1,
 		5,
 		//0,
-		0,
+		//0,
 		10,
 		0,
 	};
@@ -222,21 +222,21 @@ void CreateSingleWindows()
 
 	for (int i = 0; i < SHOP_SINGLE_WINDOWS; i++)
 	{
-		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
+		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 
-		if (i == 3)
+		if (i == 2)
 		{
 			uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		}
-		else if (i == 4)
+		else if (i == 3)
 		{
 			uiElement->Setup("ExMenu/ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 		}
 		else
 			uiElement->Setup("ExMenu/ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-		if (i != 4)
+		if (i != 3)
 		{
 			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f });
 			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.0f }, { 1.0f, 1.0f }, false);
@@ -249,14 +249,14 @@ void CreateSingleWindows()
 			}
 		}
 
-		if (i == 4)
+		if (i == 3)
 			uiElement->m_BaseImage.baseUI.SetVisibility(false);
 
 		if (i == 0)
 			registry.AddComponent<UIShopHealComponent>(relicWindow);
 		else if (i == 1)
 			registry.AddComponent<UIShopRerollComponent>(relicWindow);
-		else if (i == 3)
+		else if (i == 2)
 			registry.AddComponent<UIShopUpgradeComponent>(relicWindow);
 
 
@@ -265,7 +265,7 @@ void CreateSingleWindows()
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 
-		if (i != 4)
+		if (i != 3)
 		{
 			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 			uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
@@ -290,7 +290,7 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
@@ -340,7 +340,7 @@ void LoadShop()
 		{
 			for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 			{
-				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the first imp voice line.
+				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found, play the first imp voice line.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr) sfx->Play(Shop_FirstMeet, Channel_Extra);
@@ -360,6 +360,8 @@ void ReloadShop()
 
 	CreateRelicWindows();
 
+	CreateSingleWindows();
+
 	SetInShop(true);
 
 	for (auto entity : View<UIShopRerollComponent>(registry))
@@ -376,7 +378,7 @@ void ReloadShop()
 		{
 			for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 			{
-				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found, play the correct sound based on the level.
+				if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found, play the correct sound based on the level.
 				{
 					SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 					if (sfx != nullptr)
@@ -385,6 +387,10 @@ void ReloadShop()
 						{
 						case 4:
 							sfx->Play(Shop_BeforeLava, Channel_Extra);
+							for (auto audio : View<AudioEngineComponent>(registry))
+							{
+								registry.GetComponent<AudioEngineComponent>(audio)->HandleSound();
+							}
 							break;
 						case 6:
 							sfx->Play(Shop_BeforeSplitBoss, Channel_Extra);

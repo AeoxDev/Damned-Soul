@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define LIFE_STEAL_HEALING_MULTIPLIER (0.15f)
+#define LIFE_STEAL_HEALING_MULTIPLIER (0.1f)
 
 EntityID LIFE_STEAL::_OWNER;
 

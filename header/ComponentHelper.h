@@ -16,6 +16,10 @@ private:
 	// Multiplicative damage reduction, affected by things such as relics
 	float m_damageReduction = 1.f;
 
+	float m_DamgeTaken = 0.0f;
+
+	float m_HealthRecovered = 0.0f;
+
 // Movement stats
 	// Base move speed
 	float m_baseMoveSpeed = 1.f;
@@ -37,6 +41,8 @@ private:
 	float m_baseDamage = 10.f;
 	// Bonus damage, affected by things such as relics
 	float m_bonusDamage = 0.f;
+
+	float m_DamgeDone = 0.0f;
 
 	// Attack speed
 	float m_baseAttackSpeed = 1.f;
@@ -95,6 +101,10 @@ public:
 	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
 	float GetHealthFraction() const;
+	// Get Healing Done
+	float GetHealthRecovered() const;
+	// Get Healing Done
+	float GetDamageTaken() const;
 	// Update the entity's base health (permanently)
 	void UpdateBaseHealth(const float delta);
 	// Update the entity's bonus health
@@ -137,6 +147,10 @@ public:
 	void UpdateBonusDamage(const float delta);
 	// Get the damage of the entity
 	float GetBonusDamage() const;
+	// update damage done
+	void UpdateDamageDone(const float delta);
+	// Get damage done
+	float GetDamageDone() const;
 
 	// Get the attack speed of the entity
 	float GetAttackSpeed() const;
@@ -165,7 +179,7 @@ private:
 	int m_bonusDashes = 0;
 	float m_baseDashValue = 2.5f;
 	float m_bonusDashValue = 0.f;
-	float m_dashCooldown = 1.0f;
+	float m_dashCooldown = 0.8f;
 	float m_dashCounter = 0.0f; //When this is 0.0f we can dash, and when we dash it's plus'd by dashCooldown
 
 public:
@@ -174,6 +188,7 @@ public:
 	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
+	int weaponTier = 1;
 	bool portalCreated = false;
 	bool isDashing = false;
 

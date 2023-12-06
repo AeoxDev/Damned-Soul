@@ -15,6 +15,7 @@
 #include "MemLib/ML_Map.hpp"
 #include "Relics/Utility/RelicFuncInputTypes.h"
 #include "UI/HP_BarHelper.h"
+#include "Model.h"
 
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
@@ -78,6 +79,28 @@ void UIFunctions::MainMenu::Quit(void* args, int a)
 
 void UIFunctions::Game::LoadNextLevel(void* args, int a)
 {
+	UIPlayerRelicsComponent* playerRelics = registry.GetComponent<UIPlayerRelicsComponent>(stateManager.player);
+
+ 	for (auto entity : View<UIShopRelicComponent>(registry))
+	{
+		UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
+		for (int i = 0; i < 2; i++)
+		{
+			bool addBack = true;
+			for (int j = 0; j < sizeof(playerRelics->relics)/sizeof(playerRelics->relics[0]); j++)
+			{
+				if (relicWindow->shopRelics[i] == playerRelics->relics[j])
+				{
+					addBack = false;
+					continue;
+				}
+			}
+
+			if (addBack)
+				Relics::PutBackRelic(relicWindow->shopRelics[i]);
+		}
+	}
+
 	UnloadEntities();
 
 	for (auto entity : View<AudioEngineComponent>(registry))
@@ -156,9 +179,9 @@ void UIFunctions::Game::ExitShopCutscene(void* args, int a)
 					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(onClick);
 					if (shopBuy != nullptr)
 					{
-						for (int i = 0; i < (int)shopBuy->onClickFunctionsReleased.size(); i++)
+						for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 						{
-							if (shopBuy->onClickFunctionsReleased[i] == UIFunctions::OnClick::BuyRelic) //Purchase button found
+							if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found
 							{
 								selectedID = onClick;
 							}
@@ -224,7 +247,7 @@ void UIFunctions::Settings::SetLowRes(void* args, int a)
 		sdl.WINDOWED_WIDTH = sdl.WIDTH;
 		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
 		SDL_SetWindowSize(sdl.sdlWindow, 1280, 720);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		SDL_SetWindowPosition(sdl.sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1280, 720);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
@@ -246,7 +269,7 @@ void UIFunctions::Settings::SetMediumRes(void* args, int a)
 		sdl.WINDOWED_WIDTH = sdl.WIDTH;
 		sdl.WINDOWED_HEIGHT = sdl.HEIGHT;
 		SDL_SetWindowSize(sdl.sdlWindow, 1600, 900);
-		SDL_SetWindowPosition(sdl.sdlWindow, 50, 50);
+		SDL_SetWindowPosition(sdl.sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1600, 900);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
@@ -287,7 +310,7 @@ void UIFunctions::Settings::SetFullscreen(void* args, int a)
 		SDL_SetWindowSize(sdl.sdlWindow, sdl.WIDTH, sdl.HEIGHT);
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
-		SDL_SetWindowPosition(sdl.sdlWindow, 0, 25);
+		SDL_SetWindowPosition(sdl.sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	}
 	else
 	{
@@ -501,6 +524,8 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 			uiElement->m_Images[imageIndexes[0]].SetImage("RelicIcons\\HoverRelic");
 			uiWindow->shopSelections[index - 1] = shopState::AVALIABLE;
 		}
+
+		BuyRelic(args, 0);
 	}
 
 	RedrawUI();
@@ -688,13 +713,14 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
+	ModelSkeletonComponent* weapon = registry.GetComponent<ModelSkeletonComponent>(stateManager.weapon);
 
 	RelicInput::OnPriceCalculation priceCalc;
 
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
 		func(&priceCalc);
 
-	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || upgrade->tier >= 2)
+	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || player->weaponTier >= 3)
 		return;
 
 	int soundToPlay = rand() % 2;
@@ -753,9 +779,19 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 			}
 		}
 	}
-	upgrade->tier++;
+	
+	player->weaponTier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
-	stats->UpdateBaseDamage((float)(uiWeapon->m_price - 2.0f));
+	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
+
+	SoundComponent* upgradeSound = registry.GetComponent<SoundComponent>(*(EntityID*)args);
+	if (upgradeSound) upgradeSound->Play(Shop_Upgrade, Channel_Base);
+
+	// Update axe model
+	ReleaseModel(weapon->model);
+	char modelName[64] = "";
+	sprintf(modelName, "AxeV%d.mdl", player->weaponTier);
+	weapon->model = LoadModel(modelName);
 }
 
 void UIFunctions::OnClick::RerollRelic(void* args, int index)
@@ -827,6 +863,7 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 void UIFunctions::OnClick::HealPlayer(void* args, int index)
 {
 	UIShopButtonComponent* uiHeal = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
+	UIShopHealComponent* uiHeal2 = registry.GetComponent<UIShopHealComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
@@ -852,6 +889,11 @@ void UIFunctions::OnClick::HealPlayer(void* args, int index)
 
 	souls->spentThisShop += priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL);
 	player->UpdateSouls(-priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL));
+	if (uiHeal2->freebie)
+	{
+		uiHeal->m_price = 3;
+		uiHeal2->freebie = false;
+	}
 }
 
 

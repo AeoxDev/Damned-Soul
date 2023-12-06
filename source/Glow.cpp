@@ -17,6 +17,7 @@ CB_IDX Glow::glow_buffer;
 CB_IDX Glow::blur_buffer;
 PoolPointer<Glow::GlowData> Glow::glow_bufData;
 Glow::BlurData Glow::blur_bufData;
+SRV_IDX Glow::blur_depth;
 
 void Glow::Initialize()
 {
@@ -30,6 +31,7 @@ void Glow::Initialize()
 	// Compute
 	blur_shader = LoadComputeShader("BlurShader.cso");
 	backbuffer_uav = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, renderStates[backBufferRenderSlot].renderTargetView);
+	//blur_depth = CreateShaderResourceViewTexture(blur_depth, RESOURCE_FLAGS::BIND_DEPTH_STENCIL); // TODO: Make sure I can create an srv for glow_depth
 }
 
 void Glow::PrepareGlowPass()
