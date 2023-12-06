@@ -148,6 +148,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID);
+			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true);
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
