@@ -406,7 +406,17 @@ void ImpCutscenePoof(EntityID& entity, const int& index)
 	{
 		particle->Release();
 	}
-	particle = registry.AddComponent<ParticleComponent>(entity, 0.9f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP);
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	if (stats->GetDamage() < 20.f) //normal imp
+	{
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP);
+		AddTimedEventComponentStart(entity, 2.f, BossSpawnwaveEnd);
+	}
+	else
+	{
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP_EMPOWERED);
+		AddTimedEventComponentStart(entity, 2.f, BossSpawnwaveEnd);
+	}
 }
 
 void EventRemoveParticle(EntityID& entity, const int& index)
