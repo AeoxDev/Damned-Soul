@@ -174,23 +174,22 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystemGPU());
 
 	// Render/GPU
-	
-	
 	systems.push_back(new ShadowSystem());
-	systems[1]->timeCap = 1.f / 60.f;
 	systems.push_back(new RenderSystem());
-	systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new OutlineSystem());
-
-
 	systems.push_back(new ParticleSystemCPU());
-	systems[4]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
-	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
-	systems[6]->timeCap = 1.f / 60.f;
 
 	systems.push_back(new ShatterSystem());
+#define CAPS
+#ifdef CAPS
+	systems[1]->timeCap = 1.f / 60.f;//ShadowSystem
+	systems[2]->timeCap = 1.f / 60.f;//RenderSystem
+	systems[4]->timeCap = 1.f / 60.f;//ParticleSystemCPU
+	systems[6]->timeCap = 1.f / 60.f;//GlowSystem
+
+#endif // _DEBUG
 
 	systems.push_back(new UIRunTimeSystem());
 	systems.push_back(new UIRenderSystem());
