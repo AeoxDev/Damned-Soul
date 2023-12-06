@@ -589,7 +589,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::hellhound || eType == EnemyType::empoweredHellhound)
 		{
-			mass = 100.f;
+			mass = 90.f;
 		}
 		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
@@ -723,7 +723,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			moveSpeed = 25.f; // :)
+			moveSpeed = 22.f; // :)
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
