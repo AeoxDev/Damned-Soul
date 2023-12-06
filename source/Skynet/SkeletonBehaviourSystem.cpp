@@ -119,7 +119,7 @@ void CombatBehaviour(SkeletonBehaviour* sc, StatComponent* enemyStats, StatCompo
 		float PauseThreshold = 0.3f / animComp->aAnimTimeFactor;	//When to pause the animation
 		float AttackStartTime = 0.5f / enemyStats->GetAttackSpeed();//When to continue the animation
 		//float AttackActiveTime = AttackStartTime + 0.10f;			//When the entire attack has finished
-		float AttackActiveTime = AttackStartTime + 0.40f; //trying stuff
+		float AttackActiveTime = AttackStartTime + 0.40f; //Attack hitbox now becomes active later into the animation, so we compensate by letting it stick around a bit longer
 
 		//Attack Telegraphing #1: Quick prep + Pause + Blink
 		AddTimedEventComponentStartContinuousEnd(ent, PauseThreshold, PauseAnimation, EnemyAttackFlash, AttackStartTime, ContinueAnimation, skeleton, 1);

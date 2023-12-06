@@ -380,19 +380,19 @@ void EnemyAttack(EntityID& entity, const int& index)
 
 void EnemyBeginAttack(EntityID& entity, const int& index)
 {
-	//Temp: No longer have skeletons activate their hitboxes at the start of their attack
+	//Get enemy type
 	uint32_t condition = GetTimedEventCondition(entity, index);
+
 	//Activate attack hitbox
 	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
 	if (comp)
 	{
-		if (condition != EnemyType::skeleton && condition != EnemyType::empoweredSkeleton)
+		if (condition != EnemyType::skeleton && condition != EnemyType::empoweredSkeleton) //Skeletons now have their own method of beginning their attack
 		{
 			SetHitboxActive(entity, comp->attackHitBoxID, true);
 			SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
 		}
 	}
-
 	
 	if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Dogs do big knockback on their headbutt
 	{
