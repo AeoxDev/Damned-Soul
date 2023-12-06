@@ -209,9 +209,6 @@ bool StateSwitcherSystem::Update()
 		}
 		
 	}
-
-	
-
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
@@ -223,6 +220,11 @@ bool StateSwitcherSystem::Update()
 		}
 		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop) && !(currentStates & State::InMainMenu))
 		{
+			if (stateManager.gate.index != -1)
+			{
+				registry.DestroyEntity(stateManager.gate);
+				stateManager.gate.index = -1;
+			}
 			SetGodModePortal(false);
 			playersComp->portalCreated = true;
 			if (stateManager.activeLevel == stateManager.finalLevel)//Final stage

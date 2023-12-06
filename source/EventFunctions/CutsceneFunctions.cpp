@@ -122,13 +122,14 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			transform->positionX = newPosX;
 			transform->positionZ = newPosZ;
+			transform->positionY = newPosY;
 		}
 		
 		//Loop the walk animation
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
 		animation->aAnim = ANIMATION_WALK;
 		animation->aAnimIdx = 0;
-		animation->aAnimTime = GetFrameTime() + GetTimedEventElapsedTime(entity, index);
+		animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 		ANIM_BRANCHLESS(animation);
 		
 	}
@@ -184,7 +185,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
 		animation->aAnim = ANIMATION_IDLE;
 		animation->aAnimIdx = 1;
-		animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 		ANIM_BRANCHLESS(animation);
 	}
 	if (cutscene->mode & Cutscene_Character_Idle)
@@ -232,7 +233,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			animation->aAnim = ANIMATION_IDLE;
 			animation->aAnimIdx = 0;
-			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
 		}
 		
@@ -282,7 +283,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			animation->aAnim = ANIMATION_ATTACK;
 			animation->aAnimIdx = 0;
-			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
 		}
 		
@@ -336,7 +337,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			animation->aAnim = ANIMATION_WALK;
 			animation->aAnimIdx = 2;
-			animation->aAnimTime = 0.001f + scalar;
+			animation->aAnimTime = 0.01f + GetFrameTime() + scalar;
 		}
 
 	}
