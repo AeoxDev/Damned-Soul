@@ -363,23 +363,37 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 
 void EnemyAttack(EntityID& entity, const int& index)
 {
-	if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
-		EnemyEndAttack(entity, index);
-	else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
-		EnemyBeginAttack(entity, index);
+	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
+	if (comp)
+	{
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.4f)
+		{
+			SetHitboxActive(entity, comp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
+		}
+	}
+	//if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
+	//	EnemyEndAttack(entity, index);
+	//else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
+	//	EnemyBeginAttack(entity, index);
 }
 
 void EnemyBeginAttack(EntityID& entity, const int& index)
 {
+	//Temp: No longer have skeletons activate their hitboxes at the start of their attack
+	uint32_t condition = GetTimedEventCondition(entity, index);
 	//Activate attack hitbox
 	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
 	if (comp)
 	{
-		SetHitboxActive(entity, comp->attackHitBoxID, true);
-		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+		if (condition != EnemyType::skeleton && condition != EnemyType::empoweredSkeleton)
+		{
+			SetHitboxActive(entity, comp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+		}
 	}
 
-	uint32_t condition = GetTimedEventCondition(entity, index);
+	
 	if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Dogs do big knockback on their headbutt
 	{
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);

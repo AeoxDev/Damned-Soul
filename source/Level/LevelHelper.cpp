@@ -842,8 +842,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
 			//NICLAS WAS HERE
-			//attackSpeed = 2.0f;
-			attackSpeed = 1.5f;
+			attackSpeed = 2.0f;
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
 		{
