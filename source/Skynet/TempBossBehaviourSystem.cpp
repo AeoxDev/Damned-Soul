@@ -354,6 +354,7 @@ bool TempBossBehaviourSystem::Update()
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	}
 
-	free(valueGrid);
+	if (valueGrid != nullptr)
+		free(valueGrid);
 	return true;
 }

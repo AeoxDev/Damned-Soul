@@ -811,6 +811,7 @@ bool HellhoundBehaviourSystem::Update()
 
 	// pop the value map
 	//MemLib::spop();
-	free(valueGrid);
+	if (valueGrid != nullptr)
+		free(valueGrid);
 	return true;
 }
