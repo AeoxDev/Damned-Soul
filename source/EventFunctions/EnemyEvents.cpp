@@ -119,6 +119,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 1)
 	{
@@ -126,21 +127,25 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RLeg.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 2)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 3)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 4)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	
 
