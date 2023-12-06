@@ -650,7 +650,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			moveSpeed = 28.5f; // :)
+			moveSpeed = 25.f; // :)
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
@@ -1014,7 +1014,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
-			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Imp.mdl"));
 			//Sounds (Added by Joaquin)
 			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 			scp->Load(IMP);

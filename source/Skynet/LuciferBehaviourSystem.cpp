@@ -295,12 +295,7 @@ bool LuciferBehaviourSystem::Update()
 
 				continue;
 			}
-			else//Elliot: Turn off attack hitbox to not make player rage.
-			{
-			/*	SetHitboxActive(enemyEntity, luciferComponent->hitBoxID, false);
-				SetHitboxCanDealDamage(enemyEntity, luciferComponent->hitBoxID, false);*/
-				
-			}
+			
 
 			if (luciferComponent->nextSpecialIsSpawn && luciferComponent->isAttacking == false) // SPAWN ENEMIES
 			{
