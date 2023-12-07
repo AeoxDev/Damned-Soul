@@ -44,6 +44,7 @@ void PlayerAttack(EntityID& entity, const int& index);
 void CreatePortal(EntityID& entity, const int& index);
 //void EnemyExclusion(EntityID& entity); not needed?
 void PlayDeathAnimation(EntityID& entity, const int& index);
+void ShatterEnemy(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void RemoveCutsceneEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
@@ -136,6 +137,9 @@ void StageIntroFallUnskippable(EntityID& entity, const int& index);
 void SkeletonIntroScene(EntityID& entity, const int& index);
 void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
+void ImpCutscenePoof(EntityID& entity, const int& index);
+void EventRemoveParticle(EntityID& entity, const int& index);
+
 void SplitBossIntroScene(EntityID& entity, const int& index);
 void SplitBossLevel8IntroScene(EntityID& entity, const int& index);
 void EyeIntroScene(EntityID& entity, const int& index);

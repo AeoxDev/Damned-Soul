@@ -6,7 +6,6 @@
 
 #include <d2d1helper.h>
 #include <dwrite.h>
-#include <vector>
 
 struct ID2D1Bitmap;
 

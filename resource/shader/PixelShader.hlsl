@@ -80,7 +80,13 @@ cbuffer LightComponentShaderBuffer : register(b2)
 float4 main(GS_OUT input) : SV_TARGET
 {
     //The realer forward
-    clip(input.base.position.w - depthTexture.Load(input.base.position.xyz).w + 0.1f);
+    float renderDepthRange = 0.001f;//Generosity when rendering to avoid artefacts.
+    float depthTest = input.base.depth.x / input.base.depth.y;
+    float loadedDepth = depthTexture.Load(int3(input.base.position.x, input.base.position.y, 0)).x;//Lower when closer
+    //return float4(loadedDepth, loadedDepth, loadedDepth, 1.0f);
+   // float depthDistance = depthTest - preDepth + renderDepthRange;
+    float depthDistance = loadedDepth - depthTest + renderDepthRange;
+    clip(depthDistance);//Don't modify fragments that are behind others.
     
     // Calculate normal based on normal map combined with true normal
     

@@ -45,6 +45,7 @@ struct LuciferBehaviour
 	bool isSpawning = false;
 	float spawnTimeLimit = 1.f;
 	float spawnTimer = 0.f;
+	int spawnIndexCounter = 0;
 
 
 	// MELEE VARIABLES

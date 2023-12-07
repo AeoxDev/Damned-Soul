@@ -7,14 +7,14 @@
 
 EntityID SUCCUBUS_CHARM::_OWNER;
 
-#define MEMBERSHIP_COST_MULT (.9f)
-#define SUCCUBUS_CHARM_DAMAGE_REDUCTION (1)
+#define SUCCUBUS_CHARM_COST_MULTIPLIER (.8f)
+#define SUCCUBUS_CHARM_DAMAGE_REDUCTION (2)
 
 const char* SUCCUBUS_CHARM::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Reduces the cost of healing and relics by %ld%% and reduces damage taken by %ld",
-		100 - PERCENT(MEMBERSHIP_COST_MULT),
+	sprintf_s(temp, "Reduces the cost of healing and relics by %ld%% and reduces damage taken from attacks and hazards by %ld",
+		100 - PERCENT(SUCCUBUS_CHARM_COST_MULTIPLIER),
 		SUCCUBUS_CHARM_DAMAGE_REDUCTION);
 #pragma warning(suppress : 4172)
 	return temp;
@@ -39,8 +39,8 @@ void SUCCUBUS_CHARM::DamageReduction(void* data)
 {
 	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
-	// Check if this is the owner
-	if (input->defender.index == SUCCUBUS_CHARM::_OWNER.index)
+	// Check if this is the owner, and if its an approved damage type
+	if (input->defender.index == SUCCUBUS_CHARM::_OWNER.index && (input->typeSource & (RelicInput::DMG::ENEMY | RelicInput::DMG::HAZARD)))
 	{
 		input->flatSub += SUCCUBUS_CHARM_DAMAGE_REDUCTION;
 	}
@@ -52,6 +52,6 @@ void SUCCUBUS_CHARM::Discount(void* data)
 	// Get the input
 	RelicInput::OnPriceCalculation* input = (RelicInput::OnPriceCalculation*)data;
 
-	input->healCostMult *= MEMBERSHIP_COST_MULT;
-	input->relicCostMult *= MEMBERSHIP_COST_MULT;
+	input->healCostMult *= SUCCUBUS_CHARM_COST_MULTIPLIER;
+	input->relicCostMult *= SUCCUBUS_CHARM_COST_MULTIPLIER;
 }

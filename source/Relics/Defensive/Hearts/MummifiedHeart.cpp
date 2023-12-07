@@ -22,9 +22,10 @@ void MUMMIFIED_HEART::Initialize(void* input)
 	// Set owner
 	MUMMIFIED_HEART::_OWNER = *((EntityID*)input);
 
-	// This is a stat altering relic, mark the entity as having modified stats
-	// It also raises max HP while elevating current hp to match, meaning this is nessecary
-	RELIC_RAISE_CURRENT_MAX_HP(MUMMIFIED_HEART::_OWNER, MUMMIFIED_HEART_HEALTH_INCREASE);
+	registry.GetComponent<StatComponent>(MUMMIFIED_HEART::_OWNER)->MarkAsModified();
+	//// This is a stat altering relic, mark the entity as having modified stats
+	//// It also raises max HP while elevating current hp to match, meaning this is nessecary
+	//RELIC_RAISE_CURRENT_MAX_HP(MUMMIFIED_HEART::_OWNER, MUMMIFIED_HEART_HEALTH_INCREASE);
 
 	// Make sure the relic function map exists
 	_validateRelicFunctions();

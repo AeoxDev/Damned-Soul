@@ -105,6 +105,7 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 
 		//Animation setup
 		animComp->aAnim = ANIMATION_ATTACK;
+		animComp->aAnimIdx = 0.f;
 		animComp->aAnimTime = 0.0f;
 		animComp->aAnimTimePower = 1.0f;
 		animComp->aAnimTimeFactor = 3.0f; //Elliot comment: This might need to be changed when timePower changes
@@ -355,6 +356,7 @@ bool TempBossBehaviourSystem::Update()
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	}
 
-	free(valueGrid);
+	if (valueGrid != nullptr)
+		free(valueGrid);
 	return true;
 }

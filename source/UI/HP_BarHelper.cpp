@@ -146,7 +146,7 @@ void ScaleAdvancedHealthBar(const EntityID player)
 		{
 			UIBase& base = uiElement->m_Images[HP_MID].baseUI;
 			static FLOAT oiriginalX = base.m_PixelCoords.x - 100;
-			base.m_PixelCoords.x = oiriginalX + stats->GetMaxHealth() - EDGE_FLAT_OFFSET;
+			base.m_PixelCoords.x = oiriginalX + stats->GetMaxHealth();
 			base.UpdateTransform();
 		}
 		{

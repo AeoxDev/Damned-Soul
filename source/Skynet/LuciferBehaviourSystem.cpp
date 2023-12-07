@@ -10,6 +10,24 @@
 #include "Levels\LevelHelper.h"
 #include "EventFunctions.h"
 
+int GetSpawnLevel(StatComponent* enemyStats)
+{
+	//spawn an ice enemy
+	int levelOfDamage = 0;
+	if (enemyStats->GetHealth() > enemyStats->GetMaxHealth() / 3.f * 2.f) //least hurt, little power
+	{
+		levelOfDamage = 1;
+	}
+	else if (enemyStats->GetHealth() > enemyStats->GetMaxHealth() / 3.f) //middle hurt, middle power
+	{
+		levelOfDamage = 2;
+	}
+	else  //most hurt, more power
+	{
+		levelOfDamage = 3;
+	}
+	return levelOfDamage;
+}
 
 void ChaseBehaviour(PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, LuciferBehaviour* lc, TransformComponent* ltc, 
 	StatComponent* enemyStats, AnimationComponent* enemyAnim, float goalDirectionX, float goalDirectionZ, bool path, bool move, AnimationComponent* animComp)
@@ -260,11 +278,10 @@ bool LuciferBehaviourSystem::Update()
 				}
 			}
 
-			if (luciferComponent->isSpawning)
+			if (luciferComponent->isSpawning)// spawn at start, half spawn time and end of spawn time
 			{
 				luciferComponent->spawnTimer += GetDeltaTime();
-
-				if (luciferComponent->spawnTimer < luciferComponent->spawnTimeLimit)
+				if (luciferComponent->spawnTimer < luciferComponent->spawnTimeLimit) 
 				{
 					enemyAnim->aAnim = ANIMATION_IDLE;
 					enemyAnim->aAnimIdx = 0;
@@ -273,9 +290,54 @@ bool LuciferBehaviourSystem::Update()
 					enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 					ANIM_BRANCHLESS(enemyAnim);
 				}
-				else
+				else // spaw third  (IMP)
 				{
 					luciferComponent->isSpawning = false;
+
+					//spawn an ice enemy
+					int levelOfDamage = GetSpawnLevel(enemyStats);
+
+					CalculateGlobalMapValuesHellhound(valueGrid);
+					for (int i = 0; i < levelOfDamage; i++) // IMP
+					{
+						TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						//SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ, 0); 
+						//tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						//SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ, 0);
+						//tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ, 0);
+					}
+
+				}
+				if (luciferComponent->spawnIndexCounter == 0) // spawns at start (HELLHOUND)
+				{
+					luciferComponent->spawnIndexCounter = 1;
+					int levelOfDamage = GetSpawnLevel(enemyStats);
+					CalculateGlobalMapValuesHellhound(valueGrid);
+					for (int i = 0; i < levelOfDamage; i++) // HELLHOUND
+					{
+						TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ, 0); 
+						//tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						//SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ, 0);
+						//tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						//SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ, 0);
+					}
+				}
+				else if (luciferComponent->spawnIndexCounter == 1 && luciferComponent->spawnTimer >= luciferComponent->spawnTimeLimit / 2.f) // spawn in middle (EYE)
+				{
+					luciferComponent->spawnIndexCounter = 2;
+					int levelOfDamage = GetSpawnLevel(enemyStats);
+					CalculateGlobalMapValuesHellhound(valueGrid);
+					for (int i = 0; i < levelOfDamage; i++) // EYE
+					{
+						TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						//SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ, 0); 
+						//tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ, 0);
+						//tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
+						//SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ, 0);
+					}
 				}
 
 				continue;
@@ -295,43 +357,16 @@ bool LuciferBehaviourSystem::Update()
 
 				continue;
 			}
-			else//Elliot: Turn off attack hitbox to not make player rage.
-			{
-			/*	SetHitboxActive(enemyEntity, luciferComponent->hitBoxID, false);
-				SetHitboxCanDealDamage(enemyEntity, luciferComponent->hitBoxID, false);*/
-				
-			}
+			
 
 			if (luciferComponent->nextSpecialIsSpawn && luciferComponent->isAttacking == false) // SPAWN ENEMIES
 			{
 				luciferComponent->nextSpecialIsSpawn = false;
 				luciferComponent->spawnTimer = 0.f;
 				luciferComponent->isSpawning = true;
-				//spawn an ice enemy
-				int levelOfDamage = 0;
+				luciferComponent->spawnIndexCounter = 0;
 
-				if (enemyStats->GetHealth() > enemyStats->GetMaxHealth() / 3.f * 2.f) //least hurt, little power
-				{
-					levelOfDamage = 1;
-				}
-				else if (enemyStats->GetHealth() > enemyStats->GetMaxHealth() / 3.f) //middle hurt, middle power
-				{
-					levelOfDamage = 2;
-				}
-				else  //most hurt, more power
-				{
-					levelOfDamage = 3;
-				}
-				CalculateGlobalMapValuesHellhound(valueGrid);
-				for (int i = 0; i < levelOfDamage; i++)
-				{
-					TransformComponent tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenHellhound, tran.positionX, 0.f, tran.positionZ, 0); 
-					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenEye, tran.positionX, 0.f, tran.positionZ, 0);
-					tran = FindSpawnTile(valueGrid, luciferTransformComponent, 20.f, 60.f);
-					SetupEnemy(EnemyType::frozenImp, tran.positionX, 0.f, tran.positionZ, 0);
-				}
+				
 				continue;
 			}
 			else if (luciferComponent->isChargeCharge  == false && luciferComponent->isJumpJump == false && luciferComponent->isAttacking == false)

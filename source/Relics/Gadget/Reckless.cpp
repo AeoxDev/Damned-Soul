@@ -14,7 +14,7 @@ const char* RECKLESS::Description()
 	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "You deal %ld%% more damage, but take %ld%% more damage",
 		PERCENT(RECKLESS_DAMAGE_DEALT_MULT) - 100,
-		PERCENT(RECKLESS_DAMAGE_TAKEN_MULT)) - 100;
+		PERCENT(RECKLESS_DAMAGE_TAKEN_MULT) - 100);
 #pragma warning(suppress : 4172)
 	return temp;
 }

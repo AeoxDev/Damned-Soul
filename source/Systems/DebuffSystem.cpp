@@ -54,9 +54,9 @@ bool DebuffSystem::Update()
 				characterModel->shared.bcmG_temp /= (1 + (.05f + ft));
 				characterModel->shared.bcmB_temp /= (1 + (.05f + ft));
 				// Additive
-				characterModel->shared.bcaR_temp += .1f + 0.45f * ft;
-				characterModel->shared.bcaG_temp += .1f + 0.5f * ft;
-				characterModel->shared.bcaB_temp += .15f + 0.8f * ft;
+				characterModel->shared.bcaR_temp += .125f + 0.25f * ft;
+				characterModel->shared.bcaG_temp += .125f + 0.3f * ft;
+				characterModel->shared.bcaB_temp += .2f + 0.4f * ft;
 		}
 
 
