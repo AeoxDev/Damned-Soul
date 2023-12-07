@@ -60,18 +60,20 @@ bool DebuffSystem::Update()
 		}
 
 
-		// Count down the Debuffs' time and remove them if they are done
-		if (debuff->Advance())
+		// ARIAN SKREV DETTA
+		if (0 < debuff->m_dots[DamageOverTime::BURN].GetTime() && debuff->m_dots[DamageOverTime::BURN].GetTime() < GetDeltaTime())
 		{
-			// ARIAN SKREV DETTA
-			DebuffComponent* dComp = registry.GetComponent<DebuffComponent>(entity);
-			if (dComp->m_dots[DamageOverTime::BURN])
+			ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
+			if (pComp != nullptr)
 			{
-				ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
 				pComp->Release();
 				registry.RemoveComponent<ParticleComponent>(entity);
 			}
+		}
 
+		// Count down the Debuffs' time and remove them if they are done
+		if (debuff->Advance())
+		{
 			registry.RemoveComponent<DebuffComponent>(entity);
 
 		}

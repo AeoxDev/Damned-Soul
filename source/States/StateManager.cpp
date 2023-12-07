@@ -184,7 +184,7 @@ int StateManager::Setup()
 
 
 	systems.push_back(new ParticleSystemCPU());
-	//systems[4]->timeCap = 1.f / 60.f;
+	systems[4]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
 	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
