@@ -74,6 +74,8 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	// Apply on damage final
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
 		func(&funcInput);
+	//Elliot: Give data for shatter
+	defenderStats->overkill = funcInput.CollapseNoCap() - (float)defenderStats->GetHealth();
 
 	if (attacker.index == stateManager.player.index)
 	{
@@ -91,6 +93,8 @@ void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attac
 	}
 	// Calculate damage
 	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
+
+	
 
 	// Provide a flat hit, mostly just so that we can edit all sources at the same time
 	Combat::HitFlat(defender, defenderStats, finalDamage);

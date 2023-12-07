@@ -4,9 +4,6 @@ cbuffer shatter : register(b2)
 {
     float time;
     float strength;
-    bool reverse;
-    bool useOrigin; //displaces from origin point, displaces along face normal if false
-    float4 origin;
 };
 
 
@@ -17,25 +14,43 @@ void main(triangle VS_OUT input[3], inout TriangleStream<GS_OUT> output)
     float4 midPoint = (input[0].world + input[1].world + input[2].world) / 3;
     float3 faceNormal = normalize((input[0].normal.xyz + input[1].normal.xyz + input[2].normal.xyz) / 3);
     float3 direction;
-    if (useOrigin)
-    {
-        direction = normalize(midPoint.xyz - origin.xyz);
-    }
-    else
-    {
-        direction = faceNormal;
-    }
+    float usedTime = time;
+    direction = faceNormal;
+    
+    //if (useOrigin)
+    //{
+    //    float3 OtoT = midPoint.xyz - origin.xyz;
+    //    float length = sqrt(pow(OtoT.x, 2) + pow(OtoT.y, 2) + pow(OtoT.z, 2));
+    //    //usedTime -= length * 0.1f;
+    //    //if (usedTime < 0)
+    //    //{
+    //    //    usedTime = 0;
+    //    //}
+    //    direction = normalize(OtoT);
+    //}
+    //else
+    //{
+    //    direction = faceNormal;
+    //}
     
     float resistance = 0.1f;
     float gravStrength = 9.8f;
 
     float nullTime = ((((gravStrength / -direction.y) - strength) / (2 * resistance)) + abs(sqrt(midPoint.y / (direction.y * resistance)) + pow(((gravStrength / -direction.y) - strength) / (2 * resistance), 2)));
-    if (nullTime > time)
+    if (nullTime > usedTime)
     {
-        nullTime = time;
+        nullTime = usedTime;
     }
+    
+    float yCorrection = 0.1;
+    if (midPoint.y < 0)
+    {
+        nullTime = 0;
+        yCorrection += -midPoint.y;
+    }
+    
     float x = (direction.x * ((strength * nullTime) - (resistance * pow(nullTime, 2))));
-    float y = (direction.y * ((strength * nullTime) - (resistance * pow(nullTime, 2)))) - (nullTime * gravStrength);
+    float y = (direction.y * ((strength * nullTime) - (resistance * pow(nullTime, 2)))) - (nullTime * gravStrength) + yCorrection;
     float z = (direction.z * ((strength * nullTime) - (resistance * pow(nullTime, 2))));
     float3 displacement = float3(x, y, z);
 
@@ -57,7 +72,7 @@ void main(triangle VS_OUT input[3], inout TriangleStream<GS_OUT> output)
     p1.base.world = input[0].world + float4(displacement, 0);
     p2.base.world = input[1].world + float4(displacement, 0);
     p3.base.world = input[2].world + float4(displacement, 0);
-    p4.base.world = midPoint - float4(faceNormal, 0) + float4(displacement, 0);
+    p4.base.world = midPoint - float4(faceNormal * 100, 0) + float4(displacement, 0);
     
     p1.base.normal = input[0].normal;
     p2.base.normal = input[1].normal;
@@ -104,8 +119,8 @@ void main(triangle VS_OUT input[3], inout TriangleStream<GS_OUT> output)
     output.RestartStrip();
     
     output.Append(p1);
+    output.Append(p3);
     output.Append(p4);
-    output.Append(p2);
     output.RestartStrip();
     
     output.Append(p2);
@@ -113,8 +128,8 @@ void main(triangle VS_OUT input[3], inout TriangleStream<GS_OUT> output)
     output.Append(p3);
     output.RestartStrip();
     
-    output.Append(p3);
-    output.Append(p4);
     output.Append(p1);
+    output.Append(p4);
+    output.Append(p2);
     output.RestartStrip();
 }

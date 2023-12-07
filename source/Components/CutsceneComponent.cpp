@@ -322,7 +322,7 @@ void ImpIntroScene(EntityID& entity, const int& index)
 	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(storedCutsceneSide, -1.0f, 0.0f, -1.0f,
 		-1.0f, 0.0f, -1.0f);
-	CutsceneSetPosition(storedCutsceneSide, 0.0f, -100.0f, 0.0f,
+	CutsceneSetPosition(storedCutsceneSide, 0.0f, -100.1f, 0.0f,
 		0.0f, -100.0f, 0.0f);
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginCutscene, CutsceneTransition, teleportRight, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, nullptr, teleportRight, PlayImpIntroTeleport, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 4);
@@ -345,8 +345,8 @@ void ImpIntroScene(EntityID& entity, const int& index)
 	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(storedCutsceneSide, 1.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 1.0f);
-	CutsceneSetPosition(storedCutsceneSide, transform->positionX - 7.0f, transform->positionY, transform->positionZ,
-		transform->positionX - 7.0f, transform->positionY, transform->positionZ);
+	CutsceneSetPosition(storedCutsceneSide, transform->positionX - 7.0f, 0.0f, transform->positionZ,
+		transform->positionX - 7.0f, 0.0f, transform->positionZ);
 	AddTimedEventComponentStartContinuousEnd(storedCutsceneSide, teleportLeft, StoredEnemyCutscene, nullptr, teleportFar, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, nullptr, teleportFar, PlayImpIntroTeleport, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 4);
@@ -358,8 +358,8 @@ void ImpIntroScene(EntityID& entity, const int& index)
 	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(storedCutsceneSide, 1.0f, 0.0f, 1.0f,
 		0.0f, 0.0f, -1.0f);
-	CutsceneSetPosition(storedCutsceneSide, transform->positionX, transform->positionY, transform->positionZ + 1.0f,
-		transform->positionX, transform->positionY, transform->positionZ + 1.0f);
+	CutsceneSetPosition(storedCutsceneSide, transform->positionX, 0.0f, transform->positionZ + 1.0f,
+		transform->positionX, 0.0f, transform->positionZ + 1.0f);
 	AddTimedEventComponentStartContinuousEnd(storedCutsceneSide, teleportFar, StoredEnemyCutscene, nullptr, teleportClose, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, nullptr, teleportClose, PlayImpIntroTeleport, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 5);
@@ -371,8 +371,8 @@ void ImpIntroScene(EntityID& entity, const int& index)
 	cutscene->mode = (CutsceneMode)(Cutscene_Character_Idle | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
 	CutsceneSetLookAt(storedCutsceneSide, 0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, -1.0f);
-	CutsceneSetPosition(storedCutsceneSide, transform->positionX + transform->facingX * 3.0f, transform->positionY, transform->positionZ + transform->facingZ * 30.0f,
-		transform->positionX +transform->facingX * 30.0f, transform->positionY, transform->positionZ + transform->facingZ * 30.0f);
+	CutsceneSetPosition(storedCutsceneSide, transform->positionX + transform->facingX * 3.0f, 0.0f, transform->positionZ + transform->facingZ * 30.0f,
+		transform->positionX +transform->facingX * 30.0f, 0.0f, transform->positionZ + transform->facingZ * 30.0f);
 	AddTimedEventComponentStartContinuousEnd(storedCutsceneSide, teleportClose, StoredEnemyCutscene, nullptr, beginReturnTime, nullptr, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
 	//TeleportSound
@@ -387,9 +387,9 @@ void ImpIntroScene(EntityID& entity, const int& index)
 	cutscene = registry.AddComponent<CutsceneComponent>(returnTransition);
 	TransformComponent* transformPlayer = registry.GetComponent<TransformComponent>(returnTransition);
 	cutscene->mode = (CutsceneMode)(Cutscene_Camera | Cutscene_Linear | CutsceneMode::Transition_LookAt | Transition_Position);
-	CutsceneSetLookAt(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
+	CutsceneSetLookAt(returnTransition, transform->positionX + transform->facingX * 60.0f, cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
 		transformPlayer->positionX, transformPlayer->positionY, transformPlayer->positionZ);
-	CutsceneSetPosition(returnTransition, transform->positionX + transform->facingX * 60.0f, transform->positionY + cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
+	CutsceneSetPosition(returnTransition, transform->positionX + transform->facingX * 60.0f, cameraYOffset, transform->positionZ + transform->facingZ * 60.0f,
 		transformPlayer->positionX + CAMERA_OFFSET_X, transformPlayer->positionY + CAMERA_OFFSET_Y, transformPlayer->positionZ + CAMERA_OFFSET_Z);
 	AddTimedEventComponentStartContinuousEnd(returnTransition, beginReturnTime, BeginCutscene, CutsceneTransition, returnEndTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 
@@ -406,7 +406,17 @@ void ImpCutscenePoof(EntityID& entity, const int& index)
 	{
 		particle->Release();
 	}
-	particle = registry.AddComponent<ParticleComponent>(entity, 0.9f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP);
+	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
+	if (stats->GetDamage() < 20.f) //normal imp
+	{
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP);
+		AddTimedEventComponentStart(entity, 2.f, BossSpawnwaveEnd);
+	}
+	else
+	{
+		registry.AddComponent<ParticleComponent>(entity, 100.0f, 100.0f, 25.0f, 0.0f, 2.0f, 1.0f, 32, VFX_PATTERN::SPAWN_IMP_EMPOWERED);
+		AddTimedEventComponentStart(entity, 2.f, BossSpawnwaveEnd);
+	}
 }
 
 void EventRemoveParticle(EntityID& entity, const int& index)
