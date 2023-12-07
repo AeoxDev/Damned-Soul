@@ -4,9 +4,6 @@ cbuffer shatter : register(b2)
 {
     float time;
     float strength;
-    bool reverse;
-    bool useOrigin; //displaces from origin point, displaces along face normal if false
-    float4 origin;
 };
 
 
@@ -18,22 +15,23 @@ void main(triangle VS_OUT input[3], inout TriangleStream<GS_OUT> output)
     float3 faceNormal = normalize((input[0].normal.xyz + input[1].normal.xyz + input[2].normal.xyz) / 3);
     float3 direction;
     float usedTime = time;
+    direction = faceNormal;
     
-    if (useOrigin)
-    {
-        float3 OtoT = midPoint.xyz - origin.xyz;
-        float length = sqrt(pow(OtoT.x, 2) + pow(OtoT.y, 2) + pow(OtoT.z, 2));
-        usedTime -= length * 1.0f;
-        if (usedTime < 0)
-        {
-            usedTime = 0;
-        }
-        direction = normalize(OtoT);
-    }
-    else
-    {
-        direction = faceNormal;
-    }
+    //if (useOrigin)
+    //{
+    //    float3 OtoT = midPoint.xyz - origin.xyz;
+    //    float length = sqrt(pow(OtoT.x, 2) + pow(OtoT.y, 2) + pow(OtoT.z, 2));
+    //    //usedTime -= length * 0.1f;
+    //    //if (usedTime < 0)
+    //    //{
+    //    //    usedTime = 0;
+    //    //}
+    //    direction = normalize(OtoT);
+    //}
+    //else
+    //{
+    //    direction = faceNormal;
+    //}
     
     float resistance = 0.1f;
     float gravStrength = 9.8f;

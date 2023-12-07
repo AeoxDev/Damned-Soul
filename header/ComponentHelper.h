@@ -229,14 +229,9 @@ struct ShatterComponent
 {
 	float time = 0.f;
 	float strength = 1.f;
-	bool reverse = false;
-	bool useOrigin = false; //Displaces from origin point, displaces along face normal if false
-	float origin[4] = {0.f, 0.f, 0.f, 0.f};
 
-	ShatterComponent(float strength, bool reverse, bool useOrigin, float origin[4]) : time(0), strength(strength), reverse(reverse), useOrigin(useOrigin) 
-	{
-		this->origin[0] = origin[0], this->origin[1] = origin[1], this->origin[2] = origin[2], this->origin[3] = origin[3];
-	}
+	ShatterComponent(float strength) : time(0), strength(strength)
+	{}
 };
 
 struct ControllerComponent

@@ -136,7 +136,7 @@ bool StateSwitcherSystem::Update()
 					playersComp->killingSpree += 1;
 				}
 				float shatterTimeFactor = 1.0f;
-				if (statComp->overkill > statComp->GetMaxHealth() * 0.1f + 9.0f)
+				if (statComp->overkill > statComp->GetMaxHealth() * 0.3f + 10.0f)
 				{
 					shatterTimeFactor = 0.01f;
 				}
@@ -145,56 +145,58 @@ bool StateSwitcherSystem::Update()
 				{
 				case EnemyType::hellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
+					shatterTimeFactor *= 0.55f;
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.55f * shatterTimeFactor, ShatterEnemy);
 					break;
 				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.5f * shatterTimeFactor, ShatterEnemy);
+					shatterTimeFactor *= 0.5f;
 					break;
 				case EnemyType::empoweredSkeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.5f * shatterTimeFactor, ShatterEnemy);
+					shatterTimeFactor *= 0.5f;
 					break;
 				case EnemyType::empoweredImp:
 					sfx->Play(Imp_Death, Channel_Base);
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 1.f * shatterTimeFactor, ShatterEnemy);
+					shatterTimeFactor *= 1.f;
 					break;
 				case EnemyType::empoweredHellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.55f * shatterTimeFactor, ShatterEnemy);
+					shatterTimeFactor *= 0.55f;
 					break;
 				case EnemyType::frozenEye:
 					sfx->Play(Eye_Death, Channel_Base);
-					ShatterEnemy(entity, 0);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::frozenHellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
-					ShatterEnemy(entity, 0);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::frozenImp:
 					sfx->Play(Imp_Death, Channel_Base);
+					shatterTimeFactor *= 0.55f;
 					ShatterEnemy(entity, 0);
 					break;
 				case EnemyType::zac:
 					sfx->Play(Miniboss_Death, Channel_Base);
-					ShatterEnemy(entity, 0);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::eye:
 					sfx->Play(Eye_Death, Channel_Base);
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.9f * shatterTimeFactor, ShatterEnemy);
+					shatterTimeFactor *= 0.9f;
 					break;
 				case EnemyType::imp:
 					sfx->Play(Imp_Death, Channel_Base);
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 1.f * shatterTimeFactor, ShatterEnemy);
+					shatterTimeFactor *= 1.f;
 					break;
 				case EnemyType::minotaur:
 					sfx->Play(Minotaur_Death, Channel_Base);
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.85f * shatterTimeFactor, ShatterEnemy);
+					shatterTimeFactor *= 0.85f;
 					break;
 				case EnemyType::lucifer:
 					sfx->Play(Boss_Death, Channel_Base);
 					sfx->Play(Boss_MustNotDie, Channel_Extra);
-					ShatterEnemy(entity, 0);
+					shatterTimeFactor *= 0.f;
 
 					//Player victory sound (Make a timed event to play after boss death sound.)
 					TimedEventIgnoreGamespeed(true);
@@ -216,7 +218,8 @@ bool StateSwitcherSystem::Update()
 					model2->shared.hasOutline = false;
 				}
 
-				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 1.5f, RemoveEnemy);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, shatterTimeFactor, ShatterEnemy);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, shatterTimeFactor + 0.5f, RemoveEnemy);
 			}
 			else // boss died lmao
 			{

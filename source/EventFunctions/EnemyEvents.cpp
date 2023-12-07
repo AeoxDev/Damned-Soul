@@ -65,7 +65,7 @@ void ShatterEnemy(EntityID& entity, const int& index)
 	{
 		shatterStrength += statComp->overkill * 0.5;
 	}
-	registry.AddComponent<ShatterComponent>(entity, shatterStrength, false, false, arr);
+	registry.AddComponent<ShatterComponent>(entity, shatterStrength);
 
 	GlowComponent* gc = registry.GetComponent<GlowComponent>(entity);
 	if (gc != nullptr)

@@ -181,7 +181,7 @@ int StateManager::Setup()
 	systems.push_back(new ShadowSystem());
 	systems[1]->timeCap = 1.f / 60.f;
 	systems.push_back(new RenderSystem());
-	//systems[2]->timeCap = 1.f / 60.f;
+	systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new OutlineSystem());
 
 

@@ -6,8 +6,7 @@ GS_IDX Shatter::gShader;
 
 void Shatter::Initialize()
 {
-	float arr[4] = { 0 };
-	ShatterComponent tempData = ShatterComponent(1.f, false, false, arr);
+	ShatterComponent tempData = ShatterComponent(1.f);
 	Shatter::cBuffer = CreateConstantBuffer(&tempData, sizeof(ShatterComponent));
 	Shatter::gShader = LoadGeometryShader("ShatterGS.cso");
 }
