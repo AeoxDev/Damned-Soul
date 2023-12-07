@@ -8,6 +8,7 @@
 #include "Components.h"
 #include "UIButtonFunctions.h"
 #include "Input.h"
+#include "Levels\LevelHelper.h"
 #include <time.h>
 
 void LoadLevel(int level)
@@ -66,7 +67,10 @@ void LoadLevel(int level)
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}
-
+	if ((level % 2) == 1)
+	{
+		SetupEnemyCounter();
+	}
 	// Load swaps after switching
 	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
 	for (uint32_t i = 0; i < relics.size(); ++i)

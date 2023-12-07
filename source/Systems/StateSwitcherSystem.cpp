@@ -7,6 +7,17 @@
 #include "CollisionFunctions.h"
 #include "DeltaTime.h"
 #include "Camera.h"
+#include "UIComponents.h"
+#include "UIRenderer.h"
+#include "MemLib\ML_String.hpp"
+#include <string>
+
+int nrEnemies = 0;
+
+int GetNrEnemies()
+{
+	return nrEnemies;
+}
 
 void StartPlayerDeath(EntityID& entity, const int& index)
 {
@@ -116,11 +127,12 @@ bool StateSwitcherSystem::Update()
 			}
 		}
 	}
+	int previousEnemies = nrEnemies;
+	nrEnemies = 0;
 	
-
 	for (auto entity : View<EnemyComponent, StatComponent>(registry))
 	{
-		
+		++nrEnemies;
 		// Get enemy entity stat component
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 		//Get enemy sound component
@@ -242,6 +254,31 @@ bool StateSwitcherSystem::Update()
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 				}
 			}
+		}
+		
+	}
+	//Elliot: Setup enemy counter here
+	if (stateManager.enemyCounter.index != -1 && previousEnemies != nrEnemies)
+	{
+		UIComponent* ui = registry.GetComponent<UIComponent>(stateManager.enemyCounter);
+		if (ui != nullptr)
+		{
+
+			ML_String enemies;
+
+			enemies = "Enemies: ";
+			enemies.append(std::to_string(nrEnemies).c_str());
+			if (nrEnemies > 0)
+			{
+				ui->m_BaseText.SetText(enemies.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+			}
+			else
+			{
+				ui->m_BaseText.SetText("Portal Open", DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+				ui->m_BaseImage.Release();
+				ui->m_BaseImage.SetImage("Exmenu/ButtonSmall", false);
+			}
+			RedrawUI();
 		}
 		
 	}
