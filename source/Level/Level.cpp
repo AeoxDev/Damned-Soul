@@ -12,6 +12,13 @@
 
 void LoadLevel(int level)
 {
+	ParticleComponent* particles = registry.GetComponent<ParticleComponent>(stateManager.player);
+	if (particles != nullptr)
+	{
+		particles->Release();
+		registry.RemoveComponent<ParticleComponent>(stateManager.player);
+	}
+
 	stateManager.activeLevel = level;
 	stateManager.cutsceneEnemy.index = -1;//Reset cutscene entity for safety.
 	std::srand((unsigned)time(NULL));
