@@ -63,7 +63,7 @@ void Render(RenderPass renderPass)
 			SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 			Shatter::SetResources(sComp);
 		}
-		else if (LightPass == renderPass || DepthPass == renderPass)
+		else if (LightPass == renderPass)
 		{
 			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 		}
@@ -119,7 +119,7 @@ void Render(RenderPass renderPass)
 			SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
 			Shatter::SetResources(sComp);
 		}
-		else if ((LightPass == renderPass || DepthPass == renderPass))
+		else if (LightPass == renderPass)
 		{
 			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 		}

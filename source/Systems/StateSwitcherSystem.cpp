@@ -276,7 +276,7 @@ bool StateSwitcherSystem::Update()
 			{
 				ui->m_BaseText.SetText("Portal Open", DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
 				ui->m_BaseImage.Release();
-				ui->m_BaseImage.SetImage("Exmenu/ButtonSmall", false);
+				ui->m_BaseImage.SetImage("Exmenu/ButtonSmallBloody", false);
 			}
 			RedrawUI();
 		}
