@@ -23,7 +23,11 @@ bool ParticleSystemCPU::Update()
 	
 	//ML_Map<float, ML_Vector<EntityID>> tempArr = ML_Map<float, ML_Vector<EntityID>>();
 	ML_Vector<EntityID> tempArr = ML_Vector<EntityID>();
-
+	float cullingDist = 6400.0f;
+	if (stateManager.gate.index == -1)
+	{
+		cullingDist *= 2.0f;
+	}
 
 	//Render
 	for (auto pEntity : View<ParticleComponent, TransformComponent>(registry))
@@ -35,11 +39,11 @@ bool ParticleSystemCPU::Update()
 		float distX = (cameraPos.x - tComp->positionX);
 		float distZ = (cameraPos.z - CAMERA_OFFSET_Z - tComp->positionZ);
 		float dist = (distX * distX) + (distZ * distZ);
-		if (dist > 6400.0f && stateManager.activeLevel != 5)
+		if (dist > cullingDist && Camera::InCutscene() == 0)
 		{
 			continue;
 		}
-
+		   
 		if (tempArr.size() == 0)
 			tempArr.push_back(pEntity);
 		else

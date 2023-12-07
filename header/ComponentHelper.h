@@ -10,13 +10,15 @@ private:
 	float m_baseHealth = 100.f;
 	// Bonus Max Health, affected by things such as relics
 	float m_bonusHealth = 0.f;
-	// Current health
-	float m_currentHealth = 100.f;
+	// How much damage you have currently taken
+	float m_damageTaken = 0.f;
+	//// Current health
+	//float m_currentHealth = 100.f;
 	
 	// Multiplicative damage reduction, affected by things such as relics
 	float m_damageReduction = 1.f;
 
-	float m_DamgeTaken = 0.0f;
+	float m_TotalDamageTaken = 0.0f;
 
 	float m_HealthRecovered = 0.0f;
 
@@ -42,7 +44,7 @@ private:
 	// Bonus damage, affected by things such as relics
 	float m_bonusDamage = 0.f;
 
-	float m_DamgeDone = 0.0f;
+	float m_TotalDamageDone = 0.0f;
 
 	// Attack speed
 	float m_baseAttackSpeed = 1.f;
@@ -77,7 +79,7 @@ public:
 	float acidAnimFactor = 0.5f;
 
 
-	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), m_currentHealth(hp), m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
+	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), /*m_currentHealth(hp), */m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
 	{/* m_baseMoveSpeed = m_moveSpeed; */
 		m_baseAcceleration = ms;
 		m_acceleration = ms;
@@ -188,6 +190,7 @@ public:
 	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
+	int weaponTier = 1;
 	bool portalCreated = false;
 	bool isDashing = false;
 

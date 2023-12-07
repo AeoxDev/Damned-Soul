@@ -197,7 +197,7 @@ bool RenderSystem::Update()
 	
 	SetDepthPassTexture(true);
 	SetRasterizerState(renderStates[backBufferRenderSlot].rasterizerState);
-	SetPixelShader(GetDepthPassPixelShader());
+	//SetPixelShader(GetDepthPassPixelShader());
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[0]);
 	Render(DepthPass);
 	ClearBackBuffer();

@@ -65,7 +65,7 @@ struct ParticleComponent
 	// Flamethrower does not use max max distance therefore we store one of the triangles vertices x-position there.
 	ParticleComponent(float seconds, float v0X, float size, float offsetX, float offsetY, float offsetZ, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern);
 	~ParticleComponent();
-
+	
 
 	//void SetupFlamethrower(float seconds, float radius, float size, float x, float y, float z);
 	void Release();

@@ -66,7 +66,7 @@ namespace Particles
 
 	extern PoolPointer<ParticleInputOutput> m_readBuffer;
 	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
-	extern std::vector<int> m_unoccupiedParticles;
+	extern std::vector<int> m_unoccupiedParticles;//Elliot: Use of vector here can cause issues
 
 	void SwitchInputOutput();
 	void InitializeParticles();
