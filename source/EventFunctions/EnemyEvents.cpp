@@ -26,6 +26,9 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
 	RemoveHitbox(entity, 2);
+	RemoveHitbox(entity, 3);
+	RemoveHitbox(entity, 4);
+	RemoveHitbox(entity, 5);//Remove special case for hellhound
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;

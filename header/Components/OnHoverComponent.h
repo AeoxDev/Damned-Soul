@@ -3,8 +3,6 @@
 
 #include "MemLib/ML_Vector.hpp"
 
-#include <vector>
-
 struct OnHoverComponent
 {
 	ML_Vector<DSFLOAT2> positions;

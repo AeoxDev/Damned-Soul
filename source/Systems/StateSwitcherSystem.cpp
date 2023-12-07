@@ -236,8 +236,7 @@ bool StateSwitcherSystem::Update()
 			else
 			{
 				EntityID portal = registry.CreateEntity();
-				AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-
+				CreatePortal(portal, 0);//Create portal immediately instead of using a timed event.
 			}
 
 			//If it's on the split boss stage play a voice line from the player.
