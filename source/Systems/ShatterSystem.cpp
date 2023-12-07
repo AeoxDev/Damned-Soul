@@ -3,6 +3,7 @@
 #include "Registry.h"
 #include "DeltaTime.h"
 #include "Components.h"
+#include "Shatter.h"
 
 bool ShatterSystem::Update()
 {

@@ -56,8 +56,38 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	EnemyComponent* enmComp = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enmComp->specialHitBoxID, false);
 	SetHitboxCanDealDamage(entity, enmComp->specialHitBoxID, false);
+}
 
+void ShatterEnemy(EntityID& entity, const int& index)
+{
+	//float strength, bool reverse, bool useOrigin, float origin[4]
+	float arr[4] = { 0 };
+	float shatterStrength = 5;
+	StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
+	if (statComp != nullptr)
+	{
+		shatterStrength += statComp->overkill * 0.5;
+	}
+	registry.AddComponent<ShatterComponent>(entity, shatterStrength);
 
+	GlowComponent* gc = registry.GetComponent<GlowComponent>(entity);
+	if (gc != nullptr)
+	{
+		registry.RemoveComponent<GlowComponent>(entity);
+	}
+	ModelBonelessComponent* model = nullptr;
+	model = registry.GetComponent<ModelBonelessComponent>(entity);
+	if (model != nullptr)
+	{
+		model->shared.castShadow = false;
+	}
+
+	ModelSkeletonComponent* model2 = nullptr;
+	model2 = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (model2 != nullptr)
+	{
+		model2->shared.castShadow = false;
+	}
 }
 
 void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn, const int zacIndex, const float health)
@@ -793,6 +823,8 @@ void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
 	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
 	minotaurSound->Play(Minotaur_Attack, Channel_Base);
 }
+
+
 
 void RemoveEnemy(EntityID& entity, const int& index)
 {

@@ -11,6 +11,7 @@
 #include "Model.h"
 #include "RenderDepthPass.h"
 #include "OutlineHelper.h"
+#include "Shatter.h"
 
 // ARIAN SKREV DETTA OM DET ÄR DÅLIG KOD TA DET MED MIG 1V1 IRL
 #include "SkyPlane.h"
@@ -30,11 +31,11 @@ void Render(RenderPass renderPass)
 
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelBonelessComponent* mc = registry.GetComponent<ModelBonelessComponent>(entity);
-		if (renderPass  == ShadowPass && mc->castShadow == false)
+		if (renderPass  == ShadowPass && mc->shared.castShadow == false)
 		{
 			continue;
 		}
-		
+
 		// If this isn't a shadow pass, update colors (and reset temp colors)
 		if (LightPass == renderPass)
 		{
@@ -55,7 +56,24 @@ void Render(RenderPass renderPass)
 			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+		ShatterComponent* sComp = registry.GetComponent<ShatterComponent>(entity);
+		if (sComp != nullptr && (LightPass == renderPass || DepthPass == renderPass))
+		{
+			SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
+			Shatter::SetResources(sComp);
+		}
+		else if (LightPass == renderPass)
+		{
+			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+		}
+		
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity);
+
+		if (sComp != nullptr)
+		{
+			Shatter::UnsetResources();
+		}
 	}
 	
 	SetVertexShader(renderStates[backBufferRenderSlot].vertexShaders[1]);
@@ -63,6 +81,10 @@ void Render(RenderPass renderPass)
 	{
 		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
 		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
+		if (renderPass == ShadowPass && mc->shared.castShadow == false)
+		{
+			continue;
+		}
 		AnimationComponent* ac = registry.GetComponent<AnimationComponent>(entity);
 
 		if (OutlinePass == renderPass && false == mc->shared.hasOutline)
@@ -91,8 +113,24 @@ void Render(RenderPass renderPass)
 		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
+		ShatterComponent* sComp = registry.GetComponent<ShatterComponent>(entity);
+		if (sComp != nullptr && (LightPass == renderPass || DepthPass == renderPass))
+		{
+			SetConstantBuffer(Camera::GetCameraBufferIndex(), BIND_GEOMETRY, 1);
+			Shatter::SetResources(sComp);
+		}
+		else if (LightPass == renderPass)
+		{
+			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
+		}
+
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue());
+
+		if (sComp != nullptr)
+		{
+			Shatter::UnsetResources();
+		}
 	}
 
 

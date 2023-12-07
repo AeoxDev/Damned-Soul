@@ -18,6 +18,7 @@
 #include "Glow.h"
 #include "AntiAlias.h"
 #include "SkyPlane.h"
+#include "Shatter.h"
 
 //Cursed
 #include "SDLHandler.h"
@@ -159,6 +160,7 @@ int StateManager::Setup()
 	Camera::InitializeCamera();
 	SetupHitboxVisualizer();
 	menu.Setup();
+	Shatter::Initialize();
 
 	Particles::InitializeParticles();
 	Outlines::InitializeOutlines();
