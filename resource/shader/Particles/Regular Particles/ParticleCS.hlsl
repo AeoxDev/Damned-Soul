@@ -25,7 +25,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
     if (meta[blockID.y].life > 0)
     {
         // 0 = SMOKE
-        if (meta[blockID.y].pattern == 0 || meta[blockID.y].pattern == 1)
+        if (meta[blockID.y].pattern == 0)
         {
             SmokeMovement(DTid, blockID);
 
@@ -71,7 +71,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
             SpiralFieldMovement(DTid, blockID);
         }
         // 9 = FIRE
-        if (meta[blockID.y].pattern == 9)
+        if (meta[blockID.y].pattern == 9 || meta[blockID.y].pattern == 1)
         {
             FireMovement(DTid, blockID);
         }
