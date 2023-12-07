@@ -211,7 +211,7 @@ void CreateSingleWindows()
 
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
-		0,
+		0, // Note, hardcoded special case to handle this zero later in the code, based on its index!!!
 		5,
 		//0,
 		//0,
@@ -222,7 +222,7 @@ void CreateSingleWindows()
 
 	for (int i = 0; i < SHOP_SINGLE_WINDOWS; i++)
 	{
-		EntityID relicWindow = registry.CreateEntity(ENT_PERSIST_LEVEL);
+		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
 
 		if (i == 2)
@@ -359,6 +359,8 @@ void ReloadShop()
 	CreateTextWindows();
 
 	CreateRelicWindows();
+
+	CreateSingleWindows();
 
 	SetInShop(true);
 

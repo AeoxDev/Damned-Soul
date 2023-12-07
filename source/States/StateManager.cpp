@@ -243,7 +243,7 @@ int StateManager::Setup()
 	systems.push_back(new UIPlayerSoulsSystem());
 	systems.push_back(new UISliderSystem());
 	
-	systems.push_back(new UIRenderShopSystem());
+	systems.push_back(new UIShopSystem());
 	systems.push_back(new NavigationSystem());
 
 	return 0;

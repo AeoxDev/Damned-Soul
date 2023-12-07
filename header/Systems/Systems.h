@@ -83,7 +83,7 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIRenderShopSystem : public System
+class UIShopSystem : public System
 {
 	bool Update();
 };

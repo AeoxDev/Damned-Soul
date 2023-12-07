@@ -702,8 +702,8 @@ bool EyeBehaviourSystem::Update()
 		ANIM_BRANCHLESS(enemyAnim);
 		TransformDecelerate(enemyEntity);
 	}
-
-	free(valueGrid);
+	if(valueGrid != nullptr)
+		free(valueGrid);
 
 	return true;
 }

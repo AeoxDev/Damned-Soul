@@ -60,7 +60,7 @@ bool UIPlayerSoulsSystem::Update()
 	return true;
 }
 
-bool UIRenderShopSystem::Update()
+bool UIShopSystem::Update()
 {
 	if (!(currentStates & State::InShop))
 	{
@@ -149,7 +149,8 @@ bool UIRenderShopSystem::Update()
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
 			UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(entity);
-			if (upgrade->tier == 2)
+			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+			if (player->weaponTier == 3)
 			{
 				button->m_description = "Fully Upgraded";
 				button->m_price = 666;
