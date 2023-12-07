@@ -2,6 +2,7 @@
 #include "EntityID.h"
 
 //void RandomPosition(EntityID& entity, const int& index);
+void DestroyEntity(EntityID& entity, const int& index);
 
 //Events for any entity capable of being attacked
 void BeginHit(EntityID& entity, const int& index);
@@ -167,3 +168,6 @@ void SetGameSpeedDefault(EntityID& entity, const int& index);
 //Game level
 void EventLoadNextLevel(EntityID& entity, const int& index);
 void EventShopLoadNextLevel(EntityID& entity, const int& index);
+
+//UI
+void CreateDamageNumber(EntityID& entity, const int& index);

@@ -10,12 +10,42 @@
 #include "Levels/LevelHelper.h"
 #include <cmath>
 #include <string>
-
+#include "CombatFunctions.h"
 #include "UIComponents.h"
 #include "UIRenderer.h"
 
 #define SOFT_COLLISION_FACTOR 0.25f
 
+void DamageNumbers(EntityID& attacker, EntityID& defender)
+{
+	/*if (currentStates & InMainMenu)
+	{
+		return;
+	}*/
+	StatComponent* attackerStats = registry.GetComponent<StatComponent>(attacker);
+	StatComponent* defenderStats = registry.GetComponent<StatComponent>(defender);
+	float preHealth = (float)defenderStats->GetHealth();
+	float finalDamage = Combat::CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
+	//Do the damage numbers here
+	float damage = defenderStats->overkill + preHealth;//Calc damage done
+	float time = 0.25f;//Scale time to let player see bigger numbers for longer
+	unsigned damageCondition = (unsigned)damage;
+	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 16);
+}
+
+void DamageNumbers(EntityID& defender, float damage)
+{
+	/*if (currentStates & InMainMenu)
+	{
+		return;  
+	}*/
+	StatComponent* defenderStats = registry.GetComponent<StatComponent>(defender);
+	float preHealth = (float)defenderStats->GetHealth();
+	//Do the damage numbers here
+	float time = 0.25f;//Scale time to let player see bigger numbers for longer
+	unsigned damageCondition = (unsigned)damage;
+	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 16);
+}
 
 void NoCollision(OnCollisionParameters &params)
 {
@@ -178,6 +208,7 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	{
 		//Screen shaking
 		int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+		
 	}
 
 	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
@@ -429,6 +460,7 @@ void DashCollision(OnCollisionParameters& params)
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 
+
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
@@ -460,6 +492,7 @@ void AttackCollision(OnCollisionParameters& params)
 
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
+
 
 	//Deal damage to the defender and make their model flash red
 	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
@@ -547,6 +580,10 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 	{
 		return;
 	}
+	RemoveHitbox(params.entity1, 0);
+	RemoveHitbox(params.entity1, 1);
+	
+
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 

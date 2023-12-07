@@ -48,6 +48,8 @@ void PAIN_MIRROR::Retaliation(void* data)
 	// The damage
 	float damage = ((input->damage + input->flatAdd) * input->incMult) * PAIN_MIRROR_RETURN_FRACTION;
 
+	DamageNumbers(input->attacker, damage);
+
 	// Apply the damage
 	// Also causes static hazards to flash
 	Combat::HitFlat(input->attacker, owMyFistHurts, damage);

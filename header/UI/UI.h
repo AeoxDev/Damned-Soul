@@ -7,6 +7,13 @@ struct IWICImagingFactory;
 struct IDWriteTextFormat;
 struct ID2D1SolidColorBrush;
 
+enum BrushColor
+{
+	White,	//This is not black
+	Yellow, //Color Kinda Yellow IDK, maybe
+	MistyRose //Color: Pinkish, Whitish, Redish, Blueish, Greenish, Brushish
+};
+
 struct UI
 {
 	ID2D1Factory* m_Factory = nullptr;					//Used to create other Direct2D resources that you can use to draw or describe shapes. (basicly device)
@@ -14,6 +21,8 @@ struct UI
 	IDWriteFactory* m_WriteFactory = nullptr;			//Used to create all subsequent DirectWrite objects
 	IWICImagingFactory* m_ImagingFactory = nullptr;		//Exposes methods used to create components for the Windows Imaging Component (WIC) such as decoders, encoders and pixel format converters.
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
+	ID2D1SolidColorBrush* m_YellowBrush = nullptr;			//Elliot: Yellow Brush
+	ID2D1SolidColorBrush* m_MistyRoseBrush = nullptr;			//Elliot: Pinkish, Whitish, Redish, Blueish, Greenish, Brushish, Brush
 	int RenderSlot = -1;
 
 	void BeginFrame();
@@ -30,7 +39,7 @@ struct UI
 	ID2D1RenderTarget*& GetRenderTarget();
 	IDWriteFactory*& GetWriteFactory();
 	IWICImagingFactory*& GetImagingFactory();
-	ID2D1SolidColorBrush*& GetBrush();
+	ID2D1SolidColorBrush*& GetBrush(BrushColor brush = White);
 };
 
 extern UI ui;

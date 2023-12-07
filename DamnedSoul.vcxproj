@@ -204,6 +204,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\EventFunctions\UIEventFunctions.cpp" />
     <ClCompile Include="source\Shatter.cpp" />
     <ClCompile Include="source\AntiAlias.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />

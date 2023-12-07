@@ -39,6 +39,13 @@ void UI::Setup()
 
 	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(255.0f, 255.0f, 255.0f), &m_Brush);
 	assert(!FAILED(hr));
+	
+	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 0.225f), &m_YellowBrush);
+	assert(!FAILED(hr));
+	
+	//hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 0.894f, 0.882f), &m_MistyRoseBrush);
+	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(0.69f, 0.769f, 0.869f), &m_MistyRoseBrush);
+	assert(!FAILED(hr));
 
 	hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)&m_ImagingFactory);
 	assert(!FAILED(hr));
@@ -50,6 +57,8 @@ void UI::Release()
 	m_RenderTarget->Release();
 	m_WriteFactory->Release();
 	m_Brush->Release();
+	m_MistyRoseBrush->Release();
+	m_YellowBrush->Release();
 	m_Factory->Release();
 }
 
@@ -103,7 +112,16 @@ IWICImagingFactory*& UI::GetImagingFactory()
 	return m_ImagingFactory;
 }
 
-ID2D1SolidColorBrush*& UI::GetBrush()
+ID2D1SolidColorBrush*& UI::GetBrush(BrushColor brush)
 {
+	switch (brush)
+	{
+	case White:
+		return m_Brush;
+	case Yellow:
+		return m_YellowBrush;
+	case MistyRose:
+		return m_MistyRoseBrush;
+	}
 	return m_Brush;
 }
