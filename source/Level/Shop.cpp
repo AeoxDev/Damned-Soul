@@ -212,7 +212,7 @@ void CreateSingleWindows()
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
 		0, // Note, hardcoded special case to handle this zero later in the code, based on its index!!!
-		5,
+		4,
 		//0,
 		//0,
 		10,
