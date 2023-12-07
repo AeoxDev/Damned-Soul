@@ -90,18 +90,18 @@ void LoadLevel4()
 	ttComp.positionZ = 119;
 	registry.AddComponent<TransformComponent>(lightholderTwo, ttComp);
 
-	registry.AddComponent<ParticleComponent>(lightholderThree, 10, 0, 3, 0, 1, 0, 10, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(lightholderThree, 10, 0, 3, 0, 1, 0, 8, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent tttComp;
-	tttComp.positionX = -168;
+	tttComp.positionX = -181;
 	tttComp.positionY = 0.5f;
-	tttComp.positionZ = 47;
+	tttComp.positionZ = 26;
 	registry.AddComponent<TransformComponent>(lightholderThree, tttComp);
 
-	registry.AddComponent<ParticleComponent>(lightholderForth, 10, 0, 3.5, 0, 0, 0, 19, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(lightholderForth, 10, 0, 3.5, 0, 0, 0, 24, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent fComp;
-	fComp.positionX = 69;
-	fComp.positionY = 0.5f;
-	fComp.positionZ = 20.5;
+	fComp.positionX = 73;
+	fComp.positionY = 1.5f;
+	fComp.positionZ = 19.0f;
 	registry.AddComponent<TransformComponent>(lightholderForth, fComp);
 
 	stateManager.stage = stage;

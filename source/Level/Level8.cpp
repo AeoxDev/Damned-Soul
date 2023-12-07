@@ -17,7 +17,7 @@ void LoadLevel8()
 {
 	float redAdd = 0.0f;
 	float greenAdd = 0.0f;
-	float blueAdd = 0.0f;
+	float blueAdd = 0.07f;
 	float redMult = 1.0f;
 	float greenMult = 1.0f;
 	float blueMult = 1.0f;

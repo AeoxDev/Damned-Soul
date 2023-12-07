@@ -48,12 +48,13 @@ float4 main(GS_OUT input) : SV_TARGET
         if (pattern == 0)
         {
             image = AniRow(input, 0.0f, false); 
+            image.rgb = image.rgb * input.rgb;
         }
-        else if (pattern == 9) //4x4 sections, Top Row and Second Row //pattern = 9 (FIRE)
+        else if (pattern == 9 /*|| pattern == 8*/) //4x4 sections, Top Row and Second Row //pattern = 9 (FIRE)
         {
             image = AniRow(input, 0.0f, false); 
         }
-        else if (pattern == 3 || pattern == 10 || pattern == 11) //4x4 sections, Top Row and Second Row 
+        else if (pattern == 3 || pattern == 8 ||pattern == 10 || pattern == 11) //4x4 sections, Top Row and Second Row 
         {
             image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4,  0.75 + input.uv.y / 4));
 

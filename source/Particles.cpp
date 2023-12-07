@@ -248,13 +248,13 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	if (  data->metadata[metadataSlot].pattern == FIRE || data->metadata[metadataSlot].pattern == BOILING)
+	if (  data->metadata[metadataSlot].pattern == FIRE || data->metadata[metadataSlot].pattern == BOILING )
 		SetTexture(flipBookTextureFire, BIND_PIXEL, 6); 
 	else if (data->metadata[metadataSlot].pattern == SPARK || data->metadata[metadataSlot].pattern == SMOKE)
 		SetTexture(flipBookTextureSpark, BIND_PIXEL, 6); 
-	else if (data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == ICETHROWER)
+	else if (data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == CIRCLE_FIELD)
 		SetTexture(flipBookTextureSmoke/*textureParticle*/, BIND_PIXEL, 6);
-	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER)
+	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER || data->metadata[metadataSlot].pattern == ICETHROWER)
 		SetTexture(textureParticle, BIND_PIXEL, 6);
 	else
 		SetTexture(noTextureParticle, BIND_PIXEL, 6);
@@ -399,7 +399,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
 	data->metadata[metadataSlot].morePositionInfo.x = 99999.f; data->metadata[metadataSlot].morePositionInfo.y = 99999.f;
-	data->metadata[metadataSlot].reset = false;
+	data->metadata[metadataSlot].reset = 0;;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -430,7 +430,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	}
 }
 
-ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, bool frostFire, bool expolding, ComputeShaders pattern)
+ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern)
 {
 	metadataSlot = FindSlot();
 	//Calculate how many groups are requiered to write to all particles
@@ -445,20 +445,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	data->metadata[metadataSlot].size = size;
 	data->metadata[metadataSlot].spawnPos.x = offsetX;	data->metadata[metadataSlot].spawnPos.y = offsetY;	data->metadata[metadataSlot].spawnPos.z = offsetZ;
 	data->metadata[metadataSlot].pattern = pattern;
-	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
 
-
-	if (frostFire)
-	{
-		data->metadata[metadataSlot].morePositionInfo.x = 1.f;
-
-	}
-	if (expolding)
-	{
-		data->metadata[metadataSlot].morePositionInfo.y = 1.f;
-	}
-
-	data->metadata[metadataSlot].reset = false;
+	data->metadata[metadataSlot].positionInfo.x = redValue; data->metadata[metadataSlot].positionInfo.y = greenValue; data->metadata[metadataSlot].positionInfo.z = blueValue;//hiejacked by rgb
+	data->metadata[metadataSlot].morePositionInfo.x = 99999.f; data->metadata[metadataSlot].morePositionInfo.y = 99999.f;
+	data->metadata[metadataSlot].reset = 0;;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -489,6 +479,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 	}
 }
 
+
 ParticleComponent::ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern)
 {
 	metadataSlot = FindSlot();
@@ -510,7 +501,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
 	data->metadata[metadataSlot].morePositionInfo.x = 99999.f;
-	data->metadata[metadataSlot].reset = false;
+	data->metadata[metadataSlot].reset = 0;;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -559,7 +550,7 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
 	data->metadata[metadataSlot].morePositionInfo.x = 99999.f;
-	data->metadata[metadataSlot].reset = false;
+	data->metadata[metadataSlot].reset = 0;;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
@@ -596,7 +587,8 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 		}
 	}
 }
-ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern)
+
+ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern)
 {
 	metadataSlot = FindSlot();
 	//Calculate how many groups are requiered to write to all particles
@@ -612,9 +604,9 @@ ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float
 	data->metadata[metadataSlot].spawnPos.x = x;	data->metadata[metadataSlot].spawnPos.y = y;	data->metadata[metadataSlot].spawnPos.z = z;
 	data->metadata[metadataSlot].pattern = pattern;
 
-	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
+	data->metadata[metadataSlot].positionInfo.x = redValue; data->metadata[metadataSlot].positionInfo.y = greenValue; data->metadata[metadataSlot].positionInfo.z = blueValue;
 	data->metadata[metadataSlot].morePositionInfo.x = 99999.f; data->metadata[metadataSlot].morePositionInfo.y = 99999.f;
-	data->metadata[metadataSlot].reset = false;
+	data->metadata[metadataSlot].reset = 0;;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 	// We need to find "amount" of particles free in the physical buffer
@@ -694,7 +686,7 @@ void ParticleComponent::Release()
 	//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
 	
 	// Declare to the compute shader that this components particles is to be reset
-	data->metadata[metadataSlot].reset = true;
+	data->metadata[metadataSlot].reset = 1;
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 
 	// Prepare dispatch
@@ -720,7 +712,7 @@ void ParticleComponent::Release()
 	data->metadata[metadataSlot].start = 0.f; data->metadata[metadataSlot].end = 0.f;
 	data->metadata[metadataSlot].positionInfo.x = 99999.f; data->metadata[metadataSlot].positionInfo.y = 99999.f; data->metadata[metadataSlot].positionInfo.z = 99999.f;
 	data->metadata[metadataSlot].morePositionInfo.x = 99999.f; data->metadata[metadataSlot].morePositionInfo.y = 99999.f;
-	data->metadata[metadataSlot].reset = false;
+	data->metadata[metadataSlot].reset = 0;;
 
 	UpdateConstantBuffer(renderStates[Particles::RenderSlot].constantBuffer, data->metadata);
 

@@ -467,8 +467,10 @@ void SpawnCutsceneParticles(EntityID& entity, const int& index)
 		float  cornersX[3] = { 0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
 		float  cornersZ[3] = { -1.0f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange };//Counter clockwise
 		registry.AddComponent<ParticleComponent>(entity, 1.0f, cornersX[0], 0.5f,
-			0.0f, 2.5f, 7.5f, 0.0f, //Z offset fix
-			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, FLAMETHROWER);
+			0.0f, 1.7f, 7.5f, 0.0f, //Z offset fix
+			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 
+			2.f, 0.10f, .0f,//rgb
+			2048, FLAMETHROWER); // changed 
 	}
 }
 

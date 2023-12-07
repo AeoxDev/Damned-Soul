@@ -276,7 +276,9 @@ bool TempBossBehaviourSystem::Update()
 						tempBossComponent->isDazed = true;
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
-						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.f, 0.f, 0.f, 1.f, 200, PULSE);
+						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.5f, 0.f, 0.f, 1.f,
+						1.5f,0.60f,0.10f,//rgb
+						200, PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand
 					}
 

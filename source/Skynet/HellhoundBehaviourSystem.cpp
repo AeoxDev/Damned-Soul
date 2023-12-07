@@ -267,14 +267,14 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 		//Temp: Create point light to indicate that we're going to do flamethrower
 	if (!hc->isEmpoweredDoggo)
 	{
-		CreateSpotLight(dog, 5.0f, 0.0f, 0.0f,
+		CreateSpotLight(dog, 6.0f, 0.0f, 0.0f,
 			0.0f, 1.0f, -0.25f,
 			hc->currentShootingAttackRange + 1.0f, 7.0f,
 			0.0f, 0.0f, -1.0f, 33.0f);
 	}
 	else
 	{
-		CreateSpotLight(dog, 0.0f, 0.0f, 5.0f,
+		CreateSpotLight(dog, 0.0f, 0.0f, 6.0f,
 			0.0f, 1.0f, -0.25f,
 			hc->currentShootingAttackRange + 1.0f, 7.0f,
 			0.0f, 0.0f, -1.0f, 33.0f);
@@ -295,14 +295,18 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 		if (!hc->isEmpoweredDoggo)
 		{
 			registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
-				0.0f, 2.5f, 7.5f, 0.0f,
-				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, FLAMETHROWER);
+				0.0f, 1.7f, 7.5f, 0.0f,
+				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2],
+				2.f, 0.10f, .0f,
+				2048, FLAMETHROWER);
 		}
 		else
 		{
 			registry.AddComponent<ParticleComponent>(dog, 1.0f, cornersX[0], 0.5f,
-				0.0f, 2.5f, 7.5f, 0.0f,
-				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, ICETHROWER);
+				0.0f, 1.7f, 7.5f, 0.0f,
+				cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2],
+				0.0f, 1.6f, 1.5f,
+				2048, ICETHROWER);
 		}
 	}
 	else

@@ -55,15 +55,16 @@ struct ParticleComponent
 	int FindSlot();
 
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, ComputeShaders pattern);
-	// Overload for frostfire and exploding weapon 
-	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, bool frostFire, bool expolding, ComputeShaders pattern);
+	// Overload for RGB
+	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern);
+
 	// Overload for VFX 
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern);
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, const char* filename, VFX_PATTERN vfxPattern);
 
 	// Overload for FlameThrower
 	// Flamethrower does not use max max distance therefore we store one of the triangles vertices x-position there.
-	ParticleComponent(float seconds, float v0X, float size, float offsetX, float offsetY, float offsetZ, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, int amount, ComputeShaders pattern);
+	ParticleComponent(float seconds, float v0X, float size, float offsetX, float offsetY, float offsetZ, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern);
 	~ParticleComponent();
 
 
