@@ -198,6 +198,9 @@ int StateManager::Setup()
 	systems.push_back(new OnClickSystem());
 	systems.push_back(new OnHoverSystem());
 
+	// After all render passes, reset model colors
+	systems.push_back(new ColorResetSystem());
+
 	// Stat Calculatoins
 	systems.push_back(new StatCalcSystem()); // Should be before behaviours and controllers so that the correct stats are applied
 
