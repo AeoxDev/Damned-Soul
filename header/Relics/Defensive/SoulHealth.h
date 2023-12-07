@@ -13,6 +13,8 @@ namespace SOUL_HEALTH
 	// Consume souls at the start of each level
 	void Consume(void* input);
 
+	void CompensateSoulLoss(void* data);
+
 	// The modify health function
 	void ModifyHealth(void* data);
 }

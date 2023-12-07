@@ -11,9 +11,6 @@ using namespace DirectX;
 
 struct MouseComponent
 {
-	XMMATRIX inversePerspective;
-	XMMATRIX inverseOrthographic;
-	XMMATRIX inverseView;
 	float directionX, directionZ;//Direction from the entitites transform to the mouse (facing direction)
 };
 

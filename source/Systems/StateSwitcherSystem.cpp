@@ -245,9 +245,6 @@ bool StateSwitcherSystem::Update()
 		}
 		
 	}
-
-	
-
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
@@ -259,6 +256,11 @@ bool StateSwitcherSystem::Update()
 		}
 		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop) && !(currentStates & State::InMainMenu))
 		{
+			if (stateManager.gate.index != -1)
+			{
+				registry.DestroyEntity(stateManager.gate);
+				stateManager.gate.index = -1;
+			}
 			SetGodModePortal(false);
 			playersComp->portalCreated = true;
 			if (stateManager.activeLevel == stateManager.finalLevel)//Final stage
@@ -270,8 +272,7 @@ bool StateSwitcherSystem::Update()
 			else
 			{
 				EntityID portal = registry.CreateEntity();
-				AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-
+				CreatePortal(portal, 0);//Create portal immediately instead of using a timed event.
 			}
 
 			//If it's on the split boss stage play a voice line from the player.

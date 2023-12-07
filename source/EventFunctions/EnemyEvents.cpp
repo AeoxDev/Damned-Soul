@@ -26,6 +26,9 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
 	RemoveHitbox(entity, 2);
+	RemoveHitbox(entity, 3);
+	RemoveHitbox(entity, 4);
+	RemoveHitbox(entity, 5);//Remove special case for hellhound
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;
@@ -111,7 +114,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health * 1.5f, bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health, bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -149,6 +152,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 1)
 	{
@@ -156,21 +160,25 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RLeg.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 2)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 3)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 4)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	
 
@@ -305,7 +313,7 @@ void SplitBoss(EntityID& entity, const int& index)
 	}
 	for (int i = 0; i < 3; ++i)
 	{
-		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
+		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 10.f, 20.f);
 		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ, 0);
 		CalculateGlobalMapValuesImp(valueGrid);
 	}

@@ -484,6 +484,7 @@ bool MinotaurBehaviourSystem::Update()
 		TransformDecelerate(enemyEntity);
 	}
 	
-	free(valueGrid);
+	if (valueGrid != nullptr)
+		free(valueGrid);
 	return true;
 }

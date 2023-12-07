@@ -137,6 +137,9 @@ void StageIntroFallUnskippable(EntityID& entity, const int& index);
 void SkeletonIntroScene(EntityID& entity, const int& index);
 void HellhoundIntroScene(EntityID& entity, const int& index);
 void ImpIntroScene(EntityID& entity, const int& index);
+void ImpCutscenePoof(EntityID& entity, const int& index);
+void EventRemoveParticle(EntityID& entity, const int& index);
+
 void SplitBossIntroScene(EntityID& entity, const int& index);
 void SplitBossLevel8IntroScene(EntityID& entity, const int& index);
 void EyeIntroScene(EntityID& entity, const int& index);
