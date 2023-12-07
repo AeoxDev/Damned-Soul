@@ -73,7 +73,7 @@ void CreateDamageNumber(EntityID& entity, const int& index)
 	
 	if (stateManager.player.index == entity.index)
 	{
-		uiElement2->m_BaseText.m_brush = MistyRose;
+		uiElement2->m_BaseText.m_brush = LightSteelBlue;
 	}
 	else
 	{

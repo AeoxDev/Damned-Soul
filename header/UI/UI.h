@@ -11,7 +11,7 @@ enum BrushColor
 {
 	White,	//This is not black
 	Yellow, //Color Kinda Yellow IDK, maybe
-	MistyRose //Color: Pinkish, Whitish, Redish, Blueish, Greenish, Brushish
+	LightSteelBlue //Color: hot but not heavy; metallic. 69. Last letter in RGB-ish
 };
 
 struct UI
@@ -22,7 +22,7 @@ struct UI
 	IWICImagingFactory* m_ImagingFactory = nullptr;		//Exposes methods used to create components for the Windows Imaging Component (WIC) such as decoders, encoders and pixel format converters.
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;			//Elliot: Yellow Brush
-	ID2D1SolidColorBrush* m_MistyRoseBrush = nullptr;			//Elliot: Pinkish, Whitish, Redish, Blueish, Greenish, Brushish, Brush
+	ID2D1SolidColorBrush* m_LightSteelBlue = nullptr;			//Elliot: Not that heavy; metallic. 69. Last letter in RGB-ish
 	int RenderSlot = -1;
 
 	void BeginFrame();
