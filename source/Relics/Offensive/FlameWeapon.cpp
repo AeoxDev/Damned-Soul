@@ -50,6 +50,7 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 	if (nullptr == debuff)
 	{
 		registry.AddComponent<DebuffComponent>(input->defender, DamageOverTime::BURN, newDoT);
+		registry.AddComponent<ParticleComponent>(input->defender, FLAME_WEAPON_DOT_DURATION, 100.f, 1.0f, 0.0f, 5.0f, 0.0f, 3, ComputeShaders::ON_FIRE);
 	}
 	else if (debuff->m_dots[DamageOverTime::BURN].LessThan(newDoT))
 	{

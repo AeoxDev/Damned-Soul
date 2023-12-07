@@ -249,7 +249,7 @@ void Particles::PrepareParticlePass(int metadataSlot)
 
 	SetRasterizerState(renderStates[RenderSlot].rasterizerState);
 
-	if (  data->metadata[metadataSlot].pattern == FIRE || data->metadata[metadataSlot].pattern == BOILING)
+	if (  data->metadata[metadataSlot].pattern == FIRE || data->metadata[metadataSlot].pattern == BOILING || data->metadata[metadataSlot].pattern == ON_FIRE)
 		SetTexture(flipBookTextureFire, BIND_PIXEL, 6); 
 	else if (data->metadata[metadataSlot].pattern == SPARK || data->metadata[metadataSlot].pattern == SMOKE)
 		SetTexture(flipBookTextureSpark, BIND_PIXEL, 6); 

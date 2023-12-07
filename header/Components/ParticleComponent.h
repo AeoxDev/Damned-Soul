@@ -4,7 +4,7 @@
 enum ComputeShaders
 {
 	SMOKE = 0,
-	ARCH = 1,
+	ON_FIRE = 1,
 	EXPLOSION = 2,
 	FLAMETHROWER = 3,
 	IMPLOSION = 4,
