@@ -14,6 +14,7 @@
 #include "UIComponents.h"
 #include "UIRenderer.h"
 
+
 #define SOFT_COLLISION_FACTOR 0.25f
 
 void DamageNumbers(EntityID& attacker, EntityID& defender)
@@ -45,6 +46,29 @@ void DamageNumbers(EntityID& defender, float damage)
 	float time = 0.25f;//Scale time to let player see bigger numbers for longer
 	unsigned damageCondition = (unsigned)damage;
 	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 16);
+}
+
+void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
+{
+	//Elliot: Add a counter for damage over time here
+	StatComponent* stats = registry.GetComponent<StatComponent>(defender);
+	float damageOverTime = effectiveDPS * GetDeltaTime();
+	stats->damageOverTime += damageOverTime;
+	float damageNumber = 2.0f;
+	if (stats->damageOverTime > 2.0f)
+	{
+		float time = 0.125f;//Scale time to let player see bigger numbers for longer
+		unsigned damageCondition = (unsigned)damageNumber;
+		AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, damageCondition, 16);
+		stats->damageOverTime -= 2.0f;
+	}
+}
+
+void DamageNumbersDOTRemainder(EntityID& defender)
+{
+	StatComponent* stats = registry.GetComponent<StatComponent>(defender);
+	DamageNumbers(defender, stats->damageOverTime);
+	stats->damageOverTime = 0.0f;
 }
 
 void NoCollision(OnCollisionParameters &params)

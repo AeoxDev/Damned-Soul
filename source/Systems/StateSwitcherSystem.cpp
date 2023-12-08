@@ -10,6 +10,7 @@
 #include "UIComponents.h"
 #include "UIRenderer.h"
 #include "MemLib\ML_String.hpp"
+#include "CombatFunctions.h"
 #include <string>
 
 int nrEnemies = 0;
@@ -21,6 +22,7 @@ int GetNrEnemies()
 
 void StartPlayerDeath(EntityID& entity, const int& index)
 {
+	ResetSquashStretch(entity, index);
 	AnimationComponent* animComp = registry.GetComponent<AnimationComponent>(entity);
 	if (animComp != nullptr)
 	{
@@ -230,6 +232,11 @@ bool StateSwitcherSystem::Update()
 					model2->shared.hasOutline = false;
 				}
 
+				if (registry.GetComponent<DebuffComponent>(entity) != nullptr)
+				{
+					DamageNumbersDOTRemainder(entity);
+					registry.RemoveComponent<DebuffComponent>(entity);
+				}
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, shatterTimeFactor, ShatterEnemy);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, shatterTimeFactor + 0.5f, RemoveEnemy);
 			}

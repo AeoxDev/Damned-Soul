@@ -4,6 +4,8 @@
 
 void DamageNumbers(EntityID& attacker, EntityID& defender);
 void DamageNumbers(EntityID& defender, float damage);
+void DamageNumbersDOT(EntityID& defender, float damageOverTime);
+void DamageNumbersDOTRemainder(EntityID& defender);
 
 namespace Combat
 {
