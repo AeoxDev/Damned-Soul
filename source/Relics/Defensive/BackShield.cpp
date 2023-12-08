@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 #include "DeltaTime.h"
+#include <cmath>
 
 #define BACK_SHIELD_COOLDOWN (2.f)
 
@@ -15,7 +16,7 @@ EntityID BACK_SHIELD::_OWNER;
 const char* BACK_SHIELD::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You get 100% reduction to damage dealt by an attack hitting your back up to once every %.1lf seconds", 
+	sprintf_s(temp, "You get 100%% reduction to damage dealt by an attack hitting your back up to once every %.1lf seconds", 
 		BACK_SHIELD_COOLDOWN);
 #pragma warning(suppress : 4172)
 	return temp;
@@ -69,12 +70,16 @@ void BACK_SHIELD::NullBackHit(void* data)
 	auto aTrans = registry.GetComponent<TransformComponent>(input->attacker);
 	auto dTrans = registry.GetComponent<TransformComponent>(input->defender);
 
-	float dx, dy, dz;
+	float dx, dy, dz, dl_inv;
 	dx = dTrans->positionX - aTrans->positionX;
 	dy = dTrans->positionY - aTrans->positionY;
 	dz = dTrans->positionZ - aTrans->positionZ;
+	dl_inv = 1.f / std::sqrtf(dx * dx + dy * dy + dz * dz);
+	dx *= dl_inv;
+	dy *= dl_inv;
+	dz *= dl_inv;
 
-	float dotOfTrans = aTrans->facingX * dx + aTrans->facingY * dy + aTrans->facingZ * dz;
+	float dotOfTrans = dTrans->facingX * dx + dTrans->facingY * dy + dTrans->facingZ * dz;
 
 	float dt = GetDeltaTime();
 

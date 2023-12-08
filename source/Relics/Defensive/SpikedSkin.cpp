@@ -43,9 +43,6 @@ void SPIKED_SKIN::Retaliation(void* data)
 	// The person who's fist hurts a lot
 	StatComponent* owMyFistHurts = registry.GetComponent<StatComponent>(input->attacker);
 
-	// The damage
-	float damage = ((input->damage + input->flatAdd) * input->incMult) * SPIKED_SKIN_RETURN_FRACTION;
-
 	RelicInput::OnDamageCalculation reflected = GetModifiers(input->defender, input->attacker);
 	reflected = RetaliationCombination(*input, reflected, SPIKED_SKIN_RETURN_FRACTION);
 	reflected.cap = owMyFistHurts->GetHealth();
@@ -53,7 +50,5 @@ void SPIKED_SKIN::Retaliation(void* data)
 	DamageNumbers(input->attacker, reflected.CollapseNoCap());
 
 	// Apply the damage
-	// Also causes static hazards to flash
-	
 	Combat::HitFlat(input->attacker, owMyFistHurts, reflected.CollapseDamage());
 }

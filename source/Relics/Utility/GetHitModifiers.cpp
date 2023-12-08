@@ -15,7 +15,7 @@ RelicInput::OnDamageCalculation GetModifiers(EntityID attacker, EntityID defende
 
 RelicInput::OnDamageCalculation RetaliationCombination(const RelicInput::OnDamageCalculation& original, const RelicInput::OnDamageCalculation& roleReversed, const float fraction)
 {
-	RelicInput::OnDamageCalculation retVal = original;
+	RelicInput::OnDamageCalculation retVal = roleReversed;
 	retVal.damage = original.damage * fraction;
 	retVal.flatAdd += original.flatAdd;
 	retVal.incMult *= original.incMult;
