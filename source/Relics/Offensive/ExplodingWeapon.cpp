@@ -62,6 +62,7 @@ void EXPLODING_WEAPON::Explosion(void* data)
 		if (entity.index != input->defender.index && DistanceBetweenTransforms(ownerTrans, otherTrans) < EXPLODING_WEAPON_AOE_SIZE)
 		{
 			// Flat damage
+			DamageNumbers(entity, explosionDamage);
 			Combat::HitFlat(entity, registry.GetComponent<StatComponent>(entity), explosionDamage);
 		}
 	}
