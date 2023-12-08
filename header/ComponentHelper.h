@@ -201,6 +201,7 @@ public:
 	int weaponTier = 1;
 	bool portalCreated = false;
 	bool isDashing = false;
+	bool healFreebie = true;
 
 	//New additions because of player attack chains
 	float timeSinceLastAttack = -1.0f;

@@ -234,7 +234,20 @@ void UIImage::SetImage(const char* filepath, bool ignoreRename)
 		SetupImage(filepath, m_Bitmap);
 
 		if (!ignoreRename)
-			m_fileName = _strdup(filepath);
+			m_fileName = filepath;
+
+		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
+	}
+}
+
+void UIImage::SetHoverImage(const char* filepath, bool ignoreRename)
+{
+	if (filepath != "")
+	{
+		SetupImage(filepath, m_Bitmap);
+
+		if (!ignoreRename)
+			m_hoverFileName = filepath;
 
 		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
 	}
@@ -262,6 +275,7 @@ void UIImage::Release()
 	}
 
 	m_fileName.~ML_String();
+	m_hoverFileName.~ML_String();
 }
 
 void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale, 
@@ -325,7 +339,10 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 	else
 		m_Images[m_Images.size() - 1].SetImage("TempBaseImage");
 
-	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale);
+	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale, 
+		m_Images[m_Images.size() - 1].baseUI.GetRotation(), 
+		m_Images[m_Images.size() - 1].baseUI.GetVisibility(), 
+		m_Images[m_Images.size() - 1].baseUI.GetOpacity());
 
 	if (translateText && m_BaseText.baseUI.GetVisibility())
 	{

@@ -26,6 +26,7 @@ namespace UIFunctions
 
 		void SetMainMenu(void* args, int a);
 
+		void SetPause(void* args, int a);
 	}
 
 	namespace Settings
@@ -41,6 +42,8 @@ namespace UIFunctions
 		void SetFullscreen(void* args, int a);
 
 		void SwitchTimer(void* args, int a);
+
+		void SwitchFPS(void* args, int a);
 
 		namespace Volume
 		{

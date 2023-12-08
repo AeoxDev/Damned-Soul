@@ -46,7 +46,6 @@ struct StateManager
 	EntityID cutsceneEnemy;
 	EntityID hitboxVis;
 	EntityID naviagtion;
-	EntityID enemyCounter;
 
 	EntityID cursor;
 	int cursorMode = CursorNeutral;

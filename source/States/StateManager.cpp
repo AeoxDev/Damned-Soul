@@ -202,7 +202,7 @@ int StateManager::Setup()
 
 #endif // _DEBUG
 
-	systems.push_back(new UIRunTimeSystem());
+	systems.push_back(new UIGameSystem());
 	systems.push_back(new UIRenderSystem());
 	
 	//Input based CPU 

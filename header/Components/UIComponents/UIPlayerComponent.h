@@ -7,10 +7,15 @@ struct UIPlayerRelicsComponent
 {
 	const int maxRelics = MAX_DISPLAY_RELICS;
 	int currentRelics = 0;
-	
+
 	const RelicData* relics[MAX_DISPLAY_RELICS] = {};
 
-	DSINT2 gridPos = { 0, 0 };
-
 	UIPlayerRelicsComponent() = default;
+};
+
+struct UIPlayerSoulsComponent
+{
+	int value = -1;
+	int spentThisShop = 0;
+	int spentThisShopOnRelics = 0;
 };
