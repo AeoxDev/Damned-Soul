@@ -6,7 +6,7 @@
 
 EntityID THRILL_SEEKER::_OWNER;
 
-#define THRILL_SEEKER_RATIO (0.75f)
+#define THRILL_SEEKER_RATIO (0.5f)
 
 const char* THRILL_SEEKER::Description()
 {

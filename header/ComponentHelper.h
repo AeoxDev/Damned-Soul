@@ -102,6 +102,8 @@ public:
 // Defensive Stats
 	// Get max health
 	int64_t GetMaxHealth() const;
+	// Get Bonus Health
+	int64_t GetBonusHealth() const;
 	// Get current health
 	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
@@ -178,6 +180,9 @@ private:
 	int souls = 0;
 	int totalSouls = 0;
 
+	// Private
+	float m_chargeRate = 1.f;
+
 	// Private dash variables
 	int m_remainingDashes = 1;
 	int m_baseDashes = 1;
@@ -212,6 +217,11 @@ public:
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
 	int GetTotalSouls() const;
+
+	// Update the speed at which your charge attack charges
+	void UpdateBonusChargeRate(const float delta);
+	// Get the charge rate of the player's charge attack
+	float GetChargeRate() const;
 
 	// Update how much additional dash distance the player get
 	void UpdateBonusDashScaling(const float delta);
