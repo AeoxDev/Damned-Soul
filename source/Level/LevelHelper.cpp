@@ -433,7 +433,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<GlowComponent>(hazard, acidGlowRed, acidGlowGreen, acidGlowBlue);
 			AddStaticHazard(hazard, HAZARD_ACID);
 		}
-		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.6f, 0.6f, 0.61f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
 		portalGlow = registry.AddComponent<GlowComponent>(stateManager.gateVisual, 0.6f, 0.9f, 0.6f);	// Portal glow
@@ -467,7 +467,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<GlowComponent>(hazard, acidGlowRed, acidGlowGreen, acidGlowBlue);
 			AddStaticHazard(hazard, HAZARD_ACID);
 		}
-		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.6f, 0.6f, 0.61f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
@@ -479,7 +479,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
 		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV9Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.55f, 0.55f, 0.60f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
@@ -1408,6 +1408,13 @@ void ReloadPlayerNonGlobals()
 {
 	if (registry.GetComponent<PlayerComponent>(stateManager.player) == nullptr)
 		return; //Ain't no way we doing this function if player doesn't exist yet
+
+	ParticleComponent* particles = registry.GetComponent<ParticleComponent>(stateManager.player);
+	if (particles != nullptr)
+	{
+		particles->Release();
+		registry.RemoveComponent<ParticleComponent>(stateManager.player);
+	}
 
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)

@@ -17,7 +17,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
     int amount = meta[blockID.y].end - meta[blockID.y].start;
     int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     
-    if (index < meta[blockID.y].start || index > meta[blockID.y].end)
+    if (index < meta[blockID.y].start || index > meta[blockID.y].end || meta[blockID.y].reset == 1)
         return;
 
     
@@ -159,6 +159,12 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
         particle.position = startPosition;
         particle.time = 0.f;
     }
+    else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    {
+        particle.time = meta[index].deltaTime * meta[blockID.y].life;
+        
+
+    }
             
     if (DTid.x % 2 == 1)
         particle.position.x = particle.position.x - (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
@@ -167,9 +173,17 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
 
     particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + meta[One_OneHundo].deltaTime) * dt;
     
-    particle.rgb.r = 0.60f;
-    particle.rgb.g = 0.60f;
-    particle.rgb.b = 0.60f;
+    //particle.rgb.r = 0.60f;
+    //particle.rgb.g = 0.60f;
+    //particle.rgb.b = 0.60f;
+    
+    if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
+    {
+        particle.rgb.r = meta[blockID.y].positionInfo.x;
+        particle.rgb.g = meta[blockID.y].positionInfo.y;
+        particle.rgb.b = meta[blockID.y].positionInfo.z;
+   
+    }
 
     outputParticleData[index] = particle;
 }
@@ -244,15 +258,22 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
         particle.size = 0.5f;
     }
 
+    if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
+    {
+        particle.rgb.r = meta[blockID.y].positionInfo.x;
+        particle.rgb.g = meta[blockID.y].positionInfo.y;
+        particle.rgb.b = meta[blockID.y].positionInfo.z;
+   
+    }
     
-    if (meta[blockID.y].pattern == 11) //Ice ice baby
-    {
-        particle.rgb = float3(.0f, .75f, .95f);
-    }
-    else
-    {
-        particle.rgb = float3(1.f, 0.10f, .0f);
-    }
+    //if (meta[blockID.y].pattern == 11) //Ice ice baby
+    //{
+    //    particle.rgb = float3(.0f, .75f, .95f);
+    //}
+    //else
+    //{
+    //    particle.rgb = float3(1.f, 0.10f, .0f);
+    //}
     
     outputParticleData[index] = particle;
 }
@@ -290,9 +311,17 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.position.x = (2 * alpha + beta + 2 * gamma);
     particle.position.z = (alpha + 2 * beta - gamma);
     
-    particle.rgb.r = 0.0f;
-    particle.rgb.g = 0.0f;
-    particle.rgb.b = 1.0f;
+    //particle.rgb.r = 0.0f;
+    //particle.rgb.g = 0.0f;
+    //particle.rgb.b = 1.0f;
+    
+    if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
+    {
+        particle.rgb.r = meta[blockID.y].positionInfo.x;
+        particle.rgb.g = meta[blockID.y].positionInfo.y;
+        particle.rgb.b = meta[blockID.y].positionInfo.z;
+   
+    }
         
     outputParticleData[index] = particle;
 }
@@ -327,22 +356,29 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     //particle.size = meta[blockID.y].size * /*sqrt*/(1 - timeValue);
     
     particle.position.x = cos(piFraction) * radius;
-    particle.position.y = timeValue * indexValue;
+    particle.position.y = (timeValue * indexValue);//z mod
     particle.position.z = sin(piFraction) * radius;
     
-    if (meta[blockID.y].morePositionInfo.x > 0)
+    //if (meta[blockID.y].morePositionInfo.x > 0)
+    //{
+    //    particle.rgb.r = 0.0f;
+    //    particle.rgb.g = 0.0f;
+    //    particle.rgb.b = 1.0f;
+    //}
+    //else if (meta[blockID.y].morePositionInfo.y > 0)
+    //{
+    //    particle.rgb.r = 1.0f;
+    //    particle.rgb.g = 0.0f;
+    //    particle.rgb.b = 0.0f;
+    //}
+    
+    if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
     {
-        particle.rgb.r = 0.0f;
-        particle.rgb.g = 0.0f;
-        particle.rgb.b = 1.0f;
+        particle.rgb.r = meta[blockID.y].positionInfo.x;
+        particle.rgb.g = meta[blockID.y].positionInfo.y;
+        particle.rgb.b = meta[blockID.y].positionInfo.z;
+   
     }
-    else if (meta[blockID.y].morePositionInfo.y > 0)
-    {
-        particle.rgb.r = 1.0f;
-        particle.rgb.g = 0.0f;
-        particle.rgb.b = 0.0f;
-    }
-
       
     outputParticleData[index] = particle;
 }
@@ -406,9 +442,17 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
     particle.position.x = particle.position.x + (oscillationX + dirX) * dt;
     particle.position.z = particle.position.z + (oscillationZ + dirZ) * dt;
     
-    particle.rgb.r = 10.0f;
-    particle.rgb.g = 0.1f;
-    particle.rgb.b = 0.0f;
+    //particle.rgb.r = 10.0f;
+    //particle.rgb.g = 0.1f;
+    //particle.rgb.b = 0.0f;
+        
+    if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
+    {
+        particle.rgb.r = meta[blockID.y].positionInfo.x;
+        particle.rgb.g = meta[blockID.y].positionInfo.y;
+        particle.rgb.b = meta[blockID.y].positionInfo.z;
+   
+    }
         
     outputParticleData[index] = particle;
 }
@@ -522,16 +566,16 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     //???float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
     
     ////Time differense for variation in animation 
-    //if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
-    //{
-    //    particle.time = 0.0f;
-    //}
-    //else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
-    //{
-    //    particle.time = meta[index].deltaTime * meta[blockID.y].life;
+    ////if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
+    ////{
+    ////    particle.time = 0.0f;
+    ////}
+    ////else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    ////{
+    ////    particle.time = meta[index].deltaTime * meta[blockID.y].life;
         
 
-    //}
+    ////}
     
     ////Set specified Start position 
     //float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
@@ -547,6 +591,7 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
         //Time differense for variation in animation 
     if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
     {
+       
         particle.time = 0.0f;
     }
     else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
