@@ -3,15 +3,19 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
+#include <algorithm>
 
-#define LIFE_STEAL_HEALING_MULTIPLIER (0.1f)
+#define LIFE_STEAL_HEALING_MULTIPLIER (.08f)
+#define LIFE_STEAL_HEALING_CAP (.5f)
 
 EntityID LIFE_STEAL::_OWNER;
 
 const char* LIFE_STEAL::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You heal for %ld%% of the attack damage you deal", PERCENT(LIFE_STEAL_HEALING_MULTIPLIER));
+	sprintf_s(temp, "You heal for %ld%% of the attack damage you deal. This healing can not increase your health above %ld%% of your hit point maximum", 
+		PERCENT(LIFE_STEAL_HEALING_MULTIPLIER),
+		PERCENT(LIFE_STEAL_HEALING_CAP));
 #pragma warning(suppress : 4172)
 	return temp;
 }
@@ -38,7 +42,19 @@ void LIFE_STEAL::HealFromDamage(void* data)
 		// Get stats
 		StatComponent* stats = registry.GetComponent<StatComponent>(_OWNER);
 
-		// Heal from the damage dealt
-		stats->ApplyHealing(LIFE_STEAL_HEALING_MULTIPLIER * input->CollapseDamage());
+		//float hpMax = stats->GetMaxHealth();
+		double healingCap = LIFE_STEAL_HEALING_CAP;
+		double healing = LIFE_STEAL_HEALING_MULTIPLIER * input->CollapseDamage();
+		double healingFaction = healing / stats->GetMaxHealth();
+		double currentFraction = stats->GetHealthFraction();
+
+		if (currentFraction < healingCap)
+		{
+			healingFaction -= std::max(0., currentFraction + healingFaction - LIFE_STEAL_HEALING_CAP);
+
+			// Heal from the damage dealt
+			stats->ApplyHealing(((float)healingFaction) * stats->GetMaxHealth());//(LIFE_STEAL_HEALING_MULTIPLIER * input->CollapseDamage());
+		}
+
 	}
 }

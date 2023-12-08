@@ -21,6 +21,7 @@ struct ModelSharedData
 	float baseColorAdditiveRed = 0.0f, baseColorAdditiveGreen = 0.0f, baseColorAdditiveBlue = 0.0f;
 	float bcaR_temp = 0.0f, bcaG_temp = 0.0f, bcaB_temp = 0.0f;
 	bool hasOutline = false;
+	bool castShadow = true;
 
 	void ResetTempColor();
 	float GetRedMult() const;
@@ -50,7 +51,6 @@ struct ModelBonelessComponent
 
 	//float baseColorMultiplicativeRed = 1.0f, baseColorMultiplicativeGreen = 1.0f, baseColorMultiplicativeBlue = 1.0f;
 	//float baseColorAdditiveRed = 0.0f, baseColorAdditiveGreen = 0.0f, baseColorAdditiveBlue = 0.0f;
-	bool castShadow = true;
 };
 
 struct ModelSkeletonComponent

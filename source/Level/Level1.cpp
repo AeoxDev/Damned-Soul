@@ -43,16 +43,7 @@ void LoadLevel1()
 
 
 	SetGISpawnPosition(-0.0f, -0.0f);
-	//			 posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
-	//CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 1, 0.0f, 0.0, -1.0f);
 	ReloadPlayerNonGlobals();
-
-	/*SetupEnemy(EnemyType::skeleton, -239.f, 0.f, -25.f);
-	SetupEnemy(EnemyType::skeleton, -210.f, 0.f, -40.f);
-	SetupEnemy(EnemyType::skeleton, -212.0f, 0.f, 72.f);
-	SetupEnemy(EnemyType::skeleton, -200.0f, 0.f, 69.f);
-	SetupEnemy(EnemyType::skeleton, -122.0f, 0.f, 61.f);*/
-	//EntityID cutsceneEnemy = SetupEnemy(EnemyType::empoweredHellhound, -118.0f, 0.f, 96.f);
 
 
 	//// --- For particle testing, don't touch, Arian gets angy. --- //
@@ -143,10 +134,17 @@ void LoadLevel1()
 
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-	uiElement->Setup("TempShopTitle", "Time: 0", DSFLOAT2(0.8f, 0.8f));
-	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	uiElement->Setup("Exmenu/ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.8f));
+	uiElement->m_BaseImage.baseUI.SetVisibility(true);
 	if (!GetVisualTimer())
+	{
 		uiElement->m_BaseText.baseUI.SetVisibility(false);
+		uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	}
+		
+	
+
+	
 	
 
 	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);

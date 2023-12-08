@@ -2,6 +2,10 @@
 #include "EntityID.h"
 #include "Components.h"
 
+void DamageNumbers(EntityID& defender, float damage);
+void DamageNumbersDOT(EntityID& defender, float damageOverTime);
+void DamageNumbersDOTRemainder(EntityID& defender);
+
 namespace Combat
 {
 	// Provide a complete hit interaction between an attacker and a defender, applying damage, relics, and damage flashes

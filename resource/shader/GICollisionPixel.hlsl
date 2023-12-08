@@ -18,7 +18,7 @@ struct PS_IN
     float2 uv : UV;
 };
 
-uint4 main(PS_IN input) : SV_TARGET
+uint main(PS_IN input) : SV_TARGET
 {
     //Using an orthographic camera in the vertex stage:
     //Look at model and see whatever is above pre-determined value
@@ -56,5 +56,5 @@ uint4 main(PS_IN input) : SV_TARGET
 
         }
     }
-    return uint4(result, 0, 0, 0);
+    return result;
 }

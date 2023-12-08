@@ -92,13 +92,9 @@ bool UIShopSystem::Update()
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			StatComponent* player = registry.GetComponent<StatComponent>(stateManager.player);
 
-			ML_String damage = "Damage: ";
-			damage.append(std::to_string((int)player->GetBaseDamage()).c_str());
-			damage.append("+(");
-			damage.append(std::to_string((int)player->GetBonusDamage()).c_str());
-			damage.append(")");
-
-			uiElement->m_Texts[0].SetText(damage.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
+			char atkDmgStr[64] = "";
+			sprintf(atkDmgStr, "Damage: %.1lf + (%.1lf)", player->GetBaseDamage(), player->GetBonusDamage());
+			uiElement->m_Texts[0].SetText(atkDmgStr, uiElement->m_BaseImage.baseUI.GetBounds());
 
 			char atkSpdStr[64] = "";
 			sprintf(atkSpdStr, "Attack Speed: %.0lf%%", player->GetAttackSpeed() * 100.f);

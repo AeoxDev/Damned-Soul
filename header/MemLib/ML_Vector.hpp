@@ -2,7 +2,6 @@
 #include "MemLib\MemLib.hpp"
 #include <cinttypes>
 #include <stdexcept>
-//#include <vector>
 #define HEADER_ID 0b0101010101010101010
 
 template<typename _T>

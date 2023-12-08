@@ -52,7 +52,9 @@ void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAG
 		textFormat->Release();
 		textFormat = nullptr;
 	}
-	ui.GetWriteFactory()->CreateTextFormat(L"Arial", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &textFormat);
+	FLOAT fontSizeFactored = fontSize * 1.0f;
+	
+	ui.GetWriteFactory()->CreateTextFormat(L"Cascadia Code", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSizeFactored, L"", &textFormat);
 
 	textFormat->SetTextAlignment(textAlignment);
 	textFormat->SetParagraphAlignment(paragraphAlignment);
@@ -200,7 +202,8 @@ void UIText::Draw()
 		SetBounds(tempBounds, baseUI.m_CurrentBounds);
 
 		std::wstring textAsWString(m_Text.begin(), m_Text.end());
-		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), m_TextFormat, tempBounds, ui.GetBrush());
+		
+		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), m_TextFormat, tempBounds, ui.GetBrush(m_brush));
 	}
 }
 

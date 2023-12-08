@@ -6,7 +6,6 @@
 
 #include <d2d1helper.h>
 #include <dwrite.h>
-#include <vector>
 
 struct ID2D1Bitmap;
 
@@ -52,6 +51,8 @@ struct UIText
 
 	ML_String m_Text;
 	IDWriteTextFormat* m_TextFormat = nullptr;
+
+	BrushColor m_brush;
 
 	float m_fontSize = 20.0f;
 	DWRITE_TEXT_ALIGNMENT m_textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;

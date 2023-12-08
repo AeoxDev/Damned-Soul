@@ -209,7 +209,7 @@ void CreateSingleWindows()
 
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
-		1,
+		0, // Note, hardcoded special case to handle this zero later in the code, based on its index!!!
 		5,
 		//0,
 		//0,
@@ -238,7 +238,7 @@ void CreateSingleWindows()
 		{
 			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f });
 			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.0f }, { 1.0f, 1.0f }, false);
-			if (price[i] > 0)
+			if (price[i] > 0 || i == 0)
 			{
 				char Sprice[4];
 				sprintf(Sprice, "%i", price[i]);

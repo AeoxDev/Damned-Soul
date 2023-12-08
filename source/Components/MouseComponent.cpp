@@ -11,9 +11,6 @@ using namespace DirectX;
 
 struct MouseComponent
 {
-	XMMATRIX inversePerspective;
-	XMMATRIX inverseOrthographic;
-	XMMATRIX inverseView;
 	float directionX, directionZ;//Direction from the entitites transform to the mouse (facing direction)
 };
 
@@ -27,7 +24,6 @@ void MouseComponentUpdateDirection(EntityID entityID,const bool& isPerspective)
 {
 
 	//First get where on screen the mouse is in screenspace.
-	
 	float mousePosX = (float)mouseX / (float)sdl.WIDTH;//Down to 0.0f to 1.0f
 	mousePosX = (mousePosX - 0.5f) * 2.0f;//From -1.0f to 1.0f;
 	float mousePosY = (float)mouseY / (float)sdl.HEIGHT;
