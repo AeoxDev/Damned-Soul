@@ -31,10 +31,14 @@ void UIFollowTransform(EntityID& entity, const int& index)
 	XMFLOAT4 toFloat;
 	XMStoreFloat4(&toFloat, toScreenSpace);
 	float scalar = 0.2f * sinf(1.67f * (GetTimedEventElapsedTime(entity, index) / GetTimedEventTotalTime(entity, index)));
-	float dir = 0.2f * sinf((float)entity.index);
+	if (GetTimedEventCondition(entity, index) == 1)
+	{
+		scalar *= 0.3f;
+	}
+	float dir = 0.3f * sinf((float)entity.index);
 	float positionX = dir * scalar + toFloat.x / toFloat.w;
 	float positionY = scalar + 0.1f + (toFloat.y / toFloat.w);
-
+	
 	UIComponent* uiElement2 = registry.GetComponent<UIComponent>(entity);
 	uiElement2->m_BaseText.baseUI.SetPosition(DSFLOAT2(positionX, positionY));
 	//Change font color
@@ -68,8 +72,17 @@ void CreateDamageNumber(EntityID& entity, const int& index)
 	EntityID damageUI = registry.CreateEntity(ENT_PERSIST_LOWEST);
 	TransformComponent* transformComponent2 = registry.AddComponent<TransformComponent>(damageUI);
 	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(damageUI);
-	uiElement2->Setup("Exmenu/ButtonSmallHoverBloody", std::to_string(damage).c_str(), DSFLOAT2(positionX, positionY), DSFLOAT2(damageSize, damageSize), damageSize + 20.0f);
+	if (damage < 1)
+	{
+		uiElement2->Setup("SinglePixelImage", "<1", DSFLOAT2(positionX, positionY), DSFLOAT2(512.0f, 512.0f), damageSize + 20.0f);
+	}
+	else
+	{
+		uiElement2->Setup("SinglePixelImage", std::to_string(damage).c_str(), DSFLOAT2(positionX, positionY), DSFLOAT2(512.0f, 512.0f), damageSize + 20.0f);
+	}
+	
 	uiElement2->m_BaseImage.baseUI.SetVisibility(false);
+	uiElement2->m_BaseImage.Release();//Release image to save space
 	
 	if (stateManager.player.index == entity.index)
 	{
@@ -80,5 +93,5 @@ void CreateDamageNumber(EntityID& entity, const int& index)
 		uiElement2->m_BaseText.m_brush = Yellow;
 	}
 	FollowerComponent* follow = registry.AddComponent<FollowerComponent>(damageUI, entity);
-	AddTimedEventComponentStartContinuousEnd(damageUI, 0.0f, nullptr, UIFollowTransform, time, DestroyEntity,0 , 2);
+	AddTimedEventComponentStartContinuousEnd(damageUI, 0.0f, nullptr, UIFollowTransform, time, DestroyEntity, (int)(damage == 0) , 2);
 }
