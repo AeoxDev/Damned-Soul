@@ -448,26 +448,23 @@ bool ControllerSystem::Update()
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
-			moving = true;
 			
 			//transform->positionZ += stat->moveSpeed * GetDeltaTime();
 			controller->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
-			moving = true;
 			//transform->positionZ -= stat->moveSpeed * GetDeltaTime();
 			controller->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
-			moving = true;
 			//transform->positionX -= stat->moveSpeed * GetDeltaTime();
 			controller->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
-			moving = true;
+			
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
@@ -478,7 +475,11 @@ bool ControllerSystem::Update()
 			MouseComponentUpdateDirection(entity);
 
 		}
-			
+		
+		if ((controller->goalX * controller->goalX + controller->goalZ * controller->goalZ) > 0.0f)
+		{
+			moving = true;
+		}
 
 		if (moving)
 		{
