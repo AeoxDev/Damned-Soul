@@ -56,10 +56,11 @@ bool OnHoverSystem::Update()
 
 		if (index == comp->index)
 		{
+			int imageIndex = (index - 1) * 3;
 			//skip if interactable isnt visible or has no hover function
 			if ((index == 0 && !uiElement->m_BaseImage.baseUI.GetVisibility()) || (index == 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
 				continue;
-			else if ((index > 0 && !uiElement->m_Images[index - 1].baseUI.GetVisibility()) || (index > 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
+			else if ((index > 0 && !uiElement->m_Images[imageIndex].baseUI.GetVisibility()) || (index > 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
 				continue;
 
 

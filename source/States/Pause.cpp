@@ -51,8 +51,10 @@ void PauseState::Input()
 			SetInPlay(true);
 
 			SetPaused(false);
+
 			RedrawUI();
 			ResetInput();
+
 			gameSpeed = 1.0f;
 			Unload(ENT_PERSIST_PAUSE);
 		}
@@ -117,8 +119,7 @@ void PauseState::SetupButtons()
 		for (int i = 0; i < pauseAmount; i++)
 		{
 			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
-			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+			
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseButtonComponent* pauseSettings = registry.AddComponent<UIPauseButtonComponent>(button);
 
@@ -141,12 +142,15 @@ void PauseState::SetupButtons()
 
 			if (i != 0 && i != 4)
 			{
+				OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+				OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+
 				onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i], UIFunctions::OnClick::None);
 				onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i]);
-			}
 
-			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
-			sound->Load(MENU);
+				SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
+				sound->Load(MENU);
+			}
 		}
 	}
 
@@ -230,8 +234,7 @@ void PauseState::SetupButtons()
 		for (int i = 0; i < settingsAmount; i++)
 		{
 			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
-			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
 
@@ -248,12 +251,15 @@ void PauseState::SetupButtons()
 				continue;
 			}
 
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+
 			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i - 1], UIFunctions::OnClick::None);
 			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i - 1]);
 
 		}
 	}
-
+	
 
 	//Sliders
 	{
@@ -345,6 +351,7 @@ void PauseState::SetupButtons()
 
 		}
 	}
+
 }
 
 void PauseState::SetupImages()

@@ -32,7 +32,11 @@ bool OnClickSystem::Update()
 			}
 			else if (index > 0) //images intersect, higher number = later added image
 			{
-				if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
+				int imageIndex = index;
+				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
+					imageIndex = (index - 1) * 3;
+				
+				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility())
 					continue;
 			}
 
@@ -73,7 +77,11 @@ bool OnClickSystem::Update()
 			}
 			else if (index > 0) //images intersect, higher number = later added image
 			{
-				if (!uiElement->m_Images[index - 1].baseUI.GetVisibility())
+				int imageIndex = index;
+				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
+					imageIndex = (index - 1) * 3;
+
+				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility())
 					continue;
 			}
 

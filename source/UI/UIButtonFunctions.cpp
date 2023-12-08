@@ -562,10 +562,13 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 
 				relicWindow->shopSelections[i] = shopState::BOUGHT;
 
-				uiElement->m_Images[i].baseUI.SetVisibility(false);
-				uiElement->m_Texts[i].baseUI.SetVisibility(false);
+				int imageIndex = i * 3;
 
+				uiElement->m_Images[imageIndex].baseUI.SetVisibility(false);
+				uiElement->m_Images[imageIndex + 1].baseUI.SetVisibility(false);
 				uiElement->m_Images[index].baseUI.SetVisibility(false);
+
+				uiElement->m_Texts[i].baseUI.SetVisibility(false);
 
 				relicWindow->shopRelics[i]->m_function(&stateManager.player);
 
