@@ -58,7 +58,7 @@ bool ZacBehaviourSystem::Update()
 				zacTransformComponent->positionX += dirX * GetDeltaTime() * enemyStats->GetSpeed();
 				zacTransformComponent->positionZ += dirZ * GetDeltaTime()* enemyStats->GetSpeed();
 
-				if (zacComponent->zacIndex == 1) //time to animate
+				if (true/*zacComponent->zacIndex == 1*/) //time to animate
 				{
 					enemyAnim->aAnim = ANIMATION_WALK;
 					enemyAnim->aAnimIdx = 0;
