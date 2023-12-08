@@ -391,6 +391,25 @@ bool ControllerSystem::Update()
 
 		}
 	}
+	if (keyInput[SCANCODE_LSHIFT] == down || keyInput[SCANCODE_RSHIFT] == down)
+	{
+		if (keyState[SCANCODE_UP] == pressed)
+		{
+			gameSpeed += 0.1f;
+		}
+		if (keyState[SCANCODE_DOWN] == pressed)
+		{
+			gameSpeed -= 0.1f;
+		}
+		if (keyState[SCANCODE_RIGHT] == pressed)
+		{
+			gameSpeed = 1.0f;
+		}
+		if (keyState[SCANCODE_LEFT] == pressed)
+		{
+			gameSpeed = 0.0f;
+		}
+	}
 #endif // _DEBUG
 
 	
@@ -429,33 +448,38 @@ bool ControllerSystem::Update()
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
-			moving = true;
 			
 			//transform->positionZ += stat->moveSpeed * GetDeltaTime();
 			controller->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
-			moving = true;
 			//transform->positionZ -= stat->moveSpeed * GetDeltaTime();
 			controller->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
-			moving = true;
 			//transform->positionX -= stat->moveSpeed * GetDeltaTime();
 			controller->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
-			moving = true;
+			
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
 
 		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
-		if(!player->isAttacking)
+		if (!player->isAttacking)
+		{
 			MouseComponentUpdateDirection(entity);
+
+		}
+		
+		if ((controller->goalX * controller->goalX + controller->goalZ * controller->goalZ) > 0.0f)
+		{
+			moving = true;
+		}
 
 		if (moving)
 		{
@@ -478,7 +502,13 @@ bool ControllerSystem::Update()
 			TransformAccelerate(entity, controller->goalX, controller->goalZ);
 		
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
-			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
+
+			//Elliot: Make character face the walking direction
+			if (!player->isAttacking && player->currentCharge < 0.01f)
+			{
+				SmoothRotation(transform, controller->goalX, controller->goalZ, 32.0f);
+			}
+			
 		}
 
 
@@ -591,6 +621,9 @@ bool ControllerSystem::Update()
 		}
 		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge && player->isAttacking != true)
 		{
+			//Elliot: Make character slowly face the attacking direction
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
+
 			for (auto audio : View<AudioEngineComponent>(registry))
 			{
 				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
@@ -631,6 +664,10 @@ bool ControllerSystem::Update()
 				/*float attackDuration = 1.0f / playerStats->GetAttackSpeed();*/
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
+				//Elliot Face the direction for consistency
+				transform->facingX = MouseComponentGetDirectionX(mouseComponent);
+				transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+
 				player->currentCharge = 0.0f;
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack);
 			}
@@ -646,13 +683,20 @@ bool ControllerSystem::Update()
 			{
 				transform->mass += 1000.0f;
 				player->killingSpree = 10000;
+				pStats->UpdateBaseHealth(10000);
+				pStats->ApplyHealing(10000);
 				player->UpdateSouls(1000);
+				pStats->UpdateBaseDamage(1000);
 				hitbox->circleHitbox[2].radius += 100.0f;
 				SetGodModeFactor(100.0f);
 			}
 			else
 			{
 				transform->mass -= 1000.0f;
+				pStats->UpdateBaseHealth(-10000.f);
+				pStats->ApplyDamage(1, false);
+				pStats->CapHealth();
+				pStats->UpdateBaseDamage(-1000);
 				hitbox->circleHitbox[2].radius -= 100.0f;
 				SetGodModeFactor(1.0f);
 			}

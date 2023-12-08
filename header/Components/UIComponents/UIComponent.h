@@ -29,6 +29,7 @@ struct UIBase
 	void UpdateTransform();
 
 	void SetPosition(DSFLOAT2 position);
+	void SetPosition(int pixelX, int pixelY);
 	void SetScale(DSFLOAT2 scale);
 	void SetRotation(float rotation);
 	void SetVisibility(bool value);
@@ -51,6 +52,8 @@ struct UIText
 
 	ML_String m_Text;
 	IDWriteTextFormat* m_TextFormat = nullptr;
+
+	BrushColor m_brush;
 
 	float m_fontSize = 20.0f;
 	DWRITE_TEXT_ALIGNMENT m_textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;

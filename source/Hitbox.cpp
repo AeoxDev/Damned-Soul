@@ -594,27 +594,76 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 	AddHitboxComponent(entity);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(entity);
 	TransformComponent* transfor = registry.GetComponent<TransformComponent>(entity);
-	int hID = CreateHitbox(entity, radius*0.2f, 0.f, 0.f);
-	SetCollisionEvent(entity, hID, HardCollision);
-	SetHitboxIsEnemy(entity, hID);
-	SetHitboxHitPlayer(entity, hID);
-	SetHitboxHitEnemy(entity, hID);
-	SetHitboxActive(entity, hID);
-	SetHitboxIsMoveable(entity, hID);
-	//SetHitboxHitWall(entity, hID);
+	int hID, sID;
+	if (etype == EnemyType::hellhound || etype == EnemyType::frozenHellhound || etype == EnemyType::empoweredHellhound)
+	{
+		hID = CreateHitbox(entity, radius * 0.2f, 0.f, 0.f);
+		SetCollisionEvent(entity, hID, HardCollision);
+		SetHitboxIsEnemy(entity, hID);
+		SetHitboxHitPlayer(entity, hID);
+		SetHitboxHitEnemy(entity, hID);
+		SetHitboxActive(entity, hID);
+		SetHitboxIsMoveable(entity, hID);
+		//SetHitboxHitWall(entity, hID);
 
-	int sID = CreateHitbox(entity, radius, 0.f, 0.f);
-	SetCollisionEvent(entity, sID, SoftCollision);
-	SetHitboxIsEnemy(entity, sID);
-	SetHitboxHitPlayer(entity, sID);
-	//SetHitboxHitEnemy(entity, sID);
-	SetHitboxActive(entity, sID);
-	SetHitboxIsMoveable(entity, sID);
-	SetHitboxHitStaticHazard(entity, sID, affectedByStaticHazards);
-	SetHitboxCanTakeDamage(entity, sID);
+		sID = CreateHitbox(entity, radius * 1.2f, 0.f, 0.f);
+		SetCollisionEvent(entity, sID, SoftCollision);
+		SetHitboxIsEnemy(entity, sID);
+		SetHitboxHitPlayer(entity, sID);
+		//SetHitboxHitEnemy(entity, sID);
+		SetHitboxActive(entity, sID);
+		SetHitboxIsMoveable(entity, sID);
+		SetHitboxHitStaticHazard(entity, sID, affectedByStaticHazards);
+		SetHitboxCanTakeDamage(entity, sID);
 
-	SetHitboxCanDealDamage(entity, sID, false);
+		SetHitboxCanDealDamage(entity, sID, false);
+	}
+	else if (etype == EnemyType::minotaur)
+	{
+		hID = CreateHitbox(entity, radius * 0.2f, 0.f, 2.f);
+		SetCollisionEvent(entity, hID, HardCollision);
+		SetHitboxIsEnemy(entity, hID);
+		SetHitboxHitPlayer(entity, hID);
+		SetHitboxHitEnemy(entity, hID);
+		SetHitboxActive(entity, hID);
+		SetHitboxIsMoveable(entity, hID);
+		//SetHitboxHitWall(entity, hID);
 
+		sID = CreateHitbox(entity, radius * 3.0f, 0.f, 2.0f);
+		SetCollisionEvent(entity, sID, SoftCollision);
+		SetHitboxIsEnemy(entity, sID);
+		SetHitboxHitPlayer(entity, sID);
+		//SetHitboxHitEnemy(entity, sID);
+		SetHitboxActive(entity, sID);
+		SetHitboxIsMoveable(entity, sID);
+		SetHitboxHitStaticHazard(entity, sID, affectedByStaticHazards);
+		SetHitboxCanTakeDamage(entity, sID);
+
+		SetHitboxCanDealDamage(entity, sID, false);
+	}
+	else
+	{
+		hID = CreateHitbox(entity, radius * 0.2f, 0.f, 0.f);
+		SetCollisionEvent(entity, hID, HardCollision);
+		SetHitboxIsEnemy(entity, hID);
+		SetHitboxHitPlayer(entity, hID);
+		SetHitboxHitEnemy(entity, hID);
+		SetHitboxActive(entity, hID);
+		SetHitboxIsMoveable(entity, hID);
+		//SetHitboxHitWall(entity, hID);
+
+		sID = CreateHitbox(entity, radius, 0.f, 0.f);
+		SetCollisionEvent(entity, sID, SoftCollision);
+		SetHitboxIsEnemy(entity, sID);
+		SetHitboxHitPlayer(entity, sID);
+		//SetHitboxHitEnemy(entity, sID);
+		SetHitboxActive(entity, sID);
+		SetHitboxIsMoveable(entity, sID);
+		SetHitboxHitStaticHazard(entity, sID, affectedByStaticHazards);
+		SetHitboxCanTakeDamage(entity, sID);
+
+		SetHitboxCanDealDamage(entity, sID, false);
+	}
 
 	switch (etype)
 	{

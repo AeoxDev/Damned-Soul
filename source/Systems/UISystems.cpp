@@ -37,6 +37,9 @@ bool UIRenderSystem::Update()
 			uiElement->DrawAll();
 
 		}
+		//Elliot: Draw mouse (This affects performance, but its a custom cursor :) )
+		UIComponent* mouse = registry.GetComponent<UIComponent>(stateManager.cursor);
+		mouse->DrawAll();
 
         End2dFrame(ui);
     }

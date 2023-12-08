@@ -80,7 +80,7 @@ public:
 
 	//Elliot
 	float overkill = 0.0f;
-
+	float damageOverTime = 0.0f;
 
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), /*m_currentHealth(hp), */m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
 	{/* m_baseMoveSpeed = m_moveSpeed; */

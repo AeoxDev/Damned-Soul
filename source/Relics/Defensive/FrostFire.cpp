@@ -58,7 +58,9 @@ void FROST_FIRE::Reset(void* data)
 
 void _FF_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE, 0.35f, 0.f, 0.f, 0.f, 256, true, false, CIRCLE_FIELD);
+	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE, 1.5f, 0.f, 0.f, -10.f,
+		0.f, 1.10f, 2.0f,//rgb 
+		200/*256*/, CIRCLE_FIELD);
 }
 
 void FROST_FIRE::PushBackAndDamage(void* data)
@@ -88,6 +90,12 @@ void FROST_FIRE::PushBackAndDamage(void* data)
 
 			if (DistanceBetweenTransforms(ownerTrans, otherTrans) < FROST_FIRE_RANGE)
 			{
+				TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+				LuciferBehaviour* lucyBoss = registry.GetComponent<LuciferBehaviour>(entity);
+				ZacBehaviour* zac = registry.GetComponent<ZacBehaviour>(entity);
+				if (tempBoss || lucyBoss || zac)
+					continue;
+
 				float dx, dy, x, y;
 				// Calculate the direction of the knockback
 				CalculateKnockBackDirection(FROST_FIRE::_OWNER, entity, dx, dy);

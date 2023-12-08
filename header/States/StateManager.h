@@ -15,6 +15,17 @@ struct StateManager;
 extern State currentStates;
 extern StateManager stateManager;
 
+
+enum CursorMode
+{
+	CursorNeutral,
+	CursorDown,
+	CursorSpecial
+};
+
+
+int GetNrEnemies();
+
 struct StateManager
 {
 	//ML_Vector<System*> systems; //Herman Help;
@@ -35,7 +46,10 @@ struct StateManager
 	EntityID cutsceneEnemy;
 	EntityID hitboxVis;
 	EntityID naviagtion;
+	EntityID enemyCounter;
 
+	EntityID cursor;
+	int cursorMode = CursorNeutral;
 
 	/// <summary>
 	/// StateManager.Setup is only called once, keep this in mind

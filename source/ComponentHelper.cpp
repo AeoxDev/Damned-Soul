@@ -43,7 +43,7 @@ int64_t StatComponent::GetBonusHealth() const
 
 float StatComponent::GetHealthFraction() const
 {
-	float maxHp = GetMaxHealth();
+	float maxHp = (float)GetMaxHealth();
 	return (maxHp - m_damageTaken) / maxHp;
 	//return this->m_currentHealth / GetMaxHealth();
 }
@@ -71,7 +71,7 @@ float StatComponent::CapHealth()
 	// Branchless limit
 	m_damageTaken = (m_damageTaken * contained);
 	// Return current health
-	return GetHealth();
+	return (float)GetHealth();
 
 	//float maxHp = (float)GetMaxHealth();
 	//bool contained = m_currentHealth < maxHp;
@@ -89,7 +89,7 @@ float StatComponent::StealthilyModifyHealth(const float delta)
 	RedrawUI();
 
 	// Return current health
-	return GetHealth();
+	return (float)GetHealth();
 
 	//m_currentHealth += delta;
 	//CapHealth();
