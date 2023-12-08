@@ -206,6 +206,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   <ItemGroup>
     <ClCompile Include="source\EventFunctions\UIEventFunctions.cpp" />
     <ClCompile Include="source\Level\EmptyLevel.cpp" />
+    <ClCompile Include="source\Relics\Defensive\WendigoTalisman.cpp" />
+    <ClCompile Include="source\Relics\Gadget\GoliathSkull.cpp" />
+    <ClCompile Include="source\Relics\Offensive\SerratedDagger.cpp" />
     <ClCompile Include="source\Shatter.cpp" />
     <ClCompile Include="source\AntiAlias.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
@@ -625,7 +628,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIPauseComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerComponent.h" />

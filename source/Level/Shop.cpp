@@ -27,8 +27,12 @@ void ShopCutscene()
 	//Create the imp
 	EntityID imp = registry.CreateEntity();
 	stateManager.cutsceneEnemy = imp;
-	registry.AddComponent<ModelSkeletonComponent>(imp, LoadModel("Imp.mdl"));
+	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(imp, LoadModel("Imp.mdl"));
+	model->shared.hasOutline = true;
+	model->shared.baseColorMultiplicativeRed *= .9f;
+	model->shared.baseColorAdditiveGreen *= 1.1f;
 	registry.AddComponent<AnimationComponent>(imp);
+	registry.AddComponent<GlowComponent>(imp, 1.375f, .715f, .885f);
 	TransformComponent* transform = registry.AddComponent<TransformComponent>(imp);
 	transform->positionX = 13.0f;
 	transform->positionY = 3.5f;

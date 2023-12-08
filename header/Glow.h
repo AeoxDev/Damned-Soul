@@ -23,6 +23,8 @@ namespace Glow
 
 	extern SRV_IDX glow_srv;
 	extern UAV_IDX backbuffer_uav;
+	extern RTV_IDX bb_copy_rtv;
+	extern SRV_IDX bb_copy_srv;
 	extern RTV_IDX glow_rtv;
 	extern PS_IDX glow_shader;
 	extern DSV_IDX glow_depth;

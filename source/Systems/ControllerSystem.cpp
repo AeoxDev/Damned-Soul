@@ -448,33 +448,38 @@ bool ControllerSystem::Update()
 		bool moving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
-			moving = true;
 			
 			//transform->positionZ += stat->moveSpeed * GetDeltaTime();
 			controller->goalZ += 1.0f;
 		}
 		if (keyInput[SCANCODE_S] == down)
 		{
-			moving = true;
 			//transform->positionZ -= stat->moveSpeed * GetDeltaTime();
 			controller->goalZ -= 1.0f;
 		}
 		if (keyInput[SCANCODE_A] == down)
 		{
-			moving = true;
 			//transform->positionX -= stat->moveSpeed * GetDeltaTime();
 			controller->goalX -= 1.0f;
 		}
 		if (keyInput[SCANCODE_D] == down)
 		{
-			moving = true;
+			
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
 
 		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
-		if(!player->isAttacking)
+		if (!player->isAttacking)
+		{
 			MouseComponentUpdateDirection(entity);
+
+		}
+		
+		if ((controller->goalX * controller->goalX + controller->goalZ * controller->goalZ) > 0.0f)
+		{
+			moving = true;
+		}
 
 		if (moving)
 		{
@@ -497,7 +502,13 @@ bool ControllerSystem::Update()
 			TransformAccelerate(entity, controller->goalX, controller->goalZ);
 		
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
-			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
+
+			//Elliot: Make character face the walking direction
+			if (!player->isAttacking && player->currentCharge < 0.01f)
+			{
+				SmoothRotation(transform, controller->goalX, controller->goalZ, 32.0f);
+			}
+			
 		}
 
 
@@ -548,8 +559,14 @@ bool ControllerSystem::Update()
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
 		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
-		if(player->isAttacking == false)
+		if (player->isAttacking == false)
 			player->timeSinceLastAttack += GetDeltaTime();
+		// Otherwise, reset once per attack relics
+		else
+		{
+			for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_NOT_ATTACKING))
+				func(nullptr);
+		}
 
 		//Clamp and reset attack chain if more than half a second has passed
 		if (player->timeSinceLastAttack > 0.5f)
@@ -604,6 +621,9 @@ bool ControllerSystem::Update()
 		}
 		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge && player->isAttacking != true)
 		{
+			//Elliot: Make character slowly face the attacking direction
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
+
 			for (auto audio : View<AudioEngineComponent>(registry))
 			{
 				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
@@ -621,7 +641,7 @@ bool ControllerSystem::Update()
 			if (stats)
 				stats->SetSpeedMult(0.2f);
 			/*player->currentCharge += GetDeltaTime();*/
-			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed(); //Charge faster scaling off of attack speed baby
+			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed() * player->GetChargeRate(); //Charge faster scaling off of attack speed baby
 			auto skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 			if (skelel) //Gradually light up player when charging heavy attack
 			{
@@ -644,6 +664,10 @@ bool ControllerSystem::Update()
 				/*float attackDuration = 1.0f / playerStats->GetAttackSpeed();*/
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
+				//Elliot Face the direction for consistency
+				transform->facingX = MouseComponentGetDirectionX(mouseComponent);
+				transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+
 				player->currentCharge = 0.0f;
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack);
 			}
@@ -659,13 +683,20 @@ bool ControllerSystem::Update()
 			{
 				transform->mass += 1000.0f;
 				player->killingSpree = 10000;
+				pStats->UpdateBaseHealth(10000);
+				pStats->ApplyHealing(10000);
 				player->UpdateSouls(1000);
+				pStats->UpdateBaseDamage(1000);
 				hitbox->circleHitbox[2].radius += 100.0f;
 				SetGodModeFactor(100.0f);
 			}
 			else
 			{
 				transform->mass -= 1000.0f;
+				pStats->UpdateBaseHealth(-10000.f);
+				pStats->ApplyDamage(1, false);
+				pStats->CapHealth();
+				pStats->UpdateBaseDamage(-1000);
 				hitbox->circleHitbox[2].radius -= 100.0f;
 				SetGodModeFactor(1.0f);
 			}
