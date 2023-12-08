@@ -6,7 +6,7 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 
-#define PAIN_MIRROR_RETURN_FRACTION (1.1f)
+#define PAIN_MIRROR_RETURN_FRACTION (1.25f)
 
 EntityID PAIN_MIRROR::_OWNER;
 
