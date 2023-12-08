@@ -14,7 +14,6 @@ void DamageOverTime::AlterModelColor(void* model, const DOT_TYPE& type)
 {
 	// Both model components have the relevant data at the same place, typecast between them shouldn't matter in this case
 	ModelSkeletonComponent* cast = (ModelSkeletonComponent*)model;
-
 	float power = std::sqrt(WeightedPower());
 	if (POISON == type)
 	{

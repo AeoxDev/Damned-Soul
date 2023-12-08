@@ -14,7 +14,7 @@ void BeginHit(EntityID& entity, const int& index)
 {
 	//Get relevant components
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
-
+	float preHealth = (float)stats->GetHealth();
 	CollisionParamsComponent* cpc = registry.GetComponent<CollisionParamsComponent>(entity);
 	StatComponent* attackerStats = registry.GetComponent<StatComponent>(cpc->params.entity1);
 
@@ -23,6 +23,8 @@ void BeginHit(EntityID& entity, const int& index)
 	uint32_t condition = GetTimedEventCondition(teComp, index);
 	
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats/*, condition == CONDITION_CHARGE*/);
+
+	
 
 	//Disable damage taken until EndHit if we're the player (enemy i-frames make faster attacks useless)
 	auto player = registry.GetComponent<PlayerComponent>(entity);
@@ -94,7 +96,7 @@ void HazardBeginHit(EntityID& entity, const int& index)
 
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-
+	
 	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats);
 
 	//Become red

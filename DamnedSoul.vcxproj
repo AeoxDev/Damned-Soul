@@ -83,7 +83,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
-    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
@@ -204,6 +204,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\EventFunctions\UIEventFunctions.cpp" />
     <ClCompile Include="source\Shatter.cpp" />
     <ClCompile Include="source\AntiAlias.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />

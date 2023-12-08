@@ -334,6 +334,7 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
 
 		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualTimer());
+		uiElement->m_BaseImage.baseUI.SetVisibility(GetVisualTimer());
 	}
 
 	RedrawUI();
