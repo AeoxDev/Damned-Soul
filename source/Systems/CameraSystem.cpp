@@ -21,14 +21,18 @@ bool PointOfInterestSystem::Update()
 
 	//DEBUG Controls
 #ifdef _DEBUG
-	if (keyInput[SCANCODE_UP] == down)
+	if (keyInput[SCANCODE_LSHIFT] == up && keyInput[SCANCODE_RSHIFT] == up)
 	{
-		Camera::AdjustRotation(-1.0f * GetDeltaTime(), 0.0f, 0.0f);
+		if (keyInput[SCANCODE_UP] == down)
+		{
+			Camera::AdjustRotation(-1.0f * GetDeltaTime(), 0.0f, 0.0f);
+		}
+		if (keyInput[SCANCODE_DOWN] == down)
+		{
+			Camera::AdjustRotation(1.0f * GetDeltaTime(), 0.0f, 0.0f);
+		}
 	}
-	if (keyInput[SCANCODE_DOWN] == down)
-	{
-		Camera::AdjustRotation(1.0f * GetDeltaTime(), 0.0f, 0.0f);
-	}
+	
 #endif // _DEBUG
 
 	

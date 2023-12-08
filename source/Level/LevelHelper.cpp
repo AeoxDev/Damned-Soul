@@ -1603,3 +1603,12 @@ void UpdateScoreBoardUI(bool won)
 		}
 	}
 }
+
+
+void SetupEnemyCounter()
+{
+	stateManager.enemyCounter = registry.CreateEntity(ENT_PERSIST_LOWEST);
+	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(stateManager.enemyCounter);
+	uiElement2->Setup("Exmenu/ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.7f));
+	uiElement2->m_BaseImage.baseUI.SetVisibility(true);
+}

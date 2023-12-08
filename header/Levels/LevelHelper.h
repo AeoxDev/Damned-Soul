@@ -60,3 +60,5 @@ void SetScoreboardUI(EntityID stage);
 void UpdateScoreBoardUI(bool won);
 
 void SetupEnemyNavigationHelper(bool level8);
+
+void SetupEnemyCounter();

@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "EventFunctions.h"
 
 bool DebuffSystem::Update()
 {
@@ -31,7 +32,7 @@ bool DebuffSystem::Update()
 
 				// Get the remaining time of the dot
 				float remainingTime = debuff->m_dots[i].GetTime();
-
+				DamageNumbersDOT(entity, effectiveDPS);
 				// Flat hit using the damage and time calculated
 				if (registry.GetComponent<PlayerComponent>(entity) != nullptr)
 				{
@@ -62,7 +63,10 @@ bool DebuffSystem::Update()
 
 		// Count down the Debuffs' time and remove them if they are done
 		if (debuff->Advance())
+		{
+			DamageNumbersDOTRemainder(entity);
 			registry.RemoveComponent<DebuffComponent>(entity);
+		}
 	}
 
 	return true;

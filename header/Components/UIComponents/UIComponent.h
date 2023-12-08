@@ -52,6 +52,8 @@ struct UIText
 	ML_String m_Text;
 	IDWriteTextFormat* m_TextFormat = nullptr;
 
+	BrushColor m_brush;
+
 	float m_fontSize = 20.0f;
 	DWRITE_TEXT_ALIGNMENT m_textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;
 	DWRITE_PARAGRAPH_ALIGNMENT m_paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
