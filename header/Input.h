@@ -2,8 +2,6 @@
 
 enum ButtonState;
 
-
-
 extern int keyInput[256];
 extern ButtonState keyState[256];
 

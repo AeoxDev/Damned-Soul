@@ -473,8 +473,12 @@ bool ControllerSystem::Update()
 		}
 
 		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
-		if(!player->isAttacking)
+		if (!player->isAttacking)
+		{
 			MouseComponentUpdateDirection(entity);
+
+		}
+			
 
 		if (moving)
 		{
@@ -497,7 +501,13 @@ bool ControllerSystem::Update()
 			TransformAccelerate(entity, controller->goalX, controller->goalZ);
 		
 			/*SmoothRotation(transform, controller->goalX, controller->goalZ, 8.0f);*/
-			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
+
+			//Elliot: Make character face the walking direction
+			if (!player->isAttacking && player->currentCharge < 0.01f)
+			{
+				SmoothRotation(transform, controller->goalX, controller->goalZ, 32.0f);
+			}
+			
 		}
 
 
@@ -604,6 +614,9 @@ bool ControllerSystem::Update()
 		}
 		else if (mouseButtonDown[1] == down && player->currentCharge < player->maxCharge && player->isAttacking != true)
 		{
+			//Elliot: Make character slowly face the attacking direction
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 8.0f);
+
 			for (auto audio : View<AudioEngineComponent>(registry))
 			{
 				AudioEngineComponent* audioJungle = registry.GetComponent<AudioEngineComponent>(audio);
@@ -644,6 +657,10 @@ bool ControllerSystem::Update()
 				/*float attackDuration = 1.0f / playerStats->GetAttackSpeed();*/
 				registry.AddComponent<AttackArgumentComponent>(entity, attackDuration);
 				registry.AddComponent<ChargeAttackArgumentComponent>(entity, 1.0f + player->currentCharge);
+				//Elliot Face the direction for consistency
+				transform->facingX = MouseComponentGetDirectionX(mouseComponent);
+				transform->facingZ = MouseComponentGetDirectionZ(mouseComponent);
+
 				player->currentCharge = 0.0f;
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PlayerBeginAttack, PlayerAttack, attackDuration, PlayerEndAttack);
 			}
