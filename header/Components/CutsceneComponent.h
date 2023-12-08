@@ -36,7 +36,6 @@ struct CutsceneComponent
 struct FallofComponent
 {
 	float fallofX, fallofZ;
-	float portalX, portalZ;
 };
 
 void CutsceneSetPosition(EntityID& entity, float startX, float startY, float startZ, float goalX, float goalY, float goalZ);

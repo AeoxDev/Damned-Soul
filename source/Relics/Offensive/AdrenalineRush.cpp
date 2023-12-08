@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define ADRENALINE_RUSH_ACTIVE_DURATION 1.0f
+#define ADRENALINE_RUSH_ACTIVE_DURATION 2.5f
 #define ADRENALINE_RUSH_ATTACK_SPEED_INCREASE 1.0f
 float _AR_REMAINING_TIME = 0.f;
 

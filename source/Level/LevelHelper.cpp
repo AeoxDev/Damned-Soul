@@ -433,7 +433,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<GlowComponent>(hazard, acidGlowRed, acidGlowGreen, acidGlowBlue);
 			AddStaticHazard(hazard, HAZARD_ACID);
 		}
-		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.6f, 0.6f, 0.61f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
 		portalGlow = registry.AddComponent<GlowComponent>(stateManager.gateVisual, 0.6f, 0.9f, 0.6f);	// Portal glow
@@ -467,7 +467,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<GlowComponent>(hazard, acidGlowRed, acidGlowGreen, acidGlowBlue);
 			AddStaticHazard(hazard, HAZARD_ACID);
 		}
-		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.6f, 0.6f, 0.61f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
@@ -479,7 +479,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
 		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV9Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.55f, 0.55f, 0.60f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
@@ -570,7 +570,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 			hazardModel->shared.colorMultiplicativeGreen = gm;
 			hazardModel->shared.colorMultiplicativeBlue = bm;
 			hazardModel->shared.gammaCorrection = gamma;
-			hazardModel->castShadow = false;
+			hazardModel->shared.castShadow = false;
 			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 			hazardTransform->positionX = randX;
 			hazardTransform->positionY = 0.6f - ((float)type * .1f);
@@ -634,7 +634,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::hellhound || eType == EnemyType::empoweredHellhound)
 		{
-			mass = 100.f;
+			mass = 90.f;
 		}
 		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
@@ -768,7 +768,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			moveSpeed = 28.5f; // :)
+			moveSpeed = 22.f; // :)
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
@@ -1149,7 +1149,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
-			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Imp.mdl"));
 			//Sounds (Added by Joaquin)
 			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 			scp->Load(IMP);
@@ -1408,6 +1408,13 @@ void ReloadPlayerNonGlobals()
 	if (registry.GetComponent<PlayerComponent>(stateManager.player) == nullptr)
 		return; //Ain't no way we doing this function if player doesn't exist yet
 
+	ParticleComponent* particles = registry.GetComponent<ParticleComponent>(stateManager.player);
+	if (particles != nullptr)
+	{
+		particles->Release();
+		registry.RemoveComponent<ParticleComponent>(stateManager.player);
+	}
+
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{
@@ -1594,4 +1601,13 @@ void UpdateScoreBoardUI(bool won)
 				DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		}
 	}
+}
+
+
+void SetupEnemyCounter()
+{
+	stateManager.enemyCounter = registry.CreateEntity(ENT_PERSIST_LOWEST);
+	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(stateManager.enemyCounter);
+	uiElement2->Setup("Exmenu/ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.7f));
+	uiElement2->m_BaseImage.baseUI.SetVisibility(true);
 }

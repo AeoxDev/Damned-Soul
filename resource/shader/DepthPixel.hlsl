@@ -1,8 +1,7 @@
 #include "RenderPipelineHeader.hlsli"
 
 
-float4 main(VS_OUT input) : SV_TARGET
+float main(VS_OUT input) : SV_Depth
 {
-    float depth = input.depth.x / input.depth.y;
-    return float4(depth, depth, depth, depth);
+    return input.depth.x / input.depth.y;
 }
