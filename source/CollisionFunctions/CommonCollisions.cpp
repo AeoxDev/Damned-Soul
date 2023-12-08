@@ -16,30 +16,13 @@
 
 
 #define SOFT_COLLISION_FACTOR 0.25f
-
-void DamageNumbers(EntityID& attacker, EntityID& defender)
-{
-	/*if (currentStates & InMainMenu)
-	{
-		return;
-	}*/
-	StatComponent* attackerStats = registry.GetComponent<StatComponent>(attacker);
-	StatComponent* defenderStats = registry.GetComponent<StatComponent>(defender);
-	float preHealth = (float)defenderStats->GetHealth();
-	float finalDamage = Combat::CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
-	//Do the damage numbers here
-	float damage = defenderStats->overkill + preHealth;//Calc damage done
-	float time = 0.25f;//Scale time to let player see bigger numbers for longer
-	unsigned damageCondition = (unsigned)damage;
-	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 16);
-}
-
 void DamageNumbers(EntityID& defender, float damage)
 {
 	/*if (currentStates & InMainMenu)
 	{
 		return;  
 	}*/
+	damage += 0.1f; //To avoid rounding errors
 	StatComponent* defenderStats = registry.GetComponent<StatComponent>(defender);
 	float preHealth = (float)defenderStats->GetHealth();
 	//Do the damage numbers here

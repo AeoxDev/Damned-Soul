@@ -30,14 +30,14 @@ void UIFollowTransform(EntityID& entity, const int& index)
 	toScreenSpace = XMVector3Transform(toScreenSpace, Camera::GetPerspective());
 	XMFLOAT4 toFloat;
 	XMStoreFloat4(&toFloat, toScreenSpace);
-	float scalar = 0.2f * sinf(1.67f * (GetTimedEventElapsedTime(entity, index) / GetTimedEventTotalTime(entity, index)));
+	float scalar = 0.07f * sinf(1.67f * (GetTimedEventElapsedTime(entity, index) / GetTimedEventTotalTime(entity, index)));
 	if (GetTimedEventCondition(entity, index) == 1)
 	{
 		scalar *= 0.3f;
 	}
 	float dir = 0.3f * sinf((float)entity.index);
 	float positionX = dir * scalar + toFloat.x / toFloat.w;
-	float positionY = scalar + 0.1f + (toFloat.y / toFloat.w);
+	float positionY = scalar + 0.15f + (toFloat.y / toFloat.w);
 	
 	UIComponent* uiElement2 = registry.GetComponent<UIComponent>(entity);
 	uiElement2->m_BaseText.baseUI.SetPosition(DSFLOAT2(positionX, positionY));

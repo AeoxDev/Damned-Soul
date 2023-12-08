@@ -2,7 +2,6 @@
 #include "EntityID.h"
 #include "Components.h"
 
-void DamageNumbers(EntityID& attacker, EntityID& defender);
 void DamageNumbers(EntityID& defender, float damage);
 void DamageNumbersDOT(EntityID& defender, float damageOverTime);
 void DamageNumbersDOTRemainder(EntityID& defender);
