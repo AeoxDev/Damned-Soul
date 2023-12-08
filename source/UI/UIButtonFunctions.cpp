@@ -46,8 +46,11 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 0, 0.0f, 0.0, -1.0f);
 	gameSpeed = 1.0f; //Make sure it gets set back to 1 if StartGame is called from a completed run
 
-	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	SetScoreboardUI(scoreBoard);
+	SetScoreboardUI();
+	SetupTimer();
+	SetupEnemyCounter();
+	SetupFPSCounter();
+	ResetRunTime();
 
 	stateManager.activeLevel = 0; //Level actually being loaded: activeLevel / 2 + 1
 	LoadLevel(++stateManager.activeLevel);
@@ -223,6 +226,21 @@ void UIFunctions::Game::SetMainMenu(void* args, int a)
 	stateManager.menu.Setup();
 }
 
+void UIFunctions::Game::SetPause(void* args, int a)
+{
+	if (Camera::InCutscene() == 0)
+	{
+		SetInPause(true);
+		SetInPlay(false);
+
+		SetPaused(true);
+
+		gameSpeed = 0.0f;
+		ResetInput();
+		stateManager.pause.Setup();
+	}
+}
+
 
 void UIFunctions::Settings::Back(void* args, int a)
 {
@@ -331,10 +349,102 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 	for (auto entity : View<UIGameTimeComponent, UIComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
+		UIGameTimeComponent* timer = registry.GetComponent<UIGameTimeComponent>(entity);
+
+		if (GetVisualTimer())
+		{
+			if (GetVisualFPS())
+			{
+				timer->pos = 1;
+			}
+			else
+				timer->pos = 0;
+
+			if (timer->pos == 0)
+			{
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+			}
+			else
+			{
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
+				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
+			}
+		}
+		else
+		{
+			if (GetVisualFPS())
+			{
+				for (auto fspEnt : View<UIGameFPSComponent, UIComponent>(registry))
+				{
+					UIComponent* uiElement = registry.GetComponent<UIComponent>(fspEnt);
+					UIGameFPSComponent* fps = registry.GetComponent<UIGameFPSComponent>(fspEnt);
+
+					fps->pos = 0;
+
+					uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+					uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+				}
+			}
+		}
 
 		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualTimer());
 		uiElement->m_BaseImage.baseUI.SetVisibility(GetVisualTimer());
+	}
+
+	RedrawUI();
+}
+
+void UIFunctions::Settings::SwitchFPS(void* args, int a)
+{
+	SetVisualFPS(!GetVisualFPS());
+
+	for (auto entity : View<UIGameFPSComponent, UIComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		UIGameFPSComponent* fps = registry.GetComponent<UIGameFPSComponent>(entity);
+
+		if (GetVisualFPS())
+		{
+			if (GetVisualTimer())
+			{
+				fps->pos = 1;
+			}
+			else
+				fps->pos = 0;
+
+			if (fps->pos == 0)
+			{
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+			}
+			else
+			{
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
+				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
+			}
+			
+		}
+		else
+		{
+			if (GetVisualTimer())
+			{
+				for (auto timerEnt : View<UIGameTimeComponent, UIComponent>(registry))
+				{
+					UIComponent* uiElement = registry.GetComponent<UIComponent>(timerEnt);
+					UIGameTimeComponent* timer = registry.GetComponent<UIGameTimeComponent>(timerEnt);
+
+					timer->pos = 0;
+
+					uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+					uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+				}
+			}
+		}
+
+
+		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualFPS());
+		uiElement->m_BaseImage.baseUI.SetVisibility(GetVisualFPS());
 	}
 
 	RedrawUI();
@@ -582,29 +692,37 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 									-1 * ((offsetUICoords.y - (0.5f * sdl.BASE_HEIGHT)) / (0.5f * sdl.BASE_HEIGHT)) };
 
 				//First relic purchase
-				if (playerRelics->currentRelics == 0)
+
+				for (auto upgrade : View<OnClickComponent>(registry))
 				{
-					SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-					if (sfx != nullptr) sfx->Play(Shop_FirstPurchase, Channel_Extra);
-				}
-				else if (stateManager.activeLevel == 6 || stateManager.activeLevel == 16)
-				{
-					if (souls->spentThisShopOnRelics == 0)
+					OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(upgrade);
+
+					if (shopBuy != nullptr)
 					{
-						SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-						if (sfx != nullptr) sfx->Play(Shop_PurchaseBeforeBoss, Channel_Extra);
+						for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
+						{
+							if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found, play the first imp voice line.
+							{
+								if (playerRelics->currentRelics == 0)
+								{
+									SoundComponent* sfx = registry.GetComponent<SoundComponent>(upgrade);
+									if (sfx != nullptr) sfx->Play(Shop_FirstPurchase, Channel_Extra);
+								}
+								else if (stateManager.activeLevel == 6 || stateManager.activeLevel == 16)
+								{
+									if (souls->spentThisShopOnRelics == 0)
+									{
+										SoundComponent* sfx = registry.GetComponent<SoundComponent>(upgrade);
+										if (sfx != nullptr) sfx->Play(Shop_PurchaseBeforeBoss, Channel_Extra);
+									}
+								}
+							}
+						}
 					}
 				}
 
 				if (playerRelics->currentRelics < playerRelics->maxRelics)
 				{
-
-					if (playerRelics->gridPos.x > 0)
-					{
-						playerRelics->gridPos.y++;
-						playerRelics->gridPos.x = 0;
-					}
-
 					uint32_t idx = AddNewRelicToUI(stateManager.player, relicWindow->shopRelics[i]);
 
 					playerHover->Add(playerUI->m_Images[idx].baseUI.GetPixelCoords(),
@@ -612,7 +730,6 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 
 					playerRelics->relics[playerRelics->currentRelics] = relicWindow->shopRelics[i];
 
-					playerRelics->gridPos.x++;
 					playerRelics->currentRelics++;
 				}
 
@@ -653,20 +770,34 @@ void UIFunctions::OnClick::BuyRelic(void* args, int index)
 					if (audioJungle != nullptr)
 					{
 						//Imp voice line
-						SoundComponent* sfx = registry.GetComponent<SoundComponent>(*(EntityID*)args);
-						if (sfx != nullptr)
+						for (auto upgrade : View<OnClickComponent>(registry))
 						{
-							audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
-							if (!isPlaying)
+							OnClickComponent* shopBuy = registry.GetComponent<OnClickComponent>(upgrade);
+
+							if (shopBuy != nullptr)
 							{
-								soundToPlay = rand() % 2;
-								if (soundToPlay == 0)
+								for (int i = 0; i < (int)shopBuy->onClickFunctionsPressed.size(); i++)
 								{
-									if (sfx != nullptr) sfx->Play(Shop_RelicPurchase, Channel_Extra);
-								}
-								else
-								{
-									if (sfx != nullptr) sfx->Play(Shop_RelicPurchase2, Channel_Extra);
+									if (shopBuy->onClickFunctionsPressed[i] == UIFunctions::OnClick::UpgradeWeapon) //Changed to Upgrade weapon because buy was removed. //Purchase button found, play the first imp voice line.
+									{
+										SoundComponent* sfx = registry.GetComponent<SoundComponent>(upgrade);
+										if (sfx != nullptr)
+										{
+											audioJungle->channels[sfx->channelIndex[Channel_Extra]]->isPlaying(&isPlaying);
+											if (!isPlaying)
+											{
+												soundToPlay = rand() % 2;
+												if (soundToPlay == 0)
+												{
+													if (sfx != nullptr) sfx->Play(Shop_RelicPurchase, Channel_Extra);
+												}
+												else
+												{
+													if (sfx != nullptr) sfx->Play(Shop_RelicPurchase2, Channel_Extra);
+												}
+											}
+										}
+									}
 								}
 							}
 						}
@@ -909,10 +1040,10 @@ void UIFunctions::OnClick::HealPlayer(void* args, int index)
 
 	souls->spentThisShop += priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL);
 	player->UpdateSouls(-priceCalc.GetCostOf(uiHeal->m_price, RelicInput::OnPriceCalculation::HEAL));
-	if (uiHeal2->freebie)
+	if (player->healFreebie)
 	{
 		uiHeal->m_price = 3;
-		uiHeal2->freebie = false;
+		player->healFreebie = false;
 	}
 }
 

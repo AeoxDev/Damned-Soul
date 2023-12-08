@@ -46,7 +46,7 @@ void SettingsState::Input()
 
 void SettingsState::SetupButtons()
 {
-	const int amount = 6;
+	const int amount = 7;
 	const int sliderAmount = 5;
 
 	//Buttons
@@ -58,6 +58,7 @@ void SettingsState::SetupButtons()
 			"1600x900",
 			"1280x720",
 			"Enable Game Timer",
+			"Enable FPS Counter",
 			"Back",
 		};
 
@@ -68,6 +69,7 @@ void SettingsState::SetupButtons()
 			{ -0.3f, -0.075f },
 			{ -0.3f, -0.225f },
 			{ 0.3f, 0.225f },
+			{ 0.3f, 0.075f },
 			{ 0.78f, -0.85f }
 		};
 
@@ -79,6 +81,7 @@ void SettingsState::SetupButtons()
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f }
 		};
 
 		void(* const functions[amount])(void*, int) =
@@ -88,11 +91,13 @@ void SettingsState::SetupButtons()
 			UIFunctions::Settings::SetMediumRes,
 			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
+			UIFunctions::Settings::SwitchFPS,
 			UIFunctions::Settings::Back,
 		};
 
 		const char filenames[amount][32] =
 		{
+			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
@@ -107,6 +112,7 @@ void SettingsState::SetupButtons()
 			{ 18.0f },
 			{ 18.0f },
 			{ 18.0f },
+			{ 17.0f },
 			{ 17.0f },
 			{ 20.0f }
 		};

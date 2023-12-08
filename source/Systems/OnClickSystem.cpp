@@ -35,6 +35,8 @@ bool OnClickSystem::Update()
 				int imageIndex = index;
 				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
 					imageIndex = (index - 1) * 3;
+				else
+					imageIndex -= 1;
 				
 				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility())
 					continue;
@@ -80,6 +82,8 @@ bool OnClickSystem::Update()
 				int imageIndex = index;
 				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
 					imageIndex = (index - 1) * 3;
+				else
+					imageIndex -= 1;
 
 				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility())
 					continue;

@@ -209,7 +209,7 @@ void CreateSingleWindows()
 
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
-		0, // Note, hardcoded special case to handle this zero later in the code, based on its index!!!
+		0,
 		5,
 		//0,
 		//0,
@@ -238,13 +238,17 @@ void CreateSingleWindows()
 		{
 			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f });
 			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.0f }, { 1.0f, 1.0f }, false);
-			if (price[i] > 0 || i == 0)
+			if (price[i] > 0)
 			{
 				char Sprice[4];
 				sprintf(Sprice, "%i", price[i]);
 
 				uiElement->AddText(Sprice, uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.GetBounds(), { positions[i].x, positions[i].y - 0.1f });
 			}
+
+			if (registry.GetComponent<PlayerComponent>(stateManager.player)->healFreebie && std::strcmp(texts[i], "Heal") == 0)
+				uiElement->AddText("Free", uiElement->m_BaseImage.baseUI.GetBounds(), { positions[i].x, positions[i].y - 0.1f });
+
 		}
 
 		if (i == 3)
@@ -266,7 +270,9 @@ void CreateSingleWindows()
 		if (i != 3)
 		{
 			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
-			uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+
+			if (i != 2)
+				uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 		}
 		else
 			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);

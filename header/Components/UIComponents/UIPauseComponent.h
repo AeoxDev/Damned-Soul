@@ -12,3 +12,13 @@ struct UIPauseRelicTextComponent
 		description.~ML_String();
 	};
 };
+
+struct UIPauseSettingsComponent
+{
+
+};
+
+struct UIPauseButtonComponent
+{
+
+};

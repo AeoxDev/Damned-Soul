@@ -83,9 +83,20 @@ bool UIShopSystem::Update()
 			uiElement->SetAllVisability(false);
 		}
 
+		for (auto entity : View<UIGameEnemyCounterComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->SetAllVisability(true);
+		}
+
 	}
 	else
 	{
+		for (auto entity : View<UIGameEnemyCounterComponent>(registry))
+		{
+			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+			uiElement->SetAllVisability(false);
+		}
 
 		for (auto entity : View<UIShopPlayerStatsComponent>(registry))
 		{
@@ -180,7 +191,7 @@ bool UIShopSystem::Update()
 			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
 			uiElement->SetAllVisability(true);
 
-			if (button->m_name == "Heal")
+			if (button->m_name == "Heal" && button->m_price > 0)
 			{
 				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::HEAL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
 			}
@@ -206,16 +217,48 @@ bool UIShopSystem::Update()
     return true;
 }
 
-bool UIRunTimeSystem::Update()
+bool UIGameSystem::Update()
 {
-
 	for (auto entity : View<UIGameTimeComponent, UIComponent>(registry))
 	{
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIGameTimeComponent* runTime = registry.GetComponent<UIGameTimeComponent>(entity);
 		ML_String clock = GetDigitalMinuteClock();
 		uiElement->m_BaseText.SetText(clock.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
 	}
+
+	for (auto entity : View<UIGameFPSComponent, UIComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+		ML_String fps = "FPS: ";
+		fps.append(std::to_string((int)(1 / GetFrameTime())).c_str());
+		uiElement->m_BaseText.SetText(fps.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
+	}
+
+	for (auto entity : View<UIGameEnemyCounterComponent, UIComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+		int nrOfEnemies = 0;
+		for (auto entity : View<EnemyComponent>(registry))
+			nrOfEnemies++;
+
+		ML_String enemies;
+
+		enemies = "Enemies: ";
+		enemies.append(std::to_string(nrOfEnemies).c_str());
+
+		if (nrOfEnemies > 0)
+		{
+			uiElement->m_BaseText.SetText(enemies.c_str(), uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_BaseImage.SetImage("ButtonSmallHoverBloody", false);
+		}
+		else
+		{
+			uiElement->m_BaseText.SetText("Portal Open", uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_BaseImage.SetImage("ButtonSmall", false);
+		}
+	}
+
 	return true;
 }
 

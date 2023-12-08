@@ -64,28 +64,43 @@ void PauseState::Input()
 void PauseState::SetupButtons()
 {
 
-	const int pauseAmount = 5;
+	const int pauseAmount = 3;
 	const int settingsAmount = 7;
 	const int sliderAmount = 5;
 
 	//Pause Buttons
 	{
+		auto book = registry.CreateEntity(ENT_PERSIST_PAUSE);
+
+		UIComponent* uiBook = registry.AddComponent<UIComponent>(book);
+		UIPauseButtonComponent* pause1 = registry.AddComponent<UIPauseButtonComponent>(book);
+
+		if (stateManager.activeLevel > 10)
+			uiBook->Setup("BookFrozen60%", "Game Paused", { 0.0f, 0.0f });
+		else
+			uiBook->Setup("BookNormal60%", "Game Paused", { 0.0f, 0.0f });
+
+		uiBook->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
+
+		auto controls = registry.CreateEntity(ENT_PERSIST_PAUSE);
+
+		UIComponent* uiControls = registry.AddComponent<UIComponent>(controls);
+		UIPauseButtonComponent* pause2 = registry.AddComponent<UIPauseButtonComponent>(controls);
+
+		uiControls->Setup("Controls", " ", { 0.275f, 0.0f });
+
 		const char texts[pauseAmount][32] =
 		{
-			"Game Paused",
 			"Resume",
 			"Settings",
-			"Main Menu",
-			""
+			"Main Menu"
 		};
 
 		const DSFLOAT2 positions[pauseAmount] =
 		{
-			{ 0.0f, 0.0f },
 			{ -0.285f, 0.225f },
 			{ -0.285f, 0.0f },
-			{ -0.285f, -0.225f },
-			{ 0.23f, 0.0f}
+			{ -0.285f, -0.225f }
 
 		};
 
@@ -93,27 +108,21 @@ void PauseState::SetupButtons()
 		{
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
-			{ 1.0f, 1.0f },
-			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f }
 		};
 
 		void(* const onClicks[pauseAmount])(void*, int) =
 		{
-			UIFunctions::OnClick::None,
 			UIFunctions::Pause::Resume,
 			UIFunctions::Pause::SetSettings,
-			UIFunctions::Pause::SetMainMenu,
-			UIFunctions::OnClick::None
+			UIFunctions::Pause::SetMainMenu
 		};
 
 		void(* const onHovers[pauseAmount])(void*, int, bool) =
 		{
-			UIFunctions::OnHover::None,
 			UIFunctions::OnHover::Image,
 			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::None
+			UIFunctions::OnHover::Image
 		};
 
 		for (int i = 0; i < pauseAmount; i++)
@@ -122,59 +131,52 @@ void PauseState::SetupButtons()
 			
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseButtonComponent* pauseSettings = registry.AddComponent<UIPauseButtonComponent>(button);
-
-			if (i == 0)
-			{
-				if (stateManager.activeLevel > 10)
-					uiElement->Setup("BookFrozen60%", texts[i], positions[i], scales[i]);
-				else
-					uiElement->Setup("BookNormal60%", texts[i], positions[i], scales[i]);
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.4f));
-			}
-			else if (i == 4)
-			{
-				uiElement->Setup("Controls", texts[i], positions[i], scales[i]);
-			}
-			else 
-			{
-				uiElement->Setup("ButtonMedium", texts[i], positions[i], scales[i]);
-			}
-
-			if (i != 0 && i != 4)
-			{
-				OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-				OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
-
-				onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i], UIFunctions::OnClick::None);
-				onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i]);
-
-				SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
-				sound->Load(MENU);
-			}
+			uiElement->Setup("ButtonMedium", texts[i], positions[i], scales[i]);
+			
+			
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+			
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i], UIFunctions::OnClick::None);
+			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i]);
+			
+			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
+			sound->Load(MENU);
 		}
+
+
 	}
 
 	//Settings Buttons
 	{
+		auto panel = registry.CreateEntity(ENT_PERSIST_PAUSE);
+
+		UIComponent* uiElement = registry.AddComponent<UIComponent>(panel);
+		UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(panel);
+		uiElement->Setup("SettingsPanel", "Settings", { 0.0f, 0.0f }, { 1.0f, 1.0f }, 30.0f);
+		uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
+
+		uiElement->SetAllVisability(false);
+
 		const char texts[settingsAmount][32] =
 		{
-			"Settings",
 			"Fullscreen",
 			"1920x1080",
 			"1600x900",
 			"1280x720",
 			"Enable Game Timer",
+			"Enable FPS Counter",
 			"Back",
 		};
 
 		const DSFLOAT2 positions[settingsAmount] =
 		{
-			{ 0.0f, 0.0f },
 			{ -0.3f, 0.225f },
 			{ -0.3f, 0.075f },
 			{ -0.3f, -0.075f },
 			{ -0.3f, -0.225f },
 			{ 0.3f, 0.225f },
+			{ 0.3f, 0.075f },
 			{ 0.78f, -0.85f }
 		};
 
@@ -189,9 +191,20 @@ void PauseState::SetupButtons()
 			{ 1.0f, 1.0f }
 		};
 
+		void(* const functions[settingsAmount])(void*, int) =
+		{
+			UIFunctions::Settings::SetFullscreen,
+			UIFunctions::Settings::SetHighRes,
+			UIFunctions::Settings::SetMediumRes,
+			UIFunctions::Settings::SetLowRes,
+			UIFunctions::Settings::SwitchTimer,
+			UIFunctions::Settings::SwitchFPS,
+			UIFunctions::Pause::Back,
+		};
+
 		const char filenames[settingsAmount][32] =
 		{
-			"SettingsPanel",
+			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
@@ -202,33 +215,13 @@ void PauseState::SetupButtons()
 
 		const float fontsizes[settingsAmount] =
 		{
-			{ 30.0f },
 			{ 18.0f },
 			{ 18.0f },
 			{ 18.0f },
 			{ 18.0f },
 			{ 17.0f },
+			{ 17.0f },
 			{ 20.0f }
-		};
-
-		void(* const onClicks[settingsAmount - 1])(void*, int) =
-		{
-			UIFunctions::Settings::SetFullscreen,
-			UIFunctions::Settings::SetHighRes,
-			UIFunctions::Settings::SetMediumRes,
-			UIFunctions::Settings::SetLowRes,
-			UIFunctions::Settings::SwitchTimer,
-			UIFunctions::Pause::Back
-		};
-
-		void(* const onHovers[settingsAmount - 1])(void*, int, bool) =
-		{
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image
 		};
 
 		for (int i = 0; i < settingsAmount; i++)
@@ -237,25 +230,19 @@ void PauseState::SetupButtons()
 
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
-
-			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
-			sound->Load(MENU);
-
+			
 			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
-
 			uiElement->SetAllVisability(false);
 
-			if (i == 0)
-			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
-				continue;
-			}
-
+		
 			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
 			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 
-			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i - 1], UIFunctions::OnClick::None);
-			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i - 1]);
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
+
+			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
+			sound->Load(MENU);
 
 		}
 	}
@@ -300,12 +287,9 @@ void PauseState::SetupButtons()
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
-
 			uiElement->SetAllVisability(false);
 
-			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
+			float sliderWidth = abs(uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f) + abs(uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f);
 
 			if (audioComp != nullptr)
 			{
@@ -356,6 +340,7 @@ void PauseState::SetupButtons()
 
 void PauseState::SetupImages()
 {
+	
 
 }
 

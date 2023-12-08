@@ -72,10 +72,12 @@ struct UIImage
 {
 	UIBase baseUI;
 
-	ML_String m_fileName;
+	ML_String m_fileName = "";
+	ML_String m_hoverFileName = "";
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
 	void SetImage(const char* filepath, bool ignoreRename = false);
+	void SetHoverImage(const char* filepath, bool ignoreRename = false);
 
 	void Draw();
 

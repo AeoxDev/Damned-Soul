@@ -14,4 +14,4 @@ void LoadLevel8();//Split 2 stage, Ice
 void LoadLevel9();//Final boss
 
 void LoadParticleLevel();
-void LoadEyeChallenge();
+void LoadEmptyLevel();

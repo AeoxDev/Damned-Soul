@@ -225,7 +225,20 @@ void UIImage::SetImage(const char* filepath, bool ignoreRename)
 		SetupImage(filepath, m_Bitmap);
 
 		if (!ignoreRename)
-			m_fileName = _strdup(filepath);
+			m_fileName = filepath;
+
+		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
+	}
+}
+
+void UIImage::SetHoverImage(const char* filepath, bool ignoreRename)
+{
+	if (filepath != "")
+	{
+		SetupImage(filepath, m_Bitmap);
+
+		if (!ignoreRename)
+			m_hoverFileName = filepath;
 
 		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
 	}
@@ -253,6 +266,7 @@ void UIImage::Release()
 	}
 
 	m_fileName.~ML_String();
+	m_hoverFileName.~ML_String();
 }
 
 void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale, 

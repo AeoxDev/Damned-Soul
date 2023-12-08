@@ -10,6 +10,7 @@
 #include "Registry.h"
 #include "UIButtonFunctions.h"
 #include "Input.h"
+#include "Level.h"
 #include "UIRenderer.h"
 
 #include "MemLib/ML_String.hpp"
@@ -18,7 +19,7 @@
 
 //#define UI_TEST
 
-#define PAUSE_TEST
+//#define PAUSE_TEST
 
 //Displays info in the application title
 void UpdateDebugWindowTitle(std::string& title, std::string extra = "");
@@ -37,6 +38,12 @@ void SimulateUI(std::string& title, int total);
 
 #endif // UI_TEST
 
+#ifdef PAUSE_TEST
+
+//Simulate Main Menu <-> Settings state switching [total] times
+void SimulatePause(std::string& title, int total);
+
+#endif // PAUSE_TEST
 
 int main(int argc, char* args[])
 {
@@ -63,6 +70,12 @@ int main(int argc, char* args[])
 #ifdef UI_TEST
 
 	SimulateUI(title, 200);
+
+#endif // UI_TEST
+
+#ifdef PAUSE_TEST
+
+	SimulatePause(title, 2000);
 
 #endif // UI_TEST
 
@@ -167,3 +180,31 @@ void SimulateUI(std::string& title, int total)
 }
 
 #endif // UI_TEST
+
+#ifdef PAUSE_TEST
+
+void SimulatePause(std::string& title, int total)
+{
+	UIFunctions::MainMenu::Start(nullptr, 0);
+	LoadLevel(-1);
+	for (unsigned int i = 0; i < total; ++i)
+	{
+		UIFunctions::Game::SetPause(nullptr, i);
+		CountDeltaTime();
+
+		//Show the amount of reloads we've done up in the window title. No real reason
+		UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
+		stateManager.Update();
+
+		stateManager.EndFrame();
+
+		MemLib::pdefrag();
+
+		UIFunctions::Pause::Resume(nullptr, i);
+	}
+
+	gameSpeed = 1.0f;
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
+}
+
+#endif // PAUSE_TEST
