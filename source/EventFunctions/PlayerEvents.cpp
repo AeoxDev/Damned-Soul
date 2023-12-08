@@ -360,7 +360,12 @@ void PlayerAttack(EntityID& entity, const int& index)
 
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
-	anim->aAnimIdx = 0;
+
+	auto isCharge = registry.GetComponent<ChargeAttackArgumentComponent>(entity);
+	if (isCharge)
+		anim->aAnimIdx = 2;
+	else
+		anim->aAnimIdx = 0;
 
 #define HITBOX_START_TIME (0.45f)
 #define HITBOX_END_TIME (0.8f)
