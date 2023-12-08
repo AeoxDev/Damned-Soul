@@ -41,7 +41,7 @@ struct GeometryIndependentComponent
 };
 struct giPixel
 {
-	unsigned r, g, b, a;
+	unsigned r;
 };
 
 struct giCopyTexture
@@ -317,8 +317,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	GetTextureByType(stagingResource, TEXTURE_HOLDER_TYPE::TEXTURE, GIcomponent->stagingTexture);
 	d3d11Data->deviceContext->CopyResource(stagingResource, RTVResource);
 
-	giCopyTexture* mappingTexture = new giCopyTexture();//Does not fit onto the memlib stack :(
-	//mappingTexture = (giCopyTexture*)MemLib::spush(sizeof(giCopyTexture));
+	giCopyTexture* mappingTexture = (giCopyTexture*)MemLib::spush(sizeof(giCopyTexture));
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource{0};
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -357,7 +356,7 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	Camera::UpdateView();
 	Camera::UpdateProjection();
 	SetViewport(renderStates[backBufferRenderSlot].viewPort);
-	delete mappingTexture;
+	MemLib::spop();
 	//RTVResource->Release();
 	//stagingResource->Release();
 	//Return.
@@ -425,7 +424,7 @@ RTV_IDX SetupGIRenderTargetView(EntityID& stageEntity)
 	}
 	//Create a renderTargetView for the GI
 	GIcomponent->renderTargetView = CreateRenderTargetView(USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS::BIND_RENDER_TARGET,
-		(CPU_FLAGS)0, GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS, FORMAT_R32G32B32A32_UINT);
+		(CPU_FLAGS)0, GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS, FORMAT_R32_UINT);
 	return GIcomponent->renderTargetView;
 }
 DSV_IDX SetupGIDepthStencil(EntityID& stageEntity)
@@ -486,7 +485,7 @@ TX_IDX SetupGIStagingTexture(EntityID& stageEntity)
 		return -1;
 	}
 	//Create a pixelshader for the GI
-	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32G32B32A32_UINT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS);
+	GIcomponent->stagingTexture = CreateTexture(FORMAT_R32_UINT,USAGE_FLAGS::USAGE_STAGING, (RESOURCE_FLAGS)0, CPU_FLAGS::READ, GI_TEXTURE_DIMENSIONS, GI_TEXTURE_DIMENSIONS);
 	return GIcomponent->stagingTexture;
 }
 

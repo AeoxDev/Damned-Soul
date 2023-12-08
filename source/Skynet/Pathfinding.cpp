@@ -120,7 +120,7 @@ void CalculateGlobalMapValuesSkeleton(PathfindingMap* map, TransformComponent* p
 			{
 				map->cost[x][z] += 1;
 			}
-			else if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_LAVA) // is the floor lava?
+			else if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_LAVA || mapGrid->texture[z * ratio][x * ratio] == HAZARD_ACID) // is the floor lava?
 			{
 				if (onLava) //treat as ground to save time. optimize shit
 				{

@@ -228,7 +228,10 @@ void HazardDamageHelper(EntityID& victim, const float DPS)
 	{
 		DamageOverTime dotComp(DPS * defenderStats->hazardModifier, 1.f);
 
-		float finalDamage = Combat::CalculateDamage(dotComp, victim, RelicInput::DMG::DOT_HAZARD) * GetDeltaTime();
+		float finalDamage = Combat::CalculateDamage(dotComp, victim, RelicInput::DMG::DOT_HAZARD);
+
+		DamageNumbersDOT(victim, finalDamage);
+		finalDamage *= GetDeltaTime();
 
 		if (0.0001f < finalDamage)
 		{

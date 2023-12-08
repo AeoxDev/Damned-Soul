@@ -4,8 +4,8 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define FLAME_WEAPON_DOT_DURATION (1.75f)
-#define FLAME_WEAPON_DOT_FRACTION (0.65f)
+#define FLAME_WEAPON_DOT_DURATION (2.f)
+#define FLAME_WEAPON_DOT_FRACTION (0.5f)
 
 EntityID FLAME_WEAPON::_OWNER;
 

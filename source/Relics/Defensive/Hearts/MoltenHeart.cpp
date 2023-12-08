@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define MOLTEN_HEART_VALUE (20)
+#define MOLTEN_HEART_VALUE (25)
 
 EntityID MOLTEN_HEART::_OWNER;
 
@@ -23,9 +23,10 @@ void MOLTEN_HEART::Initialize(void* input)
 	// Set owner
 	MOLTEN_HEART::_OWNER = *((EntityID*)input);
 
-	// This is a stat altering relic, mark the entity as having modified stats
-	// It also raises max HP while elevating current hp to match, meaning this is nessecary
-	RELIC_RAISE_CURRENT_MAX_HP(MOLTEN_HEART::_OWNER, MOLTEN_HEART_VALUE);
+	registry.GetComponent<StatComponent>(MOLTEN_HEART::_OWNER)->MarkAsModified();
+	//// This is a stat altering relic, mark the entity as having modified stats
+	//// It also raises max HP while elevating current hp to match, meaning this is nessecary
+	//RELIC_RAISE_CURRENT_MAX_HP(MOLTEN_HEART::_OWNER, MOLTEN_HEART_VALUE);
 
 	// Molten Heart also heals (real healing, not just HP elevation to match max hp increase) the when obtained
 	registry.GetComponent<StatComponent>(MOLTEN_HEART::_OWNER)->ApplyHealing(MOLTEN_HEART_VALUE);

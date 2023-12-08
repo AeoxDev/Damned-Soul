@@ -49,7 +49,7 @@ struct ParticleMetadata
 
 	float deltaTime = 0;
 	DirectX::XMFLOAT2 morePositionInfo{ 0.f, 0.f}; // Stores XZ position of flamethrower movements value of triangles vertex
-	bool reset = false;
+	int reset = 0;
 };
 
 struct ParticleMetadataBuffer
@@ -66,7 +66,7 @@ namespace Particles
 
 	extern PoolPointer<ParticleInputOutput> m_readBuffer;
 	extern PoolPointer<ParticleInputOutput> m_writeBuffer;
-	extern std::vector<int> m_unoccupiedParticles;
+	extern std::vector<int> m_unoccupiedParticles;//Elliot: Use of vector here can cause issues
 
 	void SwitchInputOutput();
 	void InitializeParticles();

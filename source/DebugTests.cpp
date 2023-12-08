@@ -31,6 +31,7 @@ void UpdateDebugWindowTitle(std::string& title, std::string extra)
 		{
 			title += "(x: " + std::to_string(transform->positionX) + ", z: " + std::to_string(transform->positionZ) + ") ";
 		}
+		title += "Enemies: " + std::to_string(GetNrEnemies()) + ", ";
 		SetWindowTitle((title + extra).c_str());
 	}
 #endif

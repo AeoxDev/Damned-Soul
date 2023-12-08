@@ -391,6 +391,25 @@ bool ControllerSystem::Update()
 
 		}
 	}
+	if (keyInput[SCANCODE_LSHIFT] == down || keyInput[SCANCODE_RSHIFT] == down)
+	{
+		if (keyState[SCANCODE_UP] == pressed)
+		{
+			gameSpeed += 0.1f;
+		}
+		if (keyState[SCANCODE_DOWN] == pressed)
+		{
+			gameSpeed -= 0.1f;
+		}
+		if (keyState[SCANCODE_RIGHT] == pressed)
+		{
+			gameSpeed = 1.0f;
+		}
+		if (keyState[SCANCODE_LEFT] == pressed)
+		{
+			gameSpeed = 0.0f;
+		}
+	}
 #endif // _DEBUG
 
 	
