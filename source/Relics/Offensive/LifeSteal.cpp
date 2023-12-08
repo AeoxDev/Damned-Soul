@@ -5,7 +5,7 @@
 #include "Registry.h"
 #include <algorithm>
 
-#define LIFE_STEAL_HEALING_MULTIPLIER (.08f)
+#define LIFE_STEAL_HEALING_MULTIPLIER (.07f)
 #define LIFE_STEAL_HEALING_CAP (.5f)
 
 EntityID LIFE_STEAL::_OWNER;

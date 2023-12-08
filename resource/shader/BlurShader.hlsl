@@ -47,12 +47,12 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
         return;
     }
     
-    float4 antiAlias = float4(0, 0, 0, 0);
-    float antiTotal = 0.f;
+    float antiTotal = 1.25f * outlineSRV[index].a;
+    float4 antiAlias = backBufferOriginal[index] * antiTotal; //float4(0, 0, 0, 0);
     // Anti Aliasing using Gaussian blur, several passes, progressively getting sharper
     {
-    #define WIDTH_ANTI_ALIAS (5)
-    #define SIGMA_ANTI_ALIAS (0.875f)
+    #define WIDTH_ANTI_ALIAS (7)//(5)
+    #define SIGMA_ANTI_ALIAS (1.1f)//(0.875f)
         for (int y = max(index.y - WIDTH_ANTI_ALIAS, 0); y < min(index.y + WIDTH_ANTI_ALIAS, windowHeight); ++y)
         {
             for (int x = max(index.x - WIDTH_ANTI_ALIAS, 0); x < min(index.x + WIDTH_ANTI_ALIAS, windowWidth); ++x)
