@@ -6,8 +6,8 @@
 #include "Registry.h"
 #include <cmath>
 
-#define SOUL_EATER_HEAL_RATIO_GAIN (2.f/1.f)
-#define SOUL_EATER_HEAL_RATIO_LOSE (1.f/1.f)
+#define SOUL_EATER_HEAL_RATIO_GAIN (2.5f/1.f)
+#define SOUL_EATER_HEAL_RATIO_LOSE (1.5f/1.f)
 
 EntityID SOUL_EATER::_OWNER;
 
