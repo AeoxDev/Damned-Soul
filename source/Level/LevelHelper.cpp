@@ -979,7 +979,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
+		SetupEnemyCollisionBox(entity, 2.5f, EnemyType::hellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
