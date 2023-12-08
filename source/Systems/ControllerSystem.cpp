@@ -559,8 +559,14 @@ bool ControllerSystem::Update()
 		//Switches animation to attack and deals damage in front of yourself halfway through the animation (offset attack hitbox)
 		//Attack will now actually be more interesting. Duration of the continuous function in the timed event will now depend on which hit in the chain we're doing
 		//Only increment if we're not currently attacking, so we don't accidentally reset our attack chain while we're mid-combo
-		if(player->isAttacking == false)
+		if (player->isAttacking == false)
 			player->timeSinceLastAttack += GetDeltaTime();
+		// Otherwise, reset once per attack relics
+		else
+		{
+			for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_NOT_ATTACKING))
+				func(nullptr);
+		}
 
 		//Clamp and reset attack chain if more than half a second has passed
 		if (player->timeSinceLastAttack > 0.5f)
@@ -635,7 +641,7 @@ bool ControllerSystem::Update()
 			if (stats)
 				stats->SetSpeedMult(0.2f);
 			/*player->currentCharge += GetDeltaTime();*/
-			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed(); //Charge faster scaling off of attack speed baby
+			player->currentCharge += GetDeltaTime() * stats->GetAttackSpeed() * player->GetChargeRate(); //Charge faster scaling off of attack speed baby
 			auto skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 			if (skelel) //Gradually light up player when charging heavy attack
 			{
