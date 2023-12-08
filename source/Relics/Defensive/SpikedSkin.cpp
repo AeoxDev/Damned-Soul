@@ -1,11 +1,12 @@
 #include "Relics\Defensive\SpikedSkin.h"
 #include "Relics\Utility\RelicInternalHelper.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\GetHitModifiers.h"
 #include "Registry.h"
 #include "Components.h"
 #include "CombatFunctions.h"
 
-#define SPIKED_SKIN_RETURN_FRACTION (.75f)
+#define SPIKED_SKIN_RETURN_FRACTION (.8f)
 
 EntityID SPIKED_SKIN::_OWNER;
 
@@ -36,7 +37,7 @@ void SPIKED_SKIN::Retaliation(void* data)
 	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
 	// Check if it is the right entity that is attacking
-	if (SPIKED_SKIN::_OWNER.index != input->defender.index || input->attacker.index < 0)
+	if (SPIKED_SKIN::_OWNER.index != input->defender.index || input->attacker.index == -1 || input->typeSource & (RelicInput::DMG::REFLECT | RelicInput::DMG::HAZARD))
 		return;
 
 	// The person who's fist hurts a lot
@@ -45,7 +46,14 @@ void SPIKED_SKIN::Retaliation(void* data)
 	// The damage
 	float damage = ((input->damage + input->flatAdd) * input->incMult) * SPIKED_SKIN_RETURN_FRACTION;
 
+	RelicInput::OnDamageCalculation reflected = GetModifiers(input->defender, input->attacker);
+	reflected = RetaliationCombination(*input, reflected, SPIKED_SKIN_RETURN_FRACTION);
+	reflected.cap = owMyFistHurts->GetHealth();
+
+	DamageNumbers(input->attacker, reflected.CollapseNoCap());
+
 	// Apply the damage
 	// Also causes static hazards to flash
-	Combat::HitFlat(input->attacker, owMyFistHurts, damage);
+	
+	Combat::HitFlat(input->attacker, owMyFistHurts, reflected.CollapseDamage());
 }

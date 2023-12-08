@@ -69,7 +69,12 @@ void BACK_SHIELD::NullBackHit(void* data)
 	auto aTrans = registry.GetComponent<TransformComponent>(input->attacker);
 	auto dTrans = registry.GetComponent<TransformComponent>(input->defender);
 
-	float dotOfTrans = aTrans->facingX * dTrans->facingX + aTrans->facingY * dTrans->facingY + aTrans->facingZ * dTrans->facingZ;
+	float dx, dy, dz;
+	dx = dTrans->positionX - aTrans->positionX;
+	dy = dTrans->positionY - aTrans->positionY;
+	dz = dTrans->positionZ - aTrans->positionZ;
+
+	float dotOfTrans = aTrans->facingX * dx + aTrans->facingY * dy + aTrans->facingZ * dz;
 
 	float dt = GetDeltaTime();
 

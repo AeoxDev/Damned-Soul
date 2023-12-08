@@ -198,6 +198,13 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\EventFunctions\UIEventFunctions.cpp" />
+    <ClCompile Include="source\Level\EmptyLevel.cpp" />
+    <ClCompile Include="source\Relics\Defensive\WendigoTalisman.cpp" />
+    <ClCompile Include="source\Relics\Gadget\GoliathSkull.cpp" />
+    <ClCompile Include="source\Relics\Offensive\SerratedDagger.cpp" />
+    <ClCompile Include="source\Relics\Utility\GetHitModifiers.cpp" />
+    <ClCompile Include="source\Shatter.cpp" />
     <ClCompile Include="source\AntiAlias.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
@@ -690,6 +697,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Offensive\PowerStrike.h" />
     <ClInclude Include="header\Relics\Gadget\SoulEater.h" />
     <ClInclude Include="header\Relics\Offensive\ThrillSeeker.h" />
+    <ClInclude Include="header\Relics\Utility\GetHitModifiers.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />
     <ClInclude Include="header\Relics\Gadget\Reckless.h" />
