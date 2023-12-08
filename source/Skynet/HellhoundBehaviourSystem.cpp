@@ -261,7 +261,7 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 	//enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	ANIM_BRANCHLESS(enemyAnim);
 
-	hc->currentShootingAttackRange += GetDeltaTime() * hc->shootingAttackSpeedForHitbox * (float)(hc->currentShootingAttackRange < hc->offsetForward); //updates the range of the "flamethrower"
+	hc->currentShootingAttackRange += 0.1f + GetDeltaTime() * hc->shootingAttackSpeedForHitbox * (float)(hc->currentShootingAttackRange < hc->offsetForward); //updates the range of the "flamethrower"
 	hc->shootingTimer += GetDeltaTime();
 	//Temp: Create BIG spotlight when dog flame
 		//Temp: Create point light to indicate that we're going to do flamethrower

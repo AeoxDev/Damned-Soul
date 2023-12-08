@@ -28,7 +28,7 @@ void DamageNumbers(EntityID& defender, float damage)
 	//Do the damage numbers here
 	float time = 0.25f;//Scale time to let player see bigger numbers for longer
 	unsigned damageCondition = (unsigned)damage;
-	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 16);
+	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 1);
 }
 
 void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
@@ -42,7 +42,7 @@ void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
 	{
 		float time = 0.125f;//Scale time to let player see bigger numbers for longer
 		unsigned damageCondition = (unsigned)damageNumber;
-		AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, damageCondition, 16);
+		AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, damageCondition, 1);
 		stats->damageOverTime -= 2.0f;
 	}
 }

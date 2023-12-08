@@ -104,6 +104,15 @@ void UIBase::SetPosition(DSFLOAT2 position)
 	UpdateTransform();
 }
 
+void UIBase::SetPosition(int pixelX, int pixelY)
+{
+	m_Position.x = pixelX;
+	m_Position.y = pixelY;
+	m_PixelCoords.x = pixelX;
+	m_PixelCoords.y = pixelY;
+	UpdateTransform();
+}
+
 void UIBase::SetScale(DSFLOAT2 scale)
 {
 	m_Scale.x = scale.x;

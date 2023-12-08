@@ -29,6 +29,7 @@ struct UIBase
 	void UpdateTransform();
 
 	void SetPosition(DSFLOAT2 position);
+	void SetPosition(int pixelX, int pixelY);
 	void SetScale(DSFLOAT2 scale);
 	void SetRotation(float rotation);
 	void SetVisibility(bool value);
