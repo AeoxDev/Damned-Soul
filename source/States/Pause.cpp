@@ -80,7 +80,7 @@ void PauseState::SetupButtons()
 		else
 			uiBook->Setup("BookNormal60%", "Game Paused", { 0.0f, 0.0f });
 
-		uiBook->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
+		uiBook->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.4f));
 
 		auto controls = registry.CreateEntity(ENT_PERSIST_PAUSE);
 
