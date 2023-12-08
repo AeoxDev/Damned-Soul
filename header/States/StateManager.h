@@ -15,6 +15,8 @@ struct StateManager;
 extern State currentStates;
 extern StateManager stateManager;
 
+int GetNrEnemies();
+
 struct StateManager
 {
 	//ML_Vector<System*> systems; //Herman Help;
@@ -35,6 +37,7 @@ struct StateManager
 	EntityID cutsceneEnemy;
 	EntityID hitboxVis;
 	EntityID naviagtion;
+	EntityID enemyCounter;
 
 
 	/// <summary>

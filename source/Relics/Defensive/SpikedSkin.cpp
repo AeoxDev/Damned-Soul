@@ -45,7 +45,10 @@ void SPIKED_SKIN::Retaliation(void* data)
 	// The damage
 	float damage = ((input->damage + input->flatAdd) * input->incMult) * SPIKED_SKIN_RETURN_FRACTION;
 
+	DamageNumbers(input->attacker, damage);
+
 	// Apply the damage
 	// Also causes static hazards to flash
+	
 	Combat::HitFlat(input->attacker, owMyFistHurts, damage);
 }
