@@ -32,7 +32,7 @@ void ShopCutscene()
 	model->shared.baseColorMultiplicativeRed *= .9f;
 	model->shared.baseColorAdditiveGreen *= 1.1f;
 	registry.AddComponent<AnimationComponent>(imp);
-	registry.AddComponent<GlowComponent>(imp, .875f, .415f, .585f);
+	registry.AddComponent<GlowComponent>(imp, 1.375f, .715f, .885f);
 	TransformComponent* transform = registry.AddComponent<TransformComponent>(imp);
 	transform->positionX = 13.0f;
 	transform->positionY = 3.5f;

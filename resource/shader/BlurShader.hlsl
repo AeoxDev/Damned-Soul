@@ -47,12 +47,12 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
         return;
     }
     
-    float antiTotal = 1.25f * outlineSRV[index].a;
+    float antiTotal = 1.5f * outlineSRV[index].a;
     float4 antiAlias = backBufferOriginal[index] * antiTotal; //float4(0, 0, 0, 0);
     // Anti Aliasing using Gaussian blur, several passes, progressively getting sharper
     {
-    #define WIDTH_ANTI_ALIAS (7)//(5)
-    #define SIGMA_ANTI_ALIAS (1.1f)//(0.875f)
+    #define WIDTH_ANTI_ALIAS (4)//(5)
+    #define SIGMA_ANTI_ALIAS (0.55f)//(0.875f)
         for (int y = max(index.y - WIDTH_ANTI_ALIAS, 0); y < min(index.y + WIDTH_ANTI_ALIAS, windowHeight); ++y)
         {
             for (int x = max(index.x - WIDTH_ANTI_ALIAS, 0); x < min(index.x + WIDTH_ANTI_ALIAS, windowWidth); ++x)
@@ -63,20 +63,20 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
                 antiAlias += backBufferOriginal[h8t] * temp;
             }
         }
-        int lessWidthAlias = WIDTH_ANTI_ALIAS / 2;
-        float lessSigmaAlias = SIGMA_ANTI_ALIAS / 2;
-        for (int y = max(index.y - lessWidthAlias, 0); y < min(index.y + lessWidthAlias, windowHeight); ++y)
-        {
-            for (int x = max(index.x - lessWidthAlias, 0); x < min(index.x + lessWidthAlias, windowWidth); ++x)
-            {
-                int2 h8t = int2(x, y);
-                float temp = Gaussian(index.x - x, index.y - y, lessSigmaAlias);
-                antiTotal += temp;
-                antiAlias += backBufferOriginal[h8t] * temp;
-            }
-        }
-        lessWidthAlias = WIDTH_ANTI_ALIAS / 3;
-        lessSigmaAlias = SIGMA_ANTI_ALIAS / 3;
+        //int lessWidthAlias = WIDTH_ANTI_ALIAS / 2;
+        //float lessSigmaAlias = SIGMA_ANTI_ALIAS / 2;
+        //for (int y = max(index.y - lessWidthAlias, 0); y < min(index.y + lessWidthAlias, windowHeight); ++y)
+        //{
+        //    for (int x = max(index.x - lessWidthAlias, 0); x < min(index.x + lessWidthAlias, windowWidth); ++x)
+        //    {
+        //        int2 h8t = int2(x, y);
+        //        float temp = Gaussian(index.x - x, index.y - y, lessSigmaAlias);
+        //        antiTotal += temp;
+        //        antiAlias += backBufferOriginal[h8t] * temp;
+        //    }
+        //}
+        int lessWidthAlias = WIDTH_ANTI_ALIAS / 3;
+        float lessSigmaAlias = SIGMA_ANTI_ALIAS * 3;
         for (int y = max(index.y - lessWidthAlias, 0); y < min(index.y + lessWidthAlias, windowHeight); ++y)
         {
             for (int x = max(index.x - lessWidthAlias, 0); x < min(index.x + lessWidthAlias, windowWidth); ++x)
