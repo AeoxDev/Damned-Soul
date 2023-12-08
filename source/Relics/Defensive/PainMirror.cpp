@@ -51,6 +51,8 @@ void PAIN_MIRROR::Retaliation(void* data)
 
 	DamageNumbers(input->attacker, reflected.CollapseNoCap());
 
+	DamageNumbers(input->attacker, damage);
+
 	// Apply the damage
 	// Also causes static hazards to flash
 	Combat::HitFlat(input->attacker, owMyFistHurts, reflected.CollapseDamage());

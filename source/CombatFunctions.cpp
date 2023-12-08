@@ -17,6 +17,8 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	// Update health
 	defenderStats->ApplyDamage(damage, false); // Edit later?
 
+
+	
 	//Play sound when hit by hazard
 	if (time == 1.0f || !isPlayer)
 	{
@@ -74,7 +76,10 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	// Apply on damage final
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
 		func(&funcInput);
-
+	//Elliot: Give data for shatter
+	float uncappedDamage = funcInput.CollapseNoCap();
+	defenderStats->overkill = uncappedDamage - (float)defenderStats->GetHealth();
+	DamageNumbers(defender, uncappedDamage);
 	if (attacker.index == stateManager.player.index)
 	{
 		registry.GetComponent<StatComponent>(stateManager.player)->UpdateDamageDone(funcInput.CollapseDamage());
@@ -91,6 +96,7 @@ void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attac
 	}
 	// Calculate damage
 	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
+	
 
 	// Provide a flat hit, mostly just so that we can edit all sources at the same time
 	Combat::HitFlat(defender, defenderStats, finalDamage);

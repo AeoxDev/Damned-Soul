@@ -148,6 +148,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID);
+			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true);
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -168,8 +169,6 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 			if(stats)
 				stats->SetSpeedMult(1.0f); //Reset the speed too, phew
 		}
-		
-
 
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
@@ -177,6 +176,14 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		playerComp->isDashing = true;
  		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
 		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
+
+		////Smoke
+		registry.AddComponent<ParticleComponent>(entity, 
+			5.0f, 7.0f, 3.0f, //Time, radius, size
+			-3.0f + (transform->facingX), 0.5f, -10/*-30.0f*/ , //Offset x, y, and z,
+			0.7, 0.7, 0.6,//Overload rbg color
+			20, SMOKE); //amount,Pattern
+
 	}
 }
 
@@ -284,6 +291,13 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 		}
 		stats->hazardModifier = stats->baseHazardModifier;
 		playerComp->isDashing = false;
+
+		auto particles = registry.GetComponent<ParticleComponent>(entity);
+		if (particles)
+		{
+			particles->Release();
+			registry.RemoveComponent<ParticleComponent>(entity);
+		}
 	}
 
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);

@@ -18,10 +18,13 @@
 #include "Glow.h"
 #include "AntiAlias.h"
 #include "SkyPlane.h"
+#include "Shatter.h"
+#include "UIComponents.h"
 
 //Cursed
 #include "SDLHandler.h"
 #include "Level.h"
+
 
 State currentStates;
 StateManager stateManager;
@@ -159,6 +162,7 @@ int StateManager::Setup()
 	Camera::InitializeCamera();
 	SetupHitboxVisualizer();
 	menu.Setup();
+	Shatter::Initialize();
 
 	Particles::InitializeParticles();
 	Outlines::InitializeOutlines();
@@ -167,6 +171,13 @@ int StateManager::Setup()
 	//SetupTestHitbox();
 	RedrawUI();
 	
+	//Setup cursor here:
+	stateManager.cursor = registry.CreateEntity(ENT_PERSIST_GAME);
+	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(stateManager.cursor);
+	uiElement2->Setup("Cursor/DamnedSoul_CursorSmallBorder", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
+	uiElement2->m_BaseImage.baseUI.SetVisibility(true);
+	uiElement2->m_BaseText.baseUI.SetVisibility(false);
+	//uiElement2->m_BaseImage.baseUI.SetPosition();
 
 	//Setup systems here
 
@@ -174,25 +185,24 @@ int StateManager::Setup()
 	systems.push_back(new ParticleSystemGPU());
 
 	// Render/GPU
-
-	
 	systems.push_back(new ShadowSystem());
-	systems[1]->timeCap = 1.f / 60.f;
 	systems.push_back(new RenderSystem());
-	systems[2]->timeCap = 1.f / 60.f;
 	systems.push_back(new OutlineSystem());
-
-
 	systems.push_back(new ParticleSystemCPU());
-	systems[4]->timeCap = 1.f / 60.f;
 	systems.push_back(new ParticleSystem());
-	//systems[6]->timeCap = 1.f / 30.f;
 	systems.push_back(new GlowSystem());
-	systems[6]->timeCap = 1.f / 60.f;
 
 	systems.push_back(new ShatterSystem());
+#define CAPS
+#ifdef CAPS
+	systems[1]->timeCap = 1.f / 60.f;//ShadowSystem
+	systems[2]->timeCap = 1.f / 60.f;//RenderSystem
+	systems[4]->timeCap = 1.f / 60.f;//ParticleSystemCPU
+	systems[6]->timeCap = 1.f / 60.f;//GlowSystem
 
-	systems.push_back(new UIRunTimeSystem());
+#endif // _DEBUG
+
+	systems.push_back(new UIGameSystem());
 	systems.push_back(new UIRenderSystem());
 	
 	//Input based CPU 
@@ -305,6 +315,37 @@ void StateManager::Input()
 
 void StateManager::Update()
 {
+	//Reset input values first
+	float previousMouseX = mouseX;
+	float previousMouseY = mouseY;
+	ResetInput();
+	GetInput();
+	UIComponent* mouse = registry.GetComponent<UIComponent>(stateManager.cursor);
+	mouse->m_BaseImage.baseUI.SetPosition(mouseX - 1, mouseY - 1);
+	
+	if (mouseX != previousMouseX || mouseY != previousMouseY)
+	{
+		RedrawUI();
+	}
+
+	
+	if (mouseButtonPressed[left] != ButtonState::noEvent || mouseButtonPressed[right] != ButtonState::noEvent)
+	{
+		if (mouseButtonDown[MouseButton::left] == down)
+		{//uiElement2->Setup("Cursor/DamnedSoul_CursorSmall", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
+			mouse->m_BaseImage.SetImage("Cursor/DamnedSoul_CursorLightSmallBorder");//Brighten up
+		}
+		else if (mouseButtonDown[MouseButton::left] == up)
+		{
+			mouse->m_BaseImage.SetImage("Cursor/DamnedSoul_CursorSmallBorder");//Reset the mouse
+		}
+		if (mouseButtonDown[MouseButton::right] == down)
+		{
+			mouse->m_BaseImage.SetImage("Cursor/DamnedSoul_CursorSparkleSmallBorder");
+		}
+		RedrawUI();
+	}
+
 	for (size_t i = 0; i < systems.size(); i++)
 	{
 		systems[i]->timeElapsed += GetFrameTime(); //No longer deltatime, in case of game pause deltatime
@@ -319,6 +360,7 @@ void StateManager::Update()
 	}
 
 	Input();
+
 }
 
 void StateManager::UnloadAll()
@@ -340,8 +382,7 @@ void StateManager::UnloadAll()
 void StateManager::EndFrame()
 {
 	Present();//Present what was drawn during the update!
-	ResetInput();
-	GetInput();
+	
 	//MemLib::pdefrag();
 }
 

@@ -6,6 +6,9 @@ void ResetRunTime();
 void SetVisualTimer(bool state);
 bool GetVisualTimer();
 
+void SetVisualFPS(bool state);
+bool GetVisualFPS();
+
 ML_String GetDigitalMinuteClock();
 
 const float& GetDeltaTime();

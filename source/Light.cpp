@@ -90,8 +90,12 @@ int freeSlotStack[LIGHT_COMPONENT_ARRAY_LIMIT];
 
 int PopSlotStack()
 {
-    lastSlot -= 1;
-    return freeSlotStack[lastSlot];
+    if (lastSlot > 0)
+    {
+        lastSlot -= 1;
+        return freeSlotStack[lastSlot];
+    }
+    return -1;//ERROR: NO LIGHT LEFT
 }
 void PushSlotStack(int& value)
 {
@@ -391,6 +395,10 @@ int CreateSpotLight(EntityID& entity, float colorRed, float colorGreen, float co
 {
     RemoveLight(entity);
     int slot = PopSlotStack();
+    if (slot < 0)
+    {
+        return -1;
+    }
     lightShaderBuffer.lights[slot].type = LightType::spotlight;
     lightShaderBuffer.lights[slot].lightColor.x = colorRed;
     lightShaderBuffer.lights[slot].lightColor.y = colorGreen;

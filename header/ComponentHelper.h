@@ -78,6 +78,9 @@ public:
 	float acidAccelFactor = 0.3f;
 	float acidAnimFactor = 0.5f;
 
+	//Elliot
+	float overkill = 0.0f;
+	float damageOverTime = 0.0f;
 
 	StatComponent(float hp, float ms, float dmg, float as) : m_baseHealth(hp), /*m_currentHealth(hp), */m_baseMoveSpeed(ms), m_baseDamage(dmg), m_baseAttackSpeed(as)
 	{/* m_baseMoveSpeed = m_moveSpeed; */
@@ -99,6 +102,8 @@ public:
 // Defensive Stats
 	// Get max health
 	int64_t GetMaxHealth() const;
+	// Get Bonus Health
+	int64_t GetBonusHealth() const;
 	// Get current health
 	int64_t GetHealth() const;
 	// Get a value from 0 to 1 representing the current health of the entity
@@ -175,6 +180,9 @@ private:
 	int souls = 0;
 	int totalSouls = 0;
 
+	// Private
+	float m_chargeRate = 1.f;
+
 	// Private dash variables
 	int m_remainingDashes = 1;
 	int m_baseDashes = 1;
@@ -193,6 +201,7 @@ public:
 	int weaponTier = 1;
 	bool portalCreated = false;
 	bool isDashing = false;
+	bool healFreebie = true;
 
 	//New additions because of player attack chains
 	float timeSinceLastAttack = -1.0f;
@@ -209,6 +218,11 @@ public:
 	// Get the current number of souls the player possesses
 	int GetSouls() const;
 	int GetTotalSouls() const;
+
+	// Update the speed at which your charge attack charges
+	void UpdateBonusChargeRate(const float delta);
+	// Get the charge rate of the player's charge attack
+	float GetChargeRate() const;
 
 	// Update how much additional dash distance the player get
 	void UpdateBonusDashScaling(const float delta);
@@ -229,9 +243,9 @@ struct ShatterComponent
 {
 	float time = 0.f;
 	float strength = 1.f;
-	bool reverse = false;
-	bool useOrigin = false; //Displaces from origin point, displaces along face normal if false
-	float origin[4] = {0.f, 0.f, 0.f, 0.f};
+
+	ShatterComponent(float strength) : time(0), strength(strength)
+	{}
 };
 
 struct ControllerComponent

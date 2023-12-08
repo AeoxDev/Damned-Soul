@@ -57,7 +57,7 @@ void SOUL_HEALTH::CompensateSoulLoss(void* data)
 	if (input->soulDelta < 0.f)
 	{
 		StatComponent* stats = registry.GetComponent<StatComponent>(SOUL_HEALTH::_OWNER);
- 		stats->StealthilyModifyHealth(SOUL_HEALTH_SOUL_FACTOR_PLAYER * input->soulDelta);
+ 		stats->StealthilyModifyHealth(-SOUL_HEALTH_SOUL_FACTOR_PLAYER * input->soulDelta);
 	}
 }
 

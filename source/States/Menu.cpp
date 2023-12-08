@@ -31,7 +31,7 @@ void Menu::Setup()
 
 	ResetRunTime();
 	SetDirectionLight(1.0f, 0.8f, 0.6f, -1.6f, -3.0f, 1.0f);
-	int random = rand() % 5;//Level 1 thorugh 9
+	int random = rand() % 10;//Level 1 thorugh 9
 	//Setup stage to rotate around
 	StageSetupVariables stageVars;
 	stageVars.stageNr = random;
@@ -188,7 +188,7 @@ void Menu::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonMedium", texts[i], positions[i], scales[i]);
+		uiElement->Setup("ButtonMedium", texts[i], positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -203,11 +203,11 @@ void Menu::SetupImages()
 	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.70f });
+	uiElement->Setup("DamnedTitle3", "", { 0.0f, 0.70f });
 
 	auto panel = registry.CreateEntity();
 	UIComponent* uiElementTwo = registry.AddComponent<UIComponent>(panel);
-	uiElementTwo->Setup("ExMenu/SettingsPanelMedium", "", { 0.5f, -0.25f });
+	uiElementTwo->Setup("SettingsPanelMedium", "", { 0.5f, -0.25f });
 
 	auto controls = registry.CreateEntity();
 	UIComponent* uiElementThree = registry.AddComponent<UIComponent>(controls);

@@ -64,7 +64,9 @@ void LIGHTNING_GOD::ProcMark(void* data)
 
 void _LG_Particles_Begin_Small(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION_SMALL, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f, 256, LIGHTNING);
+	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION_SMALL, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f,
+		0.0,0.5,1.0,//rgb
+		256, LIGHTNING);
 }
 
 void LIGHTNING_GOD::OnUpdate(void* data)

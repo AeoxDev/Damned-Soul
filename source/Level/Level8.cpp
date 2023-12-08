@@ -17,10 +17,10 @@ void LoadLevel8()
 {
 	float redAdd = 0.0f;
 	float greenAdd = 0.0f;
-	float blueAdd = 0.1f;
+	float blueAdd = 0.07f;
 	float redMult = 1.0f;
 	float greenMult = 1.0f;
-	float blueMult = 1.1f;
+	float blueMult = 1.0f;
 
 	StageSetupVariables stageVars;
 	stageVars.ra = redAdd;
@@ -61,16 +61,6 @@ void LoadLevel8()
 	PointOfInterestComponent poic;
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
-
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-
 
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
