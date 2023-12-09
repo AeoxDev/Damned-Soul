@@ -91,7 +91,7 @@ enum TOPOLOGY
 // Load a texture from a .png file and return a global index that can be used to reference it
 TX_IDX LoadTexture(const char* name);
 // Create an empty texture with specific attributes
-TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height);
+TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, const bool srv = false);
 
 // Set a material
 bool SetTexture(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& shader, uint8_t slot);
@@ -249,6 +249,8 @@ SRV_IDX CreateShaderResourceViewTexture(const RESOURCES& resource, RESOURCE_FLAG
 SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS sourceResource);
 // Set an active shader resource view buffer by index (shader and slot data contained in buffer)
 bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
+// Set an active shader resource view buffer by index of a texturee (shader and slot data contained in buffer)
+bool SetShaderResourceView(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 // Sets shader resource view of parameter slot to NULL in the shader of parameter bindto
 void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot);
 //// Release for a shader resource view
@@ -264,6 +266,8 @@ void CopySRVtoSRV(const SRV_IDX destination, const SRV_IDX source);
 void CopySRVToUAV(const UAV_IDX destination, const SRV_IDX source);
 // Copies the data in a UAV resource to a SRV resource;
 void CopyUAVToSRV(const SRV_IDX destination, const UAV_IDX source);
+// Copies the data in a UAV resource to an SRV's texture
+void CopyUAVToSRV(const TX_IDX destination, const UAV_IDX source);
 
 
 // Create a shader resource view that holds a buffer

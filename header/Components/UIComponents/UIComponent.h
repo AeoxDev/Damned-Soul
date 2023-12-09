@@ -29,6 +29,7 @@ struct UIBase
 	void UpdateTransform();
 
 	void SetPosition(DSFLOAT2 position);
+	void SetPosition(int pixelX, int pixelY);
 	void SetScale(DSFLOAT2 scale);
 	void SetRotation(float rotation);
 	void SetVisibility(bool value);
@@ -72,10 +73,12 @@ struct UIImage
 {
 	UIBase baseUI;
 
-	ML_String m_fileName;
+	ML_String m_fileName = "";
+	ML_String m_hoverFileName = "";
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
 	void SetImage(const char* filepath, bool ignoreRename = false);
+	void SetHoverImage(const char* filepath, bool ignoreRename = false);
 
 	void Draw();
 
