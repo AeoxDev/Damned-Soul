@@ -945,8 +945,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(entity);
-	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->Setup("EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
 
 	//Model
@@ -979,7 +979,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
+		SetupEnemyCollisionBox(entity, 2.5f, EnemyType::hellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
@@ -1348,12 +1348,12 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
 	//
 	////Setup + Health
-	//uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
-	//uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
+	//uiElement->Setup("EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
+	//uiElement->AddImage("FullHealth", DSFLOAT2(-0.8f, 0.8f));
 	//UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(stateManager.player);
 
 	////Souls
-	//uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
+	//uiElement->AddImage("EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
 	//uiElement->AddText(" ",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
 	//UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
 	
@@ -1505,23 +1505,23 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	return enemy;
 }
 
-void SetScoreboardUI(EntityID stage)
+void SetScoreboardUI()
 {
-	//Scoreboard UI
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
-	uiElement->Setup("ExMenu/SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(scoreBoard);
+	uiElement->Setup("SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
 	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
 
-	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
-	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(scoreBoard);
+	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(scoreBoard);
 
-	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
 	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.5f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
 	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.5f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
@@ -1551,10 +1551,10 @@ void SetScoreboardUI(EntityID stage)
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.4f, uiCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.6f, uiCoords.y - 0.4f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
 			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
+	registry.AddComponent<UIGameScoreboardComponent>(scoreBoard);
 
 	uiElement->SetAllVisability(false);
 }
@@ -1604,11 +1604,41 @@ void UpdateScoreBoardUI(bool won)
 	}
 }
 
-
 void SetupEnemyCounter()
 {
-	stateManager.enemyCounter = registry.CreateEntity(ENT_PERSIST_LOWEST);
-	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(stateManager.enemyCounter);
-	uiElement2->Setup("Exmenu/ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.7f));
-	uiElement2->m_BaseImage.baseUI.SetVisibility(true);
+	EntityID counterEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(counterEntity);
+	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
+
+	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
+}
+
+void SetupFPSCounter()
+{
+	EntityID fpsEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(fpsEntity);
+	uiElement->Setup("ButtonSmall", "FPS: 0", DSFLOAT2(0.8f, 0.65f));
+
+	if (!GetVisualFPS())
+	{
+		uiElement->m_BaseText.baseUI.SetVisibility(false);
+		uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	}
+
+	registry.AddComponent<UIGameFPSComponent>(fpsEntity);
+}
+
+void SetupTimer()
+{
+	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.65f));
+
+	if (!GetVisualTimer())
+	{
+		uiElement->m_BaseText.baseUI.SetVisibility(false);
+		uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	}
+
+	registry.AddComponent<UIGameTimeComponent>(timeEntity);
 }

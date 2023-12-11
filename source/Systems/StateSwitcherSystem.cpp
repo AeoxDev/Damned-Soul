@@ -264,31 +264,6 @@ bool StateSwitcherSystem::Update()
 		}
 		
 	}
-	//Elliot: Setup enemy counter here
-	if (stateManager.enemyCounter.index != -1 && previousEnemies != nrEnemies)
-	{
-		UIComponent* ui = registry.GetComponent<UIComponent>(stateManager.enemyCounter);
-		if (ui != nullptr)
-		{
-
-			ML_String enemies;
-
-			enemies = "Enemies: ";
-			enemies.append(std::to_string(nrEnemies).c_str());
-			if (nrEnemies > 0)
-			{
-				ui->m_BaseText.SetText(enemies.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
-			}
-			else
-			{
-				ui->m_BaseText.SetText("Portal Open", DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
-				ui->m_BaseImage.Release();
-				ui->m_BaseImage.SetImage("Exmenu/ButtonSmallBloody", false);
-			}
-			RedrawUI();
-		}
-		
-	}
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{

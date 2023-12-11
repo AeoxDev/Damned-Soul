@@ -19,6 +19,7 @@ double runTime = 0.0;
 int seconds = 0;
 bool paused = true;
 bool showTimer = false;
+bool showFPS = false;
 
 void SetPaused(bool state)
 {
@@ -39,6 +40,16 @@ void SetVisualTimer(bool state)
 bool GetVisualTimer()
 {
 	return showTimer;
+}
+
+void SetVisualFPS(bool state)
+{
+	showFPS = state;
+}
+
+bool GetVisualFPS()
+{
+	return showFPS;
 }
 
 ML_String GetDigitalMinuteClock()
@@ -139,7 +150,7 @@ bool NewSecond()
 		if (!paused && !Camera::InCutscene() && !(currentStates & InMainMenu))
 		{
 			seconds += 1;
-			if (showTimer)
+			if (showTimer || showFPS)
 				RedrawUI();
 		}
 		

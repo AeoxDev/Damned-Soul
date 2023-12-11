@@ -5,7 +5,7 @@
 #include "Registry.h"
 
 #define RECKLESS_DAMAGE_TAKEN_MULT (1.75f)
-#define RECKLESS_DAMAGE_DEALT_MULT (1.5f)
+#define RECKLESS_DAMAGE_DEALT_MULT (1.35f)
 
 EntityID RECKLESS::_OWNER;
 
