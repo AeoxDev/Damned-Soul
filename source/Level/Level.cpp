@@ -51,7 +51,8 @@ void LoadLevel(int level)
 	Camera::SetCutsceneMode(false);
 	switch (level)
 	{
-	case -1: LoadEmptyLevel(); break; //Debug level for particles
+	case -2: LoadParticleLevel(); break; //Debug level for particles
+	case -1: LoadEmptyLevel(); break; //Debug level for pause
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;//Imp stage
