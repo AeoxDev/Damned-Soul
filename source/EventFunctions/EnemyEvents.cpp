@@ -146,7 +146,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	{
 		soulWorth = 1;
 	}
-	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
+	registry.AddComponent<EnemyComponent>(newMini, soulWorth, EnemyType::zac);
 
 	if (zacIndex == 0)
 	{
