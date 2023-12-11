@@ -1613,25 +1613,12 @@ void SetupEnemyCounter()
 	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
 }
 
-void SetupFPSCounter()
-{
-	EntityID fpsEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(fpsEntity);
-	uiElement->Setup("ButtonSmall", "FPS: 0", DSFLOAT2(0.8f, 0.65f));
-
-	if (!GetVisualFPS())
-	{
-		uiElement->m_BaseText.baseUI.SetVisibility(false);
-		uiElement->m_BaseImage.baseUI.SetVisibility(false);
-	}
-
-	registry.AddComponent<UIGameFPSComponent>(fpsEntity);
-}
-
 void SetupTimer()
 {
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+	UIGameTimeComponent* timer = registry.AddComponent<UIGameTimeComponent>(timeEntity);
+
 	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.65f));
 
 	if (!GetVisualTimer())
@@ -1640,5 +1627,4 @@ void SetupTimer()
 		uiElement->m_BaseImage.baseUI.SetVisibility(false);
 	}
 
-	registry.AddComponent<UIGameTimeComponent>(timeEntity);
 }

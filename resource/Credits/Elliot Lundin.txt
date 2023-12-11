@@ -1,0 +1,10 @@
+Collision (Circular, Convex (2D), Geometry Independent)
+Cutscenes
+Game feel (Screen shake, Hit freeze)
+UI (Damage numbers, Cursor)
+Lights (Shadow mapping, Forward + (Depth pass))
+Camera
+Hazards
+Static hazards
+Event system
+Audio (Shop music, Sound effects (Eye, Hellhound))

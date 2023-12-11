@@ -106,7 +106,7 @@ struct UIComponent
 	void AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
 
 	void AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, float 
-		fontSize = 20, DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
+		fontSize = 20.0f, DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
 		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	void Release();
