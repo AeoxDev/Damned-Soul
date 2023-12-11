@@ -315,7 +315,7 @@ bool GeometryIndependentSystem::Update()
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
 
-					HazardDamageHelper(entity, 25.f);
+					HazardDamageHelper(entity, 15.f);
 					p->lastSafeGIPosX = p->positionX;
 					p->lastSafeGIPosY = p->positionY;
 					p->lastSafeGIPosZ = p->positionZ;
@@ -360,7 +360,7 @@ bool GeometryIndependentSystem::Update()
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
-					HazardDamageHelper(entity, 50.f);
+					HazardDamageHelper(entity, 20.f);
 					p->lastSafeGIPosX = p->positionX;
 					p->lastSafeGIPosY = p->positionY;
 					p->lastSafeGIPosZ = p->positionZ;
