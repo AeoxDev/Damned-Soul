@@ -398,6 +398,26 @@ void PlayerAttack(EntityID& entity, const int& index)
 		float depth = (0.3f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE * GetGodModeFactor();
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
+		//Attack hitbox 2.0, uses 6 points to create a schweird rectangle
+		//Point 0: Bottom right
+		corners.cornersX[0] = 0.0f;
+		corners.cornersZ[0] = 0.0f;
+		//Point 1: Bottom middle
+		corners.cornersX[1] = -0.5f;
+		corners.cornersZ[1] = -0.5f;
+		//Point 2: Bottom left
+		corners.cornersX[2] = -1.0f;
+		corners.cornersZ[2] = -0.8f;
+		//Point 3: Top left
+		corners.cornersX[3] = -0.9f;
+		corners.cornersZ[3] = -1.5f;
+		//Point 4: Top middle
+		corners.cornersX[4] = -0.4f;
+		corners.cornersZ[4] = -1.2f;
+		//Point 5: Top right
+		corners.cornersX[5] =  0.3f;
+		corners.cornersZ[5] = -0.8f;
+
 
 		// Counter clockwise
 		// X
