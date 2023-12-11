@@ -150,8 +150,9 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	if (zacIndex == 0)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Torso.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 1)
@@ -164,20 +165,23 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	}
 	else if (zacIndex == 2)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 3)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("LArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 4)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Skull.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	
@@ -190,8 +194,8 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(newMini);
-	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->Setup("EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
 
 	////Set hitbox
@@ -213,7 +217,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	AddHitboxComponent(newMini);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(newMini);
-	int hID = CreateHitbox(newMini, radius * /*mini **/ 0.7f, 0.f, 0.f);
+	int hID = CreateHitbox(newMini, radius * /*mini **/ 1.2f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
@@ -221,7 +225,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID, false);
 
-	int sID = CreateHitbox(newMini, radius, 0.f, 0.f);
+	int sID = CreateHitbox(newMini, radius * 5.f, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
 	SetHitboxIsEnemy(newMini, sID);
 	SetHitboxHitPlayer(newMini, sID);

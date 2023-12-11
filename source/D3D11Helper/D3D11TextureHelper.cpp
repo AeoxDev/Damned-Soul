@@ -70,7 +70,7 @@ TX_IDX LoadTexture(const char* name)
 	return currentIdx;
 }
 
-TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height)
+TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFlags, CPU_FLAGS cpuAcess, const size_t& width, const size_t& height, const bool srv)
 {
 	// Check hash
 	TX_IDX currentIdx = txHolder->NextIdx();
@@ -94,6 +94,14 @@ TX_IDX CreateTexture(FORMAT format, USAGE_FLAGS useFlags, RESOURCE_FLAGS bindFla
 	HRESULT hr = d3d11Data->device->CreateTexture2D(&desc, nullptr, &tempTex);
 	assert(!FAILED(hr));
 	txHolder->tx_map.emplace(currentIdx, tempTex);
+
+	if (srv)
+	{
+		ID3D11ShaderResourceView* tempSRV = 0;
+		hr = d3d11Data->device->CreateShaderResourceView(txHolder->tx_map[currentIdx], nullptr, &tempSRV);
+		assert(!FAILED(hr));
+		txHolder->srv_map.emplace(currentIdx, tempSRV);
+	}
 
 	// Set the hash last thing you do
 	txHolder->hash_map.emplace(currentIdx, currentIdx);

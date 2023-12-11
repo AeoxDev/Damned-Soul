@@ -4,7 +4,7 @@ struct DamageOverTime
 private:
 	float remainingTime = -1.f;
 	float damagePerSecond = 0.f;
-
+	
 public:
 	enum DOT_TYPE
 	{

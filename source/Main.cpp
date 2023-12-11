@@ -7,10 +7,43 @@
 #include "States\StateManager.h"
 #include "ConfigManager.h"
 #include "TransformComponent.h"
+#include "Registry.h"
+#include "UIButtonFunctions.h"
+#include "Input.h"
+#include "Level.h"
+#include "UIRenderer.h"
 
 #include "MemLib/ML_String.hpp"
-#include "DebugTests.h" // <-- ALL TEST ARE IN HERE
 
+//#define GAME_TEST
+
+//#define UI_TEST
+
+//#define PAUSE_TEST
+
+//Displays info in the application title
+void UpdateDebugWindowTitle(std::string& title, std::string extra = "");
+
+#ifdef GAME_TEST
+
+//Simulate [sim] frames in every level for [total] frames
+void SimulateGame(std::string& title, int sim, int total);
+
+#endif // GAME_TEST
+
+#ifdef UI_TEST
+
+//Simulate Main Menu <-> Settings state switching [total] times
+void SimulateUI(std::string& title, int total);
+
+#endif // UI_TEST
+
+#ifdef PAUSE_TEST
+
+//Simulate Main Menu <-> Settings state switching [total] times
+void SimulatePause(std::string& title, int total);
+
+#endif // PAUSE_TEST
 
 int main(int argc, char* args[])
 {
@@ -40,17 +73,11 @@ int main(int argc, char* args[])
 
 #endif // UI_TEST
 
-#ifdef MAIN_MENU_TEST
+#ifdef PAUSE_TEST
 
-	SimulateMainMenu(title, 1000);
+	SimulatePause(title, 2000);
 
-#endif // MAIN_MENU_TEST
-
-#ifdef PARTICLE_TEST
-
-	SimulateParticleLevel(title, 100);
-
-#endif // MAIN_MENU_TEST
+#endif // UI_TEST
 
 	while (!sdl.quit)
 	{
@@ -69,3 +96,115 @@ int main(int argc, char* args[])
 	MemLib::destroyMemoryManager();
 	return 0;
 }
+
+void UpdateDebugWindowTitle(std::string& title, std::string extra)
+{
+	SetWindowTitle((title + extra).c_str());
+	bool newSec = NewSecond();
+#ifdef _DEBUG
+	//Get player transform
+	TransformComponent* transform = nullptr;
+	if (stateManager.player.index != -1)
+	{
+		transform = registry.GetComponent<TransformComponent>(stateManager.player);
+	}
+
+	if (newSec)
+	{
+		title = "Damned Soul " + std::to_string((int)(1000.0f * GetAverage())) + " ms (" + std::to_string(GetFPS()) + " fps) ";
+		if (transform != nullptr)
+		{
+			title += "(x: " + std::to_string(transform->positionX) + ", z: " + std::to_string(transform->positionZ) + ") ";
+		}
+		SetWindowTitle((title + extra).c_str());
+	}
+#endif
+
+}
+
+
+#ifdef GAME_TEST
+
+void SimulateGame(std::string& title, int sim, int total)
+{
+	for (unsigned int i = 0; i < total; ++i)
+	{
+		if (i % 18 == 0)
+		{
+			UIFunctions::MainMenu::Start(nullptr, i);
+		}
+
+		UIFunctions::Game::LoadNextLevel(nullptr, i);
+		for (size_t j = 0; j < sim; j++)
+		{
+			CountDeltaTime();
+
+			//Show the amount of reloads we've done up in the window title. No real reason
+			UpdateDebugWindowTitle(title, " load: " + std::to_string(i) + " /" + std::to_string(total));
+			stateManager.Update();
+
+			stateManager.EndFrame();
+
+			MemLib::pdefrag();
+		}
+	}
+
+	gameSpeed = 1.0f;
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
+
+}
+
+#endif	//GAME_TEST
+
+#ifdef UI_TEST
+
+void SimulateUI(std::string& title, int total)
+{
+	for (unsigned int i = 0; i < total; ++i)
+	{
+		UIFunctions::MainMenu::SetSettings(nullptr, i);
+		CountDeltaTime();
+
+		//Show the amount of reloads we've done up in the window title. No real reason
+		UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
+		stateManager.Update();
+
+		stateManager.EndFrame();
+
+		MemLib::pdefrag();
+
+		UIFunctions::Settings::Back(nullptr, i);
+	}
+
+	gameSpeed = 1.0f;
+}
+
+#endif // UI_TEST
+
+#ifdef PAUSE_TEST
+
+void SimulatePause(std::string& title, int total)
+{
+	UIFunctions::MainMenu::Start(nullptr, 0);
+	LoadLevel(-1);
+	for (unsigned int i = 0; i < total; ++i)
+	{
+		UIFunctions::Game::SetPause(nullptr, i);
+		CountDeltaTime();
+
+		//Show the amount of reloads we've done up in the window title. No real reason
+		UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
+		stateManager.Update();
+
+		stateManager.EndFrame();
+
+		MemLib::pdefrag();
+
+		UIFunctions::Pause::Resume(nullptr, i);
+	}
+
+	gameSpeed = 1.0f;
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
+}
+
+#endif // PAUSE_TEST

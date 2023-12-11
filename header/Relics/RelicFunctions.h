@@ -57,6 +57,10 @@ namespace Relics
 		//arguments: foo(cost_all, cost_relics, cost_heal, cost_reroll, upgrade_cost)
 		FUNC_ON_PRICE_CALC,
 
+		// Called when the player initiates an attack
+		//arguments: foo(void)
+		FUNC_ON_NOT_ATTACKING,
+
 		// Used to iterate, not to give functionality to relics
 		FUNC_END_OF_TYPES
 	};
