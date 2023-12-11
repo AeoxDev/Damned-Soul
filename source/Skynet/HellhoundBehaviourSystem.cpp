@@ -191,7 +191,7 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 		0.0f, 1.0f, -0.25f,
 		hc->offsetForward + 1.0f, 1.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);*/
-	hc->currentShootingAttackRange = 1.f;
+	hc->currentShootingAttackRange = 7.5f; //Same as the offset forwards
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(dog);
 	sfx->Play(Hellhound_Inhale, Channel_Base);
 	//from hound  to player
@@ -284,7 +284,7 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
 	float  cornersX[3] = {0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
-	float  cornersZ[3] = {-1.0f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange};//Counter clockwise
+	float  cornersZ[3] = {-7.5f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange};//Counter clockwise
 	SetHitboxCorners(dog,enemy->specialHitBoxID, 3, cornersX, cornersZ);
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);//Reset hitbox
 	SetHitboxActive(dog, enemy->specialHitBoxID, true);

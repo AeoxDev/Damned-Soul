@@ -637,53 +637,37 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 
 	case EnemyType::hellhound:
 		//Regular attack hitbox
-
-		/*Player attack hitbox for reference, wider at the base
-		corners.cornersX[0] = -width;
-		corners.cornersX[1] = width;
-		corners.cornersX[2] = 2.0f * width;
-		corners.cornersX[3] = -2.0 * width;
-		// Z
-		corners.cornersZ[0] = -2.f * depth;
-		corners.cornersZ[1] = -2.f * depth;
-		corners.cornersZ[2] = -0.5f;
-		corners.cornersZ[3] = -0.5f;
-		*/
-
-
-
 		{
 			float cornersX[4];		//Width
-			cornersX[0] = -2.25f;	//Thinner at the tip
-			cornersX[1] = 2.25f;	//
-			cornersX[2] = 3.0f;		//Thicker at the base
-			cornersX[3] = -3.0f;	//
+			cornersX[0] = -2.5f;	//Thinner at the tip (Now Thicker)
+			cornersX[1] = 2.5f;	//
+			cornersX[2] = 1.7f;		//Thicker at the base (Now Thinner)
+			cornersX[3] = -1.75f;	//
 			float cornersZ[4];		//Length
-			cornersZ[0] = -7.5f;	//Long reach forwards
-			cornersZ[1] = -7.5f;	//
+			cornersZ[0] = -6.0f;	//Long reach forwards
+			cornersZ[1] = -6.0f;	//
 			cornersZ[2] = 1.0f;		//Slightly offset backwards
 			cornersZ[3] = 1.0f;		//
 			enemyComp->attackHitBoxID = CreateHitbox(entity, 4, cornersX, cornersZ);
-			//enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
 		}
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
 		SetHitboxActive(entity, enemyComp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
-
 		
 		//Breath attack hitbox (cone)
-		float cornersX[3];// = { 0.0f, 0.5f, -0.5f };
-		cornersX[0] = 0.0f;
-		cornersX[1] = 0.5f;
-		cornersX[2] = -0.5f;
-		float cornersZ[3];// = { 0.0f, -0.5f, -0.5f };
-		cornersZ[0] = -1.0f;
-		cornersZ[1] = -1.5f;
-		cornersZ[2] = -1.5f;
-		enemyComp->specialHitBoxID = CreateHitbox(entity, 3, cornersX, cornersZ);
+		{
+			float cornersX[3];// = { 0.0f, 0.5f, -0.5f };
+			cornersX[0] = 0.0f;
+			cornersX[1] = 0.5f;
+			cornersX[2] = -0.5f;
+			float cornersZ[3];// = { 0.0f, -0.5f, -0.5f };
+			cornersZ[0] = -7.5f; //Irrelevant numbers, properly sized in hellhoundbehavioursystem (afaik)
+			cornersZ[1] = -8.0f;
+			cornersZ[2] = -8.0f;
+			enemyComp->specialHitBoxID = CreateHitbox(entity, 3, cornersX, cornersZ);
+		}
 		SetCollisionEvent(entity, enemyComp->specialHitBoxID, HellhoundBreathAttackCollision);
-		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
 		SetHitboxActive(entity, enemyComp->specialHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
