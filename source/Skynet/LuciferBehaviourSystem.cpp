@@ -160,7 +160,7 @@ bool LuciferBehaviourSystem::Update()
 		enemyAnim = registry.GetComponent<AnimationComponent>(enemyEntity);
 		
 		
-
+		
 
 		//Find a player to kill.
 		if (enmComp != nullptr)
@@ -233,6 +233,16 @@ bool LuciferBehaviourSystem::Update()
 				luciferComponent->isDazed = true;
 				luciferComponent->limitHP = 0.f;
 
+
+				//time to calculate the damage cap of 10% of max health
+				//luciferComponent->toIgnorehealthCap = enemyStats->GetMaxHealth() * 0.2f;
+				float percent = enemyStats->GetMaxHealth() / 10.f;
+				luciferComponent->toIgnorehealthCap = (float)enemyStats->GetMaxHealth();
+				while (luciferComponent->toIgnorehealthCap >= enemyStats->GetHealth() || luciferComponent->toIgnorehealthCap + percent > enemyStats->GetHealth())
+				{
+					luciferComponent->toIgnorehealthCap = luciferComponent->toIgnorehealthCap - percent;
+				}
+
 				//Play Sound Effect (Added by Joaquin)
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
 				if (sfx) sfx->Play(Boss_Channeling, Channel_Extra);
@@ -241,6 +251,17 @@ bool LuciferBehaviourSystem::Update()
 			// are we dazed? dazed means standing still like an idiot
 			if (luciferComponent->isDazed)
 			{
+				// we set the damage cap, so players cannot bum rush the boss. Filthy stinky thrill seeker + adrenaline rush
+				if (enemyStats->GetHealth() <= luciferComponent->toIgnorehealthCap)
+				{
+					SetHitboxActive(enemyEntity, 0, false);
+					SetHitboxActive(enemyEntity, 1, false);
+					SetHitboxActive(enemyEntity, 2, false);
+					// heal to cap
+					float damageToHeal = luciferComponent->toIgnorehealthCap - enemyStats->GetHealth();
+					enemyStats->ApplyHealing(damageToHeal);
+				}
+
 				luciferComponent->dazeCounter += GetDeltaTime();
 				if (luciferComponent->dazeCounter >= luciferComponent->dazeTimeAmount)
 				{
@@ -280,6 +301,18 @@ bool LuciferBehaviourSystem::Update()
 
 			if (luciferComponent->isSpawning)// spawn at start, half spawn time and end of spawn time
 			{
+				// we set the damage cap, so players cannot bum rush the boss. Filthy stinky thrill seeker + adrenaline rush
+				if (enemyStats->GetHealth() <= luciferComponent->toIgnorehealthCap)
+				{
+					SetHitboxActive(enemyEntity, 0, false);
+					SetHitboxActive(enemyEntity, 1, false);
+					SetHitboxActive(enemyEntity, 2, false);
+					
+					// heal to cap
+					float damageToHeal = luciferComponent->toIgnorehealthCap - enemyStats->GetHealth();
+					enemyStats->ApplyHealing(damageToHeal);
+				}
+
 				luciferComponent->spawnTimer += GetDeltaTime();
 				if (luciferComponent->spawnTimer < luciferComponent->spawnTimeLimit) 
 				{
@@ -293,6 +326,10 @@ bool LuciferBehaviourSystem::Update()
 				else // spaw third  (IMP)
 				{
 					luciferComponent->isSpawning = false;
+					//we also reset hitbox in case it got turned off
+					SetHitboxActive(enemyEntity, 0, true);
+					SetHitboxActive(enemyEntity, 1, true);
+					SetHitboxActive(enemyEntity, 2, true);
 
 					//spawn an ice enemy
 					int levelOfDamage = GetSpawnLevel(enemyStats);
@@ -353,7 +390,7 @@ bool LuciferBehaviourSystem::Update()
 				//rotate here
 				luciferComponent->goalDirectionX = playerTransformCompenent->positionX - luciferTransformComponent->positionX;
 				luciferComponent->goalDirectionZ = playerTransformCompenent->positionZ - luciferTransformComponent->positionZ;
-				SmoothRotation(luciferTransformComponent, luciferComponent->goalDirectionX, luciferComponent->goalDirectionZ, 4.f);
+				SmoothRotation(luciferTransformComponent, luciferComponent->goalDirectionX, luciferComponent->goalDirectionZ, 10.f);
 
 				continue;
 			}
@@ -365,6 +402,8 @@ bool LuciferBehaviourSystem::Update()
 				luciferComponent->spawnTimer = 0.f;
 				luciferComponent->isSpawning = true;
 				luciferComponent->spawnIndexCounter = 0;
+
+				
 
 				
 				continue;
@@ -502,6 +541,15 @@ bool LuciferBehaviourSystem::Update()
 						SoundComponent* sfx = registry.GetComponent<SoundComponent>(enemyEntity);
 						if (sfx) sfx->Play(Boss_Channeling, Channel_Extra);
 
+
+						//time to calculate the damage cap of 10% of max health
+						//luciferComponent->toIgnorehealthCap = enemyStats->GetMaxHealth() * 0.2f;
+						float percent = enemyStats->GetMaxHealth() / 10.f;
+						luciferComponent->toIgnorehealthCap = (float)enemyStats->GetMaxHealth();
+						while (luciferComponent->toIgnorehealthCap >= enemyStats->GetHealth() || luciferComponent->toIgnorehealthCap + percent > enemyStats->GetHealth())
+						{
+							luciferComponent->toIgnorehealthCap = luciferComponent->toIgnorehealthCap - percent;
+						}
 
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
