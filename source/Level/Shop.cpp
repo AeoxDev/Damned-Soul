@@ -224,7 +224,7 @@ void CreateSingleWindows()
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
 		heal,
-		3,
+		4,
 		wep,
 		0,
 	};

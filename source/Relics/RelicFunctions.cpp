@@ -485,9 +485,10 @@ void _validateMasterRelicList()
 				/*Name*/		"Goliath Skull",
 				/*Filepath*/	"RelicIcons\\Goliath_Skull",
 				/*Description*/	GOLIATH_SKULL::Description(),
-				/*Price*/		18,
+				/*Price*/		14,
 				/*Type*/		RELIC_GADGET,
-				/*Function*/	GOLIATH_SKULL::Initialize
+				/*Function*/	GOLIATH_SKULL::Initialize,
+				/*Weight*/		15
 			),
 			//ENDOF: GADGET RELICS
 		};

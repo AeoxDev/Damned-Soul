@@ -956,7 +956,8 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	player->weaponTier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
-
+	// 10, 15, 20
+	uiWeapon->m_price = 5 * (player->weaponTier + 1);
 	SoundComponent* upgradeSound = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 	if (upgradeSound) upgradeSound->Play(Shop_Upgrade, Channel_Base);
 
