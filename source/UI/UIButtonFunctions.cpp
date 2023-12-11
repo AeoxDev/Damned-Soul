@@ -249,8 +249,6 @@ void UIFunctions::Game::SetPause(void* args, int a)
 
 void UIFunctions::Settings::Back(void* args, int a)
 {
-	//Please check this function cause the Setup sets in main menu to true already.
-	//SetInMainMenu(true);
 	stateManager.settings.Unload();
 	stateManager.menu.Setup();
 	SetInSettings(false);

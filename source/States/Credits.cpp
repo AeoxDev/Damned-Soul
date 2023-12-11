@@ -90,8 +90,12 @@ void Credits::SetupUI()
 		uiElementC->AddText(names[stateManager.creditsIndex][i].c_str(), DSBOUNDS(0, 0, uiElementC->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElementC->m_BaseImage.baseUI.GetBounds().bottom),
 			DSFLOAT2(-0.4 * reverse, 0.3), DSFLOAT2(1.0f, 1.0f), 40.0f);
 
+		uiElementC->m_Texts[i + i].m_brush = Black;
+
 		uiElementC->AddText(desc.c_str(), DSBOUNDS(0, 0, uiElementC->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElementC->m_BaseImage.baseUI.GetBounds().bottom),
 			DSFLOAT2(-0.4 * reverse, 0.0), DSFLOAT2(1.0, 1.0), 20.0f, DWRITE_TEXT_ALIGNMENT_LEADING);
+
+		uiElementC->m_Texts[i + i + 1].m_brush = Black;
 
 		reverse = -1;
 	}
