@@ -154,13 +154,13 @@ void WallResolve(EntityID entity, ProjectileComponent* proj, GeometryIndependent
 				}
 				else if (blendAnim != nullptr)
 				{
-					blendAnim->anim1.aAnimIdx = 0;
-					blendAnim->anim1.aAnim = ANIMATION_DEATH;
-					blendAnim->anim1.aAnimTime = 0.01f;
+					blendAnim->lower.aAnimIdx = 0;
+					blendAnim->lower.aAnim = ANIMATION_DEATH;
+					blendAnim->lower.aAnimTime = 0.01f;
 				
-					blendAnim->anim2.aAnimIdx = 0;
-					blendAnim->anim2.aAnim = ANIMATION_DEATH;
-					blendAnim->anim2.aAnimTime = 0.01f;
+					blendAnim->upper.aAnimIdx = 0;
+					blendAnim->upper.aAnim = ANIMATION_DEATH;
+					blendAnim->upper.aAnimTime = 0.01f;
 				}
 				player->isDashing = false;
 				AddTimedEventComponentStartContinuousEnd(entity, 0.0f, PauseAnimation, TPose, punishTime, ContinueAnimation, 0, 2);
@@ -327,9 +327,9 @@ bool GeometryIndependentSystem::Update()
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 
-					else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+					else if (blendAnim != nullptr && blendAnim->upper.aAnim == ANIMATION_WALK)
 					{
-						blendAnim->anim2.aAnimTimeFactor = stat->lavaAnimFactor;
+						blendAnim->upper.aAnimTimeFactor = stat->lavaAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 
@@ -378,9 +378,9 @@ bool GeometryIndependentSystem::Update()
 						anim->aAnimTimeFactor = stat->acidAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
-					else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+					else if (blendAnim != nullptr && blendAnim->upper.aAnim == ANIMATION_WALK)
 					{
-						blendAnim->anim2.aAnimTimeFactor = stat->acidAnimFactor;
+						blendAnim->upper.aAnimTimeFactor = stat->acidAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
@@ -397,9 +397,9 @@ bool GeometryIndependentSystem::Update()
 						anim->aAnimTimeFactor = stat->iceAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
-					else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+					else if (blendAnim != nullptr && blendAnim->upper.aAnim == ANIMATION_WALK)
 					{
-						blendAnim->anim2.aAnimTimeFactor = stat->iceAnimFactor;
+						blendAnim->upper.aAnimTimeFactor = stat->iceAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;

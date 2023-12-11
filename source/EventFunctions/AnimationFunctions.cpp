@@ -15,8 +15,8 @@ void PauseAnimation(EntityID& entity, const int& index)
 	}
 	else if (blendAnim != nullptr)
 	{
-		blendAnim->anim1.aAnimTimeFactor = 0.0f;
-		blendAnim->anim2.aAnimTimeFactor = 0.0f;
+		blendAnim->lower.aAnimTimeFactor = 0.0f;
+		blendAnim->upper.aAnimTimeFactor = 0.0f;
 	}
 }
 
@@ -30,8 +30,8 @@ void ContinueAnimation(EntityID& entity, const int& index)
 	}
 	else if (blendAnim != nullptr)
 	{
-		blendAnim->anim1.aAnimTimeFactor = 1.0f;
-		blendAnim->anim2.aAnimTimeFactor = 1.0f;
+		blendAnim->lower.aAnimTimeFactor = 1.0f;
+		blendAnim->upper.aAnimTimeFactor = 1.0f;
 	}
 
 	uint32_t condition = GetTimedEventCondition(entity, index);
@@ -54,8 +54,8 @@ void ResetAnimation(EntityID& entity, const int& index)
 	}
 	else if (blendAnim != nullptr)
 	{
-		blendAnim->anim1.aAnimTime = 0.0f;
-		blendAnim->anim2.aAnimTime = 0.0f;
+		blendAnim->lower.aAnimTime = 0.0f;
+		blendAnim->upper.aAnimTime = 0.0f;
 	}
 }
 
@@ -182,17 +182,17 @@ void TPose(EntityID& entity, const int& index)
 	{
 		anim->aAnimIdx = 0;
 		anim->aAnim = ANIMATION_DEATH;
-		anim->aAnimTime = 0.01f;;
+		anim->aAnimTime = 0.01f;
 	}
 	else if (blendAnim != nullptr)
 	{
-		blendAnim->anim1.aAnimIdx = 0;
-		blendAnim->anim1.aAnim = ANIMATION_DEATH;
-		blendAnim->anim1.aAnimTime = 0.01f;;
+		blendAnim->lower.aAnimIdx = 0;
+		blendAnim->lower.aAnim = ANIMATION_DEATH;
+		blendAnim->lower.aAnimTime = 0.01f;
 
-		blendAnim->anim2.aAnimIdx = 0;
-		blendAnim->anim2.aAnim = ANIMATION_DEATH;
-		blendAnim->anim2.aAnimTime = 0.01f;;
+		blendAnim->upper.aAnimIdx = 0;
+		blendAnim->upper.aAnim = ANIMATION_DEATH;
+		blendAnim->upper.aAnimTime = 0.01f;
 	}
 	
 }

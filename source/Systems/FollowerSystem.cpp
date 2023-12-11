@@ -24,7 +24,7 @@ bool FollowerSystem::Update()
 		}
 		else if (aComp && target_aBlendComp)
 		{
-			*aComp = target_aBlendComp->anim2;
+			*aComp = target_aBlendComp->upper;
 		}
 	}
 	return true;

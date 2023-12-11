@@ -162,7 +162,7 @@ void Render(RenderPass renderPass)
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->anim1.aAnim,  bac->anim1.aAnimIdx, bac->anim1.GetTimeValue(),bac->anim2.aAnim, bac->anim2.aAnimIdx, bac->anim2.GetTimeValue());
+		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->lower.aAnim,  bac->lower.aAnimIdx, bac->lower.GetTimeValue(),bac->upper.aAnim, bac->upper.aAnimIdx, bac->upper.GetTimeValue());
 	}
 
 
@@ -445,7 +445,7 @@ bool OutlineSystem::Update()
 		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->anim1.aAnim, bac->anim1.aAnimIdx, bac->anim1.GetTimeValue(), bac->anim2.aAnim, bac->anim2.aAnimIdx, bac->anim2.GetTimeValue());
+		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->lower.aAnim, bac->lower.aAnimIdx, bac->lower.GetTimeValue(), bac->upper.aAnim, bac->upper.aAnimIdx, bac->upper.GetTimeValue());
 	}
 
 	//Outlines::SwapBack();

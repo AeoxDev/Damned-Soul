@@ -212,7 +212,6 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Utility\GetHitModifiers.cpp" />
     <ClCompile Include="source\Shatter.cpp" />
     <ClCompile Include="source\AntiAlias.cpp" />
-    <ClCompile Include="source\Components\BlendAnimationsComponent.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
     <ClCompile Include="source\Glow.cpp" />

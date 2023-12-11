@@ -9,16 +9,6 @@
 
 struct BlendAnimationComponent
 {
-	//ANIMATION_TYPE aAnim1 = ANIMATION_IDLE;
-	//uint8_t aAnimIdx1 = 0;
-	//float aAnimTime1 = 0;
-	//float aAnimTimeFactor1 = 1.0f;
-	//
-	//ANIMATION_TYPE aAnim2 = ANIMATION_IDLE;
-	//uint8_t aAnimIdx2 = 0;
-	//float aAnimTime2 = 0;
-	//float aAnimTimeFactor2 = 1.0f;
-
-	AnimationComponent anim1 = AnimationComponent();
-	AnimationComponent anim2 = AnimationComponent();
+	AnimationComponent lower = AnimationComponent(); //Lower body animations
+	AnimationComponent upper = AnimationComponent(); //Upper body animations
 };

@@ -446,6 +446,7 @@ bool ControllerSystem::Update()
 
 		/*MOVEMENT INPUT*/
 		bool moving = false;
+		player->isMoving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
 			
@@ -468,8 +469,8 @@ bool ControllerSystem::Update()
 			//transform->positionX += stat->moveSpeed * GetDeltaTime();
 			controller->goalX += 1.0f;
 		}
-		player->isMoving = moving;
 
+		
 		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
 		if (!player->isAttacking)
 		{
@@ -480,18 +481,19 @@ bool ControllerSystem::Update()
 		if ((controller->goalX * controller->goalX + controller->goalZ * controller->goalZ) > 0.0f)
 		{
 			moving = true;
+			player->isMoving = true;
 		}
 
 		if (moving)
 		{
-			anim->anim1.aAnim = ANIMATION_WALK;
-			anim->anim1.aAnimIdx= 0;
+			anim->lower.aAnim = ANIMATION_WALK;
+			anim->lower.aAnimIdx= 0;
 
 			if (!player->isAttacking)
 			{
-				anim->anim2.aAnim = ANIMATION_WALK;
-				anim->anim2.aAnimIdx = 0;
-				anim->anim2.aAnimTime = anim->anim1.aAnimTime;
+				anim->upper.aAnim = ANIMATION_WALK;
+				anim->upper.aAnimIdx = 0;
+				anim->upper.aAnimTime = anim->lower.aAnimTime;
 			}
 
 			float len = controller->goalX * controller->goalX + controller->goalZ * controller->goalZ;
@@ -524,12 +526,12 @@ bool ControllerSystem::Update()
 		else 
 		{
 		
-			anim->anim1.aAnim = ANIMATION_IDLE;
-			anim->anim1.aAnimIdx = 0;
+			anim->lower.aAnim = ANIMATION_IDLE;
+			anim->lower.aAnimIdx = 0;
 
-			anim->anim2.aAnim = ANIMATION_IDLE;
-			anim->anim2.aAnimIdx = 0;
-			anim->anim2.aAnimTime = anim->anim1.aAnimTime;
+			anim->upper.aAnim = ANIMATION_IDLE;
+			anim->upper.aAnimIdx = 0;
+			anim->upper.aAnimTime = anim->lower.aAnimTime;
 			
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			TransformDecelerate(entity);
@@ -724,31 +726,31 @@ bool ControllerSystem::Update()
 		float scalar = (transform->facingX * controller->goalX) + (transform->facingZ * controller->goalZ);
 		if (scalar >= 0.0f)
 		{
-			anim->anim1.aAnimTime += GetDeltaTime() * anim->anim1.aAnimTimeFactor;
-			anim->anim2.aAnimTime += GetDeltaTime() * anim->anim2.aAnimTimeFactor;
-			ANIM_BRANCHLESS((&(anim->anim1)));
-			ANIM_BRANCHLESS((&(anim->anim2)));
+			anim->lower.aAnimTime += GetDeltaTime() * anim->lower.aAnimTimeFactor;
+			anim->upper.aAnimTime += GetDeltaTime() * anim->upper.aAnimTimeFactor;
+			ANIM_BRANCHLESS((&(anim->lower)));
+			ANIM_BRANCHLESS((&(anim->upper)));
 		}
 		else
 		{
-			anim->anim1.aAnimTime -= GetDeltaTime() * anim->anim1.aAnimTimeFactor;//Legs
-			if (anim->anim1.aAnimTime < 0.0f)
+			anim->lower.aAnimTime -= GetDeltaTime() * anim->lower.aAnimTimeFactor;//Legs
+			if (anim->lower.aAnimTime < 0.0f)
 			{
-				anim->anim1.aAnimTime += 1.0f;
+				anim->lower.aAnimTime += 1.0f;
 			}
 
 			if (player->isAttacking == false)//Only do the backwards whilst not attacking.
 			{
-				anim->anim2.aAnimTime -= GetDeltaTime() * anim->anim2.aAnimTimeFactor;
-				if (anim->anim2.aAnimTime < 0.0f)
+				anim->upper.aAnimTime -= GetDeltaTime() * anim->upper.aAnimTimeFactor;
+				if (anim->upper.aAnimTime < 0.0f)
 				{
-					anim->anim2.aAnimTime += 1.0f;
+					anim->upper.aAnimTime += 1.0f;
 				}
 			}
 			else
 			{
-				anim->anim2.aAnimTime += GetDeltaTime() * anim->anim2.aAnimTimeFactor;
-				ANIM_BRANCHLESS((&(anim->anim2)));
+				anim->upper.aAnimTime += GetDeltaTime() * anim->upper.aAnimTimeFactor;
+				ANIM_BRANCHLESS((&(anim->upper)));
 			}
 			
 		

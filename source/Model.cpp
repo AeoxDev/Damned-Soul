@@ -345,34 +345,8 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uin
 
 		for (int i = 0; i < m_data->m_numBones; i++)
 		{
-			/*if (i == 2) copy = frame.vertex[i];			//Center_Joint
-			else if (i == 3) copy = frame.vertex[i];	//FootL_Joint
-			else if (i == 4) copy = frame.vertex[i];	//FootR_Joint
-			else if (i == 5) copy = frame.vertex[i];	//"freedom" joint
-			else if (i == 9) copy = frame.vertex[i];	//Hip_Joint
-			else if (i == 10) copy = frame.vertex[i];	//LegL_Joint
-			else if (i == 11) copy = frame.vertex[i];	//LegR_Joint
-			else if (i == 13) copy = frame.vertex[i];	//Root_Joint
-			else if (i == 18) copy = frame.vertex[i];	//ThighL_Joint
-			else if (i == 19) copy = frame.vertex[i];	//ThighR_Joint
-			else if (i == 20) copy = frame.vertex[i];	//ToeL_Joint
-			else if (i == 21) copy = frame.vertex[i];	//ToeR_Joint
-			//Upper Body
-			else if (i == 0) copy = frame2.vertex[i]; //ArmL_Joint
-			else if (i == 1) copy = frame2.vertex[i]; //ArmR_Joint
-			else if (i == 6) copy = frame2.vertex[i]; //HandL_Joint
-			else if (i == 7) copy = frame2.vertex[i]; //HandR_Joint
-			else if (i == 8) copy = frame2.vertex[i]; //Head_Joint
-			else if (i == 12) copy = frame2.vertex[i];//Neck_Joint
-			else if (i == 14) copy = frame2.vertex[i];//ShoulderL_Joint
-			else if (i == 15) copy = frame2.vertex[i];//ShoulderR_Joint
-			else if (i == 16) copy = frame2.vertex[i];//Spine1_Joint
-			else if (i == 17) copy = frame2.vertex[i];//Spine2_Joint
-			else if (i == 22) copy = frame2.vertex[i];//Top_Joint*/
-
-
-			//if (i == 0) copy = frame.vertex[i];		//0  Control_Joint
-			if (i == 15) copy = frame.vertex[i];		//15 FootL_Joint
+			if (i == 0) copy = frame.vertex[i];		//0  Control_Joint
+			else if (i == 15) copy = frame.vertex[i];		//15 FootL_Joint
 			else if (i == 16) copy = frame.vertex[i];	//16 FootR_Joint
 			//else if (i == 20) copy = frame.vertex[i];	//20 Hip_Joint
 			else if (i == 21) copy = frame.vertex[i];	//21 KneeL_Joint

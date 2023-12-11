@@ -152,8 +152,8 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		}
 
 		BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
-		anim->anim1.aAnimTimeFactor = 5.f;
-		anim->anim2.aAnimTimeFactor = 5.f;
+		anim->lower.aAnimTimeFactor = 5.f;
+		anim->upper.aAnimTimeFactor = 5.f;
 
 
 		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
@@ -213,13 +213,13 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	float speedDiff = 1.0f / aac->duration; //stats->GetAttackSpeed() instead of 1.0f
 
 	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
-	anim->anim2.aAnimTimeFactor = speedDiff; //Cracked
-	anim->anim2.aAnimTime = 0.0f; //reset animation
+	anim->upper.aAnimTimeFactor = speedDiff; //Cracked
+	anim->upper.aAnimTime = 0.0f; //reset animation
 
 	if (!player->isMoving)
 	{
-		anim->anim1.aAnimTimeFactor = speedDiff; //Cracked
-		anim->anim1.aAnimTime = 0.0f; //reset animation
+		anim->lower.aAnimTimeFactor = speedDiff; //Cracked
+		anim->lower.aAnimTime = 0.0f; //reset animation
 	}
 
 	stats->SetSpeedMult(0.6f); //Move slower while attacking
@@ -310,8 +310,8 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	}
 
 	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
-	anim->anim1.aAnimTimeFactor = 1.f;
-	anim->anim2.aAnimTimeFactor = 1.f;
+	anim->lower.aAnimTimeFactor = 1.f;
+	anim->upper.aAnimTimeFactor = 1.f;
 }
 
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
@@ -325,11 +325,11 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 {
 	//Smile
 	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
-	anim->anim1.aAnimTimeFactor = 1.f;
-	anim->anim1.aAnimTimePower = 1.f;
+	anim->lower.aAnimTimeFactor = 1.f;
+	anim->lower.aAnimTimePower = 1.f;
 	
-	anim->anim2.aAnimTimeFactor = 1.f;
-	anim->anim2.aAnimTimePower = 1.f;
+	anim->upper.aAnimTimeFactor = 1.f;
+	anim->upper.aAnimTimePower = 1.f;
 
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	player->timeSinceLastAttack = 0.0f;
@@ -373,22 +373,22 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 
 	//Perform attack animation, woo, loop using DT
 
-	anim->anim2.aAnim = ANIMATION_ATTACK;
-	anim->anim2.aAnimIdx = 0;
+	anim->upper.aAnim = ANIMATION_ATTACK;
+	anim->upper.aAnimIdx = 0;
 
 	if (!player->isMoving)
 	{
-		anim->anim1.aAnim = ANIMATION_ATTACK;
-		anim->anim1.aAnimIdx = 0;
-		anim->anim1.aAnimTimePower = .5f;
+		anim->lower.aAnim = ANIMATION_ATTACK;
+		anim->lower.aAnimIdx = 0;
+		anim->lower.aAnimTimePower = .5f;
 	}
 
 #define HITBOX_START_TIME (0.45f)
 #define HITBOX_END_TIME (0.8f)
 #define HITBOX_SCALE (2.f)
 
-	anim->anim2.aAnimTimePower = .5f;
-	float animTime = anim->anim2.GetTimeValue();
+	anim->upper.aAnimTimePower = .5f;
+	float animTime = anim->upper.GetTimeValue();
 
 	//Make the players' attack hitbox active during the second half of the attack animation
 	if (animTime >= HITBOX_END_TIME)
@@ -599,11 +599,11 @@ void PlayerDash(EntityID& entity, const int& index)
 		return;
 
 	//Perform attack animation, woo, loop using DT
-	anim->anim1.aAnim = ANIMATION_ATTACK;
-	anim->anim2.aAnim = ANIMATION_ATTACK;
+	anim->lower.aAnim = ANIMATION_ATTACK;
+	anim->upper.aAnim = ANIMATION_ATTACK;
 	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-	anim->anim1.aAnimIdx = 1;
-	anim->anim2.aAnimIdx = 1;
+	anim->lower.aAnimIdx = 1;
+	anim->upper.aAnimIdx = 1;
 
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
 	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;

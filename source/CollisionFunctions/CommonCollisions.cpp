@@ -268,9 +268,9 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->lavaAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
-			else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
 			{
-				blendAnim->anim2.aAnimTimeFactor = stat->lavaAnimFactor;
+				blendAnim->lower.aAnimTimeFactor = stat->lavaAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
@@ -293,9 +293,9 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->acidAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
-			else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
 			{
-				blendAnim->anim2.aAnimTimeFactor = stat->acidAnimFactor;
+				blendAnim->lower.aAnimTimeFactor = stat->acidAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
@@ -309,9 +309,9 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->iceAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
-			else if (blendAnim != nullptr && blendAnim->anim2.aAnim == ANIMATION_WALK)
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
 			{
-				blendAnim->anim2.aAnimTimeFactor = stat->iceAnimFactor;
+				blendAnim->lower.aAnimTimeFactor = stat->iceAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;

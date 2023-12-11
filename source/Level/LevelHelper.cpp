@@ -1305,16 +1305,17 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->shared.colorMultiplicativeGreen = 1.25f;
 	model->shared.colorMultiplicativeBlue = 1.25f;
 	model->shared.gammaCorrection = 1.5f;
+	model->shared.hasOutline = true;
 	BlendAnimationComponent* animation = registry.AddComponent<BlendAnimationComponent>(stateManager.player, BlendAnimationComponent());
-	animation->anim1.aAnim = ANIMATION_IDLE;
-	animation->anim1.aAnimTime = 0.5f;
-	animation->anim1.aAnimIdx = 0;
-	animation->anim1.aAnimTimeFactor = 1.0f;
+	animation->lower.aAnim = ANIMATION_IDLE;
+	animation->lower.aAnimTime = 0.5f;
+	animation->lower.aAnimIdx = 0;
+	animation->lower.aAnimTimeFactor = 1.0f;
 
-	animation->anim2.aAnim = ANIMATION_IDLE;
-	animation->anim2.aAnimTime = 0.5f;
-	animation->anim2.aAnimIdx = 0;
-	animation->anim2.aAnimTimeFactor = 1.0f;
+	animation->upper.aAnim = ANIMATION_IDLE;
+	animation->upper.aAnimTime = 0.5f;
+	animation->upper.aAnimIdx = 0;
+	animation->upper.aAnimTimeFactor = 1.0f;
 	//stateManager.player Sounds
 	LoadPlayerSounds();
 
@@ -1435,8 +1436,8 @@ void ReloadPlayerNonGlobals()
 		animationLoaded = registry.AddComponent<BlendAnimationComponent>(stateManager.player, BlendAnimationComponent());
 		
 	}
-	animationLoaded->anim1.aAnimTimeFactor = 1.0f;
-	animationLoaded->anim2.aAnimTimeFactor = 1.0f;
+	animationLoaded->lower.aAnimTimeFactor = 1.0f;
+	animationLoaded->upper.aAnimTimeFactor = 1.0f;
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);

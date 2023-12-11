@@ -129,7 +129,7 @@ bool GlowSystem::Update()
 		SetIndexBuffer(LOADED_MODELS[skel_comp->model].m_indexBuffer);
 
 		// Render with data
-		LOADED_MODELS[skel_comp->model].RenderAllSubmeshesWithBlending(blandAnim_comp->anim1.aAnim, blandAnim_comp->anim1.aAnimIdx, blandAnim_comp->anim1.aAnimTime, blandAnim_comp->anim2.aAnim, blandAnim_comp->anim2.aAnimIdx, blandAnim_comp->anim2.aAnimTime);
+		LOADED_MODELS[skel_comp->model].RenderAllSubmeshesWithBlending(blandAnim_comp->lower.aAnim, blandAnim_comp->lower.aAnimIdx, blandAnim_comp->lower.aAnimTime, blandAnim_comp->upper.aAnim, blandAnim_comp->upper.aAnimIdx, blandAnim_comp->upper.aAnimTime);
 
 		UnsetGeometryShader();
 		drawn = true;

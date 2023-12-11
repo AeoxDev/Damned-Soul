@@ -137,16 +137,16 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		}
 		else if (bAnimation != nullptr)
 		{
-			bAnimation->anim1.aAnim = ANIMATION_WALK;
-			bAnimation->anim1.aAnimIdx = 0;
-			bAnimation->anim1.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			bAnimation->lower.aAnim = ANIMATION_WALK;
+			bAnimation->lower.aAnimIdx = 0;
+			bAnimation->lower.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 
-			bAnimation->anim2.aAnim = ANIMATION_WALK;
-			bAnimation->anim2.aAnimIdx = 0;
-			bAnimation->anim2.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			bAnimation->upper.aAnim = ANIMATION_WALK;
+			bAnimation->upper.aAnimIdx = 0;
+			bAnimation->upper.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
 
-			ANIM_BRANCHLESS((&(bAnimation->anim1)));
-			ANIM_BRANCHLESS((&(bAnimation->anim2)));
+			ANIM_BRANCHLESS((&(bAnimation->lower)));
+			ANIM_BRANCHLESS((&(bAnimation->upper)));
 		}
 	}
 	if (cutscene->mode & Cutscene_Character_Fall)
@@ -198,22 +198,17 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		}
 
 		//Loop the walk animation
-		//AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
-		//animation->aAnim = ANIMATION_IDLE;
-		//animation->aAnimIdx = 1;
-		//animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
-		//ANIM_BRANCHLESS(animation);
 
 		BlendAnimationComponent* animation = registry.GetComponent<BlendAnimationComponent>(entity);
-		animation->anim1.aAnim = ANIMATION_IDLE;
-		animation->anim1.aAnimIdx = 1;
-		animation->anim1.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
-		ANIM_BRANCHLESS((&(animation->anim1)));
+		animation->lower.aAnim = ANIMATION_IDLE;
+		animation->lower.aAnimIdx = 1;
+		animation->lower.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS((&(animation->lower)));
 
-		animation->anim2.aAnim = ANIMATION_IDLE;
-		animation->anim2.aAnimIdx = 1;
-		animation->anim2.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
-		ANIM_BRANCHLESS((& (animation->anim2)));
+		animation->upper.aAnim = ANIMATION_IDLE;
+		animation->upper.aAnimIdx = 1;
+		animation->upper.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS((& (animation->upper)));
 
 	}
 	if (cutscene->mode & Cutscene_Character_Idle)
@@ -267,15 +262,15 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		}
 		else if (bAnimation != nullptr)
 		{
-			bAnimation->anim1.aAnim = ANIMATION_IDLE;
-			bAnimation->anim1.aAnimIdx = 0;
-			bAnimation->anim1.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
-			ANIM_BRANCHLESS((&(bAnimation->anim1)));
+			bAnimation->lower.aAnim = ANIMATION_IDLE;
+			bAnimation->lower.aAnimIdx = 0;
+			bAnimation->lower.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->lower)));
 
-			bAnimation->anim2.aAnim = ANIMATION_IDLE;
-			bAnimation->anim2.aAnimIdx = 0;
-			bAnimation->anim2.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
-			ANIM_BRANCHLESS((&(bAnimation->anim2)));
+			bAnimation->upper.aAnim = ANIMATION_IDLE;
+			bAnimation->upper.aAnimIdx = 0;
+			bAnimation->upper.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->upper)));
 		}
 		
 	}
@@ -330,15 +325,15 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		}
 		else if (bAnimation != nullptr)
 		{
-			bAnimation->anim1.aAnim = ANIMATION_ATTACK;
-			bAnimation->anim1.aAnimIdx = 0;
-			bAnimation->anim1.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
-			ANIM_BRANCHLESS((&(bAnimation->anim1)));
+			bAnimation->lower.aAnim = ANIMATION_ATTACK;
+			bAnimation->lower.aAnimIdx = 0;
+			bAnimation->lower.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->lower)));
 
-			bAnimation->anim2.aAnim = ANIMATION_ATTACK;
-			bAnimation->anim2.aAnimIdx = 0;
-			bAnimation->anim2.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
-			ANIM_BRANCHLESS((&(bAnimation->anim2)));
+			bAnimation->upper.aAnim = ANIMATION_ATTACK;
+			bAnimation->upper.aAnimIdx = 0;
+			bAnimation->upper.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->upper)));
 		}
 		
 	}

@@ -33,13 +33,13 @@ void StartPlayerDeath(EntityID& entity, const int& index)
 	BlendAnimationComponent* blendAnimComp = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (blendAnimComp != nullptr)
 	{
-		blendAnimComp->anim1.aAnim = ANIMATION_DEATH;
-		blendAnimComp->anim1.aAnimIdx = 0;
-		blendAnimComp->anim1.aAnimTime = 0.0f;
+		blendAnimComp->lower.aAnim = ANIMATION_DEATH;
+		blendAnimComp->lower.aAnimIdx = 0;
+		blendAnimComp->lower.aAnimTime = 0.0f;
 
-		blendAnimComp->anim2.aAnim = ANIMATION_DEATH;
-		blendAnimComp->anim2.aAnimIdx = 0;
-		blendAnimComp->anim2.aAnimTime = 0.0f;
+		blendAnimComp->upper.aAnim = ANIMATION_DEATH;
+		blendAnimComp->upper.aAnimIdx = 0;
+		blendAnimComp->upper.aAnimTime = 0.0f;
 	}
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
@@ -78,19 +78,19 @@ void PlayPlayerDeath(EntityID& entity, const int& index)
 	BlendAnimationComponent* blendAnimComp = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (blendAnimComp != nullptr)
 	{
-		blendAnimComp->anim1.aAnim = ANIMATION_DEATH;
-		blendAnimComp->anim2.aAnim = ANIMATION_DEATH;
+		blendAnimComp->lower.aAnim = ANIMATION_DEATH;
+		blendAnimComp->upper.aAnim = ANIMATION_DEATH;
 
-		blendAnimComp->anim1.aAnimIdx = 0;
-		blendAnimComp->anim2.aAnimIdx = 0;
+		blendAnimComp->lower.aAnimIdx = 0;
+		blendAnimComp->upper.aAnimIdx = 0;
 
 		float scalar = 3.0f * GetTimedEventElapsedTime(entity, index) / GetTimedEventTotalTime(entity, index);
-		blendAnimComp->anim1.aAnimTime = 0.01f + scalar;
-		blendAnimComp->anim2.aAnimTime = 0.01f + scalar;
+		blendAnimComp->lower.aAnimTime = 0.01f + scalar;
+		blendAnimComp->upper.aAnimTime = 0.01f + scalar;
 		if (scalar > 1.0f)
 		{
-			blendAnimComp->anim1.aAnimTime = 0.99999f;
-			blendAnimComp->anim2.aAnimTime = 0.99999f;
+			blendAnimComp->lower.aAnimTime = 0.99999f;
+			blendAnimComp->upper.aAnimTime = 0.99999f;
 		}
 	}
 }
@@ -113,7 +113,7 @@ bool StateSwitcherSystem::Update()
 		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(player);
 		if (statComp != nullptr && controller != nullptr)
 		{
-			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay && registry.GetComponent<BlendAnimationComponent>(player)->anim1.aAnim != ANIMATION_DEATH) //Added a check to see if the player death animation is already playing (Joaquin)
+			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay && registry.GetComponent<BlendAnimationComponent>(player)->lower.aAnim != ANIMATION_DEATH) //Added a check to see if the player death animation is already playing (Joaquin)
 			{
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(player);
 				if (sfx != nullptr)
