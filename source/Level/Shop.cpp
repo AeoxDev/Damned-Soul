@@ -156,27 +156,22 @@ void CreateSingleWindows()
 	{
 		"Heal",
 		"Reroll",
-		//"Lock",
-		//"Buy",
 		"Weapon",
 		"Next Level"
 	};
 
 	const DSFLOAT2 positions[SHOP_SINGLE_WINDOWS] =
 	{
-		{ SHOP_OFFSET_X_LEFT, SHOP_POSITION_Y - 1.25f },
-		{ SHOP_OFFSET_X_RIGHT, SHOP_POSITION_Y - 1.25f  },
-		//{ SHOP_OFFSET_X_Left + 0.44f, SHOP_POSITION_Y - 1.25f  },
+		{ SHOP_OFFSET_X_LEFT - 0.07f, SHOP_POSITION_Y - 1.25f },
+		{ SHOP_OFFSET_X_RIGHT + 0.07f, SHOP_POSITION_Y - 1.25f  },
 		{ SHOP_OFFSET_X_RIGHT, SHOP_POSITION_Y - 0.3f },
-		{ 0.8f, -0.75f }
+		{ 0.5f, -0.7f }
 	};
 
 	const char filenames[SHOP_SINGLE_WINDOWS][32] =
 	{
 		"Heal",
 		"Reroll",
-		//"Lock",
-		//"Buy",
 		"Axe2",
 		""
 	};
@@ -185,8 +180,6 @@ void CreateSingleWindows()
 	{
 		UIFunctions::OnClick::HealPlayer,
 		UIFunctions::OnClick::RerollRelic,
-		//UIFunctions::OnClick::LockRelic,
-		//UIFunctions::OnClick::BuyRelic,
 		UIFunctions::OnClick::UpgradeWeapon,
 		UIFunctions::Game::ExitShopCutscene
 	};
@@ -195,8 +188,6 @@ void CreateSingleWindows()
 	{
 		"Heal",
 		"Reroll",
-		//"Lock",
-		//"Buy",
 		"Upgrade Weapon",
 		""
 	};
@@ -205,8 +196,6 @@ void CreateSingleWindows()
 	{
 		"Recover 25% of max Health",
 		"Reroll a new set of relics",
-		//"Lock the selected relic until the next reroll or shop",
-		//"Buy the selected relic",
 		"Increase your base damage by 25%",
 		"Leave the shop"
 	};
@@ -215,8 +204,6 @@ void CreateSingleWindows()
 	{
 		0,
 		5,
-		//0,
-		//0,
 		10,
 		0,
 	};
@@ -233,10 +220,10 @@ void CreateSingleWindows()
 		}
 		else if (i == 3)
 		{
-			uiElement->Setup("ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+			uiElement->Setup("ButtonMedium", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 		}
 		else
-			uiElement->Setup("ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			uiElement->Setup("ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 		if (i != 3)
 		{
@@ -298,7 +285,7 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y + 0.05f }, DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
@@ -314,15 +301,15 @@ void CreateTextWindows()
 	registry.AddComponent<UIShopImpComponent>(impText);
 
 	UIComponent* uiPlayerInfo = registry.AddComponent<UIComponent>(statsText);
-	uiPlayerInfo->Setup("PanelSmall", "Player Stats", { 0.3f,  SHOP_POSITION_Y - 1.25f }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	uiPlayerInfo->Setup("PanelSmall", "Player Stats", { SHOP_POSITION_X,  SHOP_POSITION_Y - 1.25f }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 	uiPlayerInfo->m_BaseText.baseUI.SetPosition(DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y - 0.05f));
 
 	float offsets[3] = { 0.06f, 0.0f, -0.06f };
 
 	for (int i = 0; i < 3; i++)
 	{
-		uiPlayerInfo->AddText("", uiPlayerInfo->m_BaseImage.baseUI.GetBounds(),
-			DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y + offsets[i] - 0.025f));
+		uiPlayerInfo->AddText(" ", uiPlayerInfo->m_BaseImage.baseUI.GetBounds(),
+			DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y + offsets[i] - 0.025f), DSFLOAT2(1.0f, 1.0f), 15.0f);
 	}
 
 

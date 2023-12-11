@@ -1160,6 +1160,7 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 
 		}
 
+		buttonText.append("\n");
 		buttonText.append(uiImpText->description);
 
 		uiImpElement->m_BaseText.SetText(buttonText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize,
@@ -1238,6 +1239,7 @@ void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 		else
 			relicText.append("\nPrice: Free\n");
 
+		relicText.append("\n");
 		relicText.append(uiImpText->description);
 
 
