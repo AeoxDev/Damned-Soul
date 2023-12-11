@@ -433,7 +433,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<GlowComponent>(hazard, acidGlowRed, acidGlowGreen, acidGlowBlue);
 			AddStaticHazard(hazard, HAZARD_ACID);
 		}
-		SetDirectionLight(0.6f, 0.6f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.6f, 0.6f, 0.61f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
 		portalGlow = registry.AddComponent<GlowComponent>(stateManager.gateVisual, 0.6f, 0.9f, 0.6f);	// Portal glow
@@ -467,7 +467,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			registry.AddComponent<GlowComponent>(hazard, acidGlowRed, acidGlowGreen, acidGlowBlue);
 			AddStaticHazard(hazard, HAZARD_ACID);
 		}
-		SetDirectionLight(0.55f, 0.55f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.6f, 0.6f, 0.61f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
@@ -479,7 +479,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
 		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV9Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(0.5f, 0.5f, 1.0f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.55f, 0.55f, 0.60f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, 0.7f, 1, 0.8f);	// Ice glow.
@@ -570,7 +570,7 @@ EntityID SetUpHazard(const StaticHazardType& type, const float scale, const floa
 			hazardModel->shared.colorMultiplicativeGreen = gm;
 			hazardModel->shared.colorMultiplicativeBlue = bm;
 			hazardModel->shared.gammaCorrection = gamma;
-			hazardModel->castShadow = false;
+			hazardModel->shared.castShadow = false;
 			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(hazard);
 			hazardTransform->positionX = randX;
 			hazardTransform->positionY = 0.6f - ((float)type * .1f);
@@ -634,7 +634,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::hellhound || eType == EnemyType::empoweredHellhound)
 		{
-			mass = 100.f;
+			mass = 90.f;
 		}
 		else if (eType == EnemyType::skeleton || eType == EnemyType::empoweredSkeleton)
 		{
@@ -768,7 +768,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::empoweredHellhound)
 		{
-			moveSpeed = 28.5f; // :)
+			moveSpeed = 22.f; // :)
 		}
 		else if (eType == EnemyType::empoweredSkeleton)
 		{
@@ -944,8 +944,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(entity);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(entity);
-	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->Setup("EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
 
 	//Model
@@ -978,7 +978,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Hellhound.mdl"));
 		registry.AddComponent<AnimationComponent>(entity);
 		registry.AddComponent<HellhoundBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::hellhound);
+		SetupEnemyCollisionBox(entity, 2.5f, EnemyType::hellhound);
 		//Sounds
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(HELLHOUND);
@@ -1149,7 +1149,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::frozenImp)
 		{
-			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("EyePlaceholder.mdl"));
+			model = registry.AddComponent<ModelSkeletonComponent>(entity, LoadModel("Imp.mdl"));
 			//Sounds (Added by Joaquin)
 			SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 			scp->Load(IMP);
@@ -1347,12 +1347,12 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	//UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
 	//
 	////Setup + Health
-	//uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
-	//uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(-0.8f, 0.8f));
+	//uiElement->Setup("EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
+	//uiElement->AddImage("FullHealth", DSFLOAT2(-0.8f, 0.8f));
 	//UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(stateManager.player);
 
 	////Souls
-	//uiElement->AddImage("ExMenu/EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
+	//uiElement->AddImage("EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
 	//uiElement->AddText(" ",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
 	//UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
 	
@@ -1407,6 +1407,13 @@ void ReloadPlayerNonGlobals()
 {
 	if (registry.GetComponent<PlayerComponent>(stateManager.player) == nullptr)
 		return; //Ain't no way we doing this function if player doesn't exist yet
+
+	ParticleComponent* particles = registry.GetComponent<ParticleComponent>(stateManager.player);
+	if (particles != nullptr)
+	{
+		particles->Release();
+		registry.RemoveComponent<ParticleComponent>(stateManager.player);
+	}
 
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
@@ -1497,23 +1504,23 @@ EntityID RandomPlayerEnemy(EnemyType enemyType) {
 	return enemy;
 }
 
-void SetScoreboardUI(EntityID stage)
+void SetScoreboardUI()
 {
-	//Scoreboard UI
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(stage);
-	uiElement->Setup("ExMenu/SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(scoreBoard);
+	uiElement->Setup("SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
 	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
 
-	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stage);
-	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(stage);
+	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(scoreBoard);
+	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(scoreBoard);
 
-	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
 	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.5f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ExMenu/ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
 	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.5f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
@@ -1543,10 +1550,10 @@ void SetScoreboardUI(EntityID stage)
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.4f, uiCoords.y - 0.3f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.6f, uiCoords.y - 0.4f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
 			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-	UIGameScoreboardComponent* scoreBoard = registry.AddComponent<UIGameScoreboardComponent>(stage);
+	registry.AddComponent<UIGameScoreboardComponent>(scoreBoard);
 
 	uiElement->SetAllVisability(false);
 }
@@ -1594,4 +1601,43 @@ void UpdateScoreBoardUI(bool won)
 				DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		}
 	}
+}
+
+void SetupEnemyCounter()
+{
+	EntityID counterEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(counterEntity);
+	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
+
+	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
+}
+
+void SetupFPSCounter()
+{
+	EntityID fpsEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(fpsEntity);
+	uiElement->Setup("ButtonSmall", "FPS: 0", DSFLOAT2(0.8f, 0.65f));
+
+	if (!GetVisualFPS())
+	{
+		uiElement->m_BaseText.baseUI.SetVisibility(false);
+		uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	}
+
+	registry.AddComponent<UIGameFPSComponent>(fpsEntity);
+}
+
+void SetupTimer()
+{
+	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
+	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.65f));
+
+	if (!GetVisualTimer())
+	{
+		uiElement->m_BaseText.baseUI.SetVisibility(false);
+		uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	}
+
+	registry.AddComponent<UIGameTimeComponent>(timeEntity);
 }

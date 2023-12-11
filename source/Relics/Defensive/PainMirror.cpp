@@ -1,11 +1,12 @@
 #include "Relics\Defensive\PainMirror.h"
 #include "Relics\Utility\RelicInternalHelper.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\GetHitModifiers.h"
 #include "Registry.h"
 #include "Components.h"
 #include "CombatFunctions.h"
 
-#define PAIN_MIRROR_RETURN_FRACTION (1.0f)
+#define PAIN_MIRROR_RETURN_FRACTION (1.25f)
 
 EntityID PAIN_MIRROR::_OWNER;
 
@@ -35,20 +36,22 @@ void PAIN_MIRROR::Retaliation(void* data)
 {
 	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
-	// Check if it is the right entity that is attacking
-	if (PAIN_MIRROR::_OWNER.index != input->defender.index)
+	// Check if it is the right entity that is attacking, and if this is reflect damage or a hazard (no infinite loops!)
+	if (PAIN_MIRROR::_OWNER.index != input->defender.index || input->attacker.index == -1 || input->typeSource & (RelicInput::DMG::REFLECT | RelicInput::DMG::HAZARD))
 		return;
-	if (input->attacker.index == -1)//Static hazard
-	{
-		return;
-	}
+
 	// The person who's fist hurts a lot
 	StatComponent* owMyFistHurts = registry.GetComponent<StatComponent>(input->attacker);
 
-	// The damage
-	float damage = ((input->damage + input->flatAdd) * input->incMult) * PAIN_MIRROR_RETURN_FRACTION;
+	// The damage modifiers if the defender was the attacker
+	RelicInput::OnDamageCalculation reflected = GetModifiers(input->defender, input->attacker);
+	reflected = RetaliationCombination(*input, reflected, PAIN_MIRROR_RETURN_FRACTION);
+	reflected.cap = owMyFistHurts->GetHealth();
+
+
+	DamageNumbers(input->attacker, reflected.CollapseNoCap());
 
 	// Apply the damage
 	// Also causes static hazards to flash
-	Combat::HitFlat(input->attacker, owMyFistHurts, damage);
+	Combat::HitFlat(input->attacker, owMyFistHurts, reflected.CollapseDamage());
 }

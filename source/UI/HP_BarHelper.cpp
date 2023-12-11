@@ -146,7 +146,7 @@ void ScaleAdvancedHealthBar(const EntityID player)
 		{
 			UIBase& base = uiElement->m_Images[HP_MID].baseUI;
 			static FLOAT oiriginalX = base.m_PixelCoords.x - 100;
-			base.m_PixelCoords.x = oiriginalX + stats->GetMaxHealth() - EDGE_FLAT_OFFSET;
+			base.m_PixelCoords.x = oiriginalX + stats->GetMaxHealth();
 			base.UpdateTransform();
 		}
 		{
@@ -217,7 +217,7 @@ void UpdateSoulUI(const EntityID player)
 	{
 		char temp[8] = "";
 		sprintf(temp, /*"Health: %lld"*/"%ld", souls->value);
-		uiElement->m_Texts[SOUL_TEXT].SetText(temp, uiElement->m_Texts[SOUL_TEXT].baseUI.GetBounds(), 15.f);
+		uiElement->m_Texts[SOUL_TEXT].SetText(temp, uiElement->m_Texts[SOUL_TEXT].baseUI.GetBounds(), 18.5f);
 		DSFLOAT2 position = uiElement->m_Images[SOUL_STONE].baseUI.GetPosition();
 		position.x += .017f;
 		position.y -= .007f;

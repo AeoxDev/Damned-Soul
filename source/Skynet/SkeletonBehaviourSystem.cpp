@@ -381,6 +381,7 @@ bool SkeletonBehaviourSystem::Update()
 
 	// Pop the stack
 	//MemLib::spop;
-	free(valueGrid);
+	if (valueGrid != nullptr)
+		free(valueGrid);
 	return true;
 }

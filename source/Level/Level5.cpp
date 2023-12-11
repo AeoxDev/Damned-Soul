@@ -84,16 +84,6 @@ void LoadLevel5()
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
 
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-
-
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
@@ -101,17 +91,31 @@ void LoadLevel5()
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID holder = registry.CreateEntity();
 
 	CreatePointLight(lightholder, 0.6f, 0.1f, 0.0f, 82.0f, 10.0f, 185.0f, 700.0f, 20.0f);
 	CreatePointLight(lightholderTwo, 0.6f, 0.1f, 0.0f, -318.0f, 10.0f, 163.0f, 200.0f, 20.0f);
 
+	registry.AddComponent<ParticleComponent>(holder, 10, 0, 3.5, 0.0, 0.0, 0.0, 8, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent tttComp;
+	tttComp.positionX = -52.0;
+	tttComp.positionY = 2.f;
+	tttComp.positionZ = 136.0;
+	registry.AddComponent<TransformComponent>(holder, tttComp);
 
-	//registry.AddComponent<ParticleComponent>(lightholder, 10, 0, 5.5,0.0, 0.0, 0.0, 18, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent tComp;
-	//tComp.positionX = 150.0;
-	//tComp.positionY = 20.0;
-	//tComp.positionZ = 185.0;
-	//registry.AddComponent<TransformComponent>(lightholder, tComp);
+	registry.AddComponent<ParticleComponent>(lightholder, 10, 0, 3.5,0.0, 0.0, 0.0, 19, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent tComp;
+	tComp.positionX = 5.0;
+	tComp.positionY = 2.0f;
+	tComp.positionZ = 135.0;
+	registry.AddComponent<TransformComponent>(lightholder, tComp);
+
+	registry.AddComponent<ParticleComponent>(lightholderTwo, 10, 0, 3.5, 0.0f, 0.0f, 0.0f, 9, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent ttComp;
+	ttComp.positionX = -308.0f;
+	ttComp.positionY = 8.0f;
+	ttComp.positionZ = 160.0;
+	registry.AddComponent<TransformComponent>(lightholderTwo, ttComp);
 
 	//Add static hazards on the where player does not spawn
 	//////const int nrHazards = 8;

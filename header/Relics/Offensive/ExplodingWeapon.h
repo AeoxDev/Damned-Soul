@@ -11,6 +11,9 @@ namespace EXPLODING_WEAPON
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
+	// Call to reset explosive capabilities
+	void ResetExplosion(void* input);
+
 	// Put the damage over time effect on the enemy that was hit
 	void Explosion(void* data);
 }

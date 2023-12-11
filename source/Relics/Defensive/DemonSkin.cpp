@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define DEMON_SKIN_DAMAGE_MULTIPLIER (0.8f)
+#define DEMON_SKIN_DAMAGE_MULTIPLIER (0.75f)
 
 EntityID DEMON_SKIN::_OWNER;
 

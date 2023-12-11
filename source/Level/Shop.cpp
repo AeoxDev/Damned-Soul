@@ -27,8 +27,12 @@ void ShopCutscene()
 	//Create the imp
 	EntityID imp = registry.CreateEntity();
 	stateManager.cutsceneEnemy = imp;
-	registry.AddComponent<ModelSkeletonComponent>(imp, LoadModel("Imp.mdl"));
+	ModelSkeletonComponent* model = registry.AddComponent<ModelSkeletonComponent>(imp, LoadModel("Imp.mdl"));
+	model->shared.hasOutline = true;
+	model->shared.baseColorMultiplicativeRed *= .9f;
+	model->shared.baseColorAdditiveGreen *= 1.1f;
 	registry.AddComponent<AnimationComponent>(imp);
+	registry.AddComponent<GlowComponent>(imp, 1.375f, .715f, .885f);
 	TransformComponent* transform = registry.AddComponent<TransformComponent>(imp);
 	transform->positionX = 13.0f;
 	transform->positionY = 3.5f;
@@ -72,27 +76,25 @@ void ShopCutscene()
 void CreateUIRelics(UIComponent& uiComp, UIShopRelicComponent& uiRelicComp, const Relics::RELIC_TYPE& type, DSFLOAT2 pos)
 {
 	ML_Array<float, 2> xPos;
-	xPos[0] = pos.x - 0.1f;
-	xPos[1] = pos.x + 0.1f;
+	xPos[0] = pos.x - 0.075f;
+	xPos[1] = pos.x + 0.075f;
 
 	float yPos = pos.y;
 
 	for (int i = 0; i < 2; i++)
 	{
 		const RelicData* relic = Relics::PickRandomRelic(type);
-		uiComp.AddImage(relic->m_filePath, { xPos[i], yPos }, { 1.5f, 1.5f }, false);
+		uiComp.AddImage(relic->m_filePath, { xPos[i], yPos + 0.025f }, { 1.5f, 1.5f }, false);
 		char price[4];
 		sprintf(price, "%i", relic->m_price);
 
-		uiComp.AddText(price, uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.GetBounds(), {xPos[i], yPos - 0.075f});
+		uiComp.AddText(price, uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.GetBounds(), {xPos[i] + 0.015f, yPos - 0.075f});
+		uiComp.AddImage("Soul_Stone", { xPos[i], yPos - 0.075f }, { 1.0f, 1.0f }, false);
+		uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
+		uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.SetVisibility(false);
+
 		uiRelicComp.shopRelics[i] = relic;
 	}
-
-	uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
-	uiComp.AddImage("RelicIcons\\HoverRelic", { 0.0f, 0.0f }, { 1.5f, 1.5f }, false);
-	uiComp.m_Images[uiComp.m_Images.size() - 2].baseUI.SetVisibility(false);
-	uiComp.m_Images[uiComp.m_Images.size() - 1].baseUI.SetVisibility(false);
-
 };
 
 
@@ -123,7 +125,7 @@ void CreateRelicWindows()
 	{
 		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
-		uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		uiElement->Setup("PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f});
 		
 		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
@@ -135,11 +137,11 @@ void CreateRelicWindows()
 
 		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnClick::None, UIFunctions::OnClick::None);
 		uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
-		uiOnClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
+		uiOnClick->Add(uiElement->m_Images[3].baseUI.GetPixelCoords(), uiElement->m_Images[3].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
 
 		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::None);
 		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
-		uiOnHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
+		uiOnHover->Add(uiElement->m_Images[3].baseUI.GetPixelCoords(), uiElement->m_Images[3].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
 
 		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
 		sfx->Load(SHOP);
@@ -175,7 +177,7 @@ void CreateSingleWindows()
 		"Reroll",
 		//"Lock",
 		//"Buy",
-		"AxeMedium",
+		"Axe2",
 		""
 	};
 
@@ -205,13 +207,13 @@ void CreateSingleWindows()
 		"Reroll a new set of relics",
 		//"Lock the selected relic until the next reroll or shop",
 		//"Buy the selected relic",
-		"Upgrade your weapon",
+		"Increase your base damage by 25%",
 		"Leave the shop"
 	};
 
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
-		1,
+		0,
 		5,
 		//0,
 		//0,
@@ -227,14 +229,14 @@ void CreateSingleWindows()
 
 		if (i == 2)
 		{
-			uiElement->Setup("ExMenu/PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			uiElement->Setup("PanelSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		}
 		else if (i == 3)
 		{
-			uiElement->Setup("ExMenu/ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+			uiElement->Setup("ButtonSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 		}
 		else
-			uiElement->Setup("ExMenu/ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			uiElement->Setup("ButtonSuperSmall", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 		if (i != 3)
 		{
@@ -247,6 +249,10 @@ void CreateSingleWindows()
 
 				uiElement->AddText(Sprice, uiElement->m_Images[uiElement->m_Images.size() - 1].baseUI.GetBounds(), { positions[i].x, positions[i].y - 0.1f });
 			}
+
+			if (registry.GetComponent<PlayerComponent>(stateManager.player)->healFreebie && std::strcmp(texts[i], "Heal") == 0)
+				uiElement->AddText("Free", uiElement->m_BaseImage.baseUI.GetBounds(), { positions[i].x, positions[i].y - 0.1f });
+
 		}
 
 		if (i == 3)
@@ -268,7 +274,9 @@ void CreateSingleWindows()
 		if (i != 3)
 		{
 			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
-			uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+
+			if (i != 2)
+				uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 		}
 		else
 			uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
@@ -290,12 +298,12 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("ExMenu/ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("ButtonMedium", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("ExMenu/PanelMediumShort", "Hello There", { 0.5f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
+	uiImpText->Setup("PanelMediumShort", "Hello There", { 0.5f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
 	
 	uiImpText->m_BaseText.baseUI.m_CurrentBounds.right *= 0.6;
 	uiImpText->m_BaseText.baseUI.m_PositionBounds.right *= 0.6;
@@ -306,7 +314,7 @@ void CreateTextWindows()
 	registry.AddComponent<UIShopImpComponent>(impText);
 
 	UIComponent* uiPlayerInfo = registry.AddComponent<UIComponent>(statsText);
-	uiPlayerInfo->Setup("ExMenu/PanelSmall", "Player Stats", { 0.3f,  SHOP_POSITION_Y - 1.25f }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	uiPlayerInfo->Setup("PanelSmall", "Player Stats", { 0.3f,  SHOP_POSITION_Y - 1.25f }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 	uiPlayerInfo->m_BaseText.baseUI.SetPosition(DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y - 0.05f));
 
 	float offsets[3] = { 0.06f, 0.0f, -0.06f };

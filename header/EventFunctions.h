@@ -2,6 +2,7 @@
 #include "EntityID.h"
 
 //void RandomPosition(EntityID& entity, const int& index);
+void DestroyEntity(EntityID& entity, const int& index);
 
 //Events for any entity capable of being attacked
 void BeginHit(EntityID& entity, const int& index);
@@ -44,6 +45,7 @@ void PlayerAttack(EntityID& entity, const int& index);
 void CreatePortal(EntityID& entity, const int& index);
 //void EnemyExclusion(EntityID& entity); not needed?
 void PlayDeathAnimation(EntityID& entity, const int& index);
+void ShatterEnemy(EntityID& entity, const int& index);
 void RemoveEnemy(EntityID& entity, const int& index);
 void RemoveCutsceneEnemy(EntityID& entity, const int& index);
 void SplitBoss(EntityID& entity, const int& index);
@@ -166,3 +168,6 @@ void SetGameSpeedDefault(EntityID& entity, const int& index);
 //Game level
 void EventLoadNextLevel(EntityID& entity, const int& index);
 void EventShopLoadNextLevel(EntityID& entity, const int& index);
+
+//UI
+void CreateDamageNumber(EntityID& entity, const int& index);

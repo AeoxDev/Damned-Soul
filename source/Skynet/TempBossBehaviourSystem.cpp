@@ -105,6 +105,7 @@ void CombatBehaviour(TempBossBehaviour* bc, StatComponent* enemyStats, StatCompo
 
 		//Animation setup
 		animComp->aAnim = ANIMATION_ATTACK;
+		animComp->aAnimIdx = 0.f;
 		animComp->aAnimTime = 0.0f;
 		animComp->aAnimTimePower = 1.0f;
 		animComp->aAnimTimeFactor = 3.0f; //Elliot comment: This might need to be changed when timePower changes
@@ -276,7 +277,9 @@ bool TempBossBehaviourSystem::Update()
 						tempBossComponent->isDazed = true;
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
-						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.f, 0.f, 0.f, 1.f, 200, PULSE);
+						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.5f, 0.f, 0.f, 1.f,
+						1.5f,0.60f,0.10f,//rgb
+						200, PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand
 					}
 
@@ -353,6 +356,7 @@ bool TempBossBehaviourSystem::Update()
 		enemyAnim->aAnimTime += GetDeltaTime() * enemyAnim->aAnimTimeFactor;
 	}
 
-	free(valueGrid);
+	if (valueGrid != nullptr)
+		free(valueGrid);
 	return true;
 }

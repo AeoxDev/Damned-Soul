@@ -51,7 +51,7 @@ void Credits::SetupButtons()
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-	uiElement->Setup("Exmenu/ButtonMedium", "Back", { 0.78f, -0.85f }, { 1.0f, 1.0f });
+	uiElement->Setup("ButtonMedium", "Back", { 0.78f, -0.85f }, { 1.0f, 1.0f });
 
 	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Credits_Back, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -109,7 +109,7 @@ void Credits::SetupText()
 
 	auto credits = registry.CreateEntity();
 	UIComponent* uiElementC = registry.AddComponent<UIComponent>(credits);
-	uiElementC->Setup("ExMenu/ButtonMedium", "Credits", DSFLOAT2( 0.0f, 0.6f ), DSFLOAT2(1.0f, 1.0f), 30.0f);
+	uiElementC->Setup("ButtonMedium", "Credits", DSFLOAT2( 0.0f, 0.6f ), DSFLOAT2(1.0f, 1.0f), 30.0f);
 	uiElementC->m_BaseImage.baseUI.SetVisibility(true);
 
 	for (int i = 0; i < 3; i++)

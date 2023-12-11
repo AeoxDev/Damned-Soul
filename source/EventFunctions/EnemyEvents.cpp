@@ -26,6 +26,9 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
 	RemoveHitbox(entity, 2);
+	RemoveHitbox(entity, 3);
+	RemoveHitbox(entity, 4);
+	RemoveHitbox(entity, 5);//Remove special case for hellhound
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;
@@ -53,8 +56,38 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	EnemyComponent* enmComp = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enmComp->specialHitBoxID, false);
 	SetHitboxCanDealDamage(entity, enmComp->specialHitBoxID, false);
+}
 
+void ShatterEnemy(EntityID& entity, const int& index)
+{
+	//float strength, bool reverse, bool useOrigin, float origin[4]
+	float arr[4] = { 0 };
+	float shatterStrength = 5;
+	StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
+	if (statComp != nullptr)
+	{
+		shatterStrength += statComp->overkill * 0.5;
+	}
+	registry.AddComponent<ShatterComponent>(entity, shatterStrength);
 
+	GlowComponent* gc = registry.GetComponent<GlowComponent>(entity);
+	if (gc != nullptr)
+	{
+		registry.RemoveComponent<GlowComponent>(entity);
+	}
+	ModelBonelessComponent* model = nullptr;
+	model = registry.GetComponent<ModelBonelessComponent>(entity);
+	if (model != nullptr)
+	{
+		model->shared.castShadow = false;
+	}
+
+	ModelSkeletonComponent* model2 = nullptr;
+	model2 = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (model2 != nullptr)
+	{
+		model2->shared.castShadow = false;
+	}
 }
 
 void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn, const int zacIndex, const float health)
@@ -81,7 +114,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health * 1.5f, bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health, bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -119,6 +152,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 1)
 	{
@@ -126,21 +160,25 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RLeg.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 2)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 3)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 4)
 	{
 		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		mod->shared.hasOutline = true;
 	}
 	
 
@@ -152,8 +190,8 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(newMini);
-	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->Setup("EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
 
 	////Set hitbox
@@ -175,7 +213,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	AddHitboxComponent(newMini);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(newMini);
-	int hID = CreateHitbox(newMini, radius * /*mini **/ 0.7f, 0.f, 0.f);
+	int hID = CreateHitbox(newMini, radius * /*mini **/ 1.2f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
@@ -183,7 +221,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID, false);
 
-	int sID = CreateHitbox(newMini, radius, 0.f, 0.f);
+	int sID = CreateHitbox(newMini, radius * 5.f, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
 	SetHitboxIsEnemy(newMini, sID);
 	SetHitboxHitPlayer(newMini, sID);
@@ -275,7 +313,7 @@ void SplitBoss(EntityID& entity, const int& index)
 	}
 	for (int i = 0; i < 3; ++i)
 	{
-		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
+		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 10.f, 20.f);
 		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ, 0);
 		CalculateGlobalMapValuesImp(valueGrid);
 	}
@@ -799,6 +837,8 @@ void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
 	SoundComponent* minotaurSound = registry.GetComponent<SoundComponent>(entity);
 	minotaurSound->Play(Minotaur_Attack, Channel_Base);
 }
+
+
 
 void RemoveEnemy(EntityID& entity, const int& index)
 {

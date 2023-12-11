@@ -1,5 +1,6 @@
 #include "Glow.h"
 #include "D3D11Helper/D3D11Helper.h"
+#include "D3D11Helper\D3D11Graphics.h"
 #include "SDLHandler.h"
 #include "MemLib\MemLib.hpp"
 #include "RenderDepthPass.h"
@@ -8,6 +9,8 @@
 
 SRV_IDX Glow::glow_srv;
 UAV_IDX Glow::backbuffer_uav;
+RTV_IDX Glow::bb_copy_rtv;
+SRV_IDX Glow::bb_copy_srv;
 RTV_IDX Glow::glow_rtv;
 PS_IDX Glow::glow_shader;
 DSV_IDX Glow::glow_depth;
@@ -28,6 +31,11 @@ void Glow::Initialize()
 	glow_depth = CreateDepthStencil(sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
 	glow_buffer = CreateConstantBuffer(sizeof(GlowData));
 	blur_buffer = CreateConstantBuffer(sizeof(BlurData));
+
+	//bb_copy_rtv = CreateTexture(FORMAT_R32G32B32A32_FLOAT, USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS::BIND_SHADER_RESOURCE, CPU_FLAGS::WRITE, sdl.BASE_WIDTH, sdl.BASE_HEIGHT, true);
+	bb_copy_rtv = CreateRenderTargetView(USAGE_FLAGS::USAGE_DEFAULT, RESOURCE_FLAGS(RESOURCE_FLAGS::BIND_RENDER_TARGET | RESOURCE_FLAGS::BIND_SHADER_RESOURCE), CPU_FLAGS::NONE, sdl.BASE_WIDTH, sdl.BASE_HEIGHT);
+	bb_copy_srv = CreateShaderResourceViewTexture(bb_copy_rtv, RESOURCE_FLAGS::BIND_RENDER_TARGET);
+
 	// Compute
 	blur_shader = LoadComputeShader("BlurShader.cso");
 	backbuffer_uav = CreateUnorderedAccessViewTexture(sdl.BASE_WIDTH, sdl.BASE_HEIGHT, renderStates[backBufferRenderSlot].renderTargetView);
@@ -36,6 +44,7 @@ void Glow::Initialize()
 
 void Glow::PrepareGlowPass()
 {
+	CopyUAVToSRV(bb_copy_srv, backbuffer_uav);
 	SetRenderTargetViewAndDepthStencil(glow_rtv, glow_depth);
 	SetPixelShader(glow_shader);
 }
@@ -53,6 +62,7 @@ void Glow::SetBlurViews()
 	SetShaderResourceView(renderStates[ui.RenderSlot].shaderResourceView, BIND_COMPUTE, 0);
 	SetShaderResourceView(glow_srv, BIND_COMPUTE, 1);
 	SetShaderResourceView(Outlines::targetSRV, BIND_COMPUTE, 2);
+	SetShaderResourceView(bb_copy_srv, BIND_COMPUTE, 3);
 }
 
 void Glow::UpdateGlowBuffer(float r, float g, float b)
@@ -91,6 +101,8 @@ void Glow::FinishBlurPass()
 	UnsetShaderResourceView(BIND_COMPUTE, 0);
 	UnsetShaderResourceView(BIND_COMPUTE, 1);
 	UnsetShaderResourceView(BIND_COMPUTE, 2);
+	UnsetShaderResourceView(BIND_COMPUTE, 3);
+
 	UnsetConstantBuffer(BIND_COMPUTE, 0);
 	UnsetComputeShader();
 }
