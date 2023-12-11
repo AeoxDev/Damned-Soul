@@ -327,9 +327,9 @@ bool GeometryIndependentSystem::Update()
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 
-					else if (blendAnim != nullptr && blendAnim->upper.aAnim == ANIMATION_WALK)
+					else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
 					{
-						blendAnim->upper.aAnimTimeFactor = stat->lavaAnimFactor;
+						blendAnim->lower.aAnimTimeFactor = stat->lavaAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 
@@ -378,9 +378,9 @@ bool GeometryIndependentSystem::Update()
 						anim->aAnimTimeFactor = stat->acidAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
-					else if (blendAnim != nullptr && blendAnim->upper.aAnim == ANIMATION_WALK)
+					else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
 					{
-						blendAnim->upper.aAnimTimeFactor = stat->acidAnimFactor;
+						blendAnim->lower.aAnimTimeFactor = stat->acidAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
@@ -397,9 +397,9 @@ bool GeometryIndependentSystem::Update()
 						anim->aAnimTimeFactor = stat->iceAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
-					else if (blendAnim != nullptr && blendAnim->upper.aAnim == ANIMATION_WALK)
+					else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
 					{
-						blendAnim->upper.aAnimTimeFactor = stat->iceAnimFactor;
+						blendAnim->lower.aAnimTimeFactor = stat->iceAnimFactor;
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
