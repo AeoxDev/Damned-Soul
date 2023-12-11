@@ -231,7 +231,16 @@ bool LuciferBehaviourSystem::Update()
 				luciferComponent->chargeBehevCounter = 0.f;
 				luciferComponent->nextSpecialIsSpawn = true;
 				luciferComponent->isDazed = true;
+
+				if (enemyStats->GetHealth() < luciferComponent->limitHP)
+				{
+					// heal to cap
+					float damageToHeal = luciferComponent->limitHP - enemyStats->GetHealth();
+					enemyStats->ApplyHealing(damageToHeal);
+				}
+
 				luciferComponent->limitHP = 0.f;
+
 
 
 				//time to calculate the damage cap of 10% of max health
