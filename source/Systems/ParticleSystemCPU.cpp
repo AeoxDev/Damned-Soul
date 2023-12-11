@@ -26,7 +26,7 @@ bool ParticleSystemCPU::Update()
 	float cullingDist = 6400.0f;
 	if (stateManager.gate.index == -1)
 	{
-		cullingDist *= 6.0f;
+		cullingDist *= 8.0f;
 	}
 
 	//Render
