@@ -423,8 +423,9 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 			data->metadata[metadataSlot].start = counter - amount;
 			data->metadata[metadataSlot].end = counter - 1;
 
+			//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), metadataSlot, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
 
-			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
 			break;
 		}
 		
@@ -473,7 +474,9 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 			data->metadata[metadataSlot].end = counter - 1;
 
 
-			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), metadataSlot, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
+
 			break;
 		}
 
@@ -526,7 +529,9 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 			data->metadata[metadataSlot].end = counter - 1;
 
 
-			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), metadataSlot, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
+
 			break;
 		}
 	}
@@ -583,7 +588,9 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 			data->metadata[metadataSlot].end = counter - 1;
 
 
-			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), metadataSlot, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
+
 			break;
 		}
 	}
@@ -630,7 +637,9 @@ ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float
 			data->metadata[metadataSlot].end = counter - 1;
 
 
-			std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + (data->metadata[metadataSlot].end + 1), metadataSlot);
+			std::memset(&(Particles::m_unoccupiedParticles[data->metadata[metadataSlot].start]), metadataSlot, sizeof(int) * (1 + data->metadata[metadataSlot].end - data->metadata[metadataSlot].start));
+
 			break;
 		}
 	}

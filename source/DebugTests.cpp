@@ -126,13 +126,14 @@ void SimulateParticleLevel(std::string& title, int total)
 		{
 			CountDeltaTime();
 			UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
+
 			stateManager.Update();
 			stateManager.EndFrame();
-			//MemLib::pdefrag();
+
+			MemLib::pdefrag();
 		}
 
-		stateManager.activeLevel = 0;
-		UIFunctions::Game::LoadNextLevel(nullptr, i);
+		UIFunctions::Game::SetMainMenu(nullptr, 0);
 	}
 	
 	gameSpeed = 1.0f;
