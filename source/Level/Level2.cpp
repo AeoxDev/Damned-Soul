@@ -89,35 +89,37 @@ void LoadLevel2()
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
 
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-
-
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
-	//float redLight = 0.35f;
-
 	////StageLights
 	//EntityID lightholder = registry.CreateEntity();
-	//EntityID lightholderTwo = registry.CreateEntity();
-	//EntityID lightholderThree = registry.CreateEntity();
-	//EntityID lightholderForth = registry.CreateEntity();
 
-	////EntityID part = registry.CreateEntity();
-	//registry.AddComponent<ParticleComponent>(lightholder, 10, 20, 6, 117, 14, -148, 20, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
-	//TransformComponent tComp;
-	//tComp.positionX = 1;
-	//tComp.positionY = 1;
-	//tComp.positionZ = 1;
-	//registry.AddComponent<TransformComponent>(lightholder, tComp);
+
+	//**// particels translates away on level reload //
+	//CreateParticle(115, 14, -150, 10, 20, 6, 0, 0, 0, 20, 0);
+	////**//
+	//CreateParticle(95, 13, -134, 2, 0, 3, 0, 0, 0, 10, 9);
+
+	/*CreateParticle(70, 20, -110, 10, 0, 7, 0, 0, 0, 30, 13);*/
+
+	EntityID part = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(part, 5.0f, 10.0f, 6.0f, 0.0f, 0.0f, 0.0f,0.5, 0.5, 0.5, 40, SMOKE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent ttComp;
+	ttComp.positionX = -115;
+	ttComp.positionY = 7;
+	ttComp.positionZ = 154;
+	registry.AddComponent<TransformComponent>(part, ttComp);
+
+	EntityID partT = registry.CreateEntity();
+	registry.AddComponent<ParticleComponent>(partT, 1.0f, 20.0f, 2.5f, 0.0f, 0.0f, 0.0f, 8, FIRE); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	TransformComponent tttComp;
+	tttComp.positionX = -118;
+	tttComp.positionY = 5;
+	tttComp.positionZ = 145;
+	registry.AddComponent<TransformComponent>(partT, tttComp);
+
 
 	stateManager.stage = stage;
 	SetInPlay(true);

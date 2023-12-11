@@ -46,7 +46,7 @@ void SettingsState::Input()
 
 void SettingsState::SetupButtons()
 {
-	const int amount = 6;
+	const int amount = 7;
 	const int sliderAmount = 5;
 
 	//Buttons
@@ -58,6 +58,7 @@ void SettingsState::SetupButtons()
 			"1600x900",
 			"1280x720",
 			"Enable Game Timer",
+			"Enable FPS Counter",
 			"Back",
 		};
 
@@ -68,6 +69,7 @@ void SettingsState::SetupButtons()
 			{ -0.3f, -0.075f },
 			{ -0.3f, -0.225f },
 			{ 0.3f, 0.225f },
+			{ 0.3f, 0.075f },
 			{ 0.78f, -0.85f }
 		};
 
@@ -79,6 +81,7 @@ void SettingsState::SetupButtons()
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f }
 		};
 
 		void(* const functions[amount])(void*, int) =
@@ -88,17 +91,19 @@ void SettingsState::SetupButtons()
 			UIFunctions::Settings::SetMediumRes,
 			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
+			UIFunctions::Settings::SwitchFPS,
 			UIFunctions::Settings::Back,
 		};
 
 		const char filenames[amount][32] =
 		{
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonMedium"
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonMedium"
 		};
 
 		const float fontsizes[amount] =
@@ -107,7 +112,8 @@ void SettingsState::SetupButtons()
 			{ 18.0f },
 			{ 18.0f },
 			{ 18.0f },
-			{ 16.0f },
+			{ 17.0f },
+			{ 17.0f },
 			{ 20.0f }
 		};
 
@@ -118,7 +124,7 @@ void SettingsState::SetupButtons()
 			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i]);
+			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
 
 			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -166,10 +172,10 @@ void SettingsState::SetupButtons()
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
 
-			float sliderWidth = abs(maxRightPosition - 0.13f) + abs(maxLeftPosition + 0.13f);
+			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 
 			if (audioComp != nullptr)
 			{
@@ -222,7 +228,7 @@ void SettingsState::SetupImages()
 	// Settings backdrop panel
 	auto settingsPanel = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsPanel);
-	uiElement->Setup("Exmenu/SettingsPanel", "", { 0.0f, 0.0f }, { 1.0f, 1.0f });
+	uiElement->Setup("SettingsPanel", "", { 0.0f, 0.0f }, { 1.0f, 1.0f });
 
 }
 

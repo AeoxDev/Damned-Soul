@@ -4,8 +4,6 @@
 #include "MemLib/ML_Vector.hpp"
 #include "MemLib/ML_Array.hpp"
 
-#include <vector>
-
 struct OnClickComponent
 {
 	ML_Vector<DSFLOAT2> positions;

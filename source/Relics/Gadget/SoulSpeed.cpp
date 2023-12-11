@@ -5,17 +5,35 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_SPEED_SOUL_FACTOR_PLAYER (.3f)
-#define SOUL_SPEED_SOUL_FACTOR_ENEMY (6.f)
+#define SOUL_SPEED_SOUL_FACTOR_MOVEMENT (.025f)
+#define SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT (100.f * SOUL_SPEED_SOUL_FACTOR_MOVEMENT)
+#define SOUL_SPEED_SOUL_FACTOR_ATTACK (.004f)
+#define SOUL_SPEED_SOUL_FACTOR_ATTACK_AS_PERCENT (100.f * SOUL_SPEED_SOUL_FACTOR_ATTACK)
 
 EntityID SOUL_SPEED::_OWNER;
 
 const char* SOUL_SPEED::Description()
 {
+	float bonus_m, per_m;
+	if (1.f <= SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT)
+	{
+		per_m = 1.f;
+		bonus_m = SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT;
+	}
+	else
+	{
+		bonus_m = 1.f;
+		per_m = 1.f / SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT;
+	}
+
+	float bonus_a = bonus_m * (SOUL_SPEED_SOUL_FACTOR_ATTACK_AS_PERCENT / SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT);
+
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You gain %.1lf speed for every soul in your possession, but you lose %ld%% of your current souls (rounded up) at the start of each level",
-		SOUL_SPEED_SOUL_FACTOR_PLAYER,
-		PERCENT(_SC_FACTOR));
+	sprintf_s(temp, "You gain %.1lf%% movement speed and %.2lf%% attack speed and for every %.0lf soul you possess"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
+		bonus_m,
+		bonus_a,
+		per_m/*,
+		PERCENT(_SC_FACTOR)*/);
 #pragma warning(suppress : 4172)
 	return temp;
 }
@@ -31,8 +49,8 @@ void SOUL_SPEED::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
-	// Add the consume function
-	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_SPEED::Consume);
+	//// Add the consume function
+	//(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_SPEED::Consume);
 	// Add the modify speed function to the stat calc functions
 	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(SOUL_SPEED::ModifySpeed);
 }
@@ -61,12 +79,13 @@ void SOUL_SPEED::ModifySpeed(void* data)
 		if (player)
 		{
 			// Increase speed based on souls
-			stats->UpdateBonusSpeed(SOUL_SPEED_SOUL_FACTOR_PLAYER * player->GetSouls());
+			stats->UpdateBonusSpeed(SOUL_SPEED_SOUL_FACTOR_MOVEMENT * player->GetSouls());
+			stats->UpdateBonusAttackSpeed(SOUL_SPEED_SOUL_FACTOR_ATTACK * player->GetSouls());
 		}
-		else
-		{
-			EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(SOUL_SPEED::_OWNER);
-			stats->UpdateBonusSpeed(SOUL_SPEED_SOUL_FACTOR_ENEMY * enemy->soulCount);
-		}
+		//else
+		//{
+		//	EnemyComponent* enemy = registry.GetComponent<EnemyComponent>(SOUL_SPEED::_OWNER);
+		//	stats->UpdateBonusSpeed(SOUL_SPEED_SOUL_FACTOR_MOVEMENT * enemy->soulCount);
+		//}
 	}
 }

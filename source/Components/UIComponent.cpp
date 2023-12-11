@@ -52,7 +52,9 @@ void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAG
 		textFormat->Release();
 		textFormat = nullptr;
 	}
-	ui.GetWriteFactory()->CreateTextFormat(L"Arial", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"", &textFormat);
+	FLOAT fontSizeFactored = fontSize * 1.0f;
+	
+	ui.GetWriteFactory()->CreateTextFormat(L"Cascadia Code", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSizeFactored, L"", &textFormat);
 
 	textFormat->SetTextAlignment(textAlignment);
 	textFormat->SetParagraphAlignment(paragraphAlignment);
@@ -99,6 +101,15 @@ void UIBase::SetPosition(DSFLOAT2 position)
 	
 	m_Position = position;
 
+	UpdateTransform();
+}
+
+void UIBase::SetPosition(int pixelX, int pixelY)
+{
+	m_Position.x = pixelX;
+	m_Position.y = pixelY;
+	m_PixelCoords.x = pixelX;
+	m_PixelCoords.y = pixelY;
 	UpdateTransform();
 }
 
@@ -200,7 +211,8 @@ void UIText::Draw()
 		SetBounds(tempBounds, baseUI.m_CurrentBounds);
 
 		std::wstring textAsWString(m_Text.begin(), m_Text.end());
-		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), m_TextFormat, tempBounds, ui.GetBrush());
+		
+		rt->DrawTextW(textAsWString.c_str(), (UINT32)textAsWString.length(), m_TextFormat, tempBounds, ui.GetBrush(m_brush));
 	}
 }
 
@@ -222,7 +234,20 @@ void UIImage::SetImage(const char* filepath, bool ignoreRename)
 		SetupImage(filepath, m_Bitmap);
 
 		if (!ignoreRename)
-			m_fileName = _strdup(filepath);
+			m_fileName = filepath;
+
+		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
+	}
+}
+
+void UIImage::SetHoverImage(const char* filepath, bool ignoreRename)
+{
+	if (filepath != "")
+	{
+		SetupImage(filepath, m_Bitmap);
+
+		if (!ignoreRename)
+			m_hoverFileName = filepath;
 
 		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
 	}
@@ -250,6 +275,7 @@ void UIImage::Release()
 	}
 
 	m_fileName.~ML_String();
+	m_hoverFileName.~ML_String();
 }
 
 void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale, 
@@ -313,7 +339,10 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 	else
 		m_Images[m_Images.size() - 1].SetImage("TempBaseImage");
 
-	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale);
+	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale, 
+		m_Images[m_Images.size() - 1].baseUI.GetRotation(), 
+		m_Images[m_Images.size() - 1].baseUI.GetVisibility(), 
+		m_Images[m_Images.size() - 1].baseUI.GetOpacity());
 
 	if (translateText && m_BaseText.baseUI.GetVisibility())
 	{

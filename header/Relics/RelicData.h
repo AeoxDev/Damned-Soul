@@ -3,7 +3,7 @@
 
 #define RELIC_DATA_NAME_SIZE (32)
 #define RELIC_DATA_PATH_SIZE (96)
-#define RELIC_DATA_DESC_SIZE (359)
+#define RELIC_DATA_DESC_SIZE (358)
 
 
 struct RelicData
@@ -16,6 +16,8 @@ struct RelicData
 	char m_description[RELIC_DATA_DESC_SIZE] = "_DESCRIPTION";
 	// The price of the relic
 	uint8_t m_price = 255;
+	// The weight of the relic
+	uint8_t m_weight = 255;
 	// The type(s) of the relic
 	uint64_t m_typeFlag = 0x0;
 	// The hash of the relic
@@ -25,7 +27,7 @@ struct RelicData
 	void (*m_function)(void*) = nullptr;
 
 	RelicData() = default;
-	RelicData(const char name[RELIC_DATA_NAME_SIZE], const char path[RELIC_DATA_PATH_SIZE], const char desc[RELIC_DATA_DESC_SIZE], const uint8_t price, const uint64_t types, void (*init)(void*));
+	RelicData(const char name[RELIC_DATA_NAME_SIZE], const char path[RELIC_DATA_PATH_SIZE], const char desc[RELIC_DATA_DESC_SIZE], const uint8_t price, const uint64_t types, void (*init)(void*), const uint8_t weight = 255);
 	//RelicData(const RelicData& other);
 };
 

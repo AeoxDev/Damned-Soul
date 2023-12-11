@@ -7,9 +7,22 @@
 #include "CollisionFunctions.h"
 #include "DeltaTime.h"
 #include "Camera.h"
+#include "UIComponents.h"
+#include "UIRenderer.h"
+#include "MemLib\ML_String.hpp"
+#include "CombatFunctions.h"
+#include <string>
+
+int nrEnemies = 0;
+
+int GetNrEnemies()
+{
+	return nrEnemies;
+}
 
 void StartPlayerDeath(EntityID& entity, const int& index)
 {
+	ResetSquashStretch(entity, index);
 	AnimationComponent* animComp = registry.GetComponent<AnimationComponent>(entity);
 	if (animComp != nullptr)
 	{
@@ -84,7 +97,7 @@ void PlayPlayerDeath(EntityID& entity, const int& index)
 
 void EndPlayerDeath(EntityID& entity, const int& index)
 {
-	stateManager.GetCurrentLevel().GameOver();
+	UpdateScoreBoardUI(false);
 }
 
 bool StateSwitcherSystem::Update()
@@ -145,11 +158,12 @@ bool StateSwitcherSystem::Update()
 			}
 		}
 	}
+	int previousEnemies = nrEnemies;
+	nrEnemies = 0;
 	
-
 	for (auto entity : View<EnemyComponent, StatComponent>(registry))
 	{
-		
+		++nrEnemies;
 		// Get enemy entity stat component
 		StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 		//Get enemy sound component
@@ -164,55 +178,96 @@ bool StateSwitcherSystem::Update()
 				{
 					playersComp->killingSpree += 1;
 				}
+				float shatterTimeFactor = 1.0f;
+				if (statComp->overkill > statComp->GetMaxHealth() * 0.3f + 10.0f)
+				{
+					shatterTimeFactor = 0.01f;
+				}
 				// start timed event for MURDER
 				switch (registry.GetComponent<EnemyComponent>(entity)->type)
 				{
 				case EnemyType::hellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
+					shatterTimeFactor *= 0.55f;
+					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.55f * shatterTimeFactor, ShatterEnemy);
 					break;
 				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
+					shatterTimeFactor *= 0.5f;
 					break;
 				case EnemyType::empoweredSkeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
+					shatterTimeFactor *= 0.5f;
 					break;
 				case EnemyType::empoweredImp:
 					sfx->Play(Imp_Death, Channel_Base);
+					shatterTimeFactor *= 1.f;
 					break;
 				case EnemyType::empoweredHellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
+					shatterTimeFactor *= 0.55f;
 					break;
 				case EnemyType::frozenEye:
 					sfx->Play(Eye_Death, Channel_Base);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::frozenHellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::frozenImp:
 					sfx->Play(Imp_Death, Channel_Base);
+					shatterTimeFactor *= 0.55f;
+					ShatterEnemy(entity, 0);
 					break;
 				case EnemyType::zac:
 					sfx->Play(Miniboss_Death, Channel_Base);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::eye:
 					sfx->Play(Eye_Death, Channel_Base);
+					shatterTimeFactor *= 0.9f;
 					break;
 				case EnemyType::imp:
 					sfx->Play(Imp_Death, Channel_Base);
+					shatterTimeFactor *= 1.f;
 					break;
 				case EnemyType::minotaur:
 					sfx->Play(Minotaur_Death, Channel_Base);
+					shatterTimeFactor *= 0.85f;
 					break;
 				case EnemyType::lucifer:
 					sfx->Play(Boss_Death, Channel_Base);
 					sfx->Play(Boss_MustNotDie, Channel_Extra);
+					shatterTimeFactor *= 0.f;
 
 					//Player victory sound (Make a timed event to play after boss death sound.)
 					TimedEventIgnoreGamespeed(true);
 					AddTimedEventComponentStart(stateManager.player, 5.5f, PlayBossVictoryOrDeathLine, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);
 					break;
 				}
-				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
+
+				ModelBonelessComponent* model = nullptr;
+				model = registry.GetComponent<ModelBonelessComponent>(entity);
+				if (model != nullptr)
+				{
+					model->shared.hasOutline = false;
+				}
+
+				ModelSkeletonComponent* model2 = nullptr;
+				model2 = registry.GetComponent<ModelSkeletonComponent>(entity);
+				if (model2 != nullptr)
+				{
+					model2->shared.hasOutline = false;
+				}
+
+				if (registry.GetComponent<DebuffComponent>(entity) != nullptr)
+				{
+					DamageNumbersDOTRemainder(entity);
+					registry.RemoveComponent<DebuffComponent>(entity);
+				}
+				AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, shatterTimeFactor, ShatterEnemy);
+				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, shatterTimeFactor + 0.5f, RemoveEnemy);
 			}
 			else // boss died lmao
 			{
@@ -238,9 +293,6 @@ bool StateSwitcherSystem::Update()
 		}
 		
 	}
-
-	
-
 	//this is test code for ending game loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (playersComp != nullptr)
 	{
@@ -252,6 +304,11 @@ bool StateSwitcherSystem::Update()
 		}
 		if ((GetGodModePortal() || endGameLoop) && !playersComp->portalCreated && !(currentStates & State::InShop) && !(currentStates & State::InMainMenu))
 		{
+			if (stateManager.gate.index != -1)
+			{
+				registry.DestroyEntity(stateManager.gate);
+				stateManager.gate.index = -1;
+			}
 			SetGodModePortal(false);
 			playersComp->portalCreated = true;
 			if (stateManager.activeLevel == stateManager.finalLevel)//Final stage
@@ -263,8 +320,7 @@ bool StateSwitcherSystem::Update()
 			else
 			{
 				EntityID portal = registry.CreateEntity();
-				AddTimedEventComponentStart(portal, 1.0f, CreatePortal);
-
+				CreatePortal(portal, 0);//Create portal immediately instead of using a timed event.
 			}
 
 			//If it's on the split boss stage play a voice line from the player.

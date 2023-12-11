@@ -4,16 +4,16 @@
 #include "Registry.h"
 #include "Components.h"
 
-#define GALE_AMULET_SPEED_INCREASE (2.f)
-#define GALE_AMULET_ATTACK_SPEED_INCREASE (.2f)
+#define GALE_AMULET_SPEED_INCREASE (.2f)
+#define GALE_AMULET_ATTACK_SPEED_INCREASE (.1f)
 
 EntityID GALE_AMULET::_OWNER;
 
 const char* GALE_AMULET::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Increases your speed by %.1lf and your attack speed by %ld%%",
-		GALE_AMULET_SPEED_INCREASE,
+	sprintf_s(temp, "Increases your speed by %ld%% and your attack speed by %ld%%",
+		PERCENT(GALE_AMULET_SPEED_INCREASE),
 		PERCENT(GALE_AMULET_ATTACK_SPEED_INCREASE));
 #pragma warning(suppress : 4172)
 	return temp;

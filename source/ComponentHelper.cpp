@@ -27,7 +27,8 @@ void StatComponent::ZeroBonusStats()
 
 int64_t StatComponent::GetHealth() const
 {
-	return (int64_t)ceil(this->m_currentHealth);
+	return (int64_t)ceil(GetMaxHealth() - this->m_damageTaken);
+	//return (int64_t)ceil(this->m_currentHealth);
 }
 
 int64_t StatComponent::GetMaxHealth() const
@@ -35,9 +36,26 @@ int64_t StatComponent::GetMaxHealth() const
 	return (int64_t)ceil(m_baseHealth + m_bonusHealth);
 }
 
+int64_t StatComponent::GetBonusHealth() const
+{
+	return (int64_t)ceil(m_bonusHealth);
+}
+
 float StatComponent::GetHealthFraction() const
 {
-	return this->m_currentHealth / GetMaxHealth();
+	float maxHp = (float)GetMaxHealth();
+	return (maxHp - m_damageTaken) / maxHp;
+	//return this->m_currentHealth / GetMaxHealth();
+}
+
+float StatComponent::GetHealthRecovered() const
+{
+	return m_HealthRecovered;
+}
+
+float StatComponent::GetDamageTaken() const
+{
+	return m_TotalDamageTaken;
 }
 
 void StatComponent::UpdateBaseHealth(const float delta)
@@ -48,55 +66,37 @@ void StatComponent::UpdateBaseHealth(const float delta)
 float StatComponent::CapHealth()
 {
 	float maxHp = (float)GetMaxHealth();
-	bool contained = m_currentHealth < maxHp;
+	bool contained = 0.f < m_damageTaken;
 
 	// Branchless limit
-	m_currentHealth = (m_currentHealth * contained) + (maxHp * !contained);
+	m_damageTaken = (m_damageTaken * contained);
 	// Return current health
-	return m_currentHealth;
+	return (float)GetHealth();
+
+	//float maxHp = (float)GetMaxHealth();
+	//bool contained = m_currentHealth < maxHp;
+
+	//// Branchless limit
+	//m_currentHealth = (m_currentHealth * contained) + (maxHp * !contained);
+	//// Return current health
+	//return m_currentHealth;
 }
 
 float StatComponent::StealthilyModifyHealth(const float delta)
 {
-	//// If damage is being delt, apply the damage
-	//if (delta < 0)
-	//{
-	//	// Damage is affected by damage reduction
-	//	m_currentHealth += delta;
-	//}
-	//// If healing is being applied, increase current health and then cap it at maximum health
-	//else if (0 < delta && m_currentHealth < GetMaxHealth())
-	//{
-	//	m_currentHealth += delta;
-	//	m_currentHealth = m_currentHealth < GetMaxHealth() ? m_currentHealth : GetMaxHealth();
-	//}
-	//// Else, do nothing, only return
-	//else
-	//{
-	//	return m_currentHealth;
-	//}
-
-	//// Some sort of health mod happened, do the health mod relics
-	//auto hpUpdate = Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_TAKEN);
-	//RelicInput::OnHealthUpdate hpUpdateData =
-	//{
-	//	/*Adress Of StatComp*/	this,
-	//	/*Delta Health*/		delta
-	//};
-	//for (uint32_t i = 0; i < hpUpdate.size(); ++i)
-	//{
-	//	hpUpdate[i](&hpUpdateData);
-	//}
-	//RedrawUI();
-	//// Return the new current health
-	//return m_currentHealth;
-
-	m_currentHealth += delta;
+	m_damageTaken -= delta;
 	CapHealth();
 	RedrawUI();
 
 	// Return current health
-	return m_currentHealth;
+	return (float)GetHealth();
+
+	//m_currentHealth += delta;
+	//CapHealth();
+	//RedrawUI();
+
+	//// Return current health
+	//return m_currentHealth;
 }
 
 float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
@@ -105,6 +105,7 @@ float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
 	{
 		// Apply damage as a negative delta
 		StealthilyModifyHealth(-damage);
+		m_TotalDamageTaken += damage;
 
 		// Apply on damage taken effects
 		RelicInput::OnHealthUpdate hpUpdateData =
@@ -123,10 +124,11 @@ float StatComponent::ApplyDamage(const float damage, const bool hitByEnemy)
 
 float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
 {
-	if (0 < healing && m_currentHealth < GetMaxHealth())
+	if (0 < healing && 0 < m_damageTaken)
 	{
 		// Apply healing as a positive delta
 		StealthilyModifyHealth(+healing);
+		m_HealthRecovered += healing;
 
 		// Apply on healing applied effects
 		RelicInput::OnHealthUpdate hpUpdateData =
@@ -141,6 +143,26 @@ float StatComponent::ApplyHealing(const float healing, const bool hitByEnemy)
 	// Return current health
 	// Can potentially return greater than max, but StatCalcSystem does limit current health to max health when calculating stats later
 	return (float)GetHealth();
+
+	//if (0 < healing && m_currentHealth < GetMaxHealth())
+	//{
+	//	// Apply healing as a positive delta
+	//	StealthilyModifyHealth(+healing);
+	//	m_HealthRecovered += healing;
+
+	//	// Apply on healing applied effects
+	//	RelicInput::OnHealthUpdate hpUpdateData =
+	//	{
+	//		/*Adress Of StatComp*/	this,
+	//		/*Delta Health*/		healing
+	//	};
+	//	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_HEALING_TAKEN))
+	//		func(&hpUpdateData);
+	//}
+
+	//// Return current health
+	//// Can potentially return greater than max, but StatCalcSystem does limit current health to max health when calculating stats later
+	//return (float)GetHealth();
 }
 
 void StatComponent::UpdateBonusHealth(const float delta)
@@ -166,7 +188,7 @@ float StatComponent::GetBonusSpeed() const
 
 void StatComponent::UpdateBonusSpeed(const float delta)
 {
-	m_bonusMoveSpeed += delta;
+	m_bonusMoveSpeed += delta * m_baseMoveSpeed;
 }
 
 void StatComponent::SetSpeedMult(const float mult)
@@ -209,6 +231,16 @@ float StatComponent::GetBonusDamage() const
 	return m_bonusDamage;
 }
 
+void StatComponent::UpdateDamageDone(const float delta)
+{
+	m_TotalDamageDone += delta;
+}
+
+float StatComponent::GetDamageDone() const
+{
+	return m_TotalDamageDone;
+}
+
 float StatComponent::GetAttackSpeed() const
 {
 	return m_baseAttackSpeed + m_bonusAttackSpeed;
@@ -233,23 +265,6 @@ void StatComponent::SetKnockbackMultiplier(const float mult)
 {
 	m_knockbackMultiplier = mult;
 }
-
-//float StatComponent::UpdateMaxHealth(const float delta)
-//{
-//	// Update maximum health
-//	this->m_baseHealth += delta;
-//
-//	// If the change is positive, heal
-//	if (0 < delta)
-//		UpdateHealth(delta);
-//
-//	// Else if the change would make the entities current health greater than its maximum, subtract the difference
-//	else if (this->m_baseHealth < this->m_currentHealth)
-//		UpdateHealth(this->m_baseHealth - this->m_currentHealth);
-//
-//	// Return the new max health
-//	return this->m_baseHealth;
-//}
 
 int PlayerComponent::UpdateSouls(const int delta)
 {
@@ -322,6 +337,16 @@ int PlayerComponent::GetTotalSouls() const
 	return this->totalSouls;
 }
 
+void PlayerComponent::UpdateBonusChargeRate(const float delta)
+{
+	m_chargeRate += delta;
+}
+
+float PlayerComponent::GetChargeRate() const
+{
+	return m_chargeRate;
+}
+
 void PlayerComponent::UpdateBonusDashScaling(const float delta)
 {
 	m_bonusDashValue += delta;
@@ -357,6 +382,7 @@ float PlayerComponent::GetDashValue()
 
 void PlayerComponent::ZeroBonusStats()
 {
+	m_chargeRate = 1.f;
 	m_bonusDashes = 0;
 	m_bonusDashValue = 0;
 }

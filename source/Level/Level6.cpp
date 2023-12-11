@@ -45,12 +45,6 @@ void LoadLevel6()
 
 	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 
-	//StageLights
-	EntityID lightholder = registry.CreateEntity();
-	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
-
 	//posX, posY, posZ, mass, health, moveSpeed, damage, attackSpeed, soulWorth
 	if (SetupAllEnemies("LV6Enemies.dss") == false)
 	{
@@ -69,31 +63,31 @@ void LoadLevel6()
 	poic.weight = 10.0f;
 	///*PointOfInterestComponent* poic = */registry.AddComponent<PointOfInterestComponent>(player, poic);
 
-	//Thing in the top right corner showing what level we're on
-	/*UIGameLevelComponent* gameLevelUIc = registry.AddComponent<UIGameLevelComponent>(stage, DSFLOAT2(0.8f, 0.8f), DSFLOAT2(1.0f, 1.0f), 3);
-	gameLevelUIc->image.Setup("ExMenu/CheckboxBase.png");
-	gameLevelUIc->text.Setup("");*/
-
-	/*UIPlayerRelicsComponent* pcUiRc = registry.AddComponent<UIPlayerRelicsComponent>(player, DSFLOAT2(0.0f, 0.9f), DSFLOAT2(1.0f, 1.0f), 0);
-	pcUiRc->baseImage.Setup("TempRelicHolder2.png");*/
-
-
-
 	registry.AddComponent<TransformComponent>(mouse);
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
+	EntityID lightholderForth = registry.CreateEntity();
+	EntityID lightholderFive = registry.CreateEntity();
+	EntityID lightholderSix = registry.CreateEntity();
+	EntityID lightholderSeven = registry.CreateEntity();
 
-	float redLight = 0.05f;
-	float greenLight = 0.05f;
-	float blueLight = 0.25f;
+	float redLight = 0.5f;
+	float greenLight = 0.0f;
+	float blueLight = 0.10f;
 
+	CreatePointLight(lightholder, 0.8, 0.4, 0.0, 0.0f, 40.0f, -60.0f, 400.0f, 20.0f);
+	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 12.0f, 10.0f, 74.0f, 500.0f, 20.0f);
+	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, -24.0f, 10.0f, 74.0f, 500.0f, 20.0f);
+	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, 32.0f, 10.0f, 146.0f, 500.0f, 20.0f);
+	CreatePointLight(lightholderFive, redLight, greenLight, blueLight, -40.0f, 10.0f, 146.0f, 500.0f, 20.0f);
+	CreatePointLight(lightholderSix, redLight, greenLight, blueLight, 32.0f, 10.0f, 216.0f, 500.0f, 20.0f);
+	CreatePointLight(lightholderSeven, redLight, greenLight, blueLight, -40.0f, 10.0f, 216.0f, 500.0f, 20.0f);
 
-	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

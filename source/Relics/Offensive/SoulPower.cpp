@@ -13,9 +13,9 @@ EntityID SOUL_POWER::_OWNER;
 const char* SOUL_POWER::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Increases your Attack Damage by %ld of your Base Weapon Damage for every soul in your possession, but you lose %ld%% of your current souls (rounded up) at the start of each level",
-		PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER),
-		PERCENT(_SC_FACTOR));
+	sprintf_s(temp, "Increases your attack damage by %ld%% of your base weapon damage for every soul in your possession"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
+		PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER)/*,
+		PERCENT(_SC_FACTOR)*/);
 #pragma warning(suppress : 4172)
 	return temp;
 }
@@ -31,8 +31,8 @@ void SOUL_POWER::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
-	// Add the consume function
-	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_POWER::Consume);
+	//// Add the consume function
+	//(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_POWER::Consume);
 	// Add the modify health function to the stat calc functions
 	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(SOUL_POWER::ModifyStrength);
 }

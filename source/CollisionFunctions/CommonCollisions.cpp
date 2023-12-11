@@ -3,20 +3,56 @@
 #include "DeltaTime.h"
 #include "States\StateManager.h"
 #include "Level.h"
-#include "UIRenderer.h"
 #include <assert.h>
-#include "UIRenderer.h"
 #include "Relics/RelicFunctions.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h"
 #include <cmath>
 #include <string>
-
+#include "CombatFunctions.h"
 #include "UIComponents.h"
+#include "UIRenderer.h"
+
 
 #define SOFT_COLLISION_FACTOR 0.25f
+void DamageNumbers(EntityID& defender, float damage)
+{
+	/*if (currentStates & InMainMenu)
+	{
+		return;  
+	}*/
+	damage += 0.1f; //To avoid rounding errors
+	StatComponent* defenderStats = registry.GetComponent<StatComponent>(defender);
+	float preHealth = (float)defenderStats->GetHealth();
+	//Do the damage numbers here
+	float time = 0.25f;//Scale time to let player see bigger numbers for longer
+	unsigned damageCondition = (unsigned)damage;
+	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 8);
+}
 
+void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
+{
+	//Elliot: Add a counter for damage over time here
+	StatComponent* stats = registry.GetComponent<StatComponent>(defender);
+	float damageOverTime = effectiveDPS * GetDeltaTime();
+	stats->damageOverTime += damageOverTime;
+	float damageNumber = 2.0f;
+	if (stats->damageOverTime > 2.0f)
+	{
+		float time = 0.125f;//Scale time to let player see bigger numbers for longer
+		unsigned damageCondition = (unsigned)damageNumber;
+		AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, damageCondition, 8);
+		stats->damageOverTime -= 2.0f;
+	}
+}
+
+void DamageNumbersDOTRemainder(EntityID& defender)
+{
+	StatComponent* stats = registry.GetComponent<StatComponent>(defender);
+	DamageNumbers(defender, stats->damageOverTime);
+	stats->damageOverTime = 0.0f;
+}
 
 void NoCollision(OnCollisionParameters &params)
 {
@@ -179,6 +215,7 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 	{
 		//Screen shaking
 		int cameraShake = AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, nullptr, ShakeCamera, CAMERA_CONSTANT_SHAKE_TIME, ResetCameraOffset, 0, 2);
+		
 	}
 
 	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
@@ -446,6 +483,7 @@ void DashCollision(OnCollisionParameters& params)
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 
+
 	//Deal damage to the defender and make their model flash red
 	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, DashBeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
 
@@ -477,6 +515,7 @@ void AttackCollision(OnCollisionParameters& params)
 
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
+
 
 	//Deal damage to the defender and make their model flash red
 	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
@@ -564,6 +603,10 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 	{
 		return;
 	}
+	RemoveHitbox(params.entity1, 0);
+	RemoveHitbox(params.entity1, 1);
+	
+
 	//Apply hit-feedback like camera shake, hitstop and knockback
 	ApplyHitFeedbackEffects(params);
 
@@ -657,41 +700,7 @@ void LoadNextLevel(OnCollisionParameters& params)
 
 		//final level portal
 
-		UIComponent* playerUI = registry.GetComponent<UIComponent>(stateManager.player);
-		playerUI->SetAllVisability(false);
-
-		PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-
-		for (auto entity : View<UIComponent, UIGameScoreboardComponent>(registry))
-		{
-			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			UIGameScoreboardComponent* uiScore = registry.GetComponent<UIGameScoreboardComponent>(entity);
-
-			if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-				uiElement->SetAllVisability(true);
-
-			RedrawUI();
-			gameSpeed = 0.0f;
-			SetPaused(true);
-
-			const int amount = 4;
-			ML_String texts[amount] =
-			{
-				GetDigitalMinuteClock().c_str(),
-
-				("Leftover Souls: " + std::to_string(player->GetSouls())).c_str(),
-				("Spent Souls: " + std::to_string(player->GetTotalSouls() - player->GetSouls())).c_str(),
-				("Total Souls: " + std::to_string(player->GetTotalSouls())).c_str(),
-
-			};
-
-			for (int i = 3; i < amount + 3; i++)
-			{
-				uiElement->m_Texts[i].SetText(texts[i - 3].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
-					DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-			}
-		}
+		UpdateScoreBoardUI(true);
 	}
 	
 }
-

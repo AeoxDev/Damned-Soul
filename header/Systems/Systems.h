@@ -14,6 +14,10 @@ class RenderSystem : public System
 {
 	bool Update();
 };
+class ColorResetSystem : public System
+{
+	bool Update();
+};
 class ShadowSystem : public System
 {
 	bool Update();
@@ -79,11 +83,11 @@ class UIPlayerSoulsSystem : public System
 {
 	bool Update();
 };
-class UIRenderShopSystem : public System
+class UIShopSystem : public System
 {
 	bool Update();
 };
-class UIRunTimeSystem : public System
+class UIGameSystem : public System
 {
 	bool Update();
 };

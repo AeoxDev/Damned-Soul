@@ -26,6 +26,9 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	RemoveHitbox(entity, 0);
 	RemoveHitbox(entity, 1);
 	RemoveHitbox(entity, 2);
+	RemoveHitbox(entity, 3);
+	RemoveHitbox(entity, 4);
+	RemoveHitbox(entity, 5);//Remove special case for hellhound
 	auto transform = registry.GetComponent<TransformComponent>(entity);
 	float offset = float(rand() % 2);
 	offset -= 0.5f;
@@ -53,8 +56,38 @@ void PlayDeathAnimation(EntityID& entity, const int& index)
 	EnemyComponent* enmComp = registry.GetComponent<EnemyComponent>(entity);
 	SetHitboxActive(entity, enmComp->specialHitBoxID, false);
 	SetHitboxCanDealDamage(entity, enmComp->specialHitBoxID, false);
+}
 
+void ShatterEnemy(EntityID& entity, const int& index)
+{
+	//float strength, bool reverse, bool useOrigin, float origin[4]
+	float arr[4] = { 0 };
+	float shatterStrength = 5;
+	StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
+	if (statComp != nullptr)
+	{
+		shatterStrength += statComp->overkill * 0.5;
+	}
+	registry.AddComponent<ShatterComponent>(entity, shatterStrength);
 
+	GlowComponent* gc = registry.GetComponent<GlowComponent>(entity);
+	if (gc != nullptr)
+	{
+		registry.RemoveComponent<GlowComponent>(entity);
+	}
+	ModelBonelessComponent* model = nullptr;
+	model = registry.GetComponent<ModelBonelessComponent>(entity);
+	if (model != nullptr)
+	{
+		model->shared.castShadow = false;
+	}
+
+	ModelSkeletonComponent* model2 = nullptr;
+	model2 = registry.GetComponent<ModelSkeletonComponent>(entity);
+	if (model2 != nullptr)
+	{
+		model2->shared.castShadow = false;
+	}
 }
 
 void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn, const int zacIndex, const float health)
@@ -81,7 +114,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	float bossSpeed = speeeeeed /*bossStats->GetSpeed() / 2.f */;
 	float bossDamage = bossStats->GetDamage();
 	float bossAttackSpeed = bossStats->GetAttackSpeed();
-	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health * 1.5f, bossSpeed, bossDamage, bossAttackSpeed );
+	StatComponent* stat = registry.AddComponent<StatComponent>(newMini, health, bossSpeed, bossDamage, bossAttackSpeed );
 	// change health depending on balance. health = original max health
 	stat->hazardModifier = 0;
 	stat->baseHazardModifier = 0;
@@ -117,8 +150,10 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	if (zacIndex == 0)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Torso.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 1)
 	{
@@ -126,21 +161,28 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RLeg.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
 		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 2)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 3)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("LArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 4)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Skull.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
+		mod->shared.hasOutline = true;
 	}
 	
 
@@ -152,8 +194,8 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(newMini);
-	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->Setup("EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
 
 	////Set hitbox
@@ -175,7 +217,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	AddHitboxComponent(newMini);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(newMini);
-	int hID = CreateHitbox(newMini, radius * /*mini **/ 0.7f, 0.f, 0.f);
+	int hID = CreateHitbox(newMini, radius * /*mini **/ 1.2f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
@@ -183,7 +225,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID, false);
 
-	int sID = CreateHitbox(newMini, radius, 0.f, 0.f);
+	int sID = CreateHitbox(newMini, radius * 5.f, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
 	SetHitboxIsEnemy(newMini, sID);
 	SetHitboxHitPlayer(newMini, sID);
@@ -275,7 +317,7 @@ void SplitBoss(EntityID& entity, const int& index)
 	}
 	for (int i = 0; i < 3; ++i)
 	{
-		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 25.f, 45.f);
+		TransformComponent tran = FindRetreatTile(valueGrid, aiTransform, 10.f, 20.f);
 		SetupEnemy(EnemyType::skeleton, tran.positionX, 0.f, tran.positionZ, 0);
 		CalculateGlobalMapValuesImp(valueGrid);
 	}
@@ -786,6 +828,8 @@ void PlayMinotaurIntroCharge(EntityID& entity, const int& index)
 	minotaurSound->Play(Minotaur_Attack, Channel_Base);
 }
 
+
+
 void RemoveEnemy(EntityID& entity, const int& index)
 {
 
@@ -970,10 +1014,12 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	//hazardModel->shared.gammaCorrection = 1.5f;
 	//hazardModel->castShadow = false;
 
-	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::ACIDGROUND);
 
-
-	float scaling = 5.0f;
+	// ## ALEX CODE EDITS OF MATTIAS ORIGINAL CODE ##
+	// Changelog 2023-12-04 14:15: Changed scaling value & hitbox radius, changed to a mesh particle instead
+	// Also changed facing values since mesh particles rotate around Z by default (was originally meant for the sword slash)
+	float scaling = 10.0f;
+	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, scaling, 0.0f, 0.0f, -5.0f, 1, "\\AcidGround.mdl", VFX_PATTERN::ACIDGROUND);
 
 	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(acidHazard);
 	hazardTransform->positionX = origin->positionX;
@@ -982,15 +1028,18 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	hazardTransform->scaleX = scaling;
 	hazardTransform->scaleY = 1.0f;
 	hazardTransform->scaleZ = scaling;
-	hazardTransform->facingX = cosf((float)rand());
-	hazardTransform->facingZ = sinf((float)rand());
+	hazardTransform->facingX = 0.0000f;
+	hazardTransform->facingZ = 0.0000f;
+	hazardTransform->facingY = 0.00001f;
 	AddStaticHazard(acidHazard, HAZARD_ACID);
 
 	registry.AddComponent<StaticHazardComponent>(acidHazard, StaticHazardType::HAZARD_ACID);
 
-	float radius = 5.0f;
+	float radius = 10.0f;
+	// ## EO ALEX CODE ##
+
 	AddHitboxComponent(acidHazard);
-	int hitboxID = CreateHitbox(acidHazard, radius * 0.5f, 0.f, 0.f);
+	int hitboxID = CreateHitbox(acidHazard, radius * 0.5f, 0.f, 1.f);
 	SetCollisionEvent(acidHazard, hitboxID, HazardAttackCollision);
 	SetHitboxHitPlayer(acidHazard, hitboxID);
 	SetHitboxHitEnemy(acidHazard, hitboxID);

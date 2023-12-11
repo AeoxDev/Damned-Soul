@@ -122,6 +122,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			transform->positionX = newPosX;
 			transform->positionZ = newPosZ;
+			transform->positionY = newPosY;
 		}
 		
 		//Loop the walk animation
@@ -261,14 +262,14 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			animation->aAnim = ANIMATION_IDLE;
 			animation->aAnimIdx = 0;
-			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
 		}
 		else if (bAnimation != nullptr)
 		{
 			bAnimation->anim1.aAnim = ANIMATION_IDLE;
 			bAnimation->anim1.aAnimIdx = 0;
-			bAnimation->anim1.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			bAnimation->anim1.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS((&(bAnimation->anim1)));
 
 			bAnimation->anim2.aAnim = ANIMATION_IDLE;
@@ -324,19 +325,19 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			animation->aAnim = ANIMATION_ATTACK;
 			animation->aAnimIdx = 0;
-			animation->aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
 		}
 		else if (bAnimation != nullptr)
 		{
 			bAnimation->anim1.aAnim = ANIMATION_ATTACK;
 			bAnimation->anim1.aAnimIdx = 0;
-			bAnimation->anim1.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			bAnimation->anim1.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS((&(bAnimation->anim1)));
 
 			bAnimation->anim2.aAnim = ANIMATION_ATTACK;
 			bAnimation->anim2.aAnimIdx = 0;
-			bAnimation->anim2.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			bAnimation->anim2.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS((&(bAnimation->anim2)));
 		}
 		
@@ -390,7 +391,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		{
 			animation->aAnim = ANIMATION_WALK;
 			animation->aAnimIdx = 2;
-			animation->aAnimTime = 0.001f + scalar;
+			animation->aAnimTime = 0.01f + GetFrameTime() + scalar;
 		}
 
 	}
@@ -521,8 +522,10 @@ void SpawnCutsceneParticles(EntityID& entity, const int& index)
 		float  cornersX[3] = { 0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
 		float  cornersZ[3] = { -1.0f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange };//Counter clockwise
 		registry.AddComponent<ParticleComponent>(entity, 1.0f, cornersX[0], 0.5f,
-			0.0f, 2.5f, 7.5f, 0.0f, //Z offset fix
-			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 2048, FLAMETHROWER);
+			0.0f, 1.7f, 7.5f, 0.0f, //Z offset fix
+			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 
+			2.f, 0.10f, .0f,//rgb
+			2048, FLAMETHROWER); // changed 
 	}
 }
 

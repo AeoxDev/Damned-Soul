@@ -17,10 +17,10 @@ void LoadLevel9()
 {
 	float redAdd = 0.0f;
 	float greenAdd = 0.0f;
-	float blueAdd = 0.1f;
+	float blueAdd = 0.0f;
 	float redMult = 1.0f;
 	float greenMult = 1.0f;
-	float blueMult = 1.1f;
+	float blueMult = 1.0f;
 
 	StageSetupVariables stageVars;
 	stageVars.ra = redAdd;
@@ -42,13 +42,6 @@ void LoadLevel9()
 
 	EntityID mouse = registry.CreateEntity();
 
-	//StageLights
-	EntityID lightholder = registry.CreateEntity();
-	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
-	EntityID lightholderForth = registry.CreateEntity();
-
-
 	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
 
 	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
@@ -61,21 +54,20 @@ void LoadLevel9()
 	PointOfInterestComponent* mousePointOfInterset = registry.AddComponent<PointOfInterestComponent>(mouse);
 	mousePointOfInterset->mode = POI_MOUSE;
 
+	//StageLights
+	EntityID lightholder = registry.CreateEntity();
+	EntityID lightholderTwo = registry.CreateEntity();
+	EntityID lightholderThree = registry.CreateEntity();
 
-	
+	//Light color
+	float redLight = 0.0f;
+	float greenLight = 0.5f;
+	float blueLight = 1.0f;
 
-	//Light
-	float redLight = 0.05f;
-	float greenLight = 0.05f;
-	float blueLight = 0.25f;
+	CreatePointLight(lightholder, redLight, greenLight, blueLight, -40.0f, 20.0f, 312.0f, 400.0f, 20.0f);
+	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 50.0f, 20.0f, 300.0f, 400.0f, 20.0f);
+	CreatePointLight(lightholderThree, 0.0, 0.5, 1.0f, -51.0f, 20.0f, 68.0f, 400.0f, 20.0f);
 
-
-
-	CreatePointLight(stage, 0.4f, 0.6f, 0.15f, -90.0f, 20.0f, -35.0f, 90.0f, 10.0f);// needs to be removed end of level
-	CreatePointLight(lightholder, redLight, greenLight, blueLight, 70.0f, 20.0f, 40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 70.0f, 20.0f, -40.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 0.0f, 20.0f, -80.0f, 140.0f, 10.0f);
-	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -70.0f, 20.0f, -80.0f, 140.0f, 10.0f);
 
 	stateManager.stage = stage;
 	SetInPlay(true);

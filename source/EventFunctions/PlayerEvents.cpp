@@ -148,6 +148,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID);
+			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true);
 		}
 
 		BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
@@ -170,8 +171,6 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 			if(stats)
 				stats->SetSpeedMult(1.0f); //Reset the speed too, phew
 		}
-		
-
 
 		TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 		DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
@@ -179,6 +178,14 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		playerComp->isDashing = true;
  		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
 		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
+
+		////Smoke
+		registry.AddComponent<ParticleComponent>(entity, 
+			5.0f, 7.0f, 3.0f, //Time, radius, size
+			-3.0f + (transform->facingX), 0.5f, -10/*-30.0f*/ , //Offset x, y, and z,
+			0.7, 0.7, 0.6,//Overload rbg color
+			20, SMOKE); //amount,Pattern
+
 	}
 }
 
@@ -293,6 +300,13 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 		}
 		stats->hazardModifier = stats->baseHazardModifier;
 		playerComp->isDashing = false;
+
+		auto particles = registry.GetComponent<ParticleComponent>(entity);
+		if (particles)
+		{
+			particles->Release();
+			registry.RemoveComponent<ParticleComponent>(entity);
+		}
 	}
 
 	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
@@ -324,8 +338,13 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 	player->hasActivatedHitbox = false; //Reset
 
 	// ## ALEX CODE ##
-	if (registry.GetComponent<ParticleComponent>(entity) != nullptr)
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
 		registry.RemoveComponent<ParticleComponent>(entity);
+	}
+		
 	// ## EO ALEX CODE ##
 
 	if (registry.GetComponent<ChargeAttackArgumentComponent>(entity) != nullptr)
@@ -383,7 +402,7 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		player->hasActivatedHitbox = true;
 		
 		// ## ALEX CODE ##
-		ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(entity, 5.0f, 50.0f, 15.0f, 0.0f + (transform->facingX * 3.0f), 5.0f, 0.0f + (transform->facingZ * 3.0f), 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
+		ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(entity, 5.0f, 50.0f, 1.0f, 0.0f + (transform->facingX * 3.0f), 5.0f, 0.0f + (transform->facingZ * 3.0f), 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
 		// ## EO ALEX CODE ##
 
 	}

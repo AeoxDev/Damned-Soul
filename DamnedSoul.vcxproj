@@ -73,20 +73,23 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
-    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -179,12 +182,15 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
       <AdditionalIncludeDirectories>$(SolutionDir)header\Components;$(SolutionDir)lib\SDL2\include;$(SolutionDir)header\;$(SolutionDir)lib\FmodLib\inc;$(SolutionDir)header\Physics;$(SolutionDir)header\UI;$(SolutionDir)lib</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>fmod_vc.lib;MemLib.lib;d3dcompiler.lib;d3d11.lib;SDL2.lib;SDL2main.lib;$(CoreLibraryDependencies);d2d1.lib;Dwrite.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\SDL2\lib\x64;$(SolutionDir)lib\MemLib\$(Configuration);$(SolutionDir)lib\FmodLib</AdditionalLibraryDirectories>
     </Link>
@@ -198,17 +204,22 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\EventFunctions\UIEventFunctions.cpp" />
+    <ClCompile Include="source\Level\EmptyLevel.cpp" />
+    <ClCompile Include="source\Relics\Defensive\WendigoTalisman.cpp" />
+    <ClCompile Include="source\Relics\Gadget\GoliathSkull.cpp" />
+    <ClCompile Include="source\Relics\Offensive\SerratedDagger.cpp" />
+    <ClCompile Include="source\Relics\Utility\GetHitModifiers.cpp" />
+    <ClCompile Include="source\Shatter.cpp" />
     <ClCompile Include="source\AntiAlias.cpp" />
     <ClCompile Include="source\Components\BlendAnimationsComponent.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
-    <ClCompile Include="source\DebugTests.cpp" />
     <ClCompile Include="source\Glow.cpp" />
     <ClCompile Include="source\SkyPlane.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DebuffComponent.cpp" />
     <ClCompile Include="source\Components\TransformComponent.cpp" />
-    <ClCompile Include="source\Level\EyeChallenge.cpp" />
     <ClCompile Include="source\Level\Level5.cpp" />
     <ClCompile Include="source\Level\Level6.cpp" />
     <ClCompile Include="source\Level\Level7.cpp" />
@@ -241,7 +252,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Relics\Offensive\HoundFang.cpp" />
     <ClCompile Include="source\Relics\Offensive\MinotaurHorn.cpp" />
     <ClCompile Include="source\Relics\Offensive\PowerStrike.cpp" />
-    <ClCompile Include="source\Relics\Offensive\SoulEater.cpp" />
+    <ClCompile Include="source\Relics\Gadget\SoulEater.cpp" />
     <ClCompile Include="source\Relics\Offensive\ThrillSeeker.cpp" />
     <ClCompile Include="source\Skynet\ImpBehaviourSystem.cpp" />
     <ClCompile Include="source\Skynet\FrozenBehaviourSystem.cpp" />
@@ -250,6 +261,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClCompile Include="source\Skynet\ZacBehaviourSystem.cpp" />
     <ClCompile Include="source\States\Credits.cpp" />
     <ClCompile Include="source\Systems\AntiAliasingSystem.cpp" />
+    <ClCompile Include="source\Systems\ColorResetSystem.cpp" />
     <ClCompile Include="source\Systems\FollowerSystem.cpp" />
     <ClCompile Include="source\Systems\GlowSystem.cpp" />
     <ClCompile Include="source\Systems\NavigationSystem.cpp" />
@@ -619,26 +631,15 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIGameScoreboardComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPauseButtonComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPauseRelicTextComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPauseSettingsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UISettingsSliderComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopButtonComponents.h" />
-    <ClInclude Include="header\Components\UIComponents\UIGameTimeComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />
+    <ClInclude Include="header\Components\UIComponents\UIGameComponents.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPauseComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UISettingsComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIShopComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIComponent.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIGameHealthComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopPlayerStatsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopRelicComponent.h" />
-    <ClInclude Include="header\DebugTests.h" />
     <ClInclude Include="header\EnemyType.h" />
     <ClInclude Include="header\EntityCreation.h" />
     <ClInclude Include="header\EntityID.h" />
@@ -689,8 +690,9 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Offensive\LifeSteal.h" />
     <ClInclude Include="header\Relics\Offensive\MinotaurHorn.h" />
     <ClInclude Include="header\Relics\Offensive\PowerStrike.h" />
-    <ClInclude Include="header\Relics\Offensive\SoulEater.h" />
+    <ClInclude Include="header\Relics\Gadget\SoulEater.h" />
     <ClInclude Include="header\Relics\Offensive\ThrillSeeker.h" />
+    <ClInclude Include="header\Relics\Utility\GetHitModifiers.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />
     <ClInclude Include="header\Relics\Gadget\Reckless.h" />
@@ -711,6 +713,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Defensive\SpikedSkin.h" />
     <ClInclude Include="header\Relics\Utility\SoulRelicHelper.h" />
     <ClInclude Include="header\RenderDepthPass.h" />
+    <ClInclude Include="header\Shatter.h" />
     <ClInclude Include="header\Skynet\ImpBehaviour.h" />
     <ClInclude Include="header\Skynet\BehaviourHelper.h" />
     <ClInclude Include="header\Skynet\FrozenBehaviour.h" />

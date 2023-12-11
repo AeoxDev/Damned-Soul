@@ -6,7 +6,6 @@
 
 #include <d2d1helper.h>
 #include <dwrite.h>
-#include <vector>
 
 struct ID2D1Bitmap;
 
@@ -30,6 +29,7 @@ struct UIBase
 	void UpdateTransform();
 
 	void SetPosition(DSFLOAT2 position);
+	void SetPosition(int pixelX, int pixelY);
 	void SetScale(DSFLOAT2 scale);
 	void SetRotation(float rotation);
 	void SetVisibility(bool value);
@@ -53,6 +53,8 @@ struct UIText
 	ML_String m_Text;
 	IDWriteTextFormat* m_TextFormat = nullptr;
 
+	BrushColor m_brush;
+
 	float m_fontSize = 20.0f;
 	DWRITE_TEXT_ALIGNMENT m_textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;
 	DWRITE_PARAGRAPH_ALIGNMENT m_paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
@@ -71,10 +73,12 @@ struct UIImage
 {
 	UIBase baseUI;
 
-	ML_String m_fileName;
+	ML_String m_fileName = "";
+	ML_String m_hoverFileName = "";
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
 	void SetImage(const char* filepath, bool ignoreRename = false);
+	void SetHoverImage(const char* filepath, bool ignoreRename = false);
 
 	void Draw();
 

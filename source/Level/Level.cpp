@@ -8,11 +8,13 @@
 #include "Components.h"
 #include "UIButtonFunctions.h"
 #include "Input.h"
+#include "Levels\LevelHelper.h"
 #include <time.h>
 
 void LoadLevel(int level)
 {
 	stateManager.activeLevel = level;
+	stateManager.cutsceneEnemy.index = -1;//Reset cutscene entity for safety.
 	std::srand((unsigned)time(NULL));
 	//Reset UI and camera in case camera was in weird position before.
 	SetInPlay(false);
@@ -42,7 +44,7 @@ void LoadLevel(int level)
 	Camera::SetCutsceneMode(false);
 	switch (level)
 	{
-	case -1: LoadParticleLevel(); break; //Debug level for particles
+	case -1: LoadEmptyLevel(); break; //Debug level for particles
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;//Imp stage

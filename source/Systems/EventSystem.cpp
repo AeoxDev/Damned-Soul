@@ -8,13 +8,13 @@
 #include "States\StateManager.h"
 #include <assert.h>
 
-#define TIMED_EVENT_ARRAY_LIMIT 16
+#define TIMED_EVENT_ARRAY_LIMIT 32
 
 bool ignoreGameSpeed = false;
 
 struct TimedEvent
 {
-	bool isActive = true;
+	bool isActive = false;
 
 	unsigned long long id;
 	uint32_t condition = 0; //In case we want to define some extra condition as to how functions should be called. 0 means nothing
@@ -70,6 +70,12 @@ bool EventSystem::Update()
 			{
 				continue;
 			}
+			if (comp->timedEvents[i].eventity.index == -1)
+			{
+				//If something caused the entity to disappear: don't
+				comp->timedEvents[i].isActive = false;
+				continue;
+			}
 			if (comp->timedEvents[i].condition == CONDITION_IGNORE_GAMESPEED_SLOWDOWN && gameSpeed < 1.0f)
 			{
 				comp->timedEvents[i].timer += GetFrameTime();
@@ -82,6 +88,12 @@ bool EventSystem::Update()
 			if (comp->timedEvents[i].startFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer)
 			{
 				comp->timedEvents[i].startFunction(comp->timedEvents[i].eventity, i);
+				if (comp->timedEvents[i].eventity.index == -1)
+				{
+					//If something caused the entity to disappear: don't
+					comp->timedEvents[i].isActive = false;
+					break;
+				}
 				if (level == stateManager.activeLevel && i < comp->size)
 				{
 					comp->timedEvents[i].startFunction = nullptr;
@@ -94,11 +106,22 @@ bool EventSystem::Update()
 			if (comp->timedEvents[i].continousFunction != nullptr && comp->timedEvents[i].startTime < comp->timedEvents[i].timer && comp->timedEvents[i].timer < comp->timedEvents[i].endTime)
 			{
 				comp->timedEvents[i].continousFunction(comp->timedEvents[i].eventity, i);
+				if (comp->timedEvents[i].eventity.index == -1)
+				{
+					//If something caused the entity to disappear: don't
+					comp->timedEvents[i].isActive = false;
+					break;
+				}
 			}
 			if (comp->timedEvents[i].endFunction != nullptr && comp->timedEvents[i].endTime < comp->timedEvents[i].timer)
 			{
 				comp->timedEvents[i].isActive = false;
 				comp->timedEvents[i].endFunction(comp->timedEvents[i].eventity, i);
+				if (comp->timedEvents[i].eventity.index == -1)
+				{
+					//If something caused the entity to disappear: don't
+					break;
+				}
 			}
 			else if (comp->timedEvents[i].endTime < comp->timedEvents[i].timer)
 			{
@@ -136,6 +159,7 @@ int FindAndInit(EntityID& entityID)
 		slot = (int)tc->size;
 		tc->size += 1;
 	}
+	
 	return slot;
 }
 
@@ -149,6 +173,7 @@ int AddTimedEventComponentStart(EntityID& entityID, float startTime, void* start
 	}
 	TimedEvent timedEvent;
 	timedEvent.condition = condition;
+	timedEvent.isActive = true;
 	timedEvent.id = (unsigned long long)startFunction;
 	if (CheckDuplicates(tc, (unsigned long long)startFunction) > maxStacks)
 	{
@@ -179,6 +204,7 @@ int AddTimedEventComponentStartEnd(EntityID& eventity, float startTime, void* st
 	}
 	timedEvent.eventity = eventity;
 	timedEvent.startTime = startTime;
+	timedEvent.isActive = true;
 	timedEvent.startFunction = (void(*)(EntityID&, const int&))startFunction;
 	timedEvent.endTime = endTime;
 	timedEvent.endFunction = (void(*)(EntityID&, const int&))endFunction;
@@ -203,6 +229,7 @@ int AddTimedEventComponentStartContinous(EntityID& eventity, float startTime, vo
 	}
 	timedEvent.eventity = eventity;
 	timedEvent.startTime = startTime;
+	timedEvent.isActive = true;
 	timedEvent.startFunction = (void(*)(EntityID&, const int&))startFunction;
 
 	timedEvent.endTime = continousTime;
@@ -235,7 +262,7 @@ int AddTimedEventComponentStartContinuousEnd(EntityID& eventity, float startTime
 	timedEvent.condition = condition;
 
 	timedEvent.continousFunction = (void(*)(EntityID&, const int&))continousFunction;
-
+	timedEvent.isActive = true;
 	timedEvent.endTime = endTime;
 	timedEvent.endFunction = (void(*)(EntityID&, const int&))endFunction;
 	int slot = FindAndInit(eventity);

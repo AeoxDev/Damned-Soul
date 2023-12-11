@@ -13,9 +13,9 @@ EntityID SOUL_HEALTH::_OWNER;
 const char* SOUL_HEALTH::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You gain %.1lf Maximum Health for every soul in your possession, but you lose %ld%% of your current souls (rounded up) at the start of each level",
-		SOUL_HEALTH_SOUL_FACTOR_PLAYER,
-		PERCENT(_SC_FACTOR));
+	sprintf_s(temp, "You gain %.1lf Maximum Health for every soul in your possession"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
+		SOUL_HEALTH_SOUL_FACTOR_PLAYER/*,
+		PERCENT(_SC_FACTOR)*/);
 #pragma warning(suppress : 4172)
 	return temp;
 }
@@ -31,8 +31,10 @@ void SOUL_HEALTH::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
-	// Add the consume function
-	(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_HEALTH::Consume);
+	//// Add the consume function
+	//(*_RelicFunctions)[FUNC_ON_LEVEL_SWITCH].push_back(SOUL_HEALTH::Consume);
+	// Update current health and UI
+	(*_RelicFunctions)[FUNC_ON_SOUL_UPDATE].push_back(SOUL_HEALTH::CompensateSoulLoss);
 	// Add the modify health function to the stat calc functions
 	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(SOUL_HEALTH::ModifyHealth);
 }
@@ -45,6 +47,17 @@ void SOUL_HEALTH::Consume(void* input)
 		int consume = (int)std::ceilf(playerComp->GetSouls() * _SC_FACTOR);
 
 		playerComp->UpdateSouls(-consume);
+	}
+}
+
+void SOUL_HEALTH::CompensateSoulLoss(void* data)
+{
+	RelicInput::OnSoulUpdate* input = (RelicInput::OnSoulUpdate*)data;
+
+	if (input->soulDelta < 0.f)
+	{
+		StatComponent* stats = registry.GetComponent<StatComponent>(SOUL_HEALTH::_OWNER);
+ 		stats->StealthilyModifyHealth(-SOUL_HEALTH_SOUL_FACTOR_PLAYER * input->soulDelta);
 	}
 }
 

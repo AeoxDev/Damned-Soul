@@ -4,16 +4,16 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define CORRUPTED_HEART_HEALTH_INCREASE (20)
-#define CORRUPTED_HEART_DAMAGE_CONVERT_MOD (0.8f)
-#define CORRUPTED_HEART_DURATION (1.f)
+#define CORRUPTED_HEART_HEALTH_INCREASE (25)
+#define CORRUPTED_HEART_DAMAGE_CONVERT_MOD (.65f)
+#define CORRUPTED_HEART_DURATION (3.f)
 
 EntityID CORRUPTED_HEART::_OWNER;
 
 const char* CORRUPTED_HEART::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Increases your health by %ld and converts %ld%% of the immediate damage you would normally take as Damage over Time over the course of %.1lf seconds instead",
+	sprintf_s(temp, "Increases your health by %ld and converts %ld%% of the attack damage you take into a damage over time effect. This damage is dealt over %.1lf seconds, does not stack, and the damage you take each second is reduced by your damage reducing effects",
 		CORRUPTED_HEART_HEALTH_INCREASE,
 		100 - PERCENT(CORRUPTED_HEART_DAMAGE_CONVERT_MOD),
 		CORRUPTED_HEART_DURATION);
@@ -26,9 +26,10 @@ void CORRUPTED_HEART::Initialize(void* input)
 	// Set owner
 	CORRUPTED_HEART::_OWNER = *((EntityID*)input);
 
-	// This is a stat altering relic, mark the entity as having modified stats
-	// It also raises max HP while elevating current hp to match, meaning this is nessecary
-	RELIC_RAISE_CURRENT_MAX_HP(CORRUPTED_HEART::_OWNER, CORRUPTED_HEART_HEALTH_INCREASE);
+	registry.GetComponent<StatComponent>(CORRUPTED_HEART::_OWNER)->MarkAsModified();
+	//// This is a stat altering relic, mark the entity as having modified stats
+	//// It also raises max HP while elevating current hp to match, meaning this is nessecary
+	//RELIC_RAISE_CURRENT_MAX_HP(CORRUPTED_HEART::_OWNER, CORRUPTED_HEART_HEALTH_INCREASE);
 
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
@@ -64,7 +65,7 @@ void CORRUPTED_HEART::ApplyDot(void* data)
 		// The damage over time to apply
 		DamageOverTime newDoT
 		(
-			((1.f - CORRUPTED_HEART_DAMAGE_CONVERT_MOD) * input->damage) / CORRUPTED_HEART_DURATION,
+			((1.f - CORRUPTED_HEART_DAMAGE_CONVERT_MOD) * input->CollapseNoCap()) / CORRUPTED_HEART_DURATION,
 			CORRUPTED_HEART_DURATION
 		);
 
