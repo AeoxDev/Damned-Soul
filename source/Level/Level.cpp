@@ -44,7 +44,7 @@ void LoadLevel(int level)
 	Camera::SetCutsceneMode(false);
 	switch (level)
 	{
-	case -1: LoadParticleLevel(); break; //Debug level for particles
+	case -1: LoadEmptyLevel(); break; //Debug level for particles
 	case 1:	LoadLevel1(); break;
 	case 2: LoadShop(); break;
 	case 3: LoadLevel2(); break;//Imp stage
@@ -67,10 +67,7 @@ void LoadLevel(int level)
 		stateManager.menu.Setup();
 		stateManager.activeLevelScene = 0;
 	}
-	if ((level % 2) == 1)
-	{
-		SetupEnemyCounter();
-	}
+
 	// Load swaps after switching
 	auto relics = Relics::GetFunctionsOfType(Relics::FUNC_ON_LEVEL_SWITCH);
 	for (uint32_t i = 0; i < relics.size(); ++i)

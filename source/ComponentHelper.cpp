@@ -36,6 +36,11 @@ int64_t StatComponent::GetMaxHealth() const
 	return (int64_t)ceil(m_baseHealth + m_bonusHealth);
 }
 
+int64_t StatComponent::GetBonusHealth() const
+{
+	return (int64_t)ceil(m_bonusHealth);
+}
+
 float StatComponent::GetHealthFraction() const
 {
 	float maxHp = (float)GetMaxHealth();
@@ -332,6 +337,16 @@ int PlayerComponent::GetTotalSouls() const
 	return this->totalSouls;
 }
 
+void PlayerComponent::UpdateBonusChargeRate(const float delta)
+{
+	m_chargeRate += delta;
+}
+
+float PlayerComponent::GetChargeRate() const
+{
+	return m_chargeRate;
+}
+
 void PlayerComponent::UpdateBonusDashScaling(const float delta)
 {
 	m_bonusDashValue += delta;
@@ -367,6 +382,7 @@ float PlayerComponent::GetDashValue()
 
 void PlayerComponent::ZeroBonusStats()
 {
+	m_chargeRate = 1.f;
 	m_bonusDashes = 0;
 	m_bonusDashValue = 0;
 }

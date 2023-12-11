@@ -5,7 +5,7 @@
 #include "Components.h"
 
 #define GALE_AMULET_SPEED_INCREASE (.2f)
-#define GALE_AMULET_ATTACK_SPEED_INCREASE (.2f)
+#define GALE_AMULET_ATTACK_SPEED_INCREASE (.1f)
 
 EntityID GALE_AMULET::_OWNER;
 

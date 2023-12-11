@@ -13,6 +13,7 @@ namespace RelicInput
 			DOT = 0x2,
 			ENEMY = 0x4,
 			HAZARD = 0x8,
+			REFLECT = 0x10,
 			INSTANT_ENEMY = INSTANT | ENEMY,
 			DOT_ENEMY = DOT | ENEMY,
 			INSTANT_HAZARD = INSTANT | HAZARD,

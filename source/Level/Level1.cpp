@@ -129,25 +129,6 @@ void LoadLevel1()
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, -48.0f, 10.0f, -9.0f, 300.0f, 20.0f);
 	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, -66.0f, 10.0f, 30.0f, 300.0f, 20.0f);
 	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -66.0f, 10.0f, 75.0f, 300.0f, 20.0f);
-
-
-
-	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-	uiElement->Setup("Exmenu/ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.8f));
-	uiElement->m_BaseImage.baseUI.SetVisibility(true);
-	if (!GetVisualTimer())
-	{
-		uiElement->m_BaseText.baseUI.SetVisibility(false);
-		uiElement->m_BaseImage.baseUI.SetVisibility(false);
-	}
-		
-	
-
-	
-	
-
-	UIGameTimeComponent* runtime = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 	
 	stateManager.stage = stage;
 	SetInPlay(true);

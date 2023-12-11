@@ -65,7 +65,7 @@ void CORRUPTED_HEART::ApplyDot(void* data)
 		// The damage over time to apply
 		DamageOverTime newDoT
 		(
-			((1.f - CORRUPTED_HEART_DAMAGE_CONVERT_MOD) * input->damage) / CORRUPTED_HEART_DURATION,
+			((1.f - CORRUPTED_HEART_DAMAGE_CONVERT_MOD) * input->CollapseNoCap()) / CORRUPTED_HEART_DURATION,
 			CORRUPTED_HEART_DURATION
 		);
 

@@ -73,7 +73,7 @@ void ChaseBehaviour(EntityID& enemy, PlayerComponent* playerComponent, Transform
 	//hellhoundComponent->goalDirectionX = playerTransformCompenent->positionX - hellhoundTransformComponent->positionX;
 	//hellhoundComponent->goalDirectionZ = playerTransformCompenent->positionZ - hellhoundTransformComponent->positionZ;
 
-	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 15.f);
+	SmoothRotation(hellhoundTransformComponent, hellhoundComponent->goalDirectionX, hellhoundComponent->goalDirectionZ, 25.f);
 	float dirX = hellhoundTransformComponent->facingX, dirZ = hellhoundTransformComponent->facingZ;
 	float magnitude = sqrt(dirX * dirX + dirZ * dirZ);
 	if (magnitude > 0.001f)
@@ -191,7 +191,7 @@ void FixShootingTargetPosition(TransformComponent* ptc, TransformComponent* htc,
 		0.0f, 1.0f, -0.25f,
 		hc->offsetForward + 1.0f, 1.0f,
 		0.0f, 0.0f, -1.0f, 33.0f);*/
-	hc->currentShootingAttackRange = 1.f;
+	hc->currentShootingAttackRange = 2.f;
 	SoundComponent* sfx = registry.GetComponent<SoundComponent>(dog);
 	sfx->Play(Hellhound_Inhale, Channel_Base);
 	//from hound  to player
@@ -283,8 +283,8 @@ void ShootingBehaviour(TransformComponent* ptc, HellhoundBehaviour* hc, StatComp
 
 	
 	//auto tempTransform = registry.AddComponent<TransformComponent>(tempEntity, ptc);
-	float  cornersX[3] = {0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
-	float  cornersZ[3] = {-1.0f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange};//Counter clockwise
+	float  cornersX[3] = {0.0f, 0.1f + hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -0.1f -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
+	float  cornersZ[3] = {-1.0f, -hc->currentShootingAttackRange - 0.1f, -hc->currentShootingAttackRange - 0.1f};//Counter clockwise
 	SetHitboxCorners(dog,enemy->specialHitBoxID, 3, cornersX, cornersZ);
 	SetHitboxCanDealDamage(dog, enemy->specialHitBoxID, false);//Reset hitbox
 	SetHitboxActive(dog, enemy->specialHitBoxID, true);
@@ -381,7 +381,7 @@ void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, Hellhoun
 {
 	if (path)
 	{
-		hc->cowardDirectionX = goalDirectionX;
+ 		hc->cowardDirectionX = goalDirectionX;
 		hc->cowardDirectionZ = goalDirectionZ;
 	}
 	else
@@ -406,7 +406,8 @@ void TacticalRetreatBehaviour(EntityID& enemy, TransformComponent* htc, Hellhoun
 	//htc->positionX += hc->cowardDirectionX * enemyStats->GetSpeed() * GetDeltaTime();
 	//htc->positionZ += hc->cowardDirectionZ * enemyStats->GetSpeed() * GetDeltaTime();
 	enemyStats->SetSpeedMult(1.0f);
-	TransformAccelerate(enemy, hc->cowardDirectionX, hc->cowardDirectionZ);
+	//TransformAccelerate(enemy, hc->cowardDirectionX, hc->cowardDirectionZ);
+	TransformAccelerate(enemy, dirX, dirZ);
 	hc->cowardCounter += GetDeltaTime();
 
 	if (hc->cowardCounter >= hc->cowardDuration) // have we been tactically retreating long enough?
@@ -550,7 +551,7 @@ bool HellhoundBehaviourSystem::Update()
 
 		if (hellhoundComponent != nullptr && playerTransformCompenent != nullptr && enmComp != nullptr && enemyAnim != nullptr && enemyStats->GetHealth() > 0)// check if enemy is alive, change later
 		{
-			ML_Vector<Node> finalPath;
+ 			ML_Vector<Node> finalPath;
 			hellhoundComponent->updatePathCounter += GetDeltaTime();
 
 
@@ -610,6 +611,7 @@ bool HellhoundBehaviourSystem::Update()
 				TacticalRetreatBehaviour(enemyEntity, hellhoundTransformComponent, hellhoundComponent, enemyStats, enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath);
 				/*ChaseBehaviour(enemyEntity, playerComponent, playerTransformCompenent, hellhoundComponent, hellhoundTransformComponent, enemyStats, 
 					enemyAnim, hellhoundComponent->dirX, hellhoundComponent->dirZ, hellhoundComponent->followPath, true);*/
+				
 			}
 
 			//Charging ranged attack, getting ready to shoot
