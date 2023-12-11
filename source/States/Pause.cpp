@@ -65,7 +65,7 @@ void PauseState::SetupButtons()
 {
 
 	const int pauseAmount = 3;
-	const int settingsAmount = 7;
+	const int settingsAmount = 6;
 	const int sliderAmount = 5;
 
 	//Pause Buttons
@@ -87,7 +87,7 @@ void PauseState::SetupButtons()
 		UIComponent* uiControls = registry.AddComponent<UIComponent>(controls);
 		UIPauseButtonComponent* pause2 = registry.AddComponent<UIPauseButtonComponent>(controls);
 
-		uiControls->Setup("Controls", " ", { 0.275f, 0.0f });
+		uiControls->Setup("Controls", " ", { 0.225f, 0.0f });
 
 		const char texts[pauseAmount][32] =
 		{
@@ -165,7 +165,6 @@ void PauseState::SetupButtons()
 			"1600x900",
 			"1280x720",
 			"Enable Game Timer",
-			"Enable FPS Counter",
 			"Back",
 		};
 
@@ -176,13 +175,11 @@ void PauseState::SetupButtons()
 			{ -0.3f, -0.075f },
 			{ -0.3f, -0.225f },
 			{ 0.3f, 0.225f },
-			{ 0.3f, 0.075f },
 			{ 0.78f, -0.85f }
 		};
 
 		const DSFLOAT2 scales[settingsAmount] =
 		{
-			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
@@ -198,13 +195,11 @@ void PauseState::SetupButtons()
 			UIFunctions::Settings::SetMediumRes,
 			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
-			UIFunctions::Settings::SwitchFPS,
 			UIFunctions::Pause::Back,
 		};
 
 		const char filenames[settingsAmount][32] =
 		{
-			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
@@ -219,7 +214,6 @@ void PauseState::SetupButtons()
 			{ 18.0f },
 			{ 18.0f },
 			{ 18.0f },
-			{ 17.0f },
 			{ 17.0f },
 			{ 20.0f }
 		};

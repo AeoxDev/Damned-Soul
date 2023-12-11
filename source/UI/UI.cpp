@@ -37,7 +37,7 @@ void UI::Setup()
 	hr = m_Factory->CreateDxgiSurfaceRenderTarget(UISurface, properties, &m_RenderTarget);
 	assert(!FAILED(hr));
 
-	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(255.0f, 255.0f, 255.0f), &m_Brush);
+	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f), &m_Brush);
 	assert(!FAILED(hr));
 	
 	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 0.225f), &m_YellowBrush);
@@ -46,6 +46,10 @@ void UI::Setup()
 	//hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 0.894f, 0.882f), &m_MistyRoseBrush);
 	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(0.69f, 0.769f, 0.869f), &m_LightSteelBlue);
 	assert(!FAILED(hr));
+
+	hr = m_RenderTarget->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f), &m_BlackBrush);
+	assert(!FAILED(hr));
+
 
 	hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)&m_ImagingFactory);
 	assert(!FAILED(hr));
@@ -59,6 +63,7 @@ void UI::Release()
 	m_Brush->Release();
 	m_LightSteelBlue->Release();
 	m_YellowBrush->Release();
+	m_BlackBrush->Release();
 	m_Factory->Release();
 }
 
@@ -122,6 +127,8 @@ ID2D1SolidColorBrush*& UI::GetBrush(BrushColor brush)
 		return m_YellowBrush;
 	case LightSteelBlue:
 		return m_LightSteelBlue;
+	case Black:
+		return m_BlackBrush;
 	}
 	return m_Brush;
 }

@@ -629,6 +629,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UICreditsComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIPauseComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerComponent.h" />

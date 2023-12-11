@@ -269,27 +269,6 @@ void StateManager::Input()
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
-
-		// :)
-		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
-		//{
-		//	//�h�
-		//	SetInMainMenu(false);
-		//	SetInPlay(true);
-		//	SetInShop(false);
-
-		//	menu.Unload();
-
-		//	LoadLevel(++stateManager.activeLevel);
-
-		//	//Ungodly amounts of cursed energy, update UI systems after the level has been loaded
-		//	for (size_t i = 17; i < systems.size(); i++)
-		//	{
-		//		systems[i]->Update();
-		//	}
-		//}
-
-		
 	}
 	if (currentStates & State::InPause)
 	{

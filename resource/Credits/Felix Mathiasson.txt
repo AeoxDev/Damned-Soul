@@ -1,0 +1,4 @@
+AI behaviour (Skeleton, Hellhound, Splitboss, Finalboss Lucifer)
+Pathfinding (A* implementation and Optimization)
+Physics (Collision (circular + convex), Shockwave)
+QA testing

@@ -11,7 +11,8 @@ enum BrushColor
 {
 	White,	//This is not black
 	Yellow, //Color Kinda Yellow IDK, maybe
-	LightSteelBlue //Color: hot but not heavy; metallic. 69. Last letter in RGB-ish
+	LightSteelBlue, //Color: hot but not heavy; metallic. 69. Last letter in RGB-ish
+	Black //And Yellow
 };
 
 struct UI
@@ -23,6 +24,7 @@ struct UI
 	ID2D1SolidColorBrush* m_Brush = nullptr;			//Paints an area with a solid color.
 	ID2D1SolidColorBrush* m_YellowBrush = nullptr;			//Elliot: Yellow Brush
 	ID2D1SolidColorBrush* m_LightSteelBlue = nullptr;			//Elliot: Not that heavy; metallic. 69. Last letter in RGB-ish
+	ID2D1SolidColorBrush* m_BlackBrush = nullptr;			//Christian: Black Brush
 	int RenderSlot = -1;
 
 	void BeginFrame();
