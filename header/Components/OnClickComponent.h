@@ -15,7 +15,7 @@ struct OnClickComponent
 	ML_Vector<void(*)(void*, int)> onClickFunctionsPressed;
 	ML_Vector<void(*)(void*, int)> onClickFunctionsReleased;
 
-	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*function1)(void*, int), void(*function2)(void*, int))
+	void Setup(DSFLOAT2 pos, DSBOUNDS bnds, void(*press)(void*, int), void(*release)(void*, int))
 	{
 		positions.Initialize();
 		bounds.Initialize();
@@ -26,17 +26,17 @@ struct OnClickComponent
 		positions.push_back(pos);
 		bounds.push_back(bnds);
 
-		onClickFunctionsPressed.push_back(function1);
-		onClickFunctionsReleased.push_back(function2);
+		onClickFunctionsPressed.push_back(press);
+		onClickFunctionsReleased.push_back(release);
 	};
 
-	void Add(DSFLOAT2 pos, DSBOUNDS bnds, void(*function1)(void*, int), void(*function2)(void*, int))
+	void Add(DSFLOAT2 pos, DSBOUNDS bnds, void(*press)(void*, int), void(*release)(void*, int))
 	{
 		positions.push_back(pos);
 		bounds.push_back(bnds);
 
-		onClickFunctionsPressed.push_back(function1);
-		onClickFunctionsReleased.push_back(function2);
+		onClickFunctionsPressed.push_back(press);
+		onClickFunctionsReleased.push_back(release);
 	};
 
 	//Returns -1 for no intersect, positive number for first index that interacted, 

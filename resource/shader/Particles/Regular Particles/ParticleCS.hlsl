@@ -1,6 +1,7 @@
 #include "../Headers/ParticleHeader.hlsli"
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
+inline void OnFire(in uint3 DTid, in uint3 blockID);
 inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
@@ -32,7 +33,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         // 1 = ARCH
         if (meta[blockID.y].pattern == 1)
         {
-            //ArchMovement(DTid, blockID);
+            //OnFire(DTid, blockID);
         }
         // 2 = EXPLOSION
         if (meta[blockID.y].pattern == 2)
@@ -70,7 +71,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
             SpiralFieldMovement(DTid, blockID);
         }
         // 9 = FIRE
-        if (meta[blockID.y].pattern == 9)
+        if (meta[blockID.y].pattern == 9 || meta[blockID.y].pattern == 1)
         {
             FireMovement(DTid, blockID);
         }
@@ -187,6 +188,80 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
 
     outputParticleData[index] = particle;
 }
+
+
+//void OnFire(in uint3 DTid, in uint3 blockID)
+//{
+    
+//    // -- Calculate the index and get the right particle to change -- //
+//    uint amount = meta[blockID.y].end - meta[blockID.y].start;
+//    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+//    uint localIndex = (index - meta[blockID.y].start) % amount;
+    
+//    Input particle = inputParticleData[index];
+//    // -------------------------------------------------------------- // 
+
+    
+//    // --- Set the standard stuff --- //
+//    float dt = meta[0].deltaTime;
+//    particle.time = particle.time + dt;
+//    particle.size = meta[blockID.y].size;
+//    particle.patterns = meta[blockID.y].pattern;
+//        //VFX Pattern is stored in morePositionInfo.y to save space
+//    particle.VFXpatterns = (int) meta[blockID.y].morePositionInfo.y;
+//    // ------------------------------ //
+    
+    
+//    // ---- Get a "randomized" value to access deltaTime ---- //    
+//    float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    
+//    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    
+//    int One_OneHundo = holder;
+//    if (One_OneHundo == 0)
+//        One_OneHundo = 1;
+    
+//    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+//    // ------------------------------------------------------ //
+            
+            
+
+//    float travelledDistance = distance(particle.position, meta[blockID.y].startPosition);
+    
+//    if (travelledDistance >= (meta[blockID.y].maxRange + meta[One_OneHundo].deltaTime))
+//    {
+//        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) localIndex / (float) amount), meta[blockID.y].startPosition.z);
+//       //Z-edited
+//        float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
+//        startPosition.z = startPosition.z + localIndex / 2;
+//        //
+//        particle.position = startPosition;
+//        particle.time = 0.f;
+//    }
+//    if (particle.time >= (meta[blockID.y].life + meta[One_OneHundo].deltaTime))
+//    {
+//        float3 startPosition = float3(meta[blockID.y].startPosition.x + meta[OneHundo_TwoFiveFive].deltaTime, meta[blockID.y].startPosition.y + (float) ((float) localIndex / (float) amount), meta[blockID.y].startPosition.z);
+//        //Z-edited
+//        float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
+//        startPosition.z = startPosition.z + localIndex + oddEvenFactor * (4 * meta[index].deltaTime);
+//        //
+//        particle.position = startPosition;
+//        particle.time = 0.f;
+//    }
+            
+//    if (DTid.x % 2 == 1)
+//        particle.position.x = particle.position.x - (meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt;
+//    else
+//        particle.position.x = particle.position.x - ((meta[OneHundo_TwoFiveFive].deltaTime * (cos(particle.time * meta[OneHundo_TwoFiveFive].deltaTime))) * dt) * -1.0f;
+
+//    particle.position.y = particle.position.y + (meta[OneHundo_TwoFiveFive].deltaTime + meta[One_OneHundo].deltaTime) * dt;
+    
+//    particle.rgb.r = 0.60f;
+//    particle.rgb.g = 0.0f;
+//    particle.rgb.b = 0.0f;
+
+//    outputParticleData[index] = particle;
+//}
 
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {
@@ -431,13 +506,13 @@ void ShockWaveMovement(in uint3 DTid, in uint3 blockID)
         particle.position = meta[blockID.y].startPosition;
         particle.time = 0.f;
     }
-    if (particle.time >= meta[blockID.y].life)
-    {
-        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    //if (particle.time >= meta[blockID.y].life)
+    //{
+    //    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
 
-        particle.position = startPosition;
-        particle.time = 0.f;
-    }
+    //    particle.position = startPosition;
+    //    particle.time = 0.f;
+    //}
 
     float oscillationX = (meta[One_OneHundo].deltaTime + 1.f) * cos(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/ index);
     float oscillationZ = (meta[One_OneHundo].deltaTime + 1.f) * sin(2.f * PI * 2.5f * meta[OneHundo_TwoFiveFive].deltaTime * particle.time / meta[blockID.y].life + 0.5f * (float) index); //+ /*0.5f **/index);

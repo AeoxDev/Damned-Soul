@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DamnedSoul", "DamnedSoul.vcxproj", "{13DE0046-9CD6-409D-B33F-3ED2EB5D6669}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "DS_Installer", "..\DS_Installer\DS_Installer.vdproj", "{BD804848-22E3-4B31-BF9D-C4832F49BA89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,8 @@ Global
 		{13DE0046-9CD6-409D-B33F-3ED2EB5D6669}.Debug|x64.Build.0 = Debug|x64
 		{13DE0046-9CD6-409D-B33F-3ED2EB5D6669}.Release|x64.ActiveCfg = Release|x64
 		{13DE0046-9CD6-409D-B33F-3ED2EB5D6669}.Release|x64.Build.0 = Release|x64
+		{BD804848-22E3-4B31-BF9D-C4832F49BA89}.Debug|x64.ActiveCfg = Debug
+		{BD804848-22E3-4B31-BF9D-C4832F49BA89}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

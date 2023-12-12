@@ -146,12 +146,13 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	{
 		soulWorth = 1;
 	}
-	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
+	registry.AddComponent<EnemyComponent>(newMini, soulWorth, EnemyType::zac);
 
 	if (zacIndex == 0)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Torso.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 1)
@@ -164,20 +165,23 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	}
 	else if (zacIndex == 2)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 3)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("LArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 4)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Skull.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	
