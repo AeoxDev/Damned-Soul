@@ -372,21 +372,21 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		return;
 
 	//Perform attack animation, woo, loop using DT
-	anim->aAnim = ANIMATION_ATTACK;
+	anim->upper.aAnim = ANIMATION_ATTACK;
 
 	auto isCharge = registry.GetComponent<ChargeAttackArgumentComponent>(entity);
 	if (isCharge)
-		anim->aAnimIdx = 2;
+		anim->upper.aAnimIdx = 2;
 	else
-		anim->aAnimIdx = 0;
+		anim->upper.aAnimIdx = 0;
 
-	anim->upper.aAnim = ANIMATION_ATTACK;
-	anim->upper.aAnimIdx = 0;
+	
+	
 
 	if (!player->isMoving)
 	{
-		anim->lower.aAnim = ANIMATION_ATTACK;
-		anim->lower.aAnimIdx = 0;
+		anim->lower.aAnim = anim->upper.aAnim;
+		anim->lower.aAnimIdx = anim->upper.aAnimIdx;
 		anim->lower.aAnimTimePower = .5f;
 	}
 
