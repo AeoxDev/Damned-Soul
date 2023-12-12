@@ -665,8 +665,8 @@ void LoadNextLevel(OnCollisionParameters& params)
 			return;
 			break;
 		case 15://Level 8
-			fallof->fallofX = -1303.f;
-			fallof->fallofZ = 506.f;
+			fallof->fallofX = -0.f;
+			fallof->fallofZ = 226.f;
 
 			CutsceneFallStage(params.entity2, 0);
 			return;
