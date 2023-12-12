@@ -14,25 +14,27 @@ EntityID SOUL_SPEED::_OWNER;
 
 const char* SOUL_SPEED::Description()
 {
-	float bonus_m, per_m;
-	if (1.f <= SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT)
-	{
-		per_m = 1.f;
-		bonus_m = SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT;
-	}
-	else
-	{
-		bonus_m = 1.f;
-		per_m = 1.f / SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT;
-	}
+	//float bonus_m, per_m;
+	//if (1.f <= SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT)
+	//{
+	//	per_m = 1.f;
+	//	bonus_m = SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT;
+	//}
+	//else
+	//{
+	//	bonus_m = 1.f;
+	//	per_m = 1.f / SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT;
+	//}
 
-	float bonus_a = bonus_m * (SOUL_SPEED_SOUL_FACTOR_ATTACK_AS_PERCENT / SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT);
+	//float bonus_a = bonus_m * (SOUL_SPEED_SOUL_FACTOR_ATTACK_AS_PERCENT / SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT);
 
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You gain %.1lf%% movement speed and %.2lf%% attack speed and for every %.0lf soul you possess"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
-		bonus_m,
-		bonus_a,
-		per_m/*,
+	sprintf_s(temp, "You gain %.1lf%% movement speed and %.1lf%% attack speed and for every soul you possess"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
+		SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT,
+		SOUL_SPEED_SOUL_FACTOR_ATTACK_AS_PERCENT
+		//bonus_m,
+		//bonus_a,
+		/*per_m,
 		PERCENT(_SC_FACTOR)*/);
 #pragma warning(suppress : 4172)
 	return temp;

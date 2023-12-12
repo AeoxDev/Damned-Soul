@@ -4,8 +4,11 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define ADRENALINE_RUSH_ACTIVE_DURATION 2.5f
-#define ADRENALINE_RUSH_ATTACK_SPEED_INCREASE 0.75f
+#include <cmath>
+
+#define ADRENALINE_RUSH_ACTIVE_DURATION 3.f
+#define ADRENALINE_RUSH_ATTACK_SPEED_INCREASE_BASE 0.1f
+#define ADRENALINE_RUSH_ATTACK_SPEED_INCREASE_MAX 0.8f
 float _AR_REMAINING_TIME = 0.f;
 
 EntityID ADRENALINE_RUSH::_OWNER;
@@ -13,8 +16,9 @@ EntityID ADRENALINE_RUSH::_OWNER;
 const char* ADRENALINE_RUSH::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You attack %ld%% faster after taking damage, fading over %.1lf seconds",
-		PERCENT(ADRENALINE_RUSH_ATTACK_SPEED_INCREASE),
+	sprintf_s(temp, "You gain %ld%% attack speed, increasing to %ld%% after taking damage, fading over %.1lf seconds",
+		PERCENT(ADRENALINE_RUSH_ATTACK_SPEED_INCREASE_BASE),
+		PERCENT(ADRENALINE_RUSH_ATTACK_SPEED_INCREASE_MAX),
 		ADRENALINE_RUSH_ACTIVE_DURATION);
 #pragma warning(suppress : 4172)
 	return temp;
@@ -62,11 +66,18 @@ void ADRENALINE_RUSH::AttackSpeedBoost(void* data)
 	RelicInput::OnStatCalcInput* input = (RelicInput::OnStatCalcInput*)data;
 
 	// Check if this is the owner
-	if (input->entity.index == ADRENALINE_RUSH::_OWNER.index && _AR_REMAINING_TIME)
+	if (input->entity.index == ADRENALINE_RUSH::_OWNER.index/* && _AR_REMAINING_TIME*/)
 	{
 		// Get stats
 		StatComponent* stats = (StatComponent*)input->adressOfStatComonent;
+
+		// Make sure the time can't get negative
+		_AR_REMAINING_TIME = (0 < _AR_REMAINING_TIME) * _AR_REMAINING_TIME;
+
+		// Calculate current bonus attack speed
+		float bonusAttackSpeed = std::lerp(ADRENALINE_RUSH_ATTACK_SPEED_INCREASE_BASE, ADRENALINE_RUSH_ATTACK_SPEED_INCREASE_MAX, _AR_REMAINING_TIME / ADRENALINE_RUSH_ACTIVE_DURATION);
+
 		//Double attack speed (regularly it's 1, so we make it 2)
-		stats->UpdateBonusAttackSpeed(+ADRENALINE_RUSH_ATTACK_SPEED_INCREASE * _AR_REMAINING_TIME / ADRENALINE_RUSH_ACTIVE_DURATION);
+		stats->UpdateBonusAttackSpeed(bonusAttackSpeed);
 	}
 }

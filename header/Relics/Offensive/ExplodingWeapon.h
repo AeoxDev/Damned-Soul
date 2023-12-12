@@ -11,6 +11,9 @@ namespace EXPLODING_WEAPON
 	// Call to set active for a specific entity (usually player)
 	void Initialize(void* input);
 
+	// The icnrease knockback function
+	void IncreaseKnockback(void* input);
+
 	// Call to reset explosive capabilities
 	void ResetExplosion(void* input);
 

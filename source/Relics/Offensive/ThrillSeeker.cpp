@@ -6,7 +6,7 @@
 
 EntityID THRILL_SEEKER::_OWNER;
 
-#define THRILL_SEEKER_RATIO (0.5f)
+#define THRILL_SEEKER_RATIO (.75f)
 
 const char* THRILL_SEEKER::Description()
 {
@@ -35,11 +35,15 @@ void THRILL_SEEKER::Initialize(void* input)
 	// Set owner
 	THRILL_SEEKER::_OWNER = *((EntityID*)input);
 
+	registry.GetComponent<StatComponent>(THRILL_SEEKER::_OWNER)->MarkAsModified();
+
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
 	// Add it to the list of On Obtain functions
 	(*_RelicFunctions)[FUNC_ON_DAMAGE_CALC].push_back(THRILL_SEEKER::DamageAmplifier);
+	// Add it to the list of On Obtain functions
+	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(THRILL_SEEKER::DamageAmplifier);
 }
 
 void THRILL_SEEKER::DamageAmplifier(void* data)
