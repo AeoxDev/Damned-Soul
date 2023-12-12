@@ -88,7 +88,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
-    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
     <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -163,6 +163,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)CSO\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <PostBuildEvent>
       <Command>cd $(OutDir)Models
@@ -196,6 +197,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)CSO\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <PostBuildEvent>
       <Command>cd $(OutDir)Models
@@ -629,6 +631,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UICreditsComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIGameComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIPauseComponent.h" />
     <ClInclude Include="header\Components\UIComponents\UIPlayerComponent.h" />

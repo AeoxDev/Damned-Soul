@@ -34,7 +34,7 @@ bool OnClickSystem::Update()
 			{
 				int imageIndex = index;
 				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
-					imageIndex = (index - 1) * 3;
+					imageIndex = index * 3;
 				else
 					imageIndex -= 1;
 				
@@ -81,7 +81,7 @@ bool OnClickSystem::Update()
 			{
 				int imageIndex = index;
 				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
-					imageIndex = (index - 1) * 3;
+					imageIndex = index * 3;
 				else
 					imageIndex -= 1;
 

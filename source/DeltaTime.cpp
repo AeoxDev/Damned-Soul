@@ -42,16 +42,6 @@ bool GetVisualTimer()
 	return showTimer;
 }
 
-void SetVisualFPS(bool state)
-{
-	showFPS = state;
-}
-
-bool GetVisualFPS()
-{
-	return showFPS;
-}
-
 ML_String GetDigitalMinuteClock()
 {
 	DSINT2 time = {};

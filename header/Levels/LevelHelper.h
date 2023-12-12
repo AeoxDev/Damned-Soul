@@ -63,6 +63,4 @@ void SetupEnemyNavigationHelper(bool level8);
 
 void SetupEnemyCounter();
 
-void SetupFPSCounter();
-
 void SetupTimer();

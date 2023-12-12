@@ -64,5 +64,8 @@ struct LuciferBehaviour
 	bool dazedFromFly = false;
 
 	bool isAttacking = false; // please for the love of god, DO NOT TOUCH THIS
+
+	// damage ignore things, to balance. not touchie touchie
+	float toIgnorehealthCap = 0.f;
 	
 };

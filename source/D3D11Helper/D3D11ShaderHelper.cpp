@@ -14,11 +14,14 @@ ID3D11PixelShader* pixShader_NULL = nullptr;
 ID3D11ComputeShader* comShader_NULL = nullptr;
 ID3D11GeometryShader* geoShader_NULL = nullptr;
 ID3D11InputLayout* inputLayout_NULL = nullptr;
+static char csoFilepath[256] = "";
 
 PS_IDX LoadPixelShader(const char* name)//(ID3D11PixelShader* pixelShader)
 {
 	std::ifstream reader;
-	reader.open(name, std::ios::binary | std::ios::ate);
+
+	sprintf_s(csoFilepath, "CSO\\%s", name);
+	reader.open(csoFilepath, std::ios::binary | std::ios::ate);
 	assert(true == reader.is_open());
 
 
@@ -128,7 +131,8 @@ VS_IDX LoadVertexShader(const char* name, LAYOUT_DESC layout)
 {
 	std::ifstream reader;
 
-	reader.open(name, std::ios::binary | std::ios::ate);
+	sprintf_s(csoFilepath, "CSO\\%s", name);
+	reader.open(csoFilepath, std::ios::binary | std::ios::ate);
 	assert(true == reader.is_open());
 
 	// Allocate the byte data on the stack
@@ -194,7 +198,8 @@ CS_IDX LoadComputeShader(const char* name)
 {
 	std::ifstream reader;
 
-	reader.open(name, std::ios::binary | std::ios::ate);
+	sprintf_s(csoFilepath, "CSO\\%s", name);
+	reader.open(csoFilepath, std::ios::binary | std::ios::ate);
 	assert(true == reader.is_open());
 
 	// Allocate the byte data on the stack
@@ -238,7 +243,8 @@ GS_IDX LoadGeometryShader(const char* name)
 {
 	std::ifstream reader;
 
-	reader.open(name, std::ios::binary | std::ios::ate);
+	sprintf_s(csoFilepath, "CSO\\%s", name);
+	reader.open(csoFilepath, std::ios::binary | std::ios::ate);
 	assert(true == reader.is_open());
 
 	// Allocate the byte data on the stack

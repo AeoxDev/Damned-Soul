@@ -65,7 +65,7 @@ void PauseState::SetupButtons()
 {
 
 	const int pauseAmount = 3;
-	const int settingsAmount = 7;
+	const int settingsAmount = 6;
 	const int sliderAmount = 5;
 
 	//Pause Buttons
@@ -85,9 +85,9 @@ void PauseState::SetupButtons()
 		auto controls = registry.CreateEntity(ENT_PERSIST_PAUSE);
 
 		UIComponent* uiControls = registry.AddComponent<UIComponent>(controls);
-		UIPauseButtonComponent* pause2 = registry.AddComponent<UIPauseButtonComponent>(controls);
+		UIPauseButtonComponent* pause02 = registry.AddComponent<UIPauseButtonComponent>(controls);
 
-		uiControls->Setup("Controls", " ", { 0.275f, 0.0f });
+		uiControls->Setup("Controls80", " ", { 0.235f, 0.0f });
 
 		const char texts[pauseAmount][32] =
 		{
@@ -98,9 +98,9 @@ void PauseState::SetupButtons()
 
 		const DSFLOAT2 positions[pauseAmount] =
 		{
-			{ -0.285f, 0.225f },
-			{ -0.285f, 0.0f },
-			{ -0.285f, -0.225f }
+			{ -0.235f, 0.18f },
+			{ -0.235f, 0.f },
+			{ -0.235f, -0.18f }
 
 		};
 
@@ -165,24 +165,21 @@ void PauseState::SetupButtons()
 			"1600x900",
 			"1280x720",
 			"Enable Game Timer",
-			"Enable FPS Counter",
 			"Back",
 		};
 
 		const DSFLOAT2 positions[settingsAmount] =
 		{
-			{ -0.3f, 0.225f },
-			{ -0.3f, 0.075f },
-			{ -0.3f, -0.075f },
-			{ -0.3f, -0.225f },
-			{ 0.3f, 0.225f },
-			{ 0.3f, 0.075f },
+			{ -0.25f, 0.225f },
+			{ -0.25f, 0.075f },
+			{ -0.25f, -0.075f },
+			{ -0.25f, -0.225f },
+			{ 0.25f, 0.225f },
 			{ 0.78f, -0.85f }
 		};
 
 		const DSFLOAT2 scales[settingsAmount] =
 		{
-			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
@@ -198,7 +195,6 @@ void PauseState::SetupButtons()
 			UIFunctions::Settings::SetMediumRes,
 			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
-			UIFunctions::Settings::SwitchFPS,
 			UIFunctions::Pause::Back,
 		};
 
@@ -209,18 +205,16 @@ void PauseState::SetupButtons()
 			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
-			"ButtonSmall",
 			"ButtonMedium"
 		};
 
 		const float fontsizes[settingsAmount] =
 		{
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
 			{ 17.0f },
 			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 16.0f },
 			{ 20.0f }
 		};
 
