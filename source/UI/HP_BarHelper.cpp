@@ -217,7 +217,7 @@ void UpdateSoulUI(const EntityID player)
 	{
 		char temp[8] = "";
 		sprintf(temp, /*"Health: %lld"*/"%ld", souls->value);
-		uiElement->m_Texts[SOUL_TEXT].SetText(temp, uiElement->m_Texts[SOUL_TEXT].baseUI.GetBounds(), 15.f);
+		uiElement->m_Texts[SOUL_TEXT].SetText(temp, uiElement->m_Texts[SOUL_TEXT].baseUI.GetBounds(), 18.5f);
 		DSFLOAT2 position = uiElement->m_Images[SOUL_STONE].baseUI.GetPosition();
 		position.x += .017f;
 		position.y -= .007f;

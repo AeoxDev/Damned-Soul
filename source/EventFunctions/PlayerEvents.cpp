@@ -148,6 +148,7 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		for (auto& func : funcs)
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID);
+			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true);
 		}
 
 		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
@@ -359,7 +360,12 @@ void PlayerAttack(EntityID& entity, const int& index)
 
 	//Perform attack animation, woo, loop using DT
 	anim->aAnim = ANIMATION_ATTACK;
-	anim->aAnimIdx = 0;
+
+	auto isCharge = registry.GetComponent<ChargeAttackArgumentComponent>(entity);
+	if (isCharge)
+		anim->aAnimIdx = 2;
+	else
+		anim->aAnimIdx = 0;
 
 #define HITBOX_START_TIME (0.45f)
 #define HITBOX_END_TIME (0.8f)
@@ -392,18 +398,38 @@ void PlayerAttack(EntityID& entity, const int& index)
 		float depth = (0.3f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE * GetGodModeFactor();
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
+		//Attack hitbox 2.0, uses 6 points to create a schweird rectangle
+		//Point 0: Right
+		corners.cornersX[0] = -2.2f * GetGodModeFactor();
+		corners.cornersZ[0] = -0.2f * GetGodModeFactor();//-0.25f;
+		//Point 1: 
+		corners.cornersX[1] = -1.2f * GetGodModeFactor();
+		corners.cornersZ[1] = -3.5f * GetGodModeFactor();//-0.25f;
+		//Point 2: 
+		corners.cornersX[2] = -0.4f * GetGodModeFactor();//0.83f;
+		corners.cornersZ[2] = -4.0f * GetGodModeFactor();//-0.8f;
+		//Point 3: 
+		corners.cornersX[3] =  0.4f * GetGodModeFactor();//0.16f;
+		corners.cornersZ[3] = -4.0f * GetGodModeFactor();//-1.2f;
+		//Point 4: 
+		corners.cornersX[4] =  1.2f * GetGodModeFactor(); // -0.5f;
+		corners.cornersZ[4] = -3.5f * GetGodModeFactor();//-1.2f;
+		//Point 5: Left
+		corners.cornersX[5] =  2.2f * GetGodModeFactor();
+		corners.cornersZ[5] = -0.2f * GetGodModeFactor();//-0.25f;
+
 
 		// Counter clockwise
 		// X
-		corners.cornersX[0] = -width;
-		corners.cornersX[1] = width;
-		corners.cornersX[2] = 2.0f * width;
-		corners.cornersX[3] = -2.0f * width;
-		// Z
-		corners.cornersZ[0] = -2.f * depth;
-		corners.cornersZ[1] = -2.f * depth;
-		corners.cornersZ[2] = -0.5f;
-		corners.cornersZ[3] = -0.5f;
+		//corners.cornersX[0] = -width;
+		//corners.cornersX[1] = width;
+		//corners.cornersX[2] = 2.0f * width;
+		//corners.cornersX[3] = -2.0f * width;
+		//// Z
+		//corners.cornersZ[0] = -2.f * depth;
+		//corners.cornersZ[1] = -2.f * depth;
+		//corners.cornersZ[2] = -0.5f;
+		//corners.cornersZ[3] = -0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
 	}

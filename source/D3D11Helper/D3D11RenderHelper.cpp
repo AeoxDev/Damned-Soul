@@ -463,27 +463,27 @@ SRV_IDX CreateShaderResourceViewTexture(const int8_t sourceIdx, RESOURCE_FLAGS s
 	return currentIdx;
 }
 
-bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+bool SetShaderResourceViewAgnostic(const uint16_t idx, const SHADER_TO_BIND_RESOURCE& bindto, const uint8_t slot, ID3D11ShaderResourceView* srv)
 {
 	switch (bindto)
 	{
 	case BIND_VERTEX:
-		d3d11Data->deviceContext->VSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+		d3d11Data->deviceContext->VSSetShaderResources(slot, 1, &srv);
 		break;
 	case BIND_HULL:
-		d3d11Data->deviceContext->HSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+		d3d11Data->deviceContext->HSSetShaderResources(slot, 1, &srv);
 		break;
 	case BIND_DOMAIN:
-		d3d11Data->deviceContext->DSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+		d3d11Data->deviceContext->DSSetShaderResources(slot, 1, &srv);
 		break;
 	case BIND_GEOMETRY:
-		d3d11Data->deviceContext->GSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+		d3d11Data->deviceContext->GSSetShaderResources(slot, 1, &srv);
 		break;
 	case BIND_PIXEL:
-		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+		d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &srv);
 		break;
 	case BIND_COMPUTE:
-		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+		d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srv);
 		break;
 	default:
 		assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
@@ -492,6 +492,43 @@ bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bin
 	}
 
 	return true;
+}
+
+bool SetShaderResourceView(const SRV_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+{
+	return SetShaderResourceViewAgnostic(idx, bindto, slot, srvHolder->srv_map[idx]);
+	//switch (bindto)
+	//{
+	//case BIND_VERTEX:
+	//	d3d11Data->deviceContext->VSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+	//	break;
+	//case BIND_HULL:
+	//	d3d11Data->deviceContext->HSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+	//	break;
+	//case BIND_DOMAIN:
+	//	d3d11Data->deviceContext->DSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+	//	break;
+	//case BIND_GEOMETRY:
+	//	d3d11Data->deviceContext->GSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+	//	break;
+	//case BIND_PIXEL:
+	//	d3d11Data->deviceContext->PSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+	//	break;
+	//case BIND_COMPUTE:
+	//	d3d11Data->deviceContext->CSSetShaderResources(slot, 1, &srvHolder->srv_map[idx]);
+	//	break;
+	//default:
+	//	assert("ERROR"[0] == "Corrupt or incorrent Shader Type to bind!"[0]);
+	//	return false;
+	//	break; // Yes, this break is unnessecary, but it looks nice
+	//}
+
+	//return true;
+}
+
+bool SetShaderResourceView(const TX_IDX idx, const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
+{
+	return SetShaderResourceViewAgnostic(idx, bindto, slot, txHolder->srv_map[idx]);
 }
 
 void UnsetShaderResourceView(const SHADER_TO_BIND_RESOURCE& bindto, uint8_t slot)
@@ -560,6 +597,12 @@ void CopySRVToUAV(const UAV_IDX destination, const SRV_IDX source)
 void CopyUAVToSRV(const SRV_IDX destination, const UAV_IDX source)
 {
 	d3d11Data->deviceContext->CopyResource(srvHolder->srv_resource_map[destination], uavHolder->uav_resource_map[source]);
+
+}
+
+void CopyUAVToSRV(const TX_IDX destination, const UAV_IDX source)
+{
+	d3d11Data->deviceContext->CopyResource(txHolder->tx_map[destination], uavHolder->uav_resource_map[source]);
 
 }
 

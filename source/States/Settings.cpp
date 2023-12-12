@@ -63,11 +63,11 @@ void SettingsState::SetupButtons()
 
 		const DSFLOAT2 positions[amount] =
 		{
-			{ -0.3f, 0.225f },
-			{ -0.3f, 0.075f },
-			{ -0.3f, -0.075f },
-			{ -0.3f, -0.225f },
-			{ 0.3f, 0.225f },
+			{ -0.25f, 0.225f },
+			{ -0.25f, 0.075f },
+			{ -0.25f, -0.075f },
+			{ -0.25f, -0.225f },
+			{ 0.25f, 0.225f },
 			{ 0.78f, -0.85f }
 		};
 
@@ -78,7 +78,7 @@ void SettingsState::SetupButtons()
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
-			{ 1.0f, 1.0f },
+			{ 1.0f, 1.0f }
 		};
 
 		void(* const functions[amount])(void*, int) =
@@ -93,21 +93,21 @@ void SettingsState::SetupButtons()
 
 		const char filenames[amount][32] =
 		{
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonMedium"
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonMedium"
 		};
 
 		const float fontsizes[amount] =
 		{
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
 			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 16.0f },
 			{ 20.0f }
 		};
 
@@ -166,10 +166,10 @@ void SettingsState::SetupButtons()
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right / 2.0f;
 
-			float sliderWidth = abs(maxRightPosition - 0.13f) + abs(maxLeftPosition + 0.13f);
+			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 
 			if (audioComp != nullptr)
 			{
@@ -222,7 +222,7 @@ void SettingsState::SetupImages()
 	// Settings backdrop panel
 	auto settingsPanel = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsPanel);
-	uiElement->Setup("Exmenu/SettingsPanel", "", { 0.0f, 0.0f }, { 1.0f, 1.0f });
+	uiElement->Setup("SettingsPanel", "", { 0.0f, 0.0f }, { 1.0f, 1.0f });
 
 }
 

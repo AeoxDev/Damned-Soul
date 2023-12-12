@@ -159,9 +159,9 @@ void Menu::SetupButtons()
 	
 	const DSFLOAT2 positions[buttons] =
 	{
-		{ -0.78f, -0.25f },
-		{ -0.78f, -0.45f },
-		{ -0.78f,  -0.65f },
+		{ -0.78f, -0.32f },
+		{ -0.78f, -0.50f },
+		{ -0.78f,  -0.68f },
 		{ -0.78f, -0.85f }
 	};
 
@@ -188,7 +188,7 @@ void Menu::SetupButtons()
 		OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-		uiElement->Setup("Exmenu/ButtonMedium", texts[i], positions[i], scales[i]);
+		uiElement->Setup("ButtonMedium", texts[i], positions[i], scales[i]);
 
 		onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 		onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -203,15 +203,15 @@ void Menu::SetupImages()
 	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("ExMenu/DamnedTitle3", "", { 0.0f, 0.70f });
+	uiElement->Setup("DamnedTitle3", "", { 0.0f, 0.70f });
 
 	auto panel = registry.CreateEntity();
 	UIComponent* uiElementTwo = registry.AddComponent<UIComponent>(panel);
-	uiElementTwo->Setup("ExMenu/SettingsPanelMedium", "", { 0.5f, -0.25f });
+	uiElementTwo->Setup("SettingsPanelMedium", "", { 0.55f, -0.37f });
 
 	auto controls = registry.CreateEntity();
 	UIComponent* uiElementThree = registry.AddComponent<UIComponent>(controls);
-	uiElementThree->Setup("Controls", "", { 0.5f, -0.25f });
+	uiElementThree->Setup("Controls", "", { 0.55f, -0.37f });
 }
 
 void Menu::SetupText()

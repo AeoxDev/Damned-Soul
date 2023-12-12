@@ -146,12 +146,13 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	{
 		soulWorth = 1;
 	}
-	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
+	registry.AddComponent<EnemyComponent>(newMini, soulWorth, EnemyType::zac);
 
 	if (zacIndex == 0)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Torso.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Torso.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 1)
@@ -164,20 +165,23 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	}
 	else if (zacIndex == 2)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("R_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("RArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 3)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("L_Arm.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("LArm.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	else if (zacIndex == 4)
 	{
-		ModelBonelessComponent* mod = registry.AddComponent<ModelBonelessComponent>(newMini, LoadModel("Skull.mdl"));
+		ModelSkeletonComponent* mod = registry.AddComponent<ModelSkeletonComponent>(newMini, LoadModel("Skull.mdl"));
 		mod->shared.gammaCorrection = 1.5f;
+		registry.AddComponent<AnimationComponent>(newMini);
 		mod->shared.hasOutline = true;
 	}
 	
@@ -190,8 +194,8 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	// UI
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(newMini);
 	UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(newMini);
-	uiElement->Setup("ExMenu/EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
-	uiElement->AddImage("ExMenu/FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->Setup("EmptyHealth", "", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
+	uiElement->AddImage("FullHealth", DSFLOAT2(1.5f, 1.5f), DSFLOAT2(1.0f, 1.0f));
 #endif
 
 	////Set hitbox
@@ -213,7 +217,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	AddHitboxComponent(newMini);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(newMini);
-	int hID = CreateHitbox(newMini, radius * /*mini **/ 0.7f, 0.f, 0.f);
+	int hID = CreateHitbox(newMini, radius * /*mini **/ 1.2f, 0.f, 0.f);
 	SetCollisionEvent(newMini, hID, HardCollision);
 	SetHitboxIsEnemy(newMini, hID);
 	SetHitboxHitPlayer(newMini, hID);
@@ -221,7 +225,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	SetHitboxActive(newMini, hID);
 	SetHitboxIsMoveable(newMini, hID, false);
 
-	int sID = CreateHitbox(newMini, radius, 0.f, 0.f);
+	int sID = CreateHitbox(newMini, radius * 5.f, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
 	SetHitboxIsEnemy(newMini, sID);
 	SetHitboxHitPlayer(newMini, sID);
@@ -401,23 +405,37 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 
 void EnemyAttack(EntityID& entity, const int& index)
 {
-	if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
-		EnemyEndAttack(entity, index);
-	else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
-		EnemyBeginAttack(entity, index);
+	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
+	if (comp)
+	{
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.4f)
+		{
+			SetHitboxActive(entity, comp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
+		}
+	}
+	//if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
+	//	EnemyEndAttack(entity, index);
+	//else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
+	//	EnemyBeginAttack(entity, index);
 }
 
 void EnemyBeginAttack(EntityID& entity, const int& index)
 {
+	//Get enemy type
+	uint32_t condition = GetTimedEventCondition(entity, index);
+
 	//Activate attack hitbox
 	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
 	if (comp)
 	{
-		SetHitboxActive(entity, comp->attackHitBoxID, true);
-		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+		if (condition != EnemyType::skeleton && condition != EnemyType::empoweredSkeleton) //Skeletons now have their own method of beginning their attack
+		{
+			SetHitboxActive(entity, comp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+		}
 	}
-
-	uint32_t condition = GetTimedEventCondition(entity, index);
+	
 	if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Dogs do big knockback on their headbutt
 	{
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);

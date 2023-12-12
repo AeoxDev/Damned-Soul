@@ -141,6 +141,7 @@ bool StateSwitcherSystem::Update()
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (statComp->GetHealth() <= 0 && statComp->performingDeathAnimation == false)
 		{
+			bool notZac = true;
 			TempBossBehaviour* tempBossComp = registry.GetComponent<TempBossBehaviour>(entity);
 			if (tempBossComp == nullptr)
 			{
@@ -160,7 +161,6 @@ bool StateSwitcherSystem::Update()
 				case EnemyType::hellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
 					shatterTimeFactor *= 0.55f;
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.55f * shatterTimeFactor, ShatterEnemy);
 					break;
 				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
@@ -188,8 +188,7 @@ bool StateSwitcherSystem::Update()
 					break;
 				case EnemyType::frozenImp:
 					sfx->Play(Imp_Death, Channel_Base);
-					shatterTimeFactor *= 0.55f;
-					ShatterEnemy(entity, 0);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::zac:
 					sfx->Play(Miniboss_Death, Channel_Base);
@@ -239,6 +238,7 @@ bool StateSwitcherSystem::Update()
 				}
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, shatterTimeFactor, ShatterEnemy);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, shatterTimeFactor + 0.5f, RemoveEnemy);
+				
 			}
 			else // boss died lmao
 			{
@@ -261,31 +261,6 @@ bool StateSwitcherSystem::Update()
 					AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, 2.f, RemoveEnemy);
 				}
 			}
-		}
-		
-	}
-	//Elliot: Setup enemy counter here
-	if (stateManager.enemyCounter.index != -1 && previousEnemies != nrEnemies)
-	{
-		UIComponent* ui = registry.GetComponent<UIComponent>(stateManager.enemyCounter);
-		if (ui != nullptr)
-		{
-
-			ML_String enemies;
-
-			enemies = "Enemies: ";
-			enemies.append(std::to_string(nrEnemies).c_str());
-			if (nrEnemies > 0)
-			{
-				ui->m_BaseText.SetText(enemies.c_str(), DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
-			}
-			else
-			{
-				ui->m_BaseText.SetText("Portal Open", DSBOUNDS(0.0f, 0.0f, 0.0f, 0.0f));
-				ui->m_BaseImage.Release();
-				ui->m_BaseImage.SetImage("Exmenu/ButtonSmallBloody", false);
-			}
-			RedrawUI();
 		}
 		
 	}

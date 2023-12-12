@@ -9,12 +9,12 @@
 
 EntityID FROST_FIRE::_OWNER;
 
-#define FROST_FIRE_COOLDOWN (2.f)
-#define FROST_FIRE_BASE_KNOCKBACK (1.25f)
+#define FROST_FIRE_COOLDOWN (3.f)
+#define FROST_FIRE_BASE_KNOCKBACK (2.25f)
 #define FROST_FIRE_FREEZE_CHANCE (0.2f)
-#define FROST_FIRE_FREEZE_DURATION (1.5f)
+#define FROST_FIRE_FREEZE_DURATION (1.f)
 //#define FROST_FIRE_DAMAGE_FLAT (5.f)
-#define FROST_FIRE_RANGE (10.f)
+#define FROST_FIRE_RANGE (12.5f)
 #define FROST_FIRE_SFX_DURATION (0.3f)
 
 static float _Frost_Fire_Cooldown = FROST_FIRE_COOLDOWN;
@@ -94,6 +94,12 @@ void FROST_FIRE::PushBackAndDamage(void* data)
 
 			if (DistanceBetweenTransforms(ownerTrans, otherTrans) < FROST_FIRE_RANGE)
 			{
+				TempBossBehaviour* tempBoss = registry.GetComponent<TempBossBehaviour>(entity);
+				LuciferBehaviour* lucyBoss = registry.GetComponent<LuciferBehaviour>(entity);
+				ZacBehaviour* zac = registry.GetComponent<ZacBehaviour>(entity);
+				if (tempBoss || lucyBoss || zac)
+					continue;
+
 				float dx, dy, x, y;
 				// Calculate the direction of the knockback
 				CalculateKnockBackDirection(FROST_FIRE::_OWNER, entity, dx, dy);

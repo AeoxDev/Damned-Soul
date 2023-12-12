@@ -55,10 +55,12 @@ void ReloadPlayerNonGlobals();
 
 EntityID RandomPlayerEnemy(EnemyType enemyType);
 
-void SetScoreboardUI(EntityID stage);
+void SetScoreboardUI();
 
 void UpdateScoreBoardUI(bool won);
 
 void SetupEnemyNavigationHelper(bool level8);
 
 void SetupEnemyCounter();
+
+void SetupTimer();

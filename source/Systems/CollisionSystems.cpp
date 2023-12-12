@@ -316,6 +316,9 @@ bool GeometryIndependentSystem::Update()
 					stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
 
 					HazardDamageHelper(entity, 25.f);
+					p->lastSafeGIPosX = p->positionX;
+					p->lastSafeGIPosY = p->positionY;
+					p->lastSafeGIPosZ = p->positionZ;
 					//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);
 					break;
 				case HAZARD_CRACK:
@@ -358,6 +361,9 @@ bool GeometryIndependentSystem::Update()
 					stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
 					HazardDamageHelper(entity, 50.f);
+					p->lastSafeGIPosX = p->positionX;
+					p->lastSafeGIPosY = p->positionY;
+					p->lastSafeGIPosZ = p->positionZ;
 					break;
 				case HAZARD_ICE:
 					//ICE:
@@ -367,6 +373,9 @@ bool GeometryIndependentSystem::Update()
 						AddTimedEventComponentStart(entity, 0.01f, ContinueAnimation, 0, 2);
 					}
 					stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
+					p->lastSafeGIPosX = p->positionX;
+					p->lastSafeGIPosY = p->positionY;
+					p->lastSafeGIPosZ = p->positionZ;
 
 					//HazardDamageHelper(entity, 25.f);
 					//takeDamage = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, StaticHazardDamage, nullptr, HAZARD_LAVA_UPDATE_TIME, nullptr, r, 1);

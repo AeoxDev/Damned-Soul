@@ -1,6 +1,7 @@
 #include "Relics\Offensive\FlameWeapon.h"
 #include "Relics\Utility\RelicInternalHelper.h"
 #include "Relics\Utility\RelicFuncInputTypes.h"
+#include "Relics\Utility\RelicParticleHelper.h"
 #include "Components.h"
 #include "Registry.h"
 
@@ -8,6 +9,12 @@
 #define FLAME_WEAPON_DOT_FRACTION (0.5f)
 
 EntityID FLAME_WEAPON::_OWNER;
+
+void _FW_Particles_Begin(EntityID& entity, const int& index)
+{
+	// No, redo this, and do it right if anything...
+	//registry.AddComponent<ParticleComponent>(entity, FLAME_WEAPON_DOT_DURATION, 100.f, 3.0f, -2.0f, 1.5f, 1.0f, 8, ComputeShaders::ON_FIRE);
+}
 
 const char* FLAME_WEAPON::Description()
 {
@@ -50,6 +57,8 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 	if (nullptr == debuff)
 	{
 		registry.AddComponent<DebuffComponent>(input->defender, DamageOverTime::BURN, newDoT);
+
+		ParticleAtEntityLocationFollow(input->defender, FLAME_WEAPON_DOT_DURATION, _FW_Particles_Begin);
 	}
 	else if (debuff->m_dots[DamageOverTime::BURN].LessThan(newDoT))
 	{

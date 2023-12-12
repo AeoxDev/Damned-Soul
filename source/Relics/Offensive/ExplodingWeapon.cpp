@@ -12,6 +12,8 @@
 
 EntityID EXPLODING_WEAPON::_OWNER;
 
+bool _EW_CAN_EXPLODE = true;
+
 const char* EXPLODING_WEAPON::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
@@ -29,8 +31,15 @@ void EXPLODING_WEAPON::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
-	// Add the DoT to the weapon
+	// Add the AoE to the weapon
 	(*_RelicFunctions)[FUNC_ON_DAMAGE_APPLY].push_back(EXPLODING_WEAPON::Explosion);
+	// Add the reset to the functions
+	(*_RelicFunctions)[FUNC_ON_NOT_ATTACKING].push_back(EXPLODING_WEAPON::ResetExplosion);
+}
+
+void EXPLODING_WEAPON::ResetExplosion(void* input)
+{
+	_EW_CAN_EXPLODE = true;
 }
 
 void _EW_Particles_Begin(EntityID& entity, const int& index)
@@ -50,9 +59,13 @@ void EXPLODING_WEAPON::Explosion(void* data)
 	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
 	// Check if it is the right entity that is attacking
-	if (EXPLODING_WEAPON::_OWNER.index != input->attacker.index)
+	if (EXPLODING_WEAPON::_OWNER.index != input->attacker.index || false == _EW_CAN_EXPLODE)
 		return;
 
+	// Can't explode any more on this attack
+	_EW_CAN_EXPLODE = false;
+
+	// Create particles
 	ParticleAtEntityLocation(input->defender, EXPLODING_WEAPON_SFX_DURATION, _EW_Particles_Begin);
 
 	TransformComponent* ownerTrans = registry.GetComponent<TransformComponent>(EXPLODING_WEAPON::_OWNER);
@@ -66,6 +79,7 @@ void EXPLODING_WEAPON::Explosion(void* data)
 		if (entity.index != input->defender.index && DistanceBetweenTransforms(ownerTrans, otherTrans) < EXPLODING_WEAPON_AOE_SIZE)
 		{
 			// Flat damage
+			DamageNumbers(entity, explosionDamage);
 			Combat::HitFlat(entity, registry.GetComponent<StatComponent>(entity), explosionDamage);
 		}
 	}

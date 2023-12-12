@@ -19,10 +19,12 @@
 #include "AntiAlias.h"
 #include "SkyPlane.h"
 #include "Shatter.h"
+#include "UIComponents.h"
 
 //Cursed
 #include "SDLHandler.h"
 #include "Level.h"
+
 
 State currentStates;
 StateManager stateManager;
@@ -169,6 +171,13 @@ int StateManager::Setup()
 	//SetupTestHitbox();
 	RedrawUI();
 	
+	//Setup cursor here:
+	stateManager.cursor = registry.CreateEntity(ENT_PERSIST_GAME);
+	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(stateManager.cursor);
+	uiElement2->Setup("Cursor/DamnedSoul_CursorSmallBorder", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
+	uiElement2->m_BaseImage.baseUI.SetVisibility(true);
+	uiElement2->m_BaseText.baseUI.SetVisibility(false);
+	//uiElement2->m_BaseImage.baseUI.SetPosition();
 
 	//Setup systems here
 
@@ -193,7 +202,7 @@ int StateManager::Setup()
 
 #endif // _DEBUG
 
-	systems.push_back(new UIRunTimeSystem());
+	systems.push_back(new UIGameSystem());
 	systems.push_back(new UIRenderSystem());
 	
 	//Input based CPU 
@@ -260,27 +269,6 @@ void StateManager::Input()
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
-
-		// :)
-		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
-		//{
-		//	//�h�
-		//	SetInMainMenu(false);
-		//	SetInPlay(true);
-		//	SetInShop(false);
-
-		//	menu.Unload();
-
-		//	LoadLevel(++stateManager.activeLevel);
-
-		//	//Ungodly amounts of cursed energy, update UI systems after the level has been loaded
-		//	for (size_t i = 17; i < systems.size(); i++)
-		//	{
-		//		systems[i]->Update();
-		//	}
-		//}
-
-		
 	}
 	if (currentStates & State::InPause)
 	{
@@ -306,6 +294,38 @@ void StateManager::Input()
 
 void StateManager::Update()
 {
+	//Reset input values first
+	float previousMouseX = mouseX;
+	float previousMouseY = mouseY;
+	ResetInput();
+	GetInput();
+	UIComponent* mouse = registry.GetComponent<UIComponent>(stateManager.cursor);
+	mouse->m_BaseImage.baseUI.SetPosition((int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)) - 1, (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) - 1);
+
+	
+	if (mouseX != previousMouseX || mouseY != previousMouseY)
+	{
+		RedrawUI();
+	}
+
+	
+	if (mouseButtonPressed[left] != ButtonState::noEvent || mouseButtonPressed[right] != ButtonState::noEvent)
+	{
+		if (mouseButtonDown[MouseButton::left] == down)
+		{//uiElement2->Setup("Cursor/DamnedSoul_CursorSmall", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
+			mouse->m_BaseImage.SetImage("Cursor/DamnedSoul_CursorLightSmallBorder");//Brighten up
+		}
+		else if (mouseButtonDown[MouseButton::left] == up)
+		{
+			mouse->m_BaseImage.SetImage("Cursor/DamnedSoul_CursorSmallBorder");//Reset the mouse
+		}
+		if (mouseButtonDown[MouseButton::right] == down)
+		{
+			mouse->m_BaseImage.SetImage("Cursor/DamnedSoul_CursorSparkleSmallBorder");
+		}
+		RedrawUI();
+	}
+
 	for (size_t i = 0; i < systems.size(); i++)
 	{
 		systems[i]->timeElapsed += GetFrameTime(); //No longer deltatime, in case of game pause deltatime
@@ -320,6 +340,7 @@ void StateManager::Update()
 	}
 
 	Input();
+
 }
 
 void StateManager::UnloadAll()
@@ -341,8 +362,7 @@ void StateManager::UnloadAll()
 void StateManager::EndFrame()
 {
 	Present();//Present what was drawn during the update!
-	ResetInput();
-	GetInput();
+	
 	//MemLib::pdefrag();
 }
 

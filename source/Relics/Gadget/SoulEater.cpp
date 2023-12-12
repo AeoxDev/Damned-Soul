@@ -6,29 +6,41 @@
 #include "Registry.h"
 #include <cmath>
 
-#define SOUL_EATER_HEAL_RATIO (3.f/4.f)
+#define SOUL_EATER_HEAL_RATIO_GAIN (1.0f/1.f)
+#define SOUL_EATER_HEAL_RATIO_LOSE (2.0f/1.f)
 
 EntityID SOUL_EATER::_OWNER;
 
 const char* SOUL_EATER::Description()
 {
 	float bonus, per;
-	if (1.f <= SOUL_EATER_HEAL_RATIO)
+	if (1.f <= SOUL_EATER_HEAL_RATIO_GAIN)
 	{
 		per = 1.f;
-		bonus = SOUL_EATER_HEAL_RATIO;
+		bonus = SOUL_EATER_HEAL_RATIO_GAIN;
 	}
 	else
 	{
 		bonus = 1.f;
-		per = 1.f / SOUL_EATER_HEAL_RATIO;
+		per = 1.f / SOUL_EATER_HEAL_RATIO_GAIN;
+	}
+
+	float bonus2, per2;
+	if (1.f <= SOUL_EATER_HEAL_RATIO_LOSE)
+	{
+		per2 = 1.f;
+		bonus2 = SOUL_EATER_HEAL_RATIO_LOSE;
+	}
+	else
+	{
+		bonus2 = 1.f;
+		per2 = 1.f / SOUL_EATER_HEAL_RATIO_LOSE;
 	}
 
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You heal for %.1lf Health for every %.1lf souls you gain or lose"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
+	sprintf_s(temp, "You heal for %.1lf Health per soul you gain, and %.1lf health per soul you lose",
 		bonus,
-		per/*,
-		PERCENT(_SC_FACTOR)*/);
+		bonus2);
 #pragma warning(suppress : 4172)
 	return temp;
 }
@@ -66,6 +78,8 @@ void SOUL_EATER::HealFromSouls(void* data)
 	StatComponent* stats = registry.GetComponent<StatComponent>(SOUL_EATER::_OWNER);
 
 	// Heal from the damage dealt
-	if (input->soulDelta < 0)
-		stats->ApplyHealing(SOUL_EATER_HEAL_RATIO * std::abs(input->soulDelta));
+	if (0 < input->soulDelta)
+		stats->ApplyHealing(SOUL_EATER_HEAL_RATIO_GAIN * input->soulDelta);
+	else
+		stats->ApplyHealing(SOUL_EATER_HEAL_RATIO_LOSE * std::abs(input->soulDelta));
 }

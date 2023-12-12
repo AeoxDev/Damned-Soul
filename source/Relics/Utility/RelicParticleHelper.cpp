@@ -29,6 +29,23 @@ void ParticleAtEntityLocation(const EntityID& origin, const float duration, void
 	AddTimedEventComponentStartEnd(percyJackson, 0, funcStart, duration, _RelicParticleDespawn);
 }
 
+void ParticleAtEntityLocationFollow(const EntityID& origin, const float duration, void* funcStart)
+{
+	EntityID percyJackson = registry.CreateEntity();
+	TransformComponent percysLocation;
+	TransformComponent* zeusLightning = registry.GetComponent<TransformComponent>(origin);
+	registry.AddComponent<FollowerComponent>(percyJackson, origin);
+
+	// Move percy to his goal
+	percysLocation.positionX = zeusLightning->positionX;
+	percysLocation.positionY = zeusLightning->positionY;
+	percysLocation.positionZ = zeusLightning->positionZ;
+	registry.AddComponent<TransformComponent>(percyJackson, percysLocation);
+
+	// Add a timed event for the particles
+	AddTimedEventComponentStartEnd(percyJackson, 0, funcStart, duration, _RelicParticleDespawn);
+}
+
 void ParticleAtEntityFollow(const EntityID& origin, const float duration, void* funcStart)
 {
 	EntityID percyJackson = registry.CreateEntity();

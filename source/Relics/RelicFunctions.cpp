@@ -23,6 +23,7 @@
 #include "Relics\Offensive\ThrillSeeker.h"
 #include "Relics\Offensive\ExplodingWeapon.h"
 #include "Relics\Offensive\PowerStrike.h"
+#include "Relics\Offensive\SerratedDagger.h"
 
 	/*Defense*/
 #include "Relics\Defensive\Hearts\DemonHeart.h"
@@ -39,6 +40,7 @@
 #include "Relics\Defensive\BackShield.h"
 #include "Relics\Defensive\SecondWind.h"
 #include "Relics\Defensive\LastStand.h"
+#include "Relics\Defensive\WendigoTalisman.h"
 
 	/*Gadget*/
 #include "Relics\Gadget\SpeedyLittleDevil.h"
@@ -55,6 +57,7 @@
 #include "Relics\Gadget\Discount\SeeingDouble.h"
 #include "Relics\Gadget\DashFlash.h"
 #include "Relics\Gadget\QuickReflexes.h"
+#include "Relics\Gadget\GoliathSkull.h"
 // End of include all relics
 
 #include "Relics\Utility\ML_RelicArray.h"
@@ -126,7 +129,8 @@ void _validateMasterRelicList()
 				/*Description*/	MINOTAUR_HORN::Description(),
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	MINOTAUR_HORN::Initialize
+				/*Function*/	MINOTAUR_HORN::Initialize,
+				/*Weight*/		4
 			),
 			RelicData(
 				/*Name*/		"Hound Fang",
@@ -134,7 +138,8 @@ void _validateMasterRelicList()
 				/*Description*/	HOUND_FANG::Description(),
 				/*Price*/		5,
 				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	HOUND_FANG::Initialize
+				/*Function*/	HOUND_FANG::Initialize,
+				/*Weight*/		4
 			),
 			RelicData(
 				/*Name*/		"Cracked Lense",
@@ -183,7 +188,8 @@ void _validateMasterRelicList()
 				/*Description*/	DASH_ATTACK::Description(),//"Deals 50% of your damage when dashing through an enemy",
 				/*Price*/		6,
 				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	DASH_ATTACK::Initialize
+				/*Function*/	DASH_ATTACK::Initialize,
+				/*Weight*/		5
 			),
 			RelicData(
 				/*Name*/		"Adrenaline Rush",
@@ -197,7 +203,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Thrill Seeker",
 				/*Filepath*/	"RelicIcons\\Thrill_Seeker",
 				/*Description*/	THRILL_SEEKER::Description(),//"For every % hp lost, gain % damage",
-				/*Price*/		15,
+				/*Price*/		13,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	THRILL_SEEKER::Initialize
 			),
@@ -215,7 +221,16 @@ void _validateMasterRelicList()
 				/*Description*/	POWER_STRIKE::Description(),
 				/*Price*/		6,
 				/*Type*/		RELIC_OFFENSE,
-				/*Function*/	POWER_STRIKE::Initialize
+				/*Function*/	POWER_STRIKE::Initialize,
+				/*Weight*/		5
+			),
+			RelicData(
+				/*Name*/		"Serrated Dagger",
+				/*Filepath*/	"RelicIcons\\Serrated_Dagger",
+				/*Description*/	SERRATED_DAGGER::Description(),
+				/*Price*/		8,
+				/*Type*/		RELIC_OFFENSE,
+				/*Function*/	SERRATED_DAGGER::Initialize
 			),
 			//ENDOF: OFFENSIVE RELICS
 
@@ -257,7 +272,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Frost Fire",
 				/*Filepath*/	"RelicIcons\\Frost_Fire",
 				/*Description*/	FROST_FIRE::Description(),//"Every few seconds, send out a shockwave that knocks back [[and damages?]] nearby enemies",
-				/*Price*/		5,
+				/*Price*/		6,
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	FROST_FIRE::Initialize
 			),
@@ -338,6 +353,14 @@ void _validateMasterRelicList()
 				/*Type*/		RELIC_DEFENSE,
 				/*Function*/	LAST_STAND::Initialize,
 				/*Weight*/		15
+			),
+			RelicData(
+				/*Name*/		"Wendigo Talisman",
+				/*Filepath*/	"RelicIcons\\Wendigo_Talisman",
+				/*Description*/	WENDIGO_TALISMAN::Description(),
+				/*Price*/		12,
+				/*Type*/		RELIC_DEFENSE,
+				/*Function*/	WENDIGO_TALISMAN::Initialize
 			),
 			//ENDOF: DEFENSIVE RELICS
 
@@ -457,6 +480,15 @@ void _validateMasterRelicList()
 				/*Price*/		12,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	QUICK_REFLEXES::Initialize
+			),
+			RelicData(
+				/*Name*/		"Goliath Skull",
+				/*Filepath*/	"RelicIcons\\Goliath_Skull",
+				/*Description*/	GOLIATH_SKULL::Description(),
+				/*Price*/		14,
+				/*Type*/		RELIC_GADGET,
+				/*Function*/	GOLIATH_SKULL::Initialize,
+				/*Weight*/		15
 			),
 			//ENDOF: GADGET RELICS
 		};

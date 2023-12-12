@@ -12,7 +12,7 @@ EntityID MEMBERSHIP::_OWNER;
 const char* MEMBERSHIP::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Reduces the cost of healing and upgrades by %ld%% while in the shop",
+	sprintf_s(temp, "Reduces the cost of healing, rerolls, and upgrades by %ld%% while in the shop",
 		100 - PERCENT(MEMBERSHIP_COST_MULT));
 #pragma warning(suppress : 4172)
 	return temp;
@@ -36,5 +36,6 @@ void MEMBERSHIP::Discount(void* data)
 	RelicInput::OnPriceCalculation* input = (RelicInput::OnPriceCalculation*)data;
 
 	input->healCostMult *= MEMBERSHIP_COST_MULT;
+	input->rerollCostMult *= MEMBERSHIP_COST_MULT;
 	input->upgradeCost *= MEMBERSHIP_COST_MULT;
 }
