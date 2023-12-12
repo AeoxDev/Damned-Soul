@@ -400,22 +400,22 @@ void PlayerAttack(EntityID& entity, const int& index)
 
 		//Attack hitbox 2.0, uses 6 points to create a schweird rectangle
 		//Point 0: Right
-		corners.cornersX[0] = -2.0f;
+		corners.cornersX[0] = -2.2f;
 		corners.cornersZ[0] = -0.2f;//-0.25f;
 		//Point 1: 
 		corners.cornersX[1] = -1.2f;
-		corners.cornersZ[1] = -2.0f;//-0.25f;
+		corners.cornersZ[1] = -3.5f;//-0.25f;
 		//Point 2: 
 		corners.cornersX[2] = -0.4f;//0.83f;
-		corners.cornersZ[2] = -2.5f;//-0.8f;
+		corners.cornersZ[2] = -4.0f;//-0.8f;
 		//Point 3: 
 		corners.cornersX[3] =  0.4f;//0.16f;
-		corners.cornersZ[3] = -2.5f;//-1.2f;
+		corners.cornersZ[3] = -4.0f;//-1.2f;
 		//Point 4: 
 		corners.cornersX[4] =  1.2f; // -0.5f;
-		corners.cornersZ[4] = -2.0f;//-1.2f;
+		corners.cornersZ[4] = -3.5f;//-1.2f;
 		//Point 5: Left
-		corners.cornersX[5] =  2.0f;
+		corners.cornersX[5] =  2.2f;
 		corners.cornersZ[5] = -0.2f;//-0.25f;
 
 
