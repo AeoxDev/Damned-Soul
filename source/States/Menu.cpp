@@ -203,7 +203,7 @@ void Menu::SetupImages()
 	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("DamnedTitle3", "", { 0.0f, 0.70f });
+	uiElement->Setup("DamnedTitle3", "", { 0.0f, 0.65f });
 
 	auto panel = registry.CreateEntity();
 	UIComponent* uiElementTwo = registry.AddComponent<UIComponent>(panel);
