@@ -37,7 +37,7 @@ struct MinotaurBehaviour
 	
 	//used to determine how many jump the minotaur has done and when to stop jumping
 	int jumpCounter = 0;
-	int jumpBreakpoint = 3;
+	int jumpBreakpoint = 1;
 
 	//used for determening the window before the minotaur charges the player
 	float aimDuration = 1.4f;

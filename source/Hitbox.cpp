@@ -174,7 +174,7 @@ int CreateHitbox (EntityID& entity, int corners, float cornerPosX[], float corne
 	float magnitudeX = 0.f, magnitudeZ = 0.f;
 	float radians = 0.f;
 	bool reverse = false;
-	////Check if convex
+	//Check if convex (no we dont)
 	//for (int i = 0; i < corners; i++)
 	//{
 	//	//First get line
@@ -686,53 +686,37 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 
 	case EnemyType::hellhound:
 		//Regular attack hitbox
-
-		/*Player attack hitbox for reference, wider at the base
-		corners.cornersX[0] = -width;
-		corners.cornersX[1] = width;
-		corners.cornersX[2] = 2.0f * width;
-		corners.cornersX[3] = -2.0 * width;
-		// Z
-		corners.cornersZ[0] = -2.f * depth;
-		corners.cornersZ[1] = -2.f * depth;
-		corners.cornersZ[2] = -0.5f;
-		corners.cornersZ[3] = -0.5f;
-		*/
-
-
-
 		{
 			float cornersX[4];		//Width
-			cornersX[0] = -2.25f;	//Thinner at the tip
-			cornersX[1] = 2.25f;	//
-			cornersX[2] = 3.0f;		//Thicker at the base
-			cornersX[3] = -3.0f;	//
+			cornersX[0] = -2.5f;	//Thinner at the tip (Now Thicker)
+			cornersX[1] = 2.5f;	//
+			cornersX[2] = 1.7f;		//Thicker at the base (Now Thinner)
+			cornersX[3] = -1.75f;	//
 			float cornersZ[4];		//Length
-			cornersZ[0] = -7.5f;	//Long reach forwards
-			cornersZ[1] = -7.5f;	//
+			cornersZ[0] = -6.0f;	//Long reach forwards
+			cornersZ[1] = -6.0f;	//
 			cornersZ[2] = 1.0f;		//Slightly offset backwards
 			cornersZ[3] = 1.0f;		//
 			enemyComp->attackHitBoxID = CreateHitbox(entity, 4, cornersX, cornersZ);
-			//enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * -2.0f);
 		}
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);
 		SetHitboxActive(entity, enemyComp->attackHitBoxID, true);
 		SetHitboxCanDealDamage(entity, enemyComp->attackHitBoxID, false);
-
 		
 		//Breath attack hitbox (cone)
-		float cornersX[3];// = { 0.0f, 0.5f, -0.5f };
-		cornersX[0] = 0.0f;
-		cornersX[1] = 0.5f;
-		cornersX[2] = -0.5f;
-		float cornersZ[3];// = { 0.0f, -0.5f, -0.5f };
-		cornersZ[0] = -1.0f;
-		cornersZ[1] = -1.5f;
-		cornersZ[2] = -1.5f;
-		enemyComp->specialHitBoxID = CreateHitbox(entity, 3, cornersX, cornersZ);
+		{
+			float cornersX[3];// = { 0.0f, 0.5f, -0.5f };
+			cornersX[0] = 0.0f;
+			cornersX[1] = 0.5f;
+			cornersX[2] = -0.5f;
+			float cornersZ[3];// = { 0.0f, -0.5f, -0.5f };
+			cornersZ[0] = -7.5f; //Irrelevant numbers, properly sized in hellhoundbehavioursystem (afaik)
+			cornersZ[1] = -8.0f;
+			cornersZ[2] = -8.0f;
+			enemyComp->specialHitBoxID = CreateHitbox(entity, 3, cornersX, cornersZ);
+		}
 		SetCollisionEvent(entity, enemyComp->specialHitBoxID, HellhoundBreathAttackCollision);
-		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->specialHitBoxID);
 		SetHitboxActive(entity, enemyComp->specialHitBoxID, false);
 		SetHitboxCanDealDamage(entity, enemyComp->specialHitBoxID, false);
@@ -908,9 +892,37 @@ void SetupPlayerCollisionBox(EntityID& entity, float radius)
 	// Attack
 	//playerComp->attackHitboxID = CreateHitbox(entity, radius * 2.f, 0.f, -0.5f);
 	{
-		float cornersX[] = { -.1f,.1f,.1f,-.1f };
+		/*float cornersX[] = { -.1f,.1f,.1f,-.1f };
 		float cornersZ[] = { -.1f,-.1f,.1f,.1f };
-		int cornerCount = 4;
+		int cornerCount = 4;*/
+
+		/*
+		corners.cornersX[0] =  -2.0f;
+		corners.cornersZ[0] = -0.25f;//-0.25f;
+		//Point 1: 
+		corners.cornersX[1] = -1.2f;
+		corners.cornersZ[1] = -2.0f;//-0.25f;
+		//Point 2: 
+		corners.cornersX[2] = -0.4f;//0.83f;
+		corners.cornersZ[2] = -2.5f;//-0.8f;
+		//Point 3: 
+		corners.cornersX[3] =  0.4f;//0.16f;
+		corners.cornersZ[3] = -2.5f;//-1.2f;
+		//Point 4: 
+		corners.cornersX[4] =  1.2f; // -0.5f;
+		corners.cornersZ[4] = -2.0f;//-1.2f;
+		//Point 5: Left
+		corners.cornersX[5] =  2.0f;
+		corners.cornersZ[5] = -0.25f;//-0.25f;
+		*/
+
+		float cornersX[] = {	-2.0f, -1.2f, 
+								-0.4f,  0.4f, 
+								 1.2f,  2.0f };
+		float cornersZ[] = {	-0.2f, -2.0f,
+								-2.5f, -2.5f ,
+								-2.0f, -0.2f };
+		int cornerCount = 6;
 		playerComp->attackHitboxID = CreateHitbox(entity, cornerCount, cornersX, cornersZ);
 	}
 	SetCollisionEvent(entity, playerComp->attackHitboxID, AttackCollision);

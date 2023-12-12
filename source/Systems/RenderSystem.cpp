@@ -133,6 +133,38 @@ void Render(RenderPass renderPass)
 		}
 	}
 
+	for (auto entity : View<TransformComponent, ModelSkeletonComponent, BlendAnimationComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
+		BlendAnimationComponent* bac = registry.GetComponent<BlendAnimationComponent>(entity);
+
+
+		// If this isn't a shadow pass, update colors (and reset temp colors)
+		if (LightPass == renderPass)
+		{
+			Light::SetGammaCorrection(mc->shared.gammaCorrection);
+			Light::SetColorHue(mc->shared.GetRedMult(), mc->shared.GetGreenMult(), mc->shared.GetBlueMult(),
+				mc->shared.GetRedAdd(), mc->shared.GetGreenAdd(), mc->shared.GetBlueAdd());
+			Light::UpdateLight();
+			mc->shared.ResetTempColor();
+		}
+
+		if (tc->offsetX != 0.0f)
+		{
+			tc->offsetY = 0.0f;
+		}
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+		// Render with data
+		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->lower.aAnim,  bac->lower.aAnimIdx, bac->lower.GetTimeValue(),bac->upper.aAnim, bac->upper.aAnimIdx, bac->upper.GetTimeValue());
+	}
+
 
 }
 bool ShadowSystem::Update()
@@ -390,6 +422,30 @@ bool OutlineSystem::Update()
 
 		// Render with data
 		LOADED_MODELS[mc->model].RenderAllSubmeshes(entity, ac->aAnim, ac->aAnimIdx, ac->GetTimeValue(), true);
+	}
+
+	for (auto entity : View<TransformComponent, ModelSkeletonComponent, BlendAnimationComponent>(registry))
+	{
+		TransformComponent* tc = registry.GetComponent<TransformComponent>(entity);
+		ModelSkeletonComponent* mc = registry.GetComponent<ModelSkeletonComponent>(entity);
+		BlendAnimationComponent* bac = registry.GetComponent<BlendAnimationComponent>(entity);
+
+		if (false == mc->shared.hasOutline)
+			continue;
+
+		if (tc->offsetX != 0.0f)
+		{
+			tc->offsetY = 0.0f;
+		}
+		SetWorldMatrix(tc->positionX + tc->offsetX, tc->positionY + tc->offsetY, tc->positionZ + tc->offsetZ,
+			tc->facingX, tc->facingY, -tc->facingZ,
+			tc->scaleX * tc->offsetScaleX, tc->scaleY * tc->offsetScaleY, tc->scaleZ * tc->offsetScaleZ,
+			SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+		SetVertexBuffer(LOADED_MODELS[mc->model].m_vertexBuffer);
+		SetIndexBuffer(LOADED_MODELS[mc->model].m_indexBuffer);
+
+		// Render with data
+		LOADED_MODELS[mc->model].RenderAllSubmeshesWithBlending(bac->lower.aAnim, bac->lower.aAnimIdx, bac->lower.GetTimeValue(), bac->upper.aAnim, bac->upper.aAnimIdx, bac->upper.GetTimeValue());
 	}
 
 	//Outlines::SwapBack();
