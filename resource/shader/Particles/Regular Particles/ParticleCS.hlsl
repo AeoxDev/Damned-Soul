@@ -71,7 +71,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
             SpiralFieldMovement(DTid, blockID);
         }
         // 9 = FIRE
-        if (meta[blockID.y].pattern == 9 || meta[blockID.y].pattern == 1)
+        if (meta[blockID.y].pattern == 9)
         {
             FireMovement(DTid, blockID);
         }
@@ -597,7 +597,7 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
 
     float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
    
-    particle.position.x = particle.position.x + ((particle.size) * localIndex /3);
+    particle.position.x = particle.position.x + ((particle.size/1.5) * localIndex /3);
     if(localIndex%2==0)
     {
         particle.position.y = particle.position.y;
