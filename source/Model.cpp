@@ -64,6 +64,20 @@ DirectX::XMMATRIX* modelGenericData::GetBoneMatrices()
 }
 
 
+void Model::scaleQuarternion(DirectX::XMVECTOR& vector, float scale)
+{
+	DirectX::XMFLOAT4 rotQuat;
+
+	DirectX::XMStoreFloat4(&rotQuat, vector);
+
+	rotQuat.x *= scale;
+	rotQuat.y *= scale;
+	rotQuat.z *= scale;
+	rotQuat.w *= scale;
+
+	vector = DirectX::XMLoadFloat4(&rotQuat);
+}
+
 Model::~Model()
 {
 	//Free();
@@ -215,12 +229,6 @@ void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, con
 {
 
 	// Try to get the initial animation frame
-	DirectX::XMVECTOR tempScalar;
-	DirectX::XMVECTOR tempRotation;
-	DirectX::XMVECTOR tempTranslation;
-
-	DirectX::XMMATRIX tempMatrix;
-
 	m_data->m_numBones;
 
 	if (m_animationVertexBuffer != -1)
@@ -230,29 +238,11 @@ void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, con
 		AnimationFrame modified;
 		modified.vertex = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
 		modified.normal = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
-		DirectX::XMMATRIX copy;
 
 		for (int i = 0; i < m_data->m_numBones; i++)
 		{
-			
-			copy = frame.vertex[i];
-			
-			
-
-			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copy));
-
-			DirectX::XMMATRIX copyR = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 1.f));
-
-			tempMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(
-				DirectX::XMMatrixScalingFromVector(tempScalar), copyR
-				/*DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 0.5f))*/),
-				DirectX::XMMatrixTranslationFromVector(tempTranslation)));
-
-			tempMatrix = DirectX::XMMatrixTranspose(tempMatrix);
-
 			modified.vertex[i] = frame.vertex[i];
 			modified.normal[i] = frame.normal[i];
-
 		}
 		
 		UpdateStructuredBuffer(m_animationVertexBuffer, modified.vertex);
@@ -339,49 +329,83 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uin
 		AnimationFrame modified;
 		modified.vertex = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
 		modified.normal = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
-		DirectX::XMMATRIX copy;
-		DirectX::XMMATRIX tempTEST;
-
+		DirectX::XMMATRIX copyVert;
+		DirectX::XMMATRIX copyNorm;
+		float animScale = 1.0f;
 
 		for (int i = 0; i < m_data->m_numBones; i++)
 		{
-			if (i == 0) copy = frame.vertex[i];		//0  Control_Joint
-			else if (i == 15) copy = frame.vertex[i];		//15 FootL_Joint
-			else if (i == 16) copy = frame.vertex[i];	//16 FootR_Joint
-			//else if (i == 20) copy = frame.vertex[i];	//20 Hip_Joint
-			else if (i == 21) copy = frame.vertex[i];	//21 KneeL_Joint
-			else if (i == 22) copy = frame.vertex[i];	//22 KneeR_Joint
-			//else if (i == 24) copy = frame.vertex[i];	//24 Root_Joint
-			else if (i == 27) copy = frame.vertex[i];	//27 Spine1_Joint
-			else if (i == 29) copy = frame.vertex[i];	//29 ThighL_Joint
-			else if (i == 30) copy = frame.vertex[i];	//30 ThighR_Joint
-			else if (i == 37) copy = frame.vertex[i];	//37 TiptoeL_Joint
-			else if (i == 38) copy = frame.vertex[i];	//38 TiptoeR_Joint
-			else if (i == 39) copy = frame.vertex[i];	//39 ToeL_Joint
-			else if (i == 40) copy = frame.vertex[i];	//40 ToeR_Joint
+			// Lower Body
+			
+			//if (i == 0) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i];}	//0  Control_Joint
+			if (i == 15) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }		//15 FootL_Joint
+			else if (i == 16) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//16 FootR_Joint
+			//else if (i == 20) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//20 Hip_Joint
+			else if (i == 21) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//21 KneeL_Joint
+			else if (i == 22) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//22 KneeR_Joint
+			//else if (i == 24){ copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//24 Root_Joint
+			else if (i == 29) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//29 ThighL_Joint
+			else if (i == 30) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//30 ThighR_Joint
+			else if (i == 37) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//37 TiptoeL_Joint
+			else if (i == 38) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//38 TiptoeR_Joint
+			else if (i == 39) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//39 ToeL_Joint
+			else if (i == 40) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//40 ToeR_Joint
+			
+			else if (i == 20)
+			{
+				copyVert = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
+				copyNorm = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
+			}
+			else if (i == 27)
+			{
+				copyVert = (frame.vertex[i] * 0.5f) + (frame2.vertex[i] * 0.5f);
+				copyNorm = (frame.vertex[i] * 0.5f) + (frame2.vertex[i] * 0.5f);
+			}
+			else if (i == 28)
+			{
+				copyVert = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
+				copyNorm = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
+			}
 			//Upper Body
 			else
 			{
-				copy = frame2.vertex[i];
+				copyVert = frame2.vertex[i];
+				copyNorm = frame2.normal[i];
 			}
+			
+			 
 
-			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copy));
-			DirectX::XMMATRIX copyR = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorScale(tempRotation, 1.f));
+			// Decompose VERTEX matrix to scale rotations and translations without scaling the entire transform matrix.
+			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copyVert));
+			
+			scaleQuarternion(tempRotation, animScale);
 
-			tempVertMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(
-				DirectX::XMMatrixScalingFromVector(tempScalar), copyR),
-				DirectX::XMMatrixTranslationFromVector(tempTranslation)));
+			//Rebuild decomposed transformation matrix
+			tempVertMatrix = DirectX::XMMatrixIdentity(); //IdentityMatrix (T-Pose)
+			tempVertMatrix *= DirectX::XMMatrixRotationQuaternion(tempRotation); //Self * Rotation
+			tempVertMatrix *= DirectX::XMMatrixScalingFromVector(tempScalar); //Self * Scale
+			tempVertMatrix *= DirectX::XMMatrixTranslationFromVector(DirectX::XMVectorScale(tempTranslation, animScale)); //Self * Translation
 
 			tempVertMatrix = DirectX::XMMatrixTranspose(tempVertMatrix);
 
-			tempNormMatrix = DirectX::XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(
-				DirectX::XMMatrixScalingFromVector(tempScalar), copyR),
-				DirectX::XMMatrixTranslationFromVector(tempTranslation)));
 
-			tempNormMatrix = DirectX::XMMatrixTranspose(tempVertMatrix);
+			// Decompose NORMAL matrix to scale rotations and translations without scaling the entire transform matrix.
+			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copyNorm));
+
+			scaleQuarternion(tempRotation, animScale);
+
+			//Rebuild decomposed transformation matrix
+			
+			tempNormMatrix = DirectX::XMMatrixIdentity(); //IdentityMatrix (T-Pose)
+
+			tempNormMatrix *= DirectX::XMMatrixRotationQuaternion(tempRotation); //Self * Rotation
+			tempNormMatrix *= DirectX::XMMatrixScalingFromVector(tempScalar); //Self * Scale
+			tempNormMatrix *= DirectX::XMMatrixTranslationFromVector(DirectX::XMVectorScale(tempTranslation, animScale)); //Self * Translation
+
+			tempNormMatrix = DirectX::XMMatrixTranspose(tempNormMatrix);
 
 			modified.vertex[i] = tempVertMatrix;
-			modified.normal[i] = frame.normal[i];
+			modified.normal[i] = tempNormMatrix;
 
 		}
 

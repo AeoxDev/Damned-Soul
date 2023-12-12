@@ -89,6 +89,8 @@ private:
 		}
 	};
 
+	void scaleQuarternion(DirectX::XMVECTOR& vector, float scale);
+
 public:
 	//PoolPointer<ModelBoneless> m_modelData;
 	char m_name[128];
