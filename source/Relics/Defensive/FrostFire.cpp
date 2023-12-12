@@ -58,9 +58,9 @@ void FROST_FIRE::Reset(void* data)
 
 void _FF_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE-2, 2.5f, 0.f, 1.2f, 0.f,
+	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE-2, 2.0f, 0.f, 1.2f, 0.f,
 		0.f, 0.70f, 3.0f,//rgb 
-		256, CIRCLE_FIELD);
+		180, CIRCLE_FIELD);
 
 	//registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE, FROST_FIRE_RANGE, 0.f, 5.5f, 4.0f,
 	//	0.f, 1.10f, 2.0f,//rgb 
