@@ -24,6 +24,9 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 	IWICImagingFactory* factory = ui.GetImagingFactory();
 	const std::wstring path = L"../resource/GUI/" + std::wstring(pathAsString.begin(), pathAsString.end()) + L".png";
 
+#ifdef _DEBUG
+	printf("path: %ls\n", path.c_str());
+#endif
 	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
 	assert(!FAILED(hr));
 

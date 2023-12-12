@@ -12,6 +12,10 @@ bool Animation::Load(const char* filename)
 	auto flags = std::ios::binary; // | std::ios::ate;
 	reader.open(filename/*name.c_str()*/, flags);
 
+#ifdef _DEBUG
+	printf("model path: %s\n", filename);
+#endif
+
 	assert(true == reader.is_open());
 
 	// Allocate temporarily onto the stack
