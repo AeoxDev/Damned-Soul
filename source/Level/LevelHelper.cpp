@@ -1407,7 +1407,7 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	// Create weapon
 	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
-	ModelSkeletonComponent* weapon_model = registry.AddComponent<ModelSkeletonComponent>(stateManager.weapon, LoadModel("AxeV1.mdl"));
+	ModelSkeletonComponent* weapon_model = registry.AddComponent<ModelSkeletonComponent>(stateManager.weapon, LoadModel("PlayerBoneWeapon.mdl"));
 	weapon_model->shared.colorMultiplicativeRed = 1.25f;
 	weapon_model->shared.colorMultiplicativeGreen = 1.25f;
 	weapon_model->shared.colorMultiplicativeBlue = 1.25f;
