@@ -269,27 +269,6 @@ void StateManager::Input()
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
-
-		// :)
-		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
-		//{
-		//	//�h�
-		//	SetInMainMenu(false);
-		//	SetInPlay(true);
-		//	SetInShop(false);
-
-		//	menu.Unload();
-
-		//	LoadLevel(++stateManager.activeLevel);
-
-		//	//Ungodly amounts of cursed energy, update UI systems after the level has been loaded
-		//	for (size_t i = 17; i < systems.size(); i++)
-		//	{
-		//		systems[i]->Update();
-		//	}
-		//}
-
-		
 	}
 	if (currentStates & State::InPause)
 	{
@@ -321,7 +300,8 @@ void StateManager::Update()
 	ResetInput();
 	GetInput();
 	UIComponent* mouse = registry.GetComponent<UIComponent>(stateManager.cursor);
-	mouse->m_BaseImage.baseUI.SetPosition(mouseX - 1, mouseY - 1);
+	mouse->m_BaseImage.baseUI.SetPosition((int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)) - 1, (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) - 1);
+
 	
 	if (mouseX != previousMouseX || mouseY != previousMouseY)
 	{

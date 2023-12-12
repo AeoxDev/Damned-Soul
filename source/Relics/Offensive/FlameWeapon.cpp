@@ -12,7 +12,8 @@ EntityID FLAME_WEAPON::_OWNER;
 
 void _FW_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, FLAME_WEAPON_DOT_DURATION, 100.f, 3.0f, -2.0f, 1.5f, 1.0f, 8, ComputeShaders::ON_FIRE);
+	// No, redo this, and do it right if anything...
+	//registry.AddComponent<ParticleComponent>(entity, FLAME_WEAPON_DOT_DURATION, 100.f, 3.0f, -2.0f, 1.5f, 1.0f, 8, ComputeShaders::ON_FIRE);
 }
 
 const char* FLAME_WEAPON::Description()

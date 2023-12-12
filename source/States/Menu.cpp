@@ -159,9 +159,9 @@ void Menu::SetupButtons()
 	
 	const DSFLOAT2 positions[buttons] =
 	{
-		{ -0.78f, -0.25f },
-		{ -0.78f, -0.45f },
-		{ -0.78f,  -0.65f },
+		{ -0.78f, -0.32f },
+		{ -0.78f, -0.50f },
+		{ -0.78f,  -0.68f },
 		{ -0.78f, -0.85f }
 	};
 
@@ -207,11 +207,11 @@ void Menu::SetupImages()
 
 	auto panel = registry.CreateEntity();
 	UIComponent* uiElementTwo = registry.AddComponent<UIComponent>(panel);
-	uiElementTwo->Setup("SettingsPanelMedium", "", { 0.5f, -0.25f });
+	uiElementTwo->Setup("SettingsPanelMedium", "", { 0.55f, -0.37f });
 
 	auto controls = registry.CreateEntity();
 	UIComponent* uiElementThree = registry.AddComponent<UIComponent>(controls);
-	uiElementThree->Setup("Controls", "", { 0.5f, -0.25f });
+	uiElementThree->Setup("Controls", "", { 0.55f, -0.37f });
 }
 
 void Menu::SetupText()
