@@ -143,6 +143,7 @@ void Render(RenderPass renderPass)
 		// If this isn't a shadow pass, update colors (and reset temp colors)
 		if (LightPass == renderPass)
 		{
+			SetGeometryShader(renderStates[backBufferRenderSlot].geometryShader);
 			Light::SetGammaCorrection(mc->shared.gammaCorrection);
 			Light::SetColorHue(mc->shared.GetRedMult(), mc->shared.GetGreenMult(), mc->shared.GetBlueMult(),
 				mc->shared.GetRedAdd(), mc->shared.GetGreenAdd(), mc->shared.GetBlueAdd());
