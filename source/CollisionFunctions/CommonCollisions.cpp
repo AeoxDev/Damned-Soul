@@ -50,7 +50,8 @@ void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
 void DamageNumbersDOTRemainder(EntityID& defender)
 {
 	StatComponent* stats = registry.GetComponent<StatComponent>(defender);
-	DamageNumbers(defender, stats->damageOverTime);
+	if (0.01f < stats->damageOverTime)
+		DamageNumbers(defender, stats->damageOverTime);
 	stats->damageOverTime = 0.0f;
 }
 

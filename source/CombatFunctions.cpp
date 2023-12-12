@@ -28,8 +28,9 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	// Update UI
 	RedrawUI();
 
-	// Damage flash
-	Combat::DamageFlash(defender, damage);
+	if (1.f == time)
+		// Damage flash
+		Combat::DamageFlash(defender, damage);
 
 	// TODO: Play ANIMATION_TAKE_DAMAGE. Timed event?
 }
