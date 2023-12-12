@@ -53,9 +53,21 @@ bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiec
 		{
 			infoStruct->eType = EnemyType::empoweredHellhound;
 		}
-		else if ("SplitBoss")
+		else if (infoPiece == "SplitBoss")
 		{
 			infoStruct->eType = EnemyType::tempBoss;
+		}
+		else if (infoPiece == "FrozenEye")
+		{
+			infoStruct->eType = EnemyType::frozenEye;
+		}
+		else if (infoPiece == "FrozenHound")
+		{
+			infoStruct->eType = EnemyType::frozenHellhound;
+		}
+		else if (infoPiece == "FrozenImp")
+		{
+			infoStruct->eType = EnemyType::frozenImp;
 		}
 		else
 		{
@@ -128,6 +140,10 @@ bool SetupAllEnemies(std::string filePath)
 		while (std::getline(myFile, line))
 		{
 			ModelTextRead theInfo;
+			theInfo.eType = skeleton;
+			theInfo.positionX = 0;
+			theInfo.positionZ = 0;
+			theInfo.soulValue = 0;
 			int counter = 0; // by format:
 			// 0 = enemyType
 			// 1 = positionX
@@ -152,8 +168,12 @@ bool SetupAllEnemies(std::string filePath)
 					term += t; //add char to string
 				}
 			}
-			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+ 			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
 		}
+	}
+	for (auto enemyEntity : View<FrozenBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
+	{
+		registry.RemoveComponent<FrozenBehaviour>(enemyEntity);
 	}
 		
 	myFile.close();
