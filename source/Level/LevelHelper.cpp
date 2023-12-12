@@ -1502,20 +1502,20 @@ void SetScoreboardUI()
 {
 	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(scoreBoard);
-	uiElement->Setup("SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
-	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
+	uiElement->Setup("SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 35.0f);
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.45f));
 
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(scoreBoard);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(scoreBoard);
 
-	uiElement->AddImage("ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
-	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.5f));
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(-0.17f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.17f, -0.5f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
-	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.5f));
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(0.17f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.17f, -0.5f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
 	onHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -1544,8 +1544,8 @@ void SetScoreboardUI()
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.6f, uiCoords.y - 0.4f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
-			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(0.01f, uiCoords.y - 0.35f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+			20.0f ,DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIGameScoreboardComponent>(scoreBoard);
 

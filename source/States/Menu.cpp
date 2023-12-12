@@ -207,7 +207,7 @@ void Menu::SetupImages()
 
 	auto panel = registry.CreateEntity();
 	UIComponent* uiElementTwo = registry.AddComponent<UIComponent>(panel);
-	uiElementTwo->Setup("SettingsPanelMedium", "", { 0.55f, -0.37f });
+	uiElementTwo->Setup("SettingsPanelMedium", "", { 0.58f, -0.4f });
 
 	auto controls = registry.CreateEntity();
 	UIComponent* uiElementThree = registry.AddComponent<UIComponent>(controls);
