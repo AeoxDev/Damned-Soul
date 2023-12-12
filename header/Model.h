@@ -89,6 +89,10 @@ private:
 		}
 	};
 
+	void scaleQuarternion(DirectX::XMVECTOR& vector, float scale);
+	void copyFrame(DirectX::XMMATRIX &vertM, DirectX::XMMATRIX &normM, AnimationFrame frame, int index);
+	DirectX::XMMATRIX scaleMatrix(DirectX::XMMATRIX M, float scale);
+
 public:
 	//PoolPointer<ModelBoneless> m_modelData;
 	char m_name[128];
@@ -118,6 +122,9 @@ public:
 
 	// Render all the model's submeshes one after another
 	void RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType = ANIMATION_IDLE, const uint8_t aIdx = 0, const float aTime = -1.f, bool isOutline = false);
+
+	// Render all the model's submeshes one after another WITH blending 
+	void RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aTypeLower = ANIMATION_IDLE, const uint8_t aIdxLower = 0, const float aTimeLower = -1.f, const ANIMATION_TYPE aType2Upper = ANIMATION_IDLE, const uint8_t aIdx2Upper = 0, const float aTime2Upper = -1.f);
 
 	// Overload for when you just want to call "DrawIndexed"
 	void RenderMeshes();

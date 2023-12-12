@@ -843,7 +843,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			//NICLAS WAS HERE
 			attackSpeed = 2.0f;
-			//attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::imp)
 		{
@@ -1310,11 +1309,16 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->shared.colorMultiplicativeBlue = 1.25f;
 	model->shared.gammaCorrection = 1.5f;
 	model->shared.hasOutline = true;
-	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
-	animation->aAnim = ANIMATION_IDLE;
-	animation->aAnimTime = 0.5f;
-	animation->aAnimIdx = 0;
-	animation->aAnimTimeFactor = 1.0f;
+	BlendAnimationComponent* animation = registry.AddComponent<BlendAnimationComponent>(stateManager.player, BlendAnimationComponent());
+	animation->lower.aAnim = ANIMATION_IDLE;
+	animation->lower.aAnimTime = 0.5f;
+	animation->lower.aAnimIdx = 0;
+	animation->lower.aAnimTimeFactor = 1.0f;
+
+	animation->upper.aAnim = ANIMATION_IDLE;
+	animation->upper.aAnimTime = 0.5f;
+	animation->upper.aAnimIdx = 0;
+	animation->upper.aAnimTimeFactor = 1.0f;
 	//stateManager.player Sounds
 	LoadPlayerSounds();
 
@@ -1422,13 +1426,14 @@ void ReloadPlayerNonGlobals()
 		modelLoaded->shared.colorMultiplicativeBlue = 1.25f;
 		modelLoaded->shared.gammaCorrection = 1.5f;
 	}
-	AnimationComponent* animationLoaded = registry.GetComponent<AnimationComponent>(stateManager.player);
+	BlendAnimationComponent* animationLoaded = registry.GetComponent<BlendAnimationComponent>(stateManager.player);
 	if (animationLoaded == nullptr)
 	{
-		animationLoaded = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+		animationLoaded = registry.AddComponent<BlendAnimationComponent>(stateManager.player, BlendAnimationComponent());
 		
 	}
-	animationLoaded->aAnimTimeFactor = 1.0f;
+	animationLoaded->lower.aAnimTimeFactor = 1.0f;
+	animationLoaded->upper.aAnimTimeFactor = 1.0f;
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);

@@ -51,6 +51,10 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 	{
 		speed = 50.0f;
 	}
+	else if (type == empoweredImp)
+	{
+		speed = 60.0f; //speeeEEeeEd
+	}
 	StatComponent* statsParent = registry.GetComponent<StatComponent>(entity);
 
 	float damage = statsParent->GetDamage();
