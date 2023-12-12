@@ -418,7 +418,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			EntityID hazard = registry.CreateEntity();
 			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV6Ice.mdl"));
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
-			registry.AddComponent<GlowComponent>(hazard, iceGlowRed, iceGlowGreen, iceGlowBlue);
+			registry.AddComponent<GlowComponent>(hazard, iceHazardGlowRGB);
 			AddStaticHazard(hazard, HAZARD_ICE);
 		}
 		{
