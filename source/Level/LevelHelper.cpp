@@ -168,7 +168,7 @@ bool SetupAllEnemies(std::string filePath)
 					term += t; //add char to string
 				}
 			}
-			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+ 			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
 		}
 	}
 	for (auto enemyEntity : View<FrozenBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
