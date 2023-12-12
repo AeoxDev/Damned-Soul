@@ -42,7 +42,7 @@ void LoadLevel9()
 
 	EntityID mouse = registry.CreateEntity();
 
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 12.f, 0.f, 276.f);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::lucifer, 6.f, 0.f, 144.f);
 
 	SetupEnemyNavigationHelper(false); // This is for enemyfinder, ask Felix if you have a problem with it
 

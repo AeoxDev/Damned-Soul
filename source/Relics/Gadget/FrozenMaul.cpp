@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define FROZEN_MAUL_FREEZE_CHANCE (0.1f)
+#define FROZEN_MAUL_FREEZE_CHANCE (0.125f)
 #define FROZEN_MAUL_DURATION (1.5f)
 #define FROZEN_MAUL_KNOCKBACK_INCREASE (0.35f)
 
@@ -13,9 +13,9 @@ EntityID FROZEN_MAUL::_OWNER;
 const char* FROZEN_MAUL::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Your knockback force is increased by %ld%% and you gain %ld%% chance to freeze enemies for %.1lf seconds on a hit",
+	sprintf_s(temp, "Your knockback force is increased by %ld%% and you gain %.1lf%% chance to freeze enemies for %.1lf seconds on a hit",
 		PERCENT(FROZEN_MAUL_KNOCKBACK_INCREASE),
-		PERCENT(FROZEN_MAUL_FREEZE_CHANCE),
+		FROZEN_MAUL_FREEZE_CHANCE * 100.f,
 		FROZEN_MAUL_DURATION);
 #pragma warning(suppress : 4172)
 	return temp;

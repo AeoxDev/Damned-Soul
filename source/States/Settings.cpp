@@ -70,11 +70,11 @@ void SettingsState::SetupUI()
 
 		const DSFLOAT2 positions[amount] =
 		{
-			{ -0.3f, 0.225f },
-			{ -0.3f, 0.075f },
-			{ -0.3f, -0.075f },
-			{ -0.3f, -0.225f },
-			{ 0.3f, 0.225f },
+			{ -0.25f, 0.225f },
+			{ -0.25f, 0.075f },
+			{ -0.25f, -0.075f },
+			{ -0.25f, -0.225f },
+			{ 0.25f, 0.225f },
 			{ 0.78f, -0.85f }
 		};
 
@@ -120,11 +120,11 @@ void SettingsState::SetupUI()
 
 		const float fontsizes[amount] =
 		{
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
 			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 16.0f },
 			{ 20.0f }
 		};
 

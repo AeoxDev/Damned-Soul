@@ -71,9 +71,9 @@ void BACK_SHIELD::NullBackHit(void* data)
 	auto dTrans = registry.GetComponent<TransformComponent>(input->defender);
 
 	float dx, dy, dz, dl_inv;
-	dx = dTrans->positionX - aTrans->positionX;
-	dy = dTrans->positionY - aTrans->positionY;
-	dz = dTrans->positionZ - aTrans->positionZ;
+	dx = dTrans->positionX - aTrans->lastPositionX;
+	dy = dTrans->positionY - aTrans->lastPositionY;
+	dz = dTrans->positionZ - aTrans->lastPositionZ;
 	dl_inv = 1.f / std::sqrtf(dx * dx + dy * dy + dz * dz);
 	dx *= dl_inv;
 	dy *= dl_inv;

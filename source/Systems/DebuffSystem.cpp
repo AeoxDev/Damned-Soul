@@ -40,7 +40,7 @@ bool DebuffSystem::Update()
 				}
 				else
 				{
-					Combat::HitFlat(entity, stats, remainingTime * effectiveDPS);
+					Combat::HitFlat(entity, stats, remainingTime * effectiveDPS, remainingTime);
 				}
 
 				debuff->m_dots[i].AlterModelColor(characterModel, DamageOverTime::DOT_TYPE(i));

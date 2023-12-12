@@ -435,10 +435,10 @@ void _validateMasterRelicList()
 				/*Name*/		"Exploitable Coupon",
 				/*Filepath*/	"RelicIcons\\Exploitable_Coupon",
 				/*Description*/	EXPLOITABLE_COUPON::Description(),
-				/*Price*/		5,
+				/*Price*/		6,
 				/*Type*/		RELIC_GADGET,
 				/*Function*/	EXPLOITABLE_COUPON::Initialize,
-				/*Weight*/		15
+				/*Weight*/		18
 			),
 			RelicData(
 				/*Name*/		"Succubus Charm",
@@ -559,9 +559,18 @@ const RelicData* Relics::PickRandomRelic(const RELIC_TYPE& type)
 
 			// If the relic is a match for the selected type, add it to the possible selections
 			if (currentRelic->m_typeFlag & type) {
+				// Ignore relics with too high of a weight
+				if (stateManager.activeLevel < currentRelic->m_weight / 4)
+				{
+					++i;
+					continue;
+				}
+
 				// Set weight inversely by price and add level (cheaper relics more common early on)
 				// After a fairly large number of levels, this weight system will give everything an equal chance
+				bool earlyGame = (stateManager.activeLevel < 5);
 				uint32_t localWeight = CLAMP_SUB(10, CLAMP_SUB(currentRelic->m_weight * 2, stateManager.activeLevel * 3)) + stateManager.activeLevel;
+				localWeight = (localWeight << earlyGame) - 3 * earlyGame;
 				currentTotalWeight += localWeight;
 				// Emplace with the combined weights of previous selection possibilities
 				possibleSelection.emplace(currentTotalWeight, currentRelic);

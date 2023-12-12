@@ -301,6 +301,14 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     float2 v0 = float2(meta[blockID.y].maxRange, meta[blockID.y].positionInfo.x);
     float2 v1 = float2(meta[blockID.y].positionInfo.y, meta[blockID.y].positionInfo.z);
     float2 v2 = float2(meta[blockID.y].morePositionInfo.x, meta[blockID.y].morePositionInfo.y);
+    
+    //Arian tip for the offset
+    float vOffset = 7.5f; //Match the offset forward in HellhoundBehaviourSystem
+    v1.y -= vOffset;
+    v2.y -= vOffset;
+    v1.x *= 1.8f; //Adjust width of the cone to actually fill out the hitbox
+    v2.x *= 1.8f;
+    
 
     float2 legThree = v2 - v1;
     

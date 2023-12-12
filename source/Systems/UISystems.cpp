@@ -102,17 +102,17 @@ bool UIShopSystem::Update()
 
 			char atkDmgStr[64] = "";
 			sprintf(atkDmgStr, "Damage: %.1lf + (%.1lf)", player->GetBaseDamage(), player->GetBonusDamage());
-			uiElement->m_Texts[0].SetText(atkDmgStr, uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_Texts[0].SetText(atkDmgStr, uiElement->m_BaseImage.baseUI.GetBounds(), uiElement->m_Texts[0].m_fontSize);
 
 			char atkSpdStr[64] = "";
 			sprintf(atkSpdStr, "Attack Speed: %.0lf%%", player->GetAttackSpeed() * 100.f);
-			uiElement->m_Texts[1].SetText(atkSpdStr, uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_Texts[1].SetText(atkSpdStr, uiElement->m_BaseImage.baseUI.GetBounds(), uiElement->m_Texts[1].m_fontSize);
 
 			char movSpeed[64] = "";
 			player->SetSpeedMult(1.f);
 			sprintf(movSpeed, "Movement Speed: %.0lf%%", (player->GetSpeed() / player->GetBaseSpeed()) * 100.f);
 			player->SetSpeedMult(0.f);
-			uiElement->m_Texts[2].SetText(movSpeed, uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_Texts[2].SetText(movSpeed, uiElement->m_BaseImage.baseUI.GetBounds(), uiElement->m_Texts[2].m_fontSize);
 		}
 
 		RelicInput::OnPriceCalculation priceCalc;

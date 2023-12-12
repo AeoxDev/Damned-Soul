@@ -93,11 +93,11 @@ void CreatePortal(EntityID& entity, const int& index)
 		portalTransform->scaleZ = 4.0f;
 		break;
 	case 15://Level8
-		portalTransform->positionX = -1133.0f;
-		portalTransform->positionZ = 462.0f;
+		portalTransform->positionX = -0.0f;
+		portalTransform->positionZ = 134.0f;
 		portalTransform->positionY = 11.0f;
-		portalTransform->facingZ = 0.5f;
-		portalTransform->facingX = 0.5f;
+		portalTransform->facingZ = -1.0f;
+		portalTransform->facingX = 0.0f;
 		portalTransform->scaleY = 1.0f;
 		portalTransform->scaleX = 1.0f;
 		portalTransform->scaleZ = 4.0f;

@@ -165,9 +165,9 @@ void Menu::SetupUI()
 	
 	const DSFLOAT2 positions[buttons] =
 	{
-		{ -0.78f, -0.25f },
-		{ -0.78f, -0.45f },
-		{ -0.78f,  -0.65f },
+		{ -0.78f, -0.32f },
+		{ -0.78f, -0.50f },
+		{ -0.78f,  -0.68f },
 		{ -0.78f, -0.85f }
 	};
 

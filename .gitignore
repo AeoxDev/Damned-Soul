@@ -29,6 +29,7 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/*.cso
+[Bb]in/[Cc][Ss][Oo]/*.cso
 [Bb]in/*.exe
 [Bb]in/*.pdb
 [Bb]in/*.config
@@ -379,3 +380,5 @@ DamnedSoul.lastbuildstate
 intermediate/
 /resource/shader/AntiAliasingShader.hlsl
 *.cso
+*.cso
+/CSO/*.cso
