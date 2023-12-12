@@ -845,9 +845,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			attackSpeed = 2.0f;
 			//attackSpeed = 0.5f;
 		}
-		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
+		else if (eType == EnemyType::imp)
 		{
 			attackSpeed = 0.8f;
+		}
+		else if (eType == EnemyType::empoweredImp)
+		{
+			attackSpeed = 1.0f;
 		}
 		else if (eType == EnemyType::minotaur)
 		{

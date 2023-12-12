@@ -12,7 +12,7 @@
 #include <iostream>
 
 //Obstacle range is based on grid dimensions so that changing the grid does not impact the behaviour
-#define OBSTACLE_RANGE (4 * (GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE/128))
+#define OBSTACLE_RANGE (3 * (GI_TEXTURE_DIMENSIONS_FOR_OBSTACLEAVOIDANCE/128))
 
 void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, ObstacleMap* valueGrid)
 {
@@ -29,29 +29,29 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 	if (!ec->retreating)
 	{
 		ec->retreating = true;
-		float minRange = 20.0f;
+		float minRange = 25.0f;
 		float maxRange = 30.0f;
 
-		TransformComponent newTile = FindRetreatTile(valueGrid, etc, 20.f, 30.f);
+		TransformComponent newTile = FindRetreatTile(valueGrid, etc, minRange, maxRange);
 
 		float dirToPlayerX = ptc->positionX - etc->positionX;
 		float dirToPlayerZ = ptc->positionZ - etc->positionZ;
-		Normalize(dirToPlayerX, dirToPlayerZ);
+		//Normalize(dirToPlayerX, dirToPlayerZ);
 
 		float dirToNewTileX = newTile.positionX - etc->positionX;
 		float dirToNewTileZ = newTile.positionZ - etc->positionZ;
-		Normalize(dirToNewTileX, dirToNewTileZ);
+		//Normalize(dirToNewTileX, dirToNewTileZ);
 
 		float dotX = dirToNewTileX * dirToPlayerX;
 		float dotZ = dirToNewTileZ * dirToPlayerZ;
 		int iterations = 0;
 		while ((dotX + dotZ > 0.0f) && iterations < 1000)
 		{
-			newTile = FindRetreatTile(valueGrid, etc, 20.f, 30.f);
+			newTile = FindRetreatTile(valueGrid, etc, minRange, maxRange);
 
 			float dirToNewTileX = newTile.positionX - etc->positionX;
 			float dirToNewTileZ = newTile.positionZ - etc->positionZ;
-			Normalize(dirToNewTileX, dirToNewTileZ);
+			//Normalize(dirToNewTileX, dirToNewTileZ);
 
 			dotX = dirToNewTileX * dirToPlayerX;
 			dotZ = dirToNewTileZ * dirToPlayerZ;
@@ -61,10 +61,6 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 		ec->targetX = newTile.positionX;
 		ec->targetZ = newTile.positionZ;
 
-		//adjust facing based on obstacle avoidance
-		ec->goalDirectionX = dirToNewTileX + ec->correcitonDirX;
-		ec->goalDirectionZ = dirToNewTileZ + ec->correcitonDirX;
-
 		SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 
 		etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
@@ -73,10 +69,17 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 	else if (ec->chargeTimer < 1.5f)
 	{
 		auto dist = Calculate2dDistance(etc->positionX, etc->positionZ, ec->targetX, ec->targetZ);
-		if (dist > 1.0f)
+		if (dist > 2.0f)
 		{
 
+			//adjust facing based on obstacle avoidance
+			ec->goalDirectionX = ec->goalDirectionX + ec->correcitonDirX;
+			ec->goalDirectionZ = ec->goalDirectionX + ec->correcitonDirX;
+
+			Normalize(ec->goalDirectionX, ec->goalDirectionZ);
+
 			SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+			
 			etc->positionX += etc->facingX * enemyStats->GetSpeed() * GetDeltaTime();
 			etc->positionZ += etc->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
 		}
@@ -93,13 +96,12 @@ void RetreatBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour
 	}
 }
 
-bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
+void CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*& ptc, EyeBehaviour*& ec, TransformComponent*& etc, StatComponent*& enemyStats, StatComponent*& playerStats, AnimationComponent* enemyAnim)
 {
 	//if you just attacked go back to circle behaviour
 	if (ec->attackTimer < enemyStats->GetAttackSpeed())
 	{
 		ec->attackTimer += GetDeltaTime();
-		return false;
 	}
 	//rotate eye in order to shoot at the player
 	else if (ec->aimTimer < ec->aimDuration)
@@ -128,7 +130,6 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 
 		ec->aimTimer += GetDeltaTime();
 		ec->attackTimer += GetDeltaTime();
-		return true;
 	}
 	else // yes, we can indeed attack. 
 	{
@@ -195,92 +196,90 @@ bool CombatBehaviour(EntityID entity, PlayerComponent*& pc, TransformComponent*&
 		if (sfx != nullptr) sfx->Play(Eye_Shoot, Channel_Base);
 
 		ec->shooting = false;
-
-		return true;
 	}
 }
 
-void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, ObstacleMap* valueGrid)
-{
-
-	//ec->retreating = true;
-	float minRange = 10.0f;
-	float maxRange = 20.0f;
-
-	TransformComponent newTile = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
-
-	float dirToPlayerX = ptc->positionX - etc->positionX;
-	float dirToPlayerZ = ptc->positionZ - etc->positionZ;
-	Normalize(dirToPlayerX, dirToPlayerZ);
-
-	float dirToNewTileX = newTile.positionX - etc->positionX;
-	float dirToNewTileZ = newTile.positionZ - etc->positionZ;
-	Normalize(dirToNewTileX, dirToNewTileZ);
-
-	float dotX = dirToNewTileX * dirToPlayerX;
-	float dotZ = dirToNewTileZ * dirToPlayerZ;
-	int iterations = 0;
-	while ((dotX + dotZ > 0.0f) && iterations < 1000)
-	{
-		newTile = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
-
-		float dirToNewTileX = newTile.positionX - etc->positionX;
-		float dirToNewTileZ = newTile.positionZ - etc->positionZ;
-		Normalize(dirToNewTileX, dirToNewTileZ);
-
-		dotX = dirToNewTileX * dirToPlayerX;
-		dotZ = dirToNewTileZ * dirToPlayerZ;
-		iterations++;
-	}
-
-	ec->targetX = newTile.positionX;
-	ec->targetZ = newTile.positionZ;
-
-	//adjust facing based on obstacle avoidance
-	ec->goalDirectionX = dirToNewTileX + ec->correcitonDirX;
-	ec->goalDirectionZ = dirToNewTileZ + ec->correcitonDirX;
-
-	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
-}
+//void CircleBehaviour(PlayerComponent* pc, TransformComponent* ptc, EyeBehaviour* ec, TransformComponent* etc, StatComponent* enemyStats, AnimationComponent* enemyAnim, ObstacleMap* valueGrid)
 //{
-//	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
+//
+//	//ec->retreating = true;
+//	float minRange = 10.0f;
+//	float maxRange = 20.0f;
+//
+//	TransformComponent newTile = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
+//
+//	float dirToPlayerX = ptc->positionX - etc->positionX;
+//	float dirToPlayerZ = ptc->positionZ - etc->positionZ;
+//	Normalize(dirToPlayerX, dirToPlayerZ);
+//
+//	float dirToNewTileX = newTile.positionX - etc->positionX;
+//	float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+//	Normalize(dirToNewTileX, dirToNewTileZ);
+//
+//	float dotX = dirToNewTileX * dirToPlayerX;
+//	float dotZ = dirToNewTileZ * dirToPlayerZ;
+//	int iterations = 0;
+//	while ((dotX + dotZ > 0.0f) && iterations < 1000)
 //	{
-//		enemyAnim->aAnim = ANIMATION_WALK;
-//		enemyAnim->aAnimIdx = 0;
-//		enemyAnim->aAnimTime = 0.0f;
+//		newTile = FindRetreatTile(valueGrid, ptc, minRange, maxRange);
+//
+//		float dirToNewTileX = newTile.positionX - etc->positionX;
+//		float dirToNewTileZ = newTile.positionZ - etc->positionZ;
+//		Normalize(dirToNewTileX, dirToNewTileZ);
+//
+//		dotX = dirToNewTileX * dirToPlayerX;
+//		dotZ = dirToNewTileZ * dirToPlayerZ;
+//		iterations++;
 //	}
 //
-//	float magnitude = 0.f;
-//	float dirX = 0.f;
-//	float dirZ = 0.f;
+//	ec->targetX = newTile.positionX;
+//	ec->targetZ = newTile.positionZ;
 //
-//	if (ec->clockwiseCircle) //clockwise
-//	{
-//		dirX = -ec->goalDirectionZ;
-//		dirZ = ec->goalDirectionX;
-//	}
-//	else // counter clockwise
-//	{
-//		dirX = ec->goalDirectionZ;
-//		dirZ = -ec->goalDirectionX;
-//	}
-//
-//	dirX += ec->correcitonDirX;
-//	dirZ += ec->correcitonDirZ;
-//
-//	Normalize(dirX, dirZ);
-//
-//	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
-//	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
-//	ec->goalDirectionX = ptc->positionX - etc->positionX;
-//	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
-//	
-//	/*ec->goalDirectionX += ec->correcitonDirX;
-//	ec->goalDirectionZ += ec->correcitonDirZ;*/
-//	Normalize(ec->goalDirectionX, ec->goalDirectionZ);
+//	//adjust facing based on obstacle avoidance
+//	ec->goalDirectionX = dirToNewTileX + ec->correcitonDirX;
+//	ec->goalDirectionZ = dirToNewTileZ + ec->correcitonDirX;
 //
 //	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
 //}
+////{
+////	if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
+////	{
+////		enemyAnim->aAnim = ANIMATION_WALK;
+////		enemyAnim->aAnimIdx = 0;
+////		enemyAnim->aAnimTime = 0.0f;
+////	}
+////
+////	float magnitude = 0.f;
+////	float dirX = 0.f;
+////	float dirZ = 0.f;
+////
+////	if (ec->clockwiseCircle) //clockwise
+////	{
+////		dirX = -ec->goalDirectionZ;
+////		dirZ = ec->goalDirectionX;
+////	}
+////	else // counter clockwise
+////	{
+////		dirX = ec->goalDirectionZ;
+////		dirZ = -ec->goalDirectionX;
+////	}
+////
+////	dirX += ec->correcitonDirX;
+////	dirZ += ec->correcitonDirZ;
+////
+////	Normalize(dirX, dirZ);
+////
+////	etc->positionX += dirX * enemyStats->GetSpeed() * GetDeltaTime();
+////	etc->positionZ += dirZ * enemyStats->GetSpeed() * GetDeltaTime();
+////	ec->goalDirectionX = ptc->positionX - etc->positionX;
+////	ec->goalDirectionZ = ptc->positionZ - etc->positionZ;
+////	
+////	/*ec->goalDirectionX += ec->correcitonDirX;
+////	ec->goalDirectionZ += ec->correcitonDirZ;*/
+////	Normalize(ec->goalDirectionX, ec->goalDirectionZ);
+////
+////	SmoothRotation(etc, ec->goalDirectionX, ec->goalDirectionZ, 30.f);
+////}
 
 void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformComponent* playerTransformCompenent, EyeBehaviour* eyeComponent, TransformComponent* eyeTransformComponent, StatComponent* enemyStats, AnimationComponent* enemyAnim)
 {
@@ -312,7 +311,6 @@ void IdleBehaviour(EntityID& enemy, PlayerComponent* playerComponent, TransformC
 	Normalize(eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ);
 
 	SmoothRotation(eyeTransformComponent, eyeComponent->goalDirectionX, eyeComponent->goalDirectionZ, 5.0f);
-
 
 	eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
 	eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * 0.5f * GetDeltaTime();
@@ -663,6 +661,14 @@ bool EyeBehaviourSystem::Update()
 		{
 			float distance = Calculate2dDistance(eyeTransformComponent->positionX, eyeTransformComponent->positionZ, playerTransformCompenent->positionX, playerTransformCompenent->positionZ);
 
+			if (eyeComponent->hasSeenPlayer != true)
+			{
+				if (distance < eyeComponent->range)
+				{
+					eyeComponent->hasSeenPlayer = true;
+				}
+			}
+
 			//distance = 10000;
 			enemyAnim->aAnimTimeFactor = 1.0f;// Mattias: time factor is set to 0 somewhere have no clue :S
 
@@ -699,21 +705,49 @@ bool EyeBehaviourSystem::Update()
 			}
 			else if (eyeComponent->shooting || distance <= eyeComponent->range / 1.5f) // circle player & attack when possible
 			{
-				if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
-				{
-					if (hasUpdatedMap == false)
-					{
-						hasUpdatedMap = true;
-						CalculateGlobalMapValuesEye(valueGrid);
-					}
-					CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim, valueGrid);
+				CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim);
+				//if (!CombatBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, playerStats, enemyAnim))
+				//{
+				//	if (hasUpdatedMap == false)
+				//	{
+				//		hasUpdatedMap = true;
+				//		CalculateGlobalMapValuesEye(valueGrid);
+				//	}
+				//	CircleBehaviour(playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim, valueGrid);
 
-				}
+				//}
 			}
 			else // idle
 			{
-				enemComp->lastPlayer.index = -1;//Search for a new player to hit.
-				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+				if (eyeComponent->hasSeenPlayer)
+				{
+					if (enemyAnim->aAnim != ANIMATION_WALK || (enemyAnim->aAnim == ANIMATION_WALK && enemyAnim->aAnimIdx != 0))
+					{
+						enemyAnim->aAnim = ANIMATION_WALK;
+						enemyAnim->aAnimIdx = 0;
+						enemyAnim->aAnimTime = 0.0f;
+					}
+					
+					float dirToPlayerX = playerTransformCompenent->positionX - eyeTransformComponent->positionX;
+					float dirToPlayerZ = playerTransformCompenent->positionZ - eyeTransformComponent->positionZ;
+					Normalize(dirToPlayerX, dirToPlayerZ);
+
+
+					dirToPlayerX += eyeComponent->correcitonDirX;
+					dirToPlayerZ += eyeComponent->correcitonDirZ;
+					Normalize(dirToPlayerX, dirToPlayerZ);
+
+					SmoothRotation(eyeTransformComponent, dirToPlayerX, dirToPlayerZ);
+
+					eyeTransformComponent->positionX += eyeTransformComponent->facingX * enemyStats->GetSpeed() * GetDeltaTime();
+					eyeTransformComponent->positionZ += eyeTransformComponent->facingZ * enemyStats->GetSpeed() * GetDeltaTime();
+
+				}
+				else
+				{
+					enemComp->lastPlayer.index = -1;//Search for a new player to hit.
+					IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
+				}
 			}
 
 			if (!eyeComponent->charging || eyeComponent->avoidanceTimer < eyeComponent->avoidanceDuration)
