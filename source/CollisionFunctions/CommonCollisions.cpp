@@ -50,7 +50,8 @@ void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
 void DamageNumbersDOTRemainder(EntityID& defender)
 {
 	StatComponent* stats = registry.GetComponent<StatComponent>(defender);
-	DamageNumbers(defender, stats->damageOverTime);
+	if (0.01f < stats->damageOverTime)
+		DamageNumbers(defender, stats->damageOverTime);
 	stats->damageOverTime = 0.0f;
 }
 
@@ -218,7 +219,7 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 		
 	}
 
-	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit, (RelicInput::DMG::INSTANT_ENEMY | RelicInput::DMG::RANGED)); //No special condition for now
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -435,33 +436,6 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
 		if (charge)
 			appliedKnockback *= charge->multiplier * charge->multiplier; //tWEEK (1 to 4 mult instead of 2.5 to 5)
-		for (auto entity : View<UIPlayerRelicsComponent>(registry))
-		{
-			UIPlayerRelicsComponent* comp = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-			if (comp)
-			{
-				for (auto relic : comp->relics)
-				{
-					char explo[17] = "Exploding Weapon";
-					int sum1 = 0;
-					int sum2 = 0;
-					for (int i = 0; i < 10; i++)
-					{
-						sum1 += explo[i];
-					}
-					for (int i = 0; i < 10; i++)
-					{
-						if (relic->m_relicName != nullptr)
-							sum2 += relic->m_relicName[i];
-					}
-					
-					if(sum1 == sum2)
-					{
-						appliedKnockback *= 2.0f; //XD
-					}
-				}
-			}
-		}
 		float dx, dz;
 		CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
@@ -520,9 +494,9 @@ void AttackCollision(OnCollisionParameters& params)
 	//Deal damage to the defender and make their model flash red
 	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
 	if (charge)
-		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY)/*CONDITION_CHARGE*/);
 	else
-		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY));
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -568,7 +542,7 @@ void ShockWaveAttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY | RelicInput::DMG::RANGED)); //No special condition for now
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -611,7 +585,7 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY | RelicInput::DMG::RANGED)); //No special condition for now
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)

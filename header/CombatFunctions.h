@@ -1,6 +1,7 @@
 #pragma once
 #include "EntityID.h"
 #include "Components.h"
+#include "Relics\Utility\RelicFuncInputTypes.h"
 
 void DamageNumbers(EntityID& defender, float damage);
 void DamageNumbersDOT(EntityID& defender, float damageOverTime);
@@ -8,8 +9,9 @@ void DamageNumbersDOTRemainder(EntityID& defender);
 
 namespace Combat
 {
+
 	// Provide a complete hit interaction between an attacker and a defender, applying damage, relics, and damage flashes
-	void HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats/*, bool isCharged = false*/);
+	void HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE type = RelicInput::DMG::INSTANT_ENEMY);
 
 	// Calculate damage (presumably of a DoT efect), but do NOT apply it
 	float CalculateDamage(const DamageOverTime& dot, EntityID& defender, const uint64_t& source);
