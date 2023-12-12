@@ -53,9 +53,21 @@ bool SetValueForEnemy(ModelTextRead* infoStruct, int index, std::string infoPiec
 		{
 			infoStruct->eType = EnemyType::empoweredHellhound;
 		}
-		else if ("SplitBoss")
+		else if (infoPiece == "SplitBoss")
 		{
 			infoStruct->eType = EnemyType::tempBoss;
+		}
+		else if (infoPiece == "FrozenEye")
+		{
+			infoStruct->eType = EnemyType::frozenEye;
+		}
+		else if (infoPiece == "FrozenHound")
+		{
+			infoStruct->eType = EnemyType::frozenHellhound;
+		}
+		else if (infoPiece == "FrozenImp")
+		{
+			infoStruct->eType = EnemyType::frozenImp;
 		}
 		else
 		{
@@ -128,6 +140,10 @@ bool SetupAllEnemies(std::string filePath)
 		while (std::getline(myFile, line))
 		{
 			ModelTextRead theInfo;
+			theInfo.eType = skeleton;
+			theInfo.positionX = 0;
+			theInfo.positionZ = 0;
+			theInfo.soulValue = 69;
 			int counter = 0; // by format:
 			// 0 = enemyType
 			// 1 = positionX
@@ -152,8 +168,13 @@ bool SetupAllEnemies(std::string filePath)
 					term += t; //add char to string
 				}
 			}
-			SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
+			if(theInfo.soulValue != 69)
+ 				SetupEnemy(theInfo.eType, theInfo.positionX, 0.f, theInfo.positionZ, theInfo.soulValue);
 		}
+	}
+	for (auto enemyEntity : View<FrozenBehaviour, TransformComponent, StatComponent, EnemyComponent>(registry))
+	{
+		registry.RemoveComponent<FrozenBehaviour>(enemyEntity);
 	}
 		
 	myFile.close();
@@ -176,7 +197,7 @@ void SpawnTorch(float positionX, float positoinY, float positionZ, float red, fl
 	else if (level8 == true && level9 == false)
 	{
 		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 20.0f, 0.0f, 4.0f, 2.5f, 32, VFX_PATTERN::FLAME_BLUE);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 16.0f, 0.0f, 4.0f, 2.5f, 32, VFX_PATTERN::FLAME_BLUE);
 		TransformComponent tComp;
 		tComp.positionX = positionX;
 		tComp.positionY = positoinY;
@@ -186,7 +207,7 @@ void SpawnTorch(float positionX, float positoinY, float positionZ, float red, fl
 	else if (level8 == false && level9 == true)
 	{
 		EntityID particlesVFX = registry.CreateEntity();		//no,  no,    size , offset xyz
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 38.0f, 0.0f, 7.5f, 6.0f, 32, VFX_PATTERN::FLAME_BLUE);
+		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 60.0f, 18.0f, 0.0f, 7.5f, 6.0f, 32, VFX_PATTERN::FLAME_BLUE);
 		TransformComponent tComp;
 		tComp.positionX = positionX;
 		tComp.positionY = positoinY;
@@ -333,6 +354,8 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV4Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV4Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV4Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV4Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
@@ -350,6 +373,8 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		stageModel = registry.AddComponent<ModelBonelessComponent>(stage, LoadModel("LV5Geo.mdl"));
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
+		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV5Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
@@ -387,6 +412,14 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
 			registry.AddComponent<GlowComponent>(hazard, acidGlowRGB);
 			AddStaticHazard(hazard, HAZARD_ACID);
+		}
+		{
+			//Add static hazards here
+			EntityID hazard = registry.CreateEntity();
+			registry.AddComponent<ModelBonelessComponent>(hazard, LoadModel("LV6Ice.mdl"));
+			TransformComponent* transform = registry.AddComponent<TransformComponent>(hazard);
+			registry.AddComponent<GlowComponent>(hazard, iceGlowRed, iceGlowGreen, iceGlowBlue);
+			AddStaticHazard(hazard, HAZARD_ICE);
 		}
 		{
 			//Do the visual gate here
@@ -838,9 +871,13 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			//NICLAS WAS HERE
 			attackSpeed = 2.0f;
 		}
-		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
+		else if (eType == EnemyType::imp)
 		{
 			attackSpeed = 0.8f;
+		}
+		else if (eType == EnemyType::empoweredImp)
+		{
+			attackSpeed = 1.0f;
 		}
 		else if (eType == EnemyType::minotaur)
 		{
@@ -1299,11 +1336,16 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 	model->shared.colorMultiplicativeBlue = 1.25f;
 	model->shared.gammaCorrection = 1.5f;
 	model->shared.hasOutline = true;
-	AnimationComponent* animation = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
-	animation->aAnim = ANIMATION_IDLE;
-	animation->aAnimTime = 0.5f;
-	animation->aAnimIdx = 0;
-	animation->aAnimTimeFactor = 1.0f;
+	BlendAnimationComponent* animation = registry.AddComponent<BlendAnimationComponent>(stateManager.player, BlendAnimationComponent());
+	animation->lower.aAnim = ANIMATION_IDLE;
+	animation->lower.aAnimTime = 0.5f;
+	animation->lower.aAnimIdx = 0;
+	animation->lower.aAnimTimeFactor = 1.0f;
+
+	animation->upper.aAnim = ANIMATION_IDLE;
+	animation->upper.aAnimTime = 0.5f;
+	animation->upper.aAnimIdx = 0;
+	animation->upper.aAnimTimeFactor = 1.0f;
 	//stateManager.player Sounds
 	LoadPlayerSounds();
 
@@ -1411,13 +1453,14 @@ void ReloadPlayerNonGlobals()
 		modelLoaded->shared.colorMultiplicativeBlue = 1.25f;
 		modelLoaded->shared.gammaCorrection = 1.5f;
 	}
-	AnimationComponent* animationLoaded = registry.GetComponent<AnimationComponent>(stateManager.player);
+	BlendAnimationComponent* animationLoaded = registry.GetComponent<BlendAnimationComponent>(stateManager.player);
 	if (animationLoaded == nullptr)
 	{
-		animationLoaded = registry.AddComponent<AnimationComponent>(stateManager.player, AnimationComponent());
+		animationLoaded = registry.AddComponent<BlendAnimationComponent>(stateManager.player, BlendAnimationComponent());
 		
 	}
-	animationLoaded->aAnimTimeFactor = 1.0f;
+	animationLoaded->lower.aAnimTimeFactor = 1.0f;
+	animationLoaded->upper.aAnimTimeFactor = 1.0f;
 
 	// Player (Default)
 	TransformComponent* playerTransform = registry.GetComponent<TransformComponent>(stateManager.player);

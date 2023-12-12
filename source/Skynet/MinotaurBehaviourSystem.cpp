@@ -325,8 +325,8 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 		//Calculate new teleport breakpoint
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [2.0, 4.0]
-		std::uniform_real_distribution<float> distribution(2.0f, 4.0f);
+		// Define a uniform distribution for the range [1.0, 2.0]
+		std::uniform_real_distribution<float> distribution(1.0f, 2.0f);
 		mc->jumpBreakpoint = (int)distribution(gen);
 	}
 }

@@ -37,7 +37,7 @@ void PAIN_MIRROR::Retaliation(void* data)
 	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
 	// Check if it is the right entity that is attacking, and if this is reflect damage or a hazard (no infinite loops!)
-	if (PAIN_MIRROR::_OWNER.index != input->defender.index || input->attacker.index == -1 || input->typeSource & (RelicInput::DMG::REFLECT | RelicInput::DMG::HAZARD))
+	if (PAIN_MIRROR::_OWNER.index != input->defender.index || input->attacker.index == -1 || input->typeSource & (RelicInput::DMG::REFLECT | RelicInput::DMG::HAZARD | RelicInput::DMG::RANGED))
 		return;
 
 	// The person who's fist hurts a lot
