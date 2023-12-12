@@ -502,12 +502,15 @@ void CalculateGlobalMapValuesEye(ObstacleMap* map)
 			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_NAV)
 			{
 				NavigationSample(map, x, z);
+				map->cost[x][z] += 10000;
+
 			}
 			// is it walkable?
-			if (mapGrid->texture[z * ratio][x * ratio] == 0 || mapGrid->texture[z * ratio][x * ratio] == HAZARD_GATE || mapGrid->texture[z * ratio][x * ratio] == -1)
+			if (mapGrid->texture[z * ratio][x * ratio] == HAZARD_WALL || mapGrid->texture[z * ratio][x * ratio] == HAZARD_GATE || mapGrid->texture[z * ratio][x * ratio] == -1)
 			{
 				//not walkable, bad number
 				NavigationSample(map, x, z);
+				map->cost[x][z] += 10000;
 			}
 			else if (mapGrid->texture[z * ratio][x * ratio] == 1) // normal ground
 			{

@@ -380,3 +380,4 @@ DamnedSoul.lastbuildstate
 intermediate/
 /resource/shader/AntiAliasingShader.hlsl
 *.cso
+/CSO/*.cso

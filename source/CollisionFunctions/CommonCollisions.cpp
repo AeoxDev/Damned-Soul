@@ -246,6 +246,7 @@ void HazardAttackCollision(OnCollisionParameters& params)
 	TransformComponent* p = registry.GetComponent<TransformComponent>(params.entity2);
 	HitboxComponent* h = registry.GetComponent<HitboxComponent>(params.entity2);
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(params.entity2);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(params.entity2);
 	if (HitboxCanHitGI(params.entity2))
 	{
 		int r = hazard->type;//PixelValueOnPosition(geoCo, p);
@@ -268,6 +269,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->lavaAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->lower.aAnimTimeFactor = stat->lavaAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
 
 			HazardDamageHelper(params.entity2, 25.f);
@@ -288,6 +294,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->acidAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->lower.aAnimTimeFactor = stat->acidAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
 			HazardDamageHelper(params.entity2, 20.f);
@@ -297,6 +308,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
 			{
 				anim->aAnimTimeFactor = stat->iceAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->lower.aAnimTimeFactor = stat->iceAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
@@ -639,8 +655,8 @@ void LoadNextLevel(OnCollisionParameters& params)
 			return;
 			break;
 		case 15://Level 8
-			fallof->fallofX = -1303.f;
-			fallof->fallofZ = 506.f;
+			fallof->fallofX = -0.f;
+			fallof->fallofZ = 226.f;
 
 			CutsceneFallStage(params.entity2, 0);
 			return;
