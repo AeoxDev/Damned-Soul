@@ -135,12 +135,10 @@ void CreateRelicWindows()
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 		OnHoverComponent* uiOnHover = registry.AddComponent<OnHoverComponent>(relicWindow);
 
-		uiOnClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnClick::None, UIFunctions::OnClick::None);
-		uiOnClick->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
+		uiOnClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
 		uiOnClick->Add(uiElement->m_Images[3].baseUI.GetPixelCoords(), uiElement->m_Images[3].baseUI.GetBounds(), UIFunctions::OnClick::SelectRelic, UIFunctions::OnClick::None);
 
-		uiOnHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::None);
-		uiOnHover->Add(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
+		uiOnHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
 		uiOnHover->Add(uiElement->m_Images[3].baseUI.GetPixelCoords(), uiElement->m_Images[3].baseUI.GetBounds(), UIFunctions::OnHover::ShopRelic);
 
 		SoundComponent* sfx = registry.AddComponent<SoundComponent>(relicWindow);
@@ -168,11 +166,26 @@ void CreateSingleWindows()
 		{ 0.5f, -0.7f }
 	};
 
-	const char filenames[SHOP_SINGLE_WINDOWS][32] =
+	ML_String axeFile = "";
+	uint8_t wep = 0;
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
+
+	if (player->weaponTier == 1)
+	{
+		axeFile = "Axe2";
+		wep = 10;
+	}
+	else
+	{
+		axeFile = "Axe3";
+		wep = 15;
+	}
+
+	ML_String filenames[SHOP_SINGLE_WINDOWS] =
 	{
 		"Heal",
 		"Reroll",
-		"Axe2",
+		axeFile,
 		""
 	};
 
@@ -200,11 +213,16 @@ void CreateSingleWindows()
 		"Leave the shop"
 	};
 
+	uint8_t heal = 0;
+
+	if (!player->healFreebie)
+		heal = 3;
+
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
-		0,
-		5,
-		10,
+		heal,
+		4,
+		wep,
 		0,
 	};
 
@@ -213,6 +231,8 @@ void CreateSingleWindows()
 	{
 		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
+		UIShopButtonComponent* button = registry.AddComponent<UIShopButtonComponent>(relicWindow);
+		button->Setup(name[i], description[i], price[i]);
 
 		if (i == 2)
 		{
@@ -228,7 +248,7 @@ void CreateSingleWindows()
 		if (i != 3)
 		{
 			uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f });
-			uiElement->AddImage(filenames[i], { positions[i].x, positions[i].y - 0.0f }, { 1.0f, 1.0f }, false);
+			uiElement->AddImage(filenames[i].c_str(), {positions[i].x, positions[i].y - 0.0f}, {1.0f, 1.0f}, false);
 			if (price[i] > 0)
 			{
 				char Sprice[4];
@@ -253,8 +273,7 @@ void CreateSingleWindows()
 			registry.AddComponent<UIShopUpgradeComponent>(relicWindow);
 
 
-		UIShopButtonComponent* button = registry.AddComponent<UIShopButtonComponent>(relicWindow);
-		button->Setup(name[i], description[i], price[i]);
+		
 
 		OnClickComponent* uiOnClick = registry.AddComponent<OnClickComponent>(relicWindow);
 

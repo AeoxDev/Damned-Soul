@@ -21,5 +21,8 @@
 //Settings
 #include "UIComponents/UISettingsComponent.h"
 
+//Credits
+#include "UIComponents/UICreditsComponents.h"
+
 //Pause Components
 #include "UIComponents/UIPauseComponent.h"

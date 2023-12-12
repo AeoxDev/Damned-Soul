@@ -1,0 +1,3 @@
+Game Design
+Audio (SFX, Voice Editing, OST, System with FMOD)
+Collision Handling (Outer Stage)

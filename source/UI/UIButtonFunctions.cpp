@@ -20,7 +20,8 @@
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
 
-#include <random>
+#include <fstream>
+#include <string>
 
 	
 void UIFunctions::MainMenu::Start(void* args, int a)
@@ -46,10 +47,11 @@ void UIFunctions::MainMenu::Start(void* args, int a)
 	CreatePlayer(-0.0f, 0.0f, -0.0f, 80.0f, 100.0f, 20.0f, 10.0f, 1.0f, 0, 0.0f, 0.0, -1.0f);
 	gameSpeed = 1.0f; //Make sure it gets set back to 1 if StartGame is called from a completed run
 
+
+
 	SetScoreboardUI();
 	SetupTimer();
 	SetupEnemyCounter();
-	SetupFPSCounter();
 	ResetRunTime();
 
 	stateManager.activeLevel = 0; //Level actually being loaded: activeLevel / 2 + 1
@@ -221,8 +223,11 @@ void UIFunctions::Game::SetMainMenu(void* args, int a)
 {
 	SetInMainMenu(true);
 	SetInPlay(false);
+
 	UnloadEntities(ENT_PERSIST_LEVEL);
+
 	gameSpeed = 1.0f;
+
 	stateManager.menu.Setup();
 }
 
@@ -244,8 +249,6 @@ void UIFunctions::Game::SetPause(void* args, int a)
 
 void UIFunctions::Settings::Back(void* args, int a)
 {
-	//Please check this function cause the Setup sets in main menu to true already.
-	//SetInMainMenu(true);
 	stateManager.settings.Unload();
 	stateManager.menu.Setup();
 	SetInSettings(false);
@@ -351,100 +354,8 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 		UIGameTimeComponent* timer = registry.GetComponent<UIGameTimeComponent>(entity);
 
-		if (GetVisualTimer())
-		{
-			if (GetVisualFPS())
-			{
-				timer->pos = 1;
-			}
-			else
-				timer->pos = 0;
-
-			if (timer->pos == 0)
-			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
-				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
-			}
-			else
-			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
-				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
-			}
-		}
-		else
-		{
-			if (GetVisualFPS())
-			{
-				for (auto fspEnt : View<UIGameFPSComponent, UIComponent>(registry))
-				{
-					UIComponent* uiElement = registry.GetComponent<UIComponent>(fspEnt);
-					UIGameFPSComponent* fps = registry.GetComponent<UIGameFPSComponent>(fspEnt);
-
-					fps->pos = 0;
-
-					uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
-					uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
-				}
-			}
-		}
-
 		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualTimer());
 		uiElement->m_BaseImage.baseUI.SetVisibility(GetVisualTimer());
-	}
-
-	RedrawUI();
-}
-
-void UIFunctions::Settings::SwitchFPS(void* args, int a)
-{
-	SetVisualFPS(!GetVisualFPS());
-
-	for (auto entity : View<UIGameFPSComponent, UIComponent>(registry))
-	{
-		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-		UIGameFPSComponent* fps = registry.GetComponent<UIGameFPSComponent>(entity);
-
-		if (GetVisualFPS())
-		{
-			if (GetVisualTimer())
-			{
-				fps->pos = 1;
-			}
-			else
-				fps->pos = 0;
-
-			if (fps->pos == 0)
-			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
-				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
-			}
-			else
-			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
-				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
-			}
-			
-		}
-		else
-		{
-			if (GetVisualTimer())
-			{
-				for (auto timerEnt : View<UIGameTimeComponent, UIComponent>(registry))
-				{
-					UIComponent* uiElement = registry.GetComponent<UIComponent>(timerEnt);
-					UIGameTimeComponent* timer = registry.GetComponent<UIGameTimeComponent>(timerEnt);
-
-					timer->pos = 0;
-
-					uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
-					uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
-				}
-			}
-		}
-
-
-		uiElement->m_BaseText.baseUI.SetVisibility(GetVisualFPS());
-		uiElement->m_BaseImage.baseUI.SetVisibility(GetVisualFPS());
 	}
 
 	RedrawUI();
@@ -464,11 +375,128 @@ void UIFunctions::Settings::Volume::Release(void* args, int a)
 	slider->holding = false;
 }
 
-void UIFunctions::Credits_Back(void* args, int a)
-{
-	//Please check this function cause the Setup sets in main menu to true already.
-	//SetInMainMenu(true);
 
+void UIFunctions::Credits::NextPage(void* args, int a)
+{
+	const int people = 8;
+	ML_String names[people][2] =
+	{
+		{"Alexandra Lindberg", "Arian Watti"},
+		{"Christian Marcuz", "Elliot Lundin"},
+		{"Erik Svensson", "Erika Gustafsson"},
+		{"Felix Mathiasson", "Herman Larsson"},
+		{"Joaquin Lindkvist", "Joel Berg"},
+		{"Mattias Nordin", "Niclas Andersson"},
+		{"Rasmus Fridlund", "Zannie Karlsson"},
+		{"Special Thanks", "And You"}
+	};
+
+	stateManager.creditsIndex++;
+	if (stateManager.creditsIndex == 8)
+		stateManager.creditsIndex = 0;
+	
+
+	for (auto entity : View<UICreditsTextComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+		int reverse = 1;
+		for (int i = 0; i < 2; i++)
+		{
+			std::ifstream file;
+			ML_String filePath = "../resource/Credits/";
+			filePath.append(names[stateManager.creditsIndex][i].c_str());
+			filePath.append(".txt");
+
+			file.open(filePath.c_str());
+
+			std::string line;
+			ML_String desc;
+			if (file.is_open())
+			{
+				while (std::getline(file, line))
+				{
+					desc.append(line.c_str());
+					desc.append("\n");
+				}
+
+				file.close();
+			}
+
+			uiElement->m_Texts[i + i].SetText(names[stateManager.creditsIndex][i].c_str(),
+				DSBOUNDS(0, 0, uiElement->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElement->m_BaseImage.baseUI.GetBounds().bottom), 40.0f);
+
+			uiElement->m_Texts[i + i + 1].SetText(desc.c_str(), DSBOUNDS(0, 0,
+				uiElement->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElement->m_BaseImage.baseUI.GetBounds().bottom), 20.0f, DWRITE_TEXT_ALIGNMENT_LEADING);
+
+			reverse = -1;
+		}
+	}
+
+	RedrawUI();
+}
+
+void UIFunctions::Credits::PreviousPage(void* args, int a)
+{
+	const int people = 8;
+	ML_String names[people][2] =
+	{
+		{"Alexandra Lindberg", "Arian Watti"},
+		{"Christian Marcuz", "Elliot Lundin"},
+		{"Erik Svensson", "Erika Gustafsson"},
+		{"Felix Mathiasson", "Herman Larsson"},
+		{"Joaquin Lindkvist", "Joel Berg"},
+		{"Mattias Nordin", "Niclas Andersson"},
+		{"Rasmus Fridlund", "Zannie Karlsson"},
+		{"Special Thanks", "And You"}
+	};
+
+	stateManager.creditsIndex--;
+	if (stateManager.creditsIndex == -1)
+		stateManager.creditsIndex = 7;
+
+	for (auto entity : View<UICreditsTextComponent>(registry))
+	{
+		UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+
+		int reverse = 1;
+		for (int i = 0; i < 2; i++)
+		{
+			std::ifstream file;
+			ML_String filePath = "../resource/Credits/";
+			filePath.append(names[stateManager.creditsIndex][i].c_str());
+			filePath.append(".txt");
+
+			file.open(filePath.c_str());
+
+			std::string line;
+			ML_String desc;
+			if (file.is_open())
+			{
+				while (std::getline(file, line))
+				{
+					desc.append(line.c_str());
+					desc.append("\n");
+				}
+
+				file.close();
+			}
+
+			uiElement->m_Texts[i + i].SetText(names[stateManager.creditsIndex][i].c_str(),
+				DSBOUNDS(0, 0, uiElement->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElement->m_BaseImage.baseUI.GetBounds().bottom), 40.0f);
+
+			uiElement->m_Texts[i + i + 1].SetText(desc.c_str(), DSBOUNDS(0, 0,
+				uiElement->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElement->m_BaseImage.baseUI.GetBounds().bottom), 20.0f, DWRITE_TEXT_ALIGNMENT_LEADING);
+
+			reverse = -1;
+		}
+	}
+
+	RedrawUI();
+}
+
+void UIFunctions::Credits::Back(void* args, int a)
+{
 	stateManager.credits.Unload();
 	stateManager.menu.Setup();
 	SetInCredits(false);
@@ -558,12 +586,12 @@ void UIFunctions::Pause::Back(void* args, int a)
 
 void UIFunctions::Pause::SetMainMenu(void* args, int a)
 {
-	//Please check this function cause the Setup sets in main menu to true already.
-	//SetInMainMenu(true);
-	UnloadEntities(ENT_PERSIST_LEVEL);
-	gameSpeed = 1.0f;
-	stateManager.menu.Setup();
 	SetInPause(false);
+	UnloadEntities(ENT_PERSIST_LEVEL);
+
+	gameSpeed = 1.0f;
+
+	stateManager.menu.Setup();
 }
 
 
@@ -581,17 +609,17 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 	int inverseIndex = 0;
 	int hoverIndecies[2] = { 0, 0 };
 
-	hoverIndecies[0] = (index * 3) - 1;
+	hoverIndecies[0] = ((index + 1) * 3) - 1;
 
-	if (index == 1)
+	if (index == 0)
 	{
 		inverseIndex = 1;
-		hoverIndecies[1] = ((index + 1) * 3) - 1;
+		hoverIndecies[1] = ((index + 2) * 3) - 1;
 	}
-	else
+	else if (index == 1)
 	{
 		inverseIndex = 0;
-		hoverIndecies[1] = ((index + 1) - 1);
+		hoverIndecies[1] = index + 1;
 	}
 
 	for (auto entity : View<UIShopRelicComponent>(registry))
@@ -615,7 +643,7 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 			continue;
 		}
 
-		if (uiWindow->shopSelections[index - 1] != shopState::LOCKED && uiWindow->shopSelections[index - 1] != shopState::BOUGHT)
+		if (uiWindow->shopSelections[index] != shopState::LOCKED && uiWindow->shopSelections[index] != shopState::BOUGHT)
 		{
 			uiElement->m_Images[hoverIndecies[0]].SetImage("RelicIcons\\SelectedRelic");
 			uiElement->m_Images[hoverIndecies[0]].baseUI.SetVisibility(true);
@@ -628,14 +656,14 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 			uiWindow->shopSelections[inverseIndex] = shopState::AVALIABLE;
 		}
 
-		if (uiWindow->shopSelections[index - 1] == shopState::AVALIABLE)
+		if (uiWindow->shopSelections[index] == shopState::AVALIABLE)
 		{
-			uiWindow->shopSelections[index - 1] = shopState::SELECTED;
+			uiWindow->shopSelections[index] = shopState::SELECTED;
 		}
-		else if (uiWindow->shopSelections[index - 1] == shopState::SELECTED)
+		else if (uiWindow->shopSelections[index] == shopState::SELECTED)
 		{
 			uiElement->m_Images[hoverIndecies[0]].SetImage("RelicIcons\\HoverRelic");
-			uiWindow->shopSelections[index - 1] = shopState::AVALIABLE;
+			uiWindow->shopSelections[index] = shopState::AVALIABLE;
 		}
 
 		BuyRelic(args, hoverIndecies[0]);
@@ -928,7 +956,8 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	player->weaponTier++;
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
-
+	// 10, 15, 20
+	uiWeapon->m_price = 5 * (player->weaponTier + 1);
 	SoundComponent* upgradeSound = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 	if (upgradeSound) upgradeSound->Play(Shop_Upgrade, Channel_Base);
 
@@ -1210,23 +1239,23 @@ void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 	if (uiImpElement == nullptr || uiImpText == nullptr)
 		return;
 
-	int imageIndex = (index * 3) - 3;
-	int hoverIndex = (index * 3) - 1;
+	int imageIndex = ((index + 1) * 3) - 3;
+	int hoverIndex = ((index + 1) * 3) - 1;
 
 	if (hover)
 	{
 		uiElement->m_Images[hoverIndex].baseUI.SetVisibility(true);
 		uiElement->m_Images[hoverIndex].baseUI.SetPosition(uiElement->m_Images[imageIndex].baseUI.GetPosition());
 
-		uiImpText->name = relicWindow->shopRelics[index - 1]->m_relicName;
-		uiImpText->description = relicWindow->shopRelics[index - 1]->m_description;
+		uiImpText->name = relicWindow->shopRelics[index]->m_relicName;
+		uiImpText->description = relicWindow->shopRelics[index]->m_description;
 
 		RelicInput::OnPriceCalculation priceCalc;
 
 		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
 			func(&priceCalc);
 
-		uiImpText->price = priceCalc.GetCostOf(relicWindow->shopRelics[index - 1]->m_price, RelicInput::OnPriceCalculation::RELIC);
+		uiImpText->price = priceCalc.GetCostOf(relicWindow->shopRelics[index]->m_price, RelicInput::OnPriceCalculation::RELIC);
 
 		ML_String relicText = uiImpText->name;
 
@@ -1246,7 +1275,7 @@ void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 		uiImpElement->m_BaseText.SetText(relicText.c_str(), uiImpElement->m_BaseText.baseUI.GetBounds(), uiImpElement->m_BaseText.m_fontSize,
 			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
 	}
-	else if (!hover && relicWindow->shopSelections[index - 1] == shopState::AVALIABLE)
+	else if (!hover && relicWindow->shopSelections[index] == shopState::AVALIABLE)
 	{
 		uiElement->m_Images[hoverIndex].baseUI.SetVisibility(false);
 	}

@@ -8,6 +8,8 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
     
     if (index < meta[blockID.y].start || index > meta[blockID.y].end || meta[blockID.y].reset == 0)
         return;
+    //if (index < meta[blockID.y].reset == false)
+    //    return;
 
     inputParticleData[index].position = float3(99999.f, 99999.f, 99999.f);
     inputParticleData[index].time = 0;

@@ -46,7 +46,7 @@ void SettingsState::Input()
 
 void SettingsState::SetupButtons()
 {
-	const int amount = 7;
+	const int amount = 6;
 	const int sliderAmount = 5;
 
 	//Buttons
@@ -58,7 +58,6 @@ void SettingsState::SetupButtons()
 			"1600x900",
 			"1280x720",
 			"Enable Game Timer",
-			"Enable FPS Counter",
 			"Back",
 		};
 
@@ -69,13 +68,11 @@ void SettingsState::SetupButtons()
 			{ -0.25f, -0.075f },
 			{ -0.25f, -0.225f },
 			{ 0.25f, 0.225f },
-			{ 0.25f, 0.075f },
 			{ 0.78f, -0.85f }
 		};
 
 		const DSFLOAT2 scales[amount] =
 		{
-			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
@@ -91,13 +88,11 @@ void SettingsState::SetupButtons()
 			UIFunctions::Settings::SetMediumRes,
 			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
-			UIFunctions::Settings::SwitchFPS,
 			UIFunctions::Settings::Back,
 		};
 
 		const char filenames[amount][32] =
 		{
-			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
@@ -112,7 +107,6 @@ void SettingsState::SetupButtons()
 			{ 17.0f },
 			{ 17.0f },
 			{ 17.0f },
-			{ 16.0f },
 			{ 16.0f },
 			{ 20.0f }
 		};
@@ -172,8 +166,8 @@ void SettingsState::SetupButtons()
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right / 2.0f;
 
 			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 

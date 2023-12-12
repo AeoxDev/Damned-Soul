@@ -1,0 +1,5 @@
+File Managment
+Skeletal Animation
+2D Art (UI och Relics)
+Memory Management
+Relics (Backend Framework)

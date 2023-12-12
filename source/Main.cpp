@@ -21,6 +21,8 @@
 
 //#define PAUSE_TEST
 
+//#define PARTICLE_TEST
+
 //Displays info in the application title
 void UpdateDebugWindowTitle(std::string& title, std::string extra = "");
 
@@ -44,6 +46,13 @@ void SimulateUI(std::string& title, int total);
 void SimulatePause(std::string& title, int total);
 
 #endif // PAUSE_TEST
+
+#ifdef PARTICLE_TEST
+
+void SimulateParticleLevel(std::string& title, int total);
+
+#endif // PARTICLE_TEST
+
 
 int main(int argc, char* args[])
 {
@@ -77,7 +86,13 @@ int main(int argc, char* args[])
 
 	SimulatePause(title, 2000);
 
-#endif // UI_TEST
+#endif // PAUSE_TEST
+
+#ifdef PARTICLE_TEST
+
+	SimulateParticleLevel(title, 100);
+
+#endif // PARTICLE_TEST
 
 	while (!sdl.quit)
 	{
@@ -208,3 +223,34 @@ void SimulatePause(std::string& title, int total)
 }
 
 #endif // PAUSE_TEST
+
+#ifdef PARTICLE_TEST
+
+void SimulateParticleLevel(std::string& title, int total)
+{
+	for (size_t i = 0; i < total; i++)
+	{
+		LoadLevel(-2);
+
+		for (int j = 0; j < 60; j++)
+		{
+			CountDeltaTime();
+			UpdateDebugWindowTitle(title, (" load: " + std::to_string(i) + " /" + std::to_string(total)).c_str());
+
+			stateManager.Update();
+			stateManager.EndFrame();
+
+			MemLib::pdefrag();
+		}
+
+		UIFunctions::Game::SetMainMenu(nullptr, 0);
+	}
+
+	gameSpeed = 1.0f;
+	UIFunctions::Game::SetMainMenu(nullptr, 0);
+}
+
+
+#endif // PARTICLE_TEST
+
+
