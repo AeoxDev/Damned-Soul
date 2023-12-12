@@ -46,7 +46,7 @@ float Animation::GetTimestamp(const uint32_t frameIdx)
 	return 0;
 }
 
-AnimationFrame Animation::GetFrame(const float& time)
+const AnimationFrame Animation::GetFrame(const float& time)
 {
 	AnimationFrame retVal;
 

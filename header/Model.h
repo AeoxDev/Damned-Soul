@@ -90,6 +90,8 @@ private:
 	};
 
 	void scaleQuarternion(DirectX::XMVECTOR& vector, float scale);
+	void copyFrame(DirectX::XMMATRIX &vertM, DirectX::XMMATRIX &normM, AnimationFrame frame, int index);
+	DirectX::XMMATRIX scaleMatrix(DirectX::XMMATRIX M, float scale);
 
 public:
 	//PoolPointer<ModelBoneless> m_modelData;

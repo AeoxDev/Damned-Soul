@@ -40,7 +40,7 @@ public:
 	float GetTimestamp(const uint32_t frameIdx);
 
 	// Get a frame from a time
-	AnimationFrame GetFrame(const float& time);
+	const AnimationFrame GetFrame(const float& time);
 
 	~Animation();
 };
