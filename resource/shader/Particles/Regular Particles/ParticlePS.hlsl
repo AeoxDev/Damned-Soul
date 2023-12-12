@@ -30,7 +30,7 @@ float4 main(GS_OUT input) : SV_TARGET
     if (pattern != 14)
     {
             //Animation
-            // 0 = SMOKE        // 1 = ARCH     // 2 = EXPLOSION    // 3 = FLAMETHROWER
+            // 0 = SMOKE        // 1 = ON_FIRE  // 2 = EXPLOSION    // 3 = FLAMETHROWER
             // 4 = IMPLOSION    // 5 = RAIN     // 6 = SINUS        // 7 = LIGHTNING
             // 8 = CIRCLE_FIELD // 9 = FIRE     // 10 = PULSE       // 11 = ICETHROWER
             // 12 = BOILING     // 13 = SPARK
@@ -50,7 +50,7 @@ float4 main(GS_OUT input) : SV_TARGET
             image = AniRow(input, 0.0f, false); 
             image.rgb = image.rgb * input.rgb;
         }
-        else if (pattern == 9 /*|| pattern == 8*/) //4x4 sections, Top Row and Second Row //pattern = 9 (FIRE)
+        else if (pattern == 9 || pattern == 1) //4x4 sections, Top Row and Second Row //pattern = 9 (FIRE)
         {
             image = AniRow(input, 0.0f, false); 
         }

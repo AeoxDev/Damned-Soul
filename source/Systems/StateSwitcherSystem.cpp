@@ -170,6 +170,7 @@ bool StateSwitcherSystem::Update()
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (statComp->GetHealth() <= 0 && statComp->performingDeathAnimation == false)
 		{
+			bool notZac = true;
 			TempBossBehaviour* tempBossComp = registry.GetComponent<TempBossBehaviour>(entity);
 			if (tempBossComp == nullptr)
 			{
@@ -189,7 +190,6 @@ bool StateSwitcherSystem::Update()
 				case EnemyType::hellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
 					shatterTimeFactor *= 0.55f;
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.55f * shatterTimeFactor, ShatterEnemy);
 					break;
 				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
@@ -217,8 +217,7 @@ bool StateSwitcherSystem::Update()
 					break;
 				case EnemyType::frozenImp:
 					sfx->Play(Imp_Death, Channel_Base);
-					shatterTimeFactor *= 0.55f;
-					ShatterEnemy(entity, 0);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::zac:
 					sfx->Play(Miniboss_Death, Channel_Base);
@@ -268,6 +267,7 @@ bool StateSwitcherSystem::Update()
 				}
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, shatterTimeFactor, ShatterEnemy);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, shatterTimeFactor + 0.5f, RemoveEnemy);
+				
 			}
 			else // boss died lmao
 			{

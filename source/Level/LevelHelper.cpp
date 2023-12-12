@@ -1414,13 +1414,6 @@ void ReloadPlayerNonGlobals()
 	if (registry.GetComponent<PlayerComponent>(stateManager.player) == nullptr)
 		return; //Ain't no way we doing this function if player doesn't exist yet
 
-	ParticleComponent* particles = registry.GetComponent<ParticleComponent>(stateManager.player);
-	if (particles != nullptr)
-	{
-		particles->Release();
-		registry.RemoveComponent<ParticleComponent>(stateManager.player);
-	}
-
 	ModelSkeletonComponent* modelLoaded = registry.GetComponent<ModelSkeletonComponent>(stateManager.player);
 	if (modelLoaded == nullptr)
 	{
@@ -1619,25 +1612,12 @@ void SetupEnemyCounter()
 	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
 }
 
-void SetupFPSCounter()
-{
-	EntityID fpsEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(fpsEntity);
-	uiElement->Setup("ButtonSmall", "FPS: 0", DSFLOAT2(0.8f, 0.65f));
-
-	if (!GetVisualFPS())
-	{
-		uiElement->m_BaseText.baseUI.SetVisibility(false);
-		uiElement->m_BaseImage.baseUI.SetVisibility(false);
-	}
-
-	registry.AddComponent<UIGameFPSComponent>(fpsEntity);
-}
-
 void SetupTimer()
 {
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
+	UIGameTimeComponent* timer = registry.AddComponent<UIGameTimeComponent>(timeEntity);
+
 	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.65f));
 
 	if (!GetVisualTimer())
@@ -1646,5 +1626,4 @@ void SetupTimer()
 		uiElement->m_BaseImage.baseUI.SetVisibility(false);
 	}
 
-	registry.AddComponent<UIGameTimeComponent>(timeEntity);
 }

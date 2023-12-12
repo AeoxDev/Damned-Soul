@@ -1,0 +1,9 @@
+Game design
+Level design
+Shatter
+3D art (Levels, Minotaur, Minotaur Boss)
+Animation (Minotaur, Minotaur Boss, Eye)
+Maya Scripting
+Technical Animation / Rigging (Minotaur, Minotaur Boss, Eye, Imp)
+Texturing (Minotaur, Minotaur Boss)
+Concept art (levels)

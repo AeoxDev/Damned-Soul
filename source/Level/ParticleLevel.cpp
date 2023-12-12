@@ -24,33 +24,52 @@ void LoadParticleLevel()
 	stageVars.scaleZ = 1.0f;
 	stageVars.offsetY = -0.1f;
 
+	srand(time(nullptr));
+
+	CreatePlayer(0.0f, 0.0f, 0.0f, 3.0f, 1.0f, 20.0f, 10.0f, 1.0f, 0);
+
 	EntityID stage = SetUpStage(stageVars);
 
-	srand(0);
-
-	int loopAmount = rand() % (20 - 10 + 1) + 10;
-	for (int i = 0; i < loopAmount; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		EntityID particles = registry.CreateEntity();
+
+
+		float random = ((float)rand()) / RAND_MAX * 40.f - 20.f;
+
+		float firstRand = rand() & 1 ? 1 : -1;//rand() % 2 + (-1);
+		float secondRand = rand() & 1 ? 1 : -1;
 
 		TransformComponent transform;
 
 		transform.mass = 1.f;
 		transform.facingX = 1.0f; transform.facingY = 0.0f; transform.facingZ = 1.0f;
-		transform.positionX = 0.0f; transform.positionY = 0.0f; transform.positionZ = 0.0f;
+		transform.positionX = (random / (float)i) * (float)firstRand; transform.positionY = 5.0f; transform.positionZ = (random / (float)i) * (float)secondRand;
 		transform.scaleX = 1.0f; transform.scaleY = 1.0f; transform.scaleZ = 1.0f;
+
 
 		ComputeShaders cShad = SMOKE;
 
 		if (i % 2 == 1)
 			cShad = SMOKE;
 		else
-			cShad = FLAMETHROWER;
+			cShad = NO_MOVEMENT;
 
-		registry.AddComponent<TransformComponent>(particles, transform);
-		registry.AddComponent<ParticleComponent>(particles, (float)(rand() % (7 - 2 + 1) + 2), (float)(rand() % (20 - 5 + 1) + 5), (float)(rand() % (2 - 1 + 1) + 1),
-			(float)(rand() % 40 + (-30)), (float)(rand() % 40 + (-30)), (float)(rand() % 40 + (-30)), rand() % (5000 - 1 + 1) + 1, cShad);
-		
+
+		if (cShad == SMOKE)
+		{
+			registry.AddComponent<TransformComponent>(particles, transform);
+			registry.AddComponent<ParticleComponent>(particles, 5.0f, 10.f, 5.0f,
+				0.f, 0.f, 0.f, 1000, cShad);
+
+		}
+		else
+		{
+			registry.AddComponent<TransformComponent>(particles, transform);
+			registry.AddComponent<ParticleComponent>(particles, 5.0f, 10.f, 5.0f,
+				0.f, 0.f, 0.f, 2, VFX_PATTERN::FLAME);
+		}
+	
 	}
 
 	stateManager.stage = stage;
