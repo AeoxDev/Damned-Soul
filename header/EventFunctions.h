@@ -24,6 +24,9 @@ void LavaBlinkColor(EntityID& entity, const int& index);
 void PlayerLoseControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
 void PlayerBeginAttack(EntityID& entity, const int& index);
+// ARIAN WROTE THIS
+void DashParticleStart(EntityID& entity, const int& index);
+void DashAfterTrail(EntityID& entity);
 
 //Voiceline
 void PlayBossVictoryOrDeathLine(EntityID& entity, const int& index);

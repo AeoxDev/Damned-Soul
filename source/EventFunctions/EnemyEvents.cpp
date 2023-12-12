@@ -428,6 +428,12 @@ void EnemyBeginAttack(EntityID& entity, const int& index)
 		if(stats)
 			stats->SetKnockbackMultiplier(8.0f);
 	}
+
+	if (condition == EnemyType::lucifer)
+	{
+
+		registry.AddComponent<ParticleComponent>(entity, 1.f, 100.f, 0.3f, 0.0f, 0.0f, 16.f, 0.0f, 0.2f, 0.5f, 128, HAMMER);
+	}
 }
 
 void EnemyEndAttack(EntityID& entity, const int& index)
@@ -505,6 +511,13 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 		{
 			lucifer->attackTimer = 0.0f;
 			lucifer->isAttacking = false;
+		}		
+		
+		ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
+		if (pComp != nullptr)
+		{
+			pComp->Release();
+			registry.RemoveComponent<ParticleComponent>(entity);
 		}
 			
 	}

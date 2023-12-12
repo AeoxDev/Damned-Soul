@@ -9,6 +9,10 @@
 
 #include "Relics/RelicFunctions.h"
 
+// ARIAN INCLUDED THIS
+#include "Relics\Utility\RelicParticleHelper.h"
+
+
 static float godModeFactor = 1.0f;
 bool godModePortal = false;
 void SetGodModeFactor(float value)
@@ -176,14 +180,6 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		playerComp->isDashing = true;
  		transform->currentSpeedX += dac->x * (stat->m_acceleration * dac->dashModifier);// * GetDeltaTime();
 		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
-
-		////Smoke
-		registry.AddComponent<ParticleComponent>(entity, 
-			5.0f, 7.0f, 3.0f, //Time, radius, size
-			-3.0f + (transform->facingX), 0.5f, -10/*-30.0f*/ , //Offset x, y, and z,
-			0.7, 0.7, 0.6,//Overload rbg color
-			20, SMOKE); //amount,Pattern
-
 	}
 }
 
@@ -216,6 +212,24 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	stats->SetSpeedMult(0.6f); //Move slower while attacking
 	player->isAttacking = true;
 	ResetAttackTrackerFlags(entity);
+}
+
+void DashParticleStart(EntityID& entity, const int& index)
+{
+	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
+
+
+	////Smoke
+	registry.AddComponent<ParticleComponent>(entity,
+		0.5f, 6.0f, 5.0f, //Time, radius, size
+		-3.0f + (transform->facingX), 0.1f, 0.0f/*-10.f*/, //Offset x, y, and z,
+		0.7, 0.7, 0.6,//Overload rbg color
+		20, SMOKE); //amount,Pattern
+}
+
+void DashAfterTrail(EntityID& entity)
+{
+	ParticleAtEntityLocation(entity, 0.5f, DashParticleStart);
 }
 
 void PlayBossVictoryOrDeathLine(EntityID& entity, const int& index)
