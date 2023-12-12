@@ -51,6 +51,7 @@ TX_IDX flipBookTextureFire = -1; /// create holder for texture
 TX_IDX flipBookTextureSpark = -1; /// create holder for texture
 TX_IDX flipBookTextureSmoke = -1; /// create holder for texture
 TX_IDX textureParticle = -1; /// create holder for texture
+TX_IDX textureParticleExplosion = -1; /// create holder for texture
 TX_IDX noTextureParticle = -1; /// create holder for texture
 SMP_IDX sampler = -1; //create holder for sampler
 
@@ -90,7 +91,8 @@ void Particles::InitializeParticles()
 	flipBookTextureFire = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
 	flipBookTextureSpark = LoadTexture("\\SpriteSmokeSpark.png");//created texture resource 
 	flipBookTextureSmoke = LoadTexture("\\SpriteSmoke.png");//created texture resource 
-	textureParticle = LoadTexture("\\LavaPlaceholderAlpha.png");
+	textureParticle = LoadTexture("\\SpriteLava.png");
+	textureParticleExplosion = LoadTexture("\\SpriteExplosion.png");
 	noTextureParticle = LoadTexture("\\DefaultParticle.png");
 
 	sampler = CreateSamplerState(); //created sampler resource
@@ -252,8 +254,10 @@ void Particles::PrepareParticlePass(int metadataSlot)
 		SetTexture(flipBookTextureFire, BIND_PIXEL, 6); 
 	else if (data->metadata[metadataSlot].pattern == SPARK || data->metadata[metadataSlot].pattern == SMOKE)
 		SetTexture(flipBookTextureSpark, BIND_PIXEL, 6); 
-	else if (data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == CIRCLE_FIELD)
+	else if (data->metadata[metadataSlot].pattern == PULSE)
 		SetTexture(flipBookTextureSmoke/*textureParticle*/, BIND_PIXEL, 6);
+	else if (data->metadata[metadataSlot].pattern == NILL|| data->metadata[metadataSlot].pattern == CIRCLE_FIELD)
+		SetTexture(textureParticleExplosion, BIND_PIXEL, 6);
 	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER || data->metadata[metadataSlot].pattern == ICETHROWER)
 		SetTexture(textureParticle, BIND_PIXEL, 6);
 	else

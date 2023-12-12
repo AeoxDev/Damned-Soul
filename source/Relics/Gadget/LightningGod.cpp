@@ -65,8 +65,15 @@ void LIGHTNING_GOD::ProcMark(void* data)
 void _LG_Particles_Begin_Small(EntityID& entity, const int& index)
 {
 	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION_SMALL, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f,
-		0.0,0.5,1.0,//rgb
+		0.0,0.7,3.0,//rgb
 		256, LIGHTNING);
+}
+
+void _LG_Particles_Follow(EntityID& entity)
+{
+	registry.AddComponent<ParticleComponent>(entity, 0.50f, 1.0f, 1.5f, 0.0f, 1.6f, 0.0f,
+		0.0, 0.7, 3.0,//rgb
+		64, NILL);
 }
 
 void LIGHTNING_GOD::OnUpdate(void* data)
@@ -102,5 +109,6 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 		
 		// Spawn Small Lightning
 		ParticleAtEntityLocation(potentialVictims[randomlySelected], LIGHTNING_GOD_SFX_DURATION_SMALL, _LG_Particles_Begin_Small);
+		ParticleAtEntityFollow(potentialVictims[randomlySelected], LIGHTNING_GOD_COOLDOWN_SECONDS, /*nullptr*/ _LG_Particles_Follow);
 	}
 }
