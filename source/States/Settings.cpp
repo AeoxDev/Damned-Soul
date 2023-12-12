@@ -166,8 +166,8 @@ void SettingsState::SetupButtons()
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
+			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f;
+			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right / 2.0f;
 
 			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 

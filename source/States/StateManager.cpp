@@ -300,7 +300,8 @@ void StateManager::Update()
 	ResetInput();
 	GetInput();
 	UIComponent* mouse = registry.GetComponent<UIComponent>(stateManager.cursor);
-	mouse->m_BaseImage.baseUI.SetPosition(mouseX - 1, mouseY - 1);
+	mouse->m_BaseImage.baseUI.SetPosition((int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)) - 1, (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) - 1);
+
 	
 	if (mouseX != previousMouseX || mouseY != previousMouseY)
 	{
