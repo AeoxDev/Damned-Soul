@@ -399,37 +399,37 @@ void PlayerAttack(EntityID& entity, const int& index)
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
 		//Attack hitbox 2.0, uses 6 points to create a schweird rectangle
-		//Point 0: Bottom right
-		corners.cornersX[0] = 0.0f;
-		corners.cornersZ[0] = 0.0f;
-		//Point 1: Bottom middle
-		corners.cornersX[1] = -0.5f;
-		corners.cornersZ[1] = -0.5f;
-		//Point 2: Bottom left
-		corners.cornersX[2] = -1.0f;
-		corners.cornersZ[2] = -0.8f;
-		//Point 3: Top left
-		corners.cornersX[3] = -0.9f;
-		corners.cornersZ[3] = -1.5f;
-		//Point 4: Top middle
-		corners.cornersX[4] = -0.4f;
-		corners.cornersZ[4] = -1.2f;
-		//Point 5: Top right
-		corners.cornersX[5] =  0.3f;
-		corners.cornersZ[5] = -0.8f;
+		//Point 0: Right
+		corners.cornersX[0] = -2.0f;
+		corners.cornersZ[0] = -0.2f;//-0.25f;
+		//Point 1: 
+		corners.cornersX[1] = -1.2f;
+		corners.cornersZ[1] = -2.0f;//-0.25f;
+		//Point 2: 
+		corners.cornersX[2] = -0.4f;//0.83f;
+		corners.cornersZ[2] = -2.5f;//-0.8f;
+		//Point 3: 
+		corners.cornersX[3] =  0.4f;//0.16f;
+		corners.cornersZ[3] = -2.5f;//-1.2f;
+		//Point 4: 
+		corners.cornersX[4] =  1.2f; // -0.5f;
+		corners.cornersZ[4] = -2.0f;//-1.2f;
+		//Point 5: Left
+		corners.cornersX[5] =  2.0f;
+		corners.cornersZ[5] = -0.2f;//-0.25f;
 
 
 		// Counter clockwise
 		// X
-		corners.cornersX[0] = -width;
-		corners.cornersX[1] = width;
-		corners.cornersX[2] = 2.0f * width;
-		corners.cornersX[3] = -2.0f * width;
-		// Z
-		corners.cornersZ[0] = -2.f * depth;
-		corners.cornersZ[1] = -2.f * depth;
-		corners.cornersZ[2] = -0.5f;
-		corners.cornersZ[3] = -0.5f;
+		//corners.cornersX[0] = -width;
+		//corners.cornersX[1] = width;
+		//corners.cornersX[2] = 2.0f * width;
+		//corners.cornersX[3] = -2.0f * width;
+		//// Z
+		//corners.cornersZ[0] = -2.f * depth;
+		//corners.cornersZ[1] = -2.f * depth;
+		//corners.cornersZ[2] = -0.5f;
+		//corners.cornersZ[3] = -0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
 	}
