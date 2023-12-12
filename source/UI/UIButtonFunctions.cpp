@@ -362,13 +362,13 @@ void UIFunctions::Settings::SwitchTimer(void* args, int a)
 
 			if (timer->pos == 0)
 			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
-				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.65f));
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
+				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
 			}
 			else
 			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
-				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.8f, 0.50f));
+				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
+				uiElement->m_BaseImage.baseUI.SetPosition(DSFLOAT2(0.82f, 0.70f));
 			}
 		}
 		else

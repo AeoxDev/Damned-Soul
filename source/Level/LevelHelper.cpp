@@ -1608,7 +1608,7 @@ void SetupEnemyCounter()
 {
 	EntityID counterEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(counterEntity);
-	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
+	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.82f, 0.85f));
 
 	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
 }
@@ -1617,7 +1617,7 @@ void SetupFPSCounter()
 {
 	EntityID fpsEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(fpsEntity);
-	uiElement->Setup("ButtonSmall", "FPS: 0", DSFLOAT2(0.8f, 0.65f));
+	uiElement->Setup("ButtonSmall", "FPS: 0", DSFLOAT2(0.82f, 0.55f));
 
 	if (!GetVisualFPS())
 	{
@@ -1632,7 +1632,7 @@ void SetupTimer()
 {
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.65f));
+	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.82f, 0.70f));
 
 	if (!GetVisualTimer())
 	{

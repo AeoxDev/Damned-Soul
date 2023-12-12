@@ -108,12 +108,12 @@ void SettingsState::SetupButtons()
 
 		const float fontsizes[amount] =
 		{
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
 			{ 17.0f },
 			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 16.0f },
+			{ 16.0f },
 			{ 20.0f }
 		};
 
