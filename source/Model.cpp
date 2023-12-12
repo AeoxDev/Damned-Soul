@@ -351,20 +351,20 @@ void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uin
 			else if (i == 39) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//39 ToeL_Joint
 			else if (i == 40) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i]; }	//40 ToeR_Joint
 			
-			else if (i == 20)
+			else if (i == 20 || i == 0) // blend hip animation
 			{
 				copyVert = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
-				copyNorm = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
+				copyNorm = (frame.normal[i] * 0.2f) + (frame2.normal[i] * 0.8f);
 			}
-			else if (i == 27)
+			else if (i == 27) // blend spine1 animation
 			{
 				copyVert = (frame.vertex[i] * 0.5f) + (frame2.vertex[i] * 0.5f);
-				copyNorm = (frame.vertex[i] * 0.5f) + (frame2.vertex[i] * 0.5f);
+				copyNorm = (frame.normal[i] * 0.5f) + (frame2.normal[i] * 0.5f);
 			}
-			else if (i == 28)
+			else if (i == 28) // blend spine2 animation
 			{
 				copyVert = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
-				copyNorm = (frame.vertex[i] * 0.2f) + (frame2.vertex[i] * 0.8f);
+				copyNorm = (frame.normal[i] * 0.2f) + (frame2.normal[i] * 0.8f);
 			}
 			//Upper Body
 			else
