@@ -340,6 +340,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV4Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV4Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV4Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		{
 			//Add static hazards here
 			EntityID hazard = registry.CreateEntity();
@@ -358,6 +359,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		gateModel = registry.AddComponent<ModelBonelessComponent>(gate, LoadModel("LV5Gate.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(hitbox, LoadModel("LV5Hitbox.mdl"));
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV5Nav.mdl"));
+		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
 		SetDirectionLight(1.f, 0.7f, 0.7f, -1.6f, -3.0f, 1.0f);
 		{
 			//Add static hazards here
