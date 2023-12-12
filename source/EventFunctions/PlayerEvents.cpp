@@ -381,8 +381,6 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		anim->upper.aAnimIdx = 0;
 
 	
-	
-
 	if (!player->isMoving)
 	{
 		anim->lower.aAnim = anim->upper.aAnim;
