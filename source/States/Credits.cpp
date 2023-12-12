@@ -123,7 +123,7 @@ void Credits::SetupText()
 			for (int j = 0; j < 5; j++)
 			{
 				uiElement->AddText(TAnames[j], uiElement->m_BaseImage.baseUI.GetBounds(), 
-					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1))}, DSFLOAT2(1.0f, 1.0f), 20.0f, 
+					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 2))}, DSFLOAT2(1.0f, 1.0f), 20.0f, 
 					DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			}
 			break;
@@ -132,7 +132,7 @@ void Credits::SetupText()
 			for (int j = 0; j < 4; j++)
 			{
 				uiElement->AddText(CIVnames[j], uiElement->m_BaseImage.baseUI.GetBounds(),
-					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1)) }, DSFLOAT2(1.0f, 1.0f), 20.0f,
+					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 2)) }, DSFLOAT2(1.0f, 1.0f), 20.0f,
 					DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			}
 			break;
@@ -141,7 +141,7 @@ void Credits::SetupText()
 			for (int j = 0; j < 5; j++)
 			{
 				uiElement->AddText(SPnames[j], uiElement->m_BaseImage.baseUI.GetBounds(),
-					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 1)) }, DSFLOAT2(1.0f, 1.0f), 20.0f,
+					{ uiElement->m_BaseImage.baseUI.GetPosition().x, uiElement->m_BaseImage.baseUI.GetPosition().y - (0.1f * (j + 2)) }, DSFLOAT2(1.0f, 1.0f), 20.0f,
 					DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			}
 			break;
