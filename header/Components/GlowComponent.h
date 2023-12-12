@@ -14,4 +14,11 @@ struct GlowComponent
 		m_g = g;
 		m_b = b;
 	}
+
+	GlowComponent(float rgb[3])
+	{
+		m_r = rgb[0];
+		m_g = rgb[1];
+		m_b = rgb[2];
+	}
 }; 
