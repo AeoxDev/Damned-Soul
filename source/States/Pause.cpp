@@ -85,9 +85,9 @@ void PauseState::SetupButtons()
 		auto controls = registry.CreateEntity(ENT_PERSIST_PAUSE);
 
 		UIComponent* uiControls = registry.AddComponent<UIComponent>(controls);
-		UIPauseButtonComponent* pause2 = registry.AddComponent<UIPauseButtonComponent>(controls);
+		UIPauseButtonComponent* pause02 = registry.AddComponent<UIPauseButtonComponent>(controls);
 
-		uiControls->Setup("Controls", " ", { 0.225f, 0.0f });
+		uiControls->Setup("Controls80", " ", { 0.235f, 0.0f });
 
 		const char texts[pauseAmount][32] =
 		{
@@ -98,9 +98,9 @@ void PauseState::SetupButtons()
 
 		const DSFLOAT2 positions[pauseAmount] =
 		{
-			{ -0.285f, 0.225f },
-			{ -0.285f, 0.0f },
-			{ -0.285f, -0.225f }
+			{ -0.235f, 0.18f },
+			{ -0.235f, 0.f },
+			{ -0.235f, -0.18f }
 
 		};
 
@@ -170,11 +170,11 @@ void PauseState::SetupButtons()
 
 		const DSFLOAT2 positions[settingsAmount] =
 		{
-			{ -0.3f, 0.225f },
-			{ -0.3f, 0.075f },
-			{ -0.3f, -0.075f },
-			{ -0.3f, -0.225f },
-			{ 0.3f, 0.225f },
+			{ -0.25f, 0.225f },
+			{ -0.25f, 0.075f },
+			{ -0.25f, -0.075f },
+			{ -0.25f, -0.225f },
+			{ 0.25f, 0.225f },
 			{ 0.78f, -0.85f }
 		};
 
@@ -210,11 +210,11 @@ void PauseState::SetupButtons()
 
 		const float fontsizes[settingsAmount] =
 		{
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
 			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 16.0f },
 			{ 20.0f }
 		};
 

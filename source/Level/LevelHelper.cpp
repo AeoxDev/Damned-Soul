@@ -837,7 +837,6 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			//NICLAS WAS HERE
 			attackSpeed = 2.0f;
-			//attackSpeed = 0.5f;
 		}
 		else if (eType == EnemyType::imp || eType == EnemyType::empoweredImp)
 		{
@@ -1595,7 +1594,7 @@ void SetupEnemyCounter()
 {
 	EntityID counterEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(counterEntity);
-	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
+	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.82f, 0.85f));
 
 	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
 }
@@ -1606,7 +1605,7 @@ void SetupTimer()
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
 	UIGameTimeComponent* timer = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
-	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.65f));
+	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.82f, 0.70f));
 
 	if (!GetVisualTimer())
 	{
