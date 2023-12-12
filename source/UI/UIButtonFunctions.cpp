@@ -898,7 +898,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
 		func(&priceCalc);
 
-	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || player->weaponTier >= 4)
+	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || player->weaponTier >= 3)
 		return;
 
 	int soundToPlay = rand() % 2;
@@ -963,12 +963,12 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	ML_String axeFile = "";
 	ML_String axeFileHover = "";
 
-	if (player->weaponTier == 1)
+	if (player->weaponTier == 0)
 	{
 		axeFile = "Shop/Axe1";
 		axeFileHover = "Shop/Axe1Hover";
 	}
-	else if (player->weaponTier == 2)
+	else if (player->weaponTier == 1)
 	{
 		axeFile = "Shop/Axe2";
 		axeFileHover = "Shop/Axe2Hover";
@@ -986,6 +986,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 
 	souls->spentThisShop += priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE);
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
+
 	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
 	SoundComponent* upgradeSound = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 	if (upgradeSound) upgradeSound->Play(Shop_Upgrade, Channel_Base);
@@ -994,7 +995,7 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 	if (player->weaponTier < 4)
 	{
 		// 10, 15, 20
-		uiWeapon->m_price = 5 * (player->weaponTier + 1);
+		uiWeapon->m_price = 5 * (player->weaponTier + 2);
 
 		ReleaseModel(weapon->model);
 		char modelName[64] = "";

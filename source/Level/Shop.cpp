@@ -196,12 +196,12 @@ void CreateSingleWindows()
 	ML_String axeFileHover = "";
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 
-	if (player->weaponTier == 1)
+	if (player->weaponTier == 0)
 	{
 		axeFile = "Shop/Axe1";
 		axeFileHover = "Shop/Axe1Hover";
 	}
-	else if (player->weaponTier == 2)
+	else if (player->weaponTier == 1)
 	{
 		axeFile = "Shop/Axe2";
 		axeFileHover = "Shop/Axe2Hover";
@@ -211,8 +211,6 @@ void CreateSingleWindows()
 		axeFile = "Shop/Axe3";
 		axeFileHover = "Shop/Axe3Hover";
 	}
-
-	uint8_t wep = 5 * player->weaponTier;
 
 	ML_String filenames[SHOP_SINGLE_WINDOWS] =
 	{
@@ -263,7 +261,7 @@ void CreateSingleWindows()
 	{
 		heal,
 		4,
-		5 * (player->weaponTier + 1),
+		5 * (player->weaponTier + 2),
 		0,
 	};
 
@@ -369,7 +367,7 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("Shop/ImpSign", "", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 25.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("Shop/ImpSign", "", "Lil\' Devil\'s Shoppe", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 

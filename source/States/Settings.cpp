@@ -51,7 +51,7 @@ void SettingsState::SetupUI()
 	auto settingsPanel = registry.CreateEntity();
 	UIComponent* uiElementP = registry.AddComponent<UIComponent>(settingsPanel);
 	uiElementP->Setup("SettingsPanel", "", "Settings", { 0.0f, 0.0f }, { 1.0f, 1.0f }, 30.0f);
-	uiElementP->m_BaseImage.baseUI.SetPosition({ 0.0f, 0.5f });
+	uiElementP->m_BaseText.baseUI.SetPosition({ 0.0f, 0.5f });
 
 	const int amount = 6;
 	const int sliderAmount = 5;

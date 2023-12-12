@@ -198,7 +198,7 @@ public:
 	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
-	int weaponTier = 1;
+	int weaponTier = 0;
 	bool portalCreated = false;
 	bool isDashing = false;
 	bool healFreebie = true;
