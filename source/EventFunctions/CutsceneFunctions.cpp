@@ -127,11 +127,27 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		
 		//Loop the walk animation
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
-		animation->aAnim = ANIMATION_WALK;
-		animation->aAnimIdx = 0;
-		animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
-		ANIM_BRANCHLESS(animation);
-		
+		BlendAnimationComponent* bAnimation = registry.GetComponent<BlendAnimationComponent>(entity);
+		if (animation != nullptr)
+		{
+			animation->aAnim = ANIMATION_WALK;
+			animation->aAnimIdx = 0;
+			animation->aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS(animation);
+		}
+		else if (bAnimation != nullptr)
+		{
+			bAnimation->lower.aAnim = ANIMATION_WALK;
+			bAnimation->lower.aAnimIdx = 0;
+			bAnimation->lower.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+
+			bAnimation->upper.aAnim = ANIMATION_WALK;
+			bAnimation->upper.aAnimIdx = 0;
+			bAnimation->upper.aAnimTime = GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+
+			ANIM_BRANCHLESS((&(bAnimation->lower)));
+			ANIM_BRANCHLESS((&(bAnimation->upper)));
+		}
 	}
 	if (cutscene->mode & Cutscene_Character_Fall)
 	{
@@ -182,11 +198,18 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		}
 
 		//Loop the walk animation
-		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
-		animation->aAnim = ANIMATION_IDLE;
-		animation->aAnimIdx = 1;
-		animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
-		ANIM_BRANCHLESS(animation);
+
+		BlendAnimationComponent* animation = registry.GetComponent<BlendAnimationComponent>(entity);
+		animation->lower.aAnim = ANIMATION_IDLE;
+		animation->lower.aAnimIdx = 1;
+		animation->lower.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS((&(animation->lower)));
+
+		animation->upper.aAnim = ANIMATION_IDLE;
+		animation->upper.aAnimIdx = 1;
+		animation->upper.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+		ANIM_BRANCHLESS((& (animation->upper)));
+
 	}
 	if (cutscene->mode & Cutscene_Character_Idle)
 	{
@@ -229,12 +252,25 @@ void CutsceneTransition(EntityID& entity, const int& index)
 
 		//Loop the idle animation
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		BlendAnimationComponent* bAnimation = registry.GetComponent<BlendAnimationComponent>(entity);
 		if (animation != nullptr)
 		{
 			animation->aAnim = ANIMATION_IDLE;
 			animation->aAnimIdx = 0;
 			animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
+		}
+		else if (bAnimation != nullptr)
+		{
+			bAnimation->lower.aAnim = ANIMATION_IDLE;
+			bAnimation->lower.aAnimIdx = 0;
+			bAnimation->lower.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->lower)));
+
+			bAnimation->upper.aAnim = ANIMATION_IDLE;
+			bAnimation->upper.aAnimIdx = 0;
+			bAnimation->upper.aAnimTime = 0.01f + GetDeltaTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->upper)));
 		}
 		
 	}
@@ -279,12 +315,25 @@ void CutsceneTransition(EntityID& entity, const int& index)
 
 		//Loop the attack animation
 		AnimationComponent* animation = registry.GetComponent<AnimationComponent>(entity);
+		BlendAnimationComponent* bAnimation = registry.GetComponent<BlendAnimationComponent>(entity);
 		if (animation != nullptr)
 		{
 			animation->aAnim = ANIMATION_ATTACK;
 			animation->aAnimIdx = 0;
 			animation->aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
 			ANIM_BRANCHLESS(animation);
+		}
+		else if (bAnimation != nullptr)
+		{
+			bAnimation->lower.aAnim = ANIMATION_ATTACK;
+			bAnimation->lower.aAnimIdx = 0;
+			bAnimation->lower.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->lower)));
+
+			bAnimation->upper.aAnim = ANIMATION_ATTACK;
+			bAnimation->upper.aAnimIdx = 0;
+			bAnimation->upper.aAnimTime = 0.01f + GetFrameTime() + GetTimedEventElapsedTime(entity, index);
+			ANIM_BRANCHLESS((&(bAnimation->upper)));
 		}
 		
 	}

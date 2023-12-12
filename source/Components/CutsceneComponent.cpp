@@ -1131,10 +1131,16 @@ void CutscenePlayerFallDown(EntityID& entity, const int& index)
 	EntityID player = stateManager.player;
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(player);
 	CutsceneComponent* downwardsFall = registry.AddComponent<CutsceneComponent>(player);
-	AnimationComponent* anim = registry.AddComponent<AnimationComponent>(player);
-	anim->aAnimIdx = 1;
-	anim->aAnim = ANIMATION_IDLE;
-	anim->aAnimTime = 0.5f;
+	//AnimationComponent* anim = registry.AddComponent<AnimationComponent>(player);
+	BlendAnimationComponent* anim = registry.AddComponent<BlendAnimationComponent>(player);
+	anim->lower.aAnimIdx = 1;
+	anim->lower.aAnim = ANIMATION_IDLE;
+	anim->lower.aAnimTime = 0.5f;
+
+	anim->upper.aAnimIdx = 1;
+	anim->upper.aAnim = ANIMATION_IDLE;
+	anim->upper.aAnimTime = 0.5f;
+
 	downwardsFall->mode = (CutsceneMode)(CutsceneMode::Transition_Position | CutsceneMode::Cutscene_Character_Fall | CutsceneMode::Cutscene_Accelerating);
 	CutsceneSetPosition(entity, transform->positionX, transform->positionY + 1.0f, transform->positionZ, transform->positionX + transform->facingX* jumpForwardDist, transform->positionY - jumpDepth, transform->positionZ + transform->facingZ * jumpForwardDist);
 	AddTimedEventComponentStartContinuousEnd(entity, 0.0f, BeginPortalCutscene, CutsceneTransition, endTime, EndCutscene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 2);

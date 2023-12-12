@@ -19,7 +19,12 @@ VS_OUT main(VS_INPUTS_SKELETON pos)
  //   sTrans[3] = skeleMath[pos.bIdx[3]] * pos.bWeight[3];
 	//matrix skeletonTransform = sTrans[0] + sTrans[1] + sTrans[2] + sTrans[3];
 
-	retval.position = pos.base.position;
+    //skeletonTransform = skeletonTransform * 5.0f;
+    //matrix smolIdentity = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+    //skeletonTransform += smolIdentity * -4.f;
+    
+    
+    retval.position = pos.base.position;
 	
     retval.normal = mul(normalize(pos.base.normal), skeletonTransformNormal);
     retval.normal = mul(pos.base.normal, worldNormal);
