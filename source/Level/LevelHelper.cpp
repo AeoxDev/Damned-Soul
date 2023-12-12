@@ -1502,7 +1502,7 @@ void SetScoreboardUI()
 {
 	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(scoreBoard);
-	uiElement->Setup("SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	uiElement->Setup("SettingsPanel", "", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
 	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
 
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(scoreBoard);
@@ -1601,7 +1601,7 @@ void SetupEnemyCounter()
 {
 	EntityID counterEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(counterEntity);
-	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
+	uiElement->Setup("ButtonSmallHoverBloody", "", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
 
 	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
 }
@@ -1612,7 +1612,7 @@ void SetupTimer()
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
 	UIGameTimeComponent* timer = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
-	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.65f));
+	uiElement->Setup("ButtonSmall", "", "Time: 0", DSFLOAT2(0.8f, 0.65f));
 
 	if (!GetVisualTimer())
 	{

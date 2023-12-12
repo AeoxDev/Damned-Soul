@@ -74,12 +74,6 @@ bool UIShopSystem::Update()
 			uiElement->SetAllVisability(false);
 		}
 
-		for (auto entity : View<UIShopRerollComponent>(registry))
-		{
-			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			uiElement->SetAllVisability(false);
-		}
-
 		for (auto entity : View<UIShopButtonComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
@@ -131,7 +125,6 @@ bool UIShopSystem::Update()
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-			uiElement->m_BaseImage.baseUI.SetVisibility(true);
 
 			for (uint32_t i = 0; i < relicWindow->shopRelics.size(); i++)
 			{
@@ -169,19 +162,12 @@ bool UIShopSystem::Update()
 
 		}
 
-		for (auto entity : View<UIShopRerollComponent>(registry))
-		{
-			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			uiElement->SetAllVisability(true);
-		}
-
 		for (auto entity : View<UIShopUpgradeComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
-			UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(entity);
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-			if (player->weaponTier == 3)
+			if (player->weaponTier >= 4)
 			{
 				button->m_description = "Fully Upgraded";
 				button->m_price = 0;
@@ -194,24 +180,32 @@ bool UIShopSystem::Update()
 			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
 			uiElement->SetAllVisability(true);
 
-			if (button->m_name == "Heal" && button->m_price > 0)
+			if (button->m_name == "Heal")
 			{
-				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::HEAL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				if (button->m_price > 0)
+					uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::HEAL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				else
+					uiElement->m_Images[1].baseUI.SetVisibility(false);
+				uiElement->m_BaseImage.baseUI.SetVisibility(false);
+				
 			}
 			else if (button->m_name == "Reroll")
 			{
 				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::REROLL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				uiElement->m_BaseImage.baseUI.SetVisibility(false);
 			}
 			else if (button->m_name == "Upgrade Weapon")
 			{
 				if (button->m_price == 0)
 				{
-					uiElement->m_Texts[0].SetText("Fully Upgraded", uiElement->m_Images[0].baseUI.GetBounds());
+					uiElement->m_Texts[0].SetText("Fully Upgraded", uiElement->m_BaseImage.baseUI.GetBounds());
+					uiElement->m_Images[1].baseUI.SetVisibility(false);
 				}
 				else
 				{
 					uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::UPGRADE)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
 				}
+				uiElement->m_BaseImage.baseUI.SetVisibility(false);
 			}
 		}
 

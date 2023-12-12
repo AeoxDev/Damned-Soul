@@ -7,9 +7,7 @@ struct SettingsState
 
 	void Input();
 
-	void SetupButtons();
-	void SetupImages();
-	void SetupText();
+	void SetupUI();
 
 	void Unload();
 };

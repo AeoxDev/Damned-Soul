@@ -25,20 +25,19 @@ bool OnClickSystem::Update()
 
 		if (mouseButtonPressed[MouseButton::left] == pressed && index > -1)
 		{
-			if (index == 0) //baseimage intersect
+			int imageIndex = index;
+			if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
+				imageIndex = index * 3;
+
+			//skip if interactable isnt visible or has no hover function
+			if (uiElement->m_Images.size() > 0)
 			{
-				if (!uiElement->m_BaseImage.baseUI.GetVisibility())
+				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility() || comp->onClickFunctionsPressed[index] == UIFunctions::OnClick::None)
 					continue;
 			}
-			else if (index > 0) //images intersect, higher number = later added image
+			else
 			{
-				int imageIndex = index;
-				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
-					imageIndex = index * 3;
-				else
-					imageIndex -= 1;
-				
-				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility())
+				if (!uiElement->m_BaseImage.baseUI.GetVisibility() || comp->onClickFunctionsPressed[index] == UIFunctions::OnClick::None)
 					continue;
 			}
 
@@ -66,7 +65,17 @@ bool OnClickSystem::Update()
 				continue;
 			}
 
-			if (index == 0) //baseimage intersect
+			int imageIndex = index;
+			if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
+				imageIndex = index * 3;
+
+			//skip if interactable isnt visible or has no hover function
+			if (uiElement->m_Images.size() > 0)
+			{
+				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility() || comp->onClickFunctionsReleased[index] == UIFunctions::OnClick::None)
+					continue;
+			}
+			else
 			{
 				for (auto slider : View<UISettingsSliderComponent>(registry))
 				{
@@ -74,18 +83,7 @@ bool OnClickSystem::Update()
 					onClick->onClickFunctionsReleased[0](&slider, 0);
 				}
 
-				if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-					continue;
-			}
-			else if (index > 0) //images intersect, higher number = later added image
-			{
-				int imageIndex = index;
-				if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
-					imageIndex = index * 3;
-				else
-					imageIndex -= 1;
-
-				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility())
+				if (!uiElement->m_BaseImage.baseUI.GetVisibility() || comp->onClickFunctionsReleased[index] == UIFunctions::OnClick::None)
 					continue;
 			}
 

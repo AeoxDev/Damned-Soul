@@ -17,9 +17,7 @@
 void PauseState::Setup()
 {
 	RedrawUI();
-	SetupImages();
-	SetupButtons();
-	SetupText();
+	SetupUI();
 
 	if (Camera::InCutscene() > 0)
 	{
@@ -61,9 +59,8 @@ void PauseState::Input()
 	}
 }
 
-void PauseState::SetupButtons()
+void PauseState::SetupUI()
 {
-
 	const int pauseAmount = 3;
 	const int settingsAmount = 6;
 	const int sliderAmount = 5;
@@ -76,9 +73,9 @@ void PauseState::SetupButtons()
 		UIPauseButtonComponent* pause1 = registry.AddComponent<UIPauseButtonComponent>(book);
 
 		if (stateManager.activeLevel > 10)
-			uiBook->Setup("BookFrozen60%", "Game Paused", { 0.0f, 0.0f });
+			uiBook->Setup("BookFrozen60%", "", "Game Paused", { 0.0f, 0.0f });
 		else
-			uiBook->Setup("BookNormal60%", "Game Paused", { 0.0f, 0.0f });
+			uiBook->Setup("BookNormal60%", "", "Game Paused", { 0.0f, 0.0f });
 
 		uiBook->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.4f));
 
@@ -87,7 +84,7 @@ void PauseState::SetupButtons()
 		UIComponent* uiControls = registry.AddComponent<UIComponent>(controls);
 		UIPauseButtonComponent* pause2 = registry.AddComponent<UIPauseButtonComponent>(controls);
 
-		uiControls->Setup("Controls", " ", { 0.225f, 0.0f });
+		uiControls->Setup("Controls", "", "", { 0.225f, 0.0f });
 
 		const char texts[pauseAmount][32] =
 		{
@@ -131,7 +128,7 @@ void PauseState::SetupButtons()
 			
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseButtonComponent* pauseSettings = registry.AddComponent<UIPauseButtonComponent>(button);
-			uiElement->Setup("ButtonMedium", texts[i], positions[i], scales[i]);
+			uiElement->Setup("ButtonMedium", "ButtonMediumHover", texts[i], positions[i], scales[i]);
 			
 			
 			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
@@ -153,7 +150,7 @@ void PauseState::SetupButtons()
 
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(panel);
 		UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(panel);
-		uiElement->Setup("SettingsPanel", "Settings", { 0.0f, 0.0f }, { 1.0f, 1.0f }, 30.0f);
+		uiElement->Setup("SettingsPanel", "", "Settings", { 0.0f, 0.0f }, { 1.0f, 1.0f }, 30.0f);
 		uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
 
 		uiElement->SetAllVisability(false);
@@ -208,6 +205,16 @@ void PauseState::SetupButtons()
 			"ButtonMedium"
 		};
 
+		const char filenamesHover[settingsAmount][32] =
+		{
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonMediumHover"
+		};
+
 		const float fontsizes[settingsAmount] =
 		{
 			{ 18.0f },
@@ -225,7 +232,7 @@ void PauseState::SetupButtons()
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
 			
-			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			uiElement->Setup(filenames[i], filenamesHover[i], texts[i], positions[i], scales[i], fontsizes[i]);
 			uiElement->SetAllVisability(false);
 
 		
@@ -277,7 +284,7 @@ void PauseState::SetupButtons()
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
 
-			uiElement->Setup("SliderBackground2", texts[i], positions[i]);
+			uiElement->Setup("SliderBackground2", "", texts[i], positions[i]);
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
@@ -330,29 +337,18 @@ void PauseState::SetupButtons()
 		}
 	}
 
-}
-
-void PauseState::SetupImages()
-{
-	
-
-}
-
-void PauseState::SetupText()
-{
 	auto pause = registry.CreateEntity(ENT_PERSIST_PAUSE);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(pause);
-	uiElement->Setup("TempShopTitle", "", { 0.0f, 0.6f });
-	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	UIComponent* uiElementP = registry.AddComponent<UIComponent>(pause);
+	uiElementP->Setup("TempShopTitle", "", "", { 0.0f, -0.75f });
+	uiElementP->m_BaseImage.baseUI.SetVisibility(false);
 
-	uiElement->AddImage("TempRelicHolder", { 1.5f, 1.5f }, { 1.5f, 1.5f }, false);
-	uiElement->m_Images[0].baseUI.SetVisibility(false);
+	uiElementP->AddImage("PanelSmall", uiElementP->m_BaseImage.baseUI.GetPosition(), { 1.5f, 1.5f }, false);
+	uiElementP->m_Images[0].baseUI.SetVisibility(false);
 
-	uiElement->AddText(" ", uiElement->m_Images[0].baseUI.GetBounds(), { 1.5f, 1.5f });
-	uiElement->m_Texts[0].baseUI.SetVisibility(false);
+	uiElementP->AddText(" ", uiElementP->m_Images[0].baseUI.GetBounds(), uiElementP->m_BaseImage.baseUI.GetPosition());
+	uiElementP->m_Texts[0].baseUI.SetVisibility(false);
 
 	UIPauseRelicTextComponent* relicText = registry.AddComponent<UIPauseRelicTextComponent>(pause);
-
 }
 
 void PauseState::Unload(int unloadPersistent)

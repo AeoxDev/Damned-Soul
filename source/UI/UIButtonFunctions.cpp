@@ -388,7 +388,7 @@ void UIFunctions::Credits::NextPage(void* args, int a)
 		{"Joaquin Lindkvist", "Joel Berg"},
 		{"Mattias Nordin", "Niclas Andersson"},
 		{"Rasmus Fridlund", "Zannie Karlsson"},
-		{"Special Thanks", "And You"}
+		{"Fiverr", "Blekinge Institute of Technology"}
 	};
 
 	stateManager.creditsIndex++;
@@ -448,7 +448,7 @@ void UIFunctions::Credits::PreviousPage(void* args, int a)
 		{"Joaquin Lindkvist", "Joel Berg"},
 		{"Mattias Nordin", "Niclas Andersson"},
 		{"Rasmus Fridlund", "Zannie Karlsson"},
-		{"Special Thanks", "And You"}
+		{"Fiverr", "Blekinge Institute of Technology"}
 	};
 
 	stateManager.creditsIndex--;
@@ -604,7 +604,7 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 {
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 	UIShopRelicComponent* uiWindow = registry.GetComponent<UIShopRelicComponent>(*(EntityID*)args);
-
+	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 
 	int inverseIndex = 0;
 	int hoverIndecies[2] = { 0, 0 };
@@ -642,6 +642,14 @@ void UIFunctions::OnClick::SelectRelic(void* args, int index)
 
 			continue;
 		}
+
+		RelicInput::OnPriceCalculation priceCalc;
+
+		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
+			func(&priceCalc);
+
+		if (player->GetSouls() < priceCalc.GetCostOf(uiWindow->shopRelics[index]->m_price, RelicInput::OnPriceCalculation::RELIC))
+			return;
 
 		if (uiWindow->shopSelections[index] != shopState::LOCKED && uiWindow->shopSelections[index] != shopState::BOUGHT)
 		{
@@ -880,17 +888,17 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 {
 	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 	UIShopButtonComponent* uiWeapon = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
-	UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
 	ModelSkeletonComponent* weapon = registry.GetComponent<ModelSkeletonComponent>(stateManager.weapon);
+	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 
 	RelicInput::OnPriceCalculation priceCalc;
 
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_PRICE_CALC))
 		func(&priceCalc);
 
-	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || player->weaponTier >= 3)
+	if (player->GetSouls() < priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE) || player->weaponTier >= 4)
 		return;
 
 	int soundToPlay = rand() % 2;
@@ -949,23 +957,50 @@ void UIFunctions::OnClick::UpgradeWeapon(void* args, int index)
 			}
 		}
 	}
-	
-	if (player->weaponTier == 1)
-		uiElement->m_Images[0].SetImage("Axe3");
 
 	player->weaponTier++;
+
+	ML_String axeFile = "";
+	ML_String axeFileHover = "";
+
+	if (player->weaponTier == 1)
+	{
+		axeFile = "Shop/Axe1";
+		axeFileHover = "Shop/Axe1Hover";
+	}
+	else if (player->weaponTier == 2)
+	{
+		axeFile = "Shop/Axe2";
+		axeFileHover = "Shop/Axe2Hover";
+	}
+	else
+	{
+		axeFile = "Shop/Axe3";
+		axeFileHover = "Shop/Axe3Hover";
+
+		uiElement->m_Images[1].baseUI.SetVisibility(false);
+	}
+
+	uiElement->m_Images[0].SetImage(axeFile.c_str(), false);
+	uiElement->m_Images[0].SetHoverImage(axeFileHover.c_str(), false);
+
+	souls->spentThisShop += priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE);
 	player->UpdateSouls(-priceCalc.GetCostOf(uiWeapon->m_price, RelicInput::OnPriceCalculation::UPGRADE));
 	stats->UpdateBaseDamage(0.25f * stats->GetBaseDamage());
-	// 10, 15, 20
-	uiWeapon->m_price = 5 * (player->weaponTier + 1);
 	SoundComponent* upgradeSound = registry.GetComponent<SoundComponent>(*(EntityID*)args);
 	if (upgradeSound) upgradeSound->Play(Shop_Upgrade, Channel_Base);
 
 	// Update axe model
-	ReleaseModel(weapon->model);
-	char modelName[64] = "";
-	sprintf(modelName, "AxeV%d.mdl", player->weaponTier);
-	weapon->model = LoadModel(modelName);
+	if (player->weaponTier < 4)
+	{
+		// 10, 15, 20
+		uiWeapon->m_price = 5 * (player->weaponTier + 1);
+
+		ReleaseModel(weapon->model);
+		char modelName[64] = "";
+		sprintf(modelName, "AxeV%d.mdl", player->weaponTier);
+		weapon->model = LoadModel(modelName);
+	}
 
 	RedrawUI();
 }
@@ -1043,7 +1078,7 @@ void UIFunctions::OnClick::RerollRelic(void* args, int index)
 void UIFunctions::OnClick::HealPlayer(void* args, int index)
 {
 	UIShopButtonComponent* uiHeal = registry.GetComponent<UIShopButtonComponent>(*(EntityID*)args);
-	UIShopHealComponent* uiHeal2 = registry.GetComponent<UIShopHealComponent>(*(EntityID*)args);
+	UIComponent* uiElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 	UIPlayerSoulsComponent* souls = registry.GetComponent<UIPlayerSoulsComponent>(stateManager.player);
 	StatComponent* stats = registry.GetComponent<StatComponent>(stateManager.player);
@@ -1073,6 +1108,8 @@ void UIFunctions::OnClick::HealPlayer(void* args, int index)
 	{
 		uiHeal->m_price = 3;
 		player->healFreebie = false;
+		uiElement->m_Images[1].baseUI.SetVisibility(true);
+		uiElement->m_Texts[0].baseUI.SetPosition({ uiElement->m_Texts[0].baseUI.GetPosition().x + 0.015f, uiElement->m_Texts[0].baseUI.GetPosition().y });
 	}
 }
 
@@ -1085,32 +1122,24 @@ void UIFunctions::OnHover::None(void* args, int index, bool hover)
 void UIFunctions::OnHover::Image(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
-	ML_String fileName = "";
-	ML_String hoverFileName = "";
+
+
 	if (uiElement->m_Images.size() == 0)
 	{
 		if (uiElement->m_BaseImage.baseUI.GetVisibility())
 		{
-			fileName = uiElement->m_BaseImage.m_fileName;
-			hoverFileName = fileName;
-			hoverFileName.append("Hover");
-
 			if (hover)
-				uiElement->m_BaseImage.SetImage(hoverFileName.c_str(), true);
+				uiElement->m_BaseImage.SetImage(uiElement->m_BaseImage.m_hoverFileName.c_str(), true);
 			else
-				uiElement->m_BaseImage.SetImage(fileName.c_str(), true);
+				uiElement->m_BaseImage.SetImage(uiElement->m_BaseImage.m_fileName.c_str(), true);
 		}
 	}
 	else if (uiElement->m_Images[index].baseUI.GetVisibility())
 	{
-		fileName = uiElement->m_Images[index].m_fileName;
-		hoverFileName = fileName;
-		hoverFileName.append("Hover");
-
 		if (hover)
-			uiElement->m_Images[index].SetImage(hoverFileName.c_str(), true);
+			uiElement->m_Images[index].SetImage(uiElement->m_Images[index].m_hoverFileName.c_str(), true);
 		else
-			uiElement->m_Images[index].SetImage(fileName.c_str(), true);
+			uiElement->m_Images[index].SetImage(uiElement->m_Images[index].m_fileName.c_str(), true);
 		
 	}
 }
@@ -1119,9 +1148,6 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
 	UIShopButtonComponent* shopButton = nullptr;
-
-	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-		return;
 
 	UIComponent* uiImpElement = nullptr;
 	UIShopImpComponent* uiImpText = nullptr;
@@ -1196,14 +1222,12 @@ void UIFunctions::OnHover::ShopButton(void* args, int index, bool hover)
 			uiImpElement->m_BaseText.m_textAlignment, uiImpElement->m_BaseText.m_paragraphAlignment);
 
 
-		if (shopButton->m_name != "Upgrade Weapon")
-			UIFunctions::OnHover::Image(args, index, hover);
+		UIFunctions::OnHover::Image(args, index, hover);
 
 	}
 	else
 	{
-		if (shopButton->m_name != "Upgrade Weapon")
-			UIFunctions::OnHover::Image(args, index, hover);
+		UIFunctions::OnHover::Image(args, index, hover);
 	}
 
 }
@@ -1212,9 +1236,6 @@ void UIFunctions::OnHover::ShopRelic(void* args, int index, bool hover)
 {
 	UIComponent* uiElement = (UIComponent*)args;
 	UIShopRelicComponent* relicWindow = nullptr;
-
-	if (!uiElement->m_BaseImage.baseUI.GetVisibility())
-		return;
 
 	UIComponent* uiImpElement = nullptr;
 	UIShopImpComponent* uiImpText = nullptr;
@@ -1331,10 +1352,10 @@ void UIFunctions::OnHover::PlayerRelic(void* args, int index, bool hover)
 		uiPauseText->name = relicWindow->relics[index]->m_relicName;
 		uiPauseText->description = relicWindow->relics[index]->m_description;
 
-		uiPauseElement->m_Images[0].baseUI.SetPosition({ uiElement->m_Images[2].baseUI.GetPosition().x + 0.3f, uiElement->m_Images[2].baseUI.GetPosition().y });
-		uiPauseElement->m_Texts[0].baseUI.SetPosition(uiPauseElement->m_Images[0].baseUI.GetPosition());
+		DSBOUNDS bounds = uiPauseElement->m_Images[0].baseUI.GetBounds();
+		bounds.right *= 0.8;
 
-		uiPauseElement->m_Texts[0].SetText(relicText.c_str(), uiPauseElement->m_BaseText.baseUI.GetBounds());
+		uiPauseElement->m_Texts[0].SetText(relicText.c_str(), bounds);
 
 		if (hover)
 		{

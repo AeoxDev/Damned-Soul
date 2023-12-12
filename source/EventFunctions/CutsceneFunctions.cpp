@@ -167,7 +167,7 @@ void CutsceneTransition(EntityID& entity, const int& index)
 		else
 		{
 			//Smooth rotation towards mouse
-			float mousePosX = -0.13f + ((float)mouseX / (float)sdl.WIDTH);//Down to 0.0f to 1.0f
+			float mousePosX = -0.18f + ((float)mouseX / (float)sdl.WIDTH);//Down to 0.0f to 1.0f
 			mousePosX = (mousePosX - 0.5f) * 2.0f;//From -1.0f to 1.0f;
 			
 			SmoothRotationIgnoreTime(transform, mousePosX, -0.33f, 1.0f);
