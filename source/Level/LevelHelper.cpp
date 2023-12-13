@@ -11,6 +11,8 @@
 #include "SDLHandler.h"
 #include "DeltaTime.h"
 
+#include "States\StateManager.h"
+
 #include "UIComponents.h"
 #include "UIRenderer.h"
 
@@ -288,7 +290,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	
 	float lavaGlowRGB[3] = { 0.9f, 0.3f, 0.0f };
 	float acidGlowRGB[3] = { 0.8f, 0.9f, 0.0f };
-	float iceStageGlowRGB[3] = { 0.4f, 1.0f, 1.0f };
+	float iceStageGlowRGB[3] = { 0.2f, 0.50f, 0.50f };
 	float iceHazardGlowRGB[3] = { 0.7f, 0.6f, 1.0f };
 	float portalGlowRGB[3] = { 0.6f, 0.9f, 0.6f };
 
@@ -506,7 +508,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
 		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV9Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(0.55f, 0.55f, 0.60f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.45f, 0.45f, 0.50f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, iceStageGlowRGB);	// Ice glow.
@@ -964,6 +966,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
 
+	//Rasmus was here, lower frozen eye so it's easier to see where to hit
+	if (eType == frozenEye) positionY = -8;
+
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
@@ -1152,22 +1157,31 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
-		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
-		registry.AddComponent<GlowComponent>(entity, .0f, .05f, .15f);
+		registry.AddComponent<GlowComponent>(entity, 1.f, 1.f, 0.f);
 
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
-		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
-		hazardTransform->positionX = transform.positionX;
-		hazardTransform->positionY = 0.2f;
-		hazardTransform->positionZ = transform.positionZ;
-		hazardTransform->scaleX = 1.f;
-		hazardTransform->scaleY = 1.0f;
-		hazardTransform->scaleZ = 1.f;
-		hazardTransform->facingX = 0.0000f;
-		hazardTransform->facingZ = 0.0000f;
-		hazardTransform->facingY = 0.00001f;
+		//Rasmus was here, made it so fx doesn't spawn on frozen enemies on lv 8, and shortened the time the fx plays
+		if (stateManager.activeLevel != 15)
+		{
+			EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
+			registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
+			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
+			hazardTransform->positionX = transform.positionX;
 
-		AddTimedEventComponentStart(particlesVFX, 4.f, BossSpawnwaveEnd);
+			//Rasmus was here, edited height of individual types of frozen enemies
+			if (eType == frozenEye) hazardTransform->positionY = -3;
+			else if (eType == frozenHellhound) hazardTransform->positionY = -2;
+			else hazardTransform->positionY = 0.2f;
+
+			hazardTransform->positionZ = transform.positionZ;
+			hazardTransform->scaleX = 0.5f;
+			hazardTransform->scaleY = 0.5f;
+			hazardTransform->scaleZ = 0.5f;
+			hazardTransform->facingX = 0.0000f;
+			hazardTransform->facingZ = 0.0000f;
+			hazardTransform->facingY = 0.00001f;
+
+			AddTimedEventComponentStart(particlesVFX, 1.f, BossSpawnwaveEnd);
+		}
 
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
@@ -1209,7 +1223,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
+		SetupEnemyCollisionBox(entity, 2.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
 			behev->type = EnemyType::frozenHellhound;

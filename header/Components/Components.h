@@ -15,6 +15,8 @@
 #include "TransformComponent.h"
 #include "FollowerComponent.h"
 #include "MouseComponent.h"
+#include "ParentComponent.h"
+#include "ParentControlComponent.h"
 
 // Physics Components
 #include "GeometryIndependentComponent.h"

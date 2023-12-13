@@ -620,6 +620,8 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\KnockBackComponent.h" />
     <ClInclude Include="header\Components\LightComponent.h" />
     <ClInclude Include="header\Components\MouseComponent.h" />
+    <ClInclude Include="header\Components\ParentComponent.h" />
+    <ClInclude Include="header\Components\ParentControlComponent.h" />
     <ClInclude Include="header\Components\ProjectileComponent.h" />
     <ClInclude Include="header\Components\OnClickComponent.h" />
     <ClInclude Include="header\Components\OnHoverComponent.h" />

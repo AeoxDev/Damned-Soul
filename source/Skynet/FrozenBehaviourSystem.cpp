@@ -23,6 +23,32 @@ bool FrozenBehaviourSystem::Update()
 		enemyStats = registry.GetComponent< StatComponent>(enemyEntity);
 		bool thanosSnap = false;
 		frozenComponent->frozenCounter += GetDeltaTime();
+
+		//Rasmus was here, updating glow color and adding shatter
+		GlowComponent* GC = registry.GetComponent<GlowComponent>(enemyEntity);
+		if (GC)
+		{
+			GC->m_g -= (1 / frozenComponent->frozenTimeAmount) * GetDeltaTime();
+			ShatterComponent* SC = registry.GetComponent<ShatterComponent>(enemyEntity);
+			if (GC->m_g < 0.02f && !SC)
+			{
+				registry.AddComponent<ShatterComponent>(enemyEntity, 5);
+				ModelBonelessComponent* model = nullptr;
+				model = registry.GetComponent<ModelBonelessComponent>(enemyEntity);
+				if (model != nullptr) model->shared.hasOutline = false;
+
+				ModelSkeletonComponent* model2 = nullptr;
+				model2 = registry.GetComponent<ModelSkeletonComponent>(enemyEntity);
+				if (model2 != nullptr) model2->shared.hasOutline = false;
+			}
+			if (GC->m_g < 0.035f && frozenComponent->type == EnemyType::frozenEye)
+			{
+				//translates the eye back up so it looks better when switching from ice to normal
+				float timeWindow = 0.035 * frozenComponent->frozenTimeAmount;
+				float timeLeft = frozenComponent->frozenTimeAmount - frozenComponent->frozenCounter;
+				frozenTransformComponent->positionY = (-8 / timeWindow) * timeLeft;
+			}
+		}
 		
 		if (frozenComponent->frozenCounter >= frozenComponent->frozenTimeAmount)
 		{
@@ -41,6 +67,9 @@ bool FrozenBehaviourSystem::Update()
 				}
 				else if (frozenComponent->type == EnemyType::frozenEye)
 				{
+					//Rasmus was here, making sure y is properly reset after lowering it in LevelHelper.cpp
+					frozenTransformComponent->positionY = 0;
+
 					SetupEnemy(EnemyType::eye, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,
 						6969, 6969.f, 6969.f, 6969.f, 6969.f, 0);
 				}
