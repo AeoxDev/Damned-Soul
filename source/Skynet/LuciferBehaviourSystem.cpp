@@ -563,7 +563,7 @@ bool LuciferBehaviourSystem::Update()
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
 						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 2.0f, 0.f, 0.f, 1.f,
-							10.0f,1.0f,0.0f,//rgb
+							0.0f,2.0f,1.0f,//rgb
 							300, ComputeShaders::PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand
 					}

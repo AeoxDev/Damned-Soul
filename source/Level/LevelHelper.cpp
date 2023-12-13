@@ -288,7 +288,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	
 	float lavaGlowRGB[3] = { 0.9f, 0.3f, 0.0f };
 	float acidGlowRGB[3] = { 0.8f, 0.9f, 0.0f };
-	float iceStageGlowRGB[3] = { 0.4f, 1.0f, 1.0f };
+	float iceStageGlowRGB[3] = { 0.2f, 0.50f, 0.50f };
 	float iceHazardGlowRGB[3] = { 0.7f, 0.6f, 1.0f };
 	float portalGlowRGB[3] = { 0.6f, 0.9f, 0.6f };
 
@@ -506,7 +506,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
 		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV9Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(0.55f, 0.55f, 0.60f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.45f, 0.45f, 0.50f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, iceStageGlowRGB);	// Ice glow.

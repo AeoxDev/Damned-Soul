@@ -17,7 +17,8 @@ enum ComputeShaders
 	ICETHROWER = 11,
 	BOILING = 12,
 	SPARK = 13,
-	NO_MOVEMENT = 14
+	NO_MOVEMENT = 14,
+	NILL = 15
 };
 
 enum VFX_PATTERN
