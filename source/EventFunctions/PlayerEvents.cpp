@@ -422,7 +422,7 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		//Attack hitbox 2.0, uses 6 points to create a schweird rectangle
 		//Point 0: Right
 		corners.cornersX[0] = -2.2f * GetGodModeFactor();
-		corners.cornersZ[0] = -0.2f * GetGodModeFactor();//-0.25f;
+		corners.cornersZ[0] = -0.2f;//-0.25f;
 		//Point 1: 
 		corners.cornersX[1] = -1.2f * GetGodModeFactor();
 		corners.cornersZ[1] = -3.5f * GetGodModeFactor();//-0.25f;
@@ -437,7 +437,7 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		corners.cornersZ[4] = -3.5f * GetGodModeFactor();//-1.2f;
 		//Point 5: Left
 		corners.cornersX[5] =  2.2f * GetGodModeFactor();
-		corners.cornersZ[5] = -0.2f * GetGodModeFactor();//-0.25f;
+		corners.cornersZ[5] = -0.2f;//-0.25f;
 
 
 		// Counter clockwise
