@@ -72,7 +72,7 @@ void _LG_Particles_Begin_Small(EntityID& entity, const int& index)
 void _LG_Particles_Follow(EntityID& entity)
 {
 
-		registry.AddComponent<ParticleComponent>(entity, 0.50f, 1.0f, 1.5f, 0.0f, 1.6f, 0.0f,
+		registry.AddComponent<ParticleComponent>(entity, 0.60f, 1.0f, 1.5f, 0.0f, 1.6f, 0.0f,
 			0.0, 0.7, 3.0,//rgb
 			64, NILL);
 
