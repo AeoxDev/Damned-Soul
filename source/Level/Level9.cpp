@@ -57,18 +57,15 @@ void LoadLevel9()
 	//StageLights
 	EntityID lightholder = registry.CreateEntity();
 	EntityID lightholderTwo = registry.CreateEntity();
-	EntityID lightholderThree = registry.CreateEntity();
 
 	//Light color
 	float redLight = 0.0f;
-	float greenLight = 0.5f;
-	float blueLight = 1.0f;
+	float greenLight = 0.2f;
+	float blueLight = 0.70f;
 
-	CreatePointLight(lightholder, redLight, greenLight, blueLight, -40.0f, 20.0f, 312.0f, 400.0f, 20.0f);
-	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 50.0f, 20.0f, 300.0f, 400.0f, 20.0f);
-	CreatePointLight(lightholderThree, 0.0, 0.5, 1.0f, -51.0f, 20.0f, 68.0f, 400.0f, 20.0f);
-
-
+	CreatePointLight(lightholder, redLight, greenLight, blueLight, 24.0f, 20.0f, 155.0f, 200.0f, 20.0f);
+	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, -22.0f, 20.0f, 155.0f, 200.0f, 20.0f);
+	
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFallUnskippable, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);

@@ -97,7 +97,7 @@ void LoadLevel4()
 	tttComp.positionZ = 29;
 	registry.AddComponent<TransformComponent>(lightholderThree, tttComp);
 
-	registry.AddComponent<ParticleComponent>(lightholderForth, 10, 60, 3.5, 0, 0, 0, 24, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(lightholderForth, 10, 70, 3.5, 0, 0, 0, 24, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent fComp;
 	fComp.positionX = 73;
 	fComp.positionY = 2.0f;

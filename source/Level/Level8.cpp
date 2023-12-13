@@ -78,20 +78,18 @@ void LoadLevel8()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 	EntityID lightholderFive = registry.CreateEntity();
-	EntityID lightholderSix = registry.CreateEntity();
 
 	float redLight = 0.5f;
 	float greenLight = 0.0f;
 	float blueLight = 0.5f;
 
-	//CreatePointLight(light, redLight, greenLight, blueLight, 13.0f, 20.0f, 40.0f, 300.0f, 20.0f);// needs to be removed end of level
-	//CreatePointLight(lightholder, redLight, greenLight, blueLight, 16.0f, 20.0f, -11.0f, 300.0f, 20.0f);
-	//CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, -77.0f, 20.0f, -8.0f, 300.0f, 20.0f);
-	//CreatePointLight(lightholderThree, redLight, greenLight, blueLight, 77.0f, 20.0f, 39.0f, 300.0f, 20.0f);
-	//CreatePointLight(lightholderForth, redLight, greenLight, blueLight, -198.0f, 20.0f, -28.0f, 300.0f, 20.0f);
-	//CreatePointLight(lightholderFive, redLight, greenLight, blueLight, -351.0f, 20.0f, -42.0f, 300.0f, 20.0f);
-	//CreatePointLight(lightholderSix, redLight, greenLight, blueLight, -389.0f, 20.0f, 110.0f, 300.0f, 20.0f);
-
+	CreatePointLight(light, redLight, greenLight, blueLight, 16.0f, 12.0f, 10.0f, 300.0f, 20.0f);// needs to be removed end of level
+	CreatePointLight(lightholder, redLight, greenLight, blueLight, -16.0f, 12.0f, 10.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 90.0f, 12.0f, 110.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, -90.0f, 12.0f, 110.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, 140.0f, 20.0f, 320.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderFive, redLight, greenLight, blueLight, -140.0f, 20.0f, 320.0f, 300.0f, 20.0f);
+	
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
