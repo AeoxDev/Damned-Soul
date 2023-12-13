@@ -54,7 +54,7 @@ float4 main(GS_OUT input) : SV_TARGET
         {
             image = AniRow(input, 0.0f, false); 
         }
-        else if (pattern == 3 || pattern == 8 ||pattern == 10 || pattern == 11) //4x4 sections, Top Row and Second Row 
+        else if (pattern == 3 ||pattern == 10 || pattern == 11) //4x4 sections, Top Row and Second Row 
         {
             image = flipBookTex.Sample(WrapSampler, float2(0.5 + input.uv.x / 4,  0.75 + input.uv.y / 4));
 
@@ -67,6 +67,11 @@ float4 main(GS_OUT input) : SV_TARGET
         else if (pattern == 13) //4x4 sections, Third and Forth Row //pattern = (SPARK)
         {
             image = AniRow(input, 0.50f, false, 16);
+        }
+        else if (pattern == 15 || pattern == 8) //4x4 sections, Third and Forth Row //pattern = (SPARK)
+        {
+            image = flipBookTex.Sample(WrapSampler, input.uv);
+            image.rgb = image.rgb * input.rgb;
         }
         else
         {
