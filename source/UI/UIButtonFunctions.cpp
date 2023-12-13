@@ -346,6 +346,18 @@ void UIFunctions::Settings::SetFullscreen(void* args, int a)
 void UIFunctions::Settings::SwitchTimer(void* args, int a)
 {
 	SetVisualTimer(!GetVisualTimer());
+	UIComponent* buttonElement = registry.GetComponent<UIComponent>(*(EntityID*)args);
+
+	if (GetVisualTimer())
+	{
+		buttonElement->m_BaseImage.SetImage("ButtonSmallHover");
+		buttonElement->m_BaseImage.SetHoverImage("ButtonSmall");
+	}
+	else
+	{
+		buttonElement->m_BaseImage.SetImage("ButtonSmall");
+		buttonElement->m_BaseImage.SetHoverImage("ButtonSmallHover");
+	}
 
 	for (auto entity : View<UIGameTimeComponent, UIComponent>(registry))
 	{
@@ -1351,20 +1363,20 @@ void UIFunctions::OnHover::PlayerRelic(void* args, int index, bool hover)
 		uiPauseText->name = relicWindow->relics[index]->m_relicName;
 		uiPauseText->description = relicWindow->relics[index]->m_description;
 
-		DSBOUNDS bounds = uiPauseElement->m_Images[0].baseUI.GetBounds();
+		DSBOUNDS bounds = uiPauseElement->m_BaseImage.baseUI.GetBounds();
 		bounds.right *= 0.8;
 
-		uiPauseElement->m_Texts[0].SetText(relicText.c_str(), bounds);
+		uiPauseElement->m_BaseText.SetText(relicText.c_str(), bounds);
 
 		if (hover)
 		{
-			uiPauseElement->m_Images[0].baseUI.SetVisibility(true);
-			uiPauseElement->m_Texts[0].baseUI.SetVisibility(true);
+			uiPauseElement->m_BaseImage.baseUI.SetVisibility(true);
+			uiPauseElement->m_BaseText.baseUI.SetVisibility(true);
 		}
 		else
 		{
-			uiPauseElement->m_Images[0].baseUI.SetVisibility(false);
-			uiPauseElement->m_Texts[0].baseUI.SetVisibility(false);
+			uiPauseElement->m_BaseImage.baseUI.SetVisibility(false);
+			uiPauseElement->m_BaseText.baseUI.SetVisibility(false);
 		}
 
 	}

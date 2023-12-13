@@ -135,7 +135,14 @@ void SettingsState::SetupUI()
 			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-			uiElement->Setup(filenames[i], filenamesHover[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			if (i == 4 && GetVisualTimer())
+			{
+				uiElement->Setup(filenamesHover[i], filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			}
+			else
+			{
+				uiElement->Setup(filenames[i], filenamesHover[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			}
 
 			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -179,8 +186,8 @@ void SettingsState::SetupUI()
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 
-			uiElement->Setup("SliderBackground2", "", texts[i], positions[i]);
-			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
+			uiElement->Setup("SliderBackground", "", texts[i], positions[i]);
+			uiElement->AddImage("SliderMarker", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
 			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f;
