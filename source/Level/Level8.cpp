@@ -52,7 +52,11 @@ void LoadLevel8()
 		assert("Could not read file: LV8Enemies");
 	}
 	 
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::tempBoss, -320.f, 0.f, 5.f);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::imp, -0.0f, 0.f, 115.f);
+	ModelSkeletonComponent* model = registry.GetComponent<ModelSkeletonComponent>(stateManager.cutsceneEnemy);
+	ReleaseModel(model->model);
+	registry.RemoveComponent<ModelSkeletonComponent>(stateManager.cutsceneEnemy);
+
 	//22 souls + 18 souls level 1,2 = 40 souls total before boss
 
 	//Player
@@ -91,6 +95,6 @@ void LoadLevel8()
 	stateManager.stage = stage;
 	SetInPlay(true);
 	AddTimedEventComponentStart(stateManager.player, 0.0f, StageIntroFall, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
-	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, SplitBossLevel8IntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
+	AddTimedEventComponentStart(stateManager.cutsceneEnemy, 0.85f + 0.3f + 0.1f, SkeletonIntroScene, CONDITION_IGNORE_GAMESPEED_SLOWDOWN, 1);
 
 }

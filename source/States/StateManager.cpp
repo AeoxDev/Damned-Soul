@@ -74,7 +74,7 @@ void SetInPause(bool value)
 		currentStates = (State)(currentStates | State::InPause);
 		TimedEventIgnoreGamespeed(false);
 		gameSpeed = 0.0f;
-		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera from moving during pause.
+		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera fromf moving during pause.
 	}
 	else
 	{
@@ -174,7 +174,7 @@ int StateManager::Setup()
 	//Setup cursor here:
 	stateManager.cursor = registry.CreateEntity(ENT_PERSIST_GAME);
 	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(stateManager.cursor);
-	uiElement2->Setup("Cursor/DamnedSoul_CursorSmallBorder", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
+	uiElement2->Setup("Cursor/DamnedSoul_CursorSmallBorder", "", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
 	uiElement2->m_BaseImage.baseUI.SetVisibility(true);
 	uiElement2->m_BaseText.baseUI.SetVisibility(false);
 	//uiElement2->m_BaseImage.baseUI.SetPosition();

@@ -668,7 +668,7 @@ void SetupEnemyCollisionBox(EntityID& entity, float radius, EnemyType etype, boo
 	switch (etype)
 	{
 	case EnemyType::eye:
-		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.2f, 0.f, radius * 1.0f);
+		enemyComp->attackHitBoxID = CreateHitbox(entity, radius * 1.5f, 0.f, radius * 1.0f);
 		SetCollisionEvent(entity, enemyComp->attackHitBoxID, AttackCollision);
 		//SetHitboxHitEnemy(entity, enemyComp->attackHitBoxID);
 		SetHitboxHitPlayer(entity, enemyComp->attackHitBoxID);

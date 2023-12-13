@@ -13,6 +13,7 @@ EntityID _LG_Victim;
 
 #define LIGHTNING_GOD_COOLDOWN_SECONDS (3.0f)
 #define LIGHTNING_GOD_DAMAGE_FLAT (15.f)
+#define LIGHTNING_GOD_MARK_RANGE (60.f)
 #define LIGHTNING_GOD_SFX_DURATION_SMALL (0.25f)
 #define LIGHTNING_GOD_SFX_SIZE_SMALL (0.125f)
 #define LIGHTNING_GOD_SFX_DURATION_BIG (0.6f)
@@ -21,7 +22,7 @@ EntityID _LG_Victim;
 const char* LIGHTNING_GOD::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Marks an enemy for %.1lf seconds every %.1lf seconds. Striking a marked enemy causes the attack to deal an additional %.0lf damage",
+	sprintf_s(temp, "Marks a nearby enemy for %.1lf seconds every %.1lf seconds. When striking a marked enemy, your attack damage is increased by %.0lf",
 		LIGHTNING_GOD_COOLDOWN_SECONDS,
 		LIGHTNING_GOD_COOLDOWN_SECONDS,
 		LIGHTNING_GOD_DAMAGE_FLAT);
@@ -91,15 +92,18 @@ void LIGHTNING_GOD::OnUpdate(void* data)
 		cooldown += LIGHTNING_GOD_COOLDOWN_SECONDS;
 
 		// Get all "killable" things
+		TransformComponent* ownerTrasnsform = registry.GetComponent<TransformComponent>(LIGHTNING_GOD::_OWNER);
 		ML_Vector<EntityID> potentialVictims;
 		for (auto entity : View<EnemyComponent>(registry))
 		{
-			potentialVictims.push_back(entity);
+			if (DistanceBetweenTransforms(ownerTrasnsform, registry.GetComponent<TransformComponent>(entity)) < LIGHTNING_GOD_MARK_RANGE)
+				potentialVictims.push_back(entity);
 		}
 
 		if (0 == potentialVictims.size())
 		{
 			// If no victim is chosen, just do nothing and set the victim to nothing
+			cooldown = .25f;
 			_LG_Victim = { -1, false };
 			return;
 		}

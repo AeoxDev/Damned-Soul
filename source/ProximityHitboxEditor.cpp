@@ -290,7 +290,7 @@ void EdgeCaseFixer(CurrentHitboxVariables& CHV, bool lastIncluded)
 		for (uint32_t j = 0; j < CHV.list.size(); j++)
 		{
 			float newDist = abs(sqrt(pow((test.x - CHV.list[j].x), 2.0f) + pow((test.z - CHV.list[j].z), 2.0f)));
-			if ((minDist > newDist) && (minDist > 50.0f)) //Alter the minDist > X check to be the units the player can move per frame (Preferably a high number cause otherwise it's very expensive)
+			if ((minDist > newDist) && (minDist > 20.0f)) //Alter the minDist > X check to be the units the player can move per frame (Preferably a high number cause otherwise it's very expensive)
 			{
 				std::cout << "Added new point to fix edge case at: (" << test.x << ", " << test.z << ")" << std::endl;
 				//Add the middle point to the list of points

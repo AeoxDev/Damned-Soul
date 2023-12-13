@@ -142,7 +142,7 @@ void ImpCutscenePoof(EntityID& entity, const int& index);
 void EventRemoveParticle(EntityID& entity, const int& index);
 
 void SplitBossIntroScene(EntityID& entity, const int& index);
-void SplitBossLevel8IntroScene(EntityID& entity, const int& index);
+void Level8IntroScene(EntityID& entity, const int& index);
 void EyeIntroScene(EntityID& entity, const int& index);
 void MinotaurIntroScene(EntityID& entity, const int& index);
 void FinalBossIntroCutscene(EntityID& entity, const int& index);

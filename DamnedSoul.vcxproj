@@ -610,6 +610,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\AntiAlias.h" />
     <ClInclude Include="header\CombatFunctions.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
+    <ClInclude Include="header\Components\BlendAnimationsComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\CutsceneComponent.h" />
     <ClInclude Include="header\Components\DebuffComponent.h" />
