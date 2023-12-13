@@ -735,6 +735,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
+			// Herman Was Here
 			health = 1332.f; // Wanted 1666, but that was probably a tad bit too much so we took 666*2
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
