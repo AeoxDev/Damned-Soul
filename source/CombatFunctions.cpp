@@ -96,7 +96,9 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 
 void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE type)
 {
-	if (attackerStats == nullptr || defenderStats == nullptr)
+	// Killing frozen enemies as they thaw out seems to cause issues?
+	// Added check to see if the entities are valid
+	if (attackerStats == nullptr || defenderStats == nullptr || attacker.index == -1 || defender.index == -1)
 	{
 		return;
 	}
