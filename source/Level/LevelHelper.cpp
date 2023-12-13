@@ -290,7 +290,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	float acidGlowRGB[3] = { 0.2f, 0.225f, 0.0f };
 	float iceStageGlowRGB[3] = { 0.02f, .05f, .05f };
 	float iceHazardGlowRGB[3] = { 0.35f, 0.3f, .5f };
-	float portalGlowRGB[3] = { 0.6f, 0.9f, 0.6f };
+	float portalGlowRGB[3] = { 0.1f, 0.3f, 0.1f };
 
 	switch (stageVars.stageNr)
 	{
