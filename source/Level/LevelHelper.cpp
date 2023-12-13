@@ -11,6 +11,8 @@
 #include "SDLHandler.h"
 #include "DeltaTime.h"
 
+#include "States\StateManager.h"
+
 #include "UIComponents.h"
 #include "UIRenderer.h"
 
@@ -506,7 +508,7 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 		hitboxModel = registry.AddComponent<ModelBonelessComponent>(stateManager.naviagtion, LoadModel("LV9Nav.mdl"));
 		torchModel = registry.AddComponent<ModelBonelessComponent>(torch, LoadModel("LV9Torch.mdl"));
 		AddStaticHazard(stateManager.naviagtion, HAZARD_NAV);
-		SetDirectionLight(0.55f, 0.55f, 0.60f, -1.6f, -3.0f, 1.0f);
+		SetDirectionLight(0.45f, 0.45f, 0.50f, -1.6f, -3.0f, 1.0f);
 		//Set glow components.
 		torchGlow = registry.AddComponent<GlowComponent>(torch, 0.6f, 0.9f, 0.8f);
 		stageGlow = registry.AddComponent<GlowComponent>(stage, iceStageGlowRGB);	// Ice glow.
@@ -964,6 +966,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
 
+	//Rasmus was here, lower frozen eye so it's easier to see where to hit
+	if (eType == frozenEye) positionY = -8;
+
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
@@ -1152,22 +1157,31 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
-		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
-		registry.AddComponent<GlowComponent>(entity, .0f, .05f, .15f);
+		registry.AddComponent<GlowComponent>(entity, 1.f, 1.f, 0.f);
 
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
-		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
-		hazardTransform->positionX = transform.positionX;
-		hazardTransform->positionY = 0.2f;
-		hazardTransform->positionZ = transform.positionZ;
-		hazardTransform->scaleX = 1.f;
-		hazardTransform->scaleY = 1.0f;
-		hazardTransform->scaleZ = 1.f;
-		hazardTransform->facingX = 0.0000f;
-		hazardTransform->facingZ = 0.0000f;
-		hazardTransform->facingY = 0.00001f;
+		//Rasmus was here, made it so fx doesn't spawn on frozen enemies on lv 8, and shortened the time the fx plays
+		if (stateManager.activeLevel != 15)
+		{
+			EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
+			registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
+			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
+			hazardTransform->positionX = transform.positionX;
 
-		AddTimedEventComponentStart(particlesVFX, 4.f, BossSpawnwaveEnd);
+			//Rasmus was here, edited height of individual types of frozen enemies
+			if (eType == frozenEye) hazardTransform->positionY = -3;
+			else if (eType == frozenHellhound) hazardTransform->positionY = -2;
+			else hazardTransform->positionY = 0.2f;
+
+			hazardTransform->positionZ = transform.positionZ;
+			hazardTransform->scaleX = 0.5f;
+			hazardTransform->scaleY = 0.5f;
+			hazardTransform->scaleZ = 0.5f;
+			hazardTransform->facingX = 0.0000f;
+			hazardTransform->facingZ = 0.0000f;
+			hazardTransform->facingY = 0.00001f;
+
+			AddTimedEventComponentStart(particlesVFX, 1.f, BossSpawnwaveEnd);
+		}
 
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
@@ -1209,7 +1223,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
+		SetupEnemyCollisionBox(entity, 2.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
 			behev->type = EnemyType::frozenHellhound;
@@ -1384,29 +1398,12 @@ void CreatePlayer(float positionX, float positionY, float positionZ, float mass,
 
 	// UI
 	SetUpAdvancedHealthBar(stateManager.player);
-	//UIComponent* uiElement = registry.AddComponent<UIComponent>(stateManager.player);
-	//
-	////Setup + Health
-	//uiElement->Setup("EmptyHealth", "", DSFLOAT2(-0.8f, 0.8f));
-	//uiElement->AddImage("FullHealth", DSFLOAT2(-0.8f, 0.8f));
-	//UIGameHealthComponent* uiHealth = registry.AddComponent<UIGameHealthComponent>(stateManager.player);
-
-	////Souls
-	//uiElement->AddImage("EmptyHealth", DSFLOAT2(-0.8f, 0.6f));
-	//uiElement->AddText(" ",uiElement->m_Images[0].baseUI.GetOriginalBounds(), DSFLOAT2(-0.8f, 0.6f));
-	//UIPlayerSoulsComponent* uiSouls = registry.AddComponent<UIPlayerSoulsComponent>(stateManager.player);
-	
-	////Relics
-	//uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
-	//UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
-	//OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
-
 	//GlowComponent* player_glow = registry.AddComponent<GlowComponent>(stateManager.player, 1, 0, 0);
 
 	// Create weapon
 	stateManager.weapon = registry.CreateEntity(ENT_PERSIST_LEVEL);
 
-	ModelSkeletonComponent* weapon_model = registry.AddComponent<ModelSkeletonComponent>(stateManager.weapon, LoadModel("AxeV1.mdl"));
+	ModelSkeletonComponent* weapon_model = registry.AddComponent<ModelSkeletonComponent>(stateManager.weapon, LoadModel("PlayerBoneWeapon.mdl"));
 	weapon_model->shared.colorMultiplicativeRed = 1.25f;
 	weapon_model->shared.colorMultiplicativeGreen = 1.25f;
 	weapon_model->shared.colorMultiplicativeBlue = 1.25f;
@@ -1542,19 +1539,21 @@ void SetScoreboardUI()
 {
 	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(scoreBoard);
-	uiElement->Setup("SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
-	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.6f));
+	uiElement->Setup("SettingsPanel", "", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.55f));
 
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(scoreBoard);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(scoreBoard);
 
 	uiElement->AddImage("ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddHoverImage(uiElement->m_Images[uiElement->m_Images.size() - 1], "ButtonMediumHover");
 	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.5f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 	uiElement->AddImage("ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddHoverImage(uiElement->m_Images[uiElement->m_Images.size() - 1], "ButtonMediumHover");
 	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.5f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
@@ -1584,7 +1583,7 @@ void SetScoreboardUI()
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.6f, uiCoords.y - 0.4f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.575f, uiCoords.y - 0.325f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
 			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	registry.AddComponent<UIGameScoreboardComponent>(scoreBoard);
@@ -1631,7 +1630,7 @@ void UpdateScoreBoardUI(bool won)
 
 		for (int i = 2; i < amount + 2; i++)
 		{
-			uiElement->m_Texts[i].SetText(texts[i - 2].c_str(), uiElement->m_BaseImage.baseUI.GetBounds(), 20.0f,
+			uiElement->m_Texts[i].SetText(texts[i - 2].c_str(), DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), 20.0f,
 				DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		}
 	}
@@ -1641,7 +1640,7 @@ void SetupEnemyCounter()
 {
 	EntityID counterEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(counterEntity);
-	uiElement->Setup("ButtonSmallHoverBloody", "Enemies: 0", DSFLOAT2(0.82f, 0.85f));
+	uiElement->Setup("ButtonSmallHoverBloody", "", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
 
 	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
 }
@@ -1652,7 +1651,7 @@ void SetupTimer()
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
 	UIGameTimeComponent* timer = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
-	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.82f, 0.70f));
+	uiElement->Setup("ButtonSmall", "", "Time: 0", DSFLOAT2(0.8f, 0.65f));
 
 	if (!GetVisualTimer())
 	{

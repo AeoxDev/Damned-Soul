@@ -74,11 +74,11 @@ void CreateDamageNumber(EntityID& entity, const int& index)
 	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(damageUI);
 	if (damage < 1)
 	{
-		uiElement2->Setup("SinglePixelImage", "<1", DSFLOAT2(positionX, positionY), DSFLOAT2(512.0f, 512.0f), damageSize + 20.0f);
+		uiElement2->Setup("SinglePixelImage", "", "<1", DSFLOAT2(positionX, positionY), DSFLOAT2(512.0f, 512.0f), damageSize + 20.0f);
 	}
 	else
 	{
-		uiElement2->Setup("SinglePixelImage", std::to_string(damage).c_str(), DSFLOAT2(positionX, positionY), DSFLOAT2(512.0f, 512.0f), damageSize + 20.0f);
+		uiElement2->Setup("SinglePixelImage", "", std::to_string(damage).c_str(), DSFLOAT2(positionX, positionY), DSFLOAT2(512.0f, 512.0f), damageSize + 20.0f);
 	}
 	
 	uiElement2->m_BaseImage.baseUI.SetVisibility(false);

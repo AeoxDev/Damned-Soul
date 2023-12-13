@@ -1,1 +1,5 @@
-GUI (Frontend)
+Game Design
+UI Design
+GUI
+Textures
+Game Feel

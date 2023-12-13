@@ -51,7 +51,7 @@ void LoadEmptyLevel()
 
 	EntityID timeEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(timeEntity);
-	uiElement->Setup("ButtonSmall", "Time: 0", DSFLOAT2(0.8f, 0.8f));
+	uiElement->Setup("ButtonSmall", "", "Time: 0", DSFLOAT2(0.8f, 0.8f));
 
 	if (!GetVisualTimer())
 	{

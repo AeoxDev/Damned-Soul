@@ -59,9 +59,13 @@ void EXPLODING_WEAPON::ResetExplosion(void* input)
 
 void _EW_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, 2.5f, 0.f, 0.f, -10.f,
-		2.0f, 0.50f, .0f, //color
-		50/*256*/, CIRCLE_FIELD);
+	//registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, 0.5f, 0.f, 0.f, -10.f,
+	//	2.0f, 0.50f, .0f, //color
+	//	256, CIRCLE_FIELD);
+
+	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, EXPLODING_WEAPON_AOE_SIZE, 0.f, 5.5f, 4.0f,
+		3.0f, 0.50f, 0.0f, //color
+		2/*256*/, NILL);
 }
 
 
