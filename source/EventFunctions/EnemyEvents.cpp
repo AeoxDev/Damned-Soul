@@ -217,20 +217,14 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	AddHitboxComponent(newMini);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(newMini);
-	int hID = CreateHitbox(newMini, radius * /*mini **/ 1.2f, 0.f, 0.f);
-	SetCollisionEvent(newMini, hID, HardCollision);
-	SetHitboxIsEnemy(newMini, hID);
-	SetHitboxHitPlayer(newMini, hID);
-	SetHitboxHitEnemy(newMini, hID);
-	SetHitboxActive(newMini, hID);
-	SetHitboxIsMoveable(newMini, hID, false);
 
 	int sID = CreateHitbox(newMini, radius * 5.f, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
-	SetHitboxIsEnemy(newMini, sID);
-	SetHitboxHitPlayer(newMini, sID);
-	SetHitboxHitEnemy(newMini, sID);
+	//SetHitboxIsEnemy(newMini, sID);
+	//SetHitboxHitPlayer(newMini, sID);
+	//SetHitboxHitEnemy(newMini, sID);
 	SetHitboxActive(newMini, sID);
+	SetHitboxIsEnemy(newMini, sID);
 	SetHitboxIsMoveable(newMini, sID, false);
 	SetHitboxHitStaticHazard(newMini, sID, false);
 	SetHitboxCanTakeDamage(newMini, sID, true);
@@ -295,7 +289,8 @@ void SplitBoss(EntityID& entity, const int& index)
 	tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
 	StatComponent* originalStats = registry.GetComponent<StatComponent>(entity);
 
-	float health = 0.f;
+	// Herman Was Here: Hårdkodningen ligger nu härinne, inte utanför
+	float health = 40; //0.f;
 	int partsAlive = 0;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -304,8 +299,8 @@ void SplitBoss(EntityID& entity, const int& index)
 			partsAlive++;
 		}
 	}
-	health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
-	health = health / (float)partsAlive;
+	//health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
+	//health = health / (float)partsAlive;
 	for (int i = 0; i < 5; ++i)
 	{
 		if (tempBossComponent->parts[i] )

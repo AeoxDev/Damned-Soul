@@ -70,7 +70,7 @@ void CreateDamageNumber(EntityID& entity, const int& index)
 	float positionX = toFloat.x / toFloat.w;
 	float positionY = 0.1f + (toFloat.y / toFloat.w);
 	EntityID damageUI = registry.CreateEntity(ENT_PERSIST_LOWEST);
-	TransformComponent* transformComponent2 = registry.AddComponent<TransformComponent>(damageUI);
+	TransformComponent* transformComponent2 = registry.AddComponent<TransformComponent>(damageUI, transformComponent);
 	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(damageUI);
 	if (damage < 1)
 	{
@@ -92,6 +92,6 @@ void CreateDamageNumber(EntityID& entity, const int& index)
 	{
 		uiElement2->m_BaseText.m_brush = Yellow;
 	}
-	FollowerComponent* follow = registry.AddComponent<FollowerComponent>(damageUI, entity);
+	//FollowerComponent* follow = registry.AddComponent<FollowerComponent>(damageUI, entity);
 	AddTimedEventComponentStartContinuousEnd(damageUI, 0.0f, nullptr, UIFollowTransform, time, DestroyEntity, (int)(damage == 0) , 2);
 }

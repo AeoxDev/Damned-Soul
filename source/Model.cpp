@@ -116,6 +116,9 @@ const MODEL_TYPE Model::Load(const char* filename)
 	auto flags = std::ios::binary; // | std::ios::ate;
 	reader.open(name.c_str(), flags);
 
+#ifdef _DEBUG
+	printf("model path: %s\n", name.c_str());
+#endif
 	assert(true == reader.is_open());
 
 	// Allocate temporarily onto the stack
