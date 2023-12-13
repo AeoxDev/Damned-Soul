@@ -291,8 +291,8 @@ void PauseState::SetupUI()
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
 
-			uiElement->Setup("SliderBackground2", "", texts[i], positions[i]);
-			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
+			uiElement->Setup("SliderBackground", "", texts[i], positions[i]);
+			uiElement->AddImage("SliderButton", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
 			uiElement->SetAllVisability(false);

@@ -187,7 +187,7 @@ void SettingsState::SetupUI()
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 
 			uiElement->Setup("SliderBackground", "", texts[i], positions[i]);
-			uiElement->AddImage("SliderMarker", positions[i], DSFLOAT2(1.0f, 1.0f), false);
+			uiElement->AddImage("SliderButton", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
 			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f;
