@@ -382,3 +382,7 @@ intermediate/
 *.cso
 *.cso
 /CSO/*.cso
+*.cso
+/bin/CSO/ParticlePS.cso
+/bin/CSO/ParticleCS.cso
+/bin/CSO/TestSkelVS.cso
