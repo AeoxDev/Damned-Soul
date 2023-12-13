@@ -125,26 +125,26 @@ void LoadLevel3()
 	EntityID partTT = registry.CreateEntity();
 	registry.AddComponent<ParticleComponent>(partTT, 4, 12, 3, 0, 0, 0, 8, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent ttttComp;
-	ttttComp.positionX = -189;
-	ttttComp.positionY = 1;
+	ttttComp.positionX = -191;
+	ttttComp.positionY = 1.5;
 	ttttComp.positionZ = -8;
 	registry.AddComponent<TransformComponent>(partTT, ttttComp);
 
 
 	EntityID partT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partT, 4, 30, 3, 0, 0, 0, 13, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partT, 4.5, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent ttComp;
-	ttComp.positionX = -145;
+	ttComp.positionX = -140;
 	ttComp.positionY = 2;
 	ttComp.positionZ = 111;
 	registry.AddComponent<TransformComponent>(partT, ttComp);
 
 	EntityID partTTT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partTTT, 4, 30, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partTTT, 4, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent tttComp;
 	tttComp.positionX = -131;
-	tttComp.positionY = 1;
-	tttComp.positionZ = 199;
+	tttComp.positionY = 1.5;
+	tttComp.positionZ = 201;
 	registry.AddComponent<TransformComponent>(partTTT, tttComp);
 
 
