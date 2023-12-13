@@ -67,7 +67,7 @@ bool FrozenBehaviourSystem::Update()
 				}
 				else if (frozenComponent->type == EnemyType::frozenEye)
 				{
-					//Rasmus was here, resetting y after lowering it in LevelHelper.cpp
+					//Rasmus was here, making sure y is properly reset after lowering it in LevelHelper.cpp
 					frozenTransformComponent->positionY = 0;
 
 					SetupEnemy(EnemyType::eye, frozenTransformComponent->positionX, frozenTransformComponent->positionY, frozenTransformComponent->positionZ,

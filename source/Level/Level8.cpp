@@ -52,7 +52,7 @@ void LoadLevel8()
 		assert("Could not read file: LV8Enemies");
 	}
 	 
-	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::imp, -0.0f, 0.f, 115.f);
+	stateManager.cutsceneEnemy = SetupEnemy(EnemyType::imp, 0.1f, 0.f, 70.f);
 	ModelSkeletonComponent* model = registry.GetComponent<ModelSkeletonComponent>(stateManager.cutsceneEnemy);
 	ReleaseModel(model->model);
 	registry.RemoveComponent<ModelSkeletonComponent>(stateManager.cutsceneEnemy);

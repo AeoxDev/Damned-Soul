@@ -11,6 +11,8 @@
 #include "SDLHandler.h"
 #include "DeltaTime.h"
 
+#include "States\StateManager.h"
+
 #include "UIComponents.h"
 #include "UIRenderer.h"
 
@@ -1155,22 +1157,31 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
-		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
 		registry.AddComponent<GlowComponent>(entity, 1.f, 1.f, 0.f);
 
-		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
-		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
-		hazardTransform->positionX = transform.positionX;
-		hazardTransform->positionY = 0.2f;
-		hazardTransform->positionZ = transform.positionZ;
-		hazardTransform->scaleX = 0.5f;
-		hazardTransform->scaleY = 0.5f;
-		hazardTransform->scaleZ = 0.5f;
-		hazardTransform->facingX = 0.0000f;
-		hazardTransform->facingZ = 0.0000f;
-		hazardTransform->facingY = 0.00001f;
+		//Rasmus was here, made it so fx doesn't spawn on frozen enemies on lv 8, and shortened the time the fx plays
+		if (stateManager.activeLevel != 15)
+		{
+			EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
+			registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
+			TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
+			hazardTransform->positionX = transform.positionX;
 
-		AddTimedEventComponentStart(particlesVFX, 4.f, BossSpawnwaveEnd);
+			//Rasmus was here, edited height of individual types of frozen enemies
+			if (eType == frozenEye) hazardTransform->positionY = -3;
+			else if (eType == frozenHellhound) hazardTransform->positionY = -2;
+			else hazardTransform->positionY = 0.2f;
+
+			hazardTransform->positionZ = transform.positionZ;
+			hazardTransform->scaleX = 0.5f;
+			hazardTransform->scaleY = 0.5f;
+			hazardTransform->scaleZ = 0.5f;
+			hazardTransform->facingX = 0.0000f;
+			hazardTransform->facingZ = 0.0000f;
+			hazardTransform->facingY = 0.00001f;
+
+			AddTimedEventComponentStart(particlesVFX, 1.f, BossSpawnwaveEnd);
+		}
 
 		stat->hazardModifier = 0.0f;
 		stat->baseHazardModifier = 0.0f;
