@@ -73,10 +73,12 @@ struct UIImage
 {
 	UIBase baseUI;
 
-	ML_String m_fileName;
+	ML_String m_fileName = "";
+	ML_String m_hoverFileName = "";
 	ID2D1Bitmap* m_Bitmap = nullptr;
 
 	void SetImage(const char* filepath, bool ignoreRename = false);
+	void SetHoverImage(const char* filepath, bool ignoreRename = false);
 
 	void Draw();
 
@@ -91,7 +93,7 @@ struct UIComponent
 	ML_Vector<UIImage> m_Images;
 	ML_Vector<UIText> m_Texts;
 
-	void Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position,
+	void Setup(const char* baseImageFilepath, const char* baseImageHoverFilepath = "", const char* text = "", DSFLOAT2 position = {0.0f, 0.0f},
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float fontSize = 20,
 		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
 		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER,
@@ -102,9 +104,10 @@ struct UIComponent
 	void SetAllVisability(bool value);
 
 	void AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, bool translateText = true);
+	void AddHoverImage(UIImage& image, const char* imageFilepath);
 
 	void AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale = { 1.0f, 1.0f }, float 
-		fontSize = 20, DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
+		fontSize = 20.0f, DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
 		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	void Release();

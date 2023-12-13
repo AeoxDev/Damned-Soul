@@ -65,7 +65,8 @@ void CORRUPTED_HEART::ApplyDot(void* data)
 		// The damage over time to apply
 		DamageOverTime newDoT
 		(
-			((1.f - CORRUPTED_HEART_DAMAGE_CONVERT_MOD) * input->damage) / CORRUPTED_HEART_DURATION,
+			// Divided by the increase multiplier, the DoT should apply only damage resistance twice
+			((1.f - CORRUPTED_HEART_DAMAGE_CONVERT_MOD) * input->CollapseNoCap()) / (CORRUPTED_HEART_DURATION * input->incMult),
 			CORRUPTED_HEART_DURATION
 		);
 

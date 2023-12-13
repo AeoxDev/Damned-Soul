@@ -87,7 +87,7 @@ class UIShopSystem : public System
 {
 	bool Update();
 };
-class UIRunTimeSystem : public System
+class UIGameSystem : public System
 {
 	bool Update();
 };

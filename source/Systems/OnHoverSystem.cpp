@@ -56,12 +56,21 @@ bool OnHoverSystem::Update()
 
 		if (index == comp->index)
 		{
-			//skip if interactable isnt visible or has no hover function
-			if ((index == 0 && !uiElement->m_BaseImage.baseUI.GetVisibility()) || (index == 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
-				continue;
-			else if ((index > 0 && !uiElement->m_Images[index - 1].baseUI.GetVisibility()) || (index > 0 && comp->onHoverFunctions[index] == UIFunctions::OnHover::None))
-				continue;
+			int imageIndex = index;
+			if (registry.GetComponent<UIShopRelicComponent>(entity) != nullptr)
+				imageIndex = index * 3;
 
+			//skip if interactable isnt visible or has no hover function
+			if (uiElement->m_Images.size() > 0)
+			{
+				if (!uiElement->m_Images[imageIndex].baseUI.GetVisibility() || comp->onHoverFunctions[index] == UIFunctions::OnHover::None)
+					continue;
+			}
+			else
+			{
+				if (!uiElement->m_BaseImage.baseUI.GetVisibility() || comp->onHoverFunctions[index] == UIFunctions::OnHover::None)
+					continue;
+			}
 
 			if (comp->hasBeenDrawnChecks[comp->index] == 0 && comp->redrawUIChecks[comp->index] == 1)
 			{

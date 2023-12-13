@@ -24,6 +24,9 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 	IWICImagingFactory* factory = ui.GetImagingFactory();
 	const std::wstring path = L"../resource/GUI/" + std::wstring(pathAsString.begin(), pathAsString.end()) + L".png";
 
+#ifdef _DEBUG
+	printf("path: %ls\n", path.c_str());
+#endif
 	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
 	assert(!FAILED(hr));
 
@@ -52,6 +55,7 @@ void SetupText(float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAG
 		textFormat->Release();
 		textFormat = nullptr;
 	}
+
 	FLOAT fontSizeFactored = fontSize * 1.0f;
 	
 	ui.GetWriteFactory()->CreateTextFormat(L"Cascadia Code", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSizeFactored, L"", &textFormat);
@@ -198,6 +202,8 @@ void UIText::SetText(const char* text, DSBOUNDS bounds, float fontSize, DWRITE_T
 		baseUI.m_OriginalBounds = { 0, 0, (m_fontSize + 5.0f) * m_Text.length(), m_fontSize };
 	else
 		baseUI.m_OriginalBounds = { 0, 0, bounds.right, bounds.bottom };
+
+	baseUI.Setup(baseUI.GetPosition(), baseUI.GetScale(), baseUI.GetRotation(), baseUI.GetVisibility(), baseUI.GetOpacity());
 }
 
 void UIText::Draw()
@@ -234,9 +240,18 @@ void UIImage::SetImage(const char* filepath, bool ignoreRename)
 		SetupImage(filepath, m_Bitmap);
 
 		if (!ignoreRename)
-			m_fileName = _strdup(filepath);
+			m_fileName = filepath;
 
 		baseUI.m_OriginalBounds = { 0.0f, 0.0f, m_Bitmap->GetSize().width, m_Bitmap->GetSize().height };
+	}
+}
+
+void UIImage::SetHoverImage(const char* filepath, bool ignoreRename)
+{
+	if (filepath != "")
+	{
+		if (!ignoreRename)
+			m_hoverFileName = filepath;
 	}
 }
 
@@ -262,32 +277,28 @@ void UIImage::Release()
 	}
 
 	m_fileName.~ML_String();
+	m_hoverFileName.~ML_String();
 }
 
-void UIComponent::Setup(const char* baseImageFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale, 
+void UIComponent::Setup(const char* baseImageFilepath, const char* baseImageHoverFilepath, const char* text, DSFLOAT2 position, DSFLOAT2 scale,
 	float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, float rotation, bool visibility, float opacity)
 {
 	m_Images.Initialize();
 	m_Texts.Initialize();
 
-	if (baseImageFilepath != "")
-	{
-		m_BaseImage.SetImage(baseImageFilepath);
-		m_BaseImage.baseUI.Setup(position, scale, rotation, visibility, opacity);
-	}
-	else
-	{
-		m_BaseImage.SetImage("TempBaseImage");
-		m_BaseImage.baseUI.Setup(position, scale, rotation, visibility, opacity);
-	}
+	m_BaseImage.SetImage(baseImageFilepath);
+	m_BaseImage.SetHoverImage(baseImageHoverFilepath);
 
-	if (text != "")
-	{
-		m_BaseText.SetText(text, m_BaseImage.baseUI.GetOriginalBounds(), fontSize, textAlignment, paragraphAlignment);
-		m_BaseText.baseUI.Setup(position, scale, rotation, visibility, opacity);
-	}
-	else
-		m_BaseText.baseUI.SetVisibility(false);
+	bool vis = visibility;
+
+	if (baseImageFilepath == "")
+		vis = false;
+
+	m_BaseImage.baseUI.Setup(position, scale, rotation, vis, opacity);
+
+	m_BaseText.SetText(text, m_BaseImage.baseUI.GetOriginalBounds(), fontSize, textAlignment, paragraphAlignment);
+	m_BaseText.baseUI.Setup(position, scale, rotation, visibility, opacity);
+
 }
 
 void UIComponent::DrawAll()
@@ -325,7 +336,10 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 	else
 		m_Images[m_Images.size() - 1].SetImage("TempBaseImage");
 
-	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale);
+	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale, 
+		m_Images[m_Images.size() - 1].baseUI.GetRotation(), 
+		m_Images[m_Images.size() - 1].baseUI.GetVisibility(), 
+		m_Images[m_Images.size() - 1].baseUI.GetOpacity());
 
 	if (translateText && m_BaseText.baseUI.GetVisibility())
 	{
@@ -333,6 +347,11 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 		m_BaseText.baseUI.SetScale(m_BaseText.baseUI.GetScale());
 		m_BaseText.baseUI.SetPosition(m_BaseText.baseUI.GetPosition());
 	}
+}
+
+void UIComponent::AddHoverImage(UIImage& image, const char* imageFilepath)
+{
+	image.m_hoverFileName = imageFilepath;
 }
 
 void UIComponent::AddText(const char* text, DSBOUNDS textBounds, DSFLOAT2 position, DSFLOAT2 scale, float fontSize, DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment)

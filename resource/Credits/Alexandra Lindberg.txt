@@ -1,0 +1,7 @@
+Concept Art ( Hellhound )
+3D Art ( Hellhound )
+Texturing ( Hellhound )
+Technical Animation/Rigging ( Hellhound )
+Animation ( Hellhound )
+Procedural Real-Time Visual Effects
+Procedural VFX Functionality (Polar Coordinates, UV Distortions)

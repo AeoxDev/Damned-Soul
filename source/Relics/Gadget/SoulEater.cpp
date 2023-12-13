@@ -6,8 +6,8 @@
 #include "Registry.h"
 #include <cmath>
 
-#define SOUL_EATER_HEAL_RATIO_GAIN (2.f/1.f)
-#define SOUL_EATER_HEAL_RATIO_LOSE (1.f/1.f)
+#define SOUL_EATER_HEAL_RATIO_GAIN (1.0f/1.f)
+#define SOUL_EATER_HEAL_RATIO_LOSE (2.0f/1.f)
 
 EntityID SOUL_EATER::_OWNER;
 
@@ -38,11 +38,9 @@ const char* SOUL_EATER::Description()
 	}
 
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You heal for %.1lf Health for every %.1lf souls you gain, and %.1lf health for every %.1lf souls you lose",
+	sprintf_s(temp, "You heal for %.1lf Health per soul you gain, and %.1lf health per soul you lose",
 		bonus,
-		per,
-		bonus2,
-		per2);
+		bonus2);
 #pragma warning(suppress : 4172)
 	return temp;
 }

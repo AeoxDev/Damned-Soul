@@ -6,6 +6,7 @@
 #include "Components.h"
 #include "KnockBackComponent.h"
 #include "CombatFunctions.h"
+#include "States\StateManager.h"
 
 EntityID FROST_FIRE::_OWNER;
 
@@ -69,7 +70,7 @@ void FROST_FIRE::PushBackAndDamage(void* data)
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
 	// Reduce the cooldown
-	_Frost_Fire_Cooldown -= input->timeDelta;
+	_Frost_Fire_Cooldown -= input->timeDelta * (0 < (InPlay & currentStates) && (0 == (InPause & currentStates)));
 
 	// If of coodlown
 	if (_Frost_Fire_Cooldown <= 0)

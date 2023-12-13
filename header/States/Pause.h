@@ -6,9 +6,7 @@ struct PauseState
 
 	void Input();
 
-	void SetupButtons();
-	void SetupImages();
-	void SetupText();
+	void SetupUI();
 
 	void Unload(int unloadPersistent = 0);
 };

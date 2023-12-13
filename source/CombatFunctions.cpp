@@ -28,8 +28,9 @@ void Combat::HitFlat(EntityID& defender, StatComponent* defenderStats, const flo
 	// Update UI
 	RedrawUI();
 
-	// Damage flash
-	Combat::DamageFlash(defender, damage);
+	if (1.f == time)
+		// Damage flash
+		Combat::DamageFlash(defender, damage);
 
 	// TODO: Play ANIMATION_TAKE_DAMAGE. Timed event?
 }
@@ -69,6 +70,11 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 		funcInput.incMult *= charge->multiplier;
 	}
 
+	//Halve the damage since we're dashing
+	if (source & RelicInput::DMG::DASH)
+		for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH))
+			func(&funcInput);
+
 	// Apply on damage calc functions
 	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
 		func(&funcInput);
@@ -88,14 +94,14 @@ float Combat::CalculateDamage(const EntityID& attacker, const StatComponent* att
 	return funcInput.CollapseDamage();
 }
 
-void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats/*, bool isCharged*/)
+void Combat::HitInteraction(const EntityID& attacker, const StatComponent* attackerStats, EntityID& defender, StatComponent* defenderStats, RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE type)
 {
 	if (attackerStats == nullptr || defenderStats == nullptr)
 	{
 		return;
 	}
 	// Calculate damage
-	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY);
+	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, type);
 	
 
 	// Provide a flat hit, mostly just so that we can edit all sources at the same time
@@ -115,19 +121,7 @@ void Combat::DashHitInteraction(EntityID& attacker, StatComponent* attackerStats
 	funcInput.damage = attackerStats->GetDamage();
 	funcInput.cap = (float)defenderStats->GetHealth();
 
-	//Halve the damage since we're dashing
-	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH))
-		func(&funcInput);
-
-	//Calculate damage modifications from relics
-	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_CALC))
-		func(&funcInput);
-
-	//Calculate things that happen when damage is being applied (Reflect damage, lifesteal, etc..)
-	for (auto func : Relics::GetFunctionsOfType(Relics::FUNC_ON_DAMAGE_APPLY))
-		func(&funcInput);
-
-	float finalDamage = funcInput.CollapseDamage();
+	float finalDamage = CalculateDamage(attacker, attackerStats, defender, defenderStats, RelicInput::DMG::INSTANT_ENEMY | RelicInput::DMG::DASH);
 
 	// Provide a flat hit, mostly just so that we can edit all sources at the same time
 	Combat::HitFlat(defender, defenderStats, finalDamage);

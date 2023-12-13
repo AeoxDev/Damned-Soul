@@ -28,7 +28,7 @@ void DamageNumbers(EntityID& defender, float damage)
 	//Do the damage numbers here
 	float time = 0.25f;//Scale time to let player see bigger numbers for longer
 	unsigned damageCondition = (unsigned)damage;
-	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 1);
+	AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, (unsigned)damage, 8);
 }
 
 void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
@@ -42,7 +42,7 @@ void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
 	{
 		float time = 0.125f;//Scale time to let player see bigger numbers for longer
 		unsigned damageCondition = (unsigned)damageNumber;
-		AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, damageCondition, 1);
+		AddTimedEventComponentStartContinuousEnd(defender, 0.0f, CreateDamageNumber, nullptr, time, nullptr, damageCondition, 8);
 		stats->damageOverTime -= 2.0f;
 	}
 }
@@ -50,7 +50,8 @@ void DamageNumbersDOT(EntityID& defender, float effectiveDPS)
 void DamageNumbersDOTRemainder(EntityID& defender)
 {
 	StatComponent* stats = registry.GetComponent<StatComponent>(defender);
-	DamageNumbers(defender, stats->damageOverTime);
+	if (0.01f < stats->damageOverTime)
+		DamageNumbers(defender, stats->damageOverTime);
 	stats->damageOverTime = 0.0f;
 }
 
@@ -218,7 +219,7 @@ void HellhoundBreathAttackCollision(OnCollisionParameters& params)
 		
 	}
 
-	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit); //No special condition for now
+	AddTimedEventComponentStartContinuousEnd(params.entity2, 0.0f, HazardBeginHit, MiddleHit, 0.5f, HazardEndHit, (RelicInput::DMG::INSTANT_ENEMY | RelicInput::DMG::RANGED)); //No special condition for now
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -245,6 +246,7 @@ void HazardAttackCollision(OnCollisionParameters& params)
 	TransformComponent* p = registry.GetComponent<TransformComponent>(params.entity2);
 	HitboxComponent* h = registry.GetComponent<HitboxComponent>(params.entity2);
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(params.entity2);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(params.entity2);
 	if (HitboxCanHitGI(params.entity2))
 	{
 		int r = hazard->type;//PixelValueOnPosition(geoCo, p);
@@ -267,6 +269,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->lavaAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->lower.aAnimTimeFactor = stat->lavaAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->lavaAccelFactor;
 
 			HazardDamageHelper(params.entity2, 25.f);
@@ -287,6 +294,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 				anim->aAnimTimeFactor = stat->acidAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->lower.aAnimTimeFactor = stat->acidAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->acidAccelFactor;
 
 			HazardDamageHelper(params.entity2, 20.f);
@@ -296,6 +308,11 @@ void HazardAttackCollision(OnCollisionParameters& params)
 			if (anim != nullptr && anim->aAnim == ANIMATION_WALK)
 			{
 				anim->aAnimTimeFactor = stat->iceAnimFactor;
+				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
+			}
+			else if (blendAnim != nullptr && blendAnim->lower.aAnim == ANIMATION_WALK)
+			{
+				blendAnim->lower.aAnimTimeFactor = stat->iceAnimFactor;
 				AddTimedEventComponentStart(params.entity2, 0.01f, ContinueAnimation, 0, 2);
 			}
 			stat->m_acceleration = stat->m_baseAcceleration * stat->iceAccelFactor;
@@ -419,33 +436,6 @@ void ApplyHitFeedbackEffects(OnCollisionParameters& params)
 		auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
 		if (charge)
 			appliedKnockback *= charge->multiplier * charge->multiplier; //tWEEK (1 to 4 mult instead of 2.5 to 5)
-		for (auto entity : View<UIPlayerRelicsComponent>(registry))
-		{
-			UIPlayerRelicsComponent* comp = registry.GetComponent<UIPlayerRelicsComponent>(entity);
-			if (comp)
-			{
-				for (auto relic : comp->relics)
-				{
-					char explo[17] = "Exploding Weapon";
-					int sum1 = 0;
-					int sum2 = 0;
-					for (int i = 0; i < 10; i++)
-					{
-						sum1 += explo[i];
-					}
-					for (int i = 0; i < 10; i++)
-					{
-						if (relic->m_relicName != nullptr)
-							sum2 += relic->m_relicName[i];
-					}
-					
-					if(sum1 == sum2)
-					{
-						appliedKnockback *= 2.0f; //XD
-					}
-				}
-			}
-		}
 		float dx, dz;
 		CalculateKnockBackDirection(params.entity1, params.entity2, dx, dz);
 
@@ -504,9 +494,9 @@ void AttackCollision(OnCollisionParameters& params)
 	//Deal damage to the defender and make their model flash red
 	auto charge = registry.GetComponent<ChargeAttackArgumentComponent>(params.entity1);
 	if (charge)
-		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, CONDITION_CHARGE);
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY)/*CONDITION_CHARGE*/);
 	else
-		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit);
+		AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY));
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -552,7 +542,7 @@ void ShockWaveAttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY | RelicInput::DMG::RANGED)); //No special condition for now
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -595,7 +585,7 @@ void ProjectileAttackCollision(OnCollisionParameters& params)
 	ApplyHitFeedbackEffects(params);
 
 	//Deal damage to the defender and make their model flash red
-	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit); //No special condition for now
+	AddTimedEventComponentStartContinuousEnd(params.entity2, FREEZE_TIME, BeginHit, MiddleHit, FREEZE_TIME + 0.2f, EndHit, (RelicInput::DMG::INSTANT_ENEMY | RelicInput::DMG::RANGED)); //No special condition for now
 
 	//If the entity that got attacked was the player, RedrawUI since we need to update player healthbar
 	if (registry.GetComponent<PlayerComponent>(params.entity2) != nullptr)
@@ -665,8 +655,8 @@ void LoadNextLevel(OnCollisionParameters& params)
 			return;
 			break;
 		case 15://Level 8
-			fallof->fallofX = -1303.f;
-			fallof->fallofZ = 506.f;
+			fallof->fallofX = -0.f;
+			fallof->fallofZ = 226.f;
 
 			CutsceneFallStage(params.entity2, 0);
 			return;

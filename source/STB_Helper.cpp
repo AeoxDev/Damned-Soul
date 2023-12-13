@@ -24,16 +24,40 @@ bool Image::load(const char* filename)
 	unsigned char* data = stbi_load(filepath.c_str(), &m_width, &m_height, nullptr, CHANNELS);
 	m_channels = CHANNELS; // Should always be 4
 	
-	assert(nullptr != data);
+	//assert(nullptr != data);
+	if (data)
+	{
+		// Make a deep copy of the data
+		unsigned int size = this->m_width * this->m_height * this->m_channels;
+		this->m_data = MemLib::palloc(size);
+		memcpy(&(*(this->m_data)), &(data[0]), size);
 
-	// Make a deep copy of the data
-	unsigned int size = this->m_width * this->m_height * this->m_channels;
-	this->m_data = MemLib::palloc(size);
-	memcpy(&(*(this->m_data)), &(data[0]), size);
+		// Free with STB
+		stbi_image_free((void*)data);
 
-	// Free with STB
-	stbi_image_free((void*)data);
-
+		return true;
+	}
+#define WIDTH_HEIGHT_DEFAULT_MISSING (4)
+#define CHANNELS_DEFAULT_MISSING (4)
+	m_height = m_width = WIDTH_HEIGHT_DEFAULT_MISSING;
+	m_channels = CHANNELS_DEFAULT_MISSING;
+	m_data = MemLib::palloc(WIDTH_HEIGHT_DEFAULT_MISSING * WIDTH_HEIGHT_DEFAULT_MISSING * CHANNELS_DEFAULT_MISSING);
+	struct M_IMAGE_PIXEL
+	{
+		uint8_t c[CHANNELS_DEFAULT_MISSING] = { 255 };
+	};
+	for (uint8_t y = 0; y < WIDTH_HEIGHT_DEFAULT_MISSING; ++y)
+	{
+		for (uint8_t x = 0; x < WIDTH_HEIGHT_DEFAULT_MISSING; ++x)
+		{
+			M_IMAGE_PIXEL& current = ((M_IMAGE_PIXEL*)&(*this->m_data))[(y * WIDTH_HEIGHT_DEFAULT_MISSING + x)];
+			uint8_t even = (x + y) % 2;
+			current.c[0] = 250 * even;
+			current.c[1] = 3 * even;
+			current.c[2] = 216 * even;
+			current.c[3] = 255;
+		}
+	}
 	return true;
 }
 

@@ -26,6 +26,7 @@ namespace UIFunctions
 
 		void SetMainMenu(void* args, int a);
 
+		void SetPause(void* args, int a);
 	}
 
 	namespace Settings
@@ -50,8 +51,14 @@ namespace UIFunctions
 		}
 	}
 
+	namespace Credits
+	{
+		void NextPage(void* args, int a);
 
-	void Credits_Back(void* args, int a);
+		void PreviousPage(void* args, int a);
+
+		void Back(void* args, int a);
+	}
 	
 	namespace Pause
 	{

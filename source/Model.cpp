@@ -64,6 +64,43 @@ DirectX::XMMATRIX* modelGenericData::GetBoneMatrices()
 }
 
 
+void Model::scaleQuarternion(DirectX::XMVECTOR& vector, float scale)
+{
+	DirectX::XMFLOAT4 rotQuat;
+
+	DirectX::XMStoreFloat4(&rotQuat, vector);
+
+	rotQuat.x *= scale;
+	rotQuat.y *= scale;
+	rotQuat.z *= scale;
+	rotQuat.w *= scale;
+
+	vector = DirectX::XMLoadFloat4(&rotQuat);
+}
+
+void Model::copyFrame(DirectX::XMMATRIX &vertM, DirectX::XMMATRIX &normM, AnimationFrame animFrame, int index)
+{
+	std::memcpy(&vertM, &animFrame.vertex[index], sizeof(DirectX::XMMATRIX));
+	std::memcpy(&normM, &animFrame.normal[index], sizeof(DirectX::XMMATRIX));
+}
+
+DirectX::XMMATRIX Model::scaleMatrix(DirectX::XMMATRIX M, float scale)
+{
+	DirectX::XMFLOAT4X4 temp;
+
+	DirectX::XMStoreFloat4x4(&temp, M);
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int y = 0; y < 4; y++)
+		{
+			temp.m[i][y] *= scale;
+		}
+	}
+
+	return DirectX::XMLoadFloat4x4(&temp);
+}
+
 Model::~Model()
 {
 	//Free();
@@ -79,6 +116,9 @@ const MODEL_TYPE Model::Load(const char* filename)
 	auto flags = std::ios::binary; // | std::ios::ate;
 	reader.open(name.c_str(), flags);
 
+#ifdef _DEBUG
+	printf("model path: %s\n", name.c_str());
+#endif
 	assert(true == reader.is_open());
 
 	// Allocate temporarily onto the stack
@@ -213,15 +253,12 @@ AnimationFrame Model::GetAnimation(const ANIMATION_TYPE aType, const uint8_t aId
 
 void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime, bool isOutline)
 {
-	
-
-	// Incorrect bone indices?
-	// That would sort of explain some of the wonky stuff happening
 
 	// Try to get the initial animation frame
+
 	if (m_animationVertexBuffer != -1)
 	{
-		AnimationFrame frame = GetAnimation(aType, aIdx, aTime);
+		const AnimationFrame frame = GetAnimation(aType, aIdx, aTime);
 		UpdateStructuredBuffer(m_animationVertexBuffer, frame.vertex);
 		SetShaderResourceView(m_animationVertexBufferSRV, BIND_VERTEX, 0);
 		UpdateStructuredBuffer(m_animationNormalBuffer, frame.normal);
@@ -231,7 +268,7 @@ void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, con
 	// Set as slot 0, for the time being
 	SetConstantBuffer(m_materialBuffer, BIND_PIXEL, 0);
 
-	if(m_data->m_numSubMeshes == 7 && m_data->m_numBones == 25) // this is splitboss, we need to do special things. Trust the process, don't touch this code...bastard
+	if (m_data->m_numSubMeshes == 7 && m_data->m_numBones == 25) // this is splitboss, we need to do special things. Trust the process, don't touch this code...bastard
 	{
 		TempBossBehaviour* tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
 		for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
@@ -279,6 +316,136 @@ void Model::RenderAllSubmeshes(EntityID& entity, const ANIMATION_TYPE aType, con
 
 			int iJustWantToSeeWhatHappens = 0; // debug variable?
 		}
+	}
+}
+
+void Model::RenderAllSubmeshesWithBlending(const ANIMATION_TYPE aType, const uint8_t aIdx, const float aTime , const ANIMATION_TYPE aType2, const uint8_t aIdx2, const float aTime2)
+{
+
+	// Try to get the initial animation frame
+	DirectX::XMVECTOR tempScalar;
+	DirectX::XMVECTOR tempRotation;
+	DirectX::XMVECTOR tempTranslation;
+
+	DirectX::XMMATRIX tempVertMatrix;
+	DirectX::XMMATRIX tempNormMatrix;
+
+
+	if (m_animationVertexBuffer != -1)
+	{
+		const AnimationFrame frame = GetAnimation(aType, aIdx, aTime);
+		const AnimationFrame frame2 = GetAnimation(aType2, aIdx2, aTime2);
+		// Push copy onto the stack
+		AnimationFrame modified;
+		modified.vertex = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
+		modified.normal = (DirectX::XMMATRIX*)MemLib::spush(m_data->m_numBones * sizeof(DirectX::XMMATRIX));
+		DirectX::XMMATRIX copyVert = DirectX::XMMatrixIdentity();
+		DirectX::XMMATRIX copyNorm = DirectX::XMMatrixIdentity();
+		float animScale = 1.0f;
+
+		for (int i = 0; i < m_data->m_numBones; i++)
+		{
+			// Lower Body
+			//if (i == 0) { copyVert = frame.vertex[i]; copyNorm = frame.normal[i];}		//0  Control_Joint
+			if (i == 15) { copyFrame(copyVert, copyNorm, frame, i); }		//15 FootL_Joint
+			else if (i == 16) { copyFrame(copyVert, copyNorm, frame, i); }	//16 FootR_Joint
+			//else if (i == 20) { copyFrame(copyVert, copyNorm, frame, i); }//20 Hip_Joint
+			else if (i == 21) { copyFrame(copyVert, copyNorm, frame, i); }	//21 KneeL_Joint
+			else if (i == 22) { copyFrame(copyVert, copyNorm, frame, i); }	//22 KneeR_Joint
+			//else if (i == 24){ copyFrame(copyVert, copyNorm, frame, i); }	//24 Root_Joint
+			else if (i == 29) { copyFrame(copyVert, copyNorm, frame, i); }	//29 ThighL_Joint
+			else if (i == 30) { copyFrame(copyVert, copyNorm, frame, i); }	//30 ThighR_Joint
+			else if (i == 37) { copyFrame(copyVert, copyNorm, frame, i); }	//37 TiptoeL_Joint
+			else if (i == 38) { copyFrame(copyVert, copyNorm, frame, i); }	//38 TiptoeR_Joint
+			else if (i == 39) { copyFrame(copyVert, copyNorm, frame, i); }	//39 ToeL_Joint
+			else if (i == 40) { copyFrame(copyVert, copyNorm, frame, i); }	//40 ToeR_Joint
+			
+			else if (i == 20 || i == 0) // blend hip animation
+			{
+				copyVert = scaleMatrix(frame.vertex[i], 0.2f) + scaleMatrix(frame2.vertex[i], 0.8f);
+				copyNorm = scaleMatrix(frame.normal[i], 0.2f) + scaleMatrix(frame2.normal[i], 0.8f);
+			}
+			else if (i == 27) // blend spine1 animation
+			{
+				copyVert = scaleMatrix(frame.vertex[i], 0.5f) + scaleMatrix(frame2.vertex[i], 0.5f);
+				copyNorm = scaleMatrix(frame.normal[i], 0.5f) + scaleMatrix(frame2.normal[i], 0.5f);
+			}
+			else if (i == 28) // blend spine2 animation
+			{
+				copyVert = scaleMatrix(frame.vertex[i], 0.2f) + scaleMatrix(frame2.vertex[i], 0.8f);
+				copyNorm = scaleMatrix(frame.normal[i], 0.2f) + scaleMatrix(frame2.normal[i], 0.8f);
+			}
+			//Upper Body
+			else
+			{
+				copyFrame(copyVert, copyNorm, frame2, i);
+			}
+			
+			 
+
+			//// Decompose VERTEX matrix to scale rotations and translations without scaling the entire transform matrix.
+			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copyVert));
+			
+			scaleQuarternion(tempRotation, animScale);
+
+			//Rebuild decomposed transformation matrix
+			tempVertMatrix = DirectX::XMMatrixIdentity(); //IdentityMatrix (T-Pose)
+			tempVertMatrix *= DirectX::XMMatrixRotationQuaternion(tempRotation); //Self * Rotation
+			tempVertMatrix *= DirectX::XMMatrixScalingFromVector(tempScalar); //Self * Scale
+			tempVertMatrix *= DirectX::XMMatrixTranslationFromVector(DirectX::XMVectorScale(tempTranslation, animScale)); //Self * Translation
+
+			tempVertMatrix = DirectX::XMMatrixTranspose(tempVertMatrix);
+
+
+			// decompose normal matrix to scale rotations and translations without scaling the entire transform matrix.
+			DirectX::XMMatrixDecompose(&tempScalar, &tempRotation, &tempTranslation, DirectX::XMMatrixTranspose(copyNorm));
+
+			scaleQuarternion(tempRotation, animScale);
+
+			//Rebuild decomposed transformation matrix
+			tempNormMatrix = DirectX::XMMatrixIdentity(); //IdentityMatrix (T-Pose)
+
+			tempNormMatrix *= DirectX::XMMatrixRotationQuaternion(tempRotation); //Self * Rotation
+			tempNormMatrix *= DirectX::XMMatrixScalingFromVector(tempScalar); //Self * Scale
+			tempNormMatrix *= DirectX::XMMatrixTranslationFromVector(DirectX::XMVectorScale(tempTranslation, animScale)); //Self * Translation
+
+			tempNormMatrix = DirectX::XMMatrixTranspose(tempNormMatrix);
+
+			modified.vertex[i] = tempVertMatrix;
+			modified.normal[i] = tempNormMatrix;
+
+		}
+
+
+		UpdateStructuredBuffer(m_animationVertexBuffer, modified.vertex);
+		SetShaderResourceView(m_animationVertexBufferSRV, BIND_VERTEX, 0);
+		UpdateStructuredBuffer(m_animationNormalBuffer, modified.normal);
+		SetShaderResourceView(m_animationNormalBufferSRV, BIND_VERTEX, 1);
+
+		// Set as slot 0, for the time being
+		SetConstantBuffer(m_materialBuffer, BIND_PIXEL, 0);
+
+		for (unsigned int i = 0; i < m_data->m_numSubMeshes; ++i)
+		{
+			const SubMesh& currentMesh = m_data->GetSubMesh(i);
+			const Material& currentMaterial = m_data->GetMaterial(currentMesh.m_material);
+
+			// Create a buffer and give it values
+			MaterialBufferStruct buffStruct(currentMaterial.roughness, currentMaterial.exponent);
+			// Update the material buffer
+			UpdateConstantBuffer(m_materialBuffer, &buffStruct);
+
+			// Set material and draw
+			SetTexture(currentMaterial.albedoIdx, BIND_PIXEL, 0);
+			SetTexture(currentMaterial.normalIdx, BIND_PIXEL, 1);
+			SetTexture(currentMaterial.glowIdx, BIND_PIXEL, 2);
+			d3d11Data->deviceContext->DrawIndexed(1 + currentMesh.m_end - currentMesh.m_start, currentMesh.m_start, 0);
+
+			int iJustWantToSeeWhatHappens = 0; // debug variable?
+		}
+		// Pop the copy from the stack
+		MemLib::spop();
+		MemLib::spop();
 	}
 }
 

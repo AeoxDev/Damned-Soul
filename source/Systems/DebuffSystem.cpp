@@ -40,7 +40,7 @@ bool DebuffSystem::Update()
 				}
 				else
 				{
-					Combat::HitFlat(entity, stats, remainingTime * effectiveDPS);
+					Combat::HitFlat(entity, stats, remainingTime * effectiveDPS, remainingTime);
 				}
 
 				debuff->m_dots[i].AlterModelColor(characterModel, DamageOverTime::DOT_TYPE(i));
@@ -60,6 +60,17 @@ bool DebuffSystem::Update()
 				characterModel->shared.bcaB_temp += .2f + 0.4f * ft;
 		}
 
+
+		// ARIAN SKREV DETTA
+		if (0 < debuff->m_dots[DamageOverTime::BURN].GetTime() && debuff->m_dots[DamageOverTime::BURN].GetTime() < GetDeltaTime())
+		{
+			ParticleComponent* pComp = registry.GetComponent<ParticleComponent>(entity);
+			if (pComp != nullptr)
+			{
+				pComp->Release();
+				registry.RemoveComponent<ParticleComponent>(entity);
+			}
+		}
 
 		// Count down the Debuffs' time and remove them if they are done
 		if (debuff->Advance())

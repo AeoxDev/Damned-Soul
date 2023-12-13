@@ -74,7 +74,7 @@ void SetInPause(bool value)
 		currentStates = (State)(currentStates | State::InPause);
 		TimedEventIgnoreGamespeed(false);
 		gameSpeed = 0.0f;
-		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera from moving during pause.
+		Camera::SetOffset(0.0f, 0.0f, 0.0f);//Reset offset to keep camera fromf moving during pause.
 	}
 	else
 	{
@@ -174,7 +174,7 @@ int StateManager::Setup()
 	//Setup cursor here:
 	stateManager.cursor = registry.CreateEntity(ENT_PERSIST_GAME);
 	UIComponent* uiElement2 = registry.AddComponent<UIComponent>(stateManager.cursor);
-	uiElement2->Setup("Cursor/DamnedSoul_CursorSmallBorder", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
+	uiElement2->Setup("Cursor/DamnedSoul_CursorSmallBorder", "", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f));
 	uiElement2->m_BaseImage.baseUI.SetVisibility(true);
 	uiElement2->m_BaseText.baseUI.SetVisibility(false);
 	//uiElement2->m_BaseImage.baseUI.SetPosition();
@@ -202,7 +202,7 @@ int StateManager::Setup()
 
 #endif // _DEBUG
 
-	systems.push_back(new UIRunTimeSystem());
+	systems.push_back(new UIGameSystem());
 	systems.push_back(new UIRenderSystem());
 	
 	//Input based CPU 
@@ -269,27 +269,6 @@ void StateManager::Input()
 	if (currentStates & State::InMainMenu)
 	{
 		menu.Input();
-
-		// :)
-		//if (keyState[SDL_SCANCODE_RETURN] == pressed)
-		//{
-		//	//�h�
-		//	SetInMainMenu(false);
-		//	SetInPlay(true);
-		//	SetInShop(false);
-
-		//	menu.Unload();
-
-		//	LoadLevel(++stateManager.activeLevel);
-
-		//	//Ungodly amounts of cursed energy, update UI systems after the level has been loaded
-		//	for (size_t i = 17; i < systems.size(); i++)
-		//	{
-		//		systems[i]->Update();
-		//	}
-		//}
-
-		
 	}
 	if (currentStates & State::InPause)
 	{
@@ -321,7 +300,8 @@ void StateManager::Update()
 	ResetInput();
 	GetInput();
 	UIComponent* mouse = registry.GetComponent<UIComponent>(stateManager.cursor);
-	mouse->m_BaseImage.baseUI.SetPosition(mouseX - 1, mouseY - 1);
+	mouse->m_BaseImage.baseUI.SetPosition((int)((float)mouseX * ((float)sdl.BASE_WIDTH / (float)sdl.WIDTH)) - 1, (int)((float)mouseY * ((float)sdl.BASE_HEIGHT / (float)sdl.HEIGHT)) - 1);
+
 	
 	if (mouseX != previousMouseX || mouseY != previousMouseY)
 	{

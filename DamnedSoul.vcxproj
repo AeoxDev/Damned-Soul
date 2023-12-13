@@ -88,7 +88,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>intermediate\</IntDir>
-    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
     <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -163,6 +163,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)CSO\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <PostBuildEvent>
       <Command>cd $(OutDir)Models
@@ -196,6 +197,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)CSO\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <PostBuildEvent>
       <Command>cd $(OutDir)Models
@@ -205,20 +207,20 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\EventFunctions\UIEventFunctions.cpp" />
+    <ClCompile Include="source\Level\EmptyLevel.cpp" />
     <ClCompile Include="source\Relics\Defensive\WendigoTalisman.cpp" />
     <ClCompile Include="source\Relics\Gadget\GoliathSkull.cpp" />
     <ClCompile Include="source\Relics\Offensive\SerratedDagger.cpp" />
+    <ClCompile Include="source\Relics\Utility\GetHitModifiers.cpp" />
     <ClCompile Include="source\Shatter.cpp" />
     <ClCompile Include="source\AntiAlias.cpp" />
     <ClCompile Include="source\Components\AnimationComponent.cpp" />
     <ClCompile Include="source\Components\CutsceneComponent.cpp" />
-    <ClCompile Include="source\DebugTests.cpp" />
     <ClCompile Include="source\Glow.cpp" />
     <ClCompile Include="source\SkyPlane.cpp" />
     <ClCompile Include="source\CombatFunctions.cpp" />
     <ClCompile Include="source\Components\DebuffComponent.cpp" />
     <ClCompile Include="source\Components\TransformComponent.cpp" />
-    <ClCompile Include="source\Level\EyeChallenge.cpp" />
     <ClCompile Include="source\Level\Level5.cpp" />
     <ClCompile Include="source\Level\Level6.cpp" />
     <ClCompile Include="source\Level\Level7.cpp" />
@@ -608,6 +610,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\AntiAlias.h" />
     <ClInclude Include="header\CombatFunctions.h" />
     <ClInclude Include="header\Components\AnimationComponent.h" />
+    <ClInclude Include="header\Components\BlendAnimationsComponent.h" />
     <ClInclude Include="header\Components\Components.h" />
     <ClInclude Include="header\Components\CutsceneComponent.h" />
     <ClInclude Include="header\Components\DebuffComponent.h" />
@@ -629,26 +632,16 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Components\ModelComponent.h" />
     <ClInclude Include="header\Components\PointOfInterestComponent.h" />
     <ClInclude Include="header\Components\TimedEventComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIBossHealthComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIGameScoreboardComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPauseButtonComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPauseRelicTextComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPauseSettingsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPlayerRelicsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UISettingsSliderComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopButtonComponents.h" />
-    <ClInclude Include="header\Components\UIComponents\UIGameTimeComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopImpComponents.h" />
+    <ClInclude Include="header\Components\UIComponents\UICreditsComponents.h" />
+    <ClInclude Include="header\Components\UIComponents\UIGameComponents.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPauseComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIPlayerComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UISettingsComponent.h" />
+    <ClInclude Include="header\Components\UIComponents\UIShopComponents.h" />
     <ClInclude Include="header\Components\UIComponents\UIComponent.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="header\Components\UIComponents\UIGameLevelComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIGameHealthComponent.h" />
     <ClInclude Include="header\Components\TransformComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIPlayerSoulsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopPlayerStatsComponent.h" />
-    <ClInclude Include="header\Components\UIComponents\UIShopRelicComponent.h" />
-    <ClInclude Include="header\DebugTests.h" />
     <ClInclude Include="header\EnemyType.h" />
     <ClInclude Include="header\EntityCreation.h" />
     <ClInclude Include="header\EntityID.h" />
@@ -701,6 +694,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Relics\Offensive\PowerStrike.h" />
     <ClInclude Include="header\Relics\Gadget\SoulEater.h" />
     <ClInclude Include="header\Relics\Offensive\ThrillSeeker.h" />
+    <ClInclude Include="header\Relics\Utility\GetHitModifiers.h" />
     <ClInclude Include="header\Relics\Utility\ML_RelicArray.h" />
     <ClInclude Include="header\Relics\Defensive\Hearts\MoltenHeart.h" />
     <ClInclude Include="header\Relics\Gadget\Reckless.h" />

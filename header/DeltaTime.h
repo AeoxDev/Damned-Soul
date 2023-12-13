@@ -3,6 +3,7 @@
 
 void SetPaused(bool state);
 void ResetRunTime();
+
 void SetVisualTimer(bool state);
 bool GetVisualTimer();
 

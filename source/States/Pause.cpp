@@ -17,9 +17,7 @@
 void PauseState::Setup()
 {
 	RedrawUI();
-	SetupImages();
-	SetupButtons();
-	SetupText();
+	SetupUI();
 
 	if (Camera::InCutscene() > 0)
 	{
@@ -51,39 +49,55 @@ void PauseState::Input()
 			SetInPlay(true);
 
 			SetPaused(false);
+
 			RedrawUI();
 			ResetInput();
+
 			gameSpeed = 1.0f;
 			Unload(ENT_PERSIST_PAUSE);
 		}
 	}
 }
 
-void PauseState::SetupButtons()
+void PauseState::SetupUI()
 {
-
-	const int pauseAmount = 5;
-	const int settingsAmount = 7;
+	const int pauseAmount = 3;
+	const int settingsAmount = 6;
 	const int sliderAmount = 5;
 
 	//Pause Buttons
 	{
+		auto book = registry.CreateEntity(ENT_PERSIST_PAUSE);
+
+		UIComponent* uiBook = registry.AddComponent<UIComponent>(book);
+		UIPauseButtonComponent* pause1 = registry.AddComponent<UIPauseButtonComponent>(book);
+
+		if (stateManager.activeLevel > 10)
+			uiBook->Setup("BookFrozen60%", "", "Game Paused", { 0.0f, 0.0f });
+		else
+			uiBook->Setup("BookNormal60%", "", "Game Paused", { 0.0f, 0.0f });
+
+		uiBook->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.4f));
+
+		auto controls = registry.CreateEntity(ENT_PERSIST_PAUSE);
+
+		UIComponent* uiControls = registry.AddComponent<UIComponent>(controls);
+		UIPauseButtonComponent* pause02 = registry.AddComponent<UIPauseButtonComponent>(controls);
+
+		uiControls->Setup("Controls80", "", "", { 0.225f, 0.0f });
+
 		const char texts[pauseAmount][32] =
 		{
-			"Game Paused",
 			"Resume",
 			"Settings",
-			"Main Menu",
-			""
+			"Main Menu"
 		};
 
 		const DSFLOAT2 positions[pauseAmount] =
 		{
-			{ 0.0f, 0.0f },
-			{ -0.285f, 0.225f },
-			{ -0.285f, 0.0f },
-			{ -0.285f, -0.225f },
-			{ 0.23f, 0.0f}
+			{ -0.235f, 0.18f },
+			{ -0.235f, 0.f },
+			{ -0.235f, -0.18f }
 
 		};
 
@@ -91,70 +105,58 @@ void PauseState::SetupButtons()
 		{
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
-			{ 1.0f, 1.0f },
-			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f }
 		};
 
 		void(* const onClicks[pauseAmount])(void*, int) =
 		{
-			UIFunctions::OnClick::None,
 			UIFunctions::Pause::Resume,
 			UIFunctions::Pause::SetSettings,
-			UIFunctions::Pause::SetMainMenu,
-			UIFunctions::OnClick::None
+			UIFunctions::Pause::SetMainMenu
 		};
 
 		void(* const onHovers[pauseAmount])(void*, int, bool) =
 		{
-			UIFunctions::OnHover::None,
 			UIFunctions::OnHover::Image,
 			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::None
+			UIFunctions::OnHover::Image
 		};
 
 		for (int i = 0; i < pauseAmount; i++)
 		{
 			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
-			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+			
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseButtonComponent* pauseSettings = registry.AddComponent<UIPauseButtonComponent>(button);
-
-			if (i == 0)
-			{
-				if (stateManager.activeLevel > 10)
-					uiElement->Setup("Exmenu/BookFrozen60%", texts[i], positions[i], scales[i]);
-				else
-					uiElement->Setup("Exmenu/BookNormal60%", texts[i], positions[i], scales[i]);
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
-			}
-			else if (i == 4)
-			{
-				uiElement->Setup("Controls", texts[i], positions[i], scales[i]);
-			}
-			else 
-			{
-				uiElement->Setup("Exmenu/ButtonMedium", texts[i], positions[i], scales[i]);
-			}
-
-			if (i != 0 && i != 4)
-			{
-				onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i], UIFunctions::OnClick::None);
-				onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i]);
-			}
-
+			uiElement->Setup("ButtonMedium", "ButtonMediumHover", texts[i], positions[i], scales[i]);
+			
+			
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+			
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i], UIFunctions::OnClick::None);
+			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i]);
+			
 			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
 			sound->Load(MENU);
 		}
+
+
 	}
 
 	//Settings Buttons
 	{
+		auto panel = registry.CreateEntity(ENT_PERSIST_PAUSE);
+
+		UIComponent* uiElement = registry.AddComponent<UIComponent>(panel);
+		UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(panel);
+		uiElement->Setup("SettingsPanel", "", "Settings", { 0.0f, 0.0f }, { 1.0f, 1.0f }, 30.0f);
+		uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
+
+		uiElement->SetAllVisability(false);
+
 		const char texts[settingsAmount][32] =
 		{
-			"Settings",
 			"Fullscreen",
 			"1920x1080",
 			"1600x900",
@@ -165,12 +167,11 @@ void PauseState::SetupButtons()
 
 		const DSFLOAT2 positions[settingsAmount] =
 		{
-			{ 0.0f, 0.0f },
-			{ -0.3f, 0.225f },
-			{ -0.3f, 0.075f },
-			{ -0.3f, -0.075f },
-			{ -0.3f, -0.225f },
-			{ 0.3f, 0.225f },
+			{ -0.25f, 0.225f },
+			{ -0.25f, 0.075f },
+			{ -0.25f, -0.075f },
+			{ -0.25f, -0.225f },
+			{ 0.25f, 0.225f },
 			{ 0.78f, -0.85f }
 		};
 
@@ -181,79 +182,72 @@ void PauseState::SetupButtons()
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
-			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f }
 		};
 
-		const char filenames[settingsAmount][32] =
-		{
-			"Exmenu/SettingsPanel",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonSmall",
-			"Exmenu/ButtonMedium"
-		};
-
-		const float fontsizes[settingsAmount] =
-		{
-			{ 30.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 17.0f },
-			{ 20.0f }
-		};
-
-		void(* const onClicks[settingsAmount - 1])(void*, int) =
+		void(* const functions[settingsAmount])(void*, int) =
 		{
 			UIFunctions::Settings::SetFullscreen,
 			UIFunctions::Settings::SetHighRes,
 			UIFunctions::Settings::SetMediumRes,
 			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
-			UIFunctions::Pause::Back
+			UIFunctions::Pause::Back,
 		};
 
-		void(* const onHovers[settingsAmount - 1])(void*, int, bool) =
+		const char filenames[settingsAmount][32] =
 		{
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image,
-			UIFunctions::OnHover::Image
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonSmall",
+			"ButtonMedium"
+		};
+
+		const char filenamesHover[settingsAmount][32] =
+		{
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonMediumHover"
+		};
+
+		const float fontsizes[settingsAmount] =
+		{
+			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 16.0f },
+			{ 20.0f }
 		};
 
 		for (int i = 0; i < settingsAmount; i++)
 		{
 			auto button = registry.CreateEntity(ENT_PERSIST_PAUSE);
-			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
+			
+			uiElement->Setup(filenames[i], filenamesHover[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			uiElement->SetAllVisability(false);
+
+		
+			OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
+			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
+
+			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
+			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
 			sound->Load(MENU);
 
-			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
-
-			uiElement->SetAllVisability(false);
-
-			if (i == 0)
-			{
-				uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.5f));
-				continue;
-			}
-
-			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onClicks[i - 1], UIFunctions::OnClick::None);
-			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), onHovers[i - 1]);
-
 		}
 	}
-
+	
 
 	//Sliders
 	{
@@ -290,16 +284,13 @@ void PauseState::SetupButtons()
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
 
-			uiElement->Setup("SliderBackground2", texts[i], positions[i]);
+			uiElement->Setup("SliderBackground2", "", texts[i], positions[i]);
 			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right;
-
 			uiElement->SetAllVisability(false);
 
-			float sliderWidth = abs(maxRightPosition - 0.13f) + abs(maxLeftPosition + 0.13f);
+			float sliderWidth = abs(uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f) + abs(uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f);
 
 			if (audioComp != nullptr)
 			{
@@ -345,28 +336,19 @@ void PauseState::SetupButtons()
 
 		}
 	}
-}
 
-void PauseState::SetupImages()
-{
-
-}
-
-void PauseState::SetupText()
-{
 	auto pause = registry.CreateEntity(ENT_PERSIST_PAUSE);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(pause);
-	uiElement->Setup("TempShopTitle", "", { 0.0f, 0.6f });
-	uiElement->m_BaseImage.baseUI.SetVisibility(false);
+	UIComponent* uiElementP = registry.AddComponent<UIComponent>(pause);
+	uiElementP->Setup("TempShopTitle", "", "", { 0.0f, -0.75f });
+	uiElementP->m_BaseImage.baseUI.SetVisibility(false);
 
-	uiElement->AddImage("TempRelicHolder", { 1.5f, 1.5f }, { 1.5f, 1.5f }, false);
-	uiElement->m_Images[0].baseUI.SetVisibility(false);
+	uiElementP->AddImage("PanelSmall", uiElementP->m_BaseImage.baseUI.GetPosition(), { 1.5f, 1.5f }, false);
+	uiElementP->m_Images[0].baseUI.SetVisibility(false);
 
-	uiElement->AddText(" ", uiElement->m_Images[0].baseUI.GetBounds(), { 1.5f, 1.5f });
-	uiElement->m_Texts[0].baseUI.SetVisibility(false);
+	uiElementP->AddText(" ", uiElementP->m_Images[0].baseUI.GetBounds(), uiElementP->m_BaseImage.baseUI.GetPosition());
+	uiElementP->m_Texts[0].baseUI.SetVisibility(false);
 
 	UIPauseRelicTextComponent* relicText = registry.AddComponent<UIPauseRelicTextComponent>(pause);
-
 }
 
 void PauseState::Unload(int unloadPersistent)
