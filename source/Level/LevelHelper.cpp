@@ -964,6 +964,9 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	transform.mass = mass;
 	transform.facingX = facingX; transform.facingY = facingY; transform.facingZ = facingZ;
 
+	//Rasmus was here, lower frozen eye so it's easier to see where to hit
+	if (eType == frozenEye) positionY = -8;
+
 	transform.positionX = positionX; transform.positionY = positionY; transform.positionZ = positionZ;
 	transform.scaleX = scaleX; transform.scaleY = scaleY; transform.scaleZ = scaleZ;
 	registry.AddComponent<TransformComponent>(entity, transform);
@@ -1153,16 +1156,16 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
 		EntityID particlesVFX = registry.CreateEntity();	//no,  no,    size , offset xyz
-		registry.AddComponent<GlowComponent>(entity, .0f, .05f, .15f);
+		registry.AddComponent<GlowComponent>(entity, 1.f, 1.f, 0.f);
 
 		registry.AddComponent<ParticleComponent>(particlesVFX, 100.0f, 100.0f, 25.0f, 0.0f, 0.0f, -4.5f, 1, "\\AcidGround.mdl", VFX_PATTERN::SPAWN_BOSS);
 		TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(particlesVFX);
 		hazardTransform->positionX = transform.positionX;
 		hazardTransform->positionY = 0.2f;
 		hazardTransform->positionZ = transform.positionZ;
-		hazardTransform->scaleX = 1.f;
-		hazardTransform->scaleY = 1.0f;
-		hazardTransform->scaleZ = 1.f;
+		hazardTransform->scaleX = 0.5f;
+		hazardTransform->scaleY = 0.5f;
+		hazardTransform->scaleZ = 0.5f;
 		hazardTransform->facingX = 0.0000f;
 		hazardTransform->facingZ = 0.0000f;
 		hazardTransform->facingY = 0.00001f;
@@ -1209,7 +1212,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 
 		registry.AddComponent<AnimationComponent>(entity);
 		FrozenBehaviour* behev = registry.AddComponent<FrozenBehaviour>(entity);
-		SetupEnemyCollisionBox(entity, 1.5f, EnemyType::frozenHellhound);
+		SetupEnemyCollisionBox(entity, 2.5f, EnemyType::frozenHellhound);
 		if (eType == EnemyType::frozenHellhound)
 		{
 			behev->type = EnemyType::frozenHellhound;
