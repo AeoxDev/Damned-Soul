@@ -288,11 +288,11 @@ EntityID SetUpStage(StageSetupVariables& stageVars)
 	GlowComponent* stageGlow;
 	GlowComponent* portalGlow;
 	
-	float lavaGlowRGB[3] = { 0.9f, 0.3f, 0.0f };
-	float acidGlowRGB[3] = { 0.8f, 0.9f, 0.0f };
-	float iceStageGlowRGB[3] = { 0.2f, 0.50f, 0.50f };
-	float iceHazardGlowRGB[3] = { 0.7f, 0.6f, 1.0f };
-	float portalGlowRGB[3] = { 0.6f, 0.9f, 0.6f };
+	float lavaGlowRGB[3] = { 0.45f, 0.15f, 0.0f };
+	float acidGlowRGB[3] = { 0.2f, 0.225f, 0.0f };
+	float iceStageGlowRGB[3] = { 0.02f, .05f, .05f };
+	float iceHazardGlowRGB[3] = { 0.35f, 0.3f, .5f };
+	float portalGlowRGB[3] = { 0.1f, 0.3f, 0.1f };
 
 	switch (stageVars.stageNr)
 	{
@@ -1011,7 +1011,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 
 		//Orange glow
-		registry.AddComponent<GlowComponent>(entity, .95f, .5f, .0f);
+		registry.AddComponent<GlowComponent>(entity, .9f, .2f, .1f);
 	}
 	else if (eType == EnemyType::hellhound)
 	{
@@ -1031,7 +1031,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 
-		registry.AddComponent<GlowComponent>(entity, .95f, .5f, .0f);
+		registry.AddComponent<GlowComponent>(entity, 1.f, .55f, .05f);
 	}
 	else if (eType == EnemyType::eye)
 	{
@@ -1059,7 +1059,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 
-		registry.AddComponent<GlowComponent>(entity, 0.7f, 0.7f, 0.5f);	//Erika was here
+		registry.AddComponent<GlowComponent>(entity, 0.6f, 0.7f, 0.15f);
 	}
 	else if (eType == EnemyType::imp)
 	{
@@ -1095,7 +1095,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold += 1;
 		}
-		registry.AddComponent<GlowComponent>(entity, 0.8f, 0.6f, 0.9f);	//Erika was here
+		registry.AddComponent<GlowComponent>(entity, 0.75f, 0.3f, 0.5f);
 	}
 	else if (eType == EnemyType::minotaur)
 	{
@@ -1114,7 +1114,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		{
 			player->killThreshold++;
 		}
-		registry.AddComponent<GlowComponent>(entity, 0.9f, 0.7f, 0);
+		registry.AddComponent<GlowComponent>(entity, 0.4f, 0.1f, 0);
 	}
 	else if (eType == EnemyType::tempBoss)
 	{
@@ -1143,7 +1143,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold+=5;
 		}
 		//Orange glow
-		registry.AddComponent<GlowComponent>(entity, .7f, .3f, 0.f);
+		registry.AddComponent<GlowComponent>(entity, .8f, .05f, 0.0f);
 	}
 	else if (eType == EnemyType::lucifer)
 	{
@@ -1161,7 +1161,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//Sounds (Added by Joaquin)
 		SoundComponent* scp = registry.AddComponent<SoundComponent>(entity);
 		scp->Load(BOSS);
-		registry.AddComponent<GlowComponent>(entity, .1f, .2f, .6f);
+		registry.AddComponent<GlowComponent>(entity, .05f, .1f, .3f);
 	}
 	else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 	{
@@ -1278,7 +1278,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//model->shared.colorMultiplicativeBlue = 0.7f;
 		//model->shared.colorAdditiveBlue = 0.2f;
 
-		registry.AddComponent<GlowComponent>(entity, .0f, .75f, .95f);
+		registry.AddComponent<GlowComponent>(entity, .05f, .6f, .7125f);
 
 	}
 	else if (eType == EnemyType::empoweredSkeleton)
@@ -1306,7 +1306,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//model->shared.baseColorAdditiveBlue = 0.2f;
 
 		//Blue glow instead of orange
-		registry.AddComponent<GlowComponent>(entity, .0f, .75f, .95f);
+		registry.AddComponent<GlowComponent>(entity, .2f, .5f, .7f);
 	}
 	else if (eType == EnemyType::empoweredImp)
 	{
@@ -1324,17 +1324,21 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		scp->Load(IMP);
 
 		//Same as with doggo
-		model->shared.colorMultiplicativeRed = 0.3f;
+		model->shared.colorMultiplicativeRed = 1.f;
+		model->shared.colorMultiplicativeGreen = 1.f;
+		model->shared.colorMultiplicativeBlue = 1.f;
+		model->shared.colorAdditiveRed = -0.2f;
+		model->shared.colorAdditiveGreen = 0.0f;
 		model->shared.colorAdditiveBlue = 0.2f;
 
-		model->shared.baseColorMultiplicativeRed = 0.3f;
-		model->shared.baseColorAdditiveBlue = 0.2f;
+		//model->shared.baseColorMultiplicativeRed = 0.3f;
+		//model->shared.baseColorAdditiveBlue = 0.2f;
 
 		if (player)
 		{
 			player->killThreshold += 1;
 		}
-		registry.AddComponent<GlowComponent>(entity, .5f, .0f, .65f);
+		registry.AddComponent<GlowComponent>(entity, .15f, .2f, .67f);
 	}
 
 
