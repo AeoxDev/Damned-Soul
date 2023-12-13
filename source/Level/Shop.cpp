@@ -371,7 +371,7 @@ void CreateTextWindows()
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("Shop/ImpNoteBook", "", "Hello There", { 0.65f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
+	uiImpText->Setup("Shop/ImpNoteBook", "", "", { 0.65f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
 	
 	uiImpText->m_BaseText.m_brush = Black;
 
