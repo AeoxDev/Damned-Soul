@@ -20,7 +20,10 @@ void _CreateAttackParticle(EntityID& entity, const int& index)
 	// Move percy to his goal
 	percysLocation.positionX = zeusLightning->positionX;
 	percysLocation.positionY = zeusLightning->positionY;
-	percysLocation.positionZ = zeusLightning->positionZ;
+	percysLocation.positionZ = zeusLightning->positionZ;	
+	percysLocation.facingX = zeusLightning->facingX;
+	percysLocation.facingY = zeusLightning->facingY;
+	percysLocation.facingZ = zeusLightning->facingZ;
 	registry.AddComponent<TransformComponent>(percyJackson, percysLocation);
 
 																 //Just a control number, can be anything
