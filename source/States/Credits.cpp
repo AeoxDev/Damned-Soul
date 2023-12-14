@@ -60,7 +60,7 @@ void Credits::SetupUI()
 		{"Joaquin Lindkvist", "Joel Berg"},
 		{"Mattias Nordin", "Niclas Andersson"},
 		{"Rasmus Fridlund", "Zannie Karlsson"},
-		{"Fiverr", "Blekinge Institute of Technology"}
+		{"Special Thanks", "Blekinge Institute of Technology"}
 	};
 
 	auto credits = registry.CreateEntity();
@@ -99,7 +99,7 @@ void Credits::SetupUI()
 		uiElementC->m_Texts[i + i].m_brush = Black;
 
 		uiElementC->AddText(desc.c_str(), DSBOUNDS(0, 0, uiElementC->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElementC->m_BaseImage.baseUI.GetBounds().bottom),
-			DSFLOAT2(-0.4 * reverse, 0.0), DSFLOAT2(1.0, 1.0), 20.0f, DWRITE_TEXT_ALIGNMENT_LEADING);
+			DSFLOAT2(-0.4 * reverse, -0.05), DSFLOAT2(1.0, 1.0), 20.0f, DWRITE_TEXT_ALIGNMENT_LEADING);
 
 		uiElementC->m_Texts[i + i + 1].m_brush = Black;
 
