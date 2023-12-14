@@ -66,7 +66,7 @@ void ShatterEnemy(EntityID& entity, const int& index)
 	StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 	if (statComp != nullptr)
 	{
-		shatterStrength += statComp->overkill * 0.5;
+		shatterStrength += statComp->overkill * 0.5f;
 	}
 	registry.AddComponent<ShatterComponent>(entity, shatterStrength);
 
@@ -146,7 +146,7 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 	{
 		soulWorth = 1;
 	}
-	registry.AddComponent<EnemyComponent>(newMini, soulWorth, -1);
+	registry.AddComponent<EnemyComponent>(newMini, soulWorth, EnemyType::zac);
 
 	if (zacIndex == 0)
 	{
@@ -217,20 +217,14 @@ void CreateMini(const EntityID& original, const float xSpawn, const float zSpawn
 
 	AddHitboxComponent(newMini);
 	EnemyComponent* enemyComp = registry.GetComponent<EnemyComponent>(newMini);
-	int hID = CreateHitbox(newMini, radius * /*mini **/ 1.2f, 0.f, 0.f);
-	SetCollisionEvent(newMini, hID, HardCollision);
-	SetHitboxIsEnemy(newMini, hID);
-	SetHitboxHitPlayer(newMini, hID);
-	SetHitboxHitEnemy(newMini, hID);
-	SetHitboxActive(newMini, hID);
-	SetHitboxIsMoveable(newMini, hID, false);
 
 	int sID = CreateHitbox(newMini, radius * 5.f, 0.f, 0.f);
 	SetCollisionEvent(newMini, sID, SoftCollision);
-	SetHitboxIsEnemy(newMini, sID);
-	SetHitboxHitPlayer(newMini, sID);
-	SetHitboxHitEnemy(newMini, sID);
+	//SetHitboxIsEnemy(newMini, sID);
+	//SetHitboxHitPlayer(newMini, sID);
+	//SetHitboxHitEnemy(newMini, sID);
 	SetHitboxActive(newMini, sID);
+	SetHitboxIsEnemy(newMini, sID);
 	SetHitboxIsMoveable(newMini, sID, false);
 	SetHitboxHitStaticHazard(newMini, sID, false);
 	SetHitboxCanTakeDamage(newMini, sID, true);
@@ -295,7 +289,8 @@ void SplitBoss(EntityID& entity, const int& index)
 	tempBossComponent = registry.GetComponent<TempBossBehaviour>(entity);
 	StatComponent* originalStats = registry.GetComponent<StatComponent>(entity);
 
-	float health = 0.f;
+	// Herman Was Here: Hårdkodningen ligger nu härinne, inte utanför
+	float health = 40; //0.f;
 	int partsAlive = 0;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -304,8 +299,8 @@ void SplitBoss(EntityID& entity, const int& index)
 			partsAlive++;
 		}
 	}
-	health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
-	health = health / (float)partsAlive;
+	//health = (float)originalStats->GetMaxHealth(); // 40, 80, 120, 160 or 200
+	//health = health / (float)partsAlive;
 	for (int i = 0; i < 5; ++i)
 	{
 		if (tempBossComponent->parts[i] )
@@ -405,23 +400,37 @@ void EnemyAttackGradient(EntityID& entity, const int& index)
 
 void EnemyAttack(EntityID& entity, const int& index)
 {
-	if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
-		EnemyEndAttack(entity, index);
-	else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
-		EnemyBeginAttack(entity, index);
+	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
+	if (comp)
+	{
+		if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.4f)
+		{
+			SetHitboxActive(entity, comp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true);
+		}
+	}
+	//if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.95f) //End of the event
+	//	EnemyEndAttack(entity, index);
+	//else if (GetTimedEventElapsedTime(entity, index) >= GetTimedEventTotalTime(entity, index) * 0.05f) //Start of the event
+	//	EnemyBeginAttack(entity, index);
 }
 
 void EnemyBeginAttack(EntityID& entity, const int& index)
 {
+	//Get enemy type
+	uint32_t condition = GetTimedEventCondition(entity, index);
+
 	//Activate attack hitbox
 	EnemyComponent* comp = registry.GetComponent<EnemyComponent>(entity);
 	if (comp)
 	{
-		SetHitboxActive(entity, comp->attackHitBoxID, true);
-		SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+		if (condition != EnemyType::skeleton && condition != EnemyType::empoweredSkeleton) //Skeletons now have their own method of beginning their attack
+		{
+			SetHitboxActive(entity, comp->attackHitBoxID, true);
+			SetHitboxCanDealDamage(entity, comp->attackHitBoxID, true); //why isn't this enabled by default
+		}
 	}
-
-	uint32_t condition = GetTimedEventCondition(entity, index);
+	
 	if (condition == EnemyType::hellhound || condition == EnemyType::empoweredHellhound) //Dogs do big knockback on their headbutt
 	{
 		StatComponent* stats = registry.GetComponent<StatComponent>(entity);
@@ -1032,7 +1041,14 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	// Changelog 2023-12-04 14:15: Changed scaling value & hitbox radius, changed to a mesh particle instead
 	// Also changed facing values since mesh particles rotate around Z by default (was originally meant for the sword slash)
 	float scaling = 10.0f;
-	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, scaling, 0.0f, 0.0f, -5.0f, 1, "\\AcidGround.mdl", VFX_PATTERN::ACIDGROUND);
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
+	particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, scaling, 0.0f, 0.0f, -5.0f, 1, "\\AcidGround.mdl", VFX_PATTERN::ACIDGROUND);
 
 	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(acidHazard);
 	hazardTransform->positionX = origin->positionX;

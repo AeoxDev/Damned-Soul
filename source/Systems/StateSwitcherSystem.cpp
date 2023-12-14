@@ -30,6 +30,17 @@ void StartPlayerDeath(EntityID& entity, const int& index)
 		animComp->aAnimIdx = 0;
 		animComp->aAnimTime = 0.01f;
 	}
+	BlendAnimationComponent* blendAnimComp = registry.GetComponent<BlendAnimationComponent>(entity);
+	if (blendAnimComp != nullptr)
+	{
+		blendAnimComp->lower.aAnim = ANIMATION_DEATH;
+		blendAnimComp->lower.aAnimIdx = 0;
+		blendAnimComp->lower.aAnimTime = 0.0f;
+
+		blendAnimComp->upper.aAnim = ANIMATION_DEATH;
+		blendAnimComp->upper.aAnimIdx = 0;
+		blendAnimComp->upper.aAnimTime = 0.0f;
+	}
 
 	ControllerComponent* controller = registry.GetComponent<ControllerComponent>(entity);
 	if (controller)
@@ -64,6 +75,24 @@ void PlayPlayerDeath(EntityID& entity, const int& index)
 			animComp->aAnimTime = 0.99999f;
 		}
 	}
+	BlendAnimationComponent* blendAnimComp = registry.GetComponent<BlendAnimationComponent>(entity);
+	if (blendAnimComp != nullptr)
+	{
+		blendAnimComp->lower.aAnim = ANIMATION_DEATH;
+		blendAnimComp->upper.aAnim = ANIMATION_DEATH;
+
+		blendAnimComp->lower.aAnimIdx = 0;
+		blendAnimComp->upper.aAnimIdx = 0;
+
+		float scalar = 3.0f * GetTimedEventElapsedTime(entity, index) / GetTimedEventTotalTime(entity, index);
+		blendAnimComp->lower.aAnimTime = 0.01f + scalar;
+		blendAnimComp->upper.aAnimTime = 0.01f + scalar;
+		if (scalar > 1.0f)
+		{
+			blendAnimComp->lower.aAnimTime = 0.99999f;
+			blendAnimComp->upper.aAnimTime = 0.99999f;
+		}
+	}
 }
 
 void EndPlayerDeath(EntityID& entity, const int& index)
@@ -84,7 +113,7 @@ bool StateSwitcherSystem::Update()
 		ControllerComponent* controller = registry.GetComponent<ControllerComponent>(player);
 		if (statComp != nullptr && controller != nullptr)
 		{
-			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay && registry.GetComponent<AnimationComponent>(player)->aAnim != ANIMATION_DEATH) //Added a check to see if the player death animation is already playing (Joaquin)
+			if (statComp->GetHealth() <= 0 && currentStates & State::InPlay && registry.GetComponent<BlendAnimationComponent>(player)->lower.aAnim != ANIMATION_DEATH) //Added a check to see if the player death animation is already playing (Joaquin)
 			{
 				SoundComponent* sfx = registry.GetComponent<SoundComponent>(player);
 				if (sfx != nullptr)
@@ -141,6 +170,7 @@ bool StateSwitcherSystem::Update()
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (statComp->GetHealth() <= 0 && statComp->performingDeathAnimation == false)
 		{
+			bool notZac = true;
 			TempBossBehaviour* tempBossComp = registry.GetComponent<TempBossBehaviour>(entity);
 			if (tempBossComp == nullptr)
 			{
@@ -160,7 +190,6 @@ bool StateSwitcherSystem::Update()
 				case EnemyType::hellhound:
 					sfx->Play(Hellhound_Death, Channel_Base);
 					shatterTimeFactor *= 0.55f;
-					AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, 0.55f * shatterTimeFactor, ShatterEnemy);
 					break;
 				case EnemyType::skeleton:
 					sfx->Play(Skeleton_Death, Channel_Base);
@@ -188,8 +217,7 @@ bool StateSwitcherSystem::Update()
 					break;
 				case EnemyType::frozenImp:
 					sfx->Play(Imp_Death, Channel_Base);
-					shatterTimeFactor *= 0.55f;
-					ShatterEnemy(entity, 0);
+					shatterTimeFactor *= 0.f;
 					break;
 				case EnemyType::zac:
 					sfx->Play(Miniboss_Death, Channel_Base);
@@ -239,6 +267,7 @@ bool StateSwitcherSystem::Update()
 				}
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, nullptr, nullptr, shatterTimeFactor, ShatterEnemy);
 				AddTimedEventComponentStartContinuousEnd(entity, 0.f, PlayDeathAnimation, PlayDeathAnimation, shatterTimeFactor + 0.5f, RemoveEnemy);
+				
 			}
 			else // boss died lmao
 			{

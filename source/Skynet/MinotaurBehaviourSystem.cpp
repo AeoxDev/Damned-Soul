@@ -302,8 +302,15 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 					mc->attackStunTimer = 0;
 					AddTimedEventComponentStartContinuousEnd(enemy, 0.0f, BossShockwaveStart, BossShockwaveExpand, mc->attackStunDuration, BossShockwaveEnd, 0, 1);
 					mc->jumpCounter++;
-					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 2.f,0.f, 0.f, 1.f, 
-					10.0f,1.0f,0.0f,//rgb
+					//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+					//The solution: Find and release if it already exists
+					ParticleComponent* particle = registry.GetComponent<ParticleComponent>(enemy);
+					if (particle != nullptr)
+					{
+						particle->Release();
+					}
+					registry.AddComponent<ParticleComponent>(enemy, mc->attackStunDuration, 500.f, 2.f,0.f, 1.5f, 1.f, 
+					3.0f,2.0f,0.0f,//rgb
 					300, ComputeShaders::PULSE);
 					//30.f is what is growthspeed in bossshockwaveexpand
 					
@@ -325,8 +332,8 @@ void JumpingBehaviour(EntityID& enemy, TransformComponent* ptc, MinotaurBehaviou
 		//Calculate new teleport breakpoint
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		// Define a uniform distribution for the range [2.0, 4.0]
-		std::uniform_real_distribution<float> distribution(2.0f, 4.0f);
+		// Define a uniform distribution for the range [1.0, 2.0]
+		std::uniform_real_distribution<float> distribution(1.0f, 2.0f);
 		mc->jumpBreakpoint = (int)distribution(gen);
 	}
 }

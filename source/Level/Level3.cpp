@@ -123,28 +123,28 @@ void LoadLevel3()
 	CreatePointLight(lightholderForth, 0.5f, 0.1f, 0.0f, -263.0f, 10.0f, -5.0f, 300.0f, 20.0f);
 
 	EntityID partTT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partTT, 4, 5, 3, 0, 0, 0, 8, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partTT, 4, 12, 3, 0, 0, 0, 8, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent ttttComp;
-	ttttComp.positionX = -189;
-	ttttComp.positionY = 1;
+	ttttComp.positionX = -191;
+	ttttComp.positionY = 1.5;
 	ttttComp.positionZ = -8;
 	registry.AddComponent<TransformComponent>(partTT, ttttComp);
 
 
 	EntityID partT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partT, 4, 5, 3, 0, 0, 0, 13, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partT, 7.5, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent ttComp;
-	ttComp.positionX = -145;
+	ttComp.positionX = -141;
 	ttComp.positionY = 2;
 	ttComp.positionZ = 111;
 	registry.AddComponent<TransformComponent>(partT, ttComp);
 
 	EntityID partTTT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partTTT, 4, 5, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partTTT, 8.5, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent tttComp;
-	tttComp.positionX = -131;
-	tttComp.positionY = 1;
-	tttComp.positionZ = 199;
+	tttComp.positionX = -130;
+	tttComp.positionY = 1.5;
+	tttComp.positionZ = 200;
 	registry.AddComponent<TransformComponent>(partTTT, tttComp);
 
 

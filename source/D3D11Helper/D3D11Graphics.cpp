@@ -6,6 +6,7 @@
 #include "MemLib/MemLib.hpp"
 #include <fstream>
 #include <assert.h>
+#include <system_error>
 
 //#ifdef _DEBUG
 //#include <dxgidebug.h>
@@ -31,7 +32,7 @@ BlendStateHolder* bsHolder;
 
 bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 {
-	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG;
+	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
@@ -57,7 +58,12 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDesc.Flags = 0;
 
+    //https://stackoverflow.com/questions/44334207/d3d11createdevice-0x887a002d-error
+	// HRESULT 0x887a002d
+	// The error indicates that your system does not have the DirectX SDK Layer package that is required to support D3D11_CREATE_DEVICE_DEBUG. 
+	// You can verify that by building a Release configuration which won't use this flag and check that it can create the Direct3D 11 device.
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &d3d11Data->swapChain, &d3d11Data->device, NULL, &d3d11Data->deviceContext);
+	printf("Device & Swap Chain HR: %x | %s\n", hr, std::system_category().message((unsigned int)hr).c_str());
 	assert(SUCCEEDED(hr));
 
 	return SUCCEEDED(hr);

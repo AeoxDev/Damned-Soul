@@ -43,8 +43,6 @@ namespace UIFunctions
 
 		void SwitchTimer(void* args, int a);
 
-		void SwitchFPS(void* args, int a);
-
 		namespace Volume
 		{
 			void Press(void* args, int a);
@@ -53,8 +51,14 @@ namespace UIFunctions
 		}
 	}
 
+	namespace Credits
+	{
+		void NextPage(void* args, int a);
 
-	void Credits_Back(void* args, int a);
+		void PreviousPage(void* args, int a);
+
+		void Back(void* args, int a);
+	}
 	
 	namespace Pause
 	{

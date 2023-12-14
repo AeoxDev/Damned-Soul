@@ -28,7 +28,6 @@ int GetNrEnemies();
 
 struct StateManager
 {
-	//ML_Vector<System*> systems; //Herman Help;
 	std::vector<System*> systems;
 	int activeLevel = -1;
 	int finalLevel = 17;
@@ -46,6 +45,8 @@ struct StateManager
 	EntityID cutsceneEnemy;
 	EntityID hitboxVis;
 	EntityID naviagtion;
+
+	int creditsIndex = 0;
 
 	EntityID cursor;
 	int cursorMode = CursorNeutral;

@@ -12,17 +12,17 @@
 #include "UIComponents.h"
 #include "Model.h"
 #include "Levels\LevelHelper.h"
-
+#include "DeltaTime.h"
 
 void SettingsState::Setup()
 {
 
 	RedrawUI();
-	SetupImages();
-	SetupButtons();
-	SetupText();
+	SetupUI();
 
 	Camera::ResetCamera();
+	Camera::SetCutsceneMode(0);
+
 	// Stage Model
 	StageSetupVariables stageVars;
 	
@@ -37,6 +37,7 @@ void SettingsState::Setup()
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.12f;
+	gameSpeed = 1.0f;
 }
 
 void SettingsState::Input()
@@ -44,9 +45,15 @@ void SettingsState::Input()
 
 }
 
-void SettingsState::SetupButtons()
+void SettingsState::SetupUI()
 {
-	const int amount = 7;
+	// Settings backdrop panel
+	auto settingsPanel = registry.CreateEntity();
+	UIComponent* uiElementP = registry.AddComponent<UIComponent>(settingsPanel);
+	uiElementP->Setup("SettingsPanel", "", "Settings", { 0.0f, 0.0f }, { 1.0f, 1.0f }, 30.0f);
+	uiElementP->m_BaseText.baseUI.SetPosition({ 0.0f, 0.5f });
+
+	const int amount = 6;
 	const int sliderAmount = 5;
 
 	//Buttons
@@ -58,24 +65,21 @@ void SettingsState::SetupButtons()
 			"1600x900",
 			"1280x720",
 			"Enable Game Timer",
-			"Enable FPS Counter",
 			"Back",
 		};
 
 		const DSFLOAT2 positions[amount] =
 		{
-			{ -0.3f, 0.225f },
-			{ -0.3f, 0.075f },
-			{ -0.3f, -0.075f },
-			{ -0.3f, -0.225f },
-			{ 0.3f, 0.225f },
-			{ 0.3f, 0.075f },
+			{ -0.25f, 0.225f },
+			{ -0.25f, 0.075f },
+			{ -0.25f, -0.075f },
+			{ -0.25f, -0.225f },
+			{ 0.25f, 0.225f },
 			{ 0.78f, -0.85f }
 		};
 
 		const DSFLOAT2 scales[amount] =
 		{
-			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
 			{ 1.0f, 1.0f },
@@ -91,7 +95,6 @@ void SettingsState::SetupButtons()
 			UIFunctions::Settings::SetMediumRes,
 			UIFunctions::Settings::SetLowRes,
 			UIFunctions::Settings::SwitchTimer,
-			UIFunctions::Settings::SwitchFPS,
 			UIFunctions::Settings::Back,
 		};
 
@@ -102,18 +105,26 @@ void SettingsState::SetupButtons()
 			"ButtonSmall",
 			"ButtonSmall",
 			"ButtonSmall",
-			"ButtonSmall",
 			"ButtonMedium"
+		};
+
+		const char filenamesHover[amount][32] =
+		{
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonSmallHover",
+			"ButtonMediumHover"
 		};
 
 		const float fontsizes[amount] =
 		{
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
-			{ 18.0f },
 			{ 17.0f },
 			{ 17.0f },
+			{ 17.0f },
+			{ 17.0f },
+			{ 16.0f },
 			{ 20.0f }
 		};
 
@@ -124,7 +135,14 @@ void SettingsState::SetupButtons()
 			OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-			uiElement->Setup(filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			if (i == 4 && GetVisualTimer())
+			{
+				uiElement->Setup(filenamesHover[i], filenames[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			}
+			else
+			{
+				uiElement->Setup(filenames[i], filenamesHover[i], texts[i], positions[i], scales[i], fontsizes[i]);
+			}
 
 			onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), functions[i], UIFunctions::OnClick::None);
 			onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -168,12 +186,12 @@ void SettingsState::SetupButtons()
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 
-			uiElement->Setup("SliderBackground2", texts[i], positions[i]);
-			uiElement->AddImage("SliderButton2", positions[i], DSFLOAT2(1.0f, 1.0f), false);
+			uiElement->Setup("Slider/BorderSmallSlider", "", texts[i], positions[i]);
+			uiElement->AddImage("Slider/SliderButton75", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
+			float maxLeftPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f) + 0.025f;
+			float maxRightPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().right / 2.0f) - 0.025f;
 
 			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 
@@ -221,26 +239,6 @@ void SettingsState::SetupButtons()
 
 		}
 	}
-}
-
-void SettingsState::SetupImages()
-{
-	// Settings backdrop panel
-	auto settingsPanel = registry.CreateEntity();
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsPanel);
-	uiElement->Setup("SettingsPanel", "", { 0.0f, 0.0f }, { 1.0f, 1.0f });
-
-}
-
-void SettingsState::SetupText()
-{
-	
-	// Settings Text Header
-	auto settingsHeader = registry.CreateEntity();
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(settingsHeader);
-	uiElement->Setup("TempShopTitle", "Settings", { 0.0f, 0.5f }, DSFLOAT2(1.0f, 1.0f), 30.0f);
-	uiElement->m_BaseImage.baseUI.SetVisibility(false);
-	
 }
 
 void SettingsState::Unload()

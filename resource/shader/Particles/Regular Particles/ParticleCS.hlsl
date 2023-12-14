@@ -11,7 +11,7 @@ inline void ShockWaveMovement(in uint3 DTid, in uint3 blockID);
 inline void HotPotMovement(in uint3 DTid, in uint3 blockID);
 inline void SparkMovement(in uint3 DTid, in uint3 blockID);
 inline void NoMovement(in uint3 DTid, in uint3 blockID);
-
+inline void NillMovement(in uint3 DTid, in uint3 blockID);
 
 [numthreads(NUM_THREADS, 1, 1)]
 void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
@@ -71,7 +71,7 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
             SpiralFieldMovement(DTid, blockID);
         }
         // 9 = FIRE
-        if (meta[blockID.y].pattern == 9 || meta[blockID.y].pattern == 1)
+        if (meta[blockID.y].pattern == 9)
         {
             FireMovement(DTid, blockID);
         }
@@ -96,6 +96,11 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         if (meta[blockID.y].pattern == 14)
         {
             NoMovement(DTid, blockID);
+        }
+        // 15 = NILL
+        if (meta[blockID.y].pattern == 15)
+        {
+            NillMovement(DTid, blockID);
         }
         
     }
@@ -395,6 +400,14 @@ void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
     float2 v0 = float2(meta[blockID.y].maxRange, meta[blockID.y].positionInfo.x);
     float2 v1 = float2(meta[blockID.y].positionInfo.y, meta[blockID.y].positionInfo.z);
     float2 v2 = float2(meta[blockID.y].morePositionInfo.x, meta[blockID.y].morePositionInfo.y);
+    
+    //Arian tip for the offset
+    float vOffset = 7.5f; //Match the offset forward in HellhoundBehaviourSystem
+    v1.y -= vOffset;
+    v2.y -= vOffset;
+    v1.x *= 1.8f; //Adjust width of the cone to actually fill out the hitbox
+    v2.x *= 1.8f;
+    
 
     float2 legThree = v2 - v1;
     
@@ -480,6 +493,7 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
     particle.position.x = (2 * alpha + beta + 2 * gamma);
     particle.position.z = (alpha + 2 * beta - gamma);
     
+
     //particle.rgb.r = 0.0f;
     //particle.rgb.g = 0.0f;
     //particle.rgb.b = 1.0f;
@@ -497,7 +511,6 @@ void LightningMovement(in uint3 DTid, in uint3 blockID)
 
 void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
 {
-    // -- Calculate the index and get the right particle to change -- //
     int amount = meta[blockID.y].end - meta[blockID.y].start;
     int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
     int localIndex = (index - meta[blockID.y].start) % amount;
@@ -515,7 +528,6 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     // ------------------------------ //
     
     
-    
     float timeValue = (particle.time / meta[blockID.y].life);
     // "Uneven" circlings with a bit over 8 laps
     float piFraction = ((indexValue) * PI * 50.f) + timeValue * timeValue;
@@ -525,21 +537,16 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
     //particle.size = meta[blockID.y].size * /*sqrt*/(1 - timeValue);
     
     particle.position.x = cos(piFraction) * radius;
-    particle.position.y = (timeValue * indexValue);//z mod
+    particle.position.y = meta[blockID.y].startPosition.y /*0.0f*/; //(timeValue * indexValue); //z mod
     particle.position.z = sin(piFraction) * radius;
     
-    //if (meta[blockID.y].morePositionInfo.x > 0)
-    //{
-    //    particle.rgb.r = 0.0f;
-    //    particle.rgb.g = 0.0f;
-    //    particle.rgb.b = 1.0f;
-    //}
-    //else if (meta[blockID.y].morePositionInfo.y > 0)
-    //{
-    //    particle.rgb.r = 1.0f;
-    //    particle.rgb.g = 0.0f;
-    //    particle.rgb.b = 0.0f;
-    //}
+    if (particle.time >= meta[blockID.y].life)
+    {
+        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+
+        particle.position = startPosition;
+        particle.time = 0.f;
+    }
     
     if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
     {
@@ -548,7 +555,14 @@ void SpiralFieldMovement(in uint3 DTid, in uint3 blockID)
         particle.rgb.b = meta[blockID.y].positionInfo.z;
    
     }
-      
+
+    //if (radius < meta[blockID.y].maxRange / 1.5)
+    //{
+    //    particle.rgb.r = particle.rgb.r + (5 / radius);
+    //    particle.rgb.b = particle.rgb.b - (particle.rgb.b / radius);
+    //}
+ 
+    
     outputParticleData[index] = particle;
 }
 
@@ -677,7 +691,7 @@ void FireMovement(in uint3 DTid, in uint3 blockID)
 
     float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
    
-    particle.position.x = particle.position.x + ((particle.size) * localIndex /3);
+    particle.position.x = particle.position.x + ((particle.size/1.5) * localIndex /3);
     if(localIndex%2==0)
     {
         particle.position.y = particle.position.y;
@@ -730,43 +744,14 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     
     float timeValue = (particle.time / meta[blockID.y].life);
     
-     // ---- Get a "randomized" value to access deltaTime ---- //    
-    //float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
-    //???float directionRandom = normalize(float((DTid.x % 5.0) / 5.0f - 0.5f));
-    
-    ////Time differense for variation in animation 
-    ////if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
-    ////{
-    ////    particle.time = 0.0f;
-    ////}
-    ////else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
-    ////{
-    ////    particle.time = meta[index].deltaTime * meta[blockID.y].life;
-        
-
-    ////}
-    
-    ////Set specified Start position 
-    //float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
-    //particle.position = startPosition;
-
-    //float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle index
-    //particle.size = particle.size + (1*oddEvenFactor);
-    //particle.position.x = particle.position.x + (localIndex * 2 /*+4*/);
-    //particle.position.y = 1 + particle.position.y;
-    
-    //particle.position.z = particle.position.z +  localIndex/2 ; //*localIndex + (oddEvenFactor * ( /*4*6 * meta[index].deltaTime));*/
-
         //Time differense for variation in animation 
     if (particle.time >= meta[blockID.y].life + meta[One_OneHundo].deltaTime)
     {
-       
         particle.time = 0.0f;
     }
     else if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
     {
         particle.time = meta[index].deltaTime * meta[blockID.y].life;
-        
 
     }
     
@@ -775,24 +760,29 @@ void HotPotMovement(in uint3 DTid, in uint3 blockID)
     float noiseRange = 3.0f;
     float noiseX = noiseRange * sin(index);
     float noiseZ = noiseRange * sin(index * 2.0f);
-    particle.position = startPosition + noiseX;
+    //particle.position = startPosition + noiseX;
 
     float oddEvenFactor = ((index % 2) - 0.5f) * 2; //gives values 0 or 1 based on particle 
-    particle.position.x = particle.position.x + ((particle.size) * localIndex / 2);
+    float bounderyTest = noiseX + ((particle.size) * localIndex / 2);
+    
+    //particle.position.x = particle.position.x + ((particle.size) * localIndex / 2);
+    if (bounderyTest > meta[blockID.y].maxRange)
+    {
+        bounderyTest = (meta[blockID.y].maxRange - 2);
+        
+    }
+    particle.position = startPosition + bounderyTest;
+    
     if (index % 2 == 0)
     {
-        particle.position.y = particle.position.y;
+        particle.position.y = meta[blockID.y].startPosition.y;
         particle.size = (particle.size - 1.0f);
 
     }
-    //else
-    //{
-    //    //particle.position.y = particle.position.y + ((particle.size - 1) + (oddEvenFactor));
-    //}
-   
-    
-    particle.position.z = noiseZ + particle.position.z + (2 / localIndex) /** oddEvenFactor*/; /*+ oddEvenFactor * ( 4* meta[index].deltaTime)*/;
+    particle.position.y = meta[blockID.y].startPosition.y;
+    particle.position.z = noiseZ + meta[blockID.y].startPosition.z + (2 / localIndex) /** oddEvenFactor*/; /*+ oddEvenFactor * ( 4* meta[index].deltaTime)*/;
 
+    
     //Add noise
     
     particle.rgb.r = 1.0f;
@@ -910,5 +900,42 @@ void NoMovement(in uint3 DTid, in uint3 blockID)
     particle.position.y = meta[blockID.y].startPosition.y;
     particle.position.z = meta[blockID.y].startPosition.z;
         
+    outputParticleData[index] = particle;
+}
+
+void NillMovement(in uint3 DTid, in uint3 blockID)
+{
+    // -- Calculate the index and get the right particle to change -- //
+    int amount = meta[blockID.y].end - meta[blockID.y].start;
+    int index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    int localIndex = (index - meta[blockID.y].start) % amount;
+    
+    Input particle = inputParticleData[index];
+    
+    //////float indexValue = sqrt((10.f + (float) localIndex) / (10.f + (float) amount));
+    //////// --- Set the standard stuff --- //
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size;
+    particle.patterns = meta[blockID.y].pattern;
+        //VFX Pattern is stored in morePositionInfo.y to save space
+    particle.VFXpatterns = (int) meta[blockID.y].morePositionInfo.y;
+    // ------------------------------ //
+    
+    float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+    particle.position = startPosition;
+   
+    float timeValue = (particle.time / meta[blockID.y].life);
+
+    particle.size = (meta[blockID.y].size + (meta[blockID.y].size - 2)) / (1 / timeValue);
+
+    if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
+    {
+        particle.rgb.r = meta[blockID.y].positionInfo.x;
+        particle.rgb.g = meta[blockID.y].positionInfo.y;
+        particle.rgb.b = meta[blockID.y].positionInfo.z;
+   
+    }
+      
     outputParticleData[index] = particle;
 }

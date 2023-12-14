@@ -4,7 +4,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define ICY_BLADE_FREEZE_CHANCE (0.15f)
+#define ICY_BLADE_FREEZE_CHANCE (0.175f)
 #define ICY_BLADE_DURATION (2.f)
 
 EntityID ICY_BLADE::_OWNER;
@@ -12,8 +12,8 @@ EntityID ICY_BLADE::_OWNER;
 const char* ICY_BLADE::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You gain %ld%% chance to freeze enemies for %.1lf seconds on a hit", 
-		PERCENT(ICY_BLADE_FREEZE_CHANCE),
+	sprintf_s(temp, "You gain %.1lf%% chance to freeze enemies for %.1lf seconds on a hit", 
+		ICY_BLADE_FREEZE_CHANCE * 100.f,
 		ICY_BLADE_DURATION);
 #pragma warning(suppress : 4172)
 	return temp;

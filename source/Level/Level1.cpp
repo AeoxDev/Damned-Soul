@@ -123,7 +123,7 @@ void LoadLevel1()
 	EntityID lightholderThree = registry.CreateEntity();
 	EntityID lightholderForth = registry.CreateEntity();
 
-	float redLight = 0.5f;
+	float redLight = 0.7f;
 	float greenLight = 0.1f;
 	float blueLight = 0.0f;
 

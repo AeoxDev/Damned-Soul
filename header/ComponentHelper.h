@@ -198,7 +198,7 @@ public:
 	int dashHitboxID = -1;
 	int killingSpree = 0;
 	int killThreshold = 0;
-	int weaponTier = 1;
+	int weaponTier = 0;
 	bool portalCreated = false;
 	bool isDashing = false;
 	bool healFreebie = true;
@@ -212,6 +212,9 @@ public:
 	//New additions because of player heavy attacks
 	float currentCharge = 0.0f;
 	float maxCharge = 1.0f; 
+
+	//New additions because if Blend Animations
+	bool isMoving = false;
 
 	// Update the number of souls in the player's possession
 	int UpdateSouls(const int delta);

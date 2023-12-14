@@ -419,7 +419,7 @@ bool ControllerSystem::Update()
 		return true;
 	}
 
-	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, AnimationComponent, MouseComponent>(registry))
+	for (auto entity : View<ControllerComponent, TransformComponent, StatComponent, BlendAnimationComponent, MouseComponent>(registry))
 	{
 		if (gameSpeed < 0.00001f)
 		{
@@ -442,10 +442,11 @@ bool ControllerSystem::Update()
 		controller->goalZ = 0.0f;
 
 		//Default the animation to idle, subject to be changed based off of user input
-		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+		BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
 
 		/*MOVEMENT INPUT*/
 		bool moving = false;
+		player->isMoving = false;
 		if (keyInput[SCANCODE_W] == down)
 		{
 			
@@ -469,6 +470,7 @@ bool ControllerSystem::Update()
 			controller->goalX += 1.0f;
 		}
 
+		
 		//Update facing based off of mouse position (but only if we aren't currently attacking, you'd better commit)
 		if (!player->isAttacking)
 		{
@@ -479,12 +481,20 @@ bool ControllerSystem::Update()
 		if ((controller->goalX * controller->goalX + controller->goalZ * controller->goalZ) > 0.0f)
 		{
 			moving = true;
+			player->isMoving = true;
 		}
 
 		if (moving)
 		{
-			anim->aAnim = ANIMATION_WALK;
-			anim->aAnimIdx = 0;
+			anim->lower.aAnim = ANIMATION_WALK;
+			anim->lower.aAnimIdx= 0;
+
+			if (!player->isAttacking)
+			{
+				anim->upper.aAnim = ANIMATION_WALK;
+				anim->upper.aAnimIdx = 0;
+				anim->upper.aAnimTime = anim->lower.aAnimTime;
+			}
 
 			float len = controller->goalX * controller->goalX + controller->goalZ * controller->goalZ;
 			if (len <= 0.0f)
@@ -515,8 +525,13 @@ bool ControllerSystem::Update()
 		//clamp moveTime to lower limit if not moving
 		else 
 		{
-			anim->aAnim = ANIMATION_IDLE;
-			anim->aAnimIdx = 0;
+		
+			anim->lower.aAnim = ANIMATION_IDLE;
+			anim->lower.aAnimIdx = 0;
+
+			anim->upper.aAnim = ANIMATION_IDLE;
+			anim->upper.aAnimIdx = 0;
+			anim->upper.aAnimTime = anim->lower.aAnimTime;
 			
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			TransformDecelerate(entity);
@@ -710,8 +725,39 @@ bool ControllerSystem::Update()
 #endif // _DEBUG
 
 		//Update animation at the end of user input
-		anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-		ANIM_BRANCHLESS(anim);
+		float scalar = (transform->facingX * controller->goalX) + (transform->facingZ * controller->goalZ);
+		if (scalar >= 0.0f)
+		{
+			anim->lower.aAnimTime += GetDeltaTime() * anim->lower.aAnimTimeFactor;
+			anim->upper.aAnimTime += GetDeltaTime() * anim->upper.aAnimTimeFactor;
+			ANIM_BRANCHLESS((&(anim->lower)));
+			ANIM_BRANCHLESS((&(anim->upper)));
+		}
+		else
+		{
+			anim->lower.aAnimTime -= GetDeltaTime() * anim->lower.aAnimTimeFactor;//Legs
+			if (anim->lower.aAnimTime < 0.0f)
+			{
+				anim->lower.aAnimTime += 1.0f;
+			}
+
+			if (player->isAttacking == false)//Only do the backwards whilst not attacking.
+			{
+				anim->upper.aAnimTime -= GetDeltaTime() * anim->upper.aAnimTimeFactor;
+				if (anim->upper.aAnimTime < 0.0f)
+				{
+					anim->upper.aAnimTime += 1.0f;
+				}
+			}
+			else
+			{
+				anim->upper.aAnimTime += GetDeltaTime() * anim->upper.aAnimTimeFactor;
+				ANIM_BRANCHLESS((&(anim->upper)));
+			}
+			
+		
+		}
+		
 
 	}
 	//Loop for player during other places

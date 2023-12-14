@@ -8,12 +8,15 @@
 // Renderable Components
 #include "ModelComponent.h"
 #include "AnimationComponent.h"
+#include "BlendAnimationsComponent.h"
 #include "LightComponent.h"
 #include "GlowComponent.h"	// NOTE: This right? Should be rendered, so I guess?
 // Special child belongs to both groups
 #include "TransformComponent.h"
 #include "FollowerComponent.h"
 #include "MouseComponent.h"
+#include "ParentComponent.h"
+#include "ParentControlComponent.h"
 
 // Physics Components
 #include "GeometryIndependentComponent.h"

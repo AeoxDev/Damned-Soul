@@ -74,12 +74,6 @@ bool UIShopSystem::Update()
 			uiElement->SetAllVisability(false);
 		}
 
-		for (auto entity : View<UIShopRerollComponent>(registry))
-		{
-			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			uiElement->SetAllVisability(false);
-		}
-
 		for (auto entity : View<UIShopButtonComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
@@ -108,17 +102,17 @@ bool UIShopSystem::Update()
 
 			char atkDmgStr[64] = "";
 			sprintf(atkDmgStr, "Damage: %.1lf + (%.1lf)", player->GetBaseDamage(), player->GetBonusDamage());
-			uiElement->m_Texts[0].SetText(atkDmgStr, uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_Texts[0].SetText(atkDmgStr, uiElement->m_BaseText.baseUI.GetBounds(), uiElement->m_Texts[0].m_fontSize);
 
 			char atkSpdStr[64] = "";
 			sprintf(atkSpdStr, "Attack Speed: %.0lf%%", player->GetAttackSpeed() * 100.f);
-			uiElement->m_Texts[1].SetText(atkSpdStr, uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_Texts[1].SetText(atkSpdStr, uiElement->m_BaseText.baseUI.GetBounds(), uiElement->m_Texts[1].m_fontSize);
 
 			char movSpeed[64] = "";
 			player->SetSpeedMult(1.f);
 			sprintf(movSpeed, "Movement Speed: %.0lf%%", (player->GetSpeed() / player->GetBaseSpeed()) * 100.f);
 			player->SetSpeedMult(0.f);
-			uiElement->m_Texts[2].SetText(movSpeed, uiElement->m_BaseImage.baseUI.GetBounds());
+			uiElement->m_Texts[2].SetText(movSpeed, uiElement->m_BaseText.baseUI.GetBounds(), uiElement->m_Texts[2].m_fontSize);
 		}
 
 		RelicInput::OnPriceCalculation priceCalc;
@@ -131,7 +125,6 @@ bool UIShopSystem::Update()
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopRelicComponent* relicWindow = registry.GetComponent<UIShopRelicComponent>(entity);
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-			uiElement->m_BaseImage.baseUI.SetVisibility(true);
 
 			for (uint32_t i = 0; i < relicWindow->shopRelics.size(); i++)
 			{
@@ -169,19 +162,12 @@ bool UIShopSystem::Update()
 
 		}
 
-		for (auto entity : View<UIShopRerollComponent>(registry))
-		{
-			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
-			uiElement->SetAllVisability(true);
-		}
-
 		for (auto entity : View<UIShopUpgradeComponent>(registry))
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
-			UIShopUpgradeComponent* upgrade = registry.GetComponent<UIShopUpgradeComponent>(entity);
 			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
-			if (player->weaponTier == 3)
+			if (player->weaponTier >= 3)
 			{
 				button->m_description = "Fully Upgraded";
 				button->m_price = 0;
@@ -192,26 +178,84 @@ bool UIShopSystem::Update()
 		{
 			UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 			UIShopButtonComponent* button = registry.GetComponent<UIShopButtonComponent>(entity);
+			PlayerComponent* player = registry.GetComponent<PlayerComponent>(stateManager.player);
 			uiElement->SetAllVisability(true);
 
-			if (button->m_name == "Heal" && button->m_price > 0)
+			if (button->m_name == "Heal")
 			{
-				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::HEAL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				if (button->m_price > 0)
+				{
+					if (priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::HEAL) > player->GetSouls())
+					{
+						uiElement->m_Images[0].baseUI.SetOpacity(0.3f);
+						uiElement->m_Images[1].baseUI.SetOpacity(0.3f);
+
+						uiElement->m_Texts[0].baseUI.SetOpacity(0.3f);
+					}
+					else
+					{
+						uiElement->m_Images[0].baseUI.SetOpacity(1.0f);
+						uiElement->m_Images[1].baseUI.SetOpacity(1.0f);
+
+						uiElement->m_Texts[0].baseUI.SetOpacity(1.0f);
+					}
+					
+					uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::HEAL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				}
+				else
+					uiElement->m_Images[1].baseUI.SetVisibility(false);
+				uiElement->m_BaseImage.baseUI.SetVisibility(false);
+				
 			}
 			else if (button->m_name == "Reroll")
 			{
+				if (priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::REROLL) > player->GetSouls())
+				{
+					uiElement->m_Images[0].baseUI.SetOpacity(0.3f);
+					uiElement->m_Images[1].baseUI.SetOpacity(0.3f);
+
+					uiElement->m_Texts[0].baseUI.SetOpacity(0.3f);
+				}
+				else
+				{
+					uiElement->m_Images[0].baseUI.SetOpacity(1.0f);
+					uiElement->m_Images[1].baseUI.SetOpacity(1.0f);
+
+					uiElement->m_Texts[0].baseUI.SetOpacity(1.0f);
+				}
+
 				uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::REROLL)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
+				uiElement->m_BaseImage.baseUI.SetVisibility(false);
 			}
 			else if (button->m_name == "Upgrade Weapon")
 			{
 				if (button->m_price == 0)
 				{
-					uiElement->m_Texts[0].SetText("Fully Upgraded", uiElement->m_Images[0].baseUI.GetBounds());
+					uiElement->m_Texts[0].SetText("Fully Upgraded", uiElement->m_BaseImage.baseUI.GetBounds());
+					uiElement->m_Images[0].baseUI.SetVisibility(false);
+					uiElement->m_Images[1].baseUI.SetVisibility(false);
 				}
 				else
 				{
 					uiElement->m_Texts[0].SetText(std::to_string(priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::UPGRADE)).c_str(), uiElement->m_Images[0].baseUI.GetBounds());
 				}
+
+				if (priceCalc.GetCostOf(button->m_price, RelicInput::OnPriceCalculation::UPGRADE) > player->GetSouls())
+				{
+					uiElement->m_Images[0].baseUI.SetOpacity(0.3f);
+					uiElement->m_Images[1].baseUI.SetOpacity(0.3f);
+
+					uiElement->m_Texts[0].baseUI.SetOpacity(0.3f);
+				}
+				else
+				{
+					uiElement->m_Images[0].baseUI.SetOpacity(1.0f);
+					uiElement->m_Images[1].baseUI.SetOpacity(1.0f);
+
+					uiElement->m_Texts[0].baseUI.SetOpacity(1.0f);
+				}
+
+				uiElement->m_BaseImage.baseUI.SetVisibility(false);
 			}
 		}
 
@@ -258,7 +302,7 @@ bool UIGameSystem::Update()
 		else
 		{
 			uiElement->m_BaseText.SetText("Portal Open", uiElement->m_BaseImage.baseUI.GetBounds());
-			uiElement->m_BaseImage.SetImage("ButtonSmall", false);
+			uiElement->m_BaseImage.SetImage("ButtonSmallHover", false);
 		}
 	}
 
@@ -282,8 +326,8 @@ bool UISliderSystem::Update()
 		if (slider->holding)
 		{
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
+			float maxLeftPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f) + 0.025f;
+			float maxRightPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().right / 2.0f) - 0.025f;
 
 			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 

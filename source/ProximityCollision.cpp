@@ -241,6 +241,7 @@ void ProximityMove(ProximityPoint& p1, ProximityPoint& p2, float& x, float& z)
 		dx = -dx;
 
 		//Calculate the coefficient that tells the amount to move
+		float test = ((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x));
 		if (((dx * p1.x) - (dz * p2.z) + (dz * p1.z) - (dx * p2.x)) == 0) //Division by zero is BAD! >:(
 		{
 			//First point = (x, z), Second point = ((-dz * magnitude), (-dx * magnitude)), Third point = (p1.x, p1.z), Fourth point = (p2.x, p2.z)
@@ -269,7 +270,52 @@ void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C,
 	if (step1 && step2)
 	{
 		//Step 4a: Handle the corner case.
-		ProximityCornerMove(A, B, C, x, z);
+		//If the line is exactly the same in a direction (Example A.x == 40 and B.x == 40)
+		if ((A.x == B.x && B.x == C.x) || (A.z == B.z && C.z == B.z))
+		{
+			float X1, Z1, X2, Z2;
+			X1 = X2 = x;
+			Z1 = Z2 = z;
+
+			//First move attempt
+			ProximityMove(A, B, x, z); //x and z gets updated
+
+			//Check if still behind the other line
+			step1 = IntersectionOnLine(A.x, px, A.z, pz, B.x, C.x, B.z, C.z);
+			step2 = IntersectionOnLine(C.x, x, C.z, z, A.x, B.x, A.z, B.z);
+
+			if (!step1 && !step2)
+			{
+				//Second move attempt
+				ProximityMove(B, C, x, z); //x and z gets updated
+			}
+			else if (!step2)
+			{
+				//Move based on original position twice and get the middle
+				ProximityMove(A, B, X1, Z1); //x and z gets updated
+				ProximityMove(B, C, X2, Z2); //x and z gets updated
+				x = (X1 + X2) / 2.0f;
+				z = (Z1 + Z2) / 2.0f;
+			}
+			else
+			{
+				//Check if correcting it the other way is a smaller change than the first one.
+				ProximityMove(B, C, X1, Z1);
+				float dif1, dif2;
+				dif1 = abs(x - X2) + abs(z - Z2);
+				dif2 = abs(X1 - X2) + abs(Z1 - Z2);
+
+				if (dif1 > dif2) //If the difference from the original pos is larger set the x and z to X1 and Z1 instead.
+				{
+					x = X1;
+					z = Z1;
+				}
+			}
+		}
+		else //Normal corner correction
+		{
+			ProximityCornerMove(A, B, C, x, z);
+		}
 	}
 	else if (!step1 && !step2)
 	{
@@ -327,7 +373,6 @@ void ProximityStepChart(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C,
 			ProximityMove(A, B, x, z);
 		}
 	}
-
 }
 
 void ProximityCornerMove(ProximityPoint& A, ProximityPoint& B, ProximityPoint& C, float& x, float& z)

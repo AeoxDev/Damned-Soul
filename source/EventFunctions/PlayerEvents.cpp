@@ -149,14 +149,16 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, false);
 
 		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
-		for (auto& func : funcs)
+		if (funcs.size())
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID);
 			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, true);
 		}
 
-		AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-		anim->aAnimTimeFactor = 5.f;
+		BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
+		anim->lower.aAnimTimeFactor = 5.f;
+		anim->upper.aAnimTimeFactor = 5.f;
+
 
 		stats->hazardModifier = 0.0f;//Make the player immune to hazards during dash.
 
@@ -192,7 +194,8 @@ void SetPlayerAttackHitboxActive(EntityID& entity, const int& index)
 
 void PlayerBeginAttack(EntityID& entity, const int& index)
 {
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	//AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
 	StatComponent* stats = registry.GetComponent<StatComponent>(entity);
 	AttackArgumentComponent* aac = registry.GetComponent<AttackArgumentComponent>(entity);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
@@ -206,8 +209,14 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 	float speedDiff = 1.0f / aac->duration; //stats->GetAttackSpeed() instead of 1.0f
 
 	//speedDiff *= stats->GetAttackSpeed(); //Speed up the animation further based on attack speed
-	anim->aAnimTimeFactor = speedDiff; //Cracked
-	anim->aAnimTime = 0.0f; //reset animation
+	anim->upper.aAnimTimeFactor = speedDiff; //Cracked
+	anim->upper.aAnimTime = 0.0f; //reset animation
+
+	if (!player->isMoving)
+	{
+		anim->lower.aAnimTimeFactor = speedDiff; //Cracked
+		anim->lower.aAnimTime = 0.0f; //reset animation
+	}
 
 	stats->SetSpeedMult(0.6f); //Move slower while attacking
 	player->isAttacking = true;
@@ -217,7 +226,14 @@ void PlayerBeginAttack(EntityID& entity, const int& index)
 void DashParticleStart(EntityID& entity, const int& index)
 {
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
-
+	////Smoke
+//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
 
 	////Smoke
 	registry.AddComponent<ParticleComponent>(entity,
@@ -298,7 +314,7 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 	{
 		SetHitboxCanTakeDamage(entity, playerComp->softHitboxID, true);
 		auto funcs = Relics::GetFunctionsOfType(Relics::FUNC_ON_DASH);
-		for (auto& func : funcs)
+		if (funcs.size())
 		{
 			SetHitboxActive(entity, playerComp->dashHitboxID, false);
 			SetHitboxCanDealDamage(entity, playerComp->dashHitboxID, false); //Dash hitbox
@@ -314,8 +330,9 @@ void PlayerRegainControl(EntityID& entity, const int& index)
 		}
 	}
 
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-	anim->aAnimTimeFactor = 1.f;
+	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
+	anim->lower.aAnimTimeFactor = 1.f;
+	anim->upper.aAnimTimeFactor = 1.f;
 }
 
 void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
@@ -328,9 +345,12 @@ void SetPlayerAttackHitboxInactive(EntityID& entity, const int& index)
 void PlayerEndAttack(EntityID& entity, const int& index)
 {
 	//Smile
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
-	anim->aAnimTimeFactor = 1.f;
-	anim->aAnimTimePower = 1.f;
+	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
+	anim->lower.aAnimTimeFactor = 1.f;
+	anim->lower.aAnimTimePower = 1.f;
+	
+	anim->upper.aAnimTimeFactor = 1.f;
+	anim->upper.aAnimTimePower = 1.f;
 
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 	player->timeSinceLastAttack = 0.0f;
@@ -361,7 +381,7 @@ void PlayerEndAttack(EntityID& entity, const int& index)
 void PlayerAttack(EntityID& entity, const int& index)
 {
 	//All we do right now is perform the attack animation
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
 	TransformComponent* transform = registry.GetComponent<TransformComponent>(entity);
 	PlayerComponent* player = registry.GetComponent<PlayerComponent>(entity);
 
@@ -373,15 +393,28 @@ void PlayerAttack(EntityID& entity, const int& index)
 		return;
 
 	//Perform attack animation, woo, loop using DT
-	anim->aAnim = ANIMATION_ATTACK;
-	anim->aAnimIdx = 0;
+	anim->upper.aAnim = ANIMATION_ATTACK;
+
+	auto isCharge = registry.GetComponent<ChargeAttackArgumentComponent>(entity);
+	if (isCharge)
+		anim->upper.aAnimIdx = 2;
+	else
+		anim->upper.aAnimIdx = 0;
+
+	
+	if (!player->isMoving)
+	{
+		anim->lower.aAnim = anim->upper.aAnim;
+		anim->lower.aAnimIdx = anim->upper.aAnimIdx;
+		anim->lower.aAnimTimePower = .5f;
+	}
 
 #define HITBOX_START_TIME (0.45f)
 #define HITBOX_END_TIME (0.8f)
 #define HITBOX_SCALE (2.f)
 
-	anim->aAnimTimePower = .5f;
-	float animTime = anim->GetTimeValue();
+	anim->upper.aAnimTimePower = .5f;
+	float animTime = anim->upper.GetTimeValue();
 
 	//Make the players' attack hitbox active during the second half of the attack animation
 	if (animTime >= HITBOX_END_TIME)
@@ -394,6 +427,13 @@ void PlayerAttack(EntityID& entity, const int& index)
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
 		
+		//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+		ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+		if (particle != nullptr)
+		{
+			particle->Release();
+		}
 		// ## ALEX CODE ##
 		ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(entity, 5.0f, 50.0f, 1.0f, 0.0f + (transform->facingX * 3.0f), 5.0f, 0.0f + (transform->facingZ * 3.0f), 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
 		// ## EO ALEX CODE ##
@@ -407,18 +447,38 @@ void PlayerAttack(EntityID& entity, const int& index)
 		float depth = (0.3f + std::min(1.f, hitboxTime * 2.f)) * softCollisionRadius * HITBOX_SCALE * GetGodModeFactor();
 		ConvexReturnCorners corners = GetHitboxCorners(entity, player->attackHitboxID);
 
+		//Attack hitbox 2.0, uses 6 points to create a schweird rectangle
+		//Point 0: Right
+		corners.cornersX[0] = -2.2f * GetGodModeFactor();
+		corners.cornersZ[0] = -0.2f;//-0.25f;
+		//Point 1: 
+		corners.cornersX[1] = -1.2f * GetGodModeFactor();
+		corners.cornersZ[1] = -3.5f * GetGodModeFactor();//-0.25f;
+		//Point 2: 
+		corners.cornersX[2] = -0.4f * GetGodModeFactor();//0.83f;
+		corners.cornersZ[2] = -4.0f * GetGodModeFactor();//-0.8f;
+		//Point 3: 
+		corners.cornersX[3] =  0.4f * GetGodModeFactor();//0.16f;
+		corners.cornersZ[3] = -4.0f * GetGodModeFactor();//-1.2f;
+		//Point 4: 
+		corners.cornersX[4] =  1.2f * GetGodModeFactor(); // -0.5f;
+		corners.cornersZ[4] = -3.5f * GetGodModeFactor();//-1.2f;
+		//Point 5: Left
+		corners.cornersX[5] =  2.2f * GetGodModeFactor();
+		corners.cornersZ[5] = -0.2f;//-0.25f;
+
 
 		// Counter clockwise
 		// X
-		corners.cornersX[0] = -width;
-		corners.cornersX[1] = width;
-		corners.cornersX[2] = 2.0f * width;
-		corners.cornersX[3] = -2.0f * width;
-		// Z
-		corners.cornersZ[0] = -2.f * depth;
-		corners.cornersZ[1] = -2.f * depth;
-		corners.cornersZ[2] = -0.5f;
-		corners.cornersZ[3] = -0.5f;
+		//corners.cornersX[0] = -width;
+		//corners.cornersX[1] = width;
+		//corners.cornersX[2] = 2.0f * width;
+		//corners.cornersX[3] = -2.0f * width;
+		//// Z
+		//corners.cornersZ[0] = -2.f * depth;
+		//corners.cornersZ[1] = -2.f * depth;
+		//corners.cornersZ[2] = -0.5f;
+		//corners.cornersZ[3] = -0.5f;
 
 		SetHitboxCorners(entity, player->attackHitboxID, corners.cornerCount, corners.cornersX, corners.cornersZ);
 	}
@@ -585,16 +645,18 @@ void PlayerDash(EntityID& entity, const int& index)
 	StatComponent* stat = registry.GetComponent<StatComponent>(entity);
 	DashArgumentComponent* dac = registry.GetComponent<DashArgumentComponent>(entity);
 	// Get animation
-	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(entity);
 
 	//Invalid entity doesn't have the required components
 	if (!transform || !stat || !dac || !anim)
 		return;
 
 	//Perform attack animation, woo, loop using DT
-	anim->aAnim = ANIMATION_ATTACK;
+	anim->lower.aAnim = ANIMATION_ATTACK;
+	anim->upper.aAnim = ANIMATION_ATTACK;
 	//anim->aAnimTime += GetDeltaTime() * anim->aAnimTimeFactor;
-	anim->aAnimIdx = 1;
+	anim->lower.aAnimIdx = 1;
+	anim->upper.aAnimIdx = 1;
 
 	//anim->aAnimTime += GetDeltaTime() * 2.0f; //Double speed animation
 	//anim->aAnimTime -= anim->aAnimTime > 1.f ? 1.f : 0.f;

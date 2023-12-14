@@ -44,7 +44,7 @@ void LoadLevel4()
 	ReloadPlayerNonGlobals();//Bug fix if player dashes into portal
 
 	//**************************************************
-	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -58.f, 0.0f, 72.f, 6969, 6969.f,
+	EntityID tempBoss = SetupEnemy(EnemyType::tempBoss, -58.f, 0.2f, 72.f, 6969, 6969.f,
 		6969.f, 6969.f, 6969.f, 6969.f,  2.f,
 		 2.f, 2.f, 0.f,  0.f,  -1.f,  true, true,  true,
 		true, true,  false);
@@ -76,31 +76,31 @@ void LoadLevel4()
 	CreatePointLight(lightholderForth, 0.6f, 0.f, 0.0f, -63.0f, 15.0f, 150.0f, 600.0f, 20.0f);
 
 	EntityID holder = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(holder, 10, 0, 3, 0, 0, 0, 10, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(holder, 10, 15, 3, 0, 0, 0, 10, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent tComp;
 	tComp.positionX = -77;
-	tComp.positionY = 0.5f;
+	tComp.positionY = 1.5f;
 	tComp.positionZ = 145;
 	registry.AddComponent<TransformComponent>(holder, tComp);
 
-	registry.AddComponent<ParticleComponent>(lightholderTwo, 10, 0, 3, 0, 1, 0, 12, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(lightholderTwo, 10, 10, 3, 0, 0, 0, 9, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent ttComp;
-	ttComp.positionX = 32;
-	ttComp.positionY = 0.5f;
+	ttComp.positionX = 26; 
+	ttComp.positionY = 1.5f;
 	ttComp.positionZ = 119;
 	registry.AddComponent<TransformComponent>(lightholderTwo, ttComp);
 
-	registry.AddComponent<ParticleComponent>(lightholderThree, 10, 0, 3, 0, 1, 0, 8, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(lightholderThree, 10, 15, 3, 0, 0, 0, 8, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent tttComp;
 	tttComp.positionX = -181;
-	tttComp.positionY = 0.5f;
-	tttComp.positionZ = 26;
+	tttComp.positionY = 1.5f;
+	tttComp.positionZ = 29;
 	registry.AddComponent<TransformComponent>(lightholderThree, tttComp);
 
-	registry.AddComponent<ParticleComponent>(lightholderForth, 10, 0, 3.5, 0, 0, 0, 24, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(lightholderForth, 10, 70, 3.5, 0, 0, 0, 24, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent fComp;
 	fComp.positionX = 73;
-	fComp.positionY = 1.5f;
+	fComp.positionY = 2.0f;
 	fComp.positionZ = 19.0f;
 	registry.AddComponent<TransformComponent>(lightholderForth, fComp);
 

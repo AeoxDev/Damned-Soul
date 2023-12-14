@@ -16,11 +16,11 @@
 #include "MemLib/ML_String.hpp"
 
 //#define GAME_TEST
-
+//
 //#define UI_TEST
-
+//
 //#define PAUSE_TEST
-
+//
 //#define PARTICLE_TEST
 
 //Displays info in the application title
@@ -72,25 +72,25 @@ int main(int argc, char* args[])
 
 #ifdef GAME_TEST
 
-	SimulateGame(title, 1, 1500);
+	SimulateGame(title, 1, 500);
 
 #endif // GAME_TEST
 	
 #ifdef UI_TEST
 
-	SimulateUI(title, 200);
+	SimulateUI(title, 100);
 
 #endif // UI_TEST
 
 #ifdef PAUSE_TEST
 
-	SimulatePause(title, 2000);
+	SimulatePause(title, 500);
 
 #endif // PAUSE_TEST
 
 #ifdef PARTICLE_TEST
 
-	SimulateParticleLevel(title, 100);
+	SimulateParticleLevel(title, 50);
 
 #endif // PARTICLE_TEST
 

@@ -12,7 +12,16 @@ EntityID FLAME_WEAPON::_OWNER;
 
 void _FW_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, FLAME_WEAPON_DOT_DURATION, 100.f, 3.0f, -2.0f, 1.5f, 1.0f, 8, ComputeShaders::ON_FIRE);
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
+	registry.AddComponent<ParticleComponent>(entity, FLAME_WEAPON_DOT_DURATION, 1.2f, 2.5f, -1.0f, 1.f, -1.0f, 5, ComputeShaders::FIRE);
+
+	
 }
 
 const char* FLAME_WEAPON::Description()
@@ -52,15 +61,17 @@ void FLAME_WEAPON::PlaceDamageOverTime(void* data)
 		(FLAME_WEAPON_DOT_FRACTION * input->CollapseDamage()) / FLAME_WEAPON_DOT_DURATION,
 		FLAME_WEAPON_DOT_DURATION
 	);
+
 	DebuffComponent* debuff = registry.GetComponent<DebuffComponent>(input->defender);
 	if (nullptr == debuff)
 	{
 		registry.AddComponent<DebuffComponent>(input->defender, DamageOverTime::BURN, newDoT);
 
-		ParticleAtEntityLocationFollow(input->defender, FLAME_WEAPON_DOT_DURATION, _FW_Particles_Begin);
+		ParticleAtEntityFollow(input->defender, FLAME_WEAPON_DOT_DURATION, _FW_Particles_Begin);
 	}
 	else if (debuff->m_dots[DamageOverTime::BURN].LessThan(newDoT))
 	{
 		debuff->m_dots[DamageOverTime::BURN] = newDoT;
 	}
+
 }
