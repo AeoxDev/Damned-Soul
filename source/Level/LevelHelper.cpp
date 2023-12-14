@@ -1549,7 +1549,7 @@ void SetScoreboardUI()
 {
 	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(scoreBoard);
-	uiElement->Setup("SettingsPanel", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 35.0f);
+	uiElement->Setup("SettingsPanel", "", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 35.0f);
 	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.45f));
 	//uiElement->Setup("SettingsPanel", "", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
 	//uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.55f));

@@ -145,13 +145,21 @@ void Menu::Input()
 
 void Menu::SetupUI()
 {
-
+	/*
 	// Damned Soul Main Menu Title
 	auto title = registry.CreateEntity();
 	UIComponent* uiElementT = registry.AddComponent<UIComponent>(title);
 	uiElementT->Setup("DamnedTitle", "", "", { 0.0f, 0.70f });
 	uiElementT->AddImage("SettingsPanelMedium", {0.5f, -0.25f});
 	uiElementT->AddImage("Controls", {0.5f, -0.25f});
+	*/
+
+	// Damned Soul Main Menu Title
+	auto title = registry.CreateEntity();
+	UIComponent* uiElementT = registry.AddComponent<UIComponent>(title);
+	uiElementT->Setup("DamnedTitle", "", "", { 0.0f, 0.65f });
+	uiElementT->AddImage("SettingsPanelMedium", { 0.58f, -0.4f });
+	uiElementT->AddImage("Controls", { 0.55f, -0.37f });
 
 	const int buttons = 4;
 
@@ -201,28 +209,9 @@ void Menu::SetupUI()
 
 		SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
 		buttonSound->Load(MENU);
+
+
 	}
-}
-
-void Menu::SetupImages()
-{
-	// Damned Soul Main Menu Title
-	auto title = registry.CreateEntity();
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(title);
-	uiElement->Setup("DamnedTitle3", "", { 0.0f, 0.65f });
-
-	auto panel = registry.CreateEntity();
-	UIComponent* uiElementTwo = registry.AddComponent<UIComponent>(panel);
-	uiElementTwo->Setup("SettingsPanelMedium", "", { 0.58f, -0.4f });
-
-	auto controls = registry.CreateEntity();
-	UIComponent* uiElementThree = registry.AddComponent<UIComponent>(controls);
-	uiElementThree->Setup("Controls", "", { 0.55f, -0.37f });
-}
-
-void Menu::SetupText()
-{
-
 }
 
 void Menu::Unload()

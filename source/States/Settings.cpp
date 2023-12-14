@@ -186,7 +186,7 @@ void SettingsState::SetupUI()
 			UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 
-			uiElement->Setup("Slider/BorderSmallSlider", texts[i], positions[i]);
+			uiElement->Setup("Slider/BorderSmallSlider", "", texts[i], positions[i]);
 			uiElement->AddImage("Slider/SliderButton75", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
