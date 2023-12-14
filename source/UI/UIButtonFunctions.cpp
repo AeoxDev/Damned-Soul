@@ -398,7 +398,7 @@ void UIFunctions::Credits::NextPage(void* args, int a)
 		{"Joaquin Lindkvist", "Joel Berg"},
 		{"Mattias Nordin", "Niclas Andersson"},
 		{"Rasmus Fridlund", "Zannie Karlsson"},
-		{"Fiverr", "Blekinge Institute of Technology"}
+		{"Special Thanks", "Blekinge Institute of Technology"}
 	};
 
 	stateManager.creditsIndex++;
@@ -458,7 +458,7 @@ void UIFunctions::Credits::PreviousPage(void* args, int a)
 		{"Joaquin Lindkvist", "Joel Berg"},
 		{"Mattias Nordin", "Niclas Andersson"},
 		{"Rasmus Fridlund", "Zannie Karlsson"},
-		{"Fiverr", "Blekinge Institute of Technology"}
+		{"Special Thanks", "Blekinge Institute of Technology"}
 	};
 
 	stateManager.creditsIndex--;

@@ -60,7 +60,7 @@ void Credits::SetupUI()
 		{"Joaquin Lindkvist", "Joel Berg"},
 		{"Mattias Nordin", "Niclas Andersson"},
 		{"Rasmus Fridlund", "Zannie Karlsson"},
-		{"Fiverr", "Blekinge Institute of Technology"}
+		{"Special Thanks", "Blekinge Institute of Technology"}
 	};
 
 	auto credits = registry.CreateEntity();
@@ -99,7 +99,7 @@ void Credits::SetupUI()
 		uiElementC->m_Texts[i + i].m_brush = Black;
 
 		uiElementC->AddText(desc.c_str(), DSBOUNDS(0, 0, uiElementC->m_BaseImage.baseUI.GetBounds().right / 3.0f, uiElementC->m_BaseImage.baseUI.GetBounds().bottom),
-			DSFLOAT2(-0.4 * reverse, 0.0), DSFLOAT2(1.0, 1.0), 20.0f, DWRITE_TEXT_ALIGNMENT_LEADING);
+			DSFLOAT2(-0.4 * reverse, -0.05), DSFLOAT2(1.0, 1.0), 20.0f, DWRITE_TEXT_ALIGNMENT_LEADING);
 
 		uiElementC->m_Texts[i + i + 1].m_brush = Black;
 
@@ -127,19 +127,18 @@ void Credits::SetupUI()
 	onHoverC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(), 
 		uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
+	uiElementC->AddImage("Credits/Arrow Up", DSFLOAT2(-0.7, 0.6), DSFLOAT2(1.0f, 1.0f), false);
+	uiElementC->AddHoverImage(uiElementC->m_Images[uiElementC->m_Images.size() - 1], "Credits/Arrow Up Glow");
+
+	onClickC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(), uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(),
+		UIFunctions::OnClick::None, UIFunctions::Credits::Back);
+
+	onHoverC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(),
+		uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
+
 	registry.AddComponent<UICreditsTextComponent>(credits);
 
-	auto button = registry.CreateEntity();
-	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
-
-	uiElement->Setup("ButtonMedium", "ButtonMediumHover", "Back", { 0.78f, -0.85f }, { 1.0f, 1.0f });
-
-	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Credits::Back, UIFunctions::OnClick::None);
-	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
-
-	SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+	SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(credits);
 	buttonSound->Load(MENU);
 }
 

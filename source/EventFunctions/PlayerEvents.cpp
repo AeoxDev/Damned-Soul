@@ -397,7 +397,7 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 	}
 
 #define HITBOX_START_TIME (0.45f)
-#define HITBOX_END_TIME (0.8f)
+#define HITBOX_END_TIME (0.6f)
 #define HITBOX_SCALE (2.f)
 
 	anim->upper.aAnimTimePower = .5f;
