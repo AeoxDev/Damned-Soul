@@ -132,19 +132,19 @@ void LoadLevel3()
 
 
 	EntityID partT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partT, 4.5, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partT, 7.5, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent ttComp;
-	ttComp.positionX = -140;
+	ttComp.positionX = -141;
 	ttComp.positionY = 2;
 	ttComp.positionZ = 111;
 	registry.AddComponent<TransformComponent>(partT, ttComp);
 
 	EntityID partTTT = registry.CreateEntity();
-	registry.AddComponent<ParticleComponent>(partTTT, 4, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
+	registry.AddComponent<ParticleComponent>(partTTT, 8.5, 50, 3, 0, 0, 0, 20, BOILING); //(entity, float seconds, float radius, float size, float x, float y, float z,int amount, ComputeShaders pattern)
 	TransformComponent tttComp;
-	tttComp.positionX = -131;
+	tttComp.positionX = -130;
 	tttComp.positionY = 1.5;
-	tttComp.positionZ = 201;
+	tttComp.positionZ = 200;
 	registry.AddComponent<TransformComponent>(partTTT, tttComp);
 
 

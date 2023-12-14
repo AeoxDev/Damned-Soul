@@ -595,7 +595,7 @@ bool LuciferBehaviourSystem::Update()
 						{
 							particle->Release();
 						}
-						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 2.0f, 0.f, 0.f, 1.f,
+						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 2.0f, 0.f, 1.5f, 1.f,
 							0.0f,2.0f,1.0f,//rgb
 							300, ComputeShaders::PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand

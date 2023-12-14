@@ -284,7 +284,7 @@ bool TempBossBehaviourSystem::Update()
 						{
 							particle->Release();
 						}
-						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.5f, 0.f, 0.f, 1.f,
+						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.5f, 0.f, 1.5f, 1.f,
 						1.5f,0.60f,0.10f,//rgb
 						200, PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand
