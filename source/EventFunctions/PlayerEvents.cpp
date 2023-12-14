@@ -393,6 +393,7 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		anim->lower.aAnim = anim->upper.aAnim;
 		anim->lower.aAnimIdx = anim->upper.aAnimIdx;
 		anim->lower.aAnimTimePower = .5f;
+		anim->lower.aAnimTime = anim->upper.aAnimTime;
 	}
 
 #define HITBOX_START_TIME (0.45f)
