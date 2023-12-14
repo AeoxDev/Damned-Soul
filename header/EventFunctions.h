@@ -24,6 +24,9 @@ void LavaBlinkColor(EntityID& entity, const int& index);
 void PlayerLoseControl(EntityID& entity, const int& index);
 void SetPlayerAttackHitboxActive(EntityID& entity, const int& index);
 void PlayerBeginAttack(EntityID& entity, const int& index);
+// ARIAN WROTE THIS
+void DashParticleStart(EntityID& entity, const int& index);
+void DashAfterTrail(EntityID& entity);
 
 //Voiceline
 void PlayBossVictoryOrDeathLine(EntityID& entity, const int& index);
@@ -102,7 +105,7 @@ void PauseAnimation(EntityID& entity, const int& index);
 void ContinueAnimation(EntityID& entity, const int& index);
 void ResetAnimation(EntityID& entity, const int& index);
 void BlinkColor(EntityID& entity, const int& index);
-void ResetColor(EntityID& entity, const int& index);
+//void ResetColor(EntityID& entity, const int& index);
 void SquashStretch(EntityID& entity, const int& index);
 void ResetSquashStretch(EntityID& entity, const int& index);
 void ChargeColorFlash(EntityID& entity, const int& index);

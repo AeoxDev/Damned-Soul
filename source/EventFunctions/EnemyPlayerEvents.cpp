@@ -78,10 +78,10 @@ void EndHit(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	if (skelel)
-		skelel->shared.colorAdditiveRed = 0.0f;
-	if (bonel)
-		bonel->shared.colorAdditiveRed = 0.0f;
+	//if (skelel)
+	//	skelel->shared.colorAdditiveRed = 0.0f;
+	//if (bonel)
+	//	bonel->shared.colorAdditiveRed = 0.0f;
 	RedrawUI();//Bug fix redraw
 }
 
@@ -101,9 +101,9 @@ void HazardBeginHit(EntityID& entity, const int& index)
 
 	//Become red
 	if (skelel)
-		skelel->shared.colorAdditiveRed = 1.0f;
+		skelel->shared.bcaR_temp = 1.0f;
 	if (bonel)
-		bonel->shared.colorAdditiveRed = 1.0f;
+		bonel->shared.bcaR_temp = 1.0f;
 }
 void HazardEndHit(EntityID& entity, const int& index)
 {
@@ -111,10 +111,10 @@ void HazardEndHit(EntityID& entity, const int& index)
 	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
 	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
 
-	if (skelel)
-		skelel->shared.colorAdditiveRed = 0.0f;
-	if (bonel)
-		bonel->shared.colorAdditiveRed = 0.0f;
+	//if (skelel)
+	//	skelel->shared.colorAdditiveRed = 0.0f;
+	//if (bonel)
+	//	bonel->shared.colorAdditiveRed = 0.0f;
 }
 
 void StaticHazardDamage(EntityID& entity, const int& index)
@@ -136,7 +136,7 @@ void StaticHazardDamage(EntityID& entity, const int& index)
 			cameraShake = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, ShakeCamera, HAZARD_LAVA_UPDATE_TIME, ResetCameraOffset, 0, 1);
 		}
 		stat->ApplyDamage(HAZARD_LAVA_DAMAGE * stat->hazardModifier, entity.index == stateManager.player.index);
-		color = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, LavaBlinkColor, HAZARD_LAVA_UPDATE_TIME, ResetColor); //No special condition for now
+		color = AddTimedEventComponentStartContinuousEnd(entity, 0.0f, nullptr, LavaBlinkColor, HAZARD_LAVA_UPDATE_TIME, /*ResetColor*/nullptr); //No special condition for now
 		break;
 	default:
 		break;
@@ -152,13 +152,13 @@ void LavaBlinkColor(EntityID& entity, const int& index)
 	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
 	if (skelel)
 	{
-		skelel->shared.colorAdditiveRed = cosineWave;
-		skelel->shared.colorAdditiveGreen = 0.2f * cosineWave;
+		skelel->shared.bcaR_temp *= cosineWave;
+		skelel->shared.bcaR_temp += 0.2f * cosineWave;
 	}
 		
 	if (bonel)
 	{
-		bonel->shared.colorAdditiveRed = cosineWave;
-		bonel->shared.colorAdditiveGreen = 0.2f * cosineWave;
+		bonel->shared.bcaR_temp *= cosineWave;
+		bonel->shared.bcaG_temp += 0.2f * cosineWave;
 	}
 }

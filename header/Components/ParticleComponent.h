@@ -5,7 +5,7 @@ enum ComputeShaders
 {
 	SMOKE = 0,
 	ON_FIRE = 1,
-	EXPLOSION = 2,
+	HAMMER = 2,
 	FLAMETHROWER = 3,
 	IMPLOSION = 4,
 	RAIN = 5,
@@ -58,6 +58,8 @@ struct ParticleComponent
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, ComputeShaders pattern);
 	// Overload for RGB
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern);
+	// Overload for Hammer
+	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, float redValue, float greenValue, float blueValue, float facingX, float facingZ, int amount, ComputeShaders pattern);
 
 	// Overload for VFX 
 	ParticleComponent(float seconds, float radius, float size, float offsetX, float offsetY, float offsetZ, int amount, VFX_PATTERN vfxPattern);

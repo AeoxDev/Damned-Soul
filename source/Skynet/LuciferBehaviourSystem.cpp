@@ -9,6 +9,47 @@
 #include "Particles.h"
 #include "Levels\LevelHelper.h"
 #include "EventFunctions.h"
+#include "Relics\Utility\RelicParticleHelper.h" //For hammer slam particles
+
+void _CreateAttackParticle(EntityID& entity, const int& index)
+{
+	EntityID percyJackson = registry.CreateEntity();
+	TransformComponent percysLocation;
+	TransformComponent* zeusLightning = registry.GetComponent<TransformComponent>(entity);
+
+	// Move percy to his goal
+	percysLocation.positionX = zeusLightning->positionX;
+	percysLocation.positionY = zeusLightning->positionY;
+	percysLocation.positionZ = zeusLightning->positionZ;	
+	percysLocation.facingX = zeusLightning->facingX;
+	percysLocation.facingY = zeusLightning->facingY;
+	percysLocation.facingZ = zeusLightning->facingZ;
+	registry.AddComponent<TransformComponent>(percyJackson, percysLocation);
+
+																 //Just a control number, can be anything
+	registry.AddComponent<ParentComponent>(percyJackson, entity, 1337);
+	registry.AddComponent<ParentControlComponent>(entity, 1337);
+
+	registry.AddComponent<ParticleComponent>(percyJackson, 1.f, 100.f, 0.3f, 0.0f, 0.0f, 16.f, 0.0f, 2.0f, 1.0f, 128, HAMMER);
+}
+
+void _RemoveAttackParticle(EntityID& entity, const int& index)
+{
+	for (auto child : View<ParentComponent>(registry))
+	{
+		ParentComponent* childComp = registry.GetComponent<ParentComponent>(child);
+
+		if (childComp->parentID.index == entity.index)
+		{
+			auto particles = registry.GetComponent<ParticleComponent>(child);
+			if (particles != nullptr)
+			{
+				particles->Release();
+			}
+			registry.DestroyEntity(child);
+		}
+	}
+}
 
 int GetSpawnLevel(StatComponent* enemyStats)
 {
@@ -120,6 +161,7 @@ void CombatBehaviour(LuciferBehaviour* sc, StatComponent* enemyStats, StatCompon
 
 		//Actual attack
 		AddTimedEventComponentStartContinuousEnd(ent, AttackImpactTime, EnemyBeginAttack, nullptr, AttackEndTime, EnemyEndAttack, EnemyType::lucifer, 1);
+		AddTimedEventComponentStartEnd(ent, AttackImpactTime, _CreateAttackParticle, 1.5f, _RemoveAttackParticle);
 
 		//Recovery/Daze
 		float AttackTotalTime = AttackEndTime;//When finished with the attack, become stunned
@@ -589,7 +631,7 @@ bool LuciferBehaviourSystem::Update()
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
 						//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
-		//The solution: Find and release if it already exists
+						//The solution: Find and release if it already exists
 						ParticleComponent* particle = registry.GetComponent<ParticleComponent>(enemyEntity);
 						if (particle != nullptr)
 						{

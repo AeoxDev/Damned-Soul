@@ -2,6 +2,7 @@
 
 inline void SmokeMovement(in uint3 DTid, in uint3 blockID);
 inline void OnFire(in uint3 DTid, in uint3 blockID);
+inline void HammerHit(in uint3 DTid, in uint3 blockID);
 inline void FlamethrowerMovement(in uint3 DTid, in uint3 blockID);
 inline void LightningMovement(in uint3 DTid, in uint3 blockID);
 inline void SpiralFieldMovement(in uint3 DTid, in uint3 blockID);
@@ -28,17 +29,16 @@ void main(uint3 DTid : SV_GroupThreadID, uint3 blockID : SV_GroupID)
         if (meta[blockID.y].pattern == 0)
         {
             SmokeMovement(DTid, blockID);
-
         }
-        // 1 = ARCH
-        if (meta[blockID.y].pattern == 1)
-        {
-            //OnFire(DTid, blockID);
-        }
-        // 2 = EXPLOSION
+        // 1 = ON_FIRE
+        //if (meta[blockID.y].pattern == 1)
+        //{
+        //    //OnFire(DTid, blockID);
+        //}
+        // 2 = HAMMER
         if (meta[blockID.y].pattern == 2)
         {
-            //ExplosionMovement(DTid, blockID);
+            HammerHit(DTid, blockID);
         }
         // 3 = FLAMETHROWER
         if (meta[blockID.y].pattern == 3 || meta[blockID.y].pattern == 11)
@@ -122,7 +122,7 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
     // --- Set the standard stuff --- //
     float dt = meta[0].deltaTime;
     particle.time = particle.time + dt;
-    particle.size = meta[blockID.y].size;
+    particle.size = meta[blockID.y].size * ((meta[blockID.y].life - particle.time) / meta[blockID.y].life); //particle.size = meta[blockID.y].size;
     particle.patterns = meta[blockID.y].pattern;
         //VFX Pattern is stored in morePositionInfo.y to save space
     particle.VFXpatterns = (int) meta[blockID.y].morePositionInfo.y;
@@ -267,6 +267,100 @@ void SmokeMovement(in uint3 DTid, in uint3 blockID)
 
 //    outputParticleData[index] = particle;
 //}
+
+uint hash(inout uint index)
+{
+    index = (index ^ 61) ^ (index >> 16);
+    index = index + (index << 3);
+    index = index ^ (index >> 4);
+    index = index * 0x27d4eb2d;
+    index = index ^ (index >> 15);
+    return index;
+}
+
+void HammerHit(in uint3 DTid, in uint3 blockID)
+{
+    // -- Calculate the index and get the right particle to change -- //
+    uint amount = meta[blockID.y].end - meta[blockID.y].start;
+    uint index = meta[blockID.y].start + blockID.x * NUM_THREADS + DTid.x;
+    uint localIndex = (index - meta[blockID.y].start) % amount;
+    
+    Input particle = inputParticleData[index];
+    // -------------------------------------------------------------- // 
+    
+    // --- Set the standard stuff --- //
+    float dt = meta[0].deltaTime;
+    particle.time = particle.time + dt;
+    particle.size = meta[blockID.y].size + ((meta[blockID.y].life - particle.time) / meta[blockID.y].life);
+    particle.patterns = meta[blockID.y].pattern;
+    //VFX Pattern is stored in morePositionInfo.y to save space
+    // Not for Hammer tho, as it contains facing in Z
+    particle.VFXpatterns = (int) meta[blockID.y].morePositionInfo.y;
+    // ------------------------------ //
+    
+    // ---- Get a "randomized" value to access deltaTime ---- //    
+    float psuedoRand = sin(index * 71.01) * sin(index * 71.01);
+    
+    float holder = frac(sin(dot(index, float2(12.9898, 78.233))) * 43758.5453) * 100.f;
+    
+    int One_OneHundo = holder;
+    if (One_OneHundo == 0)
+        One_OneHundo = 1;
+    
+    int OneHundo_TwoFiveFive = One_OneHundo + 155;
+    // ------------------------------------------------------ //
+                        
+    uint seed = index;
+    hash(seed);
+    float randomValue = (float) (seed % 100) / 100.0f;
+    
+    
+    float sideMax = lerp(20.f, 25.f, randomValue);
+    float sideMin = lerp(0.001f, 0.1f, randomValue);
+    
+    float upMax = lerp(0.001f, 0.002f, randomValue);
+    float upMin = lerp(10.f, 30.f, randomValue);
+
+    
+    float t = saturate(particle.time / meta[blockID.y].life);
+    float easedT = t * t * (3.f - 2.f * t);
+    
+    float sideVel = lerp(sideMax, sideMin, easedT);
+    float upVel = lerp(0.001f, 10.f, easedT);
+    
+    float localOffset = 1.f * (localIndex % 4); // 4 because we assume the hammer effect will be 3 particles going left and 3 going right
+   
+
+    if (99999.f == particle.position.x, 99999.f == particle.position.y, 99999.f == particle.position.z)
+    {
+        float3 startPosition = float3(meta[blockID.y].startPosition.x, meta[blockID.y].startPosition.y, meta[blockID.y].startPosition.z);
+       
+        particle.position = startPosition;
+        particle.time = 0.f;
+    }
+    
+    float dirX = cos(((float) localIndex / (float) amount) * PI);
+    float dirZ = sin(((float) localIndex / (float) amount) * PI);
+        
+
+    particle.position.x = particle.position.x + sideVel * dirX * dt;
+    particle.position.y = particle.position.y + (particle.time / meta[blockID.y].life) * upVel * dt;
+    
+    if (localIndex % 2 == 0)
+        particle.position.z = particle.position.z + sideVel * dirZ * dt;
+    else
+        particle.position.z = particle.position.z - sideVel * dirZ * dt;
+    
+    if (meta[blockID.y].positionInfo.x > -1 && meta[blockID.y].positionInfo.x < 30)
+    {
+        particle.rgb.r = meta[blockID.y].positionInfo.x;
+        particle.rgb.g = meta[blockID.y].positionInfo.y;
+        particle.rgb.b = meta[blockID.y].positionInfo.z;
+    }
+    
+    
+    outputParticleData[index] = particle;
+}
 
 void FlamethrowerMovement(in uint3 DTid, in uint3 blockID)
 {

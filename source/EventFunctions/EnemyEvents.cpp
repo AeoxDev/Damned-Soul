@@ -514,8 +514,7 @@ void EnemyEndAttack(EntityID& entity, const int& index)
 		{
 			lucifer->attackTimer = 0.0f;
 			lucifer->isAttacking = false;
-		}
-			
+		}		
 	}
 }
 
