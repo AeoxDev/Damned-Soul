@@ -211,12 +211,12 @@ void HandleDamageCollision()
 					if (secondHitbox->circularFlags[j].canTakeDamage)
 					{
 						
-						if (firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
+						if (firstHitbox->circularFlags[i].canDealDamage && firstHitbox->circularFlags[i].active && secondHitbox->circularFlags[j].active)
 						{
 							//Both are circular, do circle to circle.
 							bool hit = IsCircularCollision(entity, entity2, i, j);
 						}
-						if (firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active)
+						if (firstHitbox->convexFlags[i].canDealDamage && firstHitbox->convexFlags[i].active && secondHitbox->circularFlags[j].active)
 						{
 							//One is convex, other one is circular.
 							bool hit = IsConvexCircularCollision(entity, entity2, i, j); //Could add a check for which is convex/circular if the parameter order matters.
@@ -225,12 +225,12 @@ void HandleDamageCollision()
 					//If the convex hitbox can take damage, check collision with active hitboses
 					if (secondHitbox->convexFlags[j].canTakeDamage)
 					{ 
-						if (firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
+						if (firstHitbox->convexFlags[i].canDealDamage && firstHitbox->convexFlags[i].active && secondHitbox->convexFlags[j].active)
 						{
 							//Both are convex, do convex to convex.
 							bool hit = IsConvexCollision(entity, entity2, i, j);
 						}
-						if (firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
+						if (firstHitbox->circularFlags[i].canDealDamage && firstHitbox->circularFlags[i].active && secondHitbox->convexFlags[j].active)
 						{
 							//One is convex, other one is circular.
 							bool hit = IsCircularConvexCollision(entity, entity2, i, j);//Could add a check for which is convex/circular if the parameter order matters.
