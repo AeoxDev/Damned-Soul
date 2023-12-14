@@ -602,6 +602,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern)
 {
+	if (metadataSlot != -1)
+	{
+		float ji = 1.0f;
+	}
 	metadataSlot = FindSlot();
 	//Calculate how many groups are requiered to write to all particles
 	float groups = (float)amount / (float)THREADS_PER_GROUP;

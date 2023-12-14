@@ -62,7 +62,13 @@ void _EW_Particles_Begin(EntityID& entity, const int& index)
 	//registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, 0.5f, 0.f, 0.f, -10.f,
 	//	2.0f, 0.50f, .0f, //color
 	//	256, CIRCLE_FIELD);
-
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
 	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, EXPLODING_WEAPON_AOE_SIZE, 0.f, 5.5f, 4.0f,
 		3.0f, 0.50f, 0.0f, //color
 		2/*256*/, NILL);
