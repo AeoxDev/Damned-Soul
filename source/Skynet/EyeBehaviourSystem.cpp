@@ -679,7 +679,7 @@ bool EyeBehaviourSystem::Update()
 				IdleBehaviour(enemyEntity, playerComponent, playerTransformCompenent, eyeComponent, eyeTransformComponent, enemyStats, enemyAnim);
 			}
 			
-			if (!eyeComponent->charging || eyeComponent->avoidanceTimer < eyeComponent->avoidanceDuration)
+			if (!eyeComponent->charging && eyeComponent->avoidanceTimer > eyeComponent->avoidanceDuration)
 			{
 				if (hasUpdatedMap == false)
 				{
