@@ -683,7 +683,7 @@ int ParticleComponent::FindSlot()
 
 void ParticleComponent::Release()
 {
-	if ((data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
+	if (metadataSlot == -1 || (data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
 		return;
 
 	//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);

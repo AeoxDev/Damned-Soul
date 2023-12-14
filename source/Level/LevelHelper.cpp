@@ -1012,7 +1012,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 
 		//Orange glow
-		registry.AddComponent<GlowComponent>(entity, .9f, .2f, .1f);
+		registry.AddComponent<GlowComponent>(entity, 1.f, .1f, .01f);//
+		//registry.AddComponent<GlowComponent>(entity, .9f, .2f, .1f);//
 	}
 	else if (eType == EnemyType::hellhound)
 	{
@@ -1307,7 +1308,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//model->shared.baseColorAdditiveBlue = 0.2f;
 
 		//Blue glow instead of orange
-		registry.AddComponent<GlowComponent>(entity, .2f, .5f, .7f);
+		registry.AddComponent<GlowComponent>(entity, 0.02f, .2f, .8f); //.2f, .5f, .7f);
 	}
 	else if (eType == EnemyType::empoweredImp)
 	{
