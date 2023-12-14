@@ -542,11 +542,6 @@ bool ControllerSystem::Update()
 			anim->lower.aAnim = ANIMATION_IDLE;
 			anim->lower.aAnimIdx = 0;
 
-			/*anim->upper.aAnim = ANIMATION_IDLE;
-			anim->upper.aAnimIdx = 0;*/
-
-			//anim->upper.aAnimTime ;
-
 			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
 			TransformDecelerate(entity);
 		}
