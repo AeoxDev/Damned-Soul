@@ -28,8 +28,8 @@ const char* SOUL_SPEED::Description()
 
 	//float bonus_a = bonus_m * (SOUL_SPEED_SOUL_FACTOR_ATTACK_AS_PERCENT / SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT);
 
-	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "You gain %.1lf%% movement speed and %.1lf%% attack speed and for every soul you possess"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
+	static char temp[RELIC_DATA_DESC_SIZE] = "";
+	sprintf_s(temp, "You gain %.1lf%% movement speed and %.1lf%% attack speed and for every soul you possess. Whenever you would gain another 100%% movement speed from this relic, the remaining increase is reduced by half",
 		SOUL_SPEED_SOUL_FACTOR_MOVEMENT_AS_PERCENT,
 		SOUL_SPEED_SOUL_FACTOR_ATTACK_AS_PERCENT
 		//bonus_m,
@@ -80,8 +80,14 @@ void SOUL_SPEED::ModifySpeed(void* data)
 		PlayerComponent* player = registry.GetComponent<PlayerComponent>(SOUL_SPEED::_OWNER);
 		if (player)
 		{
+			float moveSpeedIncrease = SOUL_SPEED_SOUL_FACTOR_MOVEMENT * player->GetSouls();
+			for (int i = 0; i < SOUL_SPEED_SOUL_FACTOR_MOVEMENT * player->GetSouls() && i < int(moveSpeedIncrease); ++i)
+			{
+				moveSpeedIncrease -= (moveSpeedIncrease - i) / 2.f;
+			}
+
 			// Increase speed based on souls
-			stats->UpdateBonusSpeed(SOUL_SPEED_SOUL_FACTOR_MOVEMENT * player->GetSouls());
+			stats->UpdateBonusSpeed(moveSpeedIncrease);
 			stats->UpdateBonusAttackSpeed(SOUL_SPEED_SOUL_FACTOR_ATTACK * player->GetSouls());
 		}
 		//else

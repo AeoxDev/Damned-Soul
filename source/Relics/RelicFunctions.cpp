@@ -178,7 +178,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Advanced Fighting",
 				/*Filepath*/	"RelicIcons\\Advanced_Fighting",
 				/*Description*/	ADVANCED_FIGHTING::Description(),//"Your attacks gain a 35% chance to critically hit, dealing double their normal damage",
-				/*Price*/		10,
+				/*Price*/		13,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	ADVANCED_FIGHTING::Initialize
 			),

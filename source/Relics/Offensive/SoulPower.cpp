@@ -5,7 +5,7 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define SOUL_POWER_SOUL_FACTOR_PLAYER (0.03f)
+#define SOUL_POWER_SOUL_FACTOR_PLAYER (0.0275f)
 #define SOUL_POWER_SOUL_FACTOR_ENEMY (.2f)
 
 EntityID SOUL_POWER::_OWNER;
@@ -13,8 +13,8 @@ EntityID SOUL_POWER::_OWNER;
 const char* SOUL_POWER::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Increases your attack damage by %ld%% of your base weapon damage for every soul in your possession"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
-		PERCENT(SOUL_POWER_SOUL_FACTOR_PLAYER)/*,
+	sprintf_s(temp, "Increases your attack damage by %.2lf%% of your base weapon damage for every soul in your possession"/*, but you lose %ld%% of your current souls (rounded up) at the start of each level"*/,
+		SOUL_POWER_SOUL_FACTOR_PLAYER * 100.f/*,
 		PERCENT(_SC_FACTOR)*/);
 #pragma warning(suppress : 4172)
 	return temp;
