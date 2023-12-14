@@ -1012,7 +1012,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 
 		//Orange glow
-		registry.AddComponent<GlowComponent>(entity, .9f, .2f, .1f);
+		registry.AddComponent<GlowComponent>(entity, 1.f, .1f, .01f);//
+		//registry.AddComponent<GlowComponent>(entity, .9f, .2f, .1f);//
 	}
 	else if (eType == EnemyType::hellhound)
 	{
@@ -1307,7 +1308,7 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		//model->shared.baseColorAdditiveBlue = 0.2f;
 
 		//Blue glow instead of orange
-		registry.AddComponent<GlowComponent>(entity, .2f, .5f, .7f);
+		registry.AddComponent<GlowComponent>(entity, 0.02f, .2f, .8f); //.2f, .5f, .7f);
 	}
 	else if (eType == EnemyType::empoweredImp)
 	{
@@ -1548,22 +1549,24 @@ void SetScoreboardUI()
 {
 	EntityID scoreBoard = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(scoreBoard);
-	uiElement->Setup("SettingsPanel", "", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
-	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.55f));
+	uiElement->Setup("SettingsPanel", "", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 35.0f);
+	uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.45f));
+	//uiElement->Setup("SettingsPanel", "", "Run Completed!", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.5f, 1.0f), 35.0f);
+	//uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(0.0f, 0.55f));
 
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(scoreBoard);
 	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(scoreBoard);
 
-	uiElement->AddImage("ButtonMedium", DSFLOAT2(-0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(-0.17f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
 	uiElement->AddHoverImage(uiElement->m_Images[uiElement->m_Images.size() - 1], "ButtonMediumHover");
-	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.2f, -0.5f));
+	uiElement->AddText("New Run", uiElement->m_Images[0].baseUI.GetBounds(), DSFLOAT2(-0.17f, -0.5f));
 
 	onClick->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::MainMenu::Start, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_Images[0].baseUI.GetPixelCoords(), uiElement->m_Images[0].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	uiElement->AddImage("ButtonMedium", DSFLOAT2(0.2f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
+	uiElement->AddImage("ButtonMedium", DSFLOAT2(0.17f, -0.5f), DSFLOAT2(1.0f, 1.0f), false);
 	uiElement->AddHoverImage(uiElement->m_Images[uiElement->m_Images.size() - 1], "ButtonMediumHover");
-	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.2f, -0.5f));
+	uiElement->AddText("Main Menu", uiElement->m_Images[1].baseUI.GetBounds(), DSFLOAT2(0.17f, -0.5f));
 
 	onClick->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::Game::SetMainMenu, UIFunctions::OnClick::None);
 	onHover->Add(uiElement->m_Images[1].baseUI.GetPixelCoords(), uiElement->m_Images[1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
@@ -1592,8 +1595,10 @@ void SetScoreboardUI()
 	};
 
 	for (int i = 0; i < amount; i++)
-		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.575f, uiCoords.y - 0.325f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
-			20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(0.01f, uiCoords.y - 0.35f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+			20.0f ,DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+		//uiElement->AddText(texts[i], DSBOUNDS(0.0f, 0.0f, 300.0f, 0.0f), DSFLOAT2(uiCoords.x + 0.575f, uiCoords.y - 0.325f - (0.1f * i)), DSFLOAT2(1.0f, 1.0f),
+		//	20.0f ,DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	registry.AddComponent<UIGameScoreboardComponent>(scoreBoard);
 

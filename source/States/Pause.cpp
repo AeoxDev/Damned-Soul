@@ -291,13 +291,16 @@ void PauseState::SetupUI()
 			UISettingsSliderComponent* slider = registry.AddComponent<UISettingsSliderComponent>(button);
 			UIPauseSettingsComponent* pauseSettings = registry.AddComponent<UIPauseSettingsComponent>(button);
 
-			uiElement->Setup("SliderBackground", "", texts[i], positions[i]);
-			uiElement->AddImage("SliderButton", positions[i], DSFLOAT2(1.0f, 1.0f), false);
+			uiElement->Setup("Slider/BorderSmallSlider", "", texts[i], positions[i]);
+			uiElement->AddImage("Slider/SliderButton75", positions[i], DSFLOAT2(1.0f, 1.0f), false);
 			uiElement->m_BaseText.baseUI.SetPosition(DSFLOAT2(positions[i].x, positions[i].y + 0.075f));
 
 			uiElement->SetAllVisability(false);
 
-			float sliderWidth = abs(uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f) + abs(uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f);
+			float maxLeftPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f) + 0.025f;
+			float maxRightPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().right / 2.0f) - 0.025f;
+
+			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 
 			if (audioComp != nullptr)
 			{

@@ -602,6 +602,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern)
 {
+	if (metadataSlot != -1)
+	{
+		float ji = 1.0f;
+	}
 	metadataSlot = FindSlot();
 	//Calculate how many groups are requiered to write to all particles
 	float groups = (float)amount / (float)THREADS_PER_GROUP;
@@ -679,7 +683,7 @@ int ParticleComponent::FindSlot()
 
 void ParticleComponent::Release()
 {
-	if ((data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
+	if (metadataSlot == -1 || (data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
 		return;
 
 	//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);

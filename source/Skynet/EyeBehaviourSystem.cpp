@@ -751,7 +751,7 @@ bool EyeBehaviourSystem::Update()
 				}
 			}
 
-			if (!eyeComponent->charging || eyeComponent->avoidanceTimer < eyeComponent->avoidanceDuration)
+			if (!eyeComponent->charging && eyeComponent->avoidanceTimer > eyeComponent->avoidanceDuration)
 			{
 				if (hasUpdatedMap == false)
 				{
