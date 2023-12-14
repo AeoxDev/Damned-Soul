@@ -3,6 +3,7 @@
 #include "Relics\Utility\RelicFuncInputTypes.h"
 #include "Components.h"
 #include "Registry.h"
+#include "States\StateManager.h"
 
 #include <cmath>
 
@@ -38,23 +39,32 @@ void ADRENALINE_RUSH::Initialize(void* input)
 	_validateRelicFunctions();
 
 	// Add it to the list of On Obtain functions
-	(*_RelicFunctions)[FUNC_ON_DAMAGE_TAKEN].push_back(ADRENALINE_RUSH::OnDamageTaken);
+	(*_RelicFunctions)[FUNC_ON_DAMAGE_APPLY].push_back(ADRENALINE_RUSH::OnDamageTaken);
 	(*_RelicFunctions)[FUNC_ON_FRAME_UPDATE].push_back(ADRENALINE_RUSH::OnUpdate);
 	(*_RelicFunctions)[FUNC_ON_STAT_CALC].push_back(ADRENALINE_RUSH::AttackSpeedBoost);
 }
 
 void ADRENALINE_RUSH::OnDamageTaken(void* data)
 {
-	RelicInput::OnHealthUpdate* input = (RelicInput::OnHealthUpdate*)data;
+	RelicInput::OnDamageCalculation* input = (RelicInput::OnDamageCalculation*)data;
 
-	if (input->adressOfStatComponent == registry.GetComponent<StatComponent>(ADRENALINE_RUSH::_OWNER))
+	if (input->defender.index == ADRENALINE_RUSH::_OWNER.index)
 	{
-		_AR_REMAINING_TIME = ADRENALINE_RUSH_ACTIVE_DURATION;
+		float upgradeTime = 1.f;
+		upgradeTime -= (0 < (RelicInput::DMG::DOT & input->typeSource)) * .5f;
+		upgradeTime *= ADRENALINE_RUSH_ACTIVE_DURATION;
+
+		if (_AR_REMAINING_TIME < upgradeTime)
+			_AR_REMAINING_TIME = upgradeTime;
 	}
 }
 
 void ADRENALINE_RUSH::OnUpdate(void* data)
 {
+	// Don't count down while in pause
+	if (currentStates & InPause)
+		return;
+
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
 	_AR_REMAINING_TIME -= input->timeDelta;

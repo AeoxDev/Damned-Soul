@@ -7,6 +7,7 @@
 #include "DeltaTime.h"
 #include "CombatFunctions.h"
 #include "MemLib/ML_Vector.hpp"
+#include "States\StateManager.h"
 
 EntityID LIGHTNING_GOD::_OWNER;
 EntityID _LG_Victim;
@@ -81,6 +82,9 @@ void _LG_Particles_Follow(EntityID& entity)
 
 void LIGHTNING_GOD::OnUpdate(void* data)
 {
+	if (currentStates & InPause)
+		return;
+
 	static float cooldown = LIGHTNING_GOD_COOLDOWN_SECONDS;
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 

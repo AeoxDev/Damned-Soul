@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 #include "DeltaTime.h"
+#include "States\StateManager.h"
 
 #define LAST_STAND_THRESHOLD (.5f)
 #define LAST_STAND_MULTIPLIER (.5f)
@@ -45,6 +46,9 @@ void LAST_STAND::Initialize(void* input)
 
 void LAST_STAND::Recharge(void* data)
 {
+	if (currentStates & InPause)
+		return;
+
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
 	if (0.0001f < _LAST_STAND_COOLDOWN)
