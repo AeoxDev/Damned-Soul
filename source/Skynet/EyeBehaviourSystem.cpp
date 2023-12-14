@@ -350,7 +350,7 @@ void ChargeBehaviour(PlayerComponent* playerComponent, TransformComponent* playe
 		//(eyeComponent->clockwiseCircle == true) ? eyeComponent->clockwiseCircle = false : eyeComponent->clockwiseCircle = true;
 
 		SmoothRotation(eyeTransformComponent, eyeComponent->chargeDirX, eyeComponent->chargeDirZ, 40.0f);
-		AddTimedEventComponentStartContinuousEnd(eID, 0.0f, nullptr, ChargeColorFlash, eyeComponent->aimDuration - 0.2f, ResetColor);
+		AddTimedEventComponentStartContinuousEnd(eID, 0.0f, nullptr, ChargeColorFlash, eyeComponent->aimDuration - 0.2f, /*ResetColor*/nullptr);
 	}
 	else if (eyeComponent->aimTimer < eyeComponent->aimDuration)
 	{
