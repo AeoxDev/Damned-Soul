@@ -127,7 +127,7 @@ void _validateMasterRelicList()
 				/*Name*/		"Minotaur Horn Fragment",
 				/*Filepath*/	"RelicIcons\\Minotaur_Horn",
 				/*Description*/	MINOTAUR_HORN::Description(),
-				/*Price*/		5,
+				/*Price*/		6,
 				/*Type*/		RELIC_OFFENSE,
 				/*Function*/	MINOTAUR_HORN::Initialize,
 				/*Weight*/		4
