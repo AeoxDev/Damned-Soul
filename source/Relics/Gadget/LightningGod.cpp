@@ -47,6 +47,13 @@ void LIGHTNING_GOD::Initialize(void* input)
 
 void _LG_Particles_Begin_Big(EntityID& entity, const int& index)
 {
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
 	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION_BIG, 0.0f, LIGHTNING_GOD_SFX_SIZE_BIG, 0.0f, 0.0f, 0.0f, 256, LIGHTNING);
 }
 
@@ -66,6 +73,13 @@ void LIGHTNING_GOD::ProcMark(void* data)
 
 void _LG_Particles_Begin_Small(EntityID& entity, const int& index)
 {
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
 	registry.AddComponent<ParticleComponent>(entity, LIGHTNING_GOD_SFX_DURATION_SMALL, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f,
 		0.0,0.7,3.0,//rgb
 		256, LIGHTNING);
@@ -73,7 +87,13 @@ void _LG_Particles_Begin_Small(EntityID& entity, const int& index)
 
 void _LG_Particles_Follow(EntityID& entity)
 {
-
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
 		registry.AddComponent<ParticleComponent>(entity, 0.60f, 1.0f, 1.5f, 0.0f, 1.6f, 0.0f,
 			0.0, 0.7, 3.0,//rgb
 			64, NILL);

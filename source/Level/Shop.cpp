@@ -259,7 +259,7 @@ void CreateSingleWindows()
 	uint8_t price[SHOP_SINGLE_WINDOWS] =
 	{
 		heal,
-		4,
+		3,
 		5 * (player->weaponTier + 2),
 		0,
 	};
@@ -366,7 +366,7 @@ void CreateTextWindows()
 	EntityID statsText = registry.CreateEntity();
 
 	UIComponent* uiTitle = registry.AddComponent<UIComponent>(shopTitle);
-	uiTitle->Setup("Shop/ImpSign", "", "Lil\' Devil\'s Shoppe", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	uiTitle->Setup("Shop/ImpSign", "", "Lil\' Devil\'s Shop", { SHOP_POSITION_X, SHOP_POSITION_Y }, DSFLOAT2(1.0f, 1.0f), 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 

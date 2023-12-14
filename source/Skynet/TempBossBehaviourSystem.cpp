@@ -277,7 +277,14 @@ bool TempBossBehaviourSystem::Update()
 						tempBossComponent->isDazed = true;
 						tempBossComponent->willDoShockWave = false;
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, tempBossComponent->dazeTime, BossShockwaveEnd, 0, 1);
-						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.5f, 0.f, 0.f, 1.f,
+						//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+						//The solution: Find and release if it already exists
+						ParticleComponent* particle = registry.GetComponent<ParticleComponent>(enemyEntity);
+						if (particle != nullptr)
+						{
+							particle->Release();
+						}
+						registry.AddComponent<ParticleComponent>(enemyEntity, tempBossComponent->dazeTime, 100.0f, 2.5f, 0.f, 1.5f, 1.f,
 						1.5f,0.60f,0.10f,//rgb
 						200, PULSE);
 						//30.f is what is growthspeed in bossshockwaveexpand

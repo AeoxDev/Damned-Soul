@@ -1,2 +1,5 @@
-Game design
 Entity Component System
+Game Design
+Combat (Player Combat, Hit Feedback, Visual Clarity, Enemy AI)
+Voice Acting (Imp)
+QA Testing

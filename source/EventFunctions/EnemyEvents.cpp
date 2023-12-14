@@ -66,7 +66,7 @@ void ShatterEnemy(EntityID& entity, const int& index)
 	StatComponent* statComp = registry.GetComponent<StatComponent>(entity);
 	if (statComp != nullptr)
 	{
-		shatterStrength += statComp->overkill * 0.5;
+		shatterStrength += statComp->overkill * 0.5f;
 	}
 	registry.AddComponent<ShatterComponent>(entity, shatterStrength);
 
@@ -1028,7 +1028,14 @@ void CreateAcidHazard(EntityID& entity, const int& index)
 	// Changelog 2023-12-04 14:15: Changed scaling value & hitbox radius, changed to a mesh particle instead
 	// Also changed facing values since mesh particles rotate around Z by default (was originally meant for the sword slash)
 	float scaling = 10.0f;
-	ParticleComponent* particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, scaling, 0.0f, 0.0f, -5.0f, 1, "\\AcidGround.mdl", VFX_PATTERN::ACIDGROUND);
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
+	particle = registry.AddComponent<ParticleComponent>(acidHazard, 2.0f, 5.0f, scaling, 0.0f, 0.0f, -5.0f, 1, "\\AcidGround.mdl", VFX_PATTERN::ACIDGROUND);
 
 	TransformComponent* hazardTransform = registry.AddComponent<TransformComponent>(acidHazard);
 	hazardTransform->positionX = origin->positionX;

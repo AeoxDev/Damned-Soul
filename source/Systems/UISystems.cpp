@@ -326,8 +326,8 @@ bool UISliderSystem::Update()
 		if (slider->holding)
 		{
 
-			float maxLeftPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().left + 0.11f;
-			float maxRightPosition = uiElement->m_BaseImage.baseUI.GetPositionBounds().right - 0.11f;
+			float maxLeftPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().left / 2.0f) + 0.025f;
+			float maxRightPosition = (uiElement->m_BaseImage.baseUI.GetPositionBounds().right / 2.0f) - 0.025f;
 
 			float sliderWidth = abs(maxRightPosition) + abs(maxLeftPosition);
 

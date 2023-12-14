@@ -180,6 +180,13 @@ void PlayerLoseControl(EntityID& entity, const int& index)
 		transform->currentSpeedZ += dac->z * (stat->m_acceleration * dac->dashModifier);// *GetDeltaTime();
 
 		////Smoke
+		//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+ 		ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+		if (particle != nullptr)
+		{
+			particle->Release();
+		}
 		registry.AddComponent<ParticleComponent>(entity, 
 			5.0f, 7.0f, 3.0f, //Time, radius, size
 			-3.0f + (transform->facingX), 0.5f, -10/*-30.0f*/ , //Offset x, y, and z,
@@ -389,7 +396,7 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 	}
 
 #define HITBOX_START_TIME (0.45f)
-#define HITBOX_END_TIME (0.8f)
+#define HITBOX_END_TIME (0.6f)
 #define HITBOX_SCALE (2.f)
 
 	anim->upper.aAnimTimePower = .5f;
@@ -406,6 +413,13 @@ BlendAnimationComponent* anim = registry.GetComponent<BlendAnimationComponent>(e
 		SetPlayerAttackHitboxActive(entity, index);
 		player->hasActivatedHitbox = true;
 		
+		//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+		ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+		if (particle != nullptr)
+		{
+			particle->Release();
+		}
 		// ## ALEX CODE ##
 		ParticleComponent* pSlashComp = registry.AddComponent<ParticleComponent>(entity, 5.0f, 50.0f, 1.0f, 0.0f + (transform->facingX * 3.0f), 5.0f, 0.0f + (transform->facingZ * 3.0f), 1, "\\SwordSlash.mdl", VFX_PATTERN::SWORD);
 		// ## EO ALEX CODE ##

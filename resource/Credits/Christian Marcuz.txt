@@ -1,2 +1,2 @@
-UI System (Front & Backend, DirectX 2D)
+UI System (Front & Backend, Direct 2D)
 Shop (Front & Backend)
