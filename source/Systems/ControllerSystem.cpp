@@ -484,17 +484,34 @@ bool ControllerSystem::Update()
 			player->isMoving = true;
 		}
 
+		if (player->isAttacking)
+		{
+#ifdef _DEBUG
+		printf("Is Attacking\n");
+#endif
+		}
+		else
+		{
+#ifdef _DEBUG
+			printf("NOT Attacking\n");
+#endif
+		}
+
 		if (moving)
 		{
 			anim->lower.aAnim = ANIMATION_WALK;
 			anim->lower.aAnimIdx= 0;
 
+
 			if (!player->isAttacking)
 			{
+
+
 				anim->upper.aAnim = ANIMATION_WALK;
 				anim->upper.aAnimIdx = 0;
 				anim->upper.aAnimTime = anim->lower.aAnimTime;
 			}
+
 
 			float len = controller->goalX * controller->goalX + controller->goalZ * controller->goalZ;
 			if (len <= 0.0f)
@@ -520,7 +537,19 @@ bool ControllerSystem::Update()
 			}
 			
 		}
+		else if (player->isAttacking)
+		{
+			anim->lower.aAnim = ANIMATION_IDLE;
+			anim->lower.aAnimIdx = 0;
 
+			/*anim->upper.aAnim = ANIMATION_IDLE;
+			anim->upper.aAnimIdx = 0;*/
+
+			//anim->upper.aAnimTime ;
+
+			SmoothRotation(transform, MouseComponentGetDirectionX(mouseComponent), MouseComponentGetDirectionZ(mouseComponent), 16.0f);
+			TransformDecelerate(entity);
+		}
 
 		//clamp moveTime to lower limit if not moving
 		else 
