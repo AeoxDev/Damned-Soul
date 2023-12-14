@@ -516,6 +516,13 @@ void SpawnCutsceneParticles(EntityID& entity, const int& index)
 	{
 		float  cornersX[3] = { 0.0f, hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward), -hc->currentShootingAttackRange * (hc->offsetSide / hc->offsetForward) };//Counter clockwise
 		float  cornersZ[3] = { -1.0f, -hc->currentShootingAttackRange, -hc->currentShootingAttackRange };//Counter clockwise
+		//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+		ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+		if (particle != nullptr)
+		{
+			particle->Release();
+		}
 		registry.AddComponent<ParticleComponent>(entity, 1.0f, cornersX[0], 0.5f,
 			0.0f, 1.7f, 7.5f, 0.0f, //Z offset fix
 			cornersZ[0], cornersX[1], cornersZ[1], cornersX[2], cornersZ[2], 

@@ -588,6 +588,13 @@ bool LuciferBehaviourSystem::Update()
 
 						//shockwave here
 						AddTimedEventComponentStartContinuousEnd(enemyEntity, 0.0f, BossShockwaveStart, BossShockwaveExpand, luciferComponent->dazeTimeAmount, BossShockwaveEnd, 0, 1);
+						//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+						ParticleComponent* particle = registry.GetComponent<ParticleComponent>(enemyEntity);
+						if (particle != nullptr)
+						{
+							particle->Release();
+						}
 						registry.AddComponent<ParticleComponent>(enemyEntity, luciferComponent->dazeTimeAmount, 500.f, 2.0f, 0.f, 1.5f, 1.f,
 							0.0f,2.0f,1.0f,//rgb
 							300, ComputeShaders::PULSE);
