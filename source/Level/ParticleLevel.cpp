@@ -59,6 +59,13 @@ void LoadParticleLevel()
 		if (cShad == SMOKE)
 		{
 			registry.AddComponent<TransformComponent>(particles, transform);
+			//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+			//The solution: Find and release if it already exists
+			ParticleComponent* particle = registry.GetComponent<ParticleComponent>(particles);
+			if (particle != nullptr)
+			{
+				particle->Release();
+			}
 			registry.AddComponent<ParticleComponent>(particles, 5.0f, 10.f, 5.0f,
 				0.f, 0.f, 0.f, 1000, cShad);
 
@@ -66,6 +73,13 @@ void LoadParticleLevel()
 		else
 		{
 			registry.AddComponent<TransformComponent>(particles, transform);
+			//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+			//The solution: Find and release if it already exists
+			ParticleComponent* particle = registry.GetComponent<ParticleComponent>(particles);
+			if (particle != nullptr)
+			{
+				particle->Release();
+			}
 			registry.AddComponent<ParticleComponent>(particles, 5.0f, 10.f, 5.0f,
 				0.f, 0.f, 0.f, 2, VFX_PATTERN::FLAME);
 		}

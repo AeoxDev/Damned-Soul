@@ -12,7 +12,13 @@ EntityID FLAME_WEAPON::_OWNER;
 
 void _FW_Particles_Begin(EntityID& entity, const int& index)
 {
-
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
 	registry.AddComponent<ParticleComponent>(entity, FLAME_WEAPON_DOT_DURATION, 1.2f, 2.5f, -1.0f, 1.f, -1.0f, 5, ComputeShaders::FIRE);
 
 	
