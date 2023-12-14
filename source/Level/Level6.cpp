@@ -83,10 +83,10 @@ void LoadLevel6()
 	CreatePointLight(lightholder, 0.8, 0.4, 0.0, 0.0f, 40.0f, -60.0f, 400.0f, 20.0f);
 	CreatePointLight(lightholderTwo, redLight, greenLight, blueLight, 12.0f, 10.0f, 74.0f, 500.0f, 20.0f);
 	CreatePointLight(lightholderThree, redLight, greenLight, blueLight, -24.0f, 10.0f, 74.0f, 500.0f, 20.0f);
-	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, 32.0f, 10.0f, 146.0f, 500.0f, 20.0f);
-	CreatePointLight(lightholderFive, redLight, greenLight, blueLight, -40.0f, 10.0f, 146.0f, 500.0f, 20.0f);
-	CreatePointLight(lightholderSix, redLight, greenLight, blueLight, 32.0f, 10.0f, 216.0f, 500.0f, 20.0f);
-	CreatePointLight(lightholderSeven, redLight, greenLight, blueLight, -40.0f, 10.0f, 216.0f, 500.0f, 20.0f);
+	CreatePointLight(lightholderForth, redLight, greenLight, blueLight, 32.0f, 10.0f, 146.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderFive, redLight, greenLight, blueLight, -40.0f, 10.0f, 146.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderSix, redLight, greenLight, blueLight, 32.0f, 10.0f, 216.0f, 300.0f, 20.0f);
+	CreatePointLight(lightholderSeven, redLight, greenLight, blueLight, -40.0f, 10.0f, 216.0f, 300.0f, 20.0f);
 
 
 	stateManager.stage = stage;
