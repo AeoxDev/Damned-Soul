@@ -27,6 +27,13 @@ void ContinueAnimation(EntityID& entity, const int& index)
 	if (anim != nullptr)
 	{
 		anim->aAnimTimeFactor = 1.0f;
+		//Use condition to set specific times
+		// Elliot Was Here
+		int condition = GetTimedEventCondition(entity, index);
+		if (condition == EnemyType::lucifer)
+		{
+			anim->aAnimTimeFactor = registry.GetComponent<StatComponent>(entity)->GetAttackSpeed();
+		}
 	}
 	else if (blendAnim != nullptr)
 	{

@@ -31,7 +31,7 @@
 #define SHOP_OFFSET_Y_DOWN_BUTTONS (SHOP_POSITION_Y - 1.475f)
 
 #define SHOP_OFFSET_X_RIGHT_STATS (SHOP_POSITION_X + 0.2725f)
-#define SHOP_OFFSET_Y_DOWN_STATS (SHOP_POSITION_Y - 1.425f)
+#define SHOP_OFFSET_Y_DOWN_STATS (SHOP_POSITION_Y - 1.35f)
 
 
 #define SHOP_RELIC_WINDOWS (3)
@@ -142,9 +142,8 @@ void CreateRelicWindows()
 	{
 		EntityID relicWindow = registry.CreateEntity();
 		UIComponent* uiElement = registry.AddComponent<UIComponent>(relicWindow);
-		uiElement->Setup("PanelSmall", "", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		uiElement->m_BaseImage.baseUI.SetVisibility(false);
-		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.05f});
+		uiElement->Setup("", "", texts[i], positions[i], DSFLOAT2(1.0f, 1.0f), 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y + 0.10f});
 		
 		UIShopRelicComponent* uiRelicWindow = registry.AddComponent<UIShopRelicComponent>(relicWindow);
 
@@ -295,13 +294,13 @@ void CreateSingleWindows()
 		}
 		else
 		{
-			uiElement->Setup("PanelSmall", "", texts[i], positions[i], { 1.0f, 1.0f } , fontSize[i], DWRITE_TEXT_ALIGNMENT_CENTER, pAling[i]);
-			uiElement->m_BaseImage.baseUI.SetVisibility(false);
-
+			uiElement->Setup("", "", texts[i], positions[i], { 1.0f, 1.0f } , fontSize[i], DWRITE_TEXT_ALIGNMENT_CENTER, pAling[i]);
+			
 			if (std::strcmp(texts[i], "Weapon") != 0)
-			{
-				uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y - 0.075f });
-			}
+				uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y + 0.10f });
+			else
+				uiElement->m_BaseText.baseUI.SetPosition({ positions[i].x, positions[i].y + 0.15f });
+
 			
 			uiElement->AddImage(filenames[i].c_str(), { positions[i].x, positions[i].y }, scales[i], false);
 			uiElement->AddHoverImage(uiElement->m_Images[uiElement->m_Images.size() - 1], filenamesHover[i].c_str());
@@ -372,7 +371,7 @@ void CreateTextWindows()
 	registry.AddComponent<UIShopTitleImpComponent>(shopTitle);
 
 	UIComponent* uiImpText = registry.AddComponent<UIComponent>(impText);
-	uiImpText->Setup("Shop/ImpNoteBook", "", "Hello There", { 0.65f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
+	uiImpText->Setup("Shop/ImpNoteBook", "", "", { 0.65f, 0.0f }, { 1.0f, 1.0f }, 20.0f);
 	
 	uiImpText->m_BaseText.m_brush = Black;
 
@@ -387,16 +386,13 @@ void CreateTextWindows()
 	registry.AddComponent<UIShopImpComponent>(impText);
 
 	UIComponent* uiPlayerInfo = registry.AddComponent<UIComponent>(statsText);
-	uiPlayerInfo->Setup("PanelSmall", "", "Player Stats", { SHOP_OFFSET_X_RIGHT_STATS,  SHOP_OFFSET_Y_DOWN_BUTTONS }, { 1.0f, 1.0f }, 20.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	uiPlayerInfo->m_BaseImage.baseUI.SetVisibility(false);
-	uiPlayerInfo->m_BaseText.baseUI.SetPosition(DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y - 0.05f));
-
-	float offsets[3] = { 0.06f, 0.0f, -0.06f };
+	uiPlayerInfo->Setup("", "", "Player Stats", { SHOP_OFFSET_X_RIGHT_STATS,  SHOP_OFFSET_Y_DOWN_STATS }, { 1.0f, 1.0f }, 30.0f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
 	for (int i = 0; i < 3; i++)
 	{
-		uiPlayerInfo->AddText(" ", uiPlayerInfo->m_BaseImage.baseUI.GetBounds(),
-			DSFLOAT2(uiPlayerInfo->m_BaseImage.baseUI.GetPosition().x, uiPlayerInfo->m_BaseImage.baseUI.GetPosition().y + offsets[i] - 0.025f));
+		uiPlayerInfo->AddText(" ", uiPlayerInfo->m_BaseText.baseUI.GetBounds(),
+			DSFLOAT2(uiPlayerInfo->m_BaseText.baseUI.GetPosition().x, uiPlayerInfo->m_BaseText.baseUI.GetPosition().y - ((i + 1) * 0.05f) - 0.05f),
+			{ 1.0f, 1.0f }, 20.0f);
 	}
 
 

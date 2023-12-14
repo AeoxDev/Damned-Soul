@@ -24,6 +24,9 @@ void SetupImage(const char* filepath, ID2D1Bitmap*& bitmap)
 	IWICImagingFactory* factory = ui.GetImagingFactory();
 	const std::wstring path = L"../resource/GUI/" + std::wstring(pathAsString.begin(), pathAsString.end()) + L".png";
 
+#ifdef _DEBUG
+	printf("path: %ls\n", path.c_str());
+#endif
 	hr = factory->CreateDecoderFromFilename(path.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
 	assert(!FAILED(hr));
 
@@ -328,10 +331,7 @@ void UIComponent::AddImage(const char* imageFilepath, DSFLOAT2 position, DSFLOAT
 {
 	m_Images.push_back();
 
-	if (imageFilepath != "")
-		m_Images[m_Images.size() - 1].SetImage(imageFilepath);
-	else
-		m_Images[m_Images.size() - 1].SetImage("TempBaseImage");
+	m_Images[m_Images.size() - 1].SetImage(imageFilepath);
 
 	m_Images[m_Images.size() - 1].baseUI.Setup(position, scale, 
 		m_Images[m_Images.size() - 1].baseUI.GetRotation(), 

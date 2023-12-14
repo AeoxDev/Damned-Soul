@@ -714,8 +714,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::tempBoss)
 		{
-			health = 0;//200.f;
-			float partHealth = 40.f; // this times 5 is the full starting strength
+			// Herman Was Here: Det var ganska meningslös innan när den bara hade en part
+			// Den är inte starkare at full, eller mycket starkare när två eller tre är döda
+			// Påverkar i stort sätt bara när det är 1 eller 2 delar kvar.
+			// Playtestat internt att detta inte känns bullshit, skall försöka få utomstående att prova också
+			health = 75;//200.f;
+			float partHealth = 25.f; // this times 5 is the full starting strength
 			if (zacIndex0)
 				health += partHealth;
 			if (zacIndex1)
@@ -731,7 +735,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			health = 1000.f;
+			// Herman Was Here
+			health = 1332.f; // Wanted 1666, but that was probably a tad bit too much so we took 666*2
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -833,7 +838,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			damage = 40.f; //66.6f????
+			// Herman Was Here
+			// Elliot Was Here
+			// Han behövde mer damage, denna siffran är ganska balanced för endgame och passande
+			damage = 66.6f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{
@@ -902,7 +910,8 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		}
 		else if (eType == EnemyType::lucifer)
 		{
-			attackSpeed = 1.2f;
+			// Herman Was Here: Märkbart snabbare än innan, men inte omöjligt att hanskas med by any means
+			attackSpeed = 1.332f;
 		}
 		else if (eType == EnemyType::frozenHellhound || eType == EnemyType::frozenEye || eType == EnemyType::frozenImp)
 		{

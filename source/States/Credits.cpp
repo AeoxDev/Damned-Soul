@@ -65,7 +65,7 @@ void Credits::SetupUI()
 
 	auto credits = registry.CreateEntity();
 	UIComponent* uiElementC = registry.AddComponent<UIComponent>(credits);
-	uiElementC->Setup("BookNormal", "", "Credits", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 40.0f);
+	uiElementC->Setup("Credits/BookNormal", "", "Credits", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 40.0f);
 	uiElementC->m_BaseText.baseUI.SetPosition({ 0.0f, 0.65f });
 
 	uiElementC->m_BaseText.m_brush = Black;

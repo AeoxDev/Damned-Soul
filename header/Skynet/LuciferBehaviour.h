@@ -56,7 +56,7 @@ struct LuciferBehaviour
 	int attackHitboxID = 3;
 
 	// variables for jump jump 
-	float flyTime = 4.f;
+	float flyTime = 3.25f; // Herman Was Here: det var smärtsamt hur länge han stannade i luften
 	float flyCounter = 0.f;
 	bool hasLandingPos = false;
 	float heroLandingTiming = 0.2f;
