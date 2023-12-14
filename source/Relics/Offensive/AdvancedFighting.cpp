@@ -41,6 +41,13 @@ void ADVANCED_FIGHTING::Initialize(void* input)
 
 void _AF_Particles_Begin(EntityID& entity, const int& index)
 {
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
 	registry.AddComponent<ParticleComponent>(entity, ADVANDED_FIGHTING_SFX_DURATION, 0.0f, 0.15f, 0.0f, 0.0f, 0.0f, 256, LIGHTNING);
 }
 
