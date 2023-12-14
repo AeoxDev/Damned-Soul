@@ -8,18 +8,37 @@
 void PauseAnimation(EntityID& entity, const int& index)
 {
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (anim != nullptr)
 	{
 		anim->aAnimTimeFactor = 0.0f;
+	}
+	else if (blendAnim != nullptr)
+	{
+		blendAnim->lower.aAnimTimeFactor = 0.0f;
+		blendAnim->upper.aAnimTimeFactor = 0.0f;
 	}
 }
 
 void ContinueAnimation(EntityID& entity, const int& index)
 {
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (anim != nullptr)
 	{
 		anim->aAnimTimeFactor = 1.0f;
+		//Use condition to set specific times
+		// Elliot Was Here
+		int condition = GetTimedEventCondition(entity, index);
+		if (condition == EnemyType::lucifer)
+		{
+			anim->aAnimTimeFactor = registry.GetComponent<StatComponent>(entity)->GetAttackSpeed();
+		}
+	}
+	else if (blendAnim != nullptr)
+	{
+		blendAnim->lower.aAnimTimeFactor = 1.0f;
+		blendAnim->upper.aAnimTimeFactor = 1.0f;
 	}
 
 	uint32_t condition = GetTimedEventCondition(entity, index);
@@ -29,16 +48,22 @@ void ContinueAnimation(EntityID& entity, const int& index)
 		SoundComponent* sfx = registry.GetComponent<SoundComponent>(entity);
 		if (sfx) sfx->Play(Boss_Attack, Channel_Base);
 	}
+	
 }
 
 void ResetAnimation(EntityID& entity, const int& index)
 {
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (anim != nullptr)
 	{
 		anim->aAnimTime = 0.0f;
 	}
-	
+	else if (blendAnim != nullptr)
+	{
+		blendAnim->lower.aAnimTime = 0.0f;
+		blendAnim->upper.aAnimTime = 0.0f;
+	}
 }
 
 void BlinkColor(EntityID& entity, const int& index)
@@ -159,11 +184,22 @@ void SquashStretch(EntityID& entity, const int& index)
 void TPose(EntityID& entity, const int& index)
 {
 	AnimationComponent* anim = registry.GetComponent<AnimationComponent>(entity);
+	BlendAnimationComponent* blendAnim = registry.GetComponent<BlendAnimationComponent>(entity);
 	if (anim != nullptr)
 	{
 		anim->aAnimIdx = 0;
 		anim->aAnim = ANIMATION_DEATH;
-		anim->aAnimTime = 0.01f;;
+		anim->aAnimTime = 0.01f;
+	}
+	else if (blendAnim != nullptr)
+	{
+		blendAnim->lower.aAnimIdx = 0;
+		blendAnim->lower.aAnim = ANIMATION_DEATH;
+		blendAnim->lower.aAnimTime = 0.01f;
+
+		blendAnim->upper.aAnimIdx = 0;
+		blendAnim->upper.aAnim = ANIMATION_DEATH;
+		blendAnim->upper.aAnimTime = 0.01f;
 	}
 	
 }

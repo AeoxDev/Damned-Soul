@@ -111,26 +111,46 @@ void main( uint3 threadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     //outlineAdd = lerp4(antiAlias, float4(pow(1.f - antiAlias.r, 2), pow(1.f - antiAlias.g, 2), 1.f - pow(1.f - antiAlias.b, 2), 1.f), outlineAdd.a);
     outlineAdd = lerp4(antiAlias, pow(antiAlias - 0.15f, 3.f), outlineAdd.a);
     
-    float total = 0;
-    float4 output = float4(0, 0, 0, 0);
+    #define WIDTH_HEIGHT_GLOW (13)  // TODO: Clamp based on distance?
+    #define SIGMA_GLOW (30.f)       // TODO: Clamp based on distance?
+    
+    float total = .1f * SIGMA_GLOW * inputGlowData[index].a; // 0;
+    float4 output = inputGlowData[index] * total; //float4(0, 0, 0, 0);
+    
     // Calculate color blend and glow falloff based on pixel distance.
-    #define WIDTH_HEIGHT_GLOW (10)  // TODO: Clamp based on distance?
-    #define SIGMA_GLOW (40.f)       // TODO: Clamp based on distance?
     for (int y_glow = max(index.y - WIDTH_HEIGHT_GLOW, 0); y_glow < min(index.y + WIDTH_HEIGHT_GLOW, windowHeight); ++y_glow)
     {
         for (int x_glow = max(index.x - WIDTH_HEIGHT_GLOW, 0); x_glow < min(index.x + WIDTH_HEIGHT_GLOW, windowWidth); ++x_glow)
         {
-            if(sqrt(pow(index.x - x_glow, 2) + pow(index.y - y_glow, 2))<=WIDTH_HEIGHT_GLOW)
-            {
-                int2 h8t = int2(x_glow, y_glow);
-                float temp = Gaussian(index.x - x_glow, index.y - y_glow, SIGMA_GLOW);
-                //if (inputGlowData[h8t].a != 0)
-                {
-                    total += temp;
-                }
+            float mult = sqrt(pow(index.x - x_glow, 2) + pow(index.y - y_glow, 2)) <= WIDTH_HEIGHT_GLOW;
+            int2 h8t = int2(x_glow, y_glow);
+            float temp = Gaussian(index.x - x_glow, index.y - y_glow, SIGMA_GLOW) * mult;
+            total += temp;
+            output += inputGlowData[h8t] * temp;
+            //if(sqrt(pow(index.x - x_glow, 2) + pow(index.y - y_glow, 2))<=WIDTH_HEIGHT_GLOW)
+            //{
+            //    int2 h8t = int2(x_glow, y_glow);
+            //    float temp = Gaussian(index.x - x_glow, index.y - y_glow, SIGMA_GLOW);
+            //    //if (inputGlowData[h8t].a != 0)
+            //    {
+            //        total += temp;
+            //    }
             
-                output += inputGlowData[h8t] * temp;
-            }
+            //    output += inputGlowData[h8t] * temp;
+            //}
+        }
+    }
+    
+        // Calculate color blend and glow falloff based on pixel distance.
+    for (y_glow = max(index.y - WIDTH_HEIGHT_GLOW / 3, 0); y_glow < min(index.y + WIDTH_HEIGHT_GLOW / 4, windowHeight); ++y_glow)
+    {
+        for (int x_glow = max(index.x - WIDTH_HEIGHT_GLOW / 3, 0); x_glow < min(index.x + WIDTH_HEIGHT_GLOW / 4, windowWidth); ++x_glow)
+        {
+            float mult = sqrt(pow(index.x - x_glow, 2) + pow(index.y - y_glow, 2)) <= WIDTH_HEIGHT_GLOW;
+            int2 h8t = int2(x_glow, y_glow);
+            float temp = Gaussian(index.x - x_glow, index.y - y_glow, SIGMA_GLOW * 3) * mult;
+            total += temp;
+            output += inputGlowData[h8t] * temp;
         }
     }
     

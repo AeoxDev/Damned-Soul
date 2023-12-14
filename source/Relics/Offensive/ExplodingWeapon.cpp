@@ -9,6 +9,7 @@
 #define EXPLODING_WEAPON_AOE_SIZE (10.f)
 #define EXPLODING_WEAPON_SFX_DURATION (.15f)
 #define EXPLODING_WEAPON_DAMAGE_FRACTION (.5f)
+#define EXPLODING_WEAPON_KOCKBACK_INCREASE (.75f)
 
 EntityID EXPLODING_WEAPON::_OWNER;
 
@@ -17,7 +18,8 @@ bool _EW_CAN_EXPLODE = true;
 const char* EXPLODING_WEAPON::Description()
 {
 	static char temp[RELIC_DATA_DESC_SIZE];
-	sprintf_s(temp, "Whenever you hit an enemy with an attack, enemies in a small area around that enemy also take %ld%% of that attack's damage as flat damage",
+	sprintf_s(temp, "Increases knockback force by %ld%% and creates an explosion in a small area around the first enemy hit with an attack, dealing %ld%% of that attack's damage to other nearby enemies",
+		PERCENT(EXPLODING_WEAPON_KOCKBACK_INCREASE),
 		PERCENT(EXPLODING_WEAPON_DAMAGE_FRACTION));
 #pragma warning(suppress : 4172)
 	return temp;
@@ -31,10 +33,23 @@ void EXPLODING_WEAPON::Initialize(void* input)
 	// Make sure the relic function map exists
 	_validateRelicFunctions();
 
+	// Mark as modified
+	registry.GetComponent<StatComponent>(EXPLODING_WEAPON::_OWNER)->MarkAsModified();
+
 	// Add the AoE to the weapon
 	(*_RelicFunctions)[FUNC_ON_DAMAGE_APPLY].push_back(EXPLODING_WEAPON::Explosion);
 	// Add the reset to the functions
 	(*_RelicFunctions)[FUNC_ON_NOT_ATTACKING].push_back(EXPLODING_WEAPON::ResetExplosion);
+}
+
+void EXPLODING_WEAPON::IncreaseKnockback(void* data)
+{
+	RelicInput::OnStatCalcInput* input = (RelicInput::OnStatCalcInput*)data;
+
+	if (input->entity.index == EXPLODING_WEAPON::_OWNER.index)
+	{
+		((StatComponent*)input->adressOfStatComonent)->UpdateBonusKnockback(EXPLODING_WEAPON_KOCKBACK_INCREASE);
+	}
 }
 
 void EXPLODING_WEAPON::ResetExplosion(void* input)
@@ -44,9 +59,19 @@ void EXPLODING_WEAPON::ResetExplosion(void* input)
 
 void _EW_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, 2.5f, 0.f, 0.f, -10.f,
-		2.0f, 0.50f, .0f, //color
-		50/*256*/, CIRCLE_FIELD);
+	//registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, 0.5f, 0.f, 0.f, -10.f,
+	//	2.0f, 0.50f, .0f, //color
+	//	256, CIRCLE_FIELD);
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
+	registry.AddComponent<ParticleComponent>(entity, EXPLODING_WEAPON_SFX_DURATION, EXPLODING_WEAPON_AOE_SIZE, EXPLODING_WEAPON_AOE_SIZE, 0.f, 5.5f, 4.0f,
+		3.0f, 0.50f, 0.0f, //color
+		2/*256*/, NILL);
 }
 
 

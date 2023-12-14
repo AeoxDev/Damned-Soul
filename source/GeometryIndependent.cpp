@@ -205,6 +205,18 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 	SetRenderTargetViewAndDepthStencil(GIcomponent->renderTargetView, GIcomponent->depthStencil);
 	SetConstantBuffer(GIcomponent->constantBuffer, SHADER_TO_BIND_RESOURCE::BIND_PIXEL, 4);
 
+
+
+	//Update CB
+	GIcomponent->shaderData.idValue = 1.0f;
+	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
+	SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
+	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
+	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
+	//Render texture to RTV
+	EntityID trash;
+	LOADED_MODELS[model->model].RenderAllSubmeshes(trash);
+
 	//Render the static hazard texture if it exists
 	StaticHazardTextureComponent* texture = registry.GetComponent<StaticHazardTextureComponent>(stageEntity);
 	if (texture != nullptr)
@@ -243,19 +255,9 @@ void RenderGeometryIndependentCollisionToTexture(EntityID& stageEntity, EntityID
 		GIcomponent->shaderData.isTexture = false;
 	}
 
-	
 
-	//Update CB
-	GIcomponent->shaderData.idValue = 1.0f;
-	UpdateConstantBuffer(GIcomponent->constantBuffer, &GIcomponent->shaderData);
-	SetWorldMatrix(x, y, z, rX, rY, -rZ, sX, sY, sZ, SHADER_TO_BIND_RESOURCE::BIND_VERTEX, 0);
-	SetVertexBuffer(LOADED_MODELS[model->model].m_vertexBuffer);
-	SetIndexBuffer(LOADED_MODELS[model->model].m_indexBuffer);
-	//Render texture to RTV
-	EntityID trash;
-	LOADED_MODELS[model->model].RenderAllSubmeshes(trash);
 
-	//ClearDepthStencilView(GIcomponent->depthStencil); //Take into account depth here to avoid issues with GI under the stage.
+	ClearDepthStencilView(GIcomponent->depthStencil); //Take into account depth here to avoid issues with GI under the stage.
 	//Render all existing static hazards on to the submesh.
 	for (auto entity : View<StaticHazardComponent, TransformComponent, ModelBonelessComponent>(registry))
 	{

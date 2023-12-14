@@ -51,6 +51,10 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 	{
 		speed = 50.0f;
 	}
+	else if (type == empoweredImp)
+	{
+		speed = 60.0f; //speeeEEeeEd
+	}
 	StatComponent* statsParent = registry.GetComponent<StatComponent>(entity);
 
 	float damage = statsParent->GetDamage();
@@ -65,6 +69,8 @@ void CreateProjectile(EntityID entity, float directionX, float directionZ, Enemy
 	if (type == eye)
 	{
 		//VFX of the bullet
+		//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+//The solution: Find and release if it already exists
 		registry.AddComponent<ParticleComponent>(bullet, 2.0f, 5.0f, 5.0f, 0.0f, 0.0f, 1.0f, 2, VFX_PATTERN::ACID);
 
 		AddTimedEventComponentStartEnd(bullet, 1.0f, BeginDestroyProjectile, 1.01f, EndDestroyProjectile, 0, 2);

@@ -4,8 +4,8 @@
 #include "Components.h"
 #include "Registry.h"
 
-#define RECKLESS_DAMAGE_TAKEN_MULT (1.75f)
-#define RECKLESS_DAMAGE_DEALT_MULT (1.35f)
+#define RECKLESS_DAMAGE_TAKEN_MULT (2.f)
+#define RECKLESS_DAMAGE_DEALT_MULT (1.5f)
 
 EntityID RECKLESS::_OWNER;
 

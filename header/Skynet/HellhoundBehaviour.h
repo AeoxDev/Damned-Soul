@@ -27,7 +27,9 @@ struct HellhoundBehaviour
 	float chargePrepareDurationCounter = 0.0f;
 	const float chargePrepareDuration = 0.5f;
 
-	float meleeDistance = 3.5f;
+	//NICLAS WAS HERE
+	float meleeDistance = 4.5f;
+	//float meleeDistance = 3.5f;
 
 
 	// SHOOTING VARIABLES

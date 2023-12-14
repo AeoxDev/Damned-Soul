@@ -12,6 +12,7 @@
 #include "UIComponents.h"
 #include "Model.h"
 #include "Levels\LevelHelper.h"
+#include "DeltaTime.h"
 
 #include <fstream>
 #include <string>
@@ -22,6 +23,7 @@ void Credits::Setup()
 	SetupUI();
 
 	Camera::ResetCamera();
+	Camera::SetCutsceneMode(0);
 
 	//Setup stage to rotate around
 	// Stage Model
@@ -38,6 +40,7 @@ void Credits::Setup()
 	stageP->rotationY = 0.0f;
 	stageP->rotationRadius = -0.7f * CAMERA_OFFSET_Z;
 	stageP->rotationAccel = 0.12f;
+	gameSpeed = 1.0f;
 }
 
 void Credits::Input()
@@ -57,12 +60,15 @@ void Credits::SetupUI()
 		{"Joaquin Lindkvist", "Joel Berg"},
 		{"Mattias Nordin", "Niclas Andersson"},
 		{"Rasmus Fridlund", "Zannie Karlsson"},
-		{"Special Thanks", "And You"}
+		{"Fiverr", "Blekinge Institute of Technology"}
 	};
 
 	auto credits = registry.CreateEntity();
 	UIComponent* uiElementC = registry.AddComponent<UIComponent>(credits);
-	uiElementC->Setup("BookNormal", "", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 30.0f);
+	uiElementC->Setup("Credits/BookNormal", "", "Credits", DSFLOAT2(0.0f, 0.0f), DSFLOAT2(1.0f, 1.0f), 40.0f);
+	uiElementC->m_BaseText.baseUI.SetPosition({ 0.0f, 0.65f });
+
+	uiElementC->m_BaseText.m_brush = Black;
 
 	int reverse = 1;
 	for (int i = 0; i < 2; i++)
@@ -103,15 +109,23 @@ void Credits::SetupUI()
 	OnHoverComponent* onHoverC = registry.AddComponent<OnHoverComponent>(credits);
 	OnClickComponent* onClickC = registry.AddComponent<OnClickComponent>(credits);
 
-	uiElementC->AddImage("Arrow Left", DSFLOAT2(-0.55, -0.65), DSFLOAT2(1.0f, 1.0f), false);
+	uiElementC->AddImage("Credits/Arrow Left", DSFLOAT2(-0.55, -0.65), DSFLOAT2(1.0f, 1.0f), false);
+	uiElementC->AddHoverImage(uiElementC->m_Images[uiElementC->m_Images.size() - 1], "Credits/Arrow Left Glow");
 
 	onClickC->Setup(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(), uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(),
 		UIFunctions::OnClick::None, UIFunctions::Credits::PreviousPage);
 
-	uiElementC->AddImage("Arrow Right", DSFLOAT2(0.55, -0.65), DSFLOAT2(1.0f, 1.0f), false);
+	onHoverC->Setup(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(),
+		uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
-	onClickC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(), uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(),
-		UIFunctions::OnClick::None, UIFunctions::Credits::NextPage);
+	uiElementC->AddImage("Credits/Arrow Right", DSFLOAT2(0.55, -0.65), DSFLOAT2(1.0f, 1.0f), false);
+	uiElementC->AddHoverImage(uiElementC->m_Images[uiElementC->m_Images.size() - 1], "Credits/Arrow Right Glow");
+
+	onClickC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(),
+		uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnClick::None, UIFunctions::Credits::NextPage);
+
+	onHoverC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(), 
+		uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
 	registry.AddComponent<UICreditsTextComponent>(credits);
 
@@ -120,7 +134,7 @@ void Credits::SetupUI()
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
 
-	uiElement->Setup("ButtonMedium", "Back", { 0.78f, -0.85f }, { 1.0f, 1.0f });
+	uiElement->Setup("ButtonMedium", "ButtonMediumHover", "Back", { 0.78f, -0.85f }, { 1.0f, 1.0f });
 
 	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Credits::Back, UIFunctions::OnClick::None);
 	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);

@@ -1,5 +1,6 @@
-File Managment
-Skeletal Animation
-2D Art (UI och Relics)
-Memory Management
-Relics (Backend Framework)
+File Managment (Model & Animation File Compilation)
+Skeletal Animation (Load & Apply Animations)
+2D Art (Player HUD, Relics)
+Memory Management (Inhouse Library, Custom Container Classes)
+Relics (Back & Frontend Framework)
+Redistribution (Installer & Troubleshooting)

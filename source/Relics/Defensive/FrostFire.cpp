@@ -6,6 +6,7 @@
 #include "Components.h"
 #include "KnockBackComponent.h"
 #include "CombatFunctions.h"
+#include "States\StateManager.h"
 
 EntityID FROST_FIRE::_OWNER;
 
@@ -58,9 +59,20 @@ void FROST_FIRE::Reset(void* data)
 
 void _FF_Particles_Begin(EntityID& entity, const int& index)
 {
-	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE, 1.5f, 0.f, 0.f, -10.f,
-		0.f, 1.10f, 2.0f,//rgb 
-		200/*256*/, CIRCLE_FIELD);
+	//Elliot: Adding a component this way is unsafe, a release is required if there already is a particleComponent
+		//The solution: Find and release if it already exists
+	ParticleComponent* particle = registry.GetComponent<ParticleComponent>(entity);
+	if (particle != nullptr)
+	{
+		particle->Release();
+	}
+	registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE-2, 1.2f, 0.f, 1.2f, 0.f,
+		0.f, 0.70f, 3.0f,//rgb 
+		250, CIRCLE_FIELD);
+
+	//registry.AddComponent<ParticleComponent>(entity, FROST_FIRE_SFX_DURATION, FROST_FIRE_RANGE, FROST_FIRE_RANGE, 0.f, 5.5f, 4.0f,
+	//	0.f, 1.10f, 2.0f,//rgb 
+	//	2/*256*/, NILL);
 }
 
 void FROST_FIRE::PushBackAndDamage(void* data)
@@ -69,7 +81,7 @@ void FROST_FIRE::PushBackAndDamage(void* data)
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
 	// Reduce the cooldown
-	_Frost_Fire_Cooldown -= input->timeDelta;
+	_Frost_Fire_Cooldown -= input->timeDelta * (0 < (InPlay & currentStates) && (0 == (InPause & currentStates)));
 
 	// If of coodlown
 	if (_Frost_Fire_Cooldown <= 0)

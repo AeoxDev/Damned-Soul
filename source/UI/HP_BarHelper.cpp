@@ -39,7 +39,7 @@ void SetUpAdvancedHealthBar(const EntityID player)
 
 	//Setup + Health
 	// Set background location!
-	uiElement->Setup   ("HP_Bar/HP_BG", "",			DSFLOAT2(BG_X,			bl.y));
+	uiElement->Setup   ("HP_Bar/HP_BG", "", "",			DSFLOAT2(BG_X,			bl.y));
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.x = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.x);
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.y = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.y);
 	uiElement->m_BaseImage.baseUI.UpdateTransform();
@@ -68,7 +68,7 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	uiElement->m_BaseText.baseUI.UpdateTransform();
 	// Create current health text
 	HP_TEXT = uiElement->m_Texts.size();
-	uiElement->AddText(" ", uiElement->m_Images[HP_TEXT].baseUI.GetOriginalBounds(), uiElement->m_Images[HP_START].baseUI.GetPosition());
+	uiElement->AddText("", uiElement->m_Images[HP_TEXT].baseUI.GetOriginalBounds(), uiElement->m_Images[HP_START].baseUI.GetPosition());
 
 	HP_END = uiElement->m_Images.size();
 	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(BG_X,	bl.y));
@@ -167,8 +167,8 @@ void ScaleAdvancedHealthBar(const EntityID player)
 			uiElement->m_Images[HP_START].baseUI.GetOpacity());
 
 		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.GetPixelCoords();
-		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords.x -= 65;
-		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords.y += 11;
+		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords.x -= 64;
+		uiElement->m_Texts[HP_TEXT].baseUI.m_PixelCoords.y += 9;
 		uiElement->m_Texts[HP_TEXT].baseUI.UpdateTransform();
 
 		sprintf(temp, "%lld", stats->GetMaxHealth());
@@ -180,8 +180,8 @@ void ScaleAdvancedHealthBar(const EntityID player)
 										   uiElement->m_Images[HP_START].baseUI.GetOpacity());
 
 		uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Texts[HP_TEXT].baseUI.GetPixelCoords();
-		uiElement->m_BaseText.baseUI.m_PixelCoords.x += 104;
-		uiElement->m_BaseText.baseUI.m_PixelCoords.y += 17;
+		uiElement->m_BaseText.baseUI.m_PixelCoords.x += 108;
+		uiElement->m_BaseText.baseUI.m_PixelCoords.y += 12;
 		//uiElement->m_BaseText.baseUI.m_PixelCoords.y += 11;
 		uiElement->m_BaseText.baseUI.UpdateTransform();
 	}

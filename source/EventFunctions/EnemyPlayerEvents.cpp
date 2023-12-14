@@ -21,8 +21,8 @@ void BeginHit(EntityID& entity, const int& index)
 	//Charged attack extravaganza
 	TimedEventComponent* teComp = registry.GetComponent<TimedEventComponent>(entity);
 	uint32_t condition = GetTimedEventCondition(teComp, index);
-	
-	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats/*, condition == CONDITION_CHARGE*/);
+
+	Combat::HitInteraction(cpc->params.entity1, attackerStats, entity, stats, RelicInput::DMG::DAMAGE_TYPE_AND_SOURCE(condition));
 
 	
 

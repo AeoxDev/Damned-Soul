@@ -1,1 +1,8 @@
-a
+Concept Art (Skeleton)
+2D Art (Textures)
+3D Art (Skeleton, Eye)
+Animations (Skeleton, SplitBoss)
+Technical Animation / Rigging (Skeleton, SplitBoss)
+Blend Animations
+Voice acting (Finalboss Lucifer)
+Audio (Finalboss Lucifer)

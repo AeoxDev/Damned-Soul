@@ -51,6 +51,7 @@ TX_IDX flipBookTextureFire = -1; /// create holder for texture
 TX_IDX flipBookTextureSpark = -1; /// create holder for texture
 TX_IDX flipBookTextureSmoke = -1; /// create holder for texture
 TX_IDX textureParticle = -1; /// create holder for texture
+TX_IDX textureParticleExplosion = -1; /// create holder for texture
 TX_IDX noTextureParticle = -1; /// create holder for texture
 SMP_IDX sampler = -1; //create holder for sampler
 
@@ -90,7 +91,8 @@ void Particles::InitializeParticles()
 	flipBookTextureFire = LoadTexture("\\SpriteFireLavaBubble.png");//created texture resource //note that dubble slash need to be used before texture file name ("\\LavaPlaceholderAlpha.png")
 	flipBookTextureSpark = LoadTexture("\\SpriteSmokeSpark.png");//created texture resource 
 	flipBookTextureSmoke = LoadTexture("\\SpriteSmoke.png");//created texture resource 
-	textureParticle = LoadTexture("\\LavaPlaceholderAlpha.png");
+	textureParticle = LoadTexture("\\SpriteLava.png");
+	textureParticleExplosion = LoadTexture("\\SpriteExplosion.png");
 	noTextureParticle = LoadTexture("\\DefaultParticle.png");
 
 	sampler = CreateSamplerState(); //created sampler resource
@@ -253,8 +255,10 @@ void Particles::PrepareParticlePass(int metadataSlot)
 		SetTexture(flipBookTextureFire, BIND_PIXEL, 6); 
 	else if (data->metadata[metadataSlot].pattern == SPARK || data->metadata[metadataSlot].pattern == SMOKE)
 		SetTexture(flipBookTextureSpark, BIND_PIXEL, 6); 
-	else if (data->metadata[metadataSlot].pattern == PULSE || data->metadata[metadataSlot].pattern == CIRCLE_FIELD)
+	else if (data->metadata[metadataSlot].pattern == PULSE)
 		SetTexture(flipBookTextureSmoke/*textureParticle*/, BIND_PIXEL, 6);
+	else if (data->metadata[metadataSlot].pattern == NILL|| data->metadata[metadataSlot].pattern == CIRCLE_FIELD)
+		SetTexture(textureParticleExplosion, BIND_PIXEL, 6);
 	else if (data->metadata[metadataSlot].pattern == FLAMETHROWER || data->metadata[metadataSlot].pattern == ICETHROWER)
 		SetTexture(textureParticle, BIND_PIXEL, 6);
 	else
@@ -598,6 +602,10 @@ ParticleComponent::ParticleComponent(float seconds, float radius, float size, fl
 
 ParticleComponent::ParticleComponent(float seconds, float v0X, float size, float x, float y, float z, float rotationY, float v0Z, float v1X, float v1Z, float v2X, float v2Z, float redValue, float greenValue, float blueValue, int amount, ComputeShaders pattern)
 {
+	if (metadataSlot != -1)
+	{
+		float ji = 1.0f;
+	}
 	metadataSlot = FindSlot();
 	//Calculate how many groups are requiered to write to all particles
 	float groups = (float)amount / (float)THREADS_PER_GROUP;
@@ -675,7 +683,7 @@ int ParticleComponent::FindSlot()
 
 void ParticleComponent::Release()
 {
-	if ((data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
+	if (metadataSlot == -1 || (data->metadata[metadataSlot].start > data->metadata[metadataSlot].end))
 		return;
 
 	//std::fill(Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].start, Particles::m_unoccupiedParticles.begin() + data->metadata[metadataSlot].end, -1);
