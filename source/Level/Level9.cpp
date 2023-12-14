@@ -26,8 +26,8 @@ void LoadLevel9()
 	// They have no other components, and as such, they can't be rendered (which is good)
 	EntityID preLoadImp = registry.CreateEntity(), preLoadHound = registry.CreateEntity(), preLoadEye = registry.CreateEntity();
 	registry.AddComponent<ModelSkeletonComponent>(preLoadImp)->model = LoadModel("Imp.mdl");
-	registry.AddComponent<ModelSkeletonComponent>(preLoadImp)->model = LoadModel("Hellhound.mdl");
-	registry.AddComponent<ModelSkeletonComponent>(preLoadImp)->model = LoadModel("Eye.mdl");
+	registry.AddComponent<ModelSkeletonComponent>(preLoadHound)->model = LoadModel("Hellhound.mdl");
+	registry.AddComponent<ModelSkeletonComponent>(preLoadEye)->model = LoadModel("Eye.mdl");
 
 	StageSetupVariables stageVars;
 	stageVars.ra = redAdd;
