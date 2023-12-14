@@ -127,19 +127,18 @@ void Credits::SetupUI()
 	onHoverC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(), 
 		uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
 
+	uiElementC->AddImage("Credits/Arrow Up", DSFLOAT2(-0.7, 0.6), DSFLOAT2(1.0f, 1.0f), false);
+	uiElementC->AddHoverImage(uiElementC->m_Images[uiElementC->m_Images.size() - 1], "Credits/Arrow Up Glow");
+
+	onClickC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(), uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(),
+		UIFunctions::OnClick::None, UIFunctions::Credits::Back);
+
+	onHoverC->Add(uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetPixelCoords(),
+		uiElementC->m_Images[uiElementC->m_Images.size() - 1].baseUI.GetBounds(), UIFunctions::OnHover::Image);
+
 	registry.AddComponent<UICreditsTextComponent>(credits);
 
-	auto button = registry.CreateEntity();
-	OnClickComponent* onClick = registry.AddComponent<OnClickComponent>(button);
-	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(button);
-	UIComponent* uiElement = registry.AddComponent<UIComponent>(button);
-
-	uiElement->Setup("ButtonMedium", "ButtonMediumHover", "Back", { 0.78f, -0.85f }, { 1.0f, 1.0f });
-
-	onClick->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::Credits::Back, UIFunctions::OnClick::None);
-	onHover->Setup(uiElement->m_BaseImage.baseUI.GetPixelCoords(), uiElement->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
-
-	SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(button);
+	SoundComponent* buttonSound = registry.AddComponent<SoundComponent>(credits);
 	buttonSound->Load(MENU);
 }
 
