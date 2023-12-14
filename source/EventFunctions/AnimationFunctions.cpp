@@ -89,28 +89,27 @@ void BlinkColor(EntityID& entity, const int& index)
 
 }
 
-void ResetColor(EntityID& entity, const int& index)
-{
-	//Flash color red repeatedly
-	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
-	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
-	float frequency = 10.0f; //Higher frequency = faster flashing lights
-	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
-	if (skelel)
-	{
-		skelel->shared.colorAdditiveRed = skelel->shared.baseColorAdditiveRed;
-		skelel->shared.colorAdditiveGreen = skelel->shared.baseColorAdditiveGreen;
-		skelel->shared.colorAdditiveBlue = skelel->shared.baseColorAdditiveBlue;
-
-	}
-	if (bonel)
-	{
-		bonel->shared.colorAdditiveRed = bonel->shared.baseColorAdditiveRed;
-		bonel->shared.colorAdditiveGreen = bonel->shared.baseColorAdditiveGreen;
-		bonel->shared.colorAdditiveBlue = bonel->shared.baseColorAdditiveBlue;
-	}
-
-}
+//void ResetColor(EntityID& entity, const int& index)
+//{
+//	//Flash color red repeatedly
+//	ModelSkeletonComponent* skelel = registry.GetComponent<ModelSkeletonComponent>(entity);
+//	ModelBonelessComponent* bonel = registry.GetComponent<ModelBonelessComponent>(entity);
+//	float frequency = 10.0f; //Higher frequency = faster flashing lights
+//	float cosineWave = std::cosf(GetTimedEventElapsedTime(entity, index) * frequency) * std::cosf(GetTimedEventElapsedTime(entity, index) * frequency);
+//	if (skelel)
+//	{
+//		skelel->shared.colorAdditiveRed = skelel->shared.baseColorAdditiveRed;
+//		skelel->shared.colorAdditiveGreen = skelel->shared.baseColorAdditiveGreen;
+//		skelel->shared.colorAdditiveBlue = skelel->shared.baseColorAdditiveBlue;
+//
+//	}
+//	if (bonel)
+//	{
+//		bonel->shared.colorAdditiveRed = bonel->shared.baseColorAdditiveRed;
+//		bonel->shared.colorAdditiveGreen = bonel->shared.baseColorAdditiveGreen;
+//		bonel->shared.colorAdditiveBlue = bonel->shared.baseColorAdditiveBlue;
+//	}
+//}
 
 void SquashStretch(EntityID& entity, const int& index)
 {

@@ -105,7 +105,7 @@ void PauseAnimation(EntityID& entity, const int& index);
 void ContinueAnimation(EntityID& entity, const int& index);
 void ResetAnimation(EntityID& entity, const int& index);
 void BlinkColor(EntityID& entity, const int& index);
-void ResetColor(EntityID& entity, const int& index);
+//void ResetColor(EntityID& entity, const int& index);
 void SquashStretch(EntityID& entity, const int& index);
 void ResetSquashStretch(EntityID& entity, const int& index);
 void ChargeColorFlash(EntityID& entity, const int& index);

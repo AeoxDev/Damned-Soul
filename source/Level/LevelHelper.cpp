@@ -1223,12 +1223,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 		model->shared.colorAdditiveBlue = 0.8f;
 		model->shared.colorAdditiveGreen = 0.4f;
 
-		model->shared.baseColorMultiplicativeRed = 0.4f;
-		model->shared.baseColorMultiplicativeBlue = 0.4f;
-		model->shared.baseColorMultiplicativeGreen = 0.4f;
-		model->shared.baseColorAdditiveRed = 0.4f;
-		model->shared.baseColorAdditiveGreen = 0.4f;
-		model->shared.baseColorAdditiveBlue = 0.8f;
+		//model->shared.baseColorMultiplicativeRed = 0.4f;
+		//model->shared.baseColorMultiplicativeBlue = 0.4f;
+		//model->shared.baseColorMultiplicativeGreen = 0.4f;
+		//model->shared.baseColorAdditiveRed = 0.4f;
+		//model->shared.baseColorAdditiveGreen = 0.4f;
+		//model->shared.baseColorAdditiveBlue = 0.8f;
 		model->shared.hasOutline = true;
 
 		registry.AddComponent<AnimationComponent>(entity);
@@ -1267,12 +1267,12 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 
-		//Hue shift for strongdogs (Darker mult on the red parts, then add blue?)
-		model->shared.baseColorMultiplicativeRed = 0.3f;
-		//model->shared.baseColorMultiplicativeRed = 0.4f;
-		model->shared.baseColorMultiplicativeGreen = 0.65f;
-		//model->shared.baseColorMultiplicativeBlue = 0.7f;
-		//model->shared.baseColorAdditiveBlue = 0.2f;
+		////Hue shift for strongdogs (Darker mult on the red parts, then add blue?)
+		//model->shared.baseColorMultiplicativeRed = 0.3f;
+		////model->shared.baseColorMultiplicativeRed = 0.4f;
+		//model->shared.baseColorMultiplicativeGreen = 0.65f;
+		////model->shared.baseColorMultiplicativeBlue = 0.7f;
+		////model->shared.baseColorAdditiveBlue = 0.2f;
 
 		//Gotta do the color, not just base, not sure why
 		model->shared.colorMultiplicativeRed = 0.3f;
@@ -1298,10 +1298,10 @@ EntityID SetupEnemy(EnemyType eType, float positionX , float positionY , float p
 			player->killThreshold++;
 		}
 
-		//Reduce the red hue of the base color for skelington (reduce green a little bit to make up for the imbalance)
-		model->shared.baseColorMultiplicativeRed = 0.6f;
-		model->shared.baseColorMultiplicativeGreen = 0.8f;
-		//model->shared.colorAdditiveBlue = 0.2f;
+		////Reduce the red hue of the base color for skelington (reduce green a little bit to make up for the imbalance)
+		//model->shared.baseColorMultiplicativeRed = 0.6f;
+		//model->shared.baseColorMultiplicativeGreen = 0.8f;
+		////model->shared.colorAdditiveBlue = 0.2f;
 
 		model->shared.colorMultiplicativeRed = 0.6f;
 		model->shared.colorMultiplicativeGreen = 0.8f;

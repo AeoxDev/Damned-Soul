@@ -5,9 +5,10 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 #include "DeltaTime.h"
+#include "States\StateManager.h"
 
 #define LAST_STAND_THRESHOLD (.5f)
-#define LAST_STAND_MULTIPLIER (.5f)
+#define LAST_STAND_MULTIPLIER (.6f)
 #define LAST_STAND_COOLDOWN (2.f)
 
 float _LAST_STAND_COOLDOWN = 0.f;
@@ -19,7 +20,7 @@ const char* LAST_STAND::Description()
 	static char temp[RELIC_DATA_DESC_SIZE];
 	sprintf_s(temp, "While below %ld%% health, you take %ld%% reduced damage from the first attack that would hit you every %.1lf seconds",
 		PERCENT(LAST_STAND_THRESHOLD),
-		PERCENT(1.f - LAST_STAND_MULTIPLIER),
+		100 - PERCENT(LAST_STAND_MULTIPLIER),
 		LAST_STAND_COOLDOWN);
 #pragma warning(suppress : 4172)
 	return temp;
@@ -45,6 +46,9 @@ void LAST_STAND::Initialize(void* input)
 
 void LAST_STAND::Recharge(void* data)
 {
+	if (currentStates & InPause)
+		return;
+
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
 	if (0.0001f < _LAST_STAND_COOLDOWN)

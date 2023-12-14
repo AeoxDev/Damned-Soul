@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 #include "DeltaTime.h"
+#include "States\StateManager.h"
 #include <cmath>
 
 #define BACK_SHIELD_COOLDOWN (2.f)
@@ -42,6 +43,9 @@ void BACK_SHIELD::Initialize(void* input)
 
 void BACK_SHIELD::Recharge(void* data)
 {
+	if (currentStates & InPause)
+		return;
+
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
 	if (0.0001f < _BACK_SHIELD_COOLDOWN)

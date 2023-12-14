@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "CombatFunctions.h"
 #include "DeltaTime.h"
+#include "States\StateManager.h"
 
 #define GOLDEN_DUCK_BASE_DURATION (3.f)
 #define GOLDEN_DUCK_BASE_CD (0.25f)
@@ -45,6 +46,9 @@ void GOLDEN_DUCK::Initialize(void* input)
 
 void GOLDEN_DUCK::Recharge(void* data)
 {
+	if (currentStates & InPause)
+		return;
+
 	RelicInput::OnTimeUpdate* input = (RelicInput::OnTimeUpdate*)data;
 
 	if (0.0001f < _GOLDEN_DUCK_RECHARGE_COOLDOWN)

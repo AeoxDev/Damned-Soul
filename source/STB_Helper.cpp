@@ -37,7 +37,8 @@ bool Image::load(const char* filename)
 
 		return true;
 	}
-#define WIDTH_HEIGHT_DEFAULT_MISSING (4)
+#define DEFAULT_COLOR_CELL_DIMENSION (8)
+#define WIDTH_HEIGHT_DEFAULT_MISSING (4 * DEFAULT_COLOR_CELL_DIMENSION)
 #define CHANNELS_DEFAULT_MISSING (4)
 	m_height = m_width = WIDTH_HEIGHT_DEFAULT_MISSING;
 	m_channels = CHANNELS_DEFAULT_MISSING;
@@ -51,7 +52,7 @@ bool Image::load(const char* filename)
 		for (uint8_t x = 0; x < WIDTH_HEIGHT_DEFAULT_MISSING; ++x)
 		{
 			M_IMAGE_PIXEL& current = ((M_IMAGE_PIXEL*)&(*this->m_data))[(y * WIDTH_HEIGHT_DEFAULT_MISSING + x)];
-			uint8_t even = (x + y) % 2;
+			uint8_t even = ((x / DEFAULT_COLOR_CELL_DIMENSION) + (y / DEFAULT_COLOR_CELL_DIMENSION)) % 2;
 			current.c[0] = 250 * even;
 			current.c[1] = 3 * even;
 			current.c[2] = 216 * even;
