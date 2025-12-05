@@ -144,6 +144,24 @@ void PauseState::SetupUI()
 
 	}
 
+	{
+		auto hudEditBtn = registry.CreateEntity(ENT_PERSIST_PAUSE);
+		
+		UIComponent * uiHudEdit = registry.AddComponent<UIComponent>(hudEditBtn);
+		UIPauseButtonComponent * pauseBtnComp = registry.AddComponent<UIPauseButtonComponent>(hudEditBtn);
+		
+		uiHudEdit->Setup("ButtonSmall", "ButtonSmallHover", "HUD Edit", DSFLOAT2(0.78f, -0.60f), DSFLOAT2(1.0f, 1.0f), 18.0f);
+		
+		OnClickComponent * onClickHud = registry.AddComponent<OnClickComponent>(hudEditBtn);
+		OnHoverComponent * onHoverHud = registry.AddComponent<OnHoverComponent>(hudEditBtn);
+		
+		onClickHud->Setup(uiHudEdit->m_BaseImage.baseUI.GetPixelCoords(), uiHudEdit->m_BaseImage.baseUI.GetBounds(), UIFunctions::Editor::ToggleEditMode, UIFunctions::OnClick::None);
+		onHoverHud->Setup(uiHudEdit->m_BaseImage.baseUI.GetPixelCoords(), uiHudEdit->m_BaseImage.baseUI.GetBounds(), UIFunctions::OnHover::Image);
+		
+		SoundComponent * hudSound = registry.AddComponent<SoundComponent>(hudEditBtn);
+		hudSound->Load(MENU);
+	}
+
 	//Settings Buttons
 	{
 		auto panel = registry.CreateEntity(ENT_PERSIST_PAUSE);

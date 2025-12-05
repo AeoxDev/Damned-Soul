@@ -16,6 +16,9 @@
 #include "States/StateEnums.h"
 #include "Relics/Utility/RelicFuncInputTypes.h"
 
+#include "Systems/UIEditorSystem.h"
+static UIEditorSystem g_UIEditorSystem;
+
 bool uiUpdated = true;
 
 void RedrawUI()
@@ -25,6 +28,8 @@ void RedrawUI()
 
 bool UIRenderSystem::Update()
 {
+	g_UIEditorSystem.Update();
+
 	if (uiUpdated)
 	{
 		uiUpdated = false;

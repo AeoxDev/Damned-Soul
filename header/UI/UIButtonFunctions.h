@@ -71,6 +71,11 @@ namespace UIFunctions
 		void SetMainMenu(void* args, int a);
 	}
 
+	namespace Editor
+	{
+		void ToggleEditMode(void* args, int a);
+	}
+
 	namespace OnClick
 	{
 		void None(void* args, int index);

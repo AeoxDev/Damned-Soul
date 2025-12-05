@@ -6,7 +6,6 @@
 #include "GameRenderer.h"
 #include "Registry.h"
 #include "DeltaTime.h"
-#include "Registry.h"
 #include "Components.h"
 #include "UIRenderer.h"
 #include "UIComponents.h"
@@ -19,6 +18,8 @@
 
 #include "EventFunctions.h"
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
+
+#include "Systems/UIEditorSystem.h"
 
 #include <fstream>
 #include <string>
@@ -604,6 +605,13 @@ void UIFunctions::Pause::SetMainMenu(void* args, int a)
 	stateManager.menu.Setup();
 }
 
+void UIFunctions::Editor::ToggleEditMode(void* args, int a)
+{
+	bool current = UIEditorSystem::GetEditMode();
+	UIEditorSystem::SetEditMode(!current);
+	// Update UI immediately to reflect change
+	RedrawUI();
+}
 
 void UIFunctions::OnClick::None(void* args, int index)
 {

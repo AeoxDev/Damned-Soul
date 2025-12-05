@@ -206,6 +206,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Systems\UIEditorSystem.cpp" />
     <ClCompile Include="source\EventFunctions\UIEventFunctions.cpp" />
     <ClCompile Include="source\Level\EmptyLevel.cpp" />
     <ClCompile Include="source\Relics\Defensive\WendigoTalisman.cpp" />
@@ -735,6 +736,7 @@ PowerShell $(OutDir)Models\ConvertAll.ps1</Command>
     <ClInclude Include="header\Systems\Systems.h" />
     <ClInclude Include="header\UI\HP_BarHelper.h" />
     <ClInclude Include="header\UI\UIButtonFunctions.h" />
+    <ClInclude Include="header\Systems\UIEditorSystem.h" />
     <ClInclude Include="header\UI\UIRenderer.h" />
     <ClInclude Include="header\Camera.h" />
     <ClInclude Include="header\ComponentHelper.h" />
