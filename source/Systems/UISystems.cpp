@@ -73,6 +73,7 @@ bool UIRenderSystem::Update()
 					UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
 					if (!uiElement) continue;
 					if (!uiElement->m_BaseImage.baseUI.GetVisibility()) continue;
+					if (!uiElement->IsEditable()) continue;
 
 					DSFLOAT2 pixel = uiElement->m_BaseImage.baseUI.GetPixelCoords();
 					DSBOUNDS b = uiElement->m_BaseImage.baseUI.GetBounds();

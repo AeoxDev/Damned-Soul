@@ -5,6 +5,10 @@
 #include "Registry.h"
 #include "States\StateManager.h"
 
+#include "UIComponents/UIComponent.h"
+#include "..\Systems\UIEditorSystem.h"
+#include <unordered_map>
+
 static DSFLOAT2 bl(-0.73f, 0.85f);
 
 //static uint32_t HP_BG;
@@ -29,7 +33,56 @@ static uint32_t RC_ANCHOR;
 #define _ADVANCED_HP_ROUND_PIXELS_UP(idx)																	\
 uiElement->m_Images[idx].baseUI.m_PixelCoords.x = ceilf(uiElement->m_Images[idx].baseUI.m_PixelCoords.x);	\
 uiElement->m_Images[idx].baseUI.m_PixelCoords.y = ceilf(uiElement->m_Images[idx].baseUI.m_PixelCoords.y);	\
-uiElement->m_Images[idx].baseUI.UpdateTransform();															\
+uiElement->m_Images[idx].baseUI.UpdateTransform();		
+
+namespace {
+	struct HPAnchors { float midOriginal = 0.0f; float endOriginal = 0.0f; bool valid = false; };
+	std::unordered_map<int, HPAnchors> g_hpAnchors;
+}
+
+// Recompute anchors for a single player from current pixel positions.
+// This captures the edited positions so runtime layout will use them.
+void RecomputeHPBarAnchors(const EntityID player)
+{
+	auto uiElement = registry.GetComponent<UIComponent>(player);
+	if (uiElement == nullptr) return;
+
+	auto stats = registry.GetComponent<StatComponent>(player);
+	if (stats == nullptr) return;
+
+	HPAnchors anchors{};
+
+	// compute anchor for HP_MID if available
+	if (uiElement->m_Images.size() > HP_MID)
+	{
+		float midPixelX = uiElement->m_Images[HP_MID].baseUI.m_PixelCoords.x;
+		// originalX was previously computed as basePixel - 100 in the old code,
+		// the runtime used originalX + maxHealth. Derive same formula:
+		anchors.midOriginal = midPixelX - stats->GetMaxHealth();
+	}
+
+	// compute anchor for HP_END if available
+	if (uiElement->m_Images.size() > HP_END)
+	{
+		float endPixelX = uiElement->m_Images[HP_END].baseUI.m_PixelCoords.x;
+		// previous runtime used basePixel - 200 and later added 2*(maxHealth-EDGE_FLAT_OFFSET).
+		// Derive endOriginal such that endOriginal + 2*(maxHealth - EDGE_FLAT_OFFSET) == desired end.
+		const float EDGE_FLAT_OFFSET = 2.f;
+		anchors.endOriginal = endPixelX - 2.f * (stats->GetMaxHealth() - EDGE_FLAT_OFFSET);
+	}
+
+	anchors.valid = true;
+	g_hpAnchors[(int)player.index] = anchors;
+}
+
+// Recompute anchors for all players that have an advanced HP UI
+void RecomputeAllHPBarAnchors()
+{
+	for (auto entity : View<UIGameHealthComponent, UIComponent, StatComponent>(registry))
+	{
+		RecomputeHPBarAnchors(entity);
+	}
+}\
 
 void SetUpAdvancedHealthBar(const EntityID player)
 {
@@ -41,6 +94,7 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	// Set background location!
 	uiElement->Setup   ("HP_Bar/HP_BG", "", "",			DSFLOAT2(BG_X,			bl.y));
 	uiElement->SetLayoutId("Health_Bar");
+	uiElement->SetEditable(true);
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.x = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.x);
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.y = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.y);
 	uiElement->m_BaseImage.baseUI.UpdateTransform();
@@ -64,12 +118,23 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	uiElement->AddImage("HP_Bar/HP_LEFT_START",		DSFLOAT2(BG_X,	bl.y));
 	uiElement->m_Images[HP_START].baseUI.m_PixelCoords.x -= 139;
 	_ADVANCED_HP_ROUND_PIXELS_UP(HP_START);
+	
+	// Attempting to fix current HP jump when edit mode is active
 	// Set HP Text location (I think?)
 	uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.m_PixelCoords;
 	uiElement->m_BaseText.baseUI.UpdateTransform();
 	// Create current health text
 	HP_TEXT = uiElement->m_Texts.size();
 	uiElement->AddText("", uiElement->m_Images[HP_TEXT].baseUI.GetOriginalBounds(), uiElement->m_Images[HP_START].baseUI.GetPosition());
+
+	/*
+	// Set HP Text location (use the HP_START image as the anchor)
+	uiElement->m_BaseText.baseUI.m_PixelCoords = uiElement->m_Images[HP_START].baseUI.m_PixelCoords;
+	uiElement->m_BaseText.baseUI.UpdateTransform();
+	// Create current health text anchored to HP_START image, then record its index
+	HP_TEXT = uiElement->m_Texts.size() - 1;
+	uiElement->AddText("", uiElement->m_Images[HP_START].baseUI.GetOriginalBounds(), uiElement->m_Images[HP_START].baseUI.GetPosition());
+	*/
 
 	HP_END = uiElement->m_Images.size();
 	uiElement->AddImage("HP_Bar/HP_RIGHT_END",		DSFLOAT2(BG_X,	bl.y));
@@ -92,6 +157,9 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	uiElement->m_Images[RC_ANCHOR].baseUI.m_PixelCoords.x += 5;
 	_ADVANCED_HP_ROUND_PIXELS_UP(RC_ANCHOR)
 
+	// Ensure anchors reflect initial positions
+	RecomputeHPBarAnchors(player);
+
 	//uiElement->AddImage("TempRelicHolder11", DSFLOAT2(-0.95f, -0.1f));
 	UIPlayerRelicsComponent* uiRelics = registry.AddComponent<UIPlayerRelicsComponent>(stateManager.player);
 	OnHoverComponent* onHover = registry.AddComponent<OnHoverComponent>(stateManager.player);
@@ -99,6 +167,10 @@ void SetUpAdvancedHealthBar(const EntityID player)
 
 void ScaleAdvancedHealthBar(const EntityID player)
 {
+	// Don't update while in edit mode
+	if (UIEditorSystem::GetEditMode())
+		return;
+
 	auto health = registry.GetComponent<UIGameHealthComponent>(player);
 	auto uiElement = registry.GetComponent<UIComponent>(player);
 
@@ -144,19 +216,48 @@ void ScaleAdvancedHealthBar(const EntityID player)
 			base.m_CurrentBounds.left = base.m_OriginalBounds.left - EDGE_FLAT_OFFSET;
 			base.m_CurrentBounds.right = 2.f * (stats->GetMaxHealth() - EDGE_FLAT_OFFSET) - 100;
 		}
+		/*
+		{
+			
+			UIBase& base = uiElement->m_Images[HP_MID].baseUI;
+			static FLOAT originalX = base.m_PixelCoords.x - 100;
+			base.m_PixelCoords.x = originalX + stats->GetMaxHealth();
+			base.UpdateTransform();
+		}
+		*/
 		{
 			UIBase& base = uiElement->m_Images[HP_MID].baseUI;
-			static FLOAT oiriginalX = base.m_PixelCoords.x - 100;
-			base.m_PixelCoords.x = oiriginalX + stats->GetMaxHealth();
+
+			// Use recomputed anchor if present; otherwise compute a fallback originalX
+			float originalX = base.m_PixelCoords.x - 100.0f; // fallback
+			auto it = g_hpAnchors.find((int)player.index);
+			if (it != g_hpAnchors.end() && it->second.valid)
+				originalX = it->second.midOriginal;
+
+			base.m_PixelCoords.x = originalX + stats->GetMaxHealth();
 			base.UpdateTransform();
 		}
+		/*
 		{
 			UIBase& base = uiElement->m_Images[HP_END].baseUI;
-			static FLOAT oiriginalX = base.m_PixelCoords.x - 200;
-			base.m_PixelCoords.x = oiriginalX + 2.f * (stats->GetMaxHealth() - EDGE_FLAT_OFFSET);
+			static FLOAT originalX = base.m_PixelCoords.x - 200;
+			base.m_PixelCoords.x = originalX + 2.f * (stats->GetMaxHealth() - EDGE_FLAT_OFFSET);
 			base.UpdateTransform();
 		}
+		*/
+		{
+			UIBase& base = uiElement->m_Images[HP_END].baseUI;
 
+			// Use recomputed anchor if present; otherwise compute a fallback originalX
+			//const float EDGE_FLAT_OFFSET = 2.f;
+			float originalX = base.m_PixelCoords.x - 200.0f; // fallback
+			auto it = g_hpAnchors.find((int)player.index);
+			if (it != g_hpAnchors.end() && it->second.valid)
+				originalX = it->second.endOriginal;
+
+			base.m_PixelCoords.x = originalX + 2.f * (stats->GetMaxHealth() - EDGE_FLAT_OFFSET);
+			base.UpdateTransform();
+		}
 
 		char temp[8] = "";
 		sprintf(temp, "%lld", health->value);

@@ -1655,6 +1655,8 @@ void SetupEnemyCounter()
 	EntityID counterEntity = registry.CreateEntity(ENT_PERSIST_LEVEL);
 	UIComponent* uiElement = registry.AddComponent<UIComponent>(counterEntity);
 	uiElement->Setup("ButtonSmallHoverBloody", "", "Enemies: 0", DSFLOAT2(0.8f, 0.8f));
+	uiElement->SetEditable(true);
+	uiElement->SetLayoutId("EnemyCounter");
 
 	registry.AddComponent<UIGameEnemyCounterComponent>(counterEntity);
 }
@@ -1666,6 +1668,8 @@ void SetupTimer()
 	UIGameTimeComponent* timer = registry.AddComponent<UIGameTimeComponent>(timeEntity);
 
 	uiElement->Setup("ButtonSmall", "", "Time: 0", DSFLOAT2(0.8f, 0.65f));
+	uiElement->SetEditable(true);
+	uiElement->SetLayoutId("Timer");
 
 	if (!GetVisualTimer())
 	{

@@ -7,6 +7,7 @@
 #include "SDLHandler.h"
 #include "Input.h"
 #include "UIComponents.h"
+#include "../header/UI/HP_BarHelper.h" // For redraw of healthbars after layout load
 
 #include <fstream>
 #include <sstream>
@@ -32,6 +33,52 @@ static inline std::string ToStdString(const ML_String& s)
 	return std::string(s.begin(), s.end());
 }
 
+static void RecomputeNormalizedFromPixel(UIBase& b)
+{
+	DSBOUNDS cb = b.GetBounds(); // width==right, height==bottom
+	float centerPixelX = b.m_PixelCoords.x + (cb.right * 0.5f);
+	float centerPixelY = b.m_PixelCoords.y + (cb.bottom * 0.5f);
+
+	DSFLOAT2 newNorm;
+	newNorm.x = (centerPixelX / (0.5f * (float)sdl.BASE_WIDTH)) - 1.0f;
+	newNorm.y = 1.0f - (centerPixelY / (0.5f * (float)sdl.BASE_HEIGHT));
+
+	b.m_Position = newNorm;
+	b.UpdateTransform();
+}
+
+// Recompute for an entire UIComponent (base image, child images, base text, child texts)
+static void RecomputeComponentFromPixels(UIComponent* ui)
+{
+	if (!ui) return;
+
+	RecomputeNormalizedFromPixel(ui->m_BaseImage.baseUI);
+
+	for (uint32_t i = 0; i < ui->m_Images.size(); ++i)
+		RecomputeNormalizedFromPixel(ui->m_Images[i].baseUI);
+
+	RecomputeNormalizedFromPixel(ui->m_BaseText.baseUI);
+
+	for (uint32_t i = 0; i < ui->m_Texts.size(); ++i)
+		RecomputeNormalizedFromPixel(ui->m_Texts[i].baseUI);
+}
+
+// Recompute for all editable UIComponents (call before SaveLayout and after LoadLayout)
+static void RecomputeAllUIFromPixels()
+{
+	for (auto entity : View<UIComponent>(registry))
+	{
+		UIComponent* ui = registry.GetComponent<UIComponent>(entity);
+		if (ui == nullptr)
+			continue;
+		// Only recompute for editable elements (avoid touching runtime-only components unless desired)
+		if (!ui->IsEditable())
+			continue;
+
+		RecomputeComponentFromPixels(ui);
+	}
+}
+/*
 void UIEditorSystem::SetEditMode(bool enabled)
 {
 	if (enabled == s_uiEditMode)
@@ -50,6 +97,41 @@ void UIEditorSystem::SetEditMode(bool enabled)
 	{
 		// Exiting edit mode: save current layout
 		SaveLayout();
+		// Recompute HP bar anchors so runtime layout respects the edited positions
+		RecomputeAllHPBarAnchors();
+		// clear selection/interaction state
+		s_selected = EntityID();
+		s_dragging = false;
+		s_resizing = false;
+		RedrawUI();
+	}
+}
+*/
+
+void UIEditorSystem::SetEditMode(bool enabled)
+{
+	if (enabled == s_uiEditMode)
+		return;
+
+	s_uiEditMode = enabled;
+
+	if (s_uiEditMode)
+	{
+		// Entering edit mode: load saved layout if present
+		LoadLayout();
+		// Ensure child/usability normalized positions are consistent with pixels
+		RecomputeAllUIFromPixels();
+		// Ensure UI redraw
+		RedrawUI();
+	}
+	else
+	{
+		// Exiting edit mode: recompute normalized positions from any pixel-only edits,
+		// then save the layout. This ensures SaveLayout persists what the user sees.
+		RecomputeAllUIFromPixels();
+		SaveLayout();
+		// Recompute HP bar anchors so runtime layout respects the edited positions
+		RecomputeAllHPBarAnchors();
 		// clear selection/interaction state
 		s_selected = EntityID();
 		s_dragging = false;
@@ -84,6 +166,9 @@ void UIEditorSystem::SaveLayout(const char* filepath)
 	{
 		UIComponent* ui = registry.GetComponent<UIComponent>(entity);
 		if (ui == nullptr)
+			continue;
+
+		if (!ui->IsEditable())
 			continue;
 
 		// Prefer explicit layout id when present
@@ -145,6 +230,9 @@ void UIEditorSystem::LoadLayout(const char* filepath)
 		if (ui == nullptr)
 			continue;
 
+		if (!ui->IsEditable())
+			continue;
+
 		if (!ui->HasLayoutId())
 			continue;
 
@@ -183,6 +271,9 @@ void UIEditorSystem::LoadLayout(const char* filepath)
 	{
 		UIComponent* ui = registry.GetComponent<UIComponent>(entity);
 		if (ui == nullptr)
+			continue;
+
+		if (!ui->IsEditable())
 			continue;
 
 		// Skip ones that already had an explicit layout applied
@@ -527,6 +618,16 @@ bool UIEditorSystem::Update()
 		if (s_selected.index != 0)
 		{
 			UIComponent* ui = registry.GetComponent<UIComponent>(s_selected);
+
+			if (ui == nullptr)
+			{
+				// selection is invalid, cancel resize attempt
+				return true;
+			}
+
+			if (!ui->IsEditable())
+				return true;
+
 			if (ui)
 			{
 				s_resizing = true;
@@ -549,6 +650,10 @@ bool UIEditorSystem::Update()
 		}
 		else
 		{
+
+			if (!ui->IsEditable())
+				return true;
+
 			// compute desired new center in pixels from mouse
 			int newCenterX = uiMouseX - s_dragOffsetX;
 			int newCenterY = uiMouseY - s_dragOffsetY;

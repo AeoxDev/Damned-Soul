@@ -96,6 +96,12 @@ struct UIComponent
 	// When non-empty, the editor will use this id when saving/loading layouts.
 	ML_String m_layoutId = "";
 
+	// Editor flag: only editable elements are selectable / moved / saved by the editor.
+	bool m_editable = false;
+
+	void SetEditable(bool v) { m_editable = v; }
+	bool IsEditable() const { return m_editable; }
+
 	void Setup(const char* baseImageFilepath, const char* baseImageHoverFilepath = "", const char* text = "", DSFLOAT2 position = {0.0f, 0.0f},
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float fontSize = 20,
 		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER,
