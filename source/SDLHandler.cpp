@@ -34,6 +34,14 @@ bool SetupWindow()
 	sdl.window = wmInfo.info.win.window;
 	//Set windowed mode
 	SDL_SetWindowFullscreen(sdl.sdlWindow, sdl.windowFlags);
+	// After applying fullscreen mode, pick up actual pixel size (especially important on high-DPI or when using SDL_WINDOW_FULLSCREEN_DESKTOP)
+	SDL_GetWindowSizeInPixels(sdl.sdlWindow, (int*)&sdl.WIDTH, (int*)&sdl.HEIGHT);
+
+	// Log for diagnostics
+	printf("[Startup] SDL window pixel size: %u x %u, windowFlags: 0x%08x, BASE: %u x %u\n",
+		(unsigned)sdl.WIDTH, (unsigned)sdl.HEIGHT, (unsigned)sdl.windowFlags, (unsigned)sdl.BASE_WIDTH, (unsigned)sdl.BASE_HEIGHT);
+
+
 	SDL_ShowCursor(SDL_DISABLE);
 	return true;
 }

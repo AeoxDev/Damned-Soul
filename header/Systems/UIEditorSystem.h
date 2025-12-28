@@ -26,4 +26,7 @@ public:
 	static void SaveLayout(const char* filepath = "ui_layout.cfg");
 	static void LoadLayout(const char* filepath = "ui_layout.cfg");
 
+	// Return the currently selected entity in the editor (EntityID() if none)
+	static EntityID GetSelectedEntity();
+
 };

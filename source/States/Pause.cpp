@@ -140,8 +140,6 @@ void PauseState::SetupUI()
 			SoundComponent* sound = registry.AddComponent<SoundComponent>(button);
 			sound->Load(MENU);
 		}
-
-
 	}
 
 	{

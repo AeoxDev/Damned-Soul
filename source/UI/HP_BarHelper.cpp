@@ -40,6 +40,7 @@ void SetUpAdvancedHealthBar(const EntityID player)
 	//Setup + Health
 	// Set background location!
 	uiElement->Setup   ("HP_Bar/HP_BG", "", "",			DSFLOAT2(BG_X,			bl.y));
+	uiElement->SetLayoutId("Health_Bar");
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.x = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.x);
 	uiElement->m_BaseImage.baseUI.m_PixelCoords.y = ceilf(uiElement->m_BaseImage.baseUI.m_PixelCoords.y);
 	uiElement->m_BaseImage.baseUI.UpdateTransform();

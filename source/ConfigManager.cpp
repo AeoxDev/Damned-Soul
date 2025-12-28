@@ -1,5 +1,6 @@
 #include "ConfigManager.h"
 #include "ConfigInterpreter.h"
+#include "SDLHandler.h"
 #include <fstream>
 #include <filesystem>
 
@@ -64,9 +65,40 @@ void ReadConfig()
 			//Handle each case by name.
 			InterpretRow(name, value);
 		}
-
 	}
 	configFile.close();
+}
+
+void SaveConfig()
+{
+	ConfigRows configs;
+	SetupRows(configs);
+
+	// Use current runtime values
+	configs.rows[0].value = std::to_string((int)sdl.WIDTH);  // ResolutionX
+	configs.rows[1].value = std::to_string((int)sdl.HEIGHT); // ResolutionY
+
+	// Map sdl.windowFlags to one of the strings used in InterpretRow/SetupRows
+	std::string windowMode = "Windowed";
+	if ((sdl.windowFlags & SDL_WINDOW_FULLSCREEN) != 0)
+	{
+		windowMode = "Fullscreen";
+	}
+	else if ((sdl.windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
+	{
+		windowMode = "Borderless";
+	}
+	configs.rows[2].value = windowMode;
+
+	// Write file (truncate + overwrite)
+	std::ofstream out{ "Settings.config", std::ofstream::out | std::ofstream::trunc };
+	if (!out.is_open())
+		return;
+	for (size_t i = 0; i < SETTINGS_LIMIT; ++i)
+	{
+		out << configs.rows[i].name << SETTINGS_SEPARATOR << configs.rows[i].value << "\n";
+	}
+	out.close();
 }
 
 void InitiateConfig()

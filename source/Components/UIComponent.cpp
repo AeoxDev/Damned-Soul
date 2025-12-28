@@ -377,3 +377,27 @@ void UIComponent::Release()
 	m_Texts.~ML_Vector();
 	m_Images.~ML_Vector();
 }
+
+// Persistent layout id helpers
+void UIComponent::SetLayoutId(const char* id)
+{
+	if (id == nullptr || id[0] == '\0')
+	{
+		m_layoutId = ML_String();
+	}
+	else
+	{
+		m_layoutId = id;
+	}
+}
+
+const ML_String& UIComponent::GetLayoutId() const
+{
+	return m_layoutId;
+}
+
+bool UIComponent::HasLayoutId() const
+{
+	// ML_String exposes length via m_len in this codebase; empty string means not set
+	return m_layoutId.length() != 0;
+}

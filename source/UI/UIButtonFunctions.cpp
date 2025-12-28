@@ -20,6 +20,7 @@
 #include "Levels/LevelHelper.h" //Move CreatePlayer to the Start-button instead of being hardcoded to Level1.cpp
 
 #include "Systems/UIEditorSystem.h"
+#include "ConfigManager.h" // SaveConfig()
 
 #include <fstream>
 #include <string>
@@ -273,6 +274,10 @@ void UIFunctions::Settings::SetLowRes(void* args, int a)
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1280, 720);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
+
+	// Recalculate/redraw UI now that pixel/backbuffer size changed
+	RedrawUI();
+	SaveConfig();
 }
 
 void UIFunctions::Settings::SetMediumRes(void* args, int a)
@@ -295,6 +300,9 @@ void UIFunctions::Settings::SetMediumRes(void* args, int a)
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, 1600, 900);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
+
+	RedrawUI();
+	SaveConfig();
 }
 
 void UIFunctions::Settings::SetHighRes(void* args, int a)
@@ -318,6 +326,9 @@ void UIFunctions::Settings::SetHighRes(void* args, int a)
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
+
+	RedrawUI();
+	SaveConfig();
 }
 
 void UIFunctions::Settings::SetFullscreen(void* args, int a)
@@ -342,6 +353,8 @@ void UIFunctions::Settings::SetFullscreen(void* args, int a)
 		EditViewport(renderStates[backBufferRenderSlot].viewPort, sdl.WIDTH, sdl.HEIGHT);
 		SetViewport(renderStates[backBufferRenderSlot].viewPort);
 	}
+	RedrawUI();
+	SaveConfig();
 }
 
 void UIFunctions::Settings::SwitchTimer(void* args, int a)

@@ -39,6 +39,57 @@ void UpdateKeyState(int key)
 
 void GetInput()
 {
+	// Loop through each event; there can be multiple each frame
+	while (SDL_PollEvent(&sdl.sdlEvent))
+	{
+		// Update mouse pixel coordinates for other systems
+		SDL_GetMouseState(&mouseX, &mouseY);
+
+		switch (sdl.sdlEvent.type)
+		{
+		case SDL_QUIT:
+			sdl.quit = true;
+			break;
+
+		case SDL_KEYDOWN:
+			// Only treat key repeat==0 as a new press
+			if (sdl.sdlEvent.key.repeat == 0)
+			{
+				UpdateKeyState(sdl.sdlEvent.key.keysym.scancode);
+				keyInput[sdl.sdlEvent.key.keysym.scancode] = true;
+			}
+			break;
+
+		case SDL_KEYUP:
+			// key repeat doesn't apply to keyup
+			UpdateKeyState(sdl.sdlEvent.key.keysym.scancode);
+			keyInput[sdl.sdlEvent.key.keysym.scancode] = false;
+			break;
+
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			// Mouse events are handled regardless of key.repeat
+			mouseButton = sdl.sdlEvent.button;
+			if (mouseButton.button == SDL_BUTTON_LEFT)
+			{
+				UpdateMouseState(0);
+			}
+			else if (mouseButton.button == SDL_BUTTON_RIGHT)
+			{
+				UpdateMouseState(1);
+			}
+			else if (mouseButton.button == SDL_BUTTON_MIDDLE)
+			{
+				UpdateMouseState(2);
+			}
+			break;
+
+		default:
+			// ignore other events here
+			break;
+		}
+	}
+	/* Commented out to Attempt to fix Dragging Selection bug 
 	//Loop through each event; there can be multiple each frame
 	while (SDL_PollEvent(&sdl.sdlEvent))
 	{
@@ -77,7 +128,7 @@ void GetInput()
 				}
 			}
 		}
-	}
+	}*/
 }
 
 void ResetInput()

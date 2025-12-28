@@ -64,6 +64,7 @@ bool CreateDeviceAndSwapChain(HWND& window, UINT width, UINT height)
 	// You can verify that by building a Release configuration which won't use this flag and check that it can create the Direct3D 11 device.
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &d3d11Data->swapChain, &d3d11Data->device, NULL, &d3d11Data->deviceContext);
 	printf("Device & Swap Chain HR: %x | %s\n", hr, std::system_category().message((unsigned int)hr).c_str());
+	printf("CreateDeviceAndSwapChain requested: %u x %u, HRESULT: 0x%08x\n", width, height, (unsigned)hr);
 	assert(SUCCEEDED(hr));
 
 	return SUCCEEDED(hr);

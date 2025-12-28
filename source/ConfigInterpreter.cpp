@@ -39,6 +39,6 @@ void SetupRows(ConfigRows& rows)
 {
 	//Create ConfigRow:s and add to ConfigRows
 	rows.rows[0] = ConfigRow{ "ResolutionX", "1920" };//Name, default value
-	rows.rows[1] = ConfigRow{ "ResolutionY", "1030" };
+	rows.rows[1] = ConfigRow{ "ResolutionY", "1080" };
 	rows.rows[2] = ConfigRow{ "WindowMode", "Windowed" };
 }

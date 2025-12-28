@@ -92,6 +92,9 @@ struct UIComponent
 	UIText m_BaseText;
 	ML_Vector<UIImage> m_Images;
 	ML_Vector<UIText> m_Texts;
+	// Persistent layout id used by the UI editor to uniquely identify instances.
+	// When non-empty, the editor will use this id when saving/loading layouts.
+	ML_String m_layoutId = "";
 
 	void Setup(const char* baseImageFilepath, const char* baseImageHoverFilepath = "", const char* text = "", DSFLOAT2 position = {0.0f, 0.0f},
 		DSFLOAT2 scale = { 1.0f, 1.0f }, float fontSize = 20,
@@ -111,4 +114,9 @@ struct UIComponent
 		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	void Release();
+
+	// Layout id helpers
+	void SetLayoutId(const char* id);
+	const ML_String& GetLayoutId() const;
+	bool HasLayoutId() const;
 };

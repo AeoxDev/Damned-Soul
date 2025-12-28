@@ -1,0 +1,16 @@
+Bugfixes:
+
+Selected element doesn't deselect. (FIX delay when releasing)
+Make sure edit mode is disabled when pressing other menu options
+Scaling smaller clips image
+Health bar is a mess
+Only editable elements gets rectangles/boxes around them when edit mode is active
+Set unique ids to all moveable elements
+
+
+Features:
+Make timer active default
+Transparent boxes instead of rectangles around moveable ui elements
+Add a visual scaling box with a min/max scaling slider (will prob remove right-click scaling to accommodate this)
+Hide pause menu + book background while edit mode is active
+Move edit mode button into settings

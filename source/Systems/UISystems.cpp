@@ -17,6 +17,7 @@
 #include "Relics/Utility/RelicFuncInputTypes.h"
 
 #include "Systems/UIEditorSystem.h"
+#include <d2d1.h>	// Draw Rectangles around movable UI elements
 static UIEditorSystem g_UIEditorSystem;
 
 bool uiUpdated = true;
@@ -45,6 +46,57 @@ bool UIRenderSystem::Update()
 		//Elliot: Draw mouse (This affects performance, but its a custom cursor :) )
 		UIComponent* mouse = registry.GetComponent<UIComponent>(stateManager.cursor);
 		mouse->DrawAll();
+
+		// Draw outlines around UI editable elements when Editmode is enabled
+		if (UIEditorSystem::GetEditMode())
+		{
+			ID2D1RenderTarget* rt = ui.GetRenderTarget();
+			if (rt)
+			{
+				// Save previous transform and set identity so pixel coords are drawn directly.
+				D2D1_MATRIX_3X2_F prevTransform;
+				rt->GetTransform(&prevTransform);
+				rt->SetTransform(D2D1::Matrix3x2F::Identity());
+
+				// Create two brushes: one for normal outlines, one for selected (thicker)
+				ID2D1SolidColorBrush* normalBrush = nullptr;
+				ID2D1SolidColorBrush* selectedBrush = nullptr;
+				HRESULT hr1 = rt->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Yellow, 0.8f), &normalBrush);
+				HRESULT hr2 = rt->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::OrangeRed, 0.95f), &selectedBrush);
+
+				// Get selected entity
+				EntityID selected = UIEditorSystem::GetSelectedEntity();
+
+				// Draw rectangles around each UIComponent base image
+				for (auto entity : View<UIComponent>(registry))
+				{
+					UIComponent* uiElement = registry.GetComponent<UIComponent>(entity);
+					if (!uiElement) continue;
+					if (!uiElement->m_BaseImage.baseUI.GetVisibility()) continue;
+
+					DSFLOAT2 pixel = uiElement->m_BaseImage.baseUI.GetPixelCoords();
+					DSBOUNDS b = uiElement->m_BaseImage.baseUI.GetBounds();
+					D2D1_RECT_F rect = D2D1::RectF(pixel.x, pixel.y, pixel.x + b.right, pixel.y + b.bottom);
+
+					// If this is the selected entity, draw thicker selected brush, else thin normal brush
+					if (entity.index == selected.index/* && entity.version == selected.version*/)
+					{
+						if (selectedBrush) rt->DrawRectangle(rect, selectedBrush, 3.0f);
+					}
+					else
+					{
+						if (normalBrush) rt->DrawRectangle(rect, normalBrush, 1.0f);
+					}
+				}
+
+				// Release brushes
+				if (normalBrush) normalBrush->Release();
+				if (selectedBrush) selectedBrush->Release();
+
+				// Restore transform
+				rt->SetTransform(prevTransform);
+			}
+		}
 
         End2dFrame(ui);
     }
